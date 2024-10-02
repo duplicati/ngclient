@@ -15,6 +15,9 @@ jobs:
         with:
           fetch-depth: 1 # shallow clone
 
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
       - name: Deepen Clone
         run: git fetch --unshallow
 
