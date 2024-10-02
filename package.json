@@ -39,7 +39,7 @@
     "@angular-devkit/build-angular": "^18.2.0",
     "@angular/cli": "^18.2.0",
     "@angular/compiler-cli": "^18.2.0",
-    "@hey-api/openapi-ts": "^0.52.9",
+    "@hey-api/openapi-ts": "^0.53.6",
     "prettier": "^3.3.3",
     "typescript": "~5.5.2"
   }
