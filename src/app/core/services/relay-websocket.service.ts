@@ -11,6 +11,7 @@ type MessageEnvelope = {
   type: MessageType;
   messageId: string;
   payload: string | null;
+  errorMessage?: string;
 };
 
 type AuthRequestMessage = {
@@ -65,9 +66,6 @@ export class RelayWebsocketService {
 
   isConnectedToMachineServer = this.#isConnectedToMachineServer.asReadonly();
   wsState = this.#wsState.asReadonly();
-
-  // TODO:
-  // - Auto reconnect
 
   #queuedCommands: MessageEnvelope[] = [];
   #pendingCommands: { [key: string]: PromiseResolver } = {};
@@ -177,13 +175,20 @@ export class RelayWebsocketService {
           return;
         }
 
-        const payload = JSON.parse(data.payload ?? '') as CommandResponse;
-        payload.body = payload?.body == null ? null : this.utf8Atob(payload.body);
         const f = this.#pendingCommands[data.messageId];
         if (f) {
+          
+          if (data.errorMessage) {
+            f.reject(data.errorMessage);
+            return;
+          } else { 
+            const payload = JSON.parse(data.payload ?? '') as CommandResponse;
+            payload.body = payload?.body == null ? null : this.utf8Atob(payload.body);
+            f.resolve(payload);
+          }
+
           delete this.#pendingCommands[data.messageId];
           window.clearTimeout(f.timer);
-          f.resolve(payload);
         }
       }
     };
