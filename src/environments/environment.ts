@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
   baseUrl: '/api',
-  machineServerUrl: 'wss://gateway.api.duplicati.com/portal',
+  machineServerUrl: '${WS_URL}',
   defaultTimeout: 30000,
 };
