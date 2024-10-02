@@ -26,15 +26,15 @@ ARG WS_URL=wss://localhost:8080
 ENV BUILD_ENV=${BUILD_ENV}
 ENV WS_URL=${WS_URL}
 
-# Replace environment variables in the environment file
-RUN envsubst < src/environments/environment.prod.ts > src/environments/environment.prod.ts
-RUN envsubst < src/environments/environment.ts > src/environments/environment.ts
-
 # Install app dependencies
 RUN bun i
 
 # Bundle app source
 COPY . /app
+
+# Replace environment variables in the environment file
+RUN envsubst < src/environments/environment.prod.ts > src/environments/environment.prod.ts
+RUN envsubst < src/environments/environment.ts > src/environments/environment.ts
 
 # Use the environment variable to conditionally run the build command
 RUN if [ "$BUILD_ENV" = "prod" ]; then \
