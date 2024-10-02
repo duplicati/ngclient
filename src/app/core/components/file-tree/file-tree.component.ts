@@ -394,13 +394,16 @@ export default class FileTreeComponent {
       .split('\0')
       .filter((x) => !x.startsWith('-'))
       .filter(Boolean);
+
     const segmentArr = pathArr.map((x) => x.split('/').filter(Boolean));
 
     let urlPieces: string[] = [this.rootPath() ?? '/'];
 
     segmentArr.forEach((segments) => {
       segments.forEach((_, index) => {
-        const urlPiece = '/' + segments.slice(0, index + 1).join('/');
+        const urlCombined = segments.slice(0, index + 1).join('/');
+        const urlPiece = urlCombined.startsWith('%') ? urlCombined : '/' + urlCombined;
+
         if (!urlPieces.includes(urlPiece)) {
           urlPieces.push(urlPiece);
         }

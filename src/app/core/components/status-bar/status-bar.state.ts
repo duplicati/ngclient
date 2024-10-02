@@ -25,9 +25,9 @@ export class StatusBarState {
   #progState = inject(ProgressStateService);
   #dupServer = inject(DuplicatiServerService);
   #backupState = inject(BackupsState);
-  #isPolling = signal(false);
+  #isPollingProgressState = signal(false);
   #isFetching = signal(false);
-  #pollingInterval = signal<number | null>(this.#MIN_POLL_INTERVAL);
+  #progressStatePollingInterval = signal<number | null>(this.#MIN_POLL_INTERVAL);
   #statusData = signal<Status | null>(null);
   #isGettingServerState = signal(false);
   #serverStateLoading = signal(false);
@@ -56,17 +56,21 @@ export class StatusBarState {
   #activeInterval: number | null = null;
 
   #polling = effect(() => {
-    const isPolling = this.#isPolling();
-    const pollingInterval = this.#pollingInterval();
+    const isPollingProgressState = this.#isPollingProgressState();
+    const progressStatePollingInterval = this.#progressStatePollingInterval();
 
-    if (!isPolling || !pollingInterval || pollingInterval < this.#MIN_POLL_INTERVAL) {
+    if (
+      !isPollingProgressState ||
+      !progressStatePollingInterval ||
+      progressStatePollingInterval < this.#MIN_POLL_INTERVAL
+    ) {
       this.#activeInterval && window.clearInterval(this.#activeInterval);
       return;
     }
 
     this.#activeInterval = window.setInterval(() => {
-      this.#getStatus();
-    }, pollingInterval);
+      this.#getProgressState();
+    }, progressStatePollingInterval);
   });
 
   start() {
@@ -79,22 +83,22 @@ export class StatusBarState {
   }
 
   startPollingProgress() {
-    this.#getStatus();
-    this.#isPolling.set(true);
+    this.#getProgressState();
+    this.#isPollingProgressState.set(true);
   }
 
   stopPollingProgress() {
-    this.#isPolling.set(false);
+    this.#isPollingProgressState.set(false);
   }
 
-  setPollingInterval(time: number) {
+  setProgressStatePollingInterval(time: number) {
     if (time < this.#MIN_POLL_INTERVAL) {
       console.error(`Polling interval must be at least ${this.#MIN_POLL_INTERVAL}ms`);
 
       return;
     }
 
-    this.#pollingInterval.set(time);
+    this.#progressStatePollingInterval.set(time);
   }
 
   serverStateEffect = effect(
@@ -124,13 +128,14 @@ export class StatusBarState {
     this.#serverStateLoading.set(true);
     const lastEventId = this.#serverState()?.LastEventID;
 
-    const params: GetApiV1ServerstateData = lastEventId === null || lastEventId === undefined
-      ? {}
-      : {
-          lastEventId: lastEventId,
-          longpoll: true,
-          duration: '299s',
-        };
+    const params: GetApiV1ServerstateData =
+      lastEventId === null || lastEventId === undefined
+        ? {}
+        : {
+            lastEventId: lastEventId,
+            longpoll: true,
+            duration: '299s',
+          };
 
     this.#dupServer
       .getApiV1Serverstate(params)
@@ -146,7 +151,7 @@ export class StatusBarState {
       });
   }
 
-  #getStatus() {
+  #getProgressState() {
     this.#isFetching.set(true);
     this.#progState
       .getApiV1Progressstate()
@@ -173,6 +178,12 @@ export class StatusBarState {
             const backup = this.#backupState.getBackupById(backupId);
 
             res.backup = backup;
+          }
+
+          if (res.task?.Status === 'Completed') {
+            this.#isPollingProgressState.set(false);
+          } else {
+            this.#isPollingProgressState.set(true);
           }
 
           this.#statusData.set(res);

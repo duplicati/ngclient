@@ -31,6 +31,10 @@
           <h3>SSH</h3>
           <p>Store backups in SSH.</p>
         </div>
+        <div class="tile" (click)="addDestinationFormGroup('googledrive')">
+          <h3>Google Drive</h3>
+          <p>Store backups in Google Drive.</p>
+        </div>
       </div>
 
       <p>More destinations are coming soon.</p>
@@ -59,6 +63,7 @@
                     context: {
                       $implicit: {
                         destination: destination,
+                        destinationType: destinationFormSignal()?.destinations?.[0]?.destinationType,
                         index: $index,
                         formGroupName: 'custom',
                         oauthField: destinationFormPair().oauthField,
@@ -78,6 +83,7 @@
                     context: {
                       $implicit: {
                         destination: destination,
+                        destinationType: destinationFormSignal()?.destinations?.[0]?.destinationType,
                         index: $index,
                         formGroupName: 'dynamic',
                         oauthField: destinationFormPair().oauthField,
@@ -117,6 +123,7 @@
                       context: {
                         $implicit: {
                           destination: destination,
+                          destinationType: destinationFormSignal()?.destinations?.[0]?.destinationType,
                           index: $index,
                           formGroupName: 'advanced',
                           oauthField: destinationFormPair().oauthField,
@@ -162,10 +169,6 @@
                     id="destination-{{ item.formGroupName }}-{{ item.index }}"
                     formControlName="{{ item.destination.name }}" />
 
-                  <!-- @if (item.oauthField === item.destination.name) {
-                    <span spkPrefix>{{ item.oauthField }}</span>
-                  } -->
-
                   @if (item.destination.type === 'Path') {
                     <spk-icon spkPrefix>link</spk-icon>
                   } @else {
@@ -175,14 +178,19 @@
               } @else if (item.destination.type === 'Password') {
                 <spk-form-field>
                   <label for="destination-{{ item.formGroupName }}-{{ item.index }}">
-                    {{ item.destination.shortDescription ?? item.destination.name }}
+                    {{ item.destination.shortDescription ?? item.destination.name }} -- {{ item.oauthField }}
+                    {{ item.destinationType }} {{ item.destination.name }}
                   </label>
                   <input
                     [type]="$any(item.destination).showPassword ? 'text' : 'password'"
                     id="destination-{{ item.formGroupName }}-{{ item.index }}"
                     formControlName="{{ item.destination.name }}" />
 
-                  <spk-icon spkPrefix>password</spk-icon>
+                  @if (item.oauthField === item.destination.name) {
+                    <span spkPrefix class="link" (click)="oauthStartTokenCreation(item.destinationType)">AuthID</span>
+                  } @else {
+                    <spk-icon spkPrefix>password</spk-icon>
+                  }
                   @if ($any(item.destination).showPassword) {
                     <spk-icon
                       class="clickable"

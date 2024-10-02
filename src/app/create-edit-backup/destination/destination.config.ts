@@ -87,7 +87,17 @@ export const DESTINATION_CONFIG: DestinationConfig = {
     dynamicFields: ['gcs-location', 'gcs-storage-class', 'authid'],
   },
   googledrive: {
-    oauthField: 'path',
-    dynamicFields: ['path', 'authid'],
+    oauthField: 'authid',
+
+    customFields: {
+      path: {
+        type: 'Path',
+        name: 'path',
+        shortDescription: 'File path on the server',
+        longDescription: 'File path on the server',
+        formElement: (defaultValue?: any) => fb.control<string>(defaultValue ?? ''),
+      },
+    },
+    dynamicFields: ['authid'],
   },
 };

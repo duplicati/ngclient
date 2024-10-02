@@ -119,6 +119,26 @@ const mappings = {
       };
     },
   },
+  googledrive: {
+    to: (fields: any): string => {
+      const path = fields.custom.path;
+      const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
+
+      return `${fields.destinationType}://${path}${urlParams}`;
+    },
+    from: (destinationType: string, urlObj: URL, plainPath: string) => {
+      const plainPathWithoutProtocol = plainPath.replace('googledrive://', '');
+
+      return <ValueOfDestinationFormGroup>{
+        destinationType,
+        custom: {
+          path: plainPathWithoutProtocol,
+        },
+        ...handleSearchParams(destinationType, urlObj),
+      };
+    },
+  },
+
   fallbackMapper: {
     to: (fields: any): string => {
       return '';
