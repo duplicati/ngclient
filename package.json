@@ -1,7 +1,8 @@
 {
-  "name": "duplicati-client",
+  "name": "ngclient",
   "version": "0.0.0",
   "license": "MIT",
+  "contributors": ["sp90"],
   "scripts": {
     "gen:font": "bunx sparkle-fg --src='./src' --out='./src/assets' --rootPath='/assets/'",
     "watch:font": "bunx sparkle-fg --src='./src' --out='./src/assets' --rootPath='/assets/' --watch",

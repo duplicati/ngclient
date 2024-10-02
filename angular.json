@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "duplicati-client": {
+    "ngclient": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -41,7 +41,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/duplicati-client",
+            "outputPath": "dist/ngclient",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [],
@@ -80,10 +80,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "duplicati-client:build:production"
+              "buildTarget": "ngclient:build:production"
             },
             "development": {
-              "buildTarget": "duplicati-client:build:development",
+              "buildTarget": "ngclient:build:development",
               "proxyConfig": "src/proxy.conf.mjs"
             }
           },
