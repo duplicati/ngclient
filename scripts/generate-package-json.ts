@@ -1,6 +1,7 @@
-const fs = require('fs');
+import packageJson from '../package.json';
 
-const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf-8'));
+// @ts-ignore
+import { write } from 'bun';
 
 const newPackageJson = {
   version: packageJson.version,
@@ -9,6 +10,6 @@ const newPackageJson = {
   contributors: packageJson.contributors,
 };
 
-fs.writeFileSync('./dist/ngclient/browser/package.json', JSON.stringify(newPackageJson, null, 2));
+await write('./dist/ngclient/browser/package.json', JSON.stringify(newPackageJson, null, 2));
 
 console.log('package.json generated');
