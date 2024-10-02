@@ -43,9 +43,12 @@ jobs:
         if: env.changed == 'true' && github.ref == 'refs/heads/main'
         run: npm run build:prod
 
+      - name: Create package.json
+        run: npm run gen:package-json
+
       - name: Publish (if package.json changed)
         if: env.changed == 'true' && github.ref == 'refs/heads/main'
-        working-directory: ./dist/ngclient
+        working-directory: ./dist/ngclient/browser
         run: |
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
           npm publish --access public
