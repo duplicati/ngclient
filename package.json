@@ -1,5 +1,5 @@
 {
-  "name": "ngclient",
+  "name": "@duplicati/ngclient",
   "version": "0.0.1",
   "license": "MIT",
   "contributors": [
