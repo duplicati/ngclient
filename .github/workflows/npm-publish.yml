@@ -1,0 +1,53 @@
+name: Build and Deploy Angular Library
+
+on:
+  push:
+    branches:
+      - main # Or your main branch name
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1 # shallow clone
+
+      - name: Deepen Clone
+        run: git fetch --unshallow
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Check if package.json was modified
+        id: check_package_json_change
+        run: |
+          if git rev-list --count HEAD > 1; then 
+            changed=$(if git diff --name-only HEAD^ HEAD | grep 'package.json' >/dev/null; then echo 'true'; else echo 'false'; fi)
+          else
+            changed="false"
+          fi
+
+          # Write the output to the environment file
+          echo "changed=$changed" >> $GITHUB_ENV
+
+      - name: Build Library
+        if: env.changed == 'true' && github.ref == 'refs/heads/main'
+        run: npm run build:prod
+
+      - name: Publish (if package.json changed)
+        if: env.changed == 'true' && github.ref == 'refs/heads/main'
+        working-directory: ./dist/ngclient
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+          npm publish --access public
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }} # Your NPM token from secrets
