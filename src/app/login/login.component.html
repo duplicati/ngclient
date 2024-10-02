@@ -1,0 +1,12 @@
+<form [formGroup]="loginForm" (submit)="submit()">
+  <div class="login-row">
+    <spk-form-field>
+      <input placeholder="Enter your password" tabindex="1" formControlName="pass" />
+    </spk-form-field>
+
+    <button spk-button class="raised primary" type="submit">
+      Login
+      <spk-icon>arrow-right</spk-icon>
+    </button>
+  </div>
+</form>

@@ -1,0 +1,80 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(16);
+
+  &.disabled {
+    opacity: 0.5;
+    user-select: none;
+    pointer-events: none;
+    position: relative;
+
+    &:before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: transparent;
+    }
+  }
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(8);
+}
+
+.browse-files {
+  display: flex;
+  gap: p2r(8);
+  padding: p2r(8 16);
+  height: p2r(200);
+  border: 1px solid var(--base-level-40);
+  border-radius: var(--shape-3);
+  overflow: auto;
+  resize: vertical;
+
+  spk-list {
+    --list-active-bg: var(--base-level-30);
+    gap: 0;
+    padding: 0;
+    height: min-content;
+    min-width: min-content;
+
+    [spk-action-item] {
+      padding: 0;
+      gap: p2r(4);
+
+      &.usually-hidden {
+        opacity: 0.6;
+      }
+
+      .text {
+        flex: 1 0;
+        height: 100%;
+        width: max-content;
+        display: flex;
+        align-items: center;
+      }
+
+      .icon {
+        width: p2r(24);
+        height: p2r(24);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+.browse-files-toggle {
+  color: var(--base-level-60R);
+}
+
+.hidden {
+  display: none;
+}

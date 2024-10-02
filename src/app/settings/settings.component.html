@@ -1,0 +1,256 @@
+<app-status-bar />
+
+<form [formGroup]="settingsForm" class="content" (submit)="submit()">
+  <header>
+    <div class="title">
+      <h2>Settings</h2>
+      <p>Configure your backup settings.</p>
+    </div>
+
+    <button type="submit" spk-button class="raised primary">Save changes</button>
+  </header>
+
+  <section>
+    <div class="left">
+      <h3>Remote access control</h3>
+      <p>{{ getRemoteControlStatusText() }}</p>
+    </div>
+
+    <div class="right remote-control">
+      @if (remoteControlState() !== 'unknown') {
+        <div class="field-row">
+          @if (remoteControlState() === 'inactive') {
+            <spk-form-field label="Registration URL" for="remoteControlRegisterUrl">
+              <input
+                type="text"
+                spk-input
+                id="remoteControlRegisterUrl"
+                name="remoteControlRegisterUrl"
+                formControlName="remoteControlRegisterUrl" />
+            </spk-form-field>
+
+            <button type="button" spk-button class="raised" (click)="beginRemoteRegistration()">
+              Register for remote control
+            </button>
+          }
+
+          @if (remoteControlState() === 'registered') {
+            <div class="field-col">
+              <label>Machine is now registered, open this link to add it to your account:</label>
+              <a href="{{ remoteControlClaimUrl() }}" target="_blank">{{ remoteControlClaimUrl() }}</a>
+            </div>
+          }
+
+          @if (remoteControlState() === 'registering') {
+            <div class="field-col">
+              <label>Registering, please wait...</label>
+            </div>
+          }
+
+          @if (
+            remoteControlState() === 'registering' ||
+            remoteControlState() === 'registeringfaulted' ||
+            remoteControlState() === 'registered'
+          ) {
+            <button type="button" spk-button class="raised" (click)="cancelRemoteRegistration()">
+              Cancel registration
+            </button>
+          }
+
+          @if (remoteControlState() === 'connected' || remoteControlState() === 'enabled') {
+            <button type="button" spk-button class="raised" (click)="disableRemoteControl()">
+              Disable remote control
+            </button>
+          }
+          @if (remoteControlState() === 'disabled') {
+            <button type="button" spk-button class="raised" (click)="enableRemoteControl()">
+              Enable remote control
+            </button>
+
+            <button type="button" spk-button class="raised warn" (click)="deleteRemoteControl()">
+              Delete remote control setup
+            </button>
+          }
+        </div>
+      }
+    </div>
+  </section>
+
+  <section>
+    <div class="left">
+      <h3>Pause after startup or hibernation</h3>
+      <p>
+        Duplicati will run when started, but will remain in paused state for the duration. Duplicati will occupy minimal
+        system resources and no backups will be run.
+      </p>
+    </div>
+
+    <div class="right">
+      <div class="field-row" formGroupName="pauseSettings">
+        <spk-select [displayValue]="typeDisplay(settingsForm.value.pauseSettings?.timeType)">
+          <input type="text" formControlName="timeType" />
+
+          <ng-container options>
+            @for (x of timeTypeOptions(); track $index) {
+              <option [value]="x.value" (click)="pauseSettings.controls.timeType.setValue(x.value)">
+                {{ x.label }}
+              </option>
+            }
+          </ng-container>
+        </spk-select>
+
+        <spk-select>
+          <input type="search" formControlName="time" />
+
+          <ng-container options>
+            @for (x of timeOptions(); track $index) {
+              <option [value]="x" (click)="pauseSettings.controls.time.setValue(x)">{{ x }}</option>
+            }
+          </ng-container>
+        </spk-select>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="left">
+      <h3>Color theme</h3>
+      <p>Customize your application theme</p>
+    </div>
+
+    <div class="right">
+      <div class="themes">
+        <img
+          src="/assets/images/light-theme.png"
+          [class.active]="!isDarkMode()"
+          alt="light theme"
+          (click)="setLightMode()" />
+
+        <img
+          src="/assets/images/dark-theme.png"
+          [class.active]="isDarkMode()"
+          alt="dark theme"
+          (click)="setDarkMode()" />
+        <!-- <img src="/assets/images/system-theme.png" alt="system theme" /> -->
+      </div>
+    </div>
+  </section>
+
+  <!-- <section>
+    <div class="left">
+      <h3>Language</h3>
+      <p>Select a language for the platform</p>
+    </div>
+
+    <div class="right">
+      <spk-select [displayValue]="languageDisplay(settingsForm.controls.language.value)">
+        <input type="search" formControlName="language" />
+
+        @for (x of languageOptions(); track $index) {
+          <option option [value]="x.value" (click)="settingsForm.controls.language.setValue(x.value)">
+            {{ x.label }}
+          </option>
+        }
+      </spk-select>
+    </div>
+  </section> -->
+
+  <section>
+    <div class="left">
+      <h3>Update channel</h3>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+    </div>
+
+    <div class="right radios">
+      <div class="radio-option" (click)="settingsForm.controls.updateChannel.setValue('')">
+        <spk-radio class="outlined primary">
+          Default ({{ sysinfo()?.DefaultUpdateChannel }})
+          <input type="radio" name="updateChannel" value="" formControlName="updateChannel" />
+        </spk-radio>
+
+        <p>Same as the base install version: {{ sysinfo()?.ServerVersionType }}</p>
+      </div>
+
+      <div class="radio-option" (click)="settingsForm.controls.updateChannel.setValue('stable')">
+        <spk-radio class="outlined primary">
+          Stable
+          <input type="radio" name="updateChannel" value="stable" formControlName="updateChannel" />
+        </spk-radio>
+
+        <p>Official releases</p>
+      </div>
+
+      <div class="radio-option" (click)="settingsForm.controls.updateChannel.setValue('beta')">
+        <spk-radio class="outlined primary">
+          Beta
+          <input type="radio" name="updateChannel" value="beta" formControlName="updateChannel" />
+        </spk-radio>
+
+        <p>
+          Try out the new features that we are working on. Currently the most stable version available. Test Restore
+          data before using this in production environments.
+        </p>
+      </div>
+
+      <div class="radio-option" (click)="settingsForm.controls.updateChannel.setValue('experimental')">
+        <spk-radio class="outlined primary">
+          Experimental
+          <input type="radio" name="updateChannel" value="experimental" formControlName="updateChannel" />
+        </spk-radio>
+
+        <p>Specific builds for developers only. Not for use with important data.</p>
+      </div>
+
+      <div class="radio-option" (click)="settingsForm.controls.updateChannel.setValue('canary')">
+        <spk-radio class="outlined primary">
+          Canary
+          <input type="radio" name="updateChannel" value="canary" formControlName="updateChannel" />
+        </spk-radio>
+
+        <p>Individual builds for developers only. Not for use with important data.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="left">
+      <h3>Usage statistics</h3>
+      <p>
+        Usage reports help us improve the user experience and evaluate impact of new features. We use them to generate
+        <a href="#">public usage statistics.</a>
+        <br />
+        <br />
+        All usage reports are sent anonymously and do not contain any personal information. They contain information
+        about hardware and operating system, the type of backend, backup duration, overall size of source data and
+        similar data. They do not contain paths, filenames, usernames, passwords or similar sensitive information.
+      </p>
+    </div>
+
+    <div class="right">
+      <spk-select [displayValue]="usageDisplay(settingsForm.controls.usageStatistics.value)">
+        <input type="text" formControlName="usageStatistics" />
+
+        <ng-container options>
+          @for (x of usageStatisticsOptions(); track $index) {
+            <option [value]="x.value" (click)="settingsForm.controls.usageStatistics.setValue(x.value)">
+              {{ x.label }}
+            </option>
+          }
+        </ng-container>
+      </spk-select>
+    </div>
+  </section>
+
+  <!-- <section>
+    <div class="left">
+      <h3>Add advanced options</h3>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <spk-button-group>
+        <button type="button" [class.active]="editAs() === 'list'" (click)="editAs.set('list')">Edit as list</button>
+        <button type="button" [class.active]="editAs() === 'text'" (click)="editAs.set('text')">Edit as text</button>
+      </spk-button-group>
+    </div>
+
+    <div class="right">Empty for now</div>
+  </section> -->
+</form>

@@ -1,0 +1,106 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
+:host {
+  display: block;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  padding: p2r(0 32 32);
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: p2r(32 0);
+
+  .title {
+    display: flex;
+    flex-direction: column;
+    gap: p2r(4);
+  }
+}
+
+section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: p2r(16);
+  padding: p2r(32 0);
+  border-top: 1px solid var(--base-level-40);
+
+  .left {
+    display: flex;
+    flex-direction: column;
+    gap: p2r(4);
+    align-items: flex-start;
+
+    spk-button-group {
+      margin-top: p2r(4);
+    }
+
+    p {
+      text-wrap: balance;
+      width: 50%;
+    }
+  }
+}
+
+.themes {
+  display: flex;
+  gap: p2r(8);
+
+  img {
+    max-width: 240px;
+    border-radius: var(--shape-3);
+    cursor: pointer;
+
+    &.active {
+      border: 2px solid var(--primary-500);
+    }
+  }
+}
+
+.radios {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(16);
+}
+
+.radio-option {
+  cursor: pointer;
+
+  spk-radio {
+    color: var(--base-level-60);
+    margin-bottom: p2r(4);
+  }
+
+  p {
+    text-wrap: balance;
+    color: var(--base-level-60R);
+  }
+}
+
+.field-col {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(8);
+}
+
+.field-row {
+  display: flex;
+  gap: p2r(8);
+  width: 100%;
+
+  spk-form-field,
+  spk-select {
+    flex: 1 0;
+  }
+}
+
+.remote-control {
+  button {
+    white-space: nowrap;
+  }
+}

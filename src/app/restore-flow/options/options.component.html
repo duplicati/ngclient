@@ -1,0 +1,57 @@
+<form [formGroup]="optionsForm" #formRef (submit)="submit()">
+  <h3 class="title-30">Restore options</h3>
+
+  <app-toggle-card [disallowToggle]="true">
+    <ng-container title>Where do you want to restore files from?</ng-container>
+
+    <spk-radio class="raised primary">
+      Original location
+      <input type="radio" name="restoreFrom" value="orignal" formControlName="restoreFrom" />
+    </spk-radio>
+
+    <spk-radio class="raised primary">
+      Pick location
+      <input type="radio" name="restoreFrom" value="pickLocation" formControlName="restoreFrom" />
+    </spk-radio>
+
+    <app-file-tree [disabled]="optionsFormSignal()?.restoreFrom !== 'pickLocation'">
+      <label for="path">Path</label>
+      <input type="text" id="path" formControlName="restoreFromPath" />
+    </app-file-tree>
+  </app-toggle-card>
+
+  <app-toggle-card [disallowToggle]="true">
+    <ng-container title>How do you want to handle existing files?</ng-container>
+
+    <spk-radio class="raised primary">
+      Overwrite
+      <input type="radio" name="handleExisting" value="overwrite" formControlName="handleExisting" />
+    </spk-radio>
+
+    <spk-radio class="raised primary">
+      Save different versions with timestamp in file name
+      <input type="radio" name="handleExisting" value="saveTimestamp" formControlName="handleExisting" />
+    </spk-radio>
+  </app-toggle-card>
+
+  <app-toggle-card>
+    <ng-container title>Permissions</ng-container>
+
+    <spk-toggle class="primary raised">
+      Restore read/write permissions
+      <input type="checkbox" formControlName="permissions" />
+    </spk-toggle>
+  </app-toggle-card>
+
+  <div class="form-actions">
+    <button spk-button type="button" (click)="goBack()">
+      <spk-icon>arrow-left</spk-icon>
+      Go back
+    </button>
+
+    <button spk-button class="raised primary" type="submit">
+      <spk-icon>arrow-right</spk-icon>
+      Submit
+    </button>
+  </div>
+</form>

@@ -1,0 +1,359 @@
+@if (destinationOptions().length && sysIsLoaded() && destinationIsLoaded()) {
+  <form [formGroup]="destinationForm" #formRef (submit)="next()">
+    <header>
+      <h3 class="title-30">Backup destination</h3>
+      @if (destinationCount() > 0) {
+        <p (click)="removeDestinationFormGroup(destinationCount() - 1)">
+          Wanna select another destination?
+          <span class="spk-primary">Click here</span>
+        </p>
+      }
+    </header>
+
+    @if (destinationCount() === 0) {
+      <div class="most-common-destinations">
+        <div class="tile" (click)="addDestinationFormGroup('file')">
+          <h3>File system</h3>
+          <p>Store backups on your local file system.</p>
+        </div>
+
+        <div class="tile" (click)="addDestinationFormGroup('gcs')">
+          <h3>Google Cloud Storage</h3>
+          <p>Store backups in Google Cloud Storage.</p>
+        </div>
+
+        <div class="tile" (click)="addDestinationFormGroup('s3')">
+          <h3>S3 compatible bucket</h3>
+          <p>Store backups in any S3 compatible bucket.</p>
+        </div>
+
+        <div class="tile" (click)="addDestinationFormGroup('ssh')">
+          <h3>SSH</h3>
+          <p>Store backups in SSH.</p>
+        </div>
+      </div>
+
+      <p>More destinations are coming soon.</p>
+      <!-- <spk-menu>
+        <button spk-button type="button" class="outlined">Other destinations</button>
+
+        <ng-container menu>
+          @for (destination of destinationOptions(); track $index) {
+            <button spk-menu-item type="button" (click)="addDestinationFormGroup(destination.Key)">
+              {{ destination.DisplayName }}
+            </button>
+          }
+        </ng-container>
+      </spk-menu> -->
+    }
+
+    @if (destinationFormSignal()?.destinations?.length) {
+      <ng-container formArrayName="destinations">
+        <ng-container formGroupName="0">
+          @if (destinationFormPair().custom.length) {
+            <ng-container>
+              @for (destination of destinationFormPair().custom; track $index) {
+                <ng-container
+                  *ngTemplateOutlet="
+                    fieldTemplate;
+                    context: {
+                      $implicit: {
+                        destination: destination,
+                        index: $index,
+                        formGroupName: 'custom',
+                        oauthField: destinationFormPair().oauthField,
+                      },
+                    }
+                  "></ng-container>
+              }
+            </ng-container>
+          }
+
+          @if (destinationFormPair().dynamic.length) {
+            <ng-container>
+              @for (destination of destinationFormPair().dynamic; track $index) {
+                <ng-container
+                  *ngTemplateOutlet="
+                    fieldTemplate;
+                    context: {
+                      $implicit: {
+                        destination: destination,
+                        index: $index,
+                        formGroupName: 'dynamic',
+                        oauthField: destinationFormPair().oauthField,
+                      },
+                    }
+                  "></ng-container>
+              }
+            </ng-container>
+          }
+
+          @if (destinationFormPair().advanced.length) {
+            <app-toggle-card [disallowToggle]="true">
+              <ng-container title>
+                Advanced options
+
+                <spk-menu>
+                  <button spk-button type="button" class="outlined small">
+                    Add advanced option
+                    <spk-icon>plus</spk-icon>
+                  </button>
+
+                  <ng-container menu>
+                    @for (option of notSelectedAdvancedFormPair(); track $index) {
+                      <button spk-menu-item type="button" (click)="addAdvancedFormPair(option)">
+                        {{ option.name }}
+                      </button>
+                    }
+                  </ng-container>
+                </spk-menu>
+              </ng-container>
+
+              <ng-container>
+                @for (destination of selectedAdvancedFormPair(); track $index) {
+                  <ng-container
+                    *ngTemplateOutlet="
+                      fieldTemplate;
+                      context: {
+                        $implicit: {
+                          destination: destination,
+                          index: $index,
+                          formGroupName: 'advanced',
+                          oauthField: destinationFormPair().oauthField,
+                        },
+                      }
+                    "></ng-container>
+                }
+              </ng-container>
+            </app-toggle-card>
+          }
+
+          <ng-template #fieldTemplate let-item>
+            <ng-container [formGroupName]="item.formGroupName">
+              @if (item.destination.type === 'file-tree') {
+                <app-file-tree
+                  [startingPath]="getFormFieldValue(item.index, item.formGroupName, item.destination.name)">
+                  <label for="destination-{{ item.formGroupName }}-{{ item.formGroupName }}-{{ item.index }}">
+                    {{ item.destination.shortDescription ?? item.destination.name }}
+                    @if (item.destination.longDescription) {
+                      <spk-icon [attr.spk-tooltip-primary]="item.destination.longDescription" spk-tooltip-right>
+                        question
+                      </spk-icon>
+                    }
+                  </label>
+                  <input
+                    type="text"
+                    id="destination-{{ item.formGroupName }}-{{ item.index }}"
+                    formControlName="{{ item.destination.name }}" />
+                </app-file-tree>
+              } @else if (item.destination.type === 'String' || item.destination.type === 'Path') {
+                <spk-form-field>
+                  <label for="destination-{{ item.formGroupName }}-{{ item.index }}">
+                    {{ item.destination.shortDescription ?? item.destination.name }}
+                    @if (item.destination.longDescription) {
+                      <spk-icon [attr.spk-tooltip-primary]="item.destination.longDescription" spk-tooltip-right>
+                        question
+                      </spk-icon>
+                    }
+                  </label>
+
+                  <input
+                    type="text"
+                    id="destination-{{ item.formGroupName }}-{{ item.index }}"
+                    formControlName="{{ item.destination.name }}" />
+
+                  <!-- @if (item.oauthField === item.destination.name) {
+                    <span spkPrefix>{{ item.oauthField }}</span>
+                  } -->
+
+                  @if (item.destination.type === 'Path') {
+                    <spk-icon spkPrefix>link</spk-icon>
+                  } @else {
+                    <spk-icon spkPrefix>textbox</spk-icon>
+                  }
+                </spk-form-field>
+              } @else if (item.destination.type === 'Password') {
+                <spk-form-field>
+                  <label for="destination-{{ item.formGroupName }}-{{ item.index }}">
+                    {{ item.destination.shortDescription ?? item.destination.name }}
+                  </label>
+                  <input
+                    [type]="$any(item.destination).showPassword ? 'text' : 'password'"
+                    id="destination-{{ item.formGroupName }}-{{ item.index }}"
+                    formControlName="{{ item.destination.name }}" />
+
+                  <spk-icon spkPrefix>password</spk-icon>
+                  @if ($any(item.destination).showPassword) {
+                    <spk-icon
+                      class="clickable"
+                      spkSuffix
+                      (click)="$any(item.destination).showPassword = !$any(item.destination).showPassword">
+                      eye
+                    </spk-icon>
+                  } @else {
+                    <spk-icon
+                      class="clickable"
+                      spkSuffix
+                      (click)="$any(item.destination).showPassword = !$any(item.destination).showPassword">
+                      eye-slash
+                    </spk-icon>
+                  }
+                </spk-form-field>
+              } @else if (item.destination.type === 'Enumeration') {
+                <spk-select>
+                  <label for="destination-{{ item.formGroupName }}-{{ item.index }}">
+                    {{ item.destination.shortDescription ?? item.destination.name }}
+
+                    @if (item.destination.longDescription) {
+                      <spk-icon [attr.spk-tooltip-primary]="item.destination.longDescription" spk-tooltip-right>
+                        question
+                      </spk-icon>
+                    }
+                  </label>
+                  <input
+                    type="search"
+                    id="destination-{{ item.formGroupName }}-{{ item.index }}"
+                    formControlName="{{ item.destination.name }}" />
+
+                  <ng-container options>
+                    @for (option of item.destination.options; track $index) {
+                      <option [value]="option">{{ option }}</option>
+                    }
+                  </ng-container>
+                </spk-select>
+              } @else if (item.destination.type === 'Size') {
+                <div class="form-column" [formGroupName]="item.destination.name">
+                  <label for="destination-{{ item.formGroupName }}-{{ item.index }}">
+                    {{ item.destination.shortDescription ?? item.destination.name }}
+
+                    @if (item.destination.longDescription) {
+                      <spk-icon [attr.spk-tooltip-primary]="item.destination.longDescription" spk-tooltip-right>
+                        question
+                      </spk-icon>
+                    }
+                  </label>
+
+                  <div class="form-row">
+                    <spk-form-field>
+                      <input
+                        type="number"
+                        id="destination-{{ item.formGroupName }}-{{ item.index }}"
+                        formControlName="size" />
+
+                      <spk-icon spkPrefix>resize</spk-icon>
+                    </spk-form-field>
+
+                    <spk-select>
+                      <label></label>
+                      <input type="search" formControlName="unit" />
+
+                      <ng-container options>
+                        @for (option of sizeOptions(); track $index) {
+                          <option [value]="option">{{ option }}</option>
+                        }
+                      </ng-container>
+                    </spk-select>
+                  </div>
+                </div>
+              } @else if (item.destination.type === 'Integer') {
+                <spk-form-field>
+                  <label for="destination-{{ item.formGroupName }}-{{ item.index }}">
+                    {{ item.destination.shortDescription ?? item.destination.name }}
+                    @if (item.destination.longDescription) {
+                      <spk-icon [attr.spk-tooltip-primary]="item.destination.longDescription" spk-tooltip-right>
+                        question
+                      </spk-icon>
+                    }
+                  </label>
+                  <input
+                    type="number"
+                    id="destination-{{ item.formGroupName }}-{{ item.index }}"
+                    formControlName="{{ item.destination.name }}" />
+                  <spk-icon spkPrefix>numpad</spk-icon>
+                </spk-form-field>
+              } @else if (item.destination.type === 'Boolean') {
+                <spk-toggle class="primary raised">
+                  <label for="destination-{{ item.formGroupName }}-{{ item.index }}">
+                    {{ item.destination.shortDescription ?? item.destination.name }}
+                    @if (item.destination.longDescription) {
+                      <spk-icon [attr.spk-tooltip-primary]="item.destination.longDescription" spk-tooltip-right>
+                        question
+                      </spk-icon>
+                    }
+                  </label>
+                  <input
+                    type="checkbox"
+                    id="destination-{{ item.formGroupName }}-{{ item.index }}"
+                    formControlName="{{ item.destination.name }}" />
+                </spk-toggle>
+              } @else if (item.destination.type === 'Flags') {
+                <spk-select [selectMultiple]="true" class="primary">
+                  <label for="destination-{{ item.formGroupName }}-{{ item.index }}">
+                    {{ item.destination.shortDescription ?? item.destination.name }}
+                    @if (item.destination.longDescription) {
+                      <spk-icon [attr.spk-tooltip-primary]="item.destination.longDescription" spk-tooltip-right>
+                        question
+                      </spk-icon>
+                    }
+                  </label>
+                  <input type="text" id="text" formControlName="{{ item.destination.name }}" />
+
+                  <ng-container options>
+                    @for (option of item.destination.options; track $index) {
+                      @if (option === 'None') {
+                        <spk-option [value]="'None'" deselect>None</spk-option>
+                      } @else {
+                        <spk-option [value]="option">
+                          {{ option }}
+
+                          <spk-checkbox class="raised primary" />
+                        </spk-option>
+                      }
+                    }
+                  </ng-container>
+                </spk-select>
+              } @else if (item.destination.type === 'Timespan') {
+                <spk-form-field>
+                  <label for="destination-{{ item.formGroupName }}-{{ item.index }}">
+                    {{ item.destination.shortDescription ?? item.destination.name }}
+                    @if (item.destination.longDescription) {
+                      <spk-icon [attr.spk-tooltip-primary]="item.destination.longDescription" spk-tooltip-right>
+                        question
+                      </spk-icon>
+                    }
+                  </label>
+                  <input
+                    type="text"
+                    id="destination-{{ item.formGroupName }}-{{ item.index }}"
+                    formControlName="{{ item.destination.name }}" />
+
+                  <span spkError>
+                    <!-- {{ destinationForm.controls.destinations.controls[index]?.hasError('pattern') }} -->
+                  </span>
+                </spk-form-field>
+              }
+            </ng-container>
+          </ng-template>
+        </ng-container>
+      </ng-container>
+    }
+
+    <div class="form-actions">
+      <button spk-button type="button" (click)="goBack()">
+        <spk-icon>arrow-left</spk-icon>
+        Go back
+      </button>
+
+      <button spk-button class="raised primary" type="submit">
+        <spk-icon>arrow-right</spk-icon>
+        Continue
+      </button>
+    </div>
+  </form>
+
+  <!-- <pre>{{ destinationFormSignal() | json }}</pre> -->
+  <!-- <pre style="white-space: wrap">{{ targetUrl() }}</pre>
+  <pre>{{ destinationFormSignal() | json }}</pre> -->
+  <!-- <pre>{{ targetUrlsAsFormObjects() | json }}</pre>
+  <pre>{{ formObjectsAsTargetUrls() | json }}</pre> -->
+}

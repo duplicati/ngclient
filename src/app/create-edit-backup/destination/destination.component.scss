@@ -1,0 +1,79 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
+:host {
+  display: block;
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(8);
+
+  p {
+    span {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(24);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.form-column {
+  display: flex;
+  flex-direction: column;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: p2r(4);
+  }
+
+  spk-icon {
+    font-size: p2r(16);
+  }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: p2r(8);
+  align-items: flex-end;
+}
+
+.clickable {
+  cursor: pointer;
+  color: var(--primary-500);
+}
+
+.most-common-destinations {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: p2r(16);
+
+  .tile {
+    display: flex;
+    flex-direction: column;
+    gap: p2r(8);
+    padding: p2r(16);
+    border: 1px solid var(--base-level-40);
+    border-radius: var(--shape-3);
+    box-shadow: var(--shadow-1);
+    background-color: var(--base-level-20);
+    cursor: pointer;
+
+    h3 {
+      font: var(--paragraph-10);
+      margin: 0;
+    }
+  }
+}

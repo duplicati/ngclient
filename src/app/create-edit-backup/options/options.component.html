@@ -1,0 +1,95 @@
+<form [formGroup]="optionsForm" #formRef (submit)="submit()">
+  <h3 class="title-30">Options</h3>
+
+  <div class="remote-volume-wrap">
+    <div class="row-inputs" formGroupName="remoteVolumeSize">
+      <spk-form-field>
+        <label for="size">Remote volume size</label>
+        <input type="number" id="size" formControlName="size" />
+      </spk-form-field>
+
+      <spk-select>
+        <input type="text" placeholder="Select an option..." formControlName="unit" />
+
+        <ng-container options>
+          @for (option of sizeOptions(); track $index) {
+            <option [value]="option">{{ option }}</option>
+          }
+        </ng-container>
+      </spk-select>
+    </div>
+
+    <p>
+      The backups will be split up into multiple files called volumes. Here you can set the maximum size of the
+      individual volume files.
+      <a href="#" class="spk-primary">Read more</a>
+    </p>
+  </div>
+
+  <spk-select>
+    <label for="size">Backup retention</label>
+    <input type="text" placeholder="Local folder or drive" formControlName="backupRetention" />
+
+    <ng-container options>
+      @for (option of rentationOptions(); track $index) {
+        <option [value]="option">{{ option }}</option>
+      }
+    </ng-container>
+  </spk-select>
+
+  <app-toggle-card [disallowToggle]="true">
+    <ng-container title>
+      Advanced options
+
+      <spk-menu>
+        <button spk-button type="button" class="outlined small">
+          Add advanced option
+          <spk-icon>plus</spk-icon>
+        </button>
+
+        <ng-container menu>
+          @for (option of nonSelectedAdvancedOptions(); track $index) {
+            <button spk-menu-item type="button" (click)="addNewOption(option)">{{ option.Name }}</button>
+          }
+        </ng-container>
+      </spk-menu>
+    </ng-container>
+
+    <ng-container formArrayName="advancedOptions">
+      @for (optionCtrl of optionsForm.controls.advancedOptions.controls; track $index) {
+        <div class="advanced-option" [formGroup]="optionCtrl">
+          <spk-form-field>
+            @if ($index === 0) {
+              <label for="name">Name</label>
+            }
+            <input type="text" id="name" formControlName="name" />
+          </spk-form-field>
+
+          <spk-form-field>
+            @if ($index === 0) {
+              <label for="value">Value</label>
+            }
+            <input type="text" id="value" formControlName="value" />
+          </spk-form-field>
+
+          <button class="icon" spk-button type="button" (click)="optionsForm.controls.advancedOptions.removeAt($index)">
+            <spk-icon>x-circle</spk-icon>
+          </button>
+        </div>
+      }
+    </ng-container>
+  </app-toggle-card>
+
+  <div class="form-actions">
+    <button spk-button type="button" (click)="goBack()">
+      <spk-icon>arrow-left</spk-icon>
+      Go back
+    </button>
+
+    <button spk-button class="raised primary" type="submit">
+      <spk-icon>arrow-right</spk-icon>
+      Submit
+    </button>
+  </div>
+  <!-- <pre>{{ optionsForm.value | json }}</pre> -->
+</form>

@@ -1,0 +1,41 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
+:host {
+  display: block;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(24);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.row-inputs {
+  display: grid;
+  grid-template-columns: 1fr min-content;
+  gap: p2r(8);
+}
+
+.filter-inputs {
+  display: flex;
+  gap: p2r(8);
+  align-items: flex-end;
+
+  > * {
+    flex: 1 0;
+  }
+
+  .filter-removal {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: p2r(40);
+    flex: 0 0;
+  }
+}

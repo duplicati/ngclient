@@ -1,0 +1,38 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
+:host {
+  display: block;
+}
+
+section {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: p2r(32);
+  padding: p2r(32 0);
+}
+
+div.backup-types {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: p2r(16);
+  max-width: 700px;
+}
+
+spk-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: p2r(16);
+  padding-bottom: p2r(48);
+
+  img {
+    max-width: 300px;
+  }
+
+  p {
+    text-wrap: balance;
+    text-align: center;
+    width: 75%;
+  }
+}

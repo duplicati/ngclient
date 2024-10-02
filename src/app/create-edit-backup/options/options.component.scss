@@ -1,0 +1,42 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
+:host {
+  display: block;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(24);
+}
+
+.remote-volume-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(4);
+}
+
+.row-inputs {
+  display: flex;
+  align-items: flex-end;
+  gap: p2r(8);
+
+  > * {
+    flex: 1 0;
+  }
+
+  p {
+  }
+}
+
+.advanced-option {
+  display: grid;
+  gap: p2r(8);
+  grid-template-columns: 1fr 1fr 40px;
+  align-items: flex-end;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+}

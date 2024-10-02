@@ -1,0 +1,27 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: p2r(16);
+  border-bottom: 1px solid var(--base-level-40);
+}
+
+.current-backup {
+  display: flex;
+  align-items: center;
+  gap: p2r(8);
+}
+
+.current-backup-progress {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(4);
+  min-width: p2r(300);
+}
+
+.current-backup-actions {
+  display: flex;
+  gap: p2r(8);
+}

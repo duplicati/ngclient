@@ -1,0 +1,14 @@
+<spk-stepper>
+  <div spk-step routerLinkActive="active" [routerLink]="['/restore-flow', backupId(), 'select-files']">
+    <spk-radio />
+    Select files
+  </div>
+  <div spk-step routerLinkActive="active" [routerLink]="['/restore-flow', backupId(), 'options']">
+    <spk-radio />
+    Options
+  </div>
+</spk-stepper>
+
+<section>
+  <router-outlet />
+</section>

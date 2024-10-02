@@ -1,0 +1,37 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
+:host {
+  display: block;
+}
+
+h2 {
+  font: var(--title-30);
+  text-align: center;
+  padding: p2r(32);
+}
+section {
+  max-width: p2r(700);
+  margin: 0 auto;
+  padding: p2r(32 0);
+  display: flex;
+  flex-direction: column;
+  gap: p2r(16);
+}
+
+spk-divider {
+  color: var(--base-level-60);
+}
+
+spk-card {
+  display: flex;
+  align-items: center;
+  gap: p2r(16);
+  --card-padding: #{p2r(32)};
+
+  .text {
+    flex: 1 0;
+    display: flex;
+    flex-direction: column;
+    gap: p2r(4);
+  }
+}

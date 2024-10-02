@@ -1,0 +1,19 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: p2r(40);
+}
+
+.nav {
+  display: flex;
+  gap: p2r(8);
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  padding: p2r(32 0);
+}

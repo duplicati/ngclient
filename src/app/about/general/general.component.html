@@ -1,0 +1,9 @@
+@if (isLoading()) {
+  <spk-progress-bar class="indeterminate primary" />
+}
+
+<section>
+  <h3>General</h3>
+
+  <div [innerHTML]="generalInfo()"></div>
+</section>

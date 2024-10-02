@@ -1,0 +1,108 @@
+<form [formGroup]="generalForm" autocomplete="off" #formRef (submit)="next()">
+  <h3 class="title-30">General backup settings</h3>
+
+  <spk-form-field>
+    <label for="backupName">Backup name</label>
+    <input type="text" tabindex="1" placeholder="Your backup name" formControlName="name" />
+  </spk-form-field>
+
+  <spk-form-field>
+    <label for="backupDescription">Backup description</label>
+    <textarea
+      id="backupDescription"
+      tabindex="2"
+      placeholder="Your backup description"
+      formControlName="description"></textarea>
+  </spk-form-field>
+
+  @if (isNew()) {
+    <spk-select [displayValue]="displayFn(generalForm.value.encryption ?? '')">
+      <label for="encryption">Encryption</label>
+      <input type="text" id="encryption" tabindex="3" placeholder="Encryption" formControlName="encryption" />
+
+      <ng-container options>
+        @for (encryption of encryptionOptions(); track $index) {
+          <option [value]="encryption.Key">{{ encryption.DisplayName }}</option>
+        }
+      </ng-container>
+    </spk-select>
+
+    @if (encryptionFieldSignal() !== 'none') {
+      <div class="passwords">
+        <spk-form-field>
+          <label for="password">Create a password</label>
+          <input
+            [type]="showPassword() ? 'text' : 'password'"
+            id="password"
+            tabindex="4"
+            placeholder="Password"
+            formControlName="password" />
+        </spk-form-field>
+
+        <spk-form-field>
+          <input
+            [type]="showPassword() ? 'text' : 'password'"
+            id="repeatPassword"
+            tabindex="5"
+            placeholder="Repeat password"
+            formControlName="repeatPassword" />
+        </spk-form-field>
+
+        <div class="password-actions">
+          <button spk-button type="button" class="small" (click)="showPassword.set(!showPassword())">
+            @if (showPassword()) {
+              <spk-icon>eye-slash</spk-icon>
+              hide
+            } @else {
+              <spk-icon>eye</spk-icon>
+              show
+            }
+          </button>
+
+          <button spk-button type="button" class="small" (click)="generatePassword()">
+            <spk-icon>password</spk-icon>
+            Generate password
+          </button>
+
+          @if (showCopyPassword()) {
+            <button spk-button type="button" class="small copy" (click)="copyPassword()">
+              @if (copiedPassword()) {
+                <spk-icon class="spk-success">check</spk-icon>
+              } @else {
+                <spk-icon>copy</spk-icon>
+              }
+              {{ copiedPassword() ? 'Copied' : 'Copy' }} password
+            </button>
+          }
+        </div>
+      </div>
+    }
+  }
+
+  <div class="form-actions">
+    <button spk-button (click)="exit()">
+      <spk-icon>arrow-left</spk-icon>
+      Exit
+    </button>
+
+    <div
+      [attr.spk-tooltip-primary]="
+        (generalForm.valid && encryptionFieldSignal() === 'none') || copiedPassword()
+          ? undefined
+          : 'Remember to copy the password'
+      ">
+      <button
+        spk-button
+        class="raised primary"
+        type="submit"
+        [disabled]="
+          generalForm.invalid || (encryptionFieldSignal() !== 'none' && showCopyPassword() && !copiedPassword())
+        ">
+        <spk-icon>arrow-right</spk-icon>
+        Continue
+      </button>
+    </div>
+  </div>
+</form>
+
+<!-- <pre>{{ generalForm.value | json }}</pre> -->

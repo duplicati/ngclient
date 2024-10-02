@@ -1,0 +1,5 @@
+<h3>Logs</h3>
+
+@for (log of logs(); track $index) {
+  <pre style="white-space: wrap">{{ log | json }}</pre>
+}

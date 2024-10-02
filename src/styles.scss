@@ -1,0 +1,41 @@
+@use '@sparkle-ui/core/styles' as * with (
+  $initMaterial: false,
+  $sparkleButton: true,
+  $sparkleToggle: true,
+  $sparkleProgressBar: true,
+  $sparkleCheckbox: true,
+  $sparkleAlert: true,
+  $sparkleMenu: true,
+  $sparkleDivider: true,
+  $sparkleIcon: true,
+  $sparkleChip: true,
+  $sparkleFormField: true,
+  $sparkleRadio: true,
+  $sparkleList: true,
+  $sparkleSidenav: true,
+  $sparkleButtonGroup: true,
+  $sparkleRangeSlider: true,
+  $sparkleTooltip: true,
+  $sparkleSelect: true,
+  $sparkleCard: true,
+  $sparkleStepper: true,
+  // $sparkleTabs: true,
+  // $sparkleDialog: true,
+  // $sparkleDatepicker: true
+);
+
+body {
+  .spacer {
+    flex: 1 0;
+  }
+
+  h2 {
+    font: var(--title-30);
+    margin: 0;
+  }
+
+  h3 {
+    font: var(--paragraph-20);
+    margin: 0;
+  }
+}

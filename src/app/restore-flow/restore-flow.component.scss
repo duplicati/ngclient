@@ -1,0 +1,15 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
+:host {
+  display: block;
+}
+
+spk-stepper {
+  max-width: p2r(500);
+  margin: p2r(40) auto;
+}
+
+section {
+  max-width: p2r(500);
+  margin: 0 auto p2r(40);
+}

@@ -1,0 +1,11 @@
+<h3 (click)="disallowToggle() || toggle()">
+  <ng-content select="[title]">Title</ng-content>
+
+  @if (!disallowToggle()) {
+    <spk-icon>caret-down</spk-icon>
+  }
+</h3>
+
+<div class="content">
+  <ng-content></ng-content>
+</div>

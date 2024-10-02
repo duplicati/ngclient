@@ -1,0 +1,87 @@
+@if (!multiSelect()) {
+  <spk-button-group>
+    <button
+      type="button"
+      [class.active]="pathDiscoveryMethod() === 'browse'"
+      (click)="pathDiscoveryMethod.set('browse')">
+      Browser path
+    </button>
+
+    <button type="button" [class.active]="pathDiscoveryMethod() === 'path'" (click)="pathDiscoveryMethod.set('path')">
+      Manually type path
+    </button>
+  </spk-button-group>
+}
+
+<!-- <spk-form-field>
+  <label for="search">Search</label>
+  <input type="text" id="search" [(ngModel)]="treeSearchQuery" />
+</spk-form-field> -->
+
+<div class="section" [class.hidden]="pathDiscoveryMethod() !== 'browse'">
+  <ng-content select="label" ngProjectAs="label"></ng-content>
+
+  <div class="browse-files" #treeContainer>
+    <ng-template #recursiveTree let-data>
+      <spk-list [style.padding-left.rem]="data.level * 0.5">
+        @for (node of data.children; track node.id) {
+          @if ((node.hidden && showHiddenFiles()) || !node.hidden) {
+            <div
+              spk-action-item
+              #treeNode
+              [class.active]="node.isSelected"
+              [class.open]="node.children.length"
+              [class.usually-hidden]="node.hidden"
+              (click)="node.id !== '/' && toggleNode($event, node.id, node)">
+              <div class="icon">
+                @if (node.id !== '/') {
+                  @if (node.children.length) {
+                    <spk-icon class="spk-primary">folder-open</spk-icon>
+                  } @else if (node.cls === 'file') {
+                    <spk-icon>file</spk-icon>
+                  } @else {
+                    <spk-icon class="spk-primary">folder</spk-icon>
+                  }
+                } @else {
+                  <spk-icon class="spk-primary">desktop-tower</spk-icon>
+                }
+              </div>
+
+              <div class="text" (click)="node.id !== '/' && toggleSelectedNode($event, node)">
+                {{ node.text }}
+              </div>
+            </div>
+
+            @if (node.children.length > 0) {
+              <ng-container
+                *ngTemplateOutlet="
+                  recursiveTree;
+                  context: { $implicit: { children: node.children, level: data.level + 1 } }
+                "></ng-container>
+            }
+          }
+        }
+      </spk-list>
+    </ng-template>
+
+    <ng-container
+      *ngTemplateOutlet="recursiveTree; context: { $implicit: { children: treeStructure(), level: 0 } }"></ng-container>
+  </div>
+
+  <spk-toggle
+    [class.active]="showHiddenFiles()"
+    class="primary raised browse-files-toggle"
+    (click)="showHiddenFiles.set(!showHiddenFiles())">
+    Show hidden {{ showFiles() ? 'files' : 'folders' }}
+  </spk-toggle>
+</div>
+
+<div #formRef>
+  <spk-form-field [class.hidden]="pathDiscoveryMethod() !== 'path'">
+    <ng-content select="label" ngProjectAs="label"></ng-content>
+    <ng-content select="input" ngProjectAs="input"></ng-content>
+  </spk-form-field>
+
+  <!-- <pre>{{ selectedPaths() | json }}</pre> -->
+  <!-- <pre>{{ currentPath() }}</pre> -->
+</div>

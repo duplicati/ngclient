@@ -1,0 +1,23 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
+:host {
+  display: block;
+  position: relative;
+}
+
+h3 {
+  font: var(--title-30);
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(16);
+}
+
+spk-progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}

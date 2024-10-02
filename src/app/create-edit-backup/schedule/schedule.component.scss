@@ -1,0 +1,38 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
+:host {
+  display: block;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(24);
+}
+
+.toggle-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(4);
+}
+
+.row-inputs {
+  display: flex;
+  align-items: flex-end;
+  gap: p2r(8);
+
+  > * {
+    flex: 1 0;
+  }
+}
+
+.days-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: p2r(16);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+}

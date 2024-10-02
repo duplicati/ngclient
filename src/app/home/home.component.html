@@ -1,0 +1,98 @@
+<app-status-bar />
+
+<section>
+  <header>
+    <spk-card class="type-a" [routerLink]="['/add-backup']">
+      <img src="/assets/images/backup.png" alt="" width="48px" />
+      <div class="text">
+        <h3>Backups</h3>
+        <p>Backups are stored in the cloud and can be restored at any time.</p>
+      </div>
+      <button spk-button>
+        Add
+        <spk-icon>plus</spk-icon>
+      </button>
+    </spk-card>
+
+    <spk-card class="type-a" [routerLink]="['/restore']">
+      <img src="/assets/images/restore.png" alt="" width="48px" />
+      <div class="text">
+        <h3>Restores</h3>
+        <p>Restores are stored in the cloud and can be restored at any time.</p>
+      </div>
+      <button spk-button>
+        Start
+        <spk-icon>arrow-right</spk-icon>
+      </button>
+    </spk-card>
+  </header>
+
+  <div class="content">
+    <h2>My backups</h2>
+    <div class="backups">
+      @if (backups().length) {
+        @for (backup of backups(); track $index) {
+          <div class="backup">
+            <div class="text">
+              <h3>
+                {{ backup.Backup?.Name ?? 'Backup name missing' }}
+                <spk-icon>database</spk-icon>
+              </h3>
+
+              <p>
+                <span>Last successful backup:</span>
+                {{ backup.Backup?.Metadata?.['LastBackupDate'] | date: 'short' }}
+                @if (backup.Backup?.Metadata?.['LastBackupDuration']) {
+                  - (took {{ backup.Backup?.Metadata?.['LastBackupDuration'] | durationFormat }})
+                } @else {
+                  N/A
+                }
+              </p>
+
+              <p>
+                <span>Source:</span>
+                @if (backup.Backup?.Metadata?.['SourceSizeString']) {
+                  {{ backup.Backup?.Metadata?.['SourceSizeString'] }}
+                } @else {
+                  N/A
+                }
+              </p>
+
+              <p>
+                <span>Destination:</span>
+                @if (backup.Backup?.Metadata?.['TargetSizeString']) {
+                  {{ backup.Backup?.Metadata?.['TargetSizeString'] }}
+                } @else {
+                  N/A
+                }
+              </p>
+            </div>
+
+            @if (backup.Backup?.Metadata?.['BackupListCount']) {
+              <spk-chip class="simple success">{{ backup.Backup?.Metadata?.['BackupListCount'] }} Version</spk-chip>
+            } @else {
+              <spk-chip class="simple">No version yet</spk-chip>
+            }
+
+            <div class="actions">
+              <button spk-button (click)="startBackup($any(backup.Backup?.ID))">
+                <spk-icon>play-circle</spk-icon>
+                Start
+              </button>
+              <button spk-button [routerLink]="['/backup', backup.Backup?.ID]">
+                <spk-icon>pencil-circle</spk-icon>
+                Edit
+              </button>
+              <button spk-button (click)="deleteBackup(backup.Backup?.ID)">
+                <spk-icon>x-circle</spk-icon>
+                Delete
+              </button>
+            </div>
+          </div>
+        }
+      } @else {
+        No backups founds
+      }
+    </div>
+  </div>
+</section>

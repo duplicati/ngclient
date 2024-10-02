@@ -1,0 +1,28 @@
+<app-status-bar />
+
+<spk-stepper>
+  <div spk-step routerLinkActive="active" [routerLink]="['/backup', backupId(), 'general']">
+    <spk-radio />
+    General
+  </div>
+  <div spk-step routerLinkActive="active" [routerLink]="['/backup', backupId(), 'destination']">
+    <spk-radio />
+    Destination
+  </div>
+  <div spk-step routerLinkActive="active" [routerLink]="['/backup', backupId(), 'source-data']">
+    <spk-radio />
+    Source Data
+  </div>
+  <div spk-step routerLinkActive="active" [routerLink]="['/backup', backupId(), 'schedule']">
+    <spk-radio />
+    Schedule
+  </div>
+  <div spk-step routerLinkActive="active" [routerLink]="['/backup', backupId(), 'options']">
+    <spk-radio />
+    Options
+  </div>
+</spk-stepper>
+
+<section>
+  <router-outlet></router-outlet>
+</section>

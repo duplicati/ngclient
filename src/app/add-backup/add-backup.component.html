@@ -1,0 +1,29 @@
+<app-status-bar />
+
+<section>
+  <h2>Add a new backup</h2>
+
+  <div class="backup-types">
+    <spk-card class="type-a">
+      <img src="/assets/images/new-backup.png" />
+      <h3>New backup</h3>
+
+      <p>Configure a new backup. Choose your destination, source data and schedule.</p>
+
+      <button spk-button class="raised primary" [routerLink]="['/backup/new']">
+        Add a new backup
+        <spk-icon>plus</spk-icon>
+      </button>
+    </spk-card>
+
+    <!-- <spk-card class="type-a">
+      <img src="/assets/images/new-backup.png" />
+      <h3>Import from file</h3>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.</p>
+      <button spk-button class="raised primary">
+        Import from file
+        <spk-icon>upload-simple</spk-icon>
+      </button>
+    </spk-card> -->
+  </div>
+</section>

@@ -1,0 +1,34 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
+:host {
+  display: block;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(24);
+}
+
+.passwords {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(8);
+}
+
+.password-actions {
+  display: flex;
+  gap: p2r(8);
+  align-items: center;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.copy {
+  spk-icon.spk-success {
+    color: var(--success-500);
+  }
+}

@@ -1,0 +1,12 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
+:host {
+  display: inline-block;
+  width: auto;
+  height: p2r(32);
+
+  > * {
+    height: 100%;
+    width: auto;
+  }
+}
