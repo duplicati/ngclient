@@ -8,8 +8,8 @@
   ],
   "scripts": {
     "gen:package-json": "bun scripts/generate-package-json.ts",
-    "gen:font": "bunx sparkle-fg --src='./src' --out='./src/assets' --rootPath='./assets/'",
-    "watch:font": "bunx sparkle-fg --src='./src' --out='./src/assets' --rootPath='./assets/' --watch",
+    "gen:font": "bunx sparkle-fg --src='./src' --out='./src/assets' --rootPath='./'",
+    "watch:font": "bunx sparkle-fg --src='./src' --out='./src/assets' --rootPath='./' --watch",
     "ng": "ng",
     "start": "bun run watch:font & ng serve",
     "build": "bun run gen:font & ng build",
