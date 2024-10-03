@@ -1,7 +1,7 @@
 import { InjectionToken, Provider } from '@angular/core';
-import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
-import relativeTime from 'dayjs/plugin/relativeTime';
+import dayjs from 'dayjs/esm';
+import duration from 'dayjs/esm/plugin/duration';
+import relativeTime from 'dayjs/esm/plugin/relativeTime';
 
 export const DAYJS = new InjectionToken<typeof dayjs>('Dayjs');
 

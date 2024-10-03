@@ -188,6 +188,11 @@ export class StatusBarState {
 
           this.#statusData.set(res);
         },
+        error: (err) => {
+          if (err.status === 404) {
+            this.#isPollingProgressState.set(false);
+          }
+        },
       });
   }
 }
