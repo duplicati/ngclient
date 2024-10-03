@@ -4,7 +4,7 @@
   <h2>Where do you want to restore from?</h2>
 
   <!-- <spk-card class="type-a">
-    <img src="/assets/images/backup.png" alt="" width="48px" />
+    <img src="assets/images/backup.png" alt="" width="48px" />
     <div class="text">
       <h3>Direct restore from backup files</h3>
       <p>Point to your backup files and restore from there.</p>
@@ -16,7 +16,7 @@
   </spk-card> -->
 
   <!-- <spk-card class="type-a">
-    <img src="/assets/images/restore.png" alt="" width="48px" />
+    <img src="assets/images/restore.png" alt="" width="48px" />
     <div class="text">
       <h3>Restore from configuration</h3>
       <p>Load destination from an exported job or a storage provider</p>
@@ -34,7 +34,7 @@
   } @else if (backups().length) {
     @for (backup of backups(); track $index) {
       <spk-card class="type-a">
-        <img src="/assets/images/folder.png" alt="" width="48px" />
+        <img src="assets/images/folder.png" alt="" width="48px" />
 
         <div class="text">
           <h3>Restore {{ backup.Backup?.Name ?? 'Backup name missing' }}</h3>
