@@ -1,4 +1,6 @@
-@use '@sparkle-ui/core/styles' as *;
+@use '@sparkle-ui/core/styles' as * with (
+  $useInterTight: false
+);
 
 body {
   .spacer {
