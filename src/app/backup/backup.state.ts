@@ -45,7 +45,7 @@ type DestinationDefault = {
 @Injectable({
   providedIn: 'root',
 })
-export class CreateEditBackupState {
+export class BackupState {
   #router = inject(Router);
   #sysinfo = inject(SysinfoState);
   #dupServer = inject(DuplicatiServerService);

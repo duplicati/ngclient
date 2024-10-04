@@ -10,7 +10,7 @@ import {
   SparkleToggleComponent,
 } from '@sparkle-ui/core';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
-import { CreateEditBackupState } from '../create-edit-backup.state';
+import { BackupState } from '../backup.state';
 
 const fb = new FormBuilder();
 
@@ -109,13 +109,13 @@ export type ScheduleFormValue = ReturnType<typeof createScheduleForm>['value'];
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ScheduleComponent {
-  #createEditBackupState = inject(CreateEditBackupState);
+  #backupState = inject(BackupState);
   #router = inject(Router);
   #route = inject(ActivatedRoute);
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
 
-  scheduleForm = this.#createEditBackupState.scheduleForm;
-  scheduleFormSignal = this.#createEditBackupState.scheduleFormSignal;
+  scheduleForm = this.#backupState.scheduleForm;
+  scheduleFormSignal = this.#backupState.scheduleFormSignal;
   unitOptions = UNIT_OPTIONS;
 
   displayFn(val: Unit) {

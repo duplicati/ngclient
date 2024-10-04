@@ -14,7 +14,7 @@ import { startWith } from 'rxjs';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { ICommandLineArgument, SettingInputDto } from '../../core/openapi';
 import { SysinfoState } from '../../core/states/sysinfo.state';
-import { CreateEditBackupState } from '../create-edit-backup.state';
+import { BackupState } from '../backup.state';
 
 const fb = new FormBuilder();
 const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'] as const;
@@ -68,12 +68,12 @@ export const createAdvancedOption = (name: string | null | undefined, defaultVal
 })
 export default class OptionsComponent {
   #sysinfo = inject(SysinfoState);
-  #createEditBackupState = inject(CreateEditBackupState);
+  #backupState = inject(BackupState);
   #router = inject(Router);
   #route = inject(ActivatedRoute);
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
 
-  optionsForm = this.#createEditBackupState.optionsForm;
+  optionsForm = this.#backupState.optionsForm;
   sizeOptions = signal(SIZE_OPTIONS);
   rentationOptions = signal(RETENTION_OPTIONS);
   selectionAdvancedOptions = toSignal(this.optionsForm.controls.advancedOptions.valueChanges.pipe(startWith([])));
@@ -108,6 +108,6 @@ export default class OptionsComponent {
   }
 
   submit() {
-    this.#createEditBackupState.submit();
+    this.#backupState.submit();
   }
 }

@@ -1,0 +1,46 @@
+<header>
+  <h3>
+    Import backup configuration
+
+    <div class="actions">
+      <button spk-button class="outlined" [routerLink]="['/']">
+        <spk-icon>arrow-left</spk-icon>
+        Back
+      </button>
+
+      <button spk-button class="raised primary" (click)="submit()" [class.loading]="isImporting()">
+        <spk-icon>download-simple</spk-icon>
+        Import
+      </button>
+    </div>
+  </h3>
+</header>
+
+<form [formGroup]="importForm" autocomplete="off">
+  <!-- <spk-file-upload>
+    <input type="file" accept=".json,.aes" formControlName="file" />
+  </spk-file-upload> -->
+  <spk-form-field spkDragDrop (fileDropped)="onFileDropped($event)">
+    <label for="file">Select a configuration file</label>
+    <input type="file" accept=".json,.aes" (change)="onFileDropped($event)" />
+
+    <spk-icon spkSuffix>upload</spk-icon>
+  </spk-form-field>
+
+  <spk-form-field>
+    <label for="passphrase">Passphrase</label>
+    <input type="password" formControlName="passphrase" />
+  </spk-form-field>
+
+  <spk-toggle class="primary raised">
+    <label for="importMetadata">Import Metadata</label>
+    <input type="checkbox" formControlName="importMetadata" />
+  </spk-toggle>
+
+  <spk-toggle class="primary raised">
+    <label for="direct">Save now</label>
+    <input type="checkbox" formControlName="direct" />
+  </spk-toggle>
+
+  <pre>{{ importForm.value | json }}</pre>
+</form>

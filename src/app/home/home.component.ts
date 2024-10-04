@@ -6,6 +6,7 @@ import {
   SparkleCardComponent,
   SparkleChipComponent,
   SparkleIconComponent,
+  SparkleMenuComponent,
 } from '@sparkle-ui/core';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { DurationFormatPipe } from '../core/pipes/duration.pipe';
@@ -23,6 +24,7 @@ import { BackupsState } from '../core/states/backups.state';
     SparkleButtonComponent,
     SparkleIconComponent,
     SparkleChipComponent,
+    SparkleMenuComponent,
 
     JsonPipe,
     DatePipe,
@@ -49,6 +51,6 @@ export default class HomeComponent {
   deleteBackup(id: string | null | undefined) {
     if (!id) return;
 
-    this.#backupsState.deleteBackup(id);
+    window.confirm('Are you sure you want to delete this backup?') && this.#backupsState.deleteBackup(id);
   }
 }

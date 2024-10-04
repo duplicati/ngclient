@@ -26,8 +26,16 @@ export const routes: Routes = [
             loadComponent: () => import('./add-backup/add-backup.component'),
           },
           {
+            path: 'backup/:id/export',
+            loadComponent: () => import('./backup/export/export.component'),
+          },
+          {
+            path: 'backup/import',
+            loadComponent: () => import('./backup/import/import.component'),
+          },
+          {
             path: 'backup/:id',
-            loadComponent: () => import('./create-edit-backup/create-edit-backup.component'),
+            loadComponent: () => import('./backup/backup.component'),
             children: [
               {
                 path: '',
@@ -36,23 +44,23 @@ export const routes: Routes = [
               },
               {
                 path: 'general',
-                loadComponent: () => import('./create-edit-backup/general/general.component'),
+                loadComponent: () => import('./backup/general/general.component'),
               },
               {
                 path: 'destination',
-                loadComponent: () => import('./create-edit-backup/destination/destination.component'),
+                loadComponent: () => import('./backup/destination/destination.component'),
               },
               {
                 path: 'source-data',
-                loadComponent: () => import('./create-edit-backup/source-data/source-data.component'),
+                loadComponent: () => import('./backup/source-data/source-data.component'),
               },
               {
                 path: 'schedule',
-                loadComponent: () => import('./create-edit-backup/schedule/schedule.component'),
+                loadComponent: () => import('./backup/schedule/schedule.component'),
               },
               {
                 path: 'options',
-                loadComponent: () => import('./create-edit-backup/options/options.component'),
+                loadComponent: () => import('./backup/options/options.component'),
               },
             ],
           },

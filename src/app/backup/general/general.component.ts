@@ -12,7 +12,7 @@ import { IDynamicModule } from '../../core/openapi';
 import { PasswordGeneratorService } from '../../core/services/password-generator.service';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 import { validateWhen, watchField } from '../../core/validators/custom.validators';
-import { CreateEditBackupState } from '../create-edit-backup.state';
+import { BackupState } from '../backup.state';
 
 const fb = new FormBuilder();
 
@@ -62,14 +62,14 @@ export default class GeneralComponent {
   #router = inject(Router);
   #route = inject(ActivatedRoute);
   #passwordGeneratorService = inject(PasswordGeneratorService);
-  #createEditBackupState = inject(CreateEditBackupState);
+  #backupState = inject(BackupState);
   #sysinfo = inject(SysinfoState);
 
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
-  generalForm = this.#createEditBackupState.generalForm;
-  encryptionFieldSignal = this.#createEditBackupState.encryptionFieldSignal;
-  encryptionOptions = this.#createEditBackupState.encryptionOptions;
-  isNew = this.#createEditBackupState.isNew;
+  generalForm = this.#backupState.generalForm;
+  encryptionFieldSignal = this.#backupState.encryptionFieldSignal;
+  encryptionOptions = this.#backupState.encryptionOptions;
+  isNew = this.#backupState.isNew;
 
   showPassword = signal(false);
   copiedPassword = signal(false);
@@ -80,7 +80,7 @@ export default class GeneralComponent {
   }
 
   exit() {
-    this.#createEditBackupState.exit();
+    this.#backupState.exit();
   }
 
   async copyPassword() {

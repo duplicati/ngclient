@@ -1,0 +1,54 @@
+<header>
+  <h3>
+    Export backup configuration
+
+    <div class="actions">
+      <button spk-button class="outlined" [routerLink]="['/']">
+        <spk-icon>arrow-left</spk-icon>
+        Back
+      </button>
+
+      <button spk-button class="raised primary" (click)="submit()" [class.loading]="isExporting()">
+        <spk-icon>export</spk-icon>
+        Export
+      </button>
+    </div>
+  </h3>
+
+  <p>#{{ activeBackup()?.Backup?.ID }}: {{ activeBackup()?.Backup?.Name }}</p>
+</header>
+
+<form [formGroup]="exportForm" autocomplete="off">
+  <spk-button-group>
+    <button type="button" [class.active]="exportType() === 'cmd'" (click)="exportType.set('cmd')">
+      <spk-icon>terminal-window</spk-icon>
+      As command line
+    </button>
+
+    <button type="button" [class.active]="exportType() === 'file'" (click)="exportType.set('file')">
+      <spk-icon>file</spk-icon>
+      To file
+    </button>
+  </spk-button-group>
+
+  <spk-toggle class="raised primary">
+    Export passwords
+    <input type="checkbox" formControlName="exportPasswords" />
+  </spk-toggle>
+
+  <spk-toggle class="primary raised">
+    Encrypt file
+    <input type="checkbox" formControlName="encryption" />
+  </spk-toggle>
+
+  @if (encryptionFieldSignal()) {
+    <spk-form-field>
+      <label for="password">Password</label>
+      <input type="password" id="password" formControlName="password" />
+    </spk-form-field>
+    <spk-form-field>
+      <label for="repeatPassword">Repeat password</label>
+      <input type="password" id="repeatPassword" formControlName="repeatPassword" />
+    </spk-form-field>
+  }
+</form>

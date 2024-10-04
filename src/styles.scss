@@ -17,3 +17,13 @@ body {
     margin: 0;
   }
 }
+
+.sparkle-popup-menu {
+  min-width: initial;
+
+  &.right {
+    button {
+      justify-content: flex-end;
+    }
+  }
+}

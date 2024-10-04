@@ -2,10 +2,10 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { SparkleIconComponent, SparkleRadioComponent, SparkleStepperComponent } from '@sparkle-ui/core';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
-import { CreateEditBackupState } from './create-edit-backup.state';
+import { BackupState } from './backup.state';
 
 @Component({
-  selector: 'app-create-edit-backup',
+  selector: 'app-backup',
   standalone: true,
   imports: [
     RouterOutlet,
@@ -16,18 +16,18 @@ import { CreateEditBackupState } from './create-edit-backup.state';
     SparkleStepperComponent,
     SparkleIconComponent,
   ],
-  templateUrl: './create-edit-backup.component.html',
-  styleUrl: './create-edit-backup.component.scss',
+  templateUrl: './backup.component.html',
+  styleUrl: './backup.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [CreateEditBackupState],
+  providers: [BackupState],
 })
-export default class CreateEditBackupComponent {
+export default class BackupComponent {
   #route = inject(ActivatedRoute);
-  #createEditBackupState = inject(CreateEditBackupState);
+  #backupState = inject(BackupState);
 
-  backupId = this.#createEditBackupState.backupId;
+  backupId = this.#backupState.backupId;
 
   ngOnInit() {
-    this.#createEditBackupState.init(this.#route.snapshot.params['id']);
+    this.#backupState.init(this.#route.snapshot.params['id']);
   }
 }

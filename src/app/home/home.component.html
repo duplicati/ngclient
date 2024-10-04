@@ -80,13 +80,24 @@
                 Start
               </button>
               <button spk-button [routerLink]="['/backup', backup.Backup?.ID]">
-                <spk-icon>pencil-circle</spk-icon>
-                Edit
+                <spk-icon>pencil-simple</spk-icon>
               </button>
-              <button spk-button (click)="deleteBackup(backup.Backup?.ID)">
-                <spk-icon>x-circle</spk-icon>
-                Delete
-              </button>
+
+              <spk-menu [right]="true">
+                <button spk-button><spk-icon>dots-three-vertical</spk-icon></button>
+
+                <ng-container menu>
+                  <button spk-menu-item [routerLink]="['/backup', backup.Backup?.ID, 'export']">
+                    Export
+                    <spk-icon>export</spk-icon>
+                  </button>
+
+                  <button spk-menu-item (click)="deleteBackup(backup.Backup?.ID)">
+                    Delete
+                    <spk-icon>x-circle</spk-icon>
+                  </button>
+                </ng-container>
+              </spk-menu>
             </div>
           </div>
         }

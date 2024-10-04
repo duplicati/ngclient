@@ -11,13 +11,12 @@ import {
 } from '@sparkle-ui/core';
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
-import { CreateEditBackupState } from '../create-edit-backup.state';
+import { BackupState } from '../backup.state';
 
 const fb = new FormBuilder();
 const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'] as const;
 const EXPRESSION_OPTIONS = ['Contains', 'Does not contain', 'Is greater than', 'Is less than'] as const;
 
-type SizeOptions = (typeof SIZE_OPTIONS)[number] | null;
 type ExpressionOptions = (typeof EXPRESSION_OPTIONS)[number];
 
 const createExpressionGroup = () => {
@@ -74,13 +73,13 @@ export const createSourceDataForm = (
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class SourceDataComponent {
-  #createEditBackupState = inject(CreateEditBackupState);
+  #backupState = inject(BackupState);
   #router = inject(Router);
   #route = inject(ActivatedRoute);
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
-  sourceDataForm = this.#createEditBackupState.sourceDataForm;
-  sourceDataFormSignal = this.#createEditBackupState.sourceDataFormSignal;
-  destinationIsLoaded = this.#createEditBackupState.destinationIsLoaded;
+  sourceDataForm = this.#backupState.sourceDataForm;
+  sourceDataFormSignal = this.#backupState.sourceDataFormSignal;
+  destinationIsLoaded = this.#backupState.destinationIsLoaded;
 
   filesLargerThan = computed(() => this.sourceDataFormSignal()?.excludes?.filesLargerThan?.size !== null);
   sizeOptions = signal(SIZE_OPTIONS);

@@ -19,7 +19,7 @@ import FileTreeComponent from '../../core/components/file-tree/file-tree.compone
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { IDynamicModule } from '../../core/openapi';
 import { SysinfoState } from '../../core/states/sysinfo.state';
-import { CreateEditBackupState } from '../create-edit-backup.state';
+import { BackupState } from '../backup.state';
 import { FormView } from './destination.config';
 import { toTargetPath } from './destination.mapper';
 
@@ -90,18 +90,18 @@ export default class DestinationComponent {
   #route = inject(ActivatedRoute);
   #sysinfo = inject(SysinfoState);
   #httpClient = inject(HttpClient);
-  #createEditBackupState = inject(CreateEditBackupState);
+  #backupState = inject(BackupState);
 
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
 
   sysIsLoaded = this.#sysinfo.isLoaded;
-  destinationIsLoaded = this.#createEditBackupState.destinationIsLoaded;
-  destinationForm = this.#createEditBackupState.destinationForm;
-  destinationFormPair = this.#createEditBackupState.destinationFormPair;
-  selectedAdvancedFormPair = this.#createEditBackupState.selectedAdvancedFormPair;
-  notSelectedAdvancedFormPair = this.#createEditBackupState.notSelectedAdvancedFormPair;
-  destinationOptions = this.#createEditBackupState.destinationOptions;
-  destinationFormSignal = this.#createEditBackupState.destinationFormSignal;
+  destinationIsLoaded = this.#backupState.destinationIsLoaded;
+  destinationForm = this.#backupState.destinationForm;
+  destinationFormPair = this.#backupState.destinationFormPair;
+  selectedAdvancedFormPair = this.#backupState.selectedAdvancedFormPair;
+  notSelectedAdvancedFormPair = this.#backupState.notSelectedAdvancedFormPair;
+  destinationOptions = this.#backupState.destinationOptions;
+  destinationFormSignal = this.#backupState.destinationFormSignal;
   destinationCount = computed(() => this.destinationFormSignal()?.destinations?.length ?? 0);
   sizeOptions = signal(SIZE_OPTIONS);
 
@@ -117,7 +117,7 @@ export default class DestinationComponent {
   }
 
   addDestinationFormGroup(key: IDynamicModule['Key']) {
-    this.#createEditBackupState.addDestinationFormGroup(key);
+    this.#backupState.addDestinationFormGroup(key);
   }
 
   addAdvancedFormPair(item: FormView) {
