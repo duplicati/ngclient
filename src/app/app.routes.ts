@@ -1,12 +1,14 @@
-import { Routes } from '@angular/router';
+import { inject } from '@angular/core';
+import { Router, Routes } from '@angular/router';
+import { AppAuthState } from './core/states/app-auth.state';
 
 export const routes: Routes = [
   {
     path: '',
-    // canActivate: [() => socketConnection],
     children: [
       {
         path: 'login',
+        canActivate: [() => (inject(AppAuthState).token() !== null ? inject(Router).navigate(['/']) : true)],
         loadComponent: () => import('./login/login.component'),
       },
       {
@@ -34,35 +36,14 @@ export const routes: Routes = [
             loadComponent: () => import('./backup/import/import.component'),
           },
           {
+            path: 'backup/draft/:id',
+            loadComponent: () => import('./backup/backup.component'),
+            loadChildren: () => import('./backup/backup.routes'),
+          },
+          {
             path: 'backup/:id',
             loadComponent: () => import('./backup/backup.component'),
-            children: [
-              {
-                path: '',
-                redirectTo: 'general',
-                pathMatch: 'full',
-              },
-              {
-                path: 'general',
-                loadComponent: () => import('./backup/general/general.component'),
-              },
-              {
-                path: 'destination',
-                loadComponent: () => import('./backup/destination/destination.component'),
-              },
-              {
-                path: 'source-data',
-                loadComponent: () => import('./backup/source-data/source-data.component'),
-              },
-              {
-                path: 'schedule',
-                loadComponent: () => import('./backup/schedule/schedule.component'),
-              },
-              {
-                path: 'options',
-                loadComponent: () => import('./backup/options/options.component'),
-              },
-            ],
+            loadChildren: () => import('./backup/backup.routes'),
           },
           {
             path: 'restore',

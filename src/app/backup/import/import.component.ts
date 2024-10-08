@@ -1,8 +1,9 @@
 import { JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import {
+  SparkleAlertService,
   SparkleButtonComponent,
   SparkleFileDragDropDirective,
   SparkleFormFieldComponent,
@@ -11,6 +12,7 @@ import {
 } from '@sparkle-ui/core';
 import { finalize } from 'rxjs';
 import { DuplicatiServerService } from '../../core/openapi';
+import { BackupDraft, BackupsState } from '../../core/states/backups.state';
 
 const fb = new FormBuilder();
 
@@ -34,9 +36,13 @@ const fb = new FormBuilder();
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ImportComponent {
+  #sparkleAlertService = inject(SparkleAlertService);
   #dupServer = inject(DuplicatiServerService);
+  #backupsState = inject(BackupsState);
+  #router = inject(Router);
 
   isImporting = signal(false);
+  isSecureFile = signal(false);
 
   importForm = fb.group({
     config: fb.control<string>(''),
@@ -52,12 +58,10 @@ export default class ImportComponent {
     const files = (event.target as HTMLInputElement)?.files;
     const file = files?.item(0);
 
-    // console.log('onFileDropped', event);
-    // console.log('files', files);
-    // console.log('file', file);
-
     if (file) {
       const reader = new FileReader();
+
+      this.isSecureFile.set(file.type !== 'application/json');
 
       reader.onload = this.#handleReaderLoaded.bind(this);
       reader.readAsArrayBuffer(file);
@@ -94,10 +98,12 @@ export default class ImportComponent {
       .pipe(finalize(() => this.isImporting.set(false)))
       .subscribe({
         next: (res) => {
-          console.log('res', res);
+          const draftId = this.#backupsState.addDraftBackup(res.data as BackupDraft);
+
+          this.#router.navigate(['/backup/draft', draftId]);
         },
         error: (err) => {
-          console.error('err', err);
+          this.#sparkleAlertService.error(err.message);
         },
       });
   }

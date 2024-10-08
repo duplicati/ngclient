@@ -7,6 +7,7 @@ import {
   SparkleSidenavComponent,
 } from '@sparkle-ui/core';
 import LogoComponent from '../core/components/logo/logo.component';
+import ServiceHubComponent from '../core/components/service-hub/service-hub.component';
 import { BackupsState } from '../core/states/backups.state';
 import { SysinfoState } from '../core/states/sysinfo.state';
 import { TasksState } from '../core/states/tasks.state';
@@ -25,6 +26,7 @@ import { LayoutState } from './layout.state';
     SparkleListComponent,
     SparkleButtonComponent,
 
+    ServiceHubComponent,
     LogoComponent,
   ],
   templateUrl: './layout.component.html',

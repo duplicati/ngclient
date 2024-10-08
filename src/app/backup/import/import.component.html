@@ -17,9 +17,6 @@
 </header>
 
 <form [formGroup]="importForm" autocomplete="off">
-  <!-- <spk-file-upload>
-    <input type="file" accept=".json,.aes" formControlName="file" />
-  </spk-file-upload> -->
   <spk-form-field spkDragDrop (fileDropped)="onFileDropped($event)">
     <label for="file">Select a configuration file</label>
     <input type="file" accept=".json,.aes" (change)="onFileDropped($event)" />
@@ -27,10 +24,12 @@
     <spk-icon spkSuffix>upload</spk-icon>
   </spk-form-field>
 
-  <spk-form-field>
-    <label for="passphrase">Passphrase</label>
-    <input type="password" formControlName="passphrase" />
-  </spk-form-field>
+  @if (isSecureFile()) {
+    <spk-form-field>
+      <label for="passphrase">Passphrase</label>
+      <input type="password" formControlName="passphrase" />
+    </spk-form-field>
+  }
 
   <spk-toggle class="primary raised">
     <label for="importMetadata">Import Metadata</label>
@@ -41,6 +40,4 @@
     <label for="direct">Save now</label>
     <input type="checkbox" formControlName="direct" />
   </spk-toggle>
-
-  <pre>{{ importForm.value | json }}</pre>
 </form>

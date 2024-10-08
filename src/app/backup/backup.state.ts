@@ -8,10 +8,12 @@ import {
   BackupAndScheduleInputDto,
   BackupDto,
   DuplicatiServerService,
+  GetBackupResultDto,
   IDynamicModule,
   ScheduleDto,
 } from '../core/openapi';
 import { TimespanLiteralsService } from '../core/services/timespan-literals.service';
+import { BackupsState } from '../core/states/backups.state';
 import { SysinfoState } from '../core/states/sysinfo.state';
 import { createDestinationForm, createDestinationFormGroup, Size } from './destination/destination.component';
 import { DESTINATION_CONFIG, FormView } from './destination/destination.config';
@@ -50,8 +52,11 @@ export class BackupState {
   #sysinfo = inject(SysinfoState);
   #dupServer = inject(DuplicatiServerService);
   #timespanLiteralService = inject(TimespanLiteralsService);
+  #backupsState = inject(BackupsState);
+
   destinationOptions = this.#sysinfo.backendModules;
 
+  isDraft = signal(false);
   backupId = signal<'new' | 'string' | null>(null);
   isSubmitting = signal(false);
   loadingBackup = signal(false);
@@ -82,25 +87,23 @@ export class BackupState {
     return [NONE_OPTION, ...encryptionOptions];
   });
 
-  init(id: 'new' | 'string' = 'new') {
+  init(id: 'new' | 'string' = 'new', isDraft = false) {
     this.backupId.set(id);
 
     if (id !== 'new') {
-      this.getBackup(id);
+      this.getBackup(id, isDraft);
     } else {
       this.getDefaults();
     }
   }
 
   submit() {
-    // TODOS
-    // - Create/update backup
     this.isSubmitting.set(true);
 
     const backup = this.#mapFormsToBackup();
     const backupId = this.backupId();
 
-    if (backupId === 'new' || !backupId) {
+    if (backupId === 'new' || !backupId || this.isDraft()) {
       this.#dupServer
         .postApiV1Backups({
           requestBody: backup,
@@ -117,10 +120,6 @@ export class BackupState {
           },
         });
     } else {
-      // TODO
-      // - Add ID to backup
-      // - Update backup
-      //
       this.#dupServer
         .putApiV1BackupById({
           id: backupId,
@@ -166,28 +165,47 @@ export class BackupState {
       });
   }
 
-  getBackup(id: string) {
+  getBackup(id: string, isDraft = false) {
     this.loadingBackup.set(true);
 
-    this.#dupServer
-      .getApiV1BackupById({
-        id,
-      })
-      .pipe(finalize(() => this.loadingBackup.set(false)))
-      .subscribe({
-        next: (res) => {
-          this.#mapScheduleToForm(res.Schedule ?? null);
+    const onBackup = (res: GetBackupResultDto) => {
+      this.#mapScheduleToForm(res.Schedule ?? null);
 
-          if (res.Backup) {
-            this.#mapGeneralToForm(res.Backup);
-            this.#mapDestinationToForm(res.Backup);
-            this.#mapSourceDataToForm(res.Backup);
-            this.#mapOptionsToForms(res.Backup);
-          }
+      if (res.Backup) {
+        this.#mapGeneralToForm(res.Backup);
+        this.#mapDestinationToForm(res.Backup);
+        this.#mapSourceDataToForm(res.Backup);
+        this.#mapOptionsToForms(res.Backup);
+      }
 
-          this.destinationIsLoaded.set(true);
-        },
-      });
+      this.destinationIsLoaded.set(true);
+    };
+
+    if (isDraft) {
+      this.isDraft.set(isDraft);
+
+      const backup = this.#backupsState.draftBackups().find((x) => x.id === id);
+
+      if (!backup) {
+        this.loadingBackup.set(false);
+
+        // TODO alert the user
+
+        alert('Backup not found');
+        return;
+      }
+
+      onBackup(backup.data);
+    } else {
+      this.#dupServer
+        .getApiV1BackupById({
+          id,
+        })
+        .pipe(finalize(() => this.loadingBackup.set(false)))
+        .subscribe({
+          next: onBackup,
+        });
+    }
   }
 
   #mapSourceDataToForm(backup: BackupDto) {
@@ -286,10 +304,6 @@ export class BackupState {
         this.optionsForm.controls.advancedOptions.push(createAdvancedOption(x.Name, x.Value));
       }
     });
-  }
-
-  mapPub() {
-    this.#mapFormsToBackup();
   }
 
   #mapFormsToBackup() {

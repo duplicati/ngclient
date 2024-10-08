@@ -1,0 +1,124 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
+:host {
+  display: flex;
+  position: fixed;
+  gap: p2r(8);
+  bottom: p2r(24);
+  right: p2r(24);
+  z-index: 5000;
+
+  @include breakpoint(-milli) {
+    bottom: p2r(16);
+    right: p2r(16);
+  }
+
+  h6 {
+    margin: 0;
+  }
+}
+
+.preview-alert-wrap {
+  position: absolute;
+  bottom: p2r(43);
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 250px;
+}
+
+.helpdesk-modal {
+  position: absolute;
+  bottom: p2r(43);
+  right: 0;
+  display: flex;
+  flex-direction: column;
+
+  @include breakpoint(-milli) {
+    bottom: p2r(43);
+  }
+}
+
+.helpdesk-modal-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: p2r(16);
+  min-width: p2r(320);
+  border: 1px solid var(--base-level-40);
+  background-color: var(--base-level-10);
+  border-radius: var(--shape-2);
+
+  .message-sent {
+    padding: p2r(0 16 16);
+    text-wrap: pretty;
+  }
+
+  h6 {
+    padding: p2r(16);
+    border-bottom: 1px solid var(--base-level-40);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  form {
+    padding: p2r(0 16 16);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: p2r(16);
+
+    p {
+      width: 100%;
+      text-wrap: pretty;
+    }
+
+    mat-form-field {
+      width: 100%;
+    }
+  }
+}
+
+.alert-stream-modal {
+  position: absolute;
+  bottom: p2r(43);
+  right: 0;
+  display: flex;
+  flex-direction: column;
+
+  @include breakpoint(-milli) {
+    bottom: p2r(43);
+  }
+}
+
+.alert-stream-modal-list-scroller {
+  overflow-y: auto;
+  max-height: p2r(300);
+}
+
+.alert-stream-modal-list {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(16);
+  padding: p2r(16);
+  border-radius: var(--shape-2);
+}
+
+.alert-stream-modal-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: p2r(320);
+  border: 1px solid var(--base-level-40);
+  background-color: var(--base-level-10);
+  border-radius: var(--shape-2);
+
+  h6 {
+    padding: p2r(16);
+    border-bottom: 1px solid var(--base-level-40);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

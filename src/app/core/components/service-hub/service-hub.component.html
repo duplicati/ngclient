@@ -1,0 +1,49 @@
+<button spk-button [class]="alertHistory().length ? 'warn' : ''" (click)="toggleAlerts()">
+  <spk-icon>info</spk-icon>
+</button>
+
+@if (shownMessage()) {
+  <div class="preview-alert-wrap">
+    <spk-alert [type]="shownMessage()?.type ?? 'error'">
+      <div sparkle-alert-title>{{ shownMessage()?.title }}</div>
+
+      @if (shownMessage()?.content) {
+        <div sparkle-alert-content>
+          {{ shownMessage()?.content }}
+        </div>
+      }
+    </spk-alert>
+  </div>
+}
+
+@if (isAlertsOpen()) {
+  <div class="alert-stream-modal">
+    <div class="alert-stream-modal-content">
+      <h6 class="paragraph-20">
+        Alerts
+
+        <button spk-button (click)="closeAlerts()">
+          <spk-icon>x-circle</spk-icon>
+        </button>
+      </h6>
+
+      <div class="alert-stream-modal-list-scroller" #scroller>
+        <div class="alert-stream-modal-list">
+          @for (alert of alertHistory(); track $index) {
+            <spk-alert #alerts [type]="alert.type" [id]="alert.id">
+              <div spk-alert-title>{{ alert.title }}</div>
+
+              @if (alert.content) {
+                <div spk-alert-content>
+                  {{ alert.content }}
+                </div>
+              }
+            </spk-alert>
+          } @empty {
+            <p>No alerts yet</p>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+}
