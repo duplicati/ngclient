@@ -36,7 +36,7 @@ export const routes: Routes = [
             loadComponent: () => import('./backup/import/import.component'),
           },
           {
-            path: 'backup/draft/:id',
+            path: 'backup-draft/:id',
             loadComponent: () => import('./backup/backup.component'),
             loadChildren: () => import('./backup/backup.routes'),
           },

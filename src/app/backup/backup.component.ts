@@ -30,7 +30,9 @@ export default class BackupComponent {
 
   ngOnInit() {
     const snapshot = this.#route.snapshot;
-    const isDraft = !!snapshot.url.find((x) => x.path === 'draft');
+    const isDraft = !!snapshot.url.find((x) => x.path === 'backup-draft');
+    console.log(isDraft);
+
     const backupId = snapshot.params['id'];
 
     this.#backupState.init(backupId, isDraft);

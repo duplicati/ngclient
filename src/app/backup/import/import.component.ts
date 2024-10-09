@@ -100,7 +100,7 @@ export default class ImportComponent {
         next: (res) => {
           const draftId = this.#backupsState.addDraftBackup(res.data as BackupDraft);
 
-          this.#router.navigate(['/backup/draft', draftId]);
+          this.#router.navigate(['/backup-draft', draftId]);
         },
         error: (err) => {
           this.#sparkleAlertService.error(err.message);
