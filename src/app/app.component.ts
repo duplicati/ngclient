@@ -21,6 +21,7 @@ export class AppComponent {
   sub: Subscription | null = null;
 
   ngOnInit() {
+    this.#relayConfigState.fetchConfig();
     this.sub = this.#route.queryParams.subscribe(({ accessToken, clientId }: { [key: string]: string }) => {
       if (accessToken?.length && clientId?.length) {
         this.#relayConfigState.setConfig({ accessToken, clientId });

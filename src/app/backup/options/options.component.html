@@ -49,7 +49,7 @@
 
         <ng-container menu>
           @for (option of nonSelectedAdvancedOptions(); track $index) {
-            <button spk-menu-item type="button" (click)="addNewOption(option)">{{ option.Name }}</button>
+            <button item type="button" (click)="addNewOption(option)">{{ option.Name }}</button>
           }
         </ng-container>
       </spk-menu>

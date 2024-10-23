@@ -27,7 +27,7 @@
         @for (node of data.children; track node.id) {
           @if ((node.hidden && showHiddenFiles()) || !node.hidden) {
             <div
-              spk-action-item
+              action
               #treeNode
               [class.active]="node.isSelected"
               [class.open]="node.children.length"

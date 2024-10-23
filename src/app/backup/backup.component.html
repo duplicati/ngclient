@@ -1,38 +1,29 @@
 <app-status-bar />
 
 <spk-stepper>
-  <div
-    spk-step
-    routerLinkActive="active"
-    [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'general']">
+  <div step routerLinkActive="active" [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'general']">
     <spk-radio />
     General
   </div>
   <div
-    spk-step
+    step
     routerLinkActive="active"
     [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'destination']">
     <spk-radio />
     Destination
   </div>
   <div
-    spk-step
+    step
     routerLinkActive="active"
     [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'source-data']">
     <spk-radio />
     Source Data
   </div>
-  <div
-    spk-step
-    routerLinkActive="active"
-    [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'schedule']">
+  <div step routerLinkActive="active" [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'schedule']">
     <spk-radio />
     Schedule
   </div>
-  <div
-    spk-step
-    routerLinkActive="active"
-    [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'options']">
+  <div step routerLinkActive="active" [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'options']">
     <spk-radio />
     Options
   </div>

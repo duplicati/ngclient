@@ -31,10 +31,10 @@
         <div class="alert-stream-modal-list">
           @for (alert of alertHistory(); track $index) {
             <spk-alert #alerts [type]="alert.type" [id]="alert.id">
-              <div spk-alert-title>{{ alert.title }}</div>
+              <div title>{{ alert.title }}</div>
 
               @if (alert.content) {
-                <div spk-alert-content>
+                <div content>
                   {{ alert.content }}
                 </div>
               }

@@ -43,7 +43,7 @@
 
         <ng-container menu>
           @for (destination of destinationOptions(); track $index) {
-            <button spk-menu-item type="button" (click)="addDestinationFormGroup(destination.Key)">
+            <button item type="button" (click)="addDestinationFormGroup(destination.Key)">
               {{ destination.DisplayName }}
             </button>
           }
@@ -107,7 +107,7 @@
 
                   <ng-container menu>
                     @for (option of notSelectedAdvancedFormPair(); track $index) {
-                      <button spk-menu-item type="button" (click)="addAdvancedFormPair(option)">
+                      <button item type="button" (click)="addAdvancedFormPair(option)">
                         {{ option.name }}
                       </button>
                     }
@@ -170,9 +170,9 @@
                     formControlName="{{ item.destination.name }}" />
 
                   @if (item.destination.type === 'Path') {
-                    <spk-icon spkPrefix>link</spk-icon>
+                    <spk-icon prefix>link</spk-icon>
                   } @else {
-                    <spk-icon spkPrefix>textbox</spk-icon>
+                    <spk-icon prefix>textbox</spk-icon>
                   }
                 </spk-form-field>
               } @else if (item.destination.type === 'Password') {
@@ -187,21 +187,21 @@
                     formControlName="{{ item.destination.name }}" />
 
                   @if (item.oauthField === item.destination.name) {
-                    <span spkPrefix class="link" (click)="oauthStartTokenCreation(item.destinationType)">AuthID</span>
+                    <span prefix class="link" (click)="oauthStartTokenCreation(item.destinationType)">AuthID</span>
                   } @else {
-                    <spk-icon spkPrefix>password</spk-icon>
+                    <spk-icon prefix>password</spk-icon>
                   }
                   @if ($any(item.destination).showPassword) {
                     <spk-icon
                       class="clickable"
-                      spkSuffix
+                      suffix
                       (click)="$any(item.destination).showPassword = !$any(item.destination).showPassword">
                       eye
                     </spk-icon>
                   } @else {
                     <spk-icon
                       class="clickable"
-                      spkSuffix
+                      suffix
                       (click)="$any(item.destination).showPassword = !$any(item.destination).showPassword">
                       eye-slash
                     </spk-icon>
@@ -248,7 +248,7 @@
                         id="destination-{{ item.formGroupName }}-{{ item.index }}"
                         formControlName="size" />
 
-                      <spk-icon spkPrefix>resize</spk-icon>
+                      <spk-icon prefix>resize</spk-icon>
                     </spk-form-field>
 
                     <spk-select>
@@ -277,7 +277,7 @@
                     type="number"
                     id="destination-{{ item.formGroupName }}-{{ item.index }}"
                     formControlName="{{ item.destination.name }}" />
-                  <spk-icon spkPrefix>numpad</spk-icon>
+                  <spk-icon prefix>numpad</spk-icon>
                 </spk-form-field>
               } @else if (item.destination.type === 'Boolean') {
                 <spk-toggle class="primary raised">
@@ -335,7 +335,7 @@
                     id="destination-{{ item.formGroupName }}-{{ item.index }}"
                     formControlName="{{ item.destination.name }}" />
 
-                  <span spkError>
+                  <span error>
                     <!-- {{ destinationForm.controls.destinations.controls[index]?.hasError('pattern') }} -->
                   </span>
                 </spk-form-field>
