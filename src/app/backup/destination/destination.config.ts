@@ -84,6 +84,7 @@ export const DESTINATION_CONFIG: DestinationConfig = {
     dynamicFields: ['use-ssl', 's3-server-name', 'auth-username', 'auth-password'],
   },
   gcs: {
+    oauthField: 'authid',
     dynamicFields: ['gcs-location', 'gcs-storage-class', 'authid'],
   },
   googledrive: {

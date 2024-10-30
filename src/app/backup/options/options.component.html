@@ -1,95 +1,274 @@
-<form [formGroup]="optionsForm" #formRef (submit)="submit()">
-  <h3 class="title-30">Options</h3>
+@if (finishedLoading()) {
+  <form [formGroup]="optionsForm" #formRef (submit)="submit()">
+    <h3 class="title-30">Options</h3>
 
-  <div class="remote-volume-wrap">
-    <div class="row-inputs" formGroupName="remoteVolumeSize">
-      <spk-form-field>
-        <label for="size">Remote volume size</label>
-        <input type="number" id="size" formControlName="size" />
-      </spk-form-field>
+    <div class="remote-volume-wrap">
+      <div class="row-inputs" formGroupName="remoteVolumeSize">
+        <spk-form-field>
+          <label for="size">Remote volume size</label>
+          <input type="number" id="size" formControlName="size" />
+        </spk-form-field>
 
-      <spk-select>
-        <input type="text" placeholder="Select an option..." formControlName="unit" />
+        <spk-select>
+          <input type="text" placeholder="Select an option..." formControlName="unit" />
 
-        <ng-container options>
-          @for (option of sizeOptions(); track $index) {
-            <option [value]="option">{{ option }}</option>
-          }
-        </ng-container>
-      </spk-select>
+          <ng-container options>
+            @for (option of sizeOptions(); track $index) {
+              <option [value]="option">{{ option }}</option>
+            }
+          </ng-container>
+        </spk-select>
+      </div>
+
+      <p>
+        The backups will be split up into multiple files called volumes. Here you can set the maximum size of the
+        individual volume files.
+        <a href="#" class="spk-primary">Read more</a>
+      </p>
     </div>
 
-    <p>
-      The backups will be split up into multiple files called volumes. Here you can set the maximum size of the
-      individual volume files.
-      <a href="#" class="spk-primary">Read more</a>
-    </p>
-  </div>
+    <spk-select [displayFn]="retentionOptionDisplayFn()">
+      <label for="size">Backup retention</label>
+      <input type="text" formControlName="backupRetention" />
 
-  <spk-select>
-    <label for="size">Backup retention</label>
-    <input type="text" placeholder="Local folder or drive" formControlName="backupRetention" />
-
-    <ng-container options>
       @for (option of rentationOptions(); track $index) {
-        <option [value]="option">{{ option }}</option>
+        <option [value]="option.value">{{ option.name }}</option>
       }
-    </ng-container>
-  </spk-select>
+    </spk-select>
 
-  <app-toggle-card [disallowToggle]="true">
-    <ng-container title>
-      Advanced options
+    <app-toggle-card [disallowToggle]="true">
+      <ng-container title>
+        Advanced options
 
-      <spk-menu>
-        <button spk-button type="button" class="outlined small">
-          Add advanced option
-          <spk-icon>plus</spk-icon>
-        </button>
-
-        <ng-container menu>
-          @for (option of nonSelectedAdvancedOptions(); track $index) {
-            <button item type="button" (click)="addNewOption(option)">{{ option.Name }}</button>
-          }
-        </ng-container>
-      </spk-menu>
-    </ng-container>
-
-    <ng-container formArrayName="advancedOptions">
-      @for (optionCtrl of optionsForm.controls.advancedOptions.controls; track $index) {
-        <div class="advanced-option" [formGroup]="optionCtrl">
-          <spk-form-field>
-            @if ($index === 0) {
-              <label for="name">Name</label>
-            }
-            <input type="text" id="name" formControlName="name" />
-          </spk-form-field>
-
-          <spk-form-field>
-            @if ($index === 0) {
-              <label for="value">Value</label>
-            }
-            <input type="text" id="value" formControlName="value" />
-          </spk-form-field>
-
-          <button class="icon" spk-button type="button" (click)="optionsForm.controls.advancedOptions.removeAt($index)">
-            <spk-icon>x-circle</spk-icon>
+        <spk-menu>
+          <button spk-button type="button" class="outlined small">
+            Add advanced option
+            <spk-icon>plus</spk-icon>
           </button>
-        </div>
+
+          <ng-container menu>
+            @for (option of nonSelectedAdvancedOptions(); track $index) {
+              <button #option type="button" (click)="addNewOption(option)">{{ option.Name }}</button>
+            }
+          </ng-container>
+        </spk-menu>
+      </ng-container>
+
+      @for (option of selectedAdvancedOptions(); track $index) {
+        <ng-container
+          *ngTemplateOutlet="
+            fieldTemplate;
+            context: {
+              $implicit: {
+                option: option,
+                index: $index,
+              },
+            }
+          "></ng-container>
       }
-    </ng-container>
-  </app-toggle-card>
+    </app-toggle-card>
 
-  <div class="form-actions">
-    <button spk-button type="button" (click)="goBack()">
-      <spk-icon>arrow-left</spk-icon>
-      Go back
-    </button>
+    <ng-template #fieldTemplate let-item>
+      <ng-container formGroupName="advancedOptions">
+        <div class="form-wrap">
+          @if (item.option.type === 'String' || item.option.type === 'Path') {
+            <spk-form-field>
+              <label for="option-{{ item.formGroupName }}-{{ item.index }}">
+                {{ item.option.shortDescription ?? item.option.name }}
+                @if (item.option.longDescription) {
+                  <spk-icon [attr.spk-tooltip-primary]="item.option.longDescription" spk-tooltip-right>
+                    question
+                  </spk-icon>
+                }
+              </label>
 
-    <button spk-button class="raised primary" type="submit">
-      <spk-icon>arrow-right</spk-icon>
-      Submit
-    </button>
-  </div>
-  <!-- <pre>{{ optionsForm.value | json }}</pre> -->
-</form>
+              <input
+                type="text"
+                id="option-{{ item.formGroupName }}-{{ item.index }}"
+                [formControlName]="item.option.name" />
+
+              @if (item.option.type === 'Path') {
+                <spk-icon prefix>link</spk-icon>
+              } @else {
+                <spk-icon prefix>textbox</spk-icon>
+              }
+            </spk-form-field>
+          } @else if (item.option.type === 'Password') {
+            <spk-form-field>
+              <label for="option-{{ item.formGroupName }}-{{ item.index }}">
+                {{ item.option.shortDescription ?? item.option.name }}
+              </label>
+              <input
+                [type]="$any(item.option).showPassword ? 'text' : 'password'"
+                autocomplete="off"
+                id="option-{{ item.formGroupName }}-{{ item.index }}"
+                [formControlName]="item.option.name" />
+
+              <spk-icon prefix>password</spk-icon>
+
+              @if ($any(item.option).showPassword) {
+                <spk-icon
+                  class="clickable"
+                  suffix
+                  (click)="$any(item.option).showPassword = !$any(item.option).showPassword">
+                  eye
+                </spk-icon>
+              } @else {
+                <spk-icon
+                  class="clickable"
+                  suffix
+                  (click)="$any(item.option).showPassword = !$any(item.option).showPassword">
+                  eye-slash
+                </spk-icon>
+              }
+            </spk-form-field>
+          } @else if (item.option.type === 'Enumeration') {
+            <spk-select>
+              <label for="option-{{ item.formGroupName }}-{{ item.index }}">
+                {{ item.option.shortDescription ?? item.option.name }}
+
+                @if (item.option.longDescription) {
+                  <spk-icon [attr.spk-tooltip-primary]="item.option.longDescription" spk-tooltip-right>
+                    question
+                  </spk-icon>
+                }
+              </label>
+              <input
+                type="search"
+                id="option-{{ item.formGroupName }}-{{ item.index }}"
+                [formControlName]="item.option.name" />
+
+              <ng-container options>
+                @for (option of item.option.options; track $index) {
+                  <option [value]="option">{{ option }}</option>
+                }
+              </ng-container>
+            </spk-select>
+          } @else if (item.option.type === 'Size') {
+            <div class="form-column" [formGroupName]="item.option.name">
+              <label for="option-{{ item.formGroupName }}-{{ item.index }}">
+                {{ item.option.shortDescription ?? item.option.name }}
+
+                @if (item.option.longDescription) {
+                  <spk-icon [attr.spk-tooltip-primary]="item.option.longDescription" spk-tooltip-right>
+                    question
+                  </spk-icon>
+                }
+              </label>
+
+              <div class="form-row">
+                <spk-form-field>
+                  <input type="number" id="option-{{ item.formGroupName }}-{{ item.index }}" formControlName="size" />
+
+                  <spk-icon prefix>resize</spk-icon>
+                </spk-form-field>
+
+                <spk-select>
+                  <label></label>
+                  <input type="search" formControlName="unit" />
+
+                  <ng-container options>
+                    @for (option of sizeOptions(); track $index) {
+                      <option [value]="option">{{ option }}</option>
+                    }
+                  </ng-container>
+                </spk-select>
+              </div>
+            </div>
+          } @else if (item.option.type === 'Integer') {
+            <spk-form-field>
+              <label for="option-{{ item.formGroupName }}-{{ item.index }}">
+                {{ item.option.shortDescription ?? item.option.name }}
+                @if (item.option.longDescription) {
+                  <spk-icon [attr.spk-tooltip-primary]="item.option.longDescription" spk-tooltip-right>
+                    question
+                  </spk-icon>
+                }
+              </label>
+              <input
+                type="number"
+                id="option-{{ item.formGroupName }}-{{ item.index }}"
+                [formControlName]="item.option.name" />
+              <spk-icon prefix>numpad</spk-icon>
+            </spk-form-field>
+          } @else if (item.option.type === 'Boolean') {
+            <spk-toggle class="primary raised">
+              <label for="option-{{ item.formGroupName }}-{{ item.index }}">
+                {{ item.option.shortDescription ?? item.option.name }}
+                @if (item.option.longDescription) {
+                  <spk-icon [attr.spk-tooltip-primary]="item.option.longDescription" spk-tooltip-right>
+                    question
+                  </spk-icon>
+                }
+              </label>
+              <input
+                type="checkbox"
+                id="option-{{ item.formGroupName }}-{{ item.index }}"
+                [formControlName]="item.option.name" />
+            </spk-toggle>
+          } @else if (item.option.type === 'Flags') {
+            <spk-select [selectMultiple]="true" class="primary">
+              <label for="option-{{ item.formGroupName }}-{{ item.index }}">
+                {{ item.option.shortDescription ?? item.option.name }}
+                @if (item.option.longDescription) {
+                  <spk-icon [attr.spk-tooltip-primary]="item.option.longDescription" spk-tooltip-right>
+                    question
+                  </spk-icon>
+                }
+              </label>
+              <input type="text" id="text" [formControlName]="item.option.name" />
+
+              <ng-container options>
+                @for (option of item.option.options; track $index) {
+                  @if (option === 'None') {
+                    <spk-option [value]="'None'" deselect>None</spk-option>
+                  } @else {
+                    <spk-option [value]="option">
+                      {{ option }}
+
+                      <spk-checkbox class="raised primary" />
+                    </spk-option>
+                  }
+                }
+              </ng-container>
+            </spk-select>
+          } @else if (item.option.type === 'Timespan') {
+            <spk-form-field>
+              <label for="option-{{ item.formGroupName }}-{{ item.index }}">
+                {{ item.option.shortDescription ?? item.option.name }}
+                @if (item.option.longDescription) {
+                  <spk-icon [attr.spk-tooltip-primary]="item.option.longDescription" spk-tooltip-right>
+                    question
+                  </spk-icon>
+                }
+              </label>
+              <input
+                type="text"
+                id="option-{{ item.formGroupName }}-{{ item.index }}"
+                [formControlName]="item.option.name" />
+
+              <span error>
+                <!-- {{ optionForm.controls.options.controls[index]?.hasError('pattern') }} -->
+              </span>
+            </spk-form-field>
+          }
+
+          <button spk-button><spk-icon>x-circle</spk-icon></button>
+        </div>
+      </ng-container>
+    </ng-template>
+
+    <div class="form-actions">
+      <button spk-button type="button" (click)="goBack()">
+        <spk-icon>arrow-left</spk-icon>
+        Go back
+      </button>
+
+      <button spk-button class="raised primary" type="submit">
+        <spk-icon>arrow-right</spk-icon>
+        Submit
+      </button>
+    </div>
+    <!-- <pre>{{ optionsForm.value | json }}</pre> -->
+  </form>
+}

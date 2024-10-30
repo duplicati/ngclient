@@ -1,16 +1,17 @@
-import { JsonPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { JsonPipe, NgTemplateOutlet } from '@angular/common';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   SparkleButtonComponent,
+  SparkleCheckboxComponent,
   SparkleFormFieldComponent,
   SparkleIconComponent,
   SparkleMenuComponent,
+  SparkleOptionComponent,
   SparkleSelectComponent,
+  SparkleToggleComponent,
 } from '@sparkle-ui/core';
-import { startWith } from 'rxjs';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { ICommandLineArgument, SettingInputDto } from '../../core/openapi';
 import { SysinfoState } from '../../core/states/sysinfo.state';
@@ -18,17 +19,37 @@ import { BackupState } from '../backup.state';
 
 const fb = new FormBuilder();
 const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'] as const;
-const RETENTION_OPTIONS = ['Local folder', 'Local drive', 'Remote drive', 'Cloud drive'] as const;
+const RETENTION_OPTIONS = [
+  {
+    value: '',
+    name: 'Keep all backups',
+  },
+  {
+    value: 'time',
+    name: 'Delete backups that are older than',
+  },
+  {
+    value: 'versions',
+    name: 'Keep a specific number of backups',
+  },
+  {
+    value: 'smart',
+    name: 'Smart backup retention',
+  },
+  {
+    value: 'custom',
+    name: 'Custom backup retention',
+  },
+] as const;
 
-type SizeOptions = (typeof SIZE_OPTIONS)[number];
+export type SizeOptions = (typeof SIZE_OPTIONS)[number];
 type RetentionOptions = (typeof RETENTION_OPTIONS)[number];
-type AdvancedOption = ReturnType<typeof createAdvancedOption>;
 
 export const createOptionsForm = (
   defaults = {
-    remoteVolumeSize: 0,
-    size: 'GB' as SizeOptions,
-    backupRetention: 'Local folder' as RetentionOptions,
+    remoteVolumeSize: 50,
+    size: 'MB' as SizeOptions,
+    backupRetention: '' as RetentionOptions['value'],
     advancedOptions: [],
   }
 ) => {
@@ -37,8 +58,8 @@ export const createOptionsForm = (
       size: fb.control<number>(defaults.remoteVolumeSize),
       unit: fb.control<SizeOptions>(defaults.size),
     }),
-    backupRetention: fb.control<RetentionOptions>(defaults.backupRetention),
-    advancedOptions: fb.array<AdvancedOption>([]),
+    backupRetention: fb.control<RetentionOptions['value']>(defaults.backupRetention),
+    advancedOptions: fb.group({}),
   });
 };
 
@@ -54,11 +75,16 @@ export const createAdvancedOption = (name: string | null | undefined, defaultVal
   standalone: true,
   imports: [
     ReactiveFormsModule,
+    NgTemplateOutlet,
+
     SparkleMenuComponent,
     SparkleSelectComponent,
     SparkleButtonComponent,
     SparkleIconComponent,
     SparkleFormFieldComponent,
+    SparkleToggleComponent,
+    SparkleCheckboxComponent,
+    SparkleOptionComponent,
     ToggleCardComponent,
     JsonPipe,
   ],
@@ -74,23 +100,32 @@ export default class OptionsComponent {
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
 
   optionsForm = this.#backupState.optionsForm;
+  finishedLoading = this.#backupState.finishedLoading;
+  selectedAdvancedOptions = this.#backupState.selectedAdvancedOptions;
+  nonSelectedAdvancedOptions = this.#backupState.nonSelectedAdvancedOptions;
   sizeOptions = signal(SIZE_OPTIONS);
   rentationOptions = signal(RETENTION_OPTIONS);
-  selectionAdvancedOptions = toSignal(this.optionsForm.controls.advancedOptions.valueChanges.pipe(startWith([])));
-  advancedOptions = signal<ICommandLineArgument[]>(this.#sysinfo.systemInfo()?.Options ?? []);
-
-  nonSelectedAdvancedOptions = computed(() => {
-    return this.advancedOptions().filter(
-      (x) => this.selectionAdvancedOptions()?.findIndex((y) => y.name === x.Name) === -1
-    );
-  });
+  sysinfoLoaded = this.#sysinfo.isLoaded;
 
   addNewOption(option: ICommandLineArgument) {
-    this.optionsForm.controls.advancedOptions.push(createAdvancedOption(option.Name, option.DefaultValue));
+    this.#backupState.addOptionToFormGroup(option);
+  }
+
+  retentionOptionDisplayFn() {
+    const items = this.rentationOptions();
+    return (val: string) => {
+      const item = items.find((x) => x.value === val);
+
+      if (!item) {
+        return '';
+      }
+
+      return item.name;
+    };
   }
 
   displayFn() {
-    const items = this.advancedOptions();
+    const items = this.#backupState.advancedOptions();
 
     return (val: string) => {
       const item = items.find((x) => x.Name === val);

@@ -1,6 +1,7 @@
 import { inject } from '@angular/core';
 import { Router, Routes } from '@angular/router';
 import { AppAuthState } from './core/states/app-auth.state';
+import { SysinfoState } from './core/states/sysinfo.state';
 
 export const routes: Routes = [
   {
@@ -37,11 +38,13 @@ export const routes: Routes = [
           },
           {
             path: 'backup-draft/:id',
+            canActivate: [() => inject(SysinfoState).sysInfoObservable()],
             loadComponent: () => import('./backup/backup.component'),
             loadChildren: () => import('./backup/backup.routes'),
           },
           {
             path: 'backup/:id',
+            canActivateChild: [() => inject(SysinfoState).sysInfoObservable()],
             loadComponent: () => import('./backup/backup.component'),
             loadChildren: () => import('./backup/backup.routes'),
           },

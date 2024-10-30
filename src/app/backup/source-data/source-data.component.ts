@@ -79,7 +79,7 @@ export default class SourceDataComponent {
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
   sourceDataForm = this.#backupState.sourceDataForm;
   sourceDataFormSignal = this.#backupState.sourceDataFormSignal;
-  destinationIsLoaded = this.#backupState.destinationIsLoaded;
+  finishedLoading = this.#backupState.finishedLoading;
 
   filesLargerThan = computed(() => this.sourceDataFormSignal()?.excludes?.filesLargerThan?.size !== null);
   sizeOptions = signal(SIZE_OPTIONS);

@@ -1,7 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { SparkleIconComponent, SparkleRadioComponent, SparkleStepperComponent } from '@sparkle-ui/core';
+import {
+  SparkleIconComponent,
+  SparkleProgressBarComponent,
+  SparkleRadioComponent,
+  SparkleStepperComponent,
+} from '@sparkle-ui/core';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
+import { SysinfoState } from '../core/states/sysinfo.state';
 import { BackupState } from './backup.state';
 
 @Component({
@@ -15,6 +21,7 @@ import { BackupState } from './backup.state';
     SparkleRadioComponent,
     SparkleStepperComponent,
     SparkleIconComponent,
+    SparkleProgressBarComponent,
   ],
   templateUrl: './backup.component.html',
   styleUrl: './backup.component.scss',
@@ -24,15 +31,16 @@ import { BackupState } from './backup.state';
 export default class BackupComponent {
   #route = inject(ActivatedRoute);
   #backupState = inject(BackupState);
+  #sysinfo = inject(SysinfoState);
 
   isDraft = this.#backupState.isDraft;
   backupId = this.#backupState.backupId;
+  loadingBackup = this.#backupState.loadingBackup;
+  sysinfoLoaded = this.#sysinfo.isLoaded;
 
   ngOnInit() {
     const snapshot = this.#route.snapshot;
     const isDraft = !!snapshot.url.find((x) => x.path === 'backup-draft');
-    console.log(isDraft);
-
     const backupId = snapshot.params['id'];
 
     this.#backupState.init(backupId, isDraft);

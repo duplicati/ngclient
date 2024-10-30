@@ -9,6 +9,7 @@ import {
   BackupDto,
   DuplicatiServerService,
   GetBackupResultDto,
+  ICommandLineArgument,
   IDynamicModule,
   ScheduleDto,
 } from '../core/openapi';
@@ -19,7 +20,7 @@ import { createDestinationForm, createDestinationFormGroup, Size } from './desti
 import { DESTINATION_CONFIG, FormView } from './destination/destination.config';
 import { DestinationFormGroup, fromTargetPath, toTargetPath } from './destination/destination.mapper';
 import { createGeneralForm, NONE_OPTION } from './general/general.component';
-import { createAdvancedOption, createOptionsForm } from './options/options.component';
+import { createOptionsForm, SizeOptions } from './options/options.component';
 import { createScheduleForm, Days, ScheduleFormValue } from './schedule/schedule.component';
 import { createSourceDataForm } from './source-data/source-data.component';
 
@@ -61,7 +62,7 @@ export class BackupState {
   isSubmitting = signal(false);
   loadingBackup = signal(false);
   loadingDefaults = signal(true);
-  destinationIsLoaded = signal(false);
+  finishedLoading = signal(false);
   isNew = computed(() => this.backupId() === 'new');
   backupDefaults = signal<any>(null);
   generalForm = createGeneralForm();
@@ -82,9 +83,16 @@ export class BackupState {
   destinationFormSignal = toSignal(this.destinationForm.valueChanges);
   encryptionFieldSignal = toSignal(this.generalForm.controls.encryption.valueChanges);
   scheduleFormSignal = toSignal(this.scheduleForm.valueChanges);
+  advancedOptions = computed(() => this.#sysinfo.sysInfoSignal()?.Options ?? []);
   encryptionOptions = computed(() => {
-    const encryptionOptions = this.#sysinfo.systemInfo()?.EncryptionModules ?? [];
+    const encryptionOptions = this.#sysinfo.sysInfoSignal()?.EncryptionModules ?? [];
     return [NONE_OPTION, ...encryptionOptions];
+  });
+  selectedAdvancedOptions = signal<FormView[]>([]);
+  nonSelectedAdvancedOptions = computed(() => {
+    return this.advancedOptions()
+      .sort((a, b) => (a?.Name && b?.Name ? a?.Name.localeCompare(b?.Name) : 0))
+      .filter((x) => this.selectedAdvancedOptions()?.findIndex((y) => y.name === x.Name) === -1);
   });
 
   init(id: 'new' | 'string' = 'new', isDraft = false) {
@@ -160,7 +168,7 @@ export class BackupState {
           this.#mapScheduleToForm(res.Schedule);
           this.#mapOptionsToForms(res.Backup);
           this.backupDefaults.set(res);
-          this.destinationIsLoaded.set(true);
+          this.finishedLoading.set(true);
         },
       });
   }
@@ -169,6 +177,7 @@ export class BackupState {
     this.loadingBackup.set(true);
 
     const onBackup = (res: GetBackupResultDto) => {
+      console.log('hi 1');
       this.#mapScheduleToForm(res.Schedule ?? null);
 
       if (res.Backup) {
@@ -178,7 +187,7 @@ export class BackupState {
         this.#mapOptionsToForms(res.Backup);
       }
 
-      this.destinationIsLoaded.set(true);
+      this.finishedLoading.set(true);
     };
 
     if (isDraft) {
@@ -197,6 +206,8 @@ export class BackupState {
 
       onBackup(backup.data);
     } else {
+      console.log('hi');
+
       this.#dupServer
         .getApiV1BackupById({
           id,
@@ -293,17 +304,37 @@ export class BackupState {
 
   #mapOptionsToForms(backup: BackupDto) {
     const modulesToIgnore = ['--no-encryption', '--exclude-files-attributes', '--skip-files-larger-than'];
+    const advancedOptions = this.advancedOptions();
+
     backup.Settings?.forEach((x) => {
       if (x.Name === 'encryption-module') {
-        return this.generalForm.controls.encryption.setValue(x.Value ?? 'None');
+        return this.generalForm.controls.encryption.setValue(x.Value ?? '');
       }
 
       if (x.Name && modulesToIgnore.includes(x.Name)) return;
 
+      if (x.Name === 'dblock-size') {
+        const size = x.Value?.replace(/[^0-9]/g, '');
+        const unit = x.Value?.replace(/[0-9]/g, '');
+
+        return this.optionsForm.controls.remoteVolumeSize.setValue({
+          size: size ? parseInt(size) : null,
+          unit: unit ? (unit.toUpperCase() as SizeOptions) : null,
+        });
+      }
+
       if (x.Name && x.Value) {
-        this.optionsForm.controls.advancedOptions.push(createAdvancedOption(x.Name, x.Value));
+        const option = advancedOptions.find((y) => y.Name === x.Name);
+
+        if (!option) return;
+
+        this.addOptionToFormGroup(option, x.Value);
       }
     });
+  }
+
+  hello() {
+    return this.#mapFormsToBackup();
   }
 
   #mapFormsToBackup() {
@@ -333,11 +364,6 @@ export class BackupState {
       : [];
 
     const pathFilters = sourceDataFormValue.path?.split('\0') ?? [];
-    const advancedOptions =
-      optionsFormValue.advancedOptions?.map((x) => ({
-        Name: x.name ?? null,
-        Value: x.value && x.value.length ? x.value.toString() : null,
-      })) ?? [];
 
     const encryption =
       generalFormValue.encryption === 'none'
@@ -350,7 +376,41 @@ export class BackupState {
             Value: generalFormValue.encryption ?? null,
           };
 
-    const settings = [encryption, ...advancedOptions.filter((x) => x.Name && x.Value)];
+    const advancedOptions = this.advancedOptions();
+    const mappedAdvancedOptions = Object.entries(optionsFormValue.advancedOptions ?? {})
+      .filter(([key, value]) => key && value)
+      .map(([key, value]) => {
+        const option = advancedOptions.find((y) => y.Name === key);
+
+        if (option?.Type === 'Size') {
+          return {
+            Name: key,
+            Value: `${(value as any).size}${(value as any).unit.toLowerCase()}`,
+          };
+        }
+
+        if (option?.Type === 'Integer') {
+          return {
+            Name: key,
+            Value: (value as number).toString(),
+          };
+        }
+
+        if (option?.Type === 'Boolean') {
+          return {
+            Name: key,
+            Value: (value as boolean).toString(),
+          };
+        }
+
+        return {
+          Name: key,
+          Value: value,
+        };
+      });
+
+    const settings = [encryption, ...mappedAdvancedOptions];
+
     const excludes = Object.entries(sourceDataFormValue.excludes ?? {})
       .filter(([key, val]) => val && key !== 'filesLargerThan')
       .map(([key]) => key);
@@ -439,6 +499,64 @@ export class BackupState {
     }
 
     return newObj;
+  }
+
+  addOptionToFormGroup(option: ICommandLineArgument, defaultValueOverride?: string) {
+    const group = this.optionsForm.controls.advancedOptions;
+    const defaultValue = defaultValueOverride ?? option.DefaultValue;
+
+    if (
+      option.Type === 'String' ||
+      option.Type === 'Password' ||
+      option.Type === 'Enumeration' ||
+      option.Type === 'Path'
+    ) {
+      group.addControl(option.Name as string, fb.control(defaultValue));
+    }
+
+    if (option.Type === 'Size') {
+      const withNoDigits = defaultValue!.replace(/[0-9]/g, '') as Size | undefined;
+      const onlyDigits = defaultValue!.replace(/[^0-9]/g, '');
+
+      group.addControl(
+        option.Name as string,
+        fb.group({
+          size: fb.control<number>(onlyDigits ? parseInt(onlyDigits) : 50),
+          unit: fb.control<string>(withNoDigits ? withNoDigits.toUpperCase() : 'MB'),
+        })
+      );
+    }
+
+    if (option.Type === 'Integer') {
+      group.addControl(option.Name as string, fb.control<number>(defaultValue ? parseInt(defaultValue) : 0));
+    }
+
+    if (option.Type === 'Boolean') {
+      group.addControl(option.Name as string, fb.control(defaultValue === 'true'));
+    }
+
+    if (option.Type === 'Flags') {
+      group.addControl(option.Name as string, fb.control<string>(defaultValue ?? ''));
+    }
+
+    if (option.Type === 'Timespan') {
+      group.addControl(
+        option.Name as string,
+        fb.control<string>(defaultValue as string, [Validators.pattern(/([-+]?\d{1,3}[smhDWMY])+/)])
+      );
+    }
+
+    this.selectedAdvancedOptions.update((y) => {
+      y.push({
+        name: option.Name as string,
+        type: option.Type as ArgumentType,
+        shortDescription: option.ShortDescription ?? undefined,
+        longDescription: option.LongDescription ?? undefined,
+        options: option.ValidValues,
+      });
+
+      return y;
+    });
   }
 
   addDestinationFormGroup(key: IDynamicModule['Key'], defaults?: DestinationDefault) {

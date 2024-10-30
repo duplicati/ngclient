@@ -1,4 +1,4 @@
-@if (destinationOptions().length && sysIsLoaded() && destinationIsLoaded()) {
+@if (destinationOptions().length && sysIsLoaded() && finishedLoading()) {
   <form [formGroup]="destinationForm" #formRef (submit)="next()">
     <header>
       <h3 class="title-30">Backup destination</h3>
@@ -183,6 +183,7 @@
                   </label>
                   <input
                     [type]="$any(item.destination).showPassword ? 'text' : 'password'"
+                    autocomplete="off"
                     id="destination-{{ item.formGroupName }}-{{ item.index }}"
                     formControlName="{{ item.destination.name }}" />
 

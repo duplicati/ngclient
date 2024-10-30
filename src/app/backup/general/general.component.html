@@ -16,18 +16,16 @@
   </spk-form-field>
 
   @if (isNew()) {
-    <spk-select [displayValue]="displayFn(generalForm.value.encryption ?? '')">
+    <spk-select [displayFn]="displayFn()">
       <label for="encryption">Encryption</label>
       <input type="text" id="encryption" tabindex="3" placeholder="Encryption" formControlName="encryption" />
 
-      <ng-container options>
-        @for (encryption of encryptionOptions(); track $index) {
-          <option [value]="encryption.Key">{{ encryption.DisplayName }}</option>
-        }
-      </ng-container>
+      @for (encryption of encryptionOptions(); track $index) {
+        <option [value]="encryption.Key">{{ encryption.DisplayName }}</option>
+      }
     </spk-select>
 
-    @if (encryptionFieldSignal() !== 'none') {
+    @if (encryptionFieldSignal() !== '') {
       <div class="passwords">
         <spk-form-field>
           <label for="password">Create a password</label>
@@ -35,6 +33,7 @@
             [type]="showPassword() ? 'text' : 'password'"
             id="password"
             tabindex="4"
+            autocomplete="off"
             placeholder="Password"
             formControlName="password" />
         </spk-form-field>
@@ -44,6 +43,7 @@
             [type]="showPassword() ? 'text' : 'password'"
             id="repeatPassword"
             tabindex="5"
+            autocomplete="off"
             placeholder="Repeat password"
             formControlName="repeatPassword" />
         </spk-form-field>
@@ -87,7 +87,7 @@
 
     <div
       [attr.spk-tooltip-primary]="
-        (generalForm.valid && encryptionFieldSignal() === 'none') || copiedPassword()
+        (generalForm.valid && encryptionFieldSignal() === '') || copiedPassword()
           ? undefined
           : 'Remember to copy the password'
       ">
@@ -95,14 +95,10 @@
         spk-button
         class="raised primary"
         type="submit"
-        [disabled]="
-          generalForm.invalid || (encryptionFieldSignal() !== 'none' && showCopyPassword() && !copiedPassword())
-        ">
+        [disabled]="generalForm.invalid || (encryptionFieldSignal() !== '' && showCopyPassword() && !copiedPassword())">
         <spk-icon>arrow-right</spk-icon>
         Continue
       </button>
     </div>
   </div>
 </form>
-
-<!-- <pre>{{ generalForm.value | json }}</pre> -->

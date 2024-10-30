@@ -1,4 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs';
 import { DuplicatiServerService, SystemInfoDto } from '../openapi';
 
@@ -14,18 +15,23 @@ export class SysinfoState {
     return this.systemInfo()?.BackendModules ?? [];
   });
 
+  sysInfoSignal = toSignal(this.sysInfoObservable());
+
   preloadSystemInfo(force = false) {
     if (!force && this.systemInfo()) {
       return;
     }
 
-    this.#dupServer
-      .getApiV1Systeminfo()
+    this.sysInfoObservable()
       .pipe(finalize(() => this.isLoaded.set(true)))
       .subscribe({
         next: (res) => {
           this.systemInfo.set(res);
         },
       });
+  }
+
+  sysInfoObservable() {
+    return this.#dupServer.getApiV1Systeminfo();
   }
 }

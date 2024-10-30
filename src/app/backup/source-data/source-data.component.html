@@ -1,4 +1,4 @@
-@if (destinationIsLoaded()) {
+@if (finishedLoading()) {
   <form [formGroup]="sourceDataForm" #formRef (submit)="next()">
     <h3 class="title-30">Source Data</h3>
 

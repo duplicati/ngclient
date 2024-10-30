@@ -95,7 +95,7 @@ export default class DestinationComponent {
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
 
   sysIsLoaded = this.#sysinfo.isLoaded;
-  destinationIsLoaded = this.#backupState.destinationIsLoaded;
+  finishedLoading = this.#backupState.finishedLoading;
   destinationForm = this.#backupState.destinationForm;
   destinationFormPair = this.#backupState.destinationFormPair;
   selectedAdvancedFormPair = this.#backupState.selectedAdvancedFormPair;

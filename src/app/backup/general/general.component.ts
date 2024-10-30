@@ -20,7 +20,7 @@ export const createGeneralForm = (
   defaults = {
     name: '',
     description: '',
-    encryption: 'none',
+    encryption: '',
     password: '',
     repeatPassword: '',
   }
@@ -30,16 +30,16 @@ export const createGeneralForm = (
     description: fb.control<string>(defaults.description),
     encryption: fb.control<string>(defaults.encryption, [Validators.required, watchField()]),
     password: fb.control<string>(defaults.password, [
-      validateWhen((t) => t?.value.encryption !== 'none', [Validators.required]),
+      validateWhen((t) => t?.value.encryption !== '', [Validators.required]),
     ]),
     repeatPassword: fb.control<string>(defaults.repeatPassword, [
-      validateWhen((t) => t?.value.encryption !== 'none', [Validators.required]),
+      validateWhen((t) => t?.value.encryption !== '', [Validators.required]),
     ]),
   });
 };
 
 export const NONE_OPTION = {
-  Key: 'none',
+  Key: '',
   DisplayName: 'None',
 };
 
@@ -110,14 +110,18 @@ export default class GeneralComponent {
     }
   }
 
-  displayFn(val: IDynamicModule['Key']) {
+  displayFn() {
     const encryptionOptions = this.#sysinfo.systemInfo()?.EncryptionModules ?? [];
-    const item = [NONE_OPTION, ...encryptionOptions].find((x) => x.Key === val);
 
-    if (!item) {
-      return '';
-    }
-    return `${item.DisplayName}`;
+    return (val: IDynamicModule['Key']) => {
+      const item = [NONE_OPTION, ...encryptionOptions].find((x) => x.Key === val);
+
+      if (!item) {
+        return '';
+      }
+
+      return `${item.DisplayName}`;
+    };
   }
 
   generatePassword() {

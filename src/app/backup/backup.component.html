@@ -29,6 +29,10 @@
   </div>
 </spk-stepper>
 
-<section>
-  <router-outlet></router-outlet>
-</section>
+@if (loadingBackup() && !sysinfoLoaded()) {
+  <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
+} @else {
+  <section>
+    <router-outlet></router-outlet>
+  </section>
+}
