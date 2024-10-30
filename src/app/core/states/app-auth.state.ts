@@ -72,16 +72,4 @@ export class AppAuthState {
         },
       });
   }
-
-  // reLogin() {
-
-  //   return this.#dupServer.postApiV1AuthRefreshLogout().pipe(
-  //     take(1),
-  //     tap((_) => {
-  //       this.#token.set(null);
-  //       this.#ls.clearAll();
-  //     })
-  //     .
-  //   );
-  // }
 }
