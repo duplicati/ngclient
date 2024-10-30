@@ -1,5 +1,5 @@
 import { JsonPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -28,7 +28,7 @@ export const createGeneralForm = (
   return fb.group({
     name: fb.control<string>(defaults.name, [Validators.required]),
     description: fb.control<string>(defaults.description),
-    encryption: fb.control<string>(defaults.encryption, [Validators.required, watchField()]),
+    encryption: fb.control<string>(defaults.encryption, [watchField()]),
     password: fb.control<string>(defaults.password, [
       validateWhen((t) => t?.value.encryption !== '', [Validators.required]),
     ]),
@@ -74,6 +74,22 @@ export default class GeneralComponent {
   showPassword = signal(false);
   copiedPassword = signal(false);
   showCopyPassword = signal(false);
+
+  encryptionEffect = effect(
+    () => {
+      const encryptionField = this.encryptionFieldSignal();
+
+      console.log(encryptionField === '');
+
+      if (encryptionField === '') {
+        this.copiedPassword.set(false);
+        this.showCopyPassword.set(false);
+      }
+    },
+    {
+      allowSignalWrites: true,
+    }
+  );
 
   ngOnInit() {
     this.formRef().nativeElement.focus();

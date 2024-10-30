@@ -85,20 +85,23 @@
       Exit
     </button>
 
-    <div
-      [attr.spk-tooltip-primary]="
-        (generalForm.valid && encryptionFieldSignal() === '') || copiedPassword()
-          ? undefined
-          : 'Remember to copy the password'
-      ">
-      <button
-        spk-button
-        class="raised primary"
-        type="submit"
-        [disabled]="generalForm.invalid || (encryptionFieldSignal() !== '' && showCopyPassword() && !copiedPassword())">
-        <spk-icon>arrow-right</spk-icon>
+    @if (encryptionFieldSignal() === '') {
+      <button spk-button class="raised primary" type="submit" [disabled]="generalForm.invalid">
         Continue
+        <spk-icon>arrow-right</spk-icon>
       </button>
-    </div>
+    } @else {
+      <div
+        [attr.spk-tooltip-primary]="showCopyPassword() && !copiedPassword() ? 'Remember to copy the password' : null">
+        <button
+          spk-button
+          class="raised primary"
+          type="submit"
+          [disabled]="generalForm.invalid || (showCopyPassword() && !copiedPassword())">
+          Continue
+          <spk-icon>arrow-right</spk-icon>
+        </button>
+      </div>
+    }
   </div>
 </form>
