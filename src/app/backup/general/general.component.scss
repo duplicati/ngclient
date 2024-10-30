@@ -10,6 +10,11 @@ form {
   gap: p2r(24);
 }
 
+sup {
+  padding: p2r(0 2);
+  color: var(--warn-500);
+}
+
 .passwords {
   display: flex;
   flex-direction: column;

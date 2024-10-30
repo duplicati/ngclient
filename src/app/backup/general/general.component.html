@@ -2,7 +2,10 @@
   <h3 class="title-30">General backup settings</h3>
 
   <spk-form-field>
-    <label for="backupName">Backup name</label>
+    <label for="backupName">
+      Backup name
+      <sup>*</sup>
+    </label>
     <input type="text" tabindex="1" placeholder="Your backup name" formControlName="name" />
   </spk-form-field>
 
@@ -28,7 +31,10 @@
     @if (encryptionFieldSignal() !== '') {
       <div class="passwords">
         <spk-form-field>
-          <label for="password">Create a password</label>
+          <label for="password">
+            Create a password
+            <sup>*</sup>
+          </label>
           <input
             [type]="showPassword() ? 'text' : 'password'"
             id="password"
