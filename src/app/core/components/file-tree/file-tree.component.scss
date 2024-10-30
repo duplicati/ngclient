@@ -38,7 +38,8 @@
 
   spk-list {
     --list-active-bg: var(--base-level-30);
-    gap: 0;
+
+    gap: p2r(2);
     padding: 0;
     height: min-content;
     min-width: min-content;
@@ -46,6 +47,11 @@
     [action] {
       padding: 0;
       gap: p2r(4);
+      border: 1px solid transparent;
+
+      &.active {
+        border-color: var(--base-level-40);
+      }
 
       &.usually-hidden {
         opacity: 0.6;

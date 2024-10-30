@@ -4,12 +4,12 @@
       <h3 class="title-30">
         Backup destination
 
-        @if (destinationCount() > 0) {
+        <!-- @if (destinationCount() > 0) {
           <button spk-button type="button" class="small" (click)="testDestination()">Test destination</button>
-        }
+        } -->
       </h3>
 
-      <p>{{ targetUrl() }}</p>
+      <!-- <p>{{ targetUrl() }}</p> -->
       @if (destinationCount() > 0) {
         <p (click)="removeDestinationFormGroup(destinationCount() - 1)">
           Wanna select another destination?
