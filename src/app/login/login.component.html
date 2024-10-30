@@ -9,7 +9,7 @@
         formControlName="pass" />
     </spk-form-field>
 
-    <button spk-button class="raised primary" type="submit">
+    <button spk-button class="raised primary" [class.loader]="isLoading()" type="submit">
       Login
       <spk-icon>arrow-right</spk-icon>
     </button>

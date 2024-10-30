@@ -16,6 +16,7 @@ import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.c
 import { ICommandLineArgument, SettingInputDto } from '../../core/openapi';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 import { BackupState } from '../backup.state';
+import { FormView } from '../destination/destination.config';
 
 const fb = new FormBuilder();
 const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'] as const;
@@ -106,6 +107,10 @@ export default class OptionsComponent {
   sizeOptions = signal(SIZE_OPTIONS);
   rentationOptions = signal(RETENTION_OPTIONS);
   sysinfoLoaded = this.#sysinfo.isLoaded;
+
+  removeOption(option: FormView) {
+    this.#backupState.removeOptionFromFormGroup(option);
+  }
 
   addNewOption(option: ICommandLineArgument) {
     this.#backupState.addOptionToFormGroup(option);

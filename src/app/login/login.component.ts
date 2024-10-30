@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SparkleButtonComponent, SparkleFormFieldComponent, SparkleIconComponent } from '@sparkle-ui/core';
+import { finalize } from 'rxjs';
 import { AppAuthState } from '../core/states/app-auth.state';
 
 const fb = new FormBuilder();
@@ -18,17 +19,23 @@ export default class LoginComponent {
   #router = inject(Router);
   #auth = inject(AppAuthState);
 
+  isLoading = signal(false);
   loginForm = fb.group({
     pass: fb.control<string>('', Validators.required),
   });
 
   submit() {
-    if (!this.loginForm.value.pass) {
-      return;
-    }
+    const password = this.loginForm.value.pass;
 
-    this.#auth.login(this.loginForm.value.pass!).subscribe({
-      next: () => this.#router.navigate(['/']),
-    });
+    if (!password) return;
+
+    this.isLoading.set(true);
+
+    this.#auth
+      .login(password)
+      .pipe(finalize(() => this.isLoading.set(false)))
+      .subscribe({
+        next: () => this.#router.navigate(['/']),
+      });
   }
 }

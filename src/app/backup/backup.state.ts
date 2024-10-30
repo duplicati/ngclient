@@ -501,6 +501,19 @@ export class BackupState {
     return newObj;
   }
 
+  removeOptionFromFormGroup(option: FormView) {
+    const optionName = option.name;
+
+    if (!optionName) return;
+
+    this.optionsForm.controls.advancedOptions.removeControl(optionName);
+    this.selectedAdvancedOptions.update((y) => {
+      y = y.filter((x) => x.name !== optionName);
+
+      return y;
+    });
+  }
+
   addOptionToFormGroup(option: ICommandLineArgument, defaultValueOverride?: string) {
     const group = this.optionsForm.controls.advancedOptions;
     const defaultValue = defaultValueOverride ?? option.DefaultValue;

@@ -9,6 +9,13 @@ header {
   flex-direction: column;
   gap: p2r(8);
 
+  h3 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: p2r(8);
+  }
+
   p {
     span {
       cursor: pointer;

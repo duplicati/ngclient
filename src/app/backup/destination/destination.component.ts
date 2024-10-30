@@ -17,7 +17,7 @@ import {
 import { finalize } from 'rxjs';
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
-import { IDynamicModule } from '../../core/openapi';
+import { DuplicatiServerService, IDynamicModule } from '../../core/openapi';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 import { BackupState } from '../backup.state';
 import { FormView } from './destination.config';
@@ -90,6 +90,7 @@ export default class DestinationComponent {
   #route = inject(ActivatedRoute);
   #sysinfo = inject(SysinfoState);
   #httpClient = inject(HttpClient);
+  #dupServer = inject(DuplicatiServerService);
   #backupState = inject(BackupState);
 
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
@@ -141,6 +142,41 @@ export default class DestinationComponent {
 
     return toTargetPath(destinationGroup);
   });
+
+  testDestination() {
+    const targetUrl = this.targetUrl();
+
+    if (!targetUrl) return;
+
+    let request = null;
+
+    if (targetUrl.startsWith('s3://')) {
+      // Use the right API
+      request = this.#dupServer.postApiV1RemoteoperationCreate({
+        requestBody: {
+          path: targetUrl,
+        },
+      });
+    } else {
+      request = this.#dupServer.postApiV1RemoteoperationTest({
+        requestBody: {
+          path: targetUrl,
+        },
+      });
+    }
+
+    if (request) {
+      request.subscribe({
+        next: (res) => {
+          console.log('res', res);
+        },
+        error: (err) => {
+          console.error('err', err);
+        },
+      });
+    }
+  }
+
   mapToTargetUrl(destinationGroup: DestinationFormGroup) {
     return toTargetPath(destinationGroup.value);
   }
