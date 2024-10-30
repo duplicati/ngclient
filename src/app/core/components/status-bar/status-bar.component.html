@@ -8,13 +8,13 @@
         [value]="statusData()?.OverallProgress ? statusData()?.OverallProgress! * 100 : 3"></spk-progress-bar>
     } @else if (nextBackup()) {
       <div class="label">{{ nextBackup().backup?.Backup?.Name }} - {{ nextBackup().time | appRelativeTime }}</div>
-      <spk-progress-bar class="raised" [value]="3"></spk-progress-bar>
+      <!-- <spk-progress-bar class="raised" [value]="3"></spk-progress-bar> -->
     } @else if (!statusData() || statusData()?.task?.Status === 'Completed') {
       <div class="label">No scheduled tasks</div>
-      <spk-progress-bar class="raised" [value]="3"></spk-progress-bar>
+      <!-- <spk-progress-bar class="raised" [value]="3"></spk-progress-bar> -->
     } @else {
       <div class="label">Loading...</div>
-      <spk-progress-bar class="raised" [value]="3"></spk-progress-bar>
+      <!-- <spk-progress-bar class="raised" [value]="3"></spk-progress-bar> -->
     }
   </div>
 
