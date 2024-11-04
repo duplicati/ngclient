@@ -10,7 +10,7 @@
     <p>If a date was missed, the job will run as soon as possible.</p>
   </div>
 
-  @if (!scheduleFormSignal()?.autoRun) {
+  @if (scheduleFormSignal()?.autoRun) {
     <div class="row-inputs" formGroupName="nextTime">
       <spk-form-field>
         <label for="time">Next time</label>
