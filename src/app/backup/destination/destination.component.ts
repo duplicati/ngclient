@@ -122,6 +122,8 @@ export default class DestinationComponent {
   }
 
   addAdvancedFormPair(item: FormView) {
+    console.log(item);
+
     this.selectedAdvancedFormPair.update((y) => {
       y.push(item);
 

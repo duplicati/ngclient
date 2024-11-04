@@ -1,12 +1,21 @@
 import { Injectable } from '@angular/core';
 
-const DEFAULT_PASSWORD_PATTERN = /[a-zA-Z0-9_\-\+\.]/;
+const DEFAULT_PASSWORD_PATTERN = /[a-zA-Z0-9_\-\+\.!@#$%^&*?_~()-]/;
 
 @Injectable({
   providedIn: 'root',
 })
 export class PasswordGeneratorService {
   generate(length: number, pattern = DEFAULT_PASSWORD_PATTERN) {
+    let password;
+    do {
+      password = this.generatePassword(length, pattern);
+    } while (this.calculatePasswordStrength(password) < 5);
+
+    return password;
+  }
+
+  generatePassword(length: number, pattern = DEFAULT_PASSWORD_PATTERN) {
     const _self = this;
 
     return Array.apply(null, { length: length } as any)
@@ -21,6 +30,28 @@ export class PasswordGeneratorService {
         }
       }, this)
       .join('');
+  }
+
+  calculatePasswordStrength(password: string) {
+    let strength = 1;
+
+    if (password.length >= 8) {
+      strength++;
+    }
+
+    if (password.match(/[a-z]/) && password.match(/[A-Z]/)) {
+      strength++;
+    }
+
+    if (password.match(/\d+/)) {
+      strength++;
+    }
+
+    if (password.match(/.[!,@,#,$,%,^,&,*,?,_,~,(,),-]/)) {
+      strength++;
+    }
+
+    return Math.min(strength, 5);
   }
 
   #getRandomByte() {

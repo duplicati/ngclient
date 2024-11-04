@@ -1,11 +1,22 @@
 import { JsonPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, ElementRef, inject, signal, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
+  SparkleAlertComponent,
   SparkleButtonComponent,
   SparkleFormFieldComponent,
   SparkleIconComponent,
+  SparkleProgressBarComponent,
   SparkleSelectComponent,
 } from '@sparkle-ui/core';
 import { IDynamicModule } from '../../core/openapi';
@@ -52,6 +63,8 @@ export const NONE_OPTION = {
     SparkleSelectComponent,
     SparkleButtonComponent,
     SparkleIconComponent,
+    SparkleProgressBarComponent,
+    SparkleAlertComponent,
     JsonPipe,
   ],
   templateUrl: './general.component.html',
@@ -67,6 +80,7 @@ export default class GeneralComponent {
 
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
   generalForm = this.#backupState.generalForm;
+  generalFormSignal = this.#backupState.generalFormSignal;
   encryptionFieldSignal = this.#backupState.encryptionFieldSignal;
   encryptionOptions = this.#backupState.encryptionOptions;
   isNew = this.#backupState.isNew;
@@ -90,6 +104,13 @@ export default class GeneralComponent {
       allowSignalWrites: true,
     }
   );
+
+  calculatePasswordStrength = computed(() => {
+    const form = this.generalFormSignal();
+    const password = form?.password ?? '';
+
+    return this.#passwordGeneratorService.calculatePasswordStrength(password);
+  });
 
   ngOnInit() {
     this.formRef().nativeElement.focus();

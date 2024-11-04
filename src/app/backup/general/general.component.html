@@ -35,6 +35,7 @@
             Create a password
             <sup>*</sup>
           </label>
+
           <input
             [type]="showPassword() ? 'text' : 'password'"
             id="password"
@@ -44,6 +45,16 @@
             formControlName="password" />
         </spk-form-field>
 
+        @if (generalForm.value.password) {
+          <spk-progress-bar
+            class="raised"
+            [class.warn]="calculatePasswordStrength() === 1"
+            [class.tertiary]="calculatePasswordStrength() === 2"
+            [class.primary]="calculatePasswordStrength() === 4"
+            [class.success]="calculatePasswordStrength() === 5"
+            [value]="calculatePasswordStrength() * (100 / 5)"></spk-progress-bar>
+        }
+
         <spk-form-field>
           <input
             [type]="showPassword() ? 'text' : 'password'"
@@ -52,6 +63,10 @@
             autocomplete="off"
             placeholder="Repeat password"
             formControlName="repeatPassword" />
+
+          @if (generalForm.value.repeatPassword && generalForm.value.repeatPassword !== generalForm.value.password) {
+            <span error>Passwords do not match</span>
+          }
         </spk-form-field>
 
         <div class="password-actions">
@@ -81,6 +96,12 @@
             </button>
           }
         </div>
+
+        @if (generalForm.value.password && generalForm.value.password === generalForm.value.repeatPassword) {
+          <spk-alert type="primary">
+            Tip: Be sure to save your password. If you loose it you will lose access to your backups.
+          </spk-alert>
+        }
       </div>
     }
   }

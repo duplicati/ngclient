@@ -81,6 +81,7 @@ export class BackupState {
   });
   sourceDataFormSignal = toSignal(this.sourceDataForm.valueChanges);
   destinationFormSignal = toSignal(this.destinationForm.valueChanges);
+  generalFormSignal = toSignal(this.generalForm.valueChanges);
   encryptionFieldSignal = toSignal(this.generalForm.controls.encryption.valueChanges);
   scheduleFormSignal = toSignal(this.scheduleForm.valueChanges);
   advancedOptions = computed(() => this.#sysinfo.sysInfoSignal()?.Options ?? []);

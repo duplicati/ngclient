@@ -1,4 +1,4 @@
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { ArgumentType, ICommandLineArgument } from '../../core/openapi';
 
 export type FormView = {
@@ -52,7 +52,8 @@ export const DESTINATION_CONFIG: DestinationConfig = {
         name: 'port',
         shortDescription: 'Port',
         longDescription: 'The port to connect to',
-        formElement: (defaultValue?: any) => fb.control<string>(defaultValue ?? ''),
+        formElement: (defaultValue?: any) =>
+          fb.control<string>(defaultValue ?? '', [Validators.required, Validators.max(65535)]),
       },
       path: {
         type: 'Path',
