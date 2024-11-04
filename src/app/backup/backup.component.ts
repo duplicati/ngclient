@@ -37,6 +37,7 @@ export default class BackupComponent {
   backupId = this.#backupState.backupId;
   loadingBackup = this.#backupState.loadingBackup;
   sysinfoLoaded = this.#sysinfo.isLoaded;
+  finishedLoading = this.#backupState.finishedLoading;
 
   ngOnInit() {
     const snapshot = this.#route.snapshot;

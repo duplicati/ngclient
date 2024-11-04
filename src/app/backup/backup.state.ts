@@ -55,7 +55,11 @@ export class BackupState {
   #timespanLiteralService = inject(TimespanLiteralsService);
   #backupsState = inject(BackupsState);
 
-  destinationOptions = this.#sysinfo.backendModules;
+  generalForm = createGeneralForm();
+  sourceDataForm = createSourceDataForm();
+  scheduleForm = createScheduleForm();
+  destinationForm = createDestinationForm();
+  optionsForm = createOptionsForm();
 
   isDraft = signal(false);
   backupId = signal<'new' | 'string' | null>(null);
@@ -63,14 +67,10 @@ export class BackupState {
   loadingBackup = signal(false);
   loadingDefaults = signal(true);
   finishedLoading = signal(false);
-  isNew = computed(() => this.backupId() === 'new');
   backupDefaults = signal<any>(null);
-  generalForm = createGeneralForm();
-  sourceDataForm = createSourceDataForm();
-  scheduleForm = createScheduleForm();
-  destinationForm = createDestinationForm();
-  optionsForm = createOptionsForm();
+  isNew = computed(() => this.backupId() === 'new');
 
+  selectedAdvancedOptions = signal<FormView[]>([]);
   selectedAdvancedFormPair = signal<FormView[]>([]);
   notSelectedAdvancedFormPair = signal<FormView[]>([]);
   destinationFormPair = signal<DestinationFormPair>({
@@ -79,17 +79,20 @@ export class BackupState {
     dynamic: [],
     advanced: [],
   });
+
   sourceDataFormSignal = toSignal(this.sourceDataForm.valueChanges);
   destinationFormSignal = toSignal(this.destinationForm.valueChanges);
   generalFormSignal = toSignal(this.generalForm.valueChanges);
   encryptionFieldSignal = toSignal(this.generalForm.controls.encryption.valueChanges);
   scheduleFormSignal = toSignal(this.scheduleForm.valueChanges);
+
+  destinationOptions = computed(() => this.#sysinfo.sysInfoSignal()?.BackendModules ?? []);
   advancedOptions = computed(() => this.#sysinfo.sysInfoSignal()?.Options ?? []);
   encryptionOptions = computed(() => {
     const encryptionOptions = this.#sysinfo.sysInfoSignal()?.EncryptionModules ?? [];
     return [NONE_OPTION, ...encryptionOptions];
   });
-  selectedAdvancedOptions = signal<FormView[]>([]);
+
   nonSelectedAdvancedOptions = computed(() => {
     return this.advancedOptions()
       .sort((a, b) => (a?.Name && b?.Name ? a?.Name.localeCompare(b?.Name) : 0))
@@ -178,7 +181,6 @@ export class BackupState {
     this.loadingBackup.set(true);
 
     const onBackup = (res: GetBackupResultDto) => {
-      console.log('hi 1');
       this.#mapScheduleToForm(res.Schedule ?? null);
 
       if (res.Backup) {
@@ -207,8 +209,6 @@ export class BackupState {
 
       onBackup(backup.data);
     } else {
-      console.log('hi');
-
       this.#dupServer
         .getApiV1BackupById({
           id,
