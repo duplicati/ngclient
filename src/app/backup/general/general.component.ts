@@ -18,6 +18,7 @@ import {
   SparkleIconComponent,
   SparkleProgressBarComponent,
   SparkleSelectComponent,
+  SparkleTooltipComponent,
 } from '@sparkle-ui/core';
 import { IDynamicModule } from '../../core/openapi';
 import { PasswordGeneratorService } from '../../core/services/password-generator.service';
@@ -65,6 +66,7 @@ export const NONE_OPTION = {
     SparkleIconComponent,
     SparkleProgressBarComponent,
     SparkleAlertComponent,
+    SparkleTooltipComponent,
     JsonPipe,
   ],
   templateUrl: './general.component.html',

@@ -11,6 +11,7 @@ import {
   SparkleOptionComponent,
   SparkleSelectComponent,
   SparkleToggleComponent,
+  SparkleTooltipComponent,
 } from '@sparkle-ui/core';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { ICommandLineArgument, SettingInputDto } from '../../core/openapi';
@@ -86,6 +87,7 @@ export const createAdvancedOption = (name: string | null | undefined, defaultVal
     SparkleToggleComponent,
     SparkleCheckboxComponent,
     SparkleOptionComponent,
+    SparkleTooltipComponent,
     ToggleCardComponent,
     JsonPipe,
   ],

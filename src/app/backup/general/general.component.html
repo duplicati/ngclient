@@ -118,8 +118,10 @@
         <spk-icon>arrow-right</spk-icon>
       </button>
     } @else {
-      <div
-        [attr.spk-tooltip-primary]="showCopyPassword() && !copiedPassword() ? 'Remember to copy the password' : null">
+      <spk-tooltip
+        message="Remember to copy the password"
+        class="primary"
+        [disabled]="!(showCopyPassword() && !copiedPassword())">
         <button
           spk-button
           class="raised primary"
@@ -128,7 +130,7 @@
           Continue
           <spk-icon>arrow-right</spk-icon>
         </button>
-      </div>
+      </spk-tooltip>
     }
   </div>
 </form>

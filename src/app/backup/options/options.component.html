@@ -76,9 +76,9 @@
               <label for="option-{{ item.formGroupName }}-{{ item.index }}">
                 {{ item.option.shortDescription ?? item.option.name }}
                 @if (item.option.longDescription) {
-                  <spk-icon [attr.spk-tooltip-primary]="item.option.longDescription" spk-tooltip-right>
-                    question
-                  </spk-icon>
+                  <spk-tooltip class="primary" [message]="item.option.longDescription">
+                    <spk-icon>question</spk-icon>
+                  </spk-tooltip>
                 }
               </label>
 
@@ -128,9 +128,9 @@
                 {{ item.option.shortDescription ?? item.option.name }}
 
                 @if (item.option.longDescription) {
-                  <spk-icon [attr.spk-tooltip-primary]="item.option.longDescription" spk-tooltip-right>
-                    question
-                  </spk-icon>
+                  <spk-tooltip class="primary" [message]="item.option.longDescription">
+                    <spk-icon>question</spk-icon>
+                  </spk-tooltip>
                 }
               </label>
               <input
@@ -150,9 +150,9 @@
                 {{ item.option.shortDescription ?? item.option.name }}
 
                 @if (item.option.longDescription) {
-                  <spk-icon [attr.spk-tooltip-primary]="item.option.longDescription" spk-tooltip-right>
-                    question
-                  </spk-icon>
+                  <spk-tooltip class="primary" [message]="item.option.longDescription">
+                    <spk-icon>question</spk-icon>
+                  </spk-tooltip>
                 }
               </label>
 
@@ -180,9 +180,9 @@
               <label for="option-{{ item.formGroupName }}-{{ item.index }}">
                 {{ item.option.shortDescription ?? item.option.name }}
                 @if (item.option.longDescription) {
-                  <spk-icon [attr.spk-tooltip-primary]="item.option.longDescription" spk-tooltip-right>
-                    question
-                  </spk-icon>
+                  <spk-tooltip class="primary" [message]="item.option.longDescription">
+                    <spk-icon>question</spk-icon>
+                  </spk-tooltip>
                 }
               </label>
               <input
@@ -196,9 +196,9 @@
               <label for="option-{{ item.formGroupName }}-{{ item.index }}">
                 {{ item.option.shortDescription ?? item.option.name }}
                 @if (item.option.longDescription) {
-                  <spk-icon [attr.spk-tooltip-primary]="item.option.longDescription" spk-tooltip-right>
-                    question
-                  </spk-icon>
+                  <spk-tooltip class="primary" [message]="item.option.longDescription">
+                    <spk-icon>question</spk-icon>
+                  </spk-tooltip>
                 }
               </label>
               <input
@@ -211,9 +211,9 @@
               <label for="option-{{ item.formGroupName }}-{{ item.index }}">
                 {{ item.option.shortDescription ?? item.option.name }}
                 @if (item.option.longDescription) {
-                  <spk-icon [attr.spk-tooltip-primary]="item.option.longDescription" spk-tooltip-right>
-                    question
-                  </spk-icon>
+                  <spk-tooltip class="primary" [message]="item.option.longDescription">
+                    <spk-icon>question</spk-icon>
+                  </spk-tooltip>
                 }
               </label>
               <input type="text" id="text" [formControlName]="item.option.name" />
@@ -237,9 +237,9 @@
               <label for="option-{{ item.formGroupName }}-{{ item.index }}">
                 {{ item.option.shortDescription ?? item.option.name }}
                 @if (item.option.longDescription) {
-                  <spk-icon [attr.spk-tooltip-primary]="item.option.longDescription" spk-tooltip-right>
-                    question
-                  </spk-icon>
+                  <spk-tooltip class="primary" [message]="item.option.longDescription">
+                    <spk-icon>question</spk-icon>
+                  </spk-tooltip>
                 }
               </label>
               <input
@@ -253,7 +253,9 @@
             </spk-form-field>
           }
 
-          <button spk-button type="button" (click)="removeOption(item.option)"><spk-icon>x-circle</spk-icon></button>
+          <button spk-button class="outlined" type="button" (click)="removeOption(item.option)">
+            <spk-icon>x-circle</spk-icon>
+          </button>
         </div>
       </ng-container>
     </ng-template>

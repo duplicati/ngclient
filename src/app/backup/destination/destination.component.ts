@@ -13,6 +13,7 @@ import {
   SparkleOptionComponent,
   SparkleSelectComponent,
   SparkleToggleComponent,
+  SparkleTooltipComponent,
 } from '@sparkle-ui/core';
 import { finalize } from 'rxjs';
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
@@ -76,6 +77,7 @@ export type DestinationFormGroupValue = ReturnType<typeof createDestinationFormG
     SparkleIconComponent,
     SparkleToggleComponent,
     SparkleDividerComponent,
+    SparkleTooltipComponent,
 
     ToggleCardComponent,
     FileTreeComponent,
