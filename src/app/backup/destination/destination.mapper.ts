@@ -127,14 +127,15 @@ const mappings = {
       return `${fields.destinationType}://${path}${urlParams}`;
     },
     from: (destinationType: string, urlObj: URL, plainPath: string) => {
-      const plainPathWithoutProtocol = plainPath.replace('googledrive://', '');
+      const { advanced, dynamic } = handleSearchParams(destinationType, urlObj);
 
       return <ValueOfDestinationFormGroup>{
         destinationType,
         custom: {
-          path: plainPathWithoutProtocol,
+          path: urlObj.hostname + urlObj.pathname,
         },
-        ...handleSearchParams(destinationType, urlObj),
+        dynamic: dynamic,
+        advanced: advanced,
       };
     },
   },

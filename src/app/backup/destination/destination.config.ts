@@ -90,7 +90,6 @@ export const DESTINATION_CONFIG: DestinationConfig = {
   },
   googledrive: {
     oauthField: 'authid',
-
     customFields: {
       path: {
         type: 'Path',

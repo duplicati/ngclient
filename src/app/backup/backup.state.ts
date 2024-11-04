@@ -338,6 +338,10 @@ export class BackupState {
     return this.#mapFormsToBackup();
   }
 
+  getCurrentTargetUrl() {
+    return this.#getTargetUrl(this.destinationForm.controls.destinations as any);
+  }
+
   #mapFormsToBackup() {
     const generalFormValue = this.generalForm.value;
     const optionsFormValue = this.optionsForm.value;

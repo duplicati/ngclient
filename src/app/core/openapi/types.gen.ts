@@ -10,36 +10,6 @@ export type AcknowlegdementDto = {
 
 export type ArgumentType = 'String' | 'Integer' | 'Boolean' | 'Timespan' | 'Size' | 'Enumeration' | 'Path' | 'Password' | 'Flags' | 'Decimal' | 'Unknown';
 
-export type Assembly = {
-    readonly DefinedTypes?: Array<TypeInfo> | null;
-    readonly ExportedTypes?: Array<Type> | null;
-    /**
-     * @deprecated
-     */
-    readonly CodeBase?: (string) | null;
-    EntryPoint?: MethodInfo;
-    readonly FullName?: (string) | null;
-    readonly ImageRuntimeVersion?: (string) | null;
-    readonly IsDynamic?: boolean;
-    readonly Location?: (string) | null;
-    readonly ReflectionOnly?: boolean;
-    readonly IsCollectible?: boolean;
-    readonly IsFullyTrusted?: boolean;
-    readonly CustomAttributes?: Array<CustomAttributeData> | null;
-    /**
-     * @deprecated
-     */
-    readonly EscapedCodeBase?: (string) | null;
-    ManifestModule?: Module;
-    readonly Modules?: Array<Module> | null;
-    /**
-     * @deprecated
-     */
-    readonly GlobalAssemblyCache?: boolean;
-    readonly HostContext?: number;
-    SecurityRuleSet?: SecurityRuleSet;
-};
-
 export type BackupAndScheduleInputDto = {
     Backup?: BackupInputDto;
     Schedule?: ScheduleInputDto;
@@ -85,15 +55,6 @@ export type Boolean__f__AnonymousType1 = {
     success?: boolean;
 };
 
-export type CLROSInfoDto = {
-    Platform?: (string) | null;
-    ServicePack?: (string) | null;
-    Version?: (string) | null;
-    VersionString?: (string) | null;
-};
-
-export type CallingConventions = 'Standard' | 'VarArgs' | 'Any' | 'HasThis' | 'ExplicitThis';
-
 export type ChangelogDto = {
     Version?: (string) | null;
     Changelog?: (string) | null;
@@ -113,63 +74,9 @@ export type CommandlineTaskStartedDto = {
     ID?: (string) | null;
 };
 
-export type ConstructorInfo = {
-    readonly Name?: (string) | null;
-    DeclaringType?: Type;
-    ReflectedType?: Type;
-    Module?: Module;
-    readonly CustomAttributes?: Array<CustomAttributeData> | null;
-    readonly IsCollectible?: boolean;
-    readonly MetadataToken?: number;
-    Attributes?: MethodAttributes;
-    MethodImplementationFlags?: MethodImplAttributes;
-    CallingConvention?: CallingConventions;
-    readonly IsAbstract?: boolean;
-    readonly IsConstructor?: boolean;
-    readonly IsFinal?: boolean;
-    readonly IsHideBySig?: boolean;
-    readonly IsSpecialName?: boolean;
-    readonly IsStatic?: boolean;
-    readonly IsVirtual?: boolean;
-    readonly IsAssembly?: boolean;
-    readonly IsFamily?: boolean;
-    readonly IsFamilyAndAssembly?: boolean;
-    readonly IsFamilyOrAssembly?: boolean;
-    readonly IsPrivate?: boolean;
-    readonly IsPublic?: boolean;
-    readonly IsConstructedGenericMethod?: boolean;
-    readonly IsGenericMethod?: boolean;
-    readonly IsGenericMethodDefinition?: boolean;
-    readonly ContainsGenericParameters?: boolean;
-    MethodHandle?: RuntimeMethodHandle;
-    readonly IsSecurityCritical?: boolean;
-    readonly IsSecuritySafeCritical?: boolean;
-    readonly IsSecurityTransparent?: boolean;
-    MemberType?: MemberTypes;
-};
-
 export type CreateBackupDto = {
     ID?: (string) | null;
     Temporary?: boolean;
-};
-
-export type CustomAttributeData = {
-    AttributeType?: Type;
-    Constructor?: ConstructorInfo;
-    readonly ConstructorArguments?: Array<CustomAttributeTypedArgument> | null;
-    readonly NamedArguments?: Array<CustomAttributeNamedArgument> | null;
-};
-
-export type CustomAttributeNamedArgument = {
-    MemberInfo?: MemberInfo;
-    TypedValue?: CustomAttributeTypedArgument;
-    readonly MemberName?: (string) | null;
-    readonly IsField?: boolean;
-};
-
-export type CustomAttributeTypedArgument = {
-    ArgumentType?: Type;
-    Value?: unknown;
 };
 
 export type DayOfWeek = string;
@@ -182,39 +89,6 @@ export type DeleteBackupOutputDto = {
 
 export type DuplicatiOperation = 'Backup' | 'Restore' | 'List' | 'Remove' | 'Repair' | 'RepairUpdate' | 'Verify' | 'Compact' | 'CreateReport' | 'ListRemote' | 'Delete' | 'Vacuum' | 'CustomRunner';
 
-export type EventAttributes = 'None' | 'SpecialName' | 'RTSpecialName';
-
-export type EventInfo = {
-    readonly Name?: (string) | null;
-    DeclaringType?: Type;
-    ReflectedType?: Type;
-    Module?: Module;
-    readonly CustomAttributes?: Array<CustomAttributeData> | null;
-    readonly IsCollectible?: boolean;
-    readonly MetadataToken?: number;
-    MemberType?: MemberTypes;
-    Attributes?: EventAttributes;
-    readonly IsSpecialName?: boolean;
-    AddMethod?: MethodInfo;
-    RemoveMethod?: MethodInfo;
-    RaiseMethod?: MethodInfo;
-    readonly IsMulticast?: boolean;
-    EventHandlerType?: Type;
-};
-
-export type Exception = {
-    TargetSite?: MethodBase;
-    readonly Message?: (string) | null;
-    readonly Data?: {
-        [key: string]: unknown;
-    } | null;
-    InnerException?: Exception;
-    HelpLink?: (string) | null;
-    Source?: (string) | null;
-    HResult?: number;
-    readonly StackTrace?: (string) | null;
-};
-
 export type ExportArgsOnlyDto = {
     Backend?: (string) | null;
     Arguments?: Array<(string)> | null;
@@ -223,40 +97,6 @@ export type ExportArgsOnlyDto = {
 
 export type ExportCommandlineDto = {
     Command?: (string) | null;
-};
-
-export type FieldAttributes = 'PrivateScope' | 'Private' | 'FamANDAssem' | 'Assembly' | 'Family' | 'FamORAssem' | 'Public' | 'FieldAccessMask' | 'Static' | 'InitOnly' | 'Literal' | 'NotSerialized' | 'HasFieldRVA' | 'SpecialName' | 'RTSpecialName' | 'HasFieldMarshal' | 'PinvokeImpl' | 'HasDefault' | 'ReservedMask';
-
-export type FieldInfo = {
-    readonly Name?: (string) | null;
-    DeclaringType?: Type;
-    ReflectedType?: Type;
-    Module?: Module;
-    readonly CustomAttributes?: Array<CustomAttributeData> | null;
-    readonly IsCollectible?: boolean;
-    readonly MetadataToken?: number;
-    MemberType?: MemberTypes;
-    Attributes?: FieldAttributes;
-    FieldType?: Type;
-    readonly IsInitOnly?: boolean;
-    readonly IsLiteral?: boolean;
-    /**
-     * @deprecated
-     */
-    readonly IsNotSerialized?: boolean;
-    readonly IsPinvokeImpl?: boolean;
-    readonly IsSpecialName?: boolean;
-    readonly IsStatic?: boolean;
-    readonly IsAssembly?: boolean;
-    readonly IsFamily?: boolean;
-    readonly IsFamilyAndAssembly?: boolean;
-    readonly IsFamilyOrAssembly?: boolean;
-    readonly IsPrivate?: boolean;
-    readonly IsPublic?: boolean;
-    readonly IsSecurityCritical?: boolean;
-    readonly IsSecuritySafeCritical?: boolean;
-    readonly IsSecurityTransparent?: boolean;
-    FieldHandle?: RuntimeFieldHandle;
 };
 
 export type FilesystemInput = {
@@ -280,8 +120,6 @@ export type GenerateCaptchaOutput = {
     Answer?: (string) | null;
     NoVisualChallenge?: boolean;
 };
-
-export type GenericParameterAttributes = 'None' | 'Covariant' | 'Contravariant' | 'VarianceMask' | 'ReferenceTypeConstraint' | 'NotNullableValueTypeConstraint' | 'DefaultConstructorConstraint' | 'SpecialConstraintMask';
 
 export type GetBackupResultDto = {
     Schedule?: ScheduleDto;
@@ -330,10 +168,6 @@ export type ICommandLineArgument = {
     readonly Typename?: (string) | null;
     Deprecated?: boolean;
     DeprecationMessage?: (string) | null;
-};
-
-export type ICustomAttributeProvider = {
-    [key: string]: unknown;
 };
 
 export type IDynamicModule = {
@@ -422,10 +256,6 @@ export type Int64StringTuple = {
     Item2?: (string) | null;
 };
 
-export type IntPtr = {
-    [key: string]: unknown;
-};
-
 export type IsBackupActiveDto = {
     Status?: (string) | null;
     Active?: boolean;
@@ -438,8 +268,6 @@ export type IsDbUsedElsewhereDto = {
 export type IssueSigninTokenInputDto = {
     Password?: (string) | null;
 };
-
-export type LayoutKind = 'Sequential' | 'Explicit' | 'Auto';
 
 export type LicenseDto = {
     Title?: (string) | null;
@@ -464,7 +292,7 @@ export type LogEntry = {
     MessageID?: (string) | null;
     ExceptionID?: (string) | null;
     Type?: LogMessageType;
-    Exception?: Exception;
+    Exception?: (string) | null;
     BackupID?: (string) | null;
     TaskID?: (string) | null;
 };
@@ -474,112 +302,6 @@ export type LogMessageType = 'ExplicitOnly' | 'Profiling' | 'Verbose' | 'Retry' 
 export type LoginInputDto = {
     Password?: (string) | null;
     RememberMe?: (boolean) | null;
-};
-
-export type MemberInfo = {
-    MemberType?: MemberTypes;
-    readonly Name?: (string) | null;
-    DeclaringType?: Type;
-    ReflectedType?: Type;
-    Module?: Module;
-    readonly CustomAttributes?: Array<CustomAttributeData> | null;
-    readonly IsCollectible?: boolean;
-    readonly MetadataToken?: number;
-};
-
-export type MemberTypes = 'Constructor' | 'Event' | 'Field' | 'Method' | 'Property' | 'TypeInfo' | 'Custom' | 'NestedType' | 'All';
-
-export type MethodAttributes = 'PrivateScope' | 'Private' | 'FamANDAssem' | 'Assembly' | 'Family' | 'FamORAssem' | 'Public' | 'MemberAccessMask' | 'UnmanagedExport' | 'Static' | 'Final' | 'Virtual' | 'HideBySig' | 'NewSlot' | 'CheckAccessOnOverride' | 'Abstract' | 'SpecialName' | 'RTSpecialName' | 'PinvokeImpl' | 'HasSecurity' | 'RequireSecObject' | 'ReservedMask';
-
-export type MethodBase = {
-    MemberType?: MemberTypes;
-    readonly Name?: (string) | null;
-    DeclaringType?: Type;
-    ReflectedType?: Type;
-    Module?: Module;
-    readonly CustomAttributes?: Array<CustomAttributeData> | null;
-    readonly IsCollectible?: boolean;
-    readonly MetadataToken?: number;
-    Attributes?: MethodAttributes;
-    MethodImplementationFlags?: MethodImplAttributes;
-    CallingConvention?: CallingConventions;
-    readonly IsAbstract?: boolean;
-    readonly IsConstructor?: boolean;
-    readonly IsFinal?: boolean;
-    readonly IsHideBySig?: boolean;
-    readonly IsSpecialName?: boolean;
-    readonly IsStatic?: boolean;
-    readonly IsVirtual?: boolean;
-    readonly IsAssembly?: boolean;
-    readonly IsFamily?: boolean;
-    readonly IsFamilyAndAssembly?: boolean;
-    readonly IsFamilyOrAssembly?: boolean;
-    readonly IsPrivate?: boolean;
-    readonly IsPublic?: boolean;
-    readonly IsConstructedGenericMethod?: boolean;
-    readonly IsGenericMethod?: boolean;
-    readonly IsGenericMethodDefinition?: boolean;
-    readonly ContainsGenericParameters?: boolean;
-    MethodHandle?: RuntimeMethodHandle;
-    readonly IsSecurityCritical?: boolean;
-    readonly IsSecuritySafeCritical?: boolean;
-    readonly IsSecurityTransparent?: boolean;
-};
-
-export type MethodImplAttributes = 'IL' | 'Native' | 'OPTIL' | 'CodeTypeMask' | 'ManagedMask' | 'NoInlining' | 'ForwardRef' | 'Synchronized' | 'NoOptimization' | 'PreserveSig' | 'AggressiveInlining' | 'AggressiveOptimization' | 'InternalCall' | 'MaxMethodImplVal';
-
-export type MethodInfo = {
-    readonly Name?: (string) | null;
-    DeclaringType?: Type;
-    ReflectedType?: Type;
-    Module?: Module;
-    readonly CustomAttributes?: Array<CustomAttributeData> | null;
-    readonly IsCollectible?: boolean;
-    readonly MetadataToken?: number;
-    Attributes?: MethodAttributes;
-    MethodImplementationFlags?: MethodImplAttributes;
-    CallingConvention?: CallingConventions;
-    readonly IsAbstract?: boolean;
-    readonly IsConstructor?: boolean;
-    readonly IsFinal?: boolean;
-    readonly IsHideBySig?: boolean;
-    readonly IsSpecialName?: boolean;
-    readonly IsStatic?: boolean;
-    readonly IsVirtual?: boolean;
-    readonly IsAssembly?: boolean;
-    readonly IsFamily?: boolean;
-    readonly IsFamilyAndAssembly?: boolean;
-    readonly IsFamilyOrAssembly?: boolean;
-    readonly IsPrivate?: boolean;
-    readonly IsPublic?: boolean;
-    readonly IsConstructedGenericMethod?: boolean;
-    readonly IsGenericMethod?: boolean;
-    readonly IsGenericMethodDefinition?: boolean;
-    readonly ContainsGenericParameters?: boolean;
-    MethodHandle?: RuntimeMethodHandle;
-    readonly IsSecurityCritical?: boolean;
-    readonly IsSecuritySafeCritical?: boolean;
-    readonly IsSecurityTransparent?: boolean;
-    MemberType?: MemberTypes;
-    ReturnParameter?: ParameterInfo;
-    ReturnType?: Type;
-    ReturnTypeCustomAttributes?: ICustomAttributeProvider;
-};
-
-export type Module = {
-    Assembly?: Assembly;
-    readonly FullyQualifiedName?: (string) | null;
-    readonly Name?: (string) | null;
-    readonly MDStreamVersion?: number;
-    readonly ModuleVersionId?: string;
-    readonly ScopeName?: (string) | null;
-    ModuleHandle?: ModuleHandle;
-    readonly CustomAttributes?: Array<CustomAttributeData> | null;
-    readonly MetadataToken?: number;
-};
-
-export type ModuleHandle = {
-    readonly MDStreamVersion?: number;
 };
 
 export type NotificationDto = {
@@ -597,46 +319,6 @@ export type NotificationDto = {
 };
 
 export type NotificationType = 'Information' | 'Warning' | 'Error';
-
-export type ParameterAttributes = 'None' | 'In' | 'Out' | 'Lcid' | 'Retval' | 'Optional' | 'HasDefault' | 'HasFieldMarshal' | 'Reserved3' | 'Reserved4' | 'ReservedMask';
-
-export type ParameterInfo = {
-    Attributes?: ParameterAttributes;
-    Member?: MemberInfo;
-    readonly Name?: (string) | null;
-    ParameterType?: Type;
-    readonly Position?: number;
-    readonly IsIn?: boolean;
-    readonly IsLcid?: boolean;
-    readonly IsOptional?: boolean;
-    readonly IsOut?: boolean;
-    readonly IsRetval?: boolean;
-    readonly DefaultValue?: unknown;
-    readonly RawDefaultValue?: unknown;
-    readonly HasDefaultValue?: boolean;
-    readonly CustomAttributes?: Array<CustomAttributeData> | null;
-    readonly MetadataToken?: number;
-};
-
-export type PropertyAttributes = 'None' | 'SpecialName' | 'RTSpecialName' | 'HasDefault' | 'Reserved2' | 'Reserved3' | 'Reserved4' | 'ReservedMask';
-
-export type PropertyInfo = {
-    readonly Name?: (string) | null;
-    DeclaringType?: Type;
-    ReflectedType?: Type;
-    Module?: Module;
-    readonly CustomAttributes?: Array<CustomAttributeData> | null;
-    readonly IsCollectible?: boolean;
-    readonly MetadataToken?: number;
-    MemberType?: MemberTypes;
-    PropertyType?: Type;
-    Attributes?: PropertyAttributes;
-    readonly IsSpecialName?: boolean;
-    readonly CanRead?: boolean;
-    readonly CanWrite?: boolean;
-    GetMethod?: MethodInfo;
-    SetMethod?: MethodInfo;
-};
 
 export type RemoteControlStatusOutput = {
     CanEnable?: boolean;
@@ -669,18 +351,6 @@ export type RestoreInputDto = {
     skip_metadata?: (boolean) | null;
 };
 
-export type RuntimeFieldHandle = {
-    Value?: IntPtr;
-};
-
-export type RuntimeMethodHandle = {
-    Value?: IntPtr;
-};
-
-export type RuntimeTypeHandle = {
-    Value?: IntPtr;
-};
-
 export type ScheduleDto = {
     ID?: number;
     Tags?: Array<(string)> | null;
@@ -700,8 +370,6 @@ export type ScheduleInputDto = {
     Rule?: (string) | null;
     AllowedDays?: Array<DayOfWeek> | null;
 };
-
-export type SecurityRuleSet = 'None' | 'Level1' | 'Level2';
 
 export type ServerStatusDto = {
     ActiveTask?: Int64StringTuple;
@@ -766,11 +434,6 @@ export type StringDateTimeTuple = {
     Item2?: string;
 };
 
-export type StructLayoutAttribute = {
-    readonly TypeId?: unknown;
-    Value?: LayoutKind;
-};
-
 export type SuggestedStatusIcon = 'Ready' | 'ReadyWarning' | 'ReadyError' | 'Paused' | 'Active' | 'ActivePaused';
 
 export type SystemInfoDto = {
@@ -785,6 +448,7 @@ export type SystemInfoDto = {
     DefaultUsageReportLevel?: (string) | null;
     ServerTime?: string;
     OSType?: (string) | null;
+    OSVersion?: (string) | null;
     DirectorySeparator?: string;
     PathSeparator?: string;
     CaseSensitiveFilesystem?: boolean;
@@ -793,7 +457,6 @@ export type SystemInfoDto = {
     UserName?: (string) | null;
     NewLine?: (string) | null;
     CLRVersion?: (string) | null;
-    CLROSInfo?: CLROSInfoDto;
     Options?: Array<ICommandLineArgument> | null;
     CompressionModules?: Array<IDynamicModule> | null;
     EncryptionModules?: Array<IDynamicModule> | null;
@@ -830,173 +493,9 @@ export type TreeNodeDto = {
     fileSize?: number;
 };
 
-export type Type = {
-    readonly Name?: (string) | null;
-    readonly CustomAttributes?: Array<CustomAttributeData> | null;
-    readonly IsCollectible?: boolean;
-    readonly MetadataToken?: number;
-    readonly IsInterface?: boolean;
-    MemberType?: MemberTypes;
-    readonly Namespace?: (string) | null;
-    readonly AssemblyQualifiedName?: (string) | null;
-    readonly FullName?: (string) | null;
-    Assembly?: Assembly;
-    Module?: Module;
-    readonly IsNested?: boolean;
-    DeclaringType?: Type;
-    DeclaringMethod?: MethodBase;
-    ReflectedType?: Type;
-    UnderlyingSystemType?: Type;
-    readonly IsTypeDefinition?: boolean;
-    readonly IsArray?: boolean;
-    readonly IsByRef?: boolean;
-    readonly IsPointer?: boolean;
-    readonly IsConstructedGenericType?: boolean;
-    readonly IsGenericParameter?: boolean;
-    readonly IsGenericTypeParameter?: boolean;
-    readonly IsGenericMethodParameter?: boolean;
-    readonly IsGenericType?: boolean;
-    readonly IsGenericTypeDefinition?: boolean;
-    readonly IsSZArray?: boolean;
-    readonly IsVariableBoundArray?: boolean;
-    readonly IsByRefLike?: boolean;
-    readonly IsFunctionPointer?: boolean;
-    readonly IsUnmanagedFunctionPointer?: boolean;
-    readonly HasElementType?: boolean;
-    readonly GenericTypeArguments?: Array<Type> | null;
-    readonly GenericParameterPosition?: number;
-    GenericParameterAttributes?: GenericParameterAttributes;
-    Attributes?: TypeAttributes;
-    readonly IsAbstract?: boolean;
-    readonly IsImport?: boolean;
-    readonly IsSealed?: boolean;
-    readonly IsSpecialName?: boolean;
-    readonly IsClass?: boolean;
-    readonly IsNestedAssembly?: boolean;
-    readonly IsNestedFamANDAssem?: boolean;
-    readonly IsNestedFamily?: boolean;
-    readonly IsNestedFamORAssem?: boolean;
-    readonly IsNestedPrivate?: boolean;
-    readonly IsNestedPublic?: boolean;
-    readonly IsNotPublic?: boolean;
-    readonly IsPublic?: boolean;
-    readonly IsAutoLayout?: boolean;
-    readonly IsExplicitLayout?: boolean;
-    readonly IsLayoutSequential?: boolean;
-    readonly IsAnsiClass?: boolean;
-    readonly IsAutoClass?: boolean;
-    readonly IsUnicodeClass?: boolean;
-    readonly IsCOMObject?: boolean;
-    readonly IsContextful?: boolean;
-    readonly IsEnum?: boolean;
-    readonly IsMarshalByRef?: boolean;
-    readonly IsPrimitive?: boolean;
-    readonly IsValueType?: boolean;
-    readonly IsSignatureType?: boolean;
-    readonly IsSecurityCritical?: boolean;
-    readonly IsSecuritySafeCritical?: boolean;
-    readonly IsSecurityTransparent?: boolean;
-    StructLayoutAttribute?: StructLayoutAttribute;
-    TypeInitializer?: ConstructorInfo;
-    TypeHandle?: RuntimeTypeHandle;
-    readonly GUID?: string;
-    BaseType?: Type;
-    /**
-     * @deprecated
-     */
-    readonly IsSerializable?: boolean;
-    readonly ContainsGenericParameters?: boolean;
-    readonly IsVisible?: boolean;
-};
-
-export type TypeAttributes = 'NotPublic' | 'Public' | 'NestedPublic' | 'NestedPrivate' | 'NestedFamily' | 'NestedAssembly' | 'NestedFamANDAssem' | 'VisibilityMask' | 'SequentialLayout' | 'ExplicitLayout' | 'LayoutMask' | 'Interface' | 'Abstract' | 'Sealed' | 'SpecialName' | 'RTSpecialName' | 'Import' | 'Serializable' | 'WindowsRuntime' | 'UnicodeClass' | 'AutoClass' | 'StringFormatMask' | 'HasSecurity' | 'ReservedMask' | 'BeforeFieldInit' | 'CustomFormatMask';
-
-export type TypeInfo = {
-    readonly Name?: (string) | null;
-    readonly CustomAttributes?: Array<CustomAttributeData> | null;
-    readonly IsCollectible?: boolean;
-    readonly MetadataToken?: number;
-    readonly IsInterface?: boolean;
-    MemberType?: MemberTypes;
-    readonly Namespace?: (string) | null;
-    readonly AssemblyQualifiedName?: (string) | null;
-    readonly FullName?: (string) | null;
-    Assembly?: Assembly;
-    Module?: Module;
-    readonly IsNested?: boolean;
-    DeclaringType?: Type;
-    DeclaringMethod?: MethodBase;
-    ReflectedType?: Type;
-    UnderlyingSystemType?: Type;
-    readonly IsTypeDefinition?: boolean;
-    readonly IsArray?: boolean;
-    readonly IsByRef?: boolean;
-    readonly IsPointer?: boolean;
-    readonly IsConstructedGenericType?: boolean;
-    readonly IsGenericParameter?: boolean;
-    readonly IsGenericTypeParameter?: boolean;
-    readonly IsGenericMethodParameter?: boolean;
-    readonly IsGenericType?: boolean;
-    readonly IsGenericTypeDefinition?: boolean;
-    readonly IsSZArray?: boolean;
-    readonly IsVariableBoundArray?: boolean;
-    readonly IsByRefLike?: boolean;
-    readonly IsFunctionPointer?: boolean;
-    readonly IsUnmanagedFunctionPointer?: boolean;
-    readonly HasElementType?: boolean;
-    readonly GenericTypeArguments?: Array<Type> | null;
-    readonly GenericParameterPosition?: number;
-    GenericParameterAttributes?: GenericParameterAttributes;
-    Attributes?: TypeAttributes;
-    readonly IsAbstract?: boolean;
-    readonly IsImport?: boolean;
-    readonly IsSealed?: boolean;
-    readonly IsSpecialName?: boolean;
-    readonly IsClass?: boolean;
-    readonly IsNestedAssembly?: boolean;
-    readonly IsNestedFamANDAssem?: boolean;
-    readonly IsNestedFamily?: boolean;
-    readonly IsNestedFamORAssem?: boolean;
-    readonly IsNestedPrivate?: boolean;
-    readonly IsNestedPublic?: boolean;
-    readonly IsNotPublic?: boolean;
-    readonly IsPublic?: boolean;
-    readonly IsAutoLayout?: boolean;
-    readonly IsExplicitLayout?: boolean;
-    readonly IsLayoutSequential?: boolean;
-    readonly IsAnsiClass?: boolean;
-    readonly IsAutoClass?: boolean;
-    readonly IsUnicodeClass?: boolean;
-    readonly IsCOMObject?: boolean;
-    readonly IsContextful?: boolean;
-    readonly IsEnum?: boolean;
-    readonly IsMarshalByRef?: boolean;
-    readonly IsPrimitive?: boolean;
-    readonly IsValueType?: boolean;
-    readonly IsSignatureType?: boolean;
-    readonly IsSecurityCritical?: boolean;
-    readonly IsSecuritySafeCritical?: boolean;
-    readonly IsSecurityTransparent?: boolean;
-    StructLayoutAttribute?: StructLayoutAttribute;
-    TypeInitializer?: ConstructorInfo;
-    TypeHandle?: RuntimeTypeHandle;
-    readonly GUID?: string;
-    BaseType?: Type;
-    /**
-     * @deprecated
-     */
-    readonly IsSerializable?: boolean;
-    readonly ContainsGenericParameters?: boolean;
-    readonly IsVisible?: boolean;
-    readonly GenericTypeParameters?: Array<Type> | null;
-    readonly DeclaredConstructors?: Array<ConstructorInfo> | null;
-    readonly DeclaredEvents?: Array<EventInfo> | null;
-    readonly DeclaredFields?: Array<FieldInfo> | null;
-    readonly DeclaredMembers?: Array<MemberInfo> | null;
-    readonly DeclaredMethods?: Array<MethodInfo> | null;
-    readonly DeclaredNestedTypes?: Array<TypeInfo> | null;
-    readonly DeclaredProperties?: Array<PropertyInfo> | null;
-    readonly ImplementedInterfaces?: Array<Type> | null;
+export type UpdateCertificateInputDto = {
+    Certificate?: (string) | null;
+    Password?: (string) | null;
 };
 
 export type UpdateDbPathInputDto = {
@@ -1283,6 +782,12 @@ export type PostApiV1TaskByTaskidAbortData = {
 export type PostApiV1TaskByTaskidAbortResponse = (unknown);
 
 export type GetApiV1UisettingsResponse = (Array<(string)>);
+
+export type PostApiV1UisettingsData = {
+    requestBody: UpdateCertificateInputDto;
+};
+
+export type PostApiV1UisettingsResponse = (unknown);
 
 export type GetApiV1UisettingsBySchemeData = {
     scheme: string;

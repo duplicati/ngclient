@@ -146,26 +146,27 @@ export default class DestinationComponent {
   });
 
   testDestination() {
-    const targetUrl = this.targetUrl();
+    const targetUrls = this.#backupState.getCurrentTargetUrl();
+    const targetUrl = targetUrls[0];
 
     if (!targetUrl) return;
 
     let request = null;
 
-    if (targetUrl.startsWith('s3://')) {
-      // Use the right API
-      request = this.#dupServer.postApiV1RemoteoperationCreate({
-        requestBody: {
-          path: targetUrl,
-        },
-      });
-    } else {
-      request = this.#dupServer.postApiV1RemoteoperationTest({
-        requestBody: {
-          path: targetUrl,
-        },
-      });
-    }
+    // if (targetUrl.startsWith('s3://')) {
+    //   // Use the right API
+    //   request = this.#dupServer.postApiV1RemoteoperationCreate({
+    //     requestBody: {
+    //       path: targetUrl,
+    //     },
+    //   });
+    // } else {
+    request = this.#dupServer.postApiV1RemoteoperationTest({
+      requestBody: {
+        path: targetUrl,
+      },
+    });
+    // }
 
     if (request) {
       request.subscribe({
