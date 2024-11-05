@@ -172,9 +172,7 @@ export default class DestinationComponent {
           }, 3000);
         },
         error: (err) => {
-          console.error('err', err);
-
-          if (err.message === 'missing-folder') {
+          if (err.error.error.Error === 'missing-folder') {
             this.#dialog.open(ConfirmDialogComponent, {
               data: {
                 title: 'Create folder',

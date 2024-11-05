@@ -49,7 +49,13 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
       }
 
       const errorMsg = `Error Code: ${error.status}, Message: ${error.message}`;
-      return throwError(() => errorMsg);
+
+      return throwError(() => {
+        return {
+          error,
+          message: errorMsg,
+        };
+      });
     })
   );
 };
