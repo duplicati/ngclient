@@ -24,6 +24,17 @@ header {
   }
 }
 
+.field-row {
+  display: grid;
+  align-items: flex-end;
+  grid-template-columns: 1fr p2r(40);
+  gap: p2r(8);
+
+  &.single-field {
+    display: block;
+  }
+}
+
 form {
   display: flex;
   flex-direction: column;

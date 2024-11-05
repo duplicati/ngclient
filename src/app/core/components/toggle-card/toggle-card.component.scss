@@ -46,4 +46,8 @@
   transition:
     max-height 250ms linear,
     padding 250ms linear;
+
+  &:empty {
+    display: none;
+  }
 }

@@ -99,6 +99,34 @@ export class BackupState {
       .filter((x) => this.selectedAdvancedOptions()?.findIndex((y) => y.name === x.Name) === -1);
   });
 
+  addAdvancedFormPair(item: FormView) {
+    this.selectedAdvancedFormPair.update((y) => {
+      y.push(item);
+
+      return y;
+    });
+
+    this.notSelectedAdvancedFormPair.update((y) => {
+      y = y.filter((x) => x.name !== item.name);
+
+      return y;
+    });
+  }
+
+  removeAdvancedFormPair(item: FormView) {
+    this.notSelectedAdvancedFormPair.update((y) => {
+      y.push(item);
+
+      return y;
+    });
+
+    this.selectedAdvancedFormPair.update((y) => {
+      y = y.filter((x) => x.name !== item.name);
+
+      return y;
+    });
+  }
+
   init(id: 'new' | 'string' = 'new', isDraft = false) {
     this.backupId.set(id);
 

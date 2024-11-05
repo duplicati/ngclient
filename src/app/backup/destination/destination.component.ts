@@ -128,19 +128,11 @@ export default class DestinationComponent {
   }
 
   addAdvancedFormPair(item: FormView) {
-    console.log(item);
+    this.#backupState.addAdvancedFormPair(item);
+  }
 
-    this.selectedAdvancedFormPair.update((y) => {
-      y.push(item);
-
-      return y;
-    });
-
-    this.notSelectedAdvancedFormPair.update((y) => {
-      y = y.filter((x) => x.name !== item.name);
-
-      return y;
-    });
+  removeAdvancedFormPair(item: FormView) {
+    this.#backupState.removeAdvancedFormPair(item);
   }
 
   targetUrl = computed(() => {
