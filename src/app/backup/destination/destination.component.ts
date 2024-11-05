@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import {
   SparkleButtonGroupComponent,
   SparkleCheckboxComponent,
+  SparkleDialogService,
   SparkleDividerComponent,
   SparkleFormFieldComponent,
   SparkleIconComponent,
@@ -16,6 +17,7 @@ import {
   SparkleTooltipComponent,
 } from '@sparkle-ui/core';
 import { finalize } from 'rxjs';
+import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { DuplicatiServerService, IDynamicModule } from '../../core/openapi';
@@ -94,6 +96,7 @@ export default class DestinationComponent {
   #httpClient = inject(HttpClient);
   #dupServer = inject(DuplicatiServerService);
   #backupState = inject(BackupState);
+  #dialog = inject(SparkleDialogService);
 
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
 
@@ -107,6 +110,7 @@ export default class DestinationComponent {
   destinationFormSignal = this.#backupState.destinationFormSignal;
   destinationCount = computed(() => this.destinationFormSignal()?.destinations?.length ?? 0);
   sizeOptions = signal(SIZE_OPTIONS);
+  successfulTest = signal(false);
 
   getFormFieldValue(
     destinationIndex: number,
@@ -153,33 +157,51 @@ export default class DestinationComponent {
 
     if (!targetUrl) return;
 
-    let request = null;
+    this.#dupServer
+      .postApiV1RemoteoperationTest({
+        requestBody: {
+          path: targetUrl,
+        },
+      })
+      .subscribe({
+        next: () => {
+          this.successfulTest.set(true);
 
-    // if (targetUrl.startsWith('s3://')) {
-    //   // Use the right API
-    //   request = this.#dupServer.postApiV1RemoteoperationCreate({
-    //     requestBody: {
-    //       path: targetUrl,
-    //     },
-    //   });
-    // } else {
-    request = this.#dupServer.postApiV1RemoteoperationTest({
-      requestBody: {
-        path: targetUrl,
-      },
-    });
-    // }
-
-    if (request) {
-      request.subscribe({
-        next: (res) => {
-          console.log('res', res);
+          setTimeout(() => {
+            this.successfulTest.set(false);
+          }, 3000);
         },
         error: (err) => {
           console.error('err', err);
+
+          if (err.message === 'missing-folder') {
+            this.#dialog.open(ConfirmDialogComponent, {
+              data: {
+                title: 'Create folder',
+                message: 'The remote destination folder does not exist, do you want to create it?',
+              },
+              closed: (res) => {
+                if (!res) return;
+
+                this.#dupServer
+                  .postApiV1RemoteoperationCreate({
+                    requestBody: {
+                      path: targetUrl,
+                    },
+                  })
+                  .subscribe({
+                    next: (res) => {
+                      console.log('create folder res', res);
+                    },
+                    error: (err) => {
+                      console.error('create folder err', err);
+                    },
+                  });
+              },
+            });
+          }
         },
       });
-    }
   }
 
   mapToTargetUrl(destinationGroup: DestinationFormGroup) {

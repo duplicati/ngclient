@@ -1,0 +1,14 @@
+<header header>
+  <h3>{{ _data().title }}</h3>
+</header>
+
+<div content>
+  @if (_data().message) {
+    <p>{{ _data().message }}</p>
+  }
+</div>
+
+<footer footer>
+  <button spk-button class="" (click)="close('cancel')">{{ _data().cancelText }}</button>
+  <button spk-button class="raised primary" (click)="close('confirm')">{{ _data().confirmText }}</button>
+</footer>
