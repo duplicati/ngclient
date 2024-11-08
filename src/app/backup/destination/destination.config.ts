@@ -79,7 +79,7 @@ export const DESTINATION_CONFIG: DestinationConfig = {
         longDescription: 'This is a path to a private key file locally on the machine',
       },
     ],
-    ignoredAdvancedFields: ['ssh-key'],
+    // ignoredAdvancedFields: ['ssh-key'],
   },
   s3: {
     customFields: {
