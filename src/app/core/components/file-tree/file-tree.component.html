@@ -21,18 +21,19 @@
 <div class="section" [class.hidden]="pathDiscoveryMethod() !== 'browse'">
   <ng-content select="label" ngProjectAs="label"></ng-content>
 
-  <div class="browse-files" #treeContainer>
+  <div class="browse-files" [class.visualize-accepted]="accepts()" #treeContainer>
     <ng-template #recursiveTree let-data>
       <spk-list [style.padding-left.rem]="data.level * 0.5">
         @for (node of data.children; track node.id) {
-          @if ((node.hidden && showHiddenFiles()) || !node.hidden) {
+          @if ((node.hidden && _showHiddenNodes()) || !node.hidden) {
             <div
               action
               #treeNode
+              [class.accepted]="node.accepted === true"
               [class.active]="node.isSelected"
               [class.open]="node.children.length"
               [class.usually-hidden]="node.hidden"
-              (click)="node.id !== '/' && toggleNode($event, node.id, node)">
+              (click)="toggleNode(node.id, node)">
               <div class="icon">
                 @if (node.id !== '/') {
                   @if (node.children.length) {
@@ -47,7 +48,7 @@
                 }
               </div>
 
-              <div class="text" (click)="node.id !== '/' && toggleSelectedNode($event, node)">
+              <div class="text" (click)="toggleSelectedNode($event, node)">
                 {{ node.text }}
               </div>
             </div>
@@ -68,16 +69,18 @@
       *ngTemplateOutlet="recursiveTree; context: { $implicit: { children: treeStructure(), level: 0 } }"></ng-container>
   </div>
 
-  <spk-toggle
-    [class.active]="showHiddenFiles()"
-    class="primary raised browse-files-toggle"
-    (click)="showHiddenFiles.set(!showHiddenFiles())">
-    Show hidden {{ showFiles() ? 'files' : 'folders' }}
-  </spk-toggle>
+  @if (!accepts()) {
+    <spk-toggle
+      [class.active]="_showHiddenNodes()"
+      class="primary raised browse-files-toggle"
+      (click)="_showHiddenNodes.set(!_showHiddenNodes())">
+      Show hidden {{ showFiles() ? 'files' : 'folders' }}
+    </spk-toggle>
+  }
 </div>
 
-<div #formRef>
-  <spk-form-field [class.hidden]="pathDiscoveryMethod() !== 'path'">
+<div #formRef class="form-field" [class.hidden]="pathDiscoveryMethod() !== 'path'">
+  <spk-form-field>
     <ng-content select="label" ngProjectAs="label"></ng-content>
     <ng-content select="input" ngProjectAs="input"></ng-content>
   </spk-form-field>

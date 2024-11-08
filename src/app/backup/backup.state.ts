@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { FormArray, FormBuilder, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { finalize, take } from 'rxjs';
 import {
@@ -9,7 +9,6 @@ import {
   BackupDto,
   DuplicatiServerService,
   GetBackupResultDto,
-  ICommandLineArgument,
   IDynamicModule,
   ScheduleDto,
 } from '../core/openapi';
@@ -17,7 +16,7 @@ import { TimespanLiteralsService } from '../core/services/timespan-literals.serv
 import { BackupsState } from '../core/states/backups.state';
 import { SysinfoState } from '../core/states/sysinfo.state';
 import { createDestinationForm, createDestinationFormGroup, Size } from './destination/destination.component';
-import { DESTINATION_CONFIG, FormView } from './destination/destination.config';
+import { CustomFormView, DESTINATION_CONFIG, FormView } from './destination/destination.config';
 import { DestinationFormGroup, fromTargetPath, toTargetPath } from './destination/destination.mapper';
 import { createGeneralForm, NONE_OPTION } from './general/general.component';
 import { createOptionsForm, SizeOptions } from './options/options.component';
@@ -70,14 +69,22 @@ export class BackupState {
   backupDefaults = signal<any>(null);
   isNew = computed(() => this.backupId() === 'new');
 
-  selectedAdvancedOptions = signal<FormView[]>([]);
+  selectedOptions = signal<FormView[]>([]);
   selectedAdvancedFormPair = signal<FormView[]>([]);
-  notSelectedAdvancedFormPair = signal<FormView[]>([]);
   destinationFormPair = signal<DestinationFormPair>({
     oauthField: null,
     custom: [],
     dynamic: [],
     advanced: [],
+  });
+
+  notSelectedAdvancedFormPair = computed<FormView[]>(() => {
+    const advancedFormPairs = this.destinationFormPair()?.advanced ?? [];
+    const selectedAdvancedFormPair = this.selectedAdvancedFormPair() ?? [];
+
+    return advancedFormPairs.filter(
+      (formPair) => selectedAdvancedFormPair.findIndex((pair) => pair.name === formPair.name) === -1
+    );
   });
 
   sourceDataFormSignal = toSignal(this.sourceDataForm.valueChanges);
@@ -87,39 +94,49 @@ export class BackupState {
   scheduleFormSignal = toSignal(this.scheduleForm.valueChanges);
 
   destinationOptions = computed(() => this.#sysinfo.sysInfoSignal()?.BackendModules ?? []);
-  advancedOptions = computed(() => this.#sysinfo.sysInfoSignal()?.Options ?? []);
+  advancedOptions = computed(() => {
+    const options = this.#sysinfo.sysInfoSignal()?.Options ?? [];
+
+    return options.map((x) => {
+      return {
+        name: x.Name as string,
+        type: x.Type as ArgumentType,
+        shortDescription: x.ShortDescription ?? undefined,
+        longDescription: x.LongDescription ?? undefined,
+        options: x.ValidValues,
+      } as FormView;
+    });
+  });
   encryptionOptions = computed(() => {
     const encryptionOptions = this.#sysinfo.sysInfoSignal()?.EncryptionModules ?? [];
     return [NONE_OPTION, ...encryptionOptions];
   });
 
-  nonSelectedAdvancedOptions = computed(() => {
+  nonSelectedOptions = computed(() => {
     return this.advancedOptions()
-      .sort((a, b) => (a?.Name && b?.Name ? a?.Name.localeCompare(b?.Name) : 0))
-      .filter((x) => this.selectedAdvancedOptions()?.findIndex((y) => y.name === x.Name) === -1);
+      .sort((a, b) => (a?.name && b?.name ? a?.name.localeCompare(b?.name) : 0))
+      .filter((x) => this.selectedOptions()?.findIndex((y) => y.name === x.name) === -1);
   });
 
-  addAdvancedFormPair(item: FormView) {
-    this.selectedAdvancedFormPair.update((y) => {
-      y.push(item);
+  addAdvancedFormPairByName(name: string, formArrayIndex: number, overrideDefaultValue?: any) {
+    const item = this.notSelectedAdvancedFormPair().find((x) => x.name === name);
 
-      return y;
-    });
+    if (!item) return;
 
-    this.notSelectedAdvancedFormPair.update((y) => {
-      y = y.filter((x) => x.name !== item.name);
-
-      return y;
-    });
+    this.addAdvancedFormPair(item, formArrayIndex, overrideDefaultValue);
   }
 
-  removeAdvancedFormPair(item: FormView) {
-    this.notSelectedAdvancedFormPair.update((y) => {
-      y.push(item);
+  addAdvancedFormPair(item: FormView, formArrayIndex: number, overrideDefaultValue?: any) {
+    const group = this.destinationForm.controls.destinations.controls.at(formArrayIndex)?.controls.advanced!;
+    const defaultValue = overrideDefaultValue ?? item.defaultValue;
 
-      return y;
-    });
+    this.createFormField(group, item, defaultValue);
 
+    this.selectedAdvancedFormPair.set([...this.selectedAdvancedFormPair(), item]);
+  }
+
+  removeAdvancedFormPair(item: FormView, formArrayIndex: number) {
+    this.destinationForm.controls.destinations.controls.at(formArrayIndex)?.controls.advanced.removeControl(item.name);
     this.selectedAdvancedFormPair.update((y) => {
       y = y.filter((x) => x.name !== item.name);
 
@@ -280,11 +297,16 @@ export class BackupState {
     const targetUrlData = backup.TargetURL ? fromTargetPath(backup.TargetURL) : null;
 
     if (targetUrlData) {
-      this.addDestinationFormGroup(targetUrlData.destinationType, {
-        custom: targetUrlData.custom,
-        dynamic: targetUrlData.dynamic,
-        advanced: targetUrlData.advanced,
-      });
+      const createAdvancedFields = true;
+      this.addDestinationFormGroup(
+        targetUrlData.destinationType,
+        {
+          custom: targetUrlData.custom,
+          dynamic: targetUrlData.dynamic,
+          advanced: targetUrlData.advanced,
+        },
+        createAdvancedFields
+      );
     }
   }
 
@@ -353,17 +375,13 @@ export class BackupState {
       }
 
       if (x.Name && x.Value) {
-        const option = advancedOptions.find((y) => y.Name === x.Name);
+        const option = advancedOptions.find((y) => y.name === x.Name);
 
         if (!option) return;
 
         this.addOptionToFormGroup(option, x.Value);
       }
     });
-  }
-
-  hello() {
-    return this.#mapFormsToBackup();
   }
 
   getCurrentTargetUrl() {
@@ -413,23 +431,23 @@ export class BackupState {
     const mappedAdvancedOptions = Object.entries(optionsFormValue.advancedOptions ?? {})
       .filter(([key, value]) => key && value)
       .map(([key, value]) => {
-        const option = advancedOptions.find((y) => y.Name === key);
+        const option = advancedOptions.find((y) => y.name === key);
 
-        if (option?.Type === 'Size') {
+        if (option?.type === 'Size') {
           return {
             Name: key,
             Value: `${(value as any).size}${(value as any).unit.toLowerCase()}`,
           };
         }
 
-        if (option?.Type === 'Integer') {
+        if (option?.type === 'Integer') {
           return {
             Name: key,
             Value: (value as number).toString(),
           };
         }
 
-        if (option?.Type === 'Boolean') {
+        if (option?.type === 'Boolean') {
           return {
             Name: key,
             Value: (value as boolean).toString(),
@@ -497,22 +515,7 @@ export class BackupState {
   }
 
   #getTargetUrl(destinationFormArray: FormArray<DestinationFormGroup>) {
-    return destinationFormArray.controls.map((control) => {
-      if (!control.controls['advanced']) return toTargetPath(control.value);
-
-      const dirtyFields = Object.keys(control.controls['advanced'].controls).filter(
-        (controlName) => control.controls['advanced'].controls[controlName].dirty
-      );
-
-      return toTargetPath({
-        ...control.value,
-        advanced: dirtyFields.reduce((acc, key) => {
-          // @ts-ignore
-          acc[key] = control.controls['advanced'].controls[key].value;
-          return acc;
-        }, {}),
-      });
-    });
+    return destinationFormArray.controls.map((control) => toTargetPath(control.value));
   }
 
   #evaluateTimeString(t: string | undefined) {
@@ -540,82 +543,83 @@ export class BackupState {
     if (!optionName) return;
 
     this.optionsForm.controls.advancedOptions.removeControl(optionName);
-    this.selectedAdvancedOptions.update((y) => {
+    this.selectedOptions.update((y) => {
       y = y.filter((x) => x.name !== optionName);
 
       return y;
     });
   }
 
-  addOptionToFormGroup(option: ICommandLineArgument, defaultValueOverride?: string) {
+  addOptionToFormGroup(option: FormView, defaultValueOverride?: string) {
     const group = this.optionsForm.controls.advancedOptions;
-    const defaultValue = defaultValueOverride ?? option.DefaultValue;
 
+    this.createFormField(group, option, defaultValueOverride ?? option.defaultValue);
+  }
+
+  createFormField(group: FormGroup, element: FormView, defaultValue?: any) {
     if (
-      option.Type === 'String' ||
-      option.Type === 'Password' ||
-      option.Type === 'Enumeration' ||
-      option.Type === 'Path'
+      element.type === 'String' ||
+      element.type === 'FileTree' ||
+      element.type === 'FolderTree' ||
+      element.type === 'Password' ||
+      element.type === 'Enumeration' ||
+      element.type === 'Path'
     ) {
-      group.addControl(option.Name as string, fb.control(defaultValue));
+      group.addControl(element.name as string, fb.control(defaultValue));
+      return;
     }
 
-    if (option.Type === 'Size') {
+    if (element.type === 'Size') {
       const withNoDigits = defaultValue!.replace(/[0-9]/g, '') as Size | undefined;
       const onlyDigits = defaultValue!.replace(/[^0-9]/g, '');
 
       group.addControl(
-        option.Name as string,
+        element.name as string,
         fb.group({
           size: fb.control<number>(onlyDigits ? parseInt(onlyDigits) : 50),
           unit: fb.control<string>(withNoDigits ? withNoDigits.toUpperCase() : 'MB'),
         })
       );
+      return;
     }
 
-    if (option.Type === 'Integer') {
-      group.addControl(option.Name as string, fb.control<number>(defaultValue ? parseInt(defaultValue) : 0));
+    if (element.type === 'Integer') {
+      group.addControl(element.name as string, fb.control<number>(defaultValue ? parseInt(defaultValue) : 0));
+      return;
     }
 
-    if (option.Type === 'Boolean') {
-      group.addControl(option.Name as string, fb.control(defaultValue === 'true'));
+    if (element.type === 'Boolean') {
+      group.addControl(element.name as string, fb.control(defaultValue === 'true'));
+      return;
     }
 
-    if (option.Type === 'Flags') {
-      group.addControl(option.Name as string, fb.control<string>(defaultValue ?? ''));
+    if (element.type === 'Flags') {
+      group.addControl(element.name as string, fb.control<string>(defaultValue ?? ''));
+      return;
     }
 
-    if (option.Type === 'Timespan') {
+    if (element.type === 'Timespan') {
       group.addControl(
-        option.Name as string,
+        element.name as string,
         fb.control<string>(defaultValue as string, [Validators.pattern(/([-+]?\d{1,3}[smhDWMY])+/)])
       );
+      return;
     }
-
-    this.selectedAdvancedOptions.update((y) => {
-      y.push({
-        name: option.Name as string,
-        type: option.Type as ArgumentType,
-        shortDescription: option.ShortDescription ?? undefined,
-        longDescription: option.LongDescription ?? undefined,
-        options: option.ValidValues,
-      });
-
-      return y;
-    });
   }
 
-  addDestinationFormGroup(key: IDynamicModule['Key'], defaults?: DestinationDefault) {
+  addDestinationFormGroup(key: IDynamicModule['Key'], defaults?: DestinationDefault, createAdvancedFields = false) {
     const item = this.destinationOptions().find((x) => x.Key === key);
 
     if (!item || !item.Options) return;
 
     const destinationConfig = DESTINATION_CONFIG.hasOwnProperty(key as string) && DESTINATION_CONFIG[key as string];
+    const oauthField = destinationConfig && destinationConfig.oauthField ? destinationConfig.oauthField : null;
     const customFields = destinationConfig && destinationConfig.customFields ? destinationConfig.customFields : {};
     const dynamicFields = destinationConfig && destinationConfig.dynamicFields ? destinationConfig.dynamicFields : [];
     const advancedFields =
       destinationConfig && destinationConfig.advancedFields ? destinationConfig.advancedFields : [];
-    const oauthField = destinationConfig && destinationConfig.oauthField ? destinationConfig.oauthField : null;
+    const ignoredAdvancedFields =
+      destinationConfig && destinationConfig.ignoredAdvancedFields ? destinationConfig.ignoredAdvancedFields : [];
 
     this.destinationFormPair.set({
       oauthField,
@@ -623,24 +627,23 @@ export class BackupState {
       dynamic: [],
       advanced: [],
     });
-    this.selectedAdvancedFormPair.set([]);
 
     const customGroup = fb.group({});
     const dynamicGroup = fb.group({});
     const advancedGroup = fb.group({});
 
     if (customFields) {
-      for (key in customFields) {
-        const { formElement, ...val } = customFields[key];
+      Object.entries(customFields).forEach(([key, field], index) => {
+        const { formElement, ...val } = field;
 
         customGroup.addControl(key, formElement(defaults?.custom[key]));
 
         this.destinationFormPair.update((y) => {
-          y.custom.push(val);
+          y.custom.push({ order: 900 + index, ...val });
 
           return y;
         });
-      }
+      });
     }
 
     for (let index = 0; index < item.Options.length; index++) {
@@ -648,98 +651,83 @@ export class BackupState {
 
       if (element.Deprecated) continue;
 
-      const isDynamic = dynamicFields.includes(element.Name as string);
-      const group = isDynamic ? dynamicGroup : advancedGroup;
+      const asDynamic = dynamicFields.find((x) => x === element.Name || (x as CustomFormView).name === element.Name);
 
-      this.destinationFormPair.update((y) => {
-        y[isDynamic ? 'dynamic' : 'advanced'].push({
+      if (asDynamic) {
+        const overwriting = asDynamic && typeof asDynamic !== 'string';
+        const newField = {
           name: element.Name as string,
           type: element.Type as ArgumentType,
           shortDescription: element.ShortDescription ?? undefined,
           longDescription: element.LongDescription ?? undefined,
           options: element.ValidValues,
+          order: 900 + index,
+        };
+
+        const patchedNewField = overwriting
+          ? {
+              ...newField,
+              ...asDynamic,
+            }
+          : newField;
+
+        const passedDefaultValue = defaults?.dynamic[element.Name as string];
+        const defaultValue = passedDefaultValue ?? element.DefaultValue;
+
+        this.createFormField(dynamicGroup, patchedNewField, defaultValue);
+
+        this.destinationFormPair.update((y) => {
+          y.dynamic.push(patchedNewField);
+
+          return y;
         });
+      } else {
+        const ignored = ignoredAdvancedFields.find((x) => x === element.Name);
 
-        return y;
-      });
+        if (ignored) continue;
 
-      const passedDefaultValue = isDynamic
-        ? defaults?.dynamic[element.Name as string]
-        : defaults?.advanced[element.Name as string];
-      const defaultValue = passedDefaultValue ?? element.DefaultValue;
-
-      if (
-        element.Type === 'String' ||
-        element.Type === 'Password' ||
-        element.Type === 'Enumeration' ||
-        element.Type === 'Path'
-      ) {
-        group.addControl(element.Name as string, fb.control(defaultValue));
-
-        continue;
-      }
-
-      if (element.Type === 'Size') {
-        const withNoDigits = defaultValue!.replace(/[0-9]/g, '') as Size | undefined;
-        const onlyDigits = defaultValue!.replace(/[^0-9]/g, '');
-
-        group.addControl(
-          element.Name as string,
-          fb.group({
-            size: fb.control<number>(onlyDigits ? parseInt(onlyDigits) : 50),
-            unit: fb.control<string>(withNoDigits ? withNoDigits.toUpperCase() : 'MB'),
-          })
+        const asAdvanced = advancedFields.find(
+          (x) => x === element.Name || (x as CustomFormView).name === element.Name
         );
+        const overwriting = asAdvanced && typeof asAdvanced !== 'string';
+        const passedDefaultValue = defaults?.advanced[element.Name as string];
+        const defaultValue = passedDefaultValue ?? element.DefaultValue;
+        const newField = {
+          name: element.Name as string,
+          type: element.Type as ArgumentType,
+          shortDescription: element.ShortDescription ?? undefined,
+          longDescription: element.LongDescription ?? undefined,
+          options: element.ValidValues,
+          defaultValue: defaultValue,
+          order: 900 + index,
+        };
+
+        const patchedNewField = overwriting
+          ? {
+              ...newField,
+              ...asAdvanced,
+            }
+          : newField;
+
+        if (createAdvancedFields && passedDefaultValue && passedDefaultValue !== element.DefaultValue) {
+          this.createFormField(advancedGroup, patchedNewField, defaultValue);
+        }
+
+        this.destinationFormPair.update((y) => {
+          y.advanced.push(patchedNewField);
+
+          return y;
+        });
       }
-
-      if (element.Type === 'Integer') {
-        group.addControl(element.Name as string, fb.control<number>(defaultValue ? parseInt(defaultValue) : 0));
-
-        continue;
-      }
-
-      if (element.Type === 'Boolean') {
-        group.addControl(element.Name as string, fb.control(defaultValue === 'true'));
-
-        continue;
-      }
-
-      if (element.Type === 'Flags') {
-        group.addControl(element.Name as string, fb.control<string>(defaultValue ?? ''));
-
-        continue;
-      }
-
-      if (element.Type === 'Timespan') {
-        group.addControl(
-          element.Name as string,
-          fb.control<string>(defaultValue as string, [Validators.pattern(/([-+]?\d{1,3}[smhDWMY])+/)])
-        );
-      }
-    }
-
-    if (this.destinationForm.controls.destinations.length !== 0) {
-      this.destinationForm.controls.destinations.removeAt(0);
     }
 
     this.destinationFormPair.update((y) => ({
       oauthField: y.oauthField,
-      custom: y.custom,
-      dynamic: y.dynamic.sort((a, b) => dynamicFields.indexOf(a.name) - dynamicFields.indexOf(b.name)),
-      advanced: y.advanced.sort((a, b) => {
-        const indexA = advancedFields.indexOf(a.name);
-        const indexB = advancedFields.indexOf(b.name);
-        if (indexA === -1 && indexB !== -1) {
-          return 1; // Move `a` to the back
-        } else if (indexA !== -1 && indexB === -1) {
-          return -1; // Move `b` to the back
-        }
-
-        return indexA - indexB;
-      }),
+      custom: y.custom.sort((a, b) => a.order! - b.order!),
+      dynamic: y.dynamic.sort((a, b) => a.order! - b.order!),
+      advanced: y.advanced.sort((a, b) => a.order! - b.order!),
     }));
 
-    this.notSelectedAdvancedFormPair.set(this.destinationFormPair().advanced);
     this.destinationForm.controls.destinations.push(
       createDestinationFormGroup({
         key: item.Key as string,

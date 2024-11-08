@@ -127,12 +127,12 @@ export default class DestinationComponent {
     this.#backupState.addDestinationFormGroup(key);
   }
 
-  addAdvancedFormPair(item: FormView) {
-    this.#backupState.addAdvancedFormPair(item);
+  addAdvancedFormPair(item: FormView, formArrayIndex: number) {
+    this.#backupState.addAdvancedFormPair(item, formArrayIndex);
   }
 
-  removeAdvancedFormPair(item: FormView) {
-    this.#backupState.removeAdvancedFormPair(item);
+  removeFormView(item: FormView, formArrayIndex: number) {
+    this.#backupState.removeAdvancedFormPair(item, formArrayIndex);
   }
 
   targetUrl = computed(() => {
@@ -143,9 +143,9 @@ export default class DestinationComponent {
     return toTargetPath(destinationGroup);
   });
 
-  testDestination() {
+  testDestination(destinationIndex = 0) {
     const targetUrls = this.#backupState.getCurrentTargetUrl();
-    const targetUrl = targetUrls[0];
+    const targetUrl = targetUrls[destinationIndex];
 
     if (!targetUrl) return;
 
@@ -164,7 +164,9 @@ export default class DestinationComponent {
           }, 3000);
         },
         error: (err) => {
-          if (err.error.error.Error === 'missing-folder') {
+          const errorMessage = err.error.error.Error;
+
+          if (errorMessage === 'missing-folder') {
             this.#dialog.open(ConfirmDialogComponent, {
               data: {
                 title: 'Create folder',
@@ -189,6 +191,68 @@ export default class DestinationComponent {
                   });
               },
             });
+          }
+
+          // Missing http generic options
+          //           if (errorMessage.startsWith('incorrect-cert:')) {
+          //             this.#dialog.open(ConfirmDialogComponent, {
+          //               maxWidth: '500px',
+          //               data: {
+          //                 title: 'Trust the certificate',
+          //                 message: `The server is using a certificate that is not trusted.
+          // If this is a self-signed certificate, you can choose to trust this certificate.
+          // The server reported the certificate hash: ${errorMessage.split('incorrect-cert:')[1]}`,
+          //                 confirmText: 'Trust the certificate',
+          //                 cancelText: 'Cancel',
+          //               },
+          //               closed: (res: boolean) => {
+          //                 if (!res) return;
+
+          //                 // Add advanced option --accept-specified-ssl-hash=<certdata>
+          //                 // this.#backupState
+          //               },
+          //             });
+          //           }
+
+          if (errorMessage.startsWith('incorrect-host-key:')) {
+            const reportedhostkey = errorMessage.split('incorrect-host-key:"')[1].split('",')[0];
+            const suppliedhostkey = errorMessage.split('accepted-host-key:"')[1].split('",')[0];
+
+            if (!suppliedhostkey) {
+              this.#dialog.open(ConfirmDialogComponent, {
+                maxWidth: '500px',
+                data: {
+                  title: 'Approve host key?',
+                  message: `No certificate was specified, please verify that the reported host key is correct: ${reportedhostkey}`,
+                  confirmText: 'Approve',
+                  cancelText: 'Cancel',
+                },
+                closed: (res) => {
+                  if (!res) return;
+
+                  this.#backupState.addAdvancedFormPairByName('ssh-fingerprint', destinationIndex, reportedhostkey);
+                },
+              });
+            } else {
+              // MITM dialog
+              this.#dialog.open(ConfirmDialogComponent, {
+                maxWidth: '500px',
+                data: {
+                  title: 'The host key has changed',
+                  message: `The host key has changed, please check with the server administrator if this is correct,
+otherwise you could be the victim of a MAN-IN-THE-MIDDLE attack.
+Do you want to REPLACE your CURRENT host key ${suppliedhostkey}
+with the REPORTED host key: ${reportedhostkey}?`,
+                  confirmText: 'Approve',
+                  cancelText: 'Cancel',
+                },
+                closed: (res) => {
+                  if (!res) return;
+
+                  this.#backupState.addAdvancedFormPairByName('ssh-fingerprint', destinationIndex, reportedhostkey);
+                },
+              });
+            }
           }
         },
       });

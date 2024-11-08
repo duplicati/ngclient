@@ -13,8 +13,9 @@ import {
   SparkleToggleComponent,
   SparkleTooltipComponent,
 } from '@sparkle-ui/core';
+import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
-import { ICommandLineArgument, SettingInputDto } from '../../core/openapi';
+import { SettingInputDto } from '../../core/openapi';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 import { BackupState } from '../backup.state';
 import { FormView } from '../destination/destination.config';
@@ -88,6 +89,8 @@ export const createAdvancedOption = (name: string | null | undefined, defaultVal
     SparkleCheckboxComponent,
     SparkleOptionComponent,
     SparkleTooltipComponent,
+
+    FileTreeComponent,
     ToggleCardComponent,
     JsonPipe,
   ],
@@ -104,17 +107,28 @@ export default class OptionsComponent {
 
   optionsForm = this.#backupState.optionsForm;
   finishedLoading = this.#backupState.finishedLoading;
-  selectedAdvancedOptions = this.#backupState.selectedAdvancedOptions;
-  nonSelectedAdvancedOptions = this.#backupState.nonSelectedAdvancedOptions;
+  selectedOptions = this.#backupState.selectedOptions;
+  nonSelectedOptions = this.#backupState.nonSelectedOptions;
   sizeOptions = signal(SIZE_OPTIONS);
   rentationOptions = signal(RETENTION_OPTIONS);
   sysinfoLoaded = this.#sysinfo.isLoaded;
 
-  removeOption(option: FormView) {
+  oauthStartTokenCreation(_: any) {}
+  getFormFieldValue(
+    destinationIndex: number,
+    formGroupName: 'custom' | 'dynamic' | 'advanced',
+    formControlName: string
+  ) {
+    const group = this.optionsForm.controls.advancedOptions as any;
+
+    return group.controls[formControlName].value;
+  }
+
+  removeFormView(option: FormView, _: any) {
     this.#backupState.removeOptionFromFormGroup(option);
   }
 
-  addNewOption(option: ICommandLineArgument) {
+  addNewOption(option: FormView) {
     this.#backupState.addOptionToFormGroup(option);
   }
 
@@ -135,13 +149,13 @@ export default class OptionsComponent {
     const items = this.#backupState.advancedOptions();
 
     return (val: string) => {
-      const item = items.find((x) => x.Name === val);
+      const item = items.find((x) => x.name === val);
 
       if (!item) {
         return '';
       }
 
-      return `${item.Name}`;
+      return `${item.name}`;
     };
   }
 

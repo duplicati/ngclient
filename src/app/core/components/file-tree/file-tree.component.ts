@@ -25,6 +25,7 @@ import { DuplicatiServerService, GetApiV1BackupByIdFilesData, TreeNodeDto } from
 
 type TreeNode = TreeNodeDto & {
   isSelected: boolean;
+  accepted?: boolean;
   parentPath: string;
 };
 
@@ -85,17 +86,23 @@ export default class FileTreeComponent {
   multiSelect = input(false);
   disabled = input(false);
   showFiles = input(false);
+  selectFiles = input(false);
+  accepts = input<string | null | undefined>(null);
   startingPath = input<string | null>(null);
   rootPath = input<string | undefined>(undefined);
   backupSettings = input<BackupSettings | null>(null);
+  showHiddenNodes = input(false);
   includes = output<string[]>();
   excludes = output<string[]>();
 
+  _showHiddenNodes = signal(false);
+  showHiddenNodesEffect = effect(() => this._showHiddenNodes.set(this.showHiddenNodes()), {
+    allowSignalWrites: true,
+  });
   treeContainerRef = viewChild<ElementRef<HTMLDivElement>>('treeContainer');
   formRef = viewChild<ElementRef<HTMLFormElement>>('formRef');
   pathDiscoveryMethod = signal<'browse' | 'path'>('browse');
   isLoading = signal(false);
-  showHiddenFiles = signal(false);
   currentPath = signal<string>('/');
   #inputRef = signal<HTMLInputElement | null>(null);
   treeSearchQuery = signal<string>('');
@@ -108,10 +115,12 @@ export default class FileTreeComponent {
       ? this.treeNodes().filter((x) => x.text?.toLowerCase().includes(query.toLowerCase()))
       : this.treeNodes();
   });
+
   treeStructure = computed<FileTreeNode[]>(() => {
     const nodes = this.searchableTreeNodes();
     const nodeMap = new Map<string, FileTreeNode>();
     const rootPath = this.rootPath();
+    const accepts = this.accepts();
 
     const root: FileTreeNode = rootPath
       ? {
@@ -131,6 +140,10 @@ export default class FileTreeComponent {
           children: [],
           isSelected: false,
         };
+
+    if (accepts) {
+      root.accepted = true;
+    }
 
     nodeMap.set('/', root);
 
@@ -155,6 +168,11 @@ export default class FileTreeComponent {
             cls: node.cls,
             children: [],
           };
+
+          if (accepts) {
+            newNode.accepted = this.matchAccepts(accepts, newNode);
+          }
+
           nodeMap.set(currentPath, newNode);
           parentNode.children.push(newNode);
         }
@@ -186,6 +204,21 @@ export default class FileTreeComponent {
       allowSignalWrites: true,
     }
   );
+
+  matchAccepts(accepts: string, node: FileTreeNode) {
+    if (!accepts) return true;
+    if (node.cls === 'folder' || node.id === '/') return true;
+
+    const extensions = accepts.split(',');
+
+    if (extensions.length === 0) return true;
+
+    const fileExt = '.' + node.id!.slice(node.id!.indexOf('.'));
+
+    if (!fileExt) return false;
+
+    return extensions.some((x) => fileExt.endsWith(x));
+  }
 
   #scrollToFirstSelectedNode() {
     const selectedNodes = this.treeContainerRef()?.nativeElement.querySelectorAll('.active');
@@ -294,7 +327,18 @@ export default class FileTreeComponent {
   }
 
   toggleSelectedNode($event: Event, node: FileTreeNode) {
+    if (node.id === '/') return;
+
     $event.stopPropagation();
+
+    if (this.selectFiles() && node.cls === 'folder') {
+      this.toggleNode(node.id as string, node);
+      return;
+    }
+
+    const accepts = this.accepts();
+
+    if (accepts && !node.accepted) return;
 
     if (this.multiSelect()) {
       this.treeNodes.update((y) =>
@@ -318,13 +362,13 @@ export default class FileTreeComponent {
     }
   }
 
-  toggleNode($event: Event, path: string, node: FileTreeNode | null = null) {
-    $event.stopPropagation();
-
-    if (node?.children.length) {
-      this.treeNodes.update((y) => y.filter((z) => !z.id?.startsWith(node.id as string) || z.id === node.id));
-    } else {
-      this.#getPath(node, path);
+  toggleNode(path: string, node: FileTreeNode | null = null) {
+    if (node?.cls === 'folder') {
+      if (node?.children.length) {
+        this.treeNodes.update((y) => y.filter((z) => !z.id?.startsWith(node.id as string) || z.id === node.id));
+      } else {
+        this.#getPath(node, path);
+      }
     }
   }
 
@@ -470,11 +514,16 @@ export default class FileTreeComponent {
           : x;
 
         this.treeNodes.update((y) => {
-          const newArray = alignDataArray.map((z: any) => ({
-            ...z,
-            parentPath: newPath,
-            isSelected: (this.multiSelect() && node?.isSelected) ?? false,
-          }));
+          const newArray = alignDataArray.map((z: any) => {
+            const cls = (z.id.startsWith('%') && z.id.endsWith('%')) || z.id.endsWith('/') ? 'folder' : 'file';
+
+            return {
+              ...z,
+              cls,
+              parentPath: newPath,
+              isSelected: (this.multiSelect() && node?.isSelected) ?? false,
+            };
+          });
 
           const arrayUniqueByKey = [
             ...new Map([...y, ...newArray].map((item) => [item.resolvedpath ?? item.id, item])).values(),

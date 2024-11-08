@@ -26,6 +26,10 @@
   gap: p2r(8);
 }
 
+.form-field.hidden {
+  display: none;
+}
+
 .browse-files {
   display: flex;
   gap: p2r(8);
@@ -35,6 +39,17 @@
   border-radius: var(--shape-3);
   overflow: auto;
   resize: vertical;
+  background: var(--base-level-10);
+
+  &.visualize-accepted {
+    [action]:not(.accepted) {
+      opacity: 0.5;
+    }
+
+    [action].accepted {
+      opacity: 1;
+    }
+  }
 
   spk-list {
     --list-active-bg: var(--base-level-30);
