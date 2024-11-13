@@ -144,6 +144,14 @@ export class BackupState {
     this.addAdvancedFormPair(item, formArrayIndex, overrideDefaultValue);
   }
 
+  addHttpOptionByName(name: string, formArrayIndex: number, overrideDefaultValue?: any) {
+    const item = this.notSelectedHttpOptions().find((x) => x.name === name);
+
+    if (!item) return;
+
+    this.addHttpOption(item, formArrayIndex, overrideDefaultValue);
+  }
+
   addAdvancedFormPair(item: FormView, formArrayIndex: number, overrideDefaultValue?: any) {
     const group = this.destinationForm.controls.destinations.controls.at(formArrayIndex)?.controls.advanced!;
     const defaultValue = overrideDefaultValue ?? item.defaultValue;

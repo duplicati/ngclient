@@ -148,7 +148,7 @@ export default class DestinationComponent {
   targetUrl = computed(() => {
     const destinationFormSignal = this.destinationFormSignal();
 
-    console.log(destinationFormSignal);
+    // console.log(destinationFormSignal);
 
     const targetUrls = this.#backupState.getCurrentTargetUrl();
     const targetUrl = targetUrls[0];
@@ -229,26 +229,26 @@ export default class DestinationComponent {
             });
           }
 
-          // Missing http generic options
-          //           if (errorMessage.startsWith('incorrect-cert:')) {
-          //             this.#dialog.open(ConfirmDialogComponent, {
-          //               maxWidth: '500px',
-          //               data: {
-          //                 title: 'Trust the certificate',
-          //                 message: `The server is using a certificate that is not trusted.
-          // If this is a self-signed certificate, you can choose to trust this certificate.
-          // The server reported the certificate hash: ${errorMessage.split('incorrect-cert:')[1]}`,
-          //                 confirmText: 'Trust the certificate',
-          //                 cancelText: 'Cancel',
-          //               },
-          //               closed: (res: boolean) => {
-          //                 if (!res) return;
+          if (errorMessage.startsWith('incorrect-cert:')) {
+            const certData = errorMessage.split('incorrect-cert:')[1];
 
-          //                 // Add advanced option --accept-specified-ssl-hash=<certdata>
-          //                 // this.#backupState
-          //               },
-          //             });
-          //           }
+            this.#dialog.open(ConfirmDialogComponent, {
+              maxWidth: '500px',
+              data: {
+                title: 'Trust the certificate',
+                message: `The server is using a certificate that is not trusted.
+          If this is a self-signed certificate, you can choose to trust this certificate.
+          The server reported the certificate hash: ${certData}`,
+                confirmText: 'Trust the certificate',
+                cancelText: 'Cancel',
+              },
+              closed: (res: boolean) => {
+                if (!res) return;
+
+                this.#backupState.addHttpOptionByName('accept-specified-ssl-hash', certData);
+              },
+            });
+          }
 
           if (errorMessage.startsWith('incorrect-host-key:')) {
             const reportedhostkey = errorMessage.split('incorrect-host-key:"')[1].split('",')[0];
