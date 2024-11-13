@@ -72,7 +72,7 @@
     </app-toggle-card>
 
     <ng-template #fieldTemplate let-item>
-      <div class="field-row" [class.single-field]="item.formGroupName !== 'advanced'">
+      <div class="field-row">
         <ng-container [formGroupName]="item.formGroupName">
           @if (item.formView.type === 'FileTree') {
             <app-file-tree
@@ -298,11 +298,9 @@
           }
         </ng-container>
 
-        @if (item.formGroupName === 'advanced') {
-          <button spk-button class="outlined" type="button" (click)="removeFormView(item.formView, 0)">
-            <spk-icon>x-circle</spk-icon>
-          </button>
-        }
+        <button spk-button class="outlined" type="button" (click)="removeFormView(item.formView, 0)">
+          <spk-icon>x-circle</spk-icon>
+        </button>
       </div>
     </ng-template>
 

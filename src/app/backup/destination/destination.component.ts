@@ -1,11 +1,13 @@
 import { JsonPipe, NgTemplateOutlet } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
+  SparkleAlertComponent,
   SparkleButtonGroupComponent,
   SparkleCheckboxComponent,
+  SparkleDialogComponent,
   SparkleDialogService,
   SparkleDividerComponent,
   SparkleFormFieldComponent,
@@ -80,6 +82,8 @@ export type DestinationFormGroupValue = ReturnType<typeof createDestinationFormG
     SparkleToggleComponent,
     SparkleDividerComponent,
     SparkleTooltipComponent,
+    SparkleDialogComponent,
+    SparkleAlertComponent,
 
     ToggleCardComponent,
     FileTreeComponent,
@@ -106,6 +110,8 @@ export default class DestinationComponent {
   destinationFormPair = this.#backupState.destinationFormPair;
   selectedAdvancedFormPair = this.#backupState.selectedAdvancedFormPair;
   notSelectedAdvancedFormPair = this.#backupState.notSelectedAdvancedFormPair;
+  selectedHttpOptions = this.#backupState.selectedHttpOptions;
+  notSelectedHttpOptions = this.#backupState.notSelectedHttpOptions;
   destinationOptions = this.#backupState.destinationOptions;
   destinationFormSignal = this.#backupState.destinationFormSignal;
   destinationCount = computed(() => this.destinationFormSignal()?.destinations?.length ?? 0);
@@ -135,13 +141,43 @@ export default class DestinationComponent {
     this.#backupState.removeAdvancedFormPair(item, formArrayIndex);
   }
 
+  addHttpOption(item: FormView, formArrayIndex: number) {
+    this.#backupState.addHttpOption(item, formArrayIndex);
+  }
+
   targetUrl = computed(() => {
-    const destinationGroup = this.destinationFormSignal()?.destinations?.[0];
+    const destinationFormSignal = this.destinationFormSignal();
 
-    if (!destinationGroup) return '';
+    console.log(destinationFormSignal);
 
-    return toTargetPath(destinationGroup);
+    const targetUrls = this.#backupState.getCurrentTargetUrl();
+    const targetUrl = targetUrls[0];
+
+    return targetUrl;
   });
+
+  targetUrlCtrl = new FormControl();
+  targetUrlInitial = signal<string | null>(null);
+  targetUrlDialogOpen = signal(false);
+
+  openTargetUrlDialog() {
+    const targetUrls = this.#backupState.getCurrentTargetUrl();
+    const targetUrl = targetUrls[0];
+    this.targetUrlCtrl.setValue(targetUrl);
+    this.targetUrlInitial.set(targetUrl);
+    this.targetUrlDialogOpen.set(true);
+  }
+
+  closeTargetUrlDialog(submit = false) {
+    this.targetUrlDialogOpen.set(false);
+
+    const targetUrl = this.targetUrlCtrl.value;
+    const initialTargetUrl = this.targetUrlInitial();
+
+    if (!submit || targetUrl === initialTargetUrl) return;
+
+    this.#backupState.updateFieldsFromTargetUrl(this.targetUrlCtrl.value);
+  }
 
   testDestination(destinationIndex = 0) {
     const targetUrls = this.#backupState.getCurrentTargetUrl();

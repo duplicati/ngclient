@@ -9,6 +9,11 @@ header {
   flex-direction: column;
   gap: p2r(8);
 
+  h2,
+  spk-alert {
+    width: 100%;
+  }
+
   h3 {
     display: flex;
     justify-content: space-between;
@@ -22,6 +27,15 @@ header {
       text-decoration: underline;
     }
   }
+
+  .actions {
+    display: flex;
+    gap: p2r(8);
+  }
+}
+
+pre {
+  white-space: pre-wrap;
 }
 
 .field-row {
@@ -100,4 +114,8 @@ form {
   cursor: pointer;
   text-decoration: underline;
   color: var(--primary-500);
+}
+
+textarea ~ grammarly-extension {
+  display: none;
 }

@@ -1,19 +1,39 @@
-@if (destinationOptions().length && sysIsLoaded() && finishedLoading()) {
+@if (finishedLoading()) {
   <form [formGroup]="destinationForm" #formRef (submit)="next()">
     <header>
       <h3 class="title-30">
         Backup destination
 
-        @if (destinationCount() > 0) {
-          <button spk-button type="button" class="small" [class.success]="successfulTest()" (click)="testDestination()">
-            @if (successfulTest()) {
-              Connected
-              <spk-icon>check</spk-icon>
-            } @else {
-              Test destination
-            }
-          </button>
-        }
+        <div class="actions">
+          @if (destinationCount() > 0) {
+            <button
+              spk-button
+              type="button"
+              class="small"
+              [class.success]="successfulTest()"
+              (click)="testDestination()">
+              @if (successfulTest()) {
+                Connected
+                <spk-icon>check</spk-icon>
+              } @else {
+                Test destination
+              }
+            </button>
+          }
+
+          <spk-menu>
+            <button spk-button type="button" class="small">
+              <spk-icon>dots-three-vertical</spk-icon>
+            </button>
+
+            <ng-container menu>
+              <button spk-button type="button" class="small" (click)="openTargetUrlDialog()">
+                <spk-icon>link</spk-icon>
+                Edit target URL
+              </button>
+            </ng-container>
+          </spk-menu>
+        </div>
       </h3>
 
       @if (destinationCount() > 0) {
@@ -23,6 +43,9 @@
         </p>
       }
     </header>
+
+    <!-- <pre>{{ destinationFormSignal() | json }}</pre>
+    <pre>{{ targetUrl() }}</pre> -->
 
     @if (destinationCount() === 0) {
       <div class="most-common-destinations">
@@ -106,7 +129,11 @@
               Advanced options
 
               <spk-menu>
-                <button spk-button type="button" class="outlined small">
+                <button
+                  spk-button
+                  type="button"
+                  class="outlined small"
+                  [disabled]="notSelectedAdvancedFormPair().length === 0">
                   Add advanced option
                   <spk-icon>plus</spk-icon>
                 </button>
@@ -122,6 +149,47 @@
             </ng-container>
 
             @for (field of selectedAdvancedFormPair(); track $index) {
+              <ng-container
+                *ngTemplateOutlet="
+                  fieldTemplate;
+                  context: {
+                    $implicit: {
+                      index: $index,
+                      formView: field,
+                      formGroupName: 'advanced',
+                      destinationType: destinationFormSignal()?.destinations?.[0]?.destinationType,
+                      oauthField: destinationFormPair().oauthField,
+                    },
+                  }
+                "></ng-container>
+            }
+          </app-toggle-card>
+
+          <app-toggle-card [disallowToggle]="true">
+            <ng-container title>
+              Http options
+
+              <spk-menu>
+                <button
+                  spk-button
+                  type="button"
+                  class="outlined small"
+                  [disabled]="notSelectedHttpOptions().length === 0">
+                  Add http option
+                  <spk-icon>plus</spk-icon>
+                </button>
+
+                <ng-container menu>
+                  @for (option of notSelectedHttpOptions(); track $index) {
+                    <button item type="button" (click)="addHttpOption(option, 0)">
+                      {{ option.name }}
+                    </button>
+                  }
+                </ng-container>
+              </spk-menu>
+            </ng-container>
+
+            @for (field of selectedHttpOptions(); track $index) {
               <ng-container
                 *ngTemplateOutlet="
                   fieldTemplate;
@@ -358,9 +426,9 @@
                       id="destination-{{ item.formGroupName }}-{{ item.index }}"
                       formControlName="{{ item.formView.name }}" />
 
-                    <span error>
-                      <!-- {{ destinationForm.controls.destinations.controls[index]?.hasError('pattern') }} -->
-                    </span>
+                    <!-- <span error>
+                      {{ destinationForm.controls.destinations.controls[index]?.hasError('pattern') }}
+                    </span> -->
                   </spk-form-field>
                 }
               </ng-container>
@@ -388,4 +456,28 @@
       </button>
     </div>
   </form>
+
+  @if (targetUrlDialogOpen()) {
+    <spk-dialog [(isOpen)]="targetUrlDialogOpen" [options]="{ maxWidth: '700px', width: '100%' }">
+      <header header>
+        <h2>Edit target URL</h2>
+        <spk-alert class="warning">Be careful, this will overwrite everything you have in your destination.</spk-alert>
+      </header>
+
+      <div content>
+        <spk-form-field>
+          <textarea id="targetUrl" autocomplete="off" [formControl]="targetUrlCtrl"></textarea>
+        </spk-form-field>
+      </div>
+
+      <footer footer>
+        <button spk-button type="button" (click)="closeTargetUrlDialog(false)">Cancel</button>
+
+        <button spk-button class="raised primary" type="submit" (click)="closeTargetUrlDialog(true)">
+          Override target URLc
+          <spk-icon>swap</spk-icon>
+        </button>
+      </footer>
+    </spk-dialog>
+  }
 }

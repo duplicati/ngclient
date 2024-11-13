@@ -30,6 +30,13 @@ form {
   }
 }
 
+.field-row {
+  display: grid;
+  align-items: flex-end;
+  grid-template-columns: 1fr p2r(40);
+  gap: p2r(8);
+}
+
 .form-row {
   display: grid;
   grid-template-columns: 3fr 1fr;

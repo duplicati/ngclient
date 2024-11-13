@@ -9,6 +9,7 @@ import {
   BackupDto,
   DuplicatiServerService,
   GetBackupResultDto,
+  ICommandLineArgument,
   IDynamicModule,
   ScheduleDto,
 } from '../core/openapi';
@@ -87,6 +88,16 @@ export class BackupState {
     );
   });
 
+  selectedHttpOptions = signal<FormView[]>([]);
+  notSelectedHttpOptions = computed<FormView[]>(() => {
+    const httpOptions = this.httpOptions();
+    const selectedHttpOptions = this.selectedHttpOptions() ?? [];
+
+    return httpOptions.filter(
+      (formPair) => selectedHttpOptions.findIndex((pair) => pair.name === formPair.name) === -1
+    );
+  });
+
   sourceDataFormSignal = toSignal(this.sourceDataForm.valueChanges);
   destinationFormSignal = toSignal(this.destinationForm.valueChanges);
   generalFormSignal = toSignal(this.generalForm.valueChanges);
@@ -94,19 +105,26 @@ export class BackupState {
   scheduleFormSignal = toSignal(this.scheduleForm.valueChanges);
 
   destinationOptions = computed(() => this.#sysinfo.sysInfoSignal()?.BackendModules ?? []);
+  httpOptions = computed(
+    () =>
+      this.#sysinfo
+        .sysInfoSignal()
+        ?.GenericModules?.find((x) => x.Key === 'http-options')
+        ?.Options?.map(this.#mapCommandLineArgumentsToFormViews) ?? []
+  );
   advancedOptions = computed(() => {
-    const options = this.#sysinfo.sysInfoSignal()?.Options ?? [];
-
-    return options.map((x) => {
-      return {
-        name: x.Name as string,
-        type: x.Type as ArgumentType,
-        shortDescription: x.ShortDescription ?? undefined,
-        longDescription: x.LongDescription ?? undefined,
-        options: x.ValidValues,
-      } as FormView;
-    });
+    return this.#sysinfo.sysInfoSignal()?.Options?.map(this.#mapCommandLineArgumentsToFormViews) ?? [];
   });
+
+  #mapCommandLineArgumentsToFormViews(x: ICommandLineArgument) {
+    return {
+      name: x.Name as string,
+      type: x.Type as ArgumentType,
+      shortDescription: x.ShortDescription ?? undefined,
+      longDescription: x.LongDescription ?? undefined,
+      options: x.ValidValues,
+    } as FormView;
+  }
   encryptionOptions = computed(() => {
     const encryptionOptions = this.#sysinfo.sysInfoSignal()?.EncryptionModules ?? [];
     return [NONE_OPTION, ...encryptionOptions];
@@ -135,9 +153,37 @@ export class BackupState {
     this.selectedAdvancedFormPair.set([...this.selectedAdvancedFormPair(), item]);
   }
 
+  addHttpOption(item: FormView, formArrayIndex: number, overrideDefaultValue?: any) {
+    const group = this.destinationForm.controls.destinations.controls.at(formArrayIndex)?.controls.advanced!;
+    const defaultValue = overrideDefaultValue ?? item.defaultValue;
+
+    this.createFormField(group, item, defaultValue);
+
+    this.selectedHttpOptions.set([...this.selectedHttpOptions(), item]);
+  }
+
   removeAdvancedFormPair(item: FormView, formArrayIndex: number) {
     this.destinationForm.controls.destinations.controls.at(formArrayIndex)?.controls.advanced.removeControl(item.name);
-    this.selectedAdvancedFormPair.update((y) => {
+    const isSelected = this.selectedAdvancedFormPair().findIndex((x) => x.name === item.name) !== -1;
+
+    if (isSelected) {
+      this.selectedAdvancedFormPair.update((y) => {
+        y = y.filter((x) => x.name !== item.name);
+
+        return y;
+      });
+    } else {
+      this.selectedHttpOptions.update((y) => {
+        y = y.filter((x) => x.name !== item.name);
+
+        return y;
+      });
+    }
+  }
+
+  removeHttpOption(item: FormView, formArrayIndex: number) {
+    this.destinationForm.controls.destinations.controls.at(formArrayIndex)?.controls.advanced.removeControl(item.name);
+    this.selectedHttpOptions.update((y) => {
       y = y.filter((x) => x.name !== item.name);
 
       return y;
@@ -265,6 +311,27 @@ export class BackupState {
     }
   }
 
+  updateFieldsFromTargetUrl(targetUrl: string) {
+    this.#clearDestinationForm();
+
+    setTimeout(() => {
+      this.#mapTargetUrlToDestinationForm(targetUrl);
+    });
+  }
+
+  #clearDestinationForm() {
+    this.destinationFormPair.set({
+      oauthField: null,
+      custom: [],
+      dynamic: [],
+      advanced: [],
+    });
+    this.selectedAdvancedFormPair.set([]);
+    this.selectedHttpOptions.set([]);
+    this.destinationForm.controls.destinations.clear();
+    this.destinationForm.reset();
+  }
+
   #mapSourceDataToForm(backup: BackupDto) {
     const path = backup.Sources ?? '';
     const filters = backup.Filters?.map((x) => `${x.Include ? '' : '-'}${x.Expression}`) ?? [];
@@ -297,7 +364,8 @@ export class BackupState {
     const targetUrlData = backup.TargetURL ? fromTargetPath(backup.TargetURL) : null;
 
     if (targetUrlData) {
-      const createAdvancedFields = true;
+      const createAdvancedFormFields = true;
+
       this.addDestinationFormGroup(
         targetUrlData.destinationType,
         {
@@ -305,20 +373,42 @@ export class BackupState {
           dynamic: targetUrlData.dynamic,
           advanced: targetUrlData.advanced,
         },
-        createAdvancedFields
+        createAdvancedFormFields
+      );
+    }
+  }
+
+  #mapTargetUrlToDestinationForm(targetUrl: string) {
+    const targetUrlData = fromTargetPath(targetUrl);
+
+    if (targetUrlData) {
+      const createAdvancedFormFields = true;
+
+      this.addDestinationFormGroup(
+        targetUrlData.destinationType,
+        {
+          custom: targetUrlData.custom,
+          dynamic: targetUrlData.dynamic,
+          advanced: targetUrlData.advanced,
+        },
+        createAdvancedFormFields
       );
     }
   }
 
   #mapGeneralToForm(backup: BackupDto) {
     const encryptionModule = backup.Settings?.find((x) => x.Name === 'encryption-module');
-    const encryption = encryptionModule?.Value && encryptionModule.Value.length ? encryptionModule.Value : 'none';
+    const encryption = encryptionModule?.Value && encryptionModule.Value.length ? encryptionModule.Value : '';
 
-    this.generalForm.patchValue({
+    const baseUpdate: Partial<typeof this.generalForm.value> = {
       name: backup.Name ?? '',
       description: backup.Description ?? '',
-      encryption,
-    });
+    };
+
+    if (encryption && encryption !== '') {
+      baseUpdate.encryption = encryption;
+    }
+    this.generalForm.patchValue(baseUpdate);
   }
 
   #mapScheduleToForm(schedule: ScheduleDto | null) {
@@ -417,7 +507,7 @@ export class BackupState {
     const pathFilters = sourceDataFormValue.path?.split('\0') ?? [];
 
     const encryption =
-      generalFormValue.encryption === 'none'
+      generalFormValue.encryption === ''
         ? {
             Name: '--no-encryption',
             Value: 'True',
@@ -554,6 +644,11 @@ export class BackupState {
     const group = this.optionsForm.controls.advancedOptions;
 
     this.createFormField(group, option, defaultValueOverride ?? option.defaultValue);
+    this.selectedOptions.update((y) => {
+      y.push(option);
+
+      return y;
+    });
   }
 
   createFormField(group: FormGroup, element: FormView, defaultValue?: any) {
@@ -607,8 +702,9 @@ export class BackupState {
     }
   }
 
-  addDestinationFormGroup(key: IDynamicModule['Key'], defaults?: DestinationDefault, createAdvancedFields = false) {
+  addDestinationFormGroup(key: IDynamicModule['Key'], defaults?: DestinationDefault, createAdvancedFormFields = false) {
     const item = this.destinationOptions().find((x) => x.Key === key);
+    const httpOptions = this.httpOptions();
 
     if (!item || !item.Options) return;
 
@@ -709,13 +805,33 @@ export class BackupState {
             }
           : newField;
 
-        if (createAdvancedFields && passedDefaultValue && passedDefaultValue !== element.DefaultValue) {
+        if (createAdvancedFormFields && passedDefaultValue) {
           this.createFormField(advancedGroup, patchedNewField, defaultValue);
+          this.selectedAdvancedFormPair.update((y) => {
+            y.push(patchedNewField);
+
+            return y;
+          });
         }
 
         this.destinationFormPair.update((y) => {
           y.advanced.push(patchedNewField);
 
+          return y;
+        });
+      }
+    }
+
+    for (let index = 0; index < httpOptions.length; index++) {
+      const element = httpOptions[index];
+
+      const passedDefaultValue = defaults?.advanced[element.name as string];
+      const defaultValue = passedDefaultValue ?? element.defaultValue;
+
+      if (createAdvancedFormFields && passedDefaultValue) {
+        this.createFormField(advancedGroup, element, defaultValue);
+        this.selectedHttpOptions.update((y) => {
+          y.push(element);
           return y;
         });
       }
@@ -740,9 +856,10 @@ export class BackupState {
 
   #resetAllForms() {
     this.generalForm.reset();
+    this.destinationForm.controls.destinations.clear();
+    this.destinationForm.reset();
     this.sourceDataForm.reset();
     this.scheduleForm.reset();
-    this.destinationForm.reset();
     this.optionsForm.reset();
   }
 }
