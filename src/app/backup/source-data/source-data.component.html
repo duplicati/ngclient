@@ -1,13 +1,12 @@
-@if (finishedLoading()) {
-  <form [formGroup]="sourceDataForm" #formRef (submit)="next()">
-    <h3 class="title-30">Source Data</h3>
+<form [formGroup]="sourceDataForm" #formRef (submit)="next()">
+  <h3 class="title-30">Source Data</h3>
 
-    <app-file-tree [multiSelect]="true" [startingPath]="getPath()">
-      <label for="path">Folder path</label>
-      <input type="text" id="path" tabindex="4" placeholder="Path" formControlName="path" />
-    </app-file-tree>
+  <app-file-tree [multiSelect]="true" [startingPath]="getPath()">
+    <label for="path">Folder path</label>
+    <input type="text" id="path" tabindex="4" placeholder="Path" formControlName="path" />
+  </app-file-tree>
 
-    <!-- <app-toggle-card formArrayName="filters" [isActive]="true">
+  <!-- <app-toggle-card formArrayName="filters" [isActive]="true">
     <ng-container title>Filters</ng-container>
 
     @for (filterGroup of sourceDataForm.controls.filters.controls; track $index) {
@@ -35,59 +34,56 @@
     <button type="button" spk-button (click)="addFilterGroup()">Add filter</button>
   </app-toggle-card> -->
 
-    <app-toggle-card formGroupName="excludes" [isActive]="true">
-      <ng-container title>Exclude</ng-container>
+  <app-toggle-card formGroupName="excludes" [isActive]="true">
+    <ng-container title>Exclude</ng-container>
 
-      <spk-toggle class="raised primary">
-        Hidden files
-        <input type="checkbox" placeholder="Hidden files" formControlName="hidden" />
-      </spk-toggle>
+    <spk-toggle class="raised primary">
+      Hidden files
+      <input type="checkbox" placeholder="Hidden files" formControlName="hidden" />
+    </spk-toggle>
 
-      <spk-toggle class="raised primary">
-        System files
-        <input type="checkbox" placeholder="System files" formControlName="system" />
-      </spk-toggle>
+    <spk-toggle class="raised primary">
+      System files
+      <input type="checkbox" placeholder="System files" formControlName="system" />
+    </spk-toggle>
 
-      <spk-toggle class="raised primary">
-        Temporary files
-        <input type="checkbox" placeholder="Temporary files" formControlName="temporary" />
-      </spk-toggle>
+    <spk-toggle class="raised primary">
+      Temporary files
+      <input type="checkbox" placeholder="Temporary files" formControlName="temporary" />
+    </spk-toggle>
 
-      <spk-toggle class="raised primary" [class.active]="filesLargerThan()" (click)="toggleFilesLargerThan()">
-        Files larger than
-      </spk-toggle>
+    <spk-toggle class="raised primary" [class.active]="filesLargerThan()" (click)="toggleFilesLargerThan()">
+      Files larger than
+    </spk-toggle>
 
-      @if (filesLargerThan()) {
-        <div class="row-inputs" formGroupName="filesLargerThan">
-          <spk-form-field>
-            <input type="number" formControlName="size" />
-          </spk-form-field>
+    @if (filesLargerThan()) {
+      <div class="row-inputs" formGroupName="filesLargerThan">
+        <spk-form-field>
+          <input type="number" formControlName="size" />
+        </spk-form-field>
 
-          <spk-select>
-            <input type="text" formControlName="unit" placeholder="Select an option..." />
+        <spk-select>
+          <input type="text" formControlName="unit" placeholder="Select an option..." />
 
-            <ng-container options>
-              @for (option of sizeOptions(); track $index) {
-                <option [value]="option">{{ option }}</option>
-              }
-            </ng-container>
-          </spk-select>
-        </div>
-      }
-    </app-toggle-card>
+          <ng-container options>
+            @for (option of sizeOptions(); track $index) {
+              <option [value]="option">{{ option }}</option>
+            }
+          </ng-container>
+        </spk-select>
+      </div>
+    }
+  </app-toggle-card>
 
-    <div class="form-actions">
-      <button spk-button type="button" (click)="goBack()">
-        <spk-icon>arrow-left</spk-icon>
-        Go back
-      </button>
+  <div class="form-actions">
+    <button spk-button type="button" (click)="goBack()">
+      <spk-icon>arrow-left</spk-icon>
+      Go back
+    </button>
 
-      <button spk-button class="raised primary" type="submit">
-        <spk-icon>arrow-right</spk-icon>
-        Continue
-      </button>
-    </div>
-  </form>
-
-  <!-- <pre>{{ sourceDataForm.value | json }}</pre> -->
-}
+    <button spk-button class="raised primary" type="submit">
+      <spk-icon>arrow-right</spk-icon>
+      Continue
+    </button>
+  </div>
+</form>

@@ -23,7 +23,6 @@ import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/con
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { DuplicatiServerService, IDynamicModule } from '../../core/openapi';
-import { SysinfoState } from '../../core/states/sysinfo.state';
 import { BackupState } from '../backup.state';
 import { FormView } from './destination.config';
 import { toTargetPath } from './destination.mapper';
@@ -96,7 +95,6 @@ export type DestinationFormGroupValue = ReturnType<typeof createDestinationFormG
 export default class DestinationComponent {
   #router = inject(Router);
   #route = inject(ActivatedRoute);
-  #sysinfo = inject(SysinfoState);
   #httpClient = inject(HttpClient);
   #dupServer = inject(DuplicatiServerService);
   #backupState = inject(BackupState);
@@ -104,8 +102,6 @@ export default class DestinationComponent {
 
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
 
-  sysIsLoaded = this.#sysinfo.isLoaded;
-  finishedLoading = this.#backupState.finishedLoading;
   destinationForm = this.#backupState.destinationForm;
   destinationFormPair = this.#backupState.destinationFormPair;
   selectedAdvancedFormPair = this.#backupState.selectedAdvancedFormPair;
@@ -217,14 +213,7 @@ export default class DestinationComponent {
                       path: targetUrl,
                     },
                   })
-                  .subscribe({
-                    next: (res) => {
-                      console.log('create folder res', res);
-                    },
-                    error: (err) => {
-                      console.error('create folder err', err);
-                    },
-                  });
+                  .subscribe();
               },
             });
           }

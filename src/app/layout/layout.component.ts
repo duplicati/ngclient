@@ -9,7 +9,6 @@ import {
 import LogoComponent from '../core/components/logo/logo.component';
 import ServiceHubComponent from '../core/components/service-hub/service-hub.component';
 import { BackupsState } from '../core/states/backups.state';
-import { SysinfoState } from '../core/states/sysinfo.state';
 import { TasksState } from '../core/states/tasks.state';
 import { LayoutState } from './layout.state';
 
@@ -37,13 +36,11 @@ export default class LayoutComponent {
   #layoutState = inject(LayoutState);
   #backupsState = inject(BackupsState);
   #taskState = inject(TasksState);
-  #sysinfoState = inject(SysinfoState);
 
   isDarkMode = this.#layoutState.isDarkMode;
 
   ngOnInit() {
     this.#backupsState.getBackups();
-    this.#sysinfoState.preloadSystemInfo();
     // this.#taskState.getTasks();
   }
 

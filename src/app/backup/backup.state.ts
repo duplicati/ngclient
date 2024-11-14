@@ -2,19 +2,17 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { finalize, take } from 'rxjs';
+import { finalize } from 'rxjs';
 import {
   ArgumentType,
   BackupAndScheduleInputDto,
   BackupDto,
   DuplicatiServerService,
-  GetBackupResultDto,
   ICommandLineArgument,
   IDynamicModule,
   ScheduleDto,
 } from '../core/openapi';
 import { TimespanLiteralsService } from '../core/services/timespan-literals.service';
-import { BackupsState } from '../core/states/backups.state';
 import { SysinfoState } from '../core/states/sysinfo.state';
 import { createDestinationForm, createDestinationFormGroup, Size } from './destination/destination.component';
 import { CustomFormView, DESTINATION_CONFIG, FormView } from './destination/destination.config';
@@ -53,7 +51,6 @@ export class BackupState {
   #sysinfo = inject(SysinfoState);
   #dupServer = inject(DuplicatiServerService);
   #timespanLiteralService = inject(TimespanLiteralsService);
-  #backupsState = inject(BackupsState);
 
   generalForm = createGeneralForm();
   sourceDataForm = createSourceDataForm();
@@ -64,8 +61,6 @@ export class BackupState {
   isDraft = signal(false);
   backupId = signal<'new' | 'string' | null>(null);
   isSubmitting = signal(false);
-  loadingBackup = signal(false);
-  loadingDefaults = signal(true);
   finishedLoading = signal(false);
   backupDefaults = signal<any>(null);
   isNew = computed(() => this.backupId() === 'new');
@@ -104,16 +99,16 @@ export class BackupState {
   encryptionFieldSignal = toSignal(this.generalForm.controls.encryption.valueChanges);
   scheduleFormSignal = toSignal(this.scheduleForm.valueChanges);
 
-  destinationOptions = computed(() => this.#sysinfo.sysInfoSignal()?.BackendModules ?? []);
+  destinationOptions = computed(() => this.#sysinfo.backendModules() ?? []);
   httpOptions = computed(
     () =>
       this.#sysinfo
-        .sysInfoSignal()
+        .systemInfo()
         ?.GenericModules?.find((x) => x.Key === 'http-options')
         ?.Options?.map(this.#mapCommandLineArgumentsToFormViews) ?? []
   );
   advancedOptions = computed(() => {
-    return this.#sysinfo.sysInfoSignal()?.Options?.map(this.#mapCommandLineArgumentsToFormViews) ?? [];
+    return this.#sysinfo.systemInfo()?.Options?.map(this.#mapCommandLineArgumentsToFormViews) ?? [];
   });
 
   #mapCommandLineArgumentsToFormViews(x: ICommandLineArgument) {
@@ -126,7 +121,7 @@ export class BackupState {
     } as FormView;
   }
   encryptionOptions = computed(() => {
-    const encryptionOptions = this.#sysinfo.sysInfoSignal()?.EncryptionModules ?? [];
+    const encryptionOptions = this.#sysinfo.systemInfo()?.EncryptionModules ?? [];
     return [NONE_OPTION, ...encryptionOptions];
   });
 
@@ -198,16 +193,6 @@ export class BackupState {
     });
   }
 
-  init(id: 'new' | 'string' = 'new', isDraft = false) {
-    this.backupId.set(id);
-
-    if (id !== 'new') {
-      this.getBackup(id, isDraft);
-    } else {
-      this.getDefaults();
-    }
-  }
-
   submit() {
     this.isSubmitting.set(true);
 
@@ -257,68 +242,6 @@ export class BackupState {
     this.#router.navigate(['/']);
   }
 
-  getDefaults() {
-    this.loadingDefaults.set(true);
-
-    this.#dupServer
-      .getApiV1Backupdefaults()
-      .pipe(
-        take(1),
-        finalize(() => this.loadingDefaults.set(false))
-      )
-      .subscribe({
-        next: (res: any) => {
-          this.#mapScheduleToForm(res.Schedule);
-          this.#mapOptionsToForms(res.Backup);
-          this.backupDefaults.set(res);
-          this.finishedLoading.set(true);
-        },
-      });
-  }
-
-  getBackup(id: string, isDraft = false) {
-    this.loadingBackup.set(true);
-
-    const onBackup = (res: GetBackupResultDto) => {
-      this.#mapScheduleToForm(res.Schedule ?? null);
-
-      if (res.Backup) {
-        this.#mapGeneralToForm(res.Backup);
-        this.#mapDestinationToForm(res.Backup);
-        this.#mapSourceDataToForm(res.Backup);
-        this.#mapOptionsToForms(res.Backup);
-      }
-
-      this.finishedLoading.set(true);
-    };
-
-    if (isDraft) {
-      this.isDraft.set(isDraft);
-
-      const backup = this.#backupsState.draftBackups().find((x) => x.id === id);
-
-      if (!backup) {
-        this.loadingBackup.set(false);
-
-        // TODO alert the user
-
-        alert('Backup not found');
-        return;
-      }
-
-      onBackup(backup.data);
-    } else {
-      this.#dupServer
-        .getApiV1BackupById({
-          id,
-        })
-        .pipe(finalize(() => this.loadingBackup.set(false)))
-        .subscribe({
-          next: onBackup,
-        });
-    }
-  }
-
   updateFieldsFromTargetUrl(targetUrl: string) {
     this.#clearDestinationForm();
 
@@ -340,7 +263,7 @@ export class BackupState {
     this.destinationForm.reset();
   }
 
-  #mapSourceDataToForm(backup: BackupDto) {
+  mapSourceDataToForm(backup: BackupDto) {
     const path = backup.Sources ?? '';
     const filters = backup.Filters?.map((x) => `${x.Include ? '' : '-'}${x.Expression}`) ?? [];
     const excludes = backup.Settings?.find((x) => x.Name === '--exclude-files-attributes')?.Value ?? '';
@@ -368,7 +291,7 @@ export class BackupState {
     this.sourceDataForm.patchValue(sourceObj as any);
   }
 
-  #mapDestinationToForm(backup: BackupDto) {
+  mapDestinationToForm(backup: BackupDto) {
     const targetUrlData = backup.TargetURL ? fromTargetPath(backup.TargetURL) : null;
 
     if (targetUrlData) {
@@ -404,7 +327,7 @@ export class BackupState {
     }
   }
 
-  #mapGeneralToForm(backup: BackupDto) {
+  mapGeneralToForm(backup: BackupDto) {
     const encryptionModule = backup.Settings?.find((x) => x.Name === 'encryption-module');
     const encryption = encryptionModule?.Value && encryptionModule.Value.length ? encryptionModule.Value : '';
 
@@ -419,7 +342,7 @@ export class BackupState {
     this.generalForm.patchValue(baseUpdate);
   }
 
-  #mapScheduleToForm(schedule: ScheduleDto | null) {
+  mapScheduleToForm(schedule: ScheduleDto | null) {
     if (!schedule) {
       this.scheduleForm.patchValue({
         autoRun: true,
@@ -451,7 +374,7 @@ export class BackupState {
     this.scheduleForm.patchValue(patchObj);
   }
 
-  #mapOptionsToForms(backup: BackupDto) {
+  mapOptionsToForms(backup: BackupDto) {
     const modulesToIgnore = ['--no-encryption', '--exclude-files-attributes', '--skip-files-larger-than'];
     const advancedOptions = this.advancedOptions();
 

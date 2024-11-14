@@ -29,7 +29,7 @@
   </div>
 </spk-stepper>
 
-@if (loadingBackup() && !sysinfoLoaded() && !finishedLoading()) {
+@if (!finishedLoading()) {
   <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
 } @else {
   <section>

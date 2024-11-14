@@ -1,7 +1,9 @@
 import { inject } from '@angular/core';
 import { Router, Routes } from '@angular/router';
+import { zip } from 'rxjs';
 import { AppAuthState } from './core/states/app-auth.state';
 import { SysinfoState } from './core/states/sysinfo.state';
+import { WebModulesState } from './core/states/webmodules.state';
 
 export const routes: Routes = [
   {
@@ -18,6 +20,11 @@ export const routes: Routes = [
       },
       {
         path: '',
+        canActivate: [
+          () => {
+            return zip(inject(SysinfoState).preload(true) as any, inject(WebModulesState).preload(true) as any);
+          },
+        ],
         loadComponent: () => import('./layout/layout.component'),
         children: [
           {
@@ -38,13 +45,11 @@ export const routes: Routes = [
           },
           {
             path: 'backup-draft/:id',
-            canActivate: [() => inject(SysinfoState).sysInfoObservable()],
             loadComponent: () => import('./backup/backup.component'),
             loadChildren: () => import('./backup/backup.routes'),
           },
           {
             path: 'backup/:id',
-            canActivateChild: [() => inject(SysinfoState).sysInfoObservable()],
             loadComponent: () => import('./backup/backup.component'),
             loadChildren: () => import('./backup/backup.routes'),
           },
