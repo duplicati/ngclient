@@ -104,12 +104,13 @@ export const DESTINATION_CONFIG: DestinationConfig = {
       },
     },
     dynamicFields: [
-      'use-ssl',
       {
         name: 's3-server-name',
+        shortDescription: 'Server',
         type: 'NonValidatedSelectableString', // Convert to string before submitting
         loadOptions: (injector: Injector) => injector.get(WebModulesService).s3Providers,
       },
+      'use-ssl',
       'auth-username',
       'auth-password',
     ],

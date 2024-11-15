@@ -84,7 +84,7 @@ const mappings = {
     to: (fields: any): string => {
       const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
-      return `${fields.destinationType}://${fields.custom.bucket}${fields.custom.path}${urlParams}`;
+      return `${fields.destinationType}://${fields.custom.bucket}${fields.custom.path.startsWith('/') ? fields.custom.path : '/' + fields.custom.path}${urlParams}`;
     },
     from: (destinationType: string, urlObj: URL, plainPath: string) => {
       return <ValueOfDestinationFormGroup>{
