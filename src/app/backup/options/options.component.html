@@ -290,9 +290,9 @@
               id="destination-{{ item.formGroupName }}-{{ item.index }}"
               formControlName="{{ item.formView.name }}" />
 
-            <span error>
-              <!-- {{ destinationForm.controls.destinations.controls[index]?.hasError('pattern') }} -->
-            </span>
+            <!-- <span error>
+              {{ destinationForm.controls.destinations.controls[index]?.hasError('pattern') }}
+            </span> -->
           </spk-form-field>
         }
       </ng-container>
@@ -309,7 +309,7 @@
       Go back
     </button>
 
-    <button spk-button class="raised primary" type="submit">
+    <button spk-button class="raised primary" [class.loader]="isSubmitting()" type="submit">
       <spk-icon>arrow-right</spk-icon>
       Submit
     </button>

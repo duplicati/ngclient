@@ -99,23 +99,19 @@ const mappings = {
   },
   gcs: {
     to: (fields: any): string => {
-      const bucket = fields.dynamic['gcs-location'] ?? '';
-
-      delete fields.dynamic['gcs-location'];
-
       const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
-      return `${fields.destinationType}://${bucket}${urlParams}`;
+      return `${fields.destinationType}://${fields.custom.path}${urlParams}`;
     },
     from: (destinationType: string, urlObj: URL, plainPath: string) => {
       const { advanced, dynamic } = handleSearchParams(destinationType, urlObj);
       return <ValueOfDestinationFormGroup>{
         destinationType,
-        advanced,
-        dynamic: {
-          ...dynamic,
-          'gcs-location': urlObj.hostname + urlObj.pathname,
+        custom: {
+          path: urlObj.hostname + urlObj.pathname,
         },
+        dynamic,
+        advanced,
       };
     },
   },

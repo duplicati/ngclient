@@ -1,6 +1,15 @@
 import { JsonPipe, NgTemplateOutlet } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  ElementRef,
+  inject,
+  Injector,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -99,6 +108,7 @@ export default class DestinationComponent {
   #dupServer = inject(DuplicatiServerService);
   #backupState = inject(BackupState);
   #dialog = inject(SparkleDialogService);
+  injector = inject(Injector);
 
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
 
@@ -142,10 +152,6 @@ export default class DestinationComponent {
   }
 
   targetUrl = computed(() => {
-    const destinationFormSignal = this.destinationFormSignal();
-
-    // console.log(destinationFormSignal);
-
     const targetUrls = this.#backupState.getCurrentTargetUrl();
     const targetUrl = targetUrls[0];
 

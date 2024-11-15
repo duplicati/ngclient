@@ -293,7 +293,7 @@
                     formControlName="{{ item.formView.name }}" />
 
                   @if (item.oauthField === item.formView.name) {
-                    <span prefix class="link" (click)="oauthStartTokenCreation(item.formViewType)">AuthID</span>
+                    <span prefix class="link" (click)="oauthStartTokenCreation(item.destinationType)">AuthID</span>
                   } @else {
                     <spk-icon prefix>password</spk-icon>
                   }
@@ -337,6 +337,35 @@
                   <ng-container options>
                     @for (option of item.formView.options; track $index) {
                       <option [value]="option">{{ option }}</option>
+                    }
+                  </ng-container>
+                </spk-select>
+              } @else if (item.formView.type === 'NonValidatedSelectableString') {
+                <spk-select [isFreeText]="true">
+                  <label
+                    for="destination-{{ item.formGroupName }}-{{ item.index }}-{{
+                      item.asHttpOptions ? 'http' : 'other'
+                    }}">
+                    {{ item.formView.shortDescription ?? item.formView.name }}
+
+                    @if (item.formView.longDescription) {
+                      <spk-tooltip class="primary" [message]="item.formView.longDescription">
+                        <spk-icon>question</spk-icon>
+                      </spk-tooltip>
+                    }
+                  </label>
+                  <input
+                    type="search"
+                    id="destination-{{ item.formGroupName }}-{{ item.index }}-{{
+                      item.asHttpOptions ? 'http' : 'other'
+                    }}"
+                    formControlName="{{ item.formView.name }}" />
+
+                  <ng-container options>
+                    @for (option of item.formView.loadOptions(injector)(); track $index) {
+                      <option [value]="option.value">
+                        {{ option.key }} {{ option.value ? '(' + option.value + ')' : '' }}
+                      </option>
                     }
                   </ng-container>
                 </spk-select>

@@ -518,8 +518,7 @@ export class BackupState {
           })),
       },
       Schedule: scheduleFormValue.autoRun
-        ? null
-        : {
+        ? {
             Repeat: scheduleRepeat,
             Time: scheduleFormValue.nextTime?.date
               ? new Date(
@@ -527,7 +526,8 @@ export class BackupState {
                 ).toISOString()
               : null,
             AllowedDays: allowedDays,
-          },
+          }
+        : null,
       // ExtraOptions: {
       //   BackupID: this.backupId(),
       //   Operation: this.backupId() ? 'Update' : 'Create',
@@ -589,6 +589,7 @@ export class BackupState {
       element.type === 'FolderTree' ||
       element.type === 'Password' ||
       element.type === 'Enumeration' ||
+      element.type === 'NonValidatedSelectableString' ||
       element.type === 'Path'
     ) {
       group.addControl(element.name as string, fb.control(defaultValue));

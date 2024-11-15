@@ -16,7 +16,6 @@ import {
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { SettingInputDto } from '../../core/openapi';
-import { SysinfoState } from '../../core/states/sysinfo.state';
 import { BackupState } from '../backup.state';
 import { FormView } from '../destination/destination.config';
 
@@ -99,19 +98,17 @@ export const createAdvancedOption = (name: string | null | undefined, defaultVal
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class OptionsComponent {
-  #sysinfo = inject(SysinfoState);
   #backupState = inject(BackupState);
   #router = inject(Router);
   #route = inject(ActivatedRoute);
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
 
   optionsForm = this.#backupState.optionsForm;
-  finishedLoading = this.#backupState.finishedLoading;
   selectedOptions = this.#backupState.selectedOptions;
   nonSelectedOptions = this.#backupState.nonSelectedOptions;
+  isSubmitting = this.#backupState.isSubmitting;
   sizeOptions = signal(SIZE_OPTIONS);
   rentationOptions = signal(RETENTION_OPTIONS);
-  sysinfoLoaded = this.#sysinfo.isLoaded;
 
   oauthStartTokenCreation(_: any) {}
   getFormFieldValue(
