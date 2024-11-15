@@ -103,7 +103,28 @@ export const DESTINATION_CONFIG: DestinationConfig = {
         formElement: (defaultValue?: any) => fb.control<string>(defaultValue ?? ''),
       },
     },
-    dynamicFields: ['use-ssl', 's3-server-name', 'auth-username', 'auth-password'],
+    dynamicFields: [
+      'use-ssl',
+      {
+        name: 's3-server-name',
+        type: 'NonValidatedSelectableString', // Convert to string before submitting
+        loadOptions: (injector: Injector) => injector.get(WebModulesService).s3Providers,
+      },
+      'auth-username',
+      'auth-password',
+    ],
+    advancedFields: [
+      {
+        name: 's3-client',
+        type: 'Enumeration', // Convert to string before submitting
+        options: ['aws', 'minio'],
+      },
+      {
+        name: 's3-storage-class',
+        type: 'NonValidatedSelectableString', // Convert to string before submitting
+        loadOptions: (injector: Injector) => injector.get(WebModulesService).s3StorageClasses,
+      },
+    ],
   },
   gcs: {
     oauthField: 'authid',
@@ -120,12 +141,12 @@ export const DESTINATION_CONFIG: DestinationConfig = {
       {
         name: 'gcs-location',
         type: 'NonValidatedSelectableString', // Convert to string before submitting
-        loadOptions: (injector: Injector) => injector.get(WebModulesService).gcsConfigLocations,
+        loadOptions: (injector: Injector) => injector.get(WebModulesService).gcsLocations,
       },
       {
         name: 'gcs-storage-class',
         type: 'NonValidatedSelectableString', // Convert to string before submitting
-        loadOptions: (injector: Injector) => injector.get(WebModulesService).gcsConfigStorageClasses,
+        loadOptions: (injector: Injector) => injector.get(WebModulesService).gcsStorageClasses,
       },
       'authid',
     ],

@@ -17,7 +17,7 @@
 
 import { inject, Injectable } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { map, Observable } from 'rxjs';
+import { map } from 'rxjs';
 import { DuplicatiServerService, WebModuleOutputDto } from '../openapi';
 
 export type WebModuleOption = { key: string; value: any };
@@ -28,17 +28,19 @@ export type WebModuleOption = { key: string; value: any };
 export class WebModulesService {
   #dupServer = inject(DuplicatiServerService);
 
-  #defaultMapResultObjToArray(x: WebModuleOutputDto) {
-    return (
-      (x.Result &&
-        typeof x.Result === 'object' &&
-        Object.entries(x.Result).map(([key, value]) => ({
-          key,
-          value,
-        }))) ??
-      []
-    );
-  }
+  s3Providers = toSignal(this.getS3Config('Providers'));
+  s3Regions = toSignal(this.getS3Config('Regions'));
+  s3RegionHosts = toSignal(this.getS3Config('RegionHosts'));
+  s3StorageClasses = toSignal(this.getS3Config('StorageClasses'));
+
+  storjSatellites = toSignal(this.getStorjConfig('Satellites'));
+  storjAuthenticationMethods = toSignal(this.getStorjConfig('AuthenticationMethods'));
+
+  openstackProviders = toSignal(this.getOpenstackConfig('Providers'));
+  openstackVersions = toSignal(this.getOpenstackConfig('Versions'));
+
+  gcsLocations = toSignal(this.getGcsConfig('Locations'));
+  gcsStorageClasses = toSignal(this.getGcsConfig('StorageClasses'));
 
   getS3Config(config: 'Providers' | 'Regions' | 'RegionHosts' | 'StorageClasses') {
     return this.#dupServer
@@ -94,9 +96,6 @@ export class WebModulesService {
       .pipe(map((x) => this.#defaultMapResultObjToArray(x)));
   }
 
-  gcsConfigLocations = toSignal(this.getGcsConfig('Locations'));
-  gcsConfigStorageClasses = toSignal(this.getGcsConfig('StorageClasses'));
-
   getGcsConfig(config: 'Locations' | 'StorageClasses') {
     return this.#dupServer
       .postApiV1WebmoduleByModulekey({
@@ -105,6 +104,16 @@ export class WebModulesService {
           'gcs-config': config,
         },
       })
-      .pipe(map((x) => this.#defaultMapResultObjToArray(x))) as Observable<WebModuleOption[]>;
+      .pipe(map((x) => this.#defaultMapResultObjToArray(x)));
+  }
+
+  #defaultMapResultObjToArray(x: WebModuleOutputDto) {
+    return ((x.Result &&
+      typeof x.Result === 'object' &&
+      Object.entries(x.Result).map(([key, value]) => ({
+        key,
+        value,
+      }))) ??
+      []) as WebModuleOption[];
   }
 }
