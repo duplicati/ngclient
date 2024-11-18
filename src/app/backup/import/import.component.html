@@ -3,12 +3,18 @@
     Import backup configuration
 
     <div class="actions">
-      <button spk-button class="outlined" [routerLink]="['/']">
+      <button spk-button type="button" class="outlined" [routerLink]="['/']">
         <spk-icon>arrow-left</spk-icon>
         Back
       </button>
 
-      <button spk-button class="raised primary" (click)="submit()" [class.loading]="isImporting()">
+      <button
+        spk-button
+        type="submit"
+        class="raised primary"
+        (click)="submit()"
+        [disabled]="isImporting()"
+        [class.loader]="isImporting()">
         <spk-icon>download-simple</spk-icon>
         Import
       </button>

@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { delay, finalize, take, tap } from 'rxjs';
+import { finalize, take, tap } from 'rxjs';
 import { DuplicatiServerService } from '../openapi';
 import { Subscribed } from '../types/subscribed';
 
@@ -69,12 +69,10 @@ export class BackupsState {
 
     this.#timestamp = now;
     this.#backupsLoading.set(true);
-
     this.#dupServer
       .getApiV1Backups()
       .pipe(
         take(1),
-        delay(1000),
         tap((res) => this.#backups.set(res)),
         finalize(() => this.#backupsLoading.set(false))
       )
