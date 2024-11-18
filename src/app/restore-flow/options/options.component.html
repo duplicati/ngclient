@@ -49,7 +49,7 @@
       Go back
     </button>
 
-    <button spk-button class="raised primary" type="submit">
+    <button spk-button [class.loader]="isSubmitting()" class="raised primary" type="submit">
       <spk-icon>arrow-right</spk-icon>
       Submit
     </button>

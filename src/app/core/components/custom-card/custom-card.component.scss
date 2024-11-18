@@ -1,0 +1,111 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
+:host {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--base-level-20);
+
+  body.dark & {
+    .card:before {
+      background: radial-gradient(rgba(var(--primary-rgb-900), 1) 0%, #00000000 60%);
+    }
+  }
+}
+
+.card {
+  max-width: 480px;
+  width: 100%;
+  position: relative;
+  z-index: 100;
+  background-color: var(--base-level-10);
+  border-radius: var(--shape-5);
+  box-shadow: var(--box-shadow-40);
+  border: 1px solid var(--base-level-30);
+  overflow: hidden;
+
+  &:before {
+    content: '';
+    position: absolute;
+    height: 480px;
+    transform: translateY(-285px);
+    left: 0;
+    right: 0;
+    z-index: -2;
+    background: radial-gradient(rgba(var(--primary-rgb-100), 1) 0%, #00000000 60%);
+  }
+
+  img.noise {
+    position: absolute;
+    height: 480px;
+    width: 100%;
+    transform: translateY(-285px);
+    left: 0;
+    right: 0;
+    z-index: -1;
+    mask-image: radial-gradient(rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 60%);
+  }
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: p2r(32 32 0);
+  gap: 12px;
+  position: relative;
+  z-index: 10;
+}
+
+.header-title {
+  font: var(--title-30);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  img {
+    height: 28px;
+    filter: drop-shadow(0 2px 3px rgb(0 0 0 / 0.3));
+  }
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: p2r(32);
+  gap: p2r(40);
+  position: relative;
+  z-index: 10;
+
+  footer {
+    font: var(--paragraph-40);
+    color: var(--base-level-60R);
+    text-align: center;
+    text-wrap: balance;
+  }
+}
+
+.bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url('/assets/backgrounds/base-bg.svg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  body.dark & {
+    opacity: 1;
+  }
+}
+
+footer:empty {
+  display: none;
+}

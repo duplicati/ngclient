@@ -40,7 +40,7 @@ export default class LayoutComponent {
   isDarkMode = this.#layoutState.isDarkMode;
 
   ngOnInit() {
-    this.#backupsState.getBackups();
+    this.#backupsState.getBackups(true);
     // this.#taskState.getTasks();
   }
 

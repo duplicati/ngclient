@@ -7,6 +7,7 @@ import {
   SparkleChipComponent,
   SparkleIconComponent,
   SparkleMenuComponent,
+  SparkleProgressBarComponent,
 } from '@sparkle-ui/core';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { DurationFormatPipe } from '../core/pipes/duration.pipe';
@@ -25,6 +26,7 @@ import { BackupsState } from '../core/states/backups.state';
     SparkleIconComponent,
     SparkleChipComponent,
     SparkleMenuComponent,
+    SparkleProgressBarComponent,
 
     JsonPipe,
     DatePipe,
@@ -39,6 +41,8 @@ export default class HomeComponent {
 
   backups = this.#backupsState.backups;
   backupsLoading = this.#backupsState.backupsLoading;
+  startingBackup = this.#backupsState.startingBackup;
+  deletingBackup = this.#backupsState.deletingBackup;
 
   ngOnInit() {
     this.#backupsState.getBackups(true);

@@ -66,9 +66,7 @@ export class RestoreFlowState {
       })
       .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
-        next: () => {
-          this.exit();
-        },
+        next: () => this.exit(),
         error: (err) => {
           console.error('restore error', err);
         },

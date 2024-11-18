@@ -22,6 +22,10 @@
   <ng-content select="label" ngProjectAs="label"></ng-content>
 
   <div class="browse-files" [class.visualize-accepted]="accepts()" #treeContainer>
+    @if (isLoading()) {
+      <spk-progress-bar class="indeterminate primary" />
+    }
+
     <ng-template #recursiveTree let-data>
       <spk-list [style.padding-left.rem]="data.level * 0.5">
         @for (node of data.children; track node.id) {

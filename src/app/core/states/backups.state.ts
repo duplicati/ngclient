@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { finalize, take } from 'rxjs';
+import { delay, finalize, take, tap } from 'rxjs';
 import { DuplicatiServerService } from '../openapi';
 import { Subscribed } from '../types/subscribed';
 
@@ -25,9 +25,13 @@ export class BackupsState {
   #draftBackups = signal<BackupDraftItem[]>([]);
   #backups = signal<BackupRes>([]);
   #backupsLoading = signal(false);
+  #startingBackup = signal(false);
+  #deletingBackup = signal<string | null>(null);
 
   backups = this.#backups.asReadonly();
   backupsLoading = this.#backupsLoading.asReadonly();
+  startingBackup = this.#startingBackup.asReadonly();
+  deletingBackup = this.#deletingBackup.asReadonly();
   draftBackups = this.#draftBackups.asReadonly();
 
   addDraftBackup(backup: BackupDraft) {
@@ -52,52 +56,58 @@ export class BackupsState {
     return this.#backups().find((x) => x.Backup?.ID === id) ?? null;
   }
 
-  getBackups(refresh = false) {
-    if (this.#timestamp && Date.now() - this.#timestamp < 100) {
+  // TODO add cache that can be force refreshed
+  getBackups(forceRefresh = false) {
+    const timestamp = this.#timestamp;
+    const now = Date.now();
+    const cacheTimeLimit = timestamp && now - timestamp < 15 * 60 * 1000;
+    const preventMultipleRequests = false; //timestamp && now - timestamp < 100;
+
+    if (preventMultipleRequests || (!forceRefresh && cacheTimeLimit && this.#backups().length)) {
       return;
     }
 
-    this.#timestamp = Date.now();
-
+    this.#timestamp = now;
     this.#backupsLoading.set(true);
 
     this.#dupServer
       .getApiV1Backups()
       .pipe(
         take(1),
+        delay(1000),
+        tap((res) => this.#backups.set(res)),
         finalize(() => this.#backupsLoading.set(false))
       )
-      .subscribe({
-        next: (res) => {
-          this.#backups.set(res);
-        },
-        error: (err) => {
-          console.error(err);
-        },
-      });
+      .subscribe();
   }
 
   startBackup(id: string) {
+    this.#startingBackup.set(true);
+
     this.#dupServer
       .postApiV1BackupByIdStart({
         id,
       })
-      .subscribe({
-        next: () => {
-          this.getBackups();
-        },
-      });
+      .pipe(
+        take(1),
+        tap(() => this.getBackups()),
+        finalize(() => this.#startingBackup.set(false))
+      )
+      .subscribe();
   }
 
   deleteBackup(id: string) {
+    this.#deletingBackup.set(id);
+
     this.#dupServer
       .deleteApiV1BackupById({
         id,
       })
-      .subscribe({
-        next: () => {
-          this.getBackups();
-        },
-      });
+      .pipe(
+        take(1),
+        tap(() => this.getBackups()),
+        finalize(() => this.#deletingBackup.set(null))
+      )
+      .subscribe();
   }
 }

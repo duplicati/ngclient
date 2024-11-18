@@ -18,6 +18,7 @@ import {
   SparkleFormFieldComponent,
   SparkleIconComponent,
   SparkleListComponent,
+  SparkleProgressBarComponent,
   SparkleToggleComponent,
 } from '@sparkle-ui/core';
 import { finalize, forkJoin, Observable } from 'rxjs';
@@ -69,6 +70,7 @@ type BackupSettings = {
     SparkleFormFieldComponent,
     SparkleListComponent,
     SparkleCheckboxComponent,
+    SparkleProgressBarComponent,
     NgTemplateOutlet,
     JsonPipe,
     FormsModule,

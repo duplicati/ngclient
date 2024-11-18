@@ -1,6 +1,6 @@
 import { effect, inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { take, tap } from 'rxjs';
+import { finalize, take, tap } from 'rxjs';
 import { DuplicatiServerService } from '../openapi';
 import { LOCALSTORAGE } from '../services/localstorage.token';
 
@@ -13,9 +13,11 @@ export class AppAuthState {
   #dupServer = inject(DuplicatiServerService);
   #token = signal<string | null>(this.#ls.getItemParsed<string>('token') ?? null);
   #tokenSetTime = signal<number | null>(this.#ls.getItemParsed<number>('tokenSetTime') ?? null);
+  #isLoggingOut = signal(false);
 
   tokenSetTime = this.#tokenSetTime.asReadonly();
   token = this.#token.asReadonly();
+  isLoggingOut = this.#isLoggingOut.asReadonly();
 
   #tokenEffect = effect(
     () => {
@@ -54,10 +56,13 @@ export class AppAuthState {
   }
 
   logout() {
+    this.#isLoggingOut.set(true);
+
     this.#dupServer
       .postApiV1AuthRefreshLogout()
       .pipe(
         take(1),
+        finalize(() => this.#isLoggingOut.set(false)),
         tap((_) => {
           this.#token.set(null);
           this.#ls.clearAll();

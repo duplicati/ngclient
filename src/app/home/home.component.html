@@ -30,79 +30,93 @@
   <div class="content">
     <h2>My backups</h2>
     <div class="backups">
-      @if (backups().length) {
-        @for (backup of backups(); track $index) {
-          <div class="backup">
-            <div class="text">
-              <h3>
-                {{ backup.Backup?.Name ?? 'Backup name missing' }}
-                <spk-icon>database</spk-icon>
-              </h3>
+      @defer (when !backupsLoading()) {
+        @if (backups().length) {
+          @for (backup of backups(); track $index) {
+            <div class="backup">
+              <div class="text">
+                <h3>
+                  {{ backup.Backup?.Name ?? 'Backup name missing' }}
+                  <spk-icon>database</spk-icon>
+                </h3>
 
-              <p>
-                <span>Last successful backup:</span>
-                {{ backup.Backup?.Metadata?.['LastBackupDate'] | date: 'short' }}
-                @if (backup.Backup?.Metadata?.['LastBackupDuration']) {
-                  - (took {{ backup.Backup?.Metadata?.['LastBackupDuration'] | durationFormat }})
-                } @else {
-                  N/A
-                }
-              </p>
+                <p>
+                  <span>Last successful backup:</span>
+                  {{ backup.Backup?.Metadata?.['LastBackupDate'] | date: 'short' }}
+                  @if (backup.Backup?.Metadata?.['LastBackupDuration']) {
+                    - (took {{ backup.Backup?.Metadata?.['LastBackupDuration'] | durationFormat }})
+                  } @else {
+                    N/A
+                  }
+                </p>
 
-              <p>
-                <span>Source:</span>
-                @if (backup.Backup?.Metadata?.['SourceSizeString']) {
-                  {{ backup.Backup?.Metadata?.['SourceSizeString'] }}
-                } @else {
-                  N/A
-                }
-              </p>
+                <p>
+                  <span>Source:</span>
+                  @if (backup.Backup?.Metadata?.['SourceSizeString']) {
+                    {{ backup.Backup?.Metadata?.['SourceSizeString'] }}
+                  } @else {
+                    N/A
+                  }
+                </p>
 
-              <p>
-                <span>Destination:</span>
-                @if (backup.Backup?.Metadata?.['TargetSizeString']) {
-                  {{ backup.Backup?.Metadata?.['TargetSizeString'] }}
-                } @else {
-                  N/A
-                }
-              </p>
+                <p>
+                  <span>Destination:</span>
+                  @if (backup.Backup?.Metadata?.['TargetSizeString']) {
+                    {{ backup.Backup?.Metadata?.['TargetSizeString'] }}
+                  } @else {
+                    N/A
+                  }
+                </p>
+              </div>
+
+              @if (backup.Backup?.Metadata?.['BackupListCount']) {
+                <spk-chip class="simple success">{{ backup.Backup?.Metadata?.['BackupListCount'] }} Version</spk-chip>
+              } @else {
+                <spk-chip class="simple">No version yet</spk-chip>
+              }
+
+              <div class="actions">
+                <button spk-button [class.loader]="startingBackup()" (click)="startBackup($any(backup.Backup?.ID))">
+                  <spk-icon>play-circle</spk-icon>
+                  Start
+                </button>
+
+                <button spk-button [routerLink]="['/backup', backup.Backup?.ID]">
+                  <spk-icon>pencil-simple</spk-icon>
+                </button>
+
+                <spk-menu [right]="true">
+                  <button spk-button><spk-icon>dots-three-vertical</spk-icon></button>
+
+                  <ng-container menu>
+                    <button #option [routerLink]="['/backup', backup.Backup?.ID, 'export']">
+                      Export
+                      <spk-icon>export</spk-icon>
+                    </button>
+
+                    <button
+                      #option
+                      [class.loader]="deletingBackup() === backup.Backup?.ID"
+                      (click)="deleteBackup(backup.Backup?.ID)">
+                      Delete
+                      <spk-icon>x-circle</spk-icon>
+                    </button>
+                  </ng-container>
+                </spk-menu>
+              </div>
             </div>
-
-            @if (backup.Backup?.Metadata?.['BackupListCount']) {
-              <spk-chip class="simple success">{{ backup.Backup?.Metadata?.['BackupListCount'] }} Version</spk-chip>
-            } @else {
-              <spk-chip class="simple">No version yet</spk-chip>
-            }
-
-            <div class="actions">
-              <button spk-button (click)="startBackup($any(backup.Backup?.ID))">
-                <spk-icon>play-circle</spk-icon>
-                Start
-              </button>
-              <button spk-button [routerLink]="['/backup', backup.Backup?.ID]">
-                <spk-icon>pencil-simple</spk-icon>
-              </button>
-
-              <spk-menu [right]="true">
-                <button spk-button><spk-icon>dots-three-vertical</spk-icon></button>
-
-                <ng-container menu>
-                  <button #option [routerLink]="['/backup', backup.Backup?.ID, 'export']">
-                    Export
-                    <spk-icon>export</spk-icon>
-                  </button>
-
-                  <button #option (click)="deleteBackup(backup.Backup?.ID)">
-                    Delete
-                    <spk-icon>x-circle</spk-icon>
-                  </button>
-                </ng-container>
-              </spk-menu>
-            </div>
-          </div>
+          }
+        } @else {
+          No backups founds
         }
-      } @else {
-        No backups founds
+      } @placeholder {
+        <div class="loading-list">
+          <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
+
+          <div class="text">
+            <h3>Loading backups...</h3>
+          </div>
+        </div>
       }
     </div>
   </div>

@@ -40,6 +40,14 @@
   overflow: auto;
   resize: vertical;
   background: var(--base-level-10);
+  position: relative;
+
+  spk-progress-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
 
   &.visualize-accepted {
     [action]:not(.accepted) {

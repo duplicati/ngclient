@@ -95,8 +95,6 @@ export default class GeneralComponent {
     () => {
       const encryptionField = this.encryptionFieldSignal();
 
-      console.log(encryptionField === '');
-
       if (encryptionField === '') {
         this.copiedPassword.set(false);
         this.showCopyPassword.set(false);

@@ -47,6 +47,7 @@ export default class OptionsComponent {
 
   optionsForm = this.#restoreFlowState.optionsForm;
   optionsFormSignal = this.#restoreFlowState.optionsFormSignal;
+  isSubmitting = this.#restoreFlowState.isSubmitting;
 
   goBack() {
     this.#router.navigate(['select-files'], { relativeTo: this.#route.parent });

@@ -1,1 +1,9 @@
-<p>logout works!</p>,
+<app-custom-card>
+  @if (isLoggingOut()) {
+    <h3>Logging out...</h3>
+  } @else {
+    <h3>You have successfully logged out your being redirected to login page.</h3>
+
+    <button spk-button class="raised primary" routerLink="/">Go to login page</button>
+  }
+</app-custom-card>
