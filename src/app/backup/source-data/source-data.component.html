@@ -1,89 +1,113 @@
+<pre>{{ sourceDataForm.value.path!.split('\0') | json }}</pre>
+
 <form [formGroup]="sourceDataForm" #formRef (submit)="next()">
-  <h3 class="title-30">Source Data</h3>
+  <div class="left">
+    <h3 class="title-30">Source Data</h3>
 
-  <app-file-tree [multiSelect]="true" [startingPath]="getPath()">
-    <label for="path">Folder path</label>
-    <input type="text" id="path" tabindex="4" placeholder="Path" formControlName="path" />
-  </app-file-tree>
+    <app-file-tree class="fill" [multiSelect]="true" [startingPath]="getPath()">
+      <label for="path">Folder path</label>
+      <input type="text" id="path" tabindex="4" placeholder="Path" formControlName="path" />
+    </app-file-tree>
 
-  <!-- <app-toggle-card formArrayName="filters" [isActive]="true">
-    <ng-container title>Filters</ng-container>
+    <div class="form-actions">
+      <button spk-button type="button" (click)="goBack()">
+        <spk-icon>arrow-left</spk-icon>
+        Go back
+      </button>
 
-    @for (filterGroup of sourceDataForm.controls.filters.controls; track $index) {
-      <div class="filter-inputs" [formGroup]="filterGroup">
-        <spk-select>
-          <input type="text" placeholder="Select an option..." formControlName="expressionOption" />
+      <button spk-button class="raised primary" type="submit">
+        <spk-icon>arrow-right</spk-icon>
+        Continue
+      </button>
+    </div>
+  </div>
 
-          <ng-container options>
-            @for (option of expressionOptions(); track $index) {
-              <option [value]="option">{{ option }}</option>
-            }
-          </ng-container>
-        </spk-select>
+  <div class="right">
+    <h3 class="title-30">Source Data</h3>
+    <app-toggle-card [disallowToggle]="true">
+      <ng-container title>Add Path</ng-container>
+      <p description>Add a path directly from your machine.</p>
 
+      <div class="row-inputs">
         <spk-form-field>
-          <input type="text" formControlName="expression" />
+          <input type="text" placeholder="Add a direct path" [formControl]="newPathCtrl" />
         </spk-form-field>
 
-        <div class="filter-removal" (click)="removeFilterGroup($index)">
-          <spk-icon class="spk-primary">x-circle</spk-icon>
+        <button spk-button class="raised primary" type="button" (click)="addNewPath()">
+          <spk-icon>plus</spk-icon>
+        </button>
+      </div>
+    </app-toggle-card>
+
+    <!-- <app-toggle-card [disallowToggle]="true">
+      <ng-container title>Filters</ng-container>
+      <p description>Customize your filters.</p>
+
+      <button type="button" spk-button action (click)="addFilterGroup()">Add filter</button>
+
+      @for (filterGroup of sourceDataForm.controls.filters.controls; track $index) {
+        <div class="filter-inputs" [formGroup]="filterGroup">
+          <spk-select [hideClearButton]="true">
+            <input type="text" placeholder="Select an option..." formControlName="expressionOption" />
+
+            <ng-container options>
+              @for (option of expressionOptions(); track $index) {
+                <option [value]="option">{{ option }}</option>
+              }
+            </ng-container>
+          </spk-select>
+
+          <spk-form-field>
+            <input type="text" formControlName="expression" />
+          </spk-form-field>
+
+          <div class="filter-removal" (click)="removeFilterGroup($index)">
+            <spk-icon class="spk-primary">x-circle</spk-icon>
+          </div>
         </div>
-      </div>
-    }
+      }
+    </app-toggle-card> -->
 
-    <button type="button" spk-button (click)="addFilterGroup()">Add filter</button>
-  </app-toggle-card> -->
+    <app-toggle-card formGroupName="excludes" [disallowToggle]="true">
+      <ng-container title>Exclude</ng-container>
+      <p description>Choose if there’s any files you want to exclude.</p>
 
-  <app-toggle-card formGroupName="excludes" [isActive]="true">
-    <ng-container title>Exclude</ng-container>
+      <spk-toggle class="raised primary">
+        Hidden files
+        <input type="checkbox" placeholder="Hidden files" formControlName="hidden" />
+      </spk-toggle>
 
-    <spk-toggle class="raised primary">
-      Hidden files
-      <input type="checkbox" placeholder="Hidden files" formControlName="hidden" />
-    </spk-toggle>
+      <spk-toggle class="raised primary">
+        System files
+        <input type="checkbox" placeholder="System files" formControlName="system" />
+      </spk-toggle>
 
-    <spk-toggle class="raised primary">
-      System files
-      <input type="checkbox" placeholder="System files" formControlName="system" />
-    </spk-toggle>
+      <spk-toggle class="raised primary">
+        Temporary files
+        <input type="checkbox" placeholder="Temporary files" formControlName="temporary" />
+      </spk-toggle>
 
-    <spk-toggle class="raised primary">
-      Temporary files
-      <input type="checkbox" placeholder="Temporary files" formControlName="temporary" />
-    </spk-toggle>
+      <spk-toggle class="raised primary" [class.active]="filesLargerThan()" (click)="toggleFilesLargerThan()">
+        Files larger than
+      </spk-toggle>
 
-    <spk-toggle class="raised primary" [class.active]="filesLargerThan()" (click)="toggleFilesLargerThan()">
-      Files larger than
-    </spk-toggle>
+      @if (filesLargerThan()) {
+        <div class="row-inputs" formGroupName="filesLargerThan">
+          <spk-form-field>
+            <input type="number" formControlName="size" />
+          </spk-form-field>
 
-    @if (filesLargerThan()) {
-      <div class="row-inputs" formGroupName="filesLargerThan">
-        <spk-form-field>
-          <input type="number" formControlName="size" />
-        </spk-form-field>
+          <spk-select>
+            <input type="text" formControlName="unit" placeholder="Select an option..." />
 
-        <spk-select>
-          <input type="text" formControlName="unit" placeholder="Select an option..." />
-
-          <ng-container options>
-            @for (option of sizeOptions(); track $index) {
-              <option [value]="option">{{ option }}</option>
-            }
-          </ng-container>
-        </spk-select>
-      </div>
-    }
-  </app-toggle-card>
-
-  <div class="form-actions">
-    <button spk-button type="button" (click)="goBack()">
-      <spk-icon>arrow-left</spk-icon>
-      Go back
-    </button>
-
-    <button spk-button class="raised primary" type="submit">
-      <spk-icon>arrow-right</spk-icon>
-      Continue
-    </button>
+            <ng-container options>
+              @for (option of sizeOptions(); track $index) {
+                <option [value]="option">{{ option }}</option>
+              }
+            </ng-container>
+          </spk-select>
+        </div>
+      }
+    </app-toggle-card>
   </div>
 </form>

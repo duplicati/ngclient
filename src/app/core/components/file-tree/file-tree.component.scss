@@ -18,6 +18,37 @@
       background: transparent;
     }
   }
+
+  &.fill {
+    height: auto;
+    overflow: hidden;
+
+    .section {
+      height: auto;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      grid-template-areas:
+        'label toggle'
+        'tree tree';
+    }
+
+    .browse-files {
+      resize: none;
+      flex: 1 0;
+      height: initial;
+      grid-area: tree;
+    }
+
+    label {
+      grid-area: label;
+    }
+
+    spk-toggle {
+      grid-area: toggle;
+      flex-direction: row-reverse;
+    }
+  }
 }
 
 .section {

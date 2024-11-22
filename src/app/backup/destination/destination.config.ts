@@ -1,6 +1,5 @@
-import { inject, Injector, runInInjectionContext, Signal } from '@angular/core';
+import { Injector, Signal } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { toLazySignal } from 'ngxtension/to-lazy-signal';
 import { ArgumentType, ICommandLineArgument } from '../../core/openapi';
 import { WebModuleOption, WebModulesService } from '../../core/services/webmodules.service';
 
@@ -13,8 +12,7 @@ export type FormView = {
   shortDescription?: string;
   longDescription?: string;
   options?: ICommandLineArgument['ValidValues'];
-  loadOptions?: (destinationFormValue: any) => Signal<WebModuleOption[] | undefined>;
-  // loadOptions?: (hi: any) => Observable<WebModuleOption[]>;
+  loadOptions?: (injector: Injector) => Signal<WebModuleOption[] | undefined>;
   defaultValue?: ICommandLineArgument['DefaultValue'];
   order?: number;
 };
@@ -45,7 +43,7 @@ export const DESTINATION_CONFIG: DestinationConfig = {
         name: 'path',
         shortDescription: 'File path',
         longDescription: 'The path to store the backup',
-        formElement: (defaultValue?: any) => fb.control<string>(defaultValue ?? ''),
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
   },
@@ -56,14 +54,14 @@ export const DESTINATION_CONFIG: DestinationConfig = {
         name: 'server',
         shortDescription: 'Server',
         longDescription: 'The server to connect to',
-        formElement: (defaultValue?: any) => fb.control<string>(defaultValue ?? ''),
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
       port: {
         type: 'Integer',
         name: 'port',
         shortDescription: 'Port',
         longDescription: 'The port to connect to',
-        formElement: (defaultValue?: any) =>
+        formElement: (defaultValue?: string) =>
           fb.control<string>(defaultValue ?? '', [Validators.required, Validators.max(65535)]),
       },
       path: {
@@ -71,7 +69,7 @@ export const DESTINATION_CONFIG: DestinationConfig = {
         name: 'path',
         shortDescription: 'Folder path',
         longDescription: 'Folder path',
-        formElement: (defaultValue?: any) => fb.control<string>(defaultValue ?? ''),
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
     dynamicFields: ['auth-username'],
@@ -93,14 +91,14 @@ export const DESTINATION_CONFIG: DestinationConfig = {
         name: 'bucket',
         shortDescription: 'Bucket name',
         longDescription: 'Bucket name',
-        formElement: (defaultValue?: any) => fb.control<string>(defaultValue ?? ''),
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
       path: {
         type: 'Path',
         name: 'path',
         shortDescription: 'Folder path',
         longDescription: 'Folder path',
-        formElement: (defaultValue?: any) => fb.control<string>(defaultValue ?? ''),
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
     dynamicFields: [
@@ -108,7 +106,7 @@ export const DESTINATION_CONFIG: DestinationConfig = {
         name: 's3-server-name',
         shortDescription: 'Server',
         type: 'NonValidatedSelectableString', // Convert to string before submitting
-        loadOptions: (injector: Injector) => injector.get(WebModulesService).s3Providers,
+        loadOptions: (injector) => injector.get(WebModulesService).s3Providers,
       },
       'use-ssl',
       'auth-username',
@@ -123,7 +121,7 @@ export const DESTINATION_CONFIG: DestinationConfig = {
       {
         name: 's3-storage-class',
         type: 'NonValidatedSelectableString', // Convert to string before submitting
-        loadOptions: (injector: Injector) => injector.get(WebModulesService).s3StorageClasses,
+        loadOptions: (injector) => injector.get(WebModulesService).s3StorageClasses,
       },
     ],
   },
@@ -135,19 +133,19 @@ export const DESTINATION_CONFIG: DestinationConfig = {
         name: 'path',
         shortDescription: 'Bucket name',
         longDescription: 'Bucket name',
-        formElement: (defaultValue?: any) => fb.control<string>(defaultValue ?? ''),
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
     dynamicFields: [
       {
         name: 'gcs-location',
         type: 'NonValidatedSelectableString', // Convert to string before submitting
-        loadOptions: (injector: Injector) => injector.get(WebModulesService).gcsLocations,
+        loadOptions: (injector) => injector.get(WebModulesService).gcsLocations,
       },
       {
         name: 'gcs-storage-class',
         type: 'NonValidatedSelectableString', // Convert to string before submitting
-        loadOptions: (injector: Injector) => injector.get(WebModulesService).gcsStorageClasses,
+        loadOptions: (injector) => injector.get(WebModulesService).gcsStorageClasses,
       },
       'authid',
     ],
@@ -160,16 +158,9 @@ export const DESTINATION_CONFIG: DestinationConfig = {
         name: 'path',
         shortDescription: 'Folder path',
         longDescription: 'Folder path',
-        formElement: (defaultValue?: any) => fb.control<string>(defaultValue ?? ''),
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
     dynamicFields: ['authid'],
   },
 };
-
-function hello(injector: Injector) {
-  let signal: Signal<any> | null = null;
-  runInInjectionContext(injector, () => {
-    signal = toLazySignal(inject(WebModulesService).getGcsConfig('Locations'));
-  });
-}

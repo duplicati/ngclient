@@ -23,7 +23,6 @@
     align-items: center;
     justify-content: space-between;
     font: var(--paragraph-10);
-    padding: p2r(16);
     cursor: pointer;
     user-select: none;
   }
@@ -32,6 +31,20 @@
     transform: rotate(0);
     transform-origin: center;
     transition: transform 200ms ease;
+  }
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: p2r(16);
+  padding: p2r(16);
+
+  .title {
+    display: flex;
+    flex-direction: column;
+    gap: p2r(4);
   }
 }
 

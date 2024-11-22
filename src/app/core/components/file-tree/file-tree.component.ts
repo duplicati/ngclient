@@ -98,9 +98,6 @@ export default class FileTreeComponent {
   excludes = output<string[]>();
 
   _showHiddenNodes = signal(false);
-  showHiddenNodesEffect = effect(() => this._showHiddenNodes.set(this.showHiddenNodes()), {
-    allowSignalWrites: true,
-  });
   treeContainerRef = viewChild<ElementRef<HTMLDivElement>>('treeContainer');
   formRef = viewChild<ElementRef<HTMLFormElement>>('formRef');
   pathDiscoveryMethod = signal<'browse' | 'path'>('browse');
@@ -184,6 +181,10 @@ export default class FileTreeComponent {
     }
 
     return [root];
+  });
+
+  showHiddenNodesEffect = effect(() => this._showHiddenNodes.set(this.showHiddenNodes()), {
+    allowSignalWrites: true,
   });
 
   pathDiscoveryMethodEffect = effect(

@@ -1,6 +1,6 @@
 import { JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   SparkleButtonComponent,
@@ -17,20 +17,21 @@ const fb = new FormBuilder();
 const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'] as const;
 const EXPRESSION_OPTIONS = ['Contains', 'Does not contain', 'Is greater than', 'Is less than'] as const;
 
-type ExpressionOptions = (typeof EXPRESSION_OPTIONS)[number];
+// type ExpressionOptions = (typeof EXPRESSION_OPTIONS)[number];
 
-const createExpressionGroup = () => {
-  return fb.group({
-    expressionOption: fb.control<ExpressionOptions>(EXPRESSION_OPTIONS[0]),
-    expression: fb.nonNullable.control<string>('*'),
-  });
-};
+// const createExpressionGroup = () => {
+//   return fb.group({
+//     expressionOption: fb.control<ExpressionOptions>(EXPRESSION_OPTIONS[0]),
+//     expression: fb.nonNullable.control<string>('*'),
+//   });
+// };
 
-type ExpressionGroup = ReturnType<typeof createExpressionGroup>;
+// type ExpressionGroup = ReturnType<typeof createExpressionGroup>;
 
 export const createSourceDataForm = (
   defaults = {
     path: '',
+    filters: [],
     excludes: {
       hidden: false,
       system: false,
@@ -80,9 +81,12 @@ export default class SourceDataComponent {
   sourceDataForm = this.#backupState.sourceDataForm;
   sourceDataFormSignal = this.#backupState.sourceDataFormSignal;
 
+  newPathCtrl = new FormControl('');
   filesLargerThan = computed(() => this.sourceDataFormSignal()?.excludes?.filesLargerThan?.size !== null);
   sizeOptions = signal(SIZE_OPTIONS);
   expressionOptions = signal(EXPRESSION_OPTIONS);
+
+  // filters = signal<string[]>([]);
 
   getPath() {
     return this.sourceDataForm.value.path ?? null;
@@ -101,6 +105,20 @@ export default class SourceDataComponent {
       });
     }
   }
+
+  addNewPath() {
+    const currentPath = this.sourceDataForm.controls.path.value;
+    this.sourceDataForm.controls.path.setValue(`${currentPath}\0${this.newPathCtrl.value}`);
+    this.newPathCtrl.setValue('');
+  }
+
+  // addFilterGroup() {
+  //   this.sourceDataForm.controls.filters.push(createExpressionGroup());
+  // }
+
+  // removeFilterGroup(index: number) {
+  //   this.sourceDataForm.controls.filters.removeAt(index);
+  // }
 
   goBack() {
     this.#router.navigate(['destination'], { relativeTo: this.#route.parent });

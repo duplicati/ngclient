@@ -1,10 +1,20 @@
-<h3 (click)="disallowToggle() || toggle()">
-  <ng-content select="[title]">Title</ng-content>
+<header>
+  <div class="title">
+    <h3 (click)="disallowToggle() || toggle()">
+      <ng-content select="[title]">Title</ng-content>
 
-  @if (!disallowToggle()) {
-    <spk-icon>caret-down</spk-icon>
-  }
-</h3>
+      @if (!disallowToggle()) {
+        <spk-icon>caret-down</spk-icon>
+      }
+    </h3>
+
+    <ng-content select="[description]"></ng-content>
+  </div>
+
+  <div class="actions">
+    <ng-content select="[action]"></ng-content>
+  </div>
+</header>
 
 <div class="content">
   <ng-content></ng-content>

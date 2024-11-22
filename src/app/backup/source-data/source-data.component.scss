@@ -1,13 +1,38 @@
 @use '@sparkle-ui/core/styles/helpers' as *;
 
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex: 1 0;
+  overflow: hidden;
 }
 
 form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  flex: 1 0;
+  overflow: hidden;
+}
+
+.right,
+.left {
+  flex: 1 0;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   gap: p2r(24);
+}
+
+.left {
+  padding: p2r(40);
+  border-right: 1px solid var(--base-level-40);
+  // display: grid;
+  // grid-template-rows: p2r(30) 1fr p2r(40);
+}
+
+.right {
+  padding: p2r(40 24);
 }
 
 .form-actions {
@@ -22,12 +47,13 @@ form {
 }
 
 .filter-inputs {
-  display: flex;
+  display: grid;
+  grid-template-columns: p2r(160) 1fr p2r(30);
   gap: p2r(8);
   align-items: flex-end;
 
-  > * {
-    flex: 1 0;
+  spk-select {
+    --miw: initial;
   }
 
   .filter-removal {
