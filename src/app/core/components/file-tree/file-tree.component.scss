@@ -22,12 +22,15 @@
   &.fill {
     height: auto;
     overflow: hidden;
+    flex: 1 0;
 
     .section {
       height: auto;
       overflow: hidden;
+      flex: 1 0;
       display: grid;
       grid-template-columns: 1fr auto;
+      grid-template-rows: auto 1fr;
       grid-template-areas:
         'label toggle'
         'tree tree';
@@ -35,7 +38,6 @@
 
     .browse-files {
       resize: none;
-      flex: 1 0;
       height: initial;
       grid-area: tree;
     }
@@ -105,6 +107,10 @@
 
       &.active {
         border-color: var(--base-level-40);
+      }
+
+      &.indeterminate {
+        border-color: var(--primary-level-40);
       }
 
       &.usually-hidden {

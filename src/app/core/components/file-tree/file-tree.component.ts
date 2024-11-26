@@ -1,4 +1,4 @@
-import { JsonPipe, NgTemplateOutlet } from '@angular/common';
+import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -14,7 +14,6 @@ import {
 import { FormsModule } from '@angular/forms';
 import {
   SparkleButtonGroupComponent,
-  SparkleCheckboxComponent,
   SparkleFormFieldComponent,
   SparkleIconComponent,
   SparkleListComponent,
@@ -23,15 +22,28 @@ import {
 } from '@sparkle-ui/core';
 import { finalize, forkJoin, Observable } from 'rxjs';
 import { DuplicatiServerService, GetApiV1BackupByIdFilesData, TreeNodeDto } from '../../openapi';
+import { SysinfoState } from '../../states/sysinfo.state';
+
+enum TreeEvalEnum {
+  ExcludedByParent = -2,
+  Excluded = -1,
+  None = 0,
+  Included = 1,
+  IncludedByParent = 2,
+}
 
 type TreeNode = TreeNodeDto & {
-  isSelected: boolean;
+  // isSelected: boolean;
   accepted?: boolean;
   parentPath: string;
 };
 
 type FileTreeNode = TreeNode & {
   children: FileTreeNode[];
+  evalState: TreeEvalEnum;
+  // isIncluded: boolean;
+  // isExcluded: boolean;
+  isIndeterminate: boolean;
 };
 
 type InputValueChangedEvent = CustomEvent<{ value: string }>;
@@ -69,11 +81,12 @@ type BackupSettings = {
     SparkleIconComponent,
     SparkleFormFieldComponent,
     SparkleListComponent,
-    SparkleCheckboxComponent,
+    // SparkleCheckboxComponent,
     SparkleProgressBarComponent,
     NgTemplateOutlet,
-    JsonPipe,
+    // JsonPipe,
     FormsModule,
+    AsyncPipe,
   ],
   templateUrl: './file-tree.component.html',
   styleUrl: './file-tree.component.scss',
@@ -84,6 +97,7 @@ type BackupSettings = {
 })
 export default class FileTreeComponent {
   #dupServer = inject(DuplicatiServerService);
+  #sysInfo = inject(SysinfoState);
 
   multiSelect = input(false);
   disabled = input(false);
@@ -107,6 +121,7 @@ export default class FileTreeComponent {
   treeSearchQuery = signal<string>('');
   treeNodes = signal<TreeNode[]>([]);
 
+  filterGroups = this.#sysInfo.filterGroups();
   isByBackupSettings = computed(() => this.rootPath() && this.backupSettings()?.id && this.backupSettings()?.time);
   searchableTreeNodes = computed<TreeNode[]>(() => {
     const query = this.treeSearchQuery();
@@ -115,7 +130,33 @@ export default class FileTreeComponent {
       : this.treeNodes();
   });
 
+  TreeEvalEnum = TreeEvalEnum;
   treeStructure = computed<FileTreeNode[]>(() => {
+    const showHiddenNodes = this.showHiddenNodes();
+    const _currentPaths = this.currentPath()
+      .split('\0')
+      .filter((x) => x !== '' && x !== '/');
+
+    // Maybe just convert/replace filterGroup expressions with filterGroups content
+    let currentPaths = structuredClone(_currentPaths);
+
+    for (let index = 0; index < currentPaths.length; index++) {
+      const path = currentPaths[index];
+      const x = path.slice(1);
+
+      if (x.startsWith('{') && x.endsWith('}')) {
+        const groupName = x.slice(1, -1);
+
+        const filterGroup = this.filterGroups?.['FilterGroups'][groupName];
+
+        if (filterGroup && filterGroup.length) {
+          // Insert the new array at the current path index replacing the old one
+          const _filterGroup = filterGroup.map((x) => `-${x}`);
+          currentPaths.splice(index, 1, ..._filterGroup);
+        }
+      }
+    }
+
     const nodes = this.searchableTreeNodes();
     const nodeMap = new Map<string, FileTreeNode>();
     const rootPath = this.rootPath();
@@ -128,7 +169,8 @@ export default class FileTreeComponent {
           text: rootPath?.replaceAll('/', ''),
           parentPath: '',
           children: [],
-          isSelected: false,
+          evalState: TreeEvalEnum.None,
+          isIndeterminate: false,
           cls: 'folder',
         }
       : {
@@ -137,7 +179,8 @@ export default class FileTreeComponent {
           text: 'Computer',
           parentPath: '',
           children: [],
-          isSelected: false,
+          evalState: TreeEvalEnum.None,
+          isIndeterminate: false,
         };
 
     if (accepts) {
@@ -150,18 +193,24 @@ export default class FileTreeComponent {
       const itemPath = (node.id as string).replace(rootPath ?? '', '');
       const pathParts = itemPath.split('/').filter(Boolean);
 
-      let currentPath = '';
+      let evaluatedPath = '';
       let parentNode = root;
 
       for (const part of pathParts) {
-        currentPath += '/' + part;
+        evaluatedPath += '/' + part;
 
-        if (!nodeMap.has(currentPath)) {
+        if (!nodeMap.has(evaluatedPath)) {
+          const evalState =
+            node.hidden === true && showHiddenNodes
+              ? TreeEvalEnum.None
+              : this.#eval(currentPaths, node.id!, node.cls!, parentNode);
+
           const newNode: FileTreeNode = {
             id: node.id,
-            isSelected: node.isSelected,
-            parentPath: currentPath,
-            resolvedpath: node.id?.startsWith('%') ? node.resolvedpath + '/' : currentPath,
+            isIndeterminate: this.isIndeterminate(currentPaths, node.id!),
+            evalState,
+            parentPath: evaluatedPath,
+            resolvedpath: node.id?.startsWith('%') ? node.resolvedpath + '/' : evaluatedPath,
             hidden: node.hidden,
             text: node.text,
             cls: node.cls,
@@ -172,16 +221,171 @@ export default class FileTreeComponent {
             newNode.accepted = this.matchAccepts(accepts, newNode);
           }
 
-          nodeMap.set(currentPath, newNode);
+          nodeMap.set(evaluatedPath, newNode);
           parentNode.children.push(newNode);
         }
 
-        parentNode = nodeMap.get(currentPath)!;
+        parentNode = nodeMap.get(evaluatedPath)!;
       }
     }
 
     return [root];
   });
+
+  // TODO - on single select we might not wanna do all this compute for every selected node or not even for child nodes
+  // NOTE - fileGroups are handled by exploding the fileGroup and injecting its paths into the currentPath
+  #eval(currentPaths: string[], nodeId: string, nodeType: string, parentNode: FileTreeNode): TreeEvalEnum {
+    if (parentNode.evalState === TreeEvalEnum.Excluded) return TreeEvalEnum.ExcludedByParent;
+
+    let result = TreeEvalEnum.None;
+
+    const pathsWithoutDir = currentPaths.filter((x) => !x.startsWith('-') && !x.startsWith('+'));
+    const pathsWithDir = currentPaths.filter((x) => x.startsWith('-') || x.startsWith('+'));
+
+    if (pathsWithoutDir.length === 0) return result;
+
+    // Find first excluded or included node per pathWithoutDir
+    for (let index = 0; index < pathsWithoutDir.length; index++) {
+      const x = pathsWithoutDir[index];
+
+      const res = nodeId?.startsWith(x);
+
+      if (res) {
+        result = TreeEvalEnum.Included;
+        break;
+      }
+    }
+
+    if (pathsWithDir.length === 0) return result;
+
+    // Then find first excluded or included node per pathWithDir
+    for (let i = 0; i < pathsWithDir.length; i++) {
+      const pathPart = pathsWithDir[i];
+      const x = pathPart.slice(1);
+      const dir = pathPart.startsWith('-') ? 'exclude' : 'include';
+
+      if (x.startsWith('/') && x.endsWith('/')) {
+        // Works - Folder
+        if (nodeType !== 'folder') continue;
+        const res = nodeId === x;
+
+        if (res) {
+          result = dir === 'include' ? TreeEvalEnum.Included : TreeEvalEnum.Excluded;
+
+          break;
+        }
+      }
+
+      if (x.startsWith('*') && x.endsWith('*/')) {
+        // Works - FolderNameIncludes
+        if (nodeType !== 'folder') continue;
+        const trimmedX = x.slice(1, -2);
+
+        if (trimmedX === '') break;
+
+        const res = nodeId?.includes(trimmedX + '/');
+
+        if (res) {
+          result = dir === 'include' ? TreeEvalEnum.Included : TreeEvalEnum.Excluded;
+          break;
+        }
+      }
+
+      if (x.startsWith('[.*') && x.endsWith('[^\\/]*]')) {
+        // Works - FileNameIncludes
+        if (nodeType !== 'file') continue;
+
+        const regexPattern = x.slice(3, -7);
+        const regex = new RegExp(regexPattern);
+        const res = regex.test(nodeId!);
+
+        if (res) {
+          result = dir === 'include' ? TreeEvalEnum.Included : TreeEvalEnum.Excluded;
+          break;
+        }
+      }
+
+      if (x.startsWith('[') && x.endsWith(']')) {
+        // Works - Regex
+        const regexPattern = x.slice(1, -1);
+        const jsRegex = this.translateCSharpRegex(regexPattern);
+        const regex = new RegExp(`${jsRegex}`);
+        const res = regex.test(nodeId!);
+
+        if (res) {
+          result = dir === 'include' ? TreeEvalEnum.Included : TreeEvalEnum.Excluded;
+          break;
+        }
+      }
+
+      if (x.startsWith('*.')) {
+        // Works - File Extension globbing
+        if (nodeType !== 'file') continue;
+        if (x.replace('*.', '').length === 0) continue;
+
+        const res = this.#globMatch(nodeId!, x, true);
+
+        if (res) {
+          result = dir === 'include' ? TreeEvalEnum.Included : TreeEvalEnum.Excluded;
+          break;
+        }
+      }
+
+      // Works - Expression
+      if (x === '') continue;
+
+      const res = this.#globMatch(nodeId!, x, true);
+
+      if (res) {
+        result = dir === 'include' ? TreeEvalEnum.Included : TreeEvalEnum.Excluded;
+        break;
+      }
+    }
+
+    return result;
+  }
+
+  translateCSharpRegex(csharpRegex: string) {
+    let jsRegex = csharpRegex;
+
+    // 1. Remove verbatim string literal indicator (@)
+    jsRegex = jsRegex.replace(/^@/, '');
+
+    // 2. Handle named capture groups
+    //    (This is a simplification - it won't handle nested groups perfectly)
+    const namedGroupRegex = /\(\?<(?<name>\w+)>(?<pattern>[^)]+)\)/g;
+    jsRegex = jsRegex.replace(namedGroupRegex, (match, name, pattern) => `(${pattern})`);
+
+    // 3. (Optional) Add polyfill for lookbehind assertions if needed
+    //    (This is browser-dependent - might not be necessary in modern browsers)
+    if (!/(?<=)/.test(jsRegex)) {
+      // No lookbehinds, no need for polyfill
+    } else {
+      // You'll need to include a lookbehind polyfill library or implement your own
+      // Example using 'js-regex-lookbehind' library:
+      // jsRegex = require('js-regex-lookbehind')(jsRegex);
+    }
+
+    // 4. Escape backslashes
+    jsRegex = jsRegex.replace(/\\/g, '\\\\');
+
+    return jsRegex;
+  }
+
+  isIndeterminate(currentPaths: string[], nodeId: string) {
+    return currentPaths.some((x) => x.startsWith(nodeId));
+  }
+
+  #globMatch(str: string, pattern: string, evaluateFullPath = false): boolean {
+    const regexPattern = pattern
+      .replace(/\*/g, '.*')
+      .replace(/\?/g, '.')
+      .replace(/\[!([^\]]+)\]/g, '[^$1]');
+
+    const regex = new RegExp(`${regexPattern}${evaluateFullPath ? '$' : ''}`);
+
+    return regex.test(str);
+  }
 
   showHiddenNodesEffect = effect(() => this._showHiddenNodes.set(this.showHiddenNodes()), {
     allowSignalWrites: true,
@@ -189,18 +393,11 @@ export default class FileTreeComponent {
 
   pathDiscoveryMethodEffect = effect(
     () => {
-      const disvoeryMethod = this.pathDiscoveryMethod();
+      const discoveryMethod = this.pathDiscoveryMethod();
       const input = this.#inputRef();
 
-      if (disvoeryMethod === 'browse' && input) {
-        if (this.multiSelect()) {
-          const arr = input.value.split('\0');
-          this.treeNodes.update((y) =>
-            y.map((z) => ({ ...z, isSelected: typeof z.id === 'string' && arr.includes(z.id) }))
-          );
-        } else {
-          this.treeNodes.update((y) => y.map((z) => ({ ...z, isSelected: z.id === input.value })));
-        }
+      if (discoveryMethod === 'browse' && input) {
+        this.currentPath.set(input.value);
       }
     },
     {
@@ -223,14 +420,6 @@ export default class FileTreeComponent {
     return extensions.some((x) => fileExt.endsWith(x));
   }
 
-  #scrollToFirstSelectedNode() {
-    const selectedNodes = this.treeContainerRef()?.nativeElement.querySelectorAll('.active');
-
-    if (selectedNodes && selectedNodes.length > 0) {
-      selectedNodes[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  }
-
   currentPathEffect = effect(
     () => {
       const input = this.#inputRef();
@@ -238,50 +427,6 @@ export default class FileTreeComponent {
       if (input) {
         input.value = this.currentPath();
         input.dispatchEvent(new Event('input'));
-      }
-    },
-    {
-      allowSignalWrites: true,
-    }
-  );
-
-  selectedPathsEffect = effect(
-    () => {
-      if (this.multiSelect()) {
-        const selectedNodes = this.treeNodes().filter((node) => node.isSelected);
-        const excludedNodes = this.treeNodes().filter(
-          (node) => !node.isSelected && selectedNodes.some((selected) => node.id?.startsWith(selected.id as string))
-        );
-
-        const selectedMapped = selectedNodes
-          .filter(
-            (node) =>
-              !selectedNodes.some(
-                (otherNode) => node.id !== otherNode.id && node.id?.startsWith(otherNode.id as string)
-              )
-          )
-          .map((node) => node.id as string);
-
-        const excludedMapped = excludedNodes
-          .filter(
-            (node) =>
-              !excludedNodes.some(
-                (otherNode) => node.id !== otherNode.id && node.id?.startsWith(otherNode.id as string)
-              )
-          )
-          .map((node) => `-${node.id as string}`);
-
-        this.excludes.emit(excludedMapped);
-
-        const newPath = [...selectedMapped, ...excludedMapped] as string[];
-
-        this.currentPath.set(newPath.join('\0'));
-      } else {
-        const selectedNode = this.treeNodes().find((node) => node.isSelected);
-
-        const resolvedPath = selectedNode?.resolvedpath as string;
-
-        this.currentPath.set(selectedNode?.id ?? '');
       }
     },
     {
@@ -334,6 +479,8 @@ export default class FileTreeComponent {
 
     $event.stopPropagation();
 
+    if (node.evalState === TreeEvalEnum.ExcludedByParent) return;
+
     if (this.selectFiles() && node.cls === 'folder') {
       this.toggleNode(node.id as string, node);
       return;
@@ -343,26 +490,38 @@ export default class FileTreeComponent {
 
     if (accepts && !node.accepted) return;
 
+    const currentPaths = this.currentPath()
+      .split('\0')
+      .filter((x) => x !== '' && x !== '/');
+
+    const pathToTest = this.isChildOfSelected(node) ? `-${node.id}` : node.id!;
+
     if (this.multiSelect()) {
-      this.treeNodes.update((y) =>
-        y.map((z) => {
-          if (z.id?.startsWith(node.id as string)) {
-            return { ...z, isSelected: !node.isSelected };
-          }
-          return z;
-        })
-      );
+      if (currentPaths.includes(node.id!)) {
+        // is selected
+        this.currentPath.set(currentPaths.filter((x) => x !== node.id).join('\0'));
+      } else if (currentPaths.some((x) => x.startsWith(pathToTest))) {
+        // is child of selected
+        this.currentPath.set(currentPaths.filter((x) => x !== pathToTest).join('\0'));
+      } else {
+        // is not selected
+        this.currentPath.set([...currentPaths, pathToTest].join('\0'));
+      }
     } else {
-      this.treeNodes.update((y) =>
-        y.map((z) => {
-          if (z.id === (node.id as string)) {
-            return { ...z, isSelected: !node.isSelected };
-          } else {
-            return { ...z, isSelected: false };
-          }
-        })
-      );
+      if (currentPaths.includes(node.id!)) {
+        this.currentPath.set(currentPaths.filter((x) => x !== node.id).join('\0'));
+      } else {
+        this.currentPath.set(node.id!);
+      }
     }
+  }
+
+  isChildOfSelected(node: FileTreeNode) {
+    const currentPaths = this.currentPath()
+      .split('\0')
+      .filter((x) => x !== '' && x !== '/');
+
+    return currentPaths.some((x) => node.id?.startsWith(x) || `-${node.id}`.startsWith(x));
   }
 
   toggleNode(path: string, node: FileTreeNode | null = null) {
@@ -524,7 +683,7 @@ export default class FileTreeComponent {
               ...z,
               cls,
               parentPath: newPath,
-              isSelected: (this.multiSelect() && node?.isSelected) ?? false,
+              // isSelected: (this.multiSelect() && node?.isSelected) ?? false,
             };
           });
 

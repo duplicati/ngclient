@@ -146,7 +146,7 @@ export class StatusBarState {
             this.#backupState.getBackups();
           }
 
-          console.log(res);
+          // console.log(res);
 
           this.#serverState.set(res);
         },

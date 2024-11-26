@@ -1,0 +1,21 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
+:host {
+  display: grid;
+  grid-template-columns: p2r(210) 1fr p2r(30);
+  gap: p2r(8);
+  align-items: flex-end;
+
+  spk-select {
+    --miw: initial;
+  }
+
+  .filter-removal {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: p2r(40);
+    flex: 0 0;
+  }
+}

@@ -1,10 +1,10 @@
-<pre>{{ sourceDataForm.value.path!.split('\0') | json }}</pre>
+<!-- <pre>{{ sourceDataForm.value.path!.split('\0') | json }}</pre> -->
 
 <form [formGroup]="sourceDataForm" #formRef (submit)="next()">
   <div class="left">
     <h3 class="title-30">Source Data</h3>
 
-    <app-file-tree class="fill" [multiSelect]="true" [startingPath]="getPath()">
+    <app-file-tree class="fill" [multiSelect]="true" [startingPath]="getPath()" [showFiles]="true">
       <label for="path">Folder path</label>
       <input type="text" id="path" tabindex="4" placeholder="Path" formControlName="path" />
     </app-file-tree>
@@ -39,34 +39,16 @@
       </div>
     </app-toggle-card>
 
-    <!-- <app-toggle-card [disallowToggle]="true">
+    <app-toggle-card [disallowToggle]="true">
       <ng-container title>Filters</ng-container>
       <p description>Customize your filters.</p>
 
-      <button type="button" spk-button action (click)="addFilterGroup()">Add filter</button>
+      <button type="button" spk-button action (click)="addFilter()">Add filter</button>
 
-      @for (filterGroup of sourceDataForm.controls.filters.controls; track $index) {
-        <div class="filter-inputs" [formGroup]="filterGroup">
-          <spk-select [hideClearButton]="true">
-            <input type="text" placeholder="Select an option..." formControlName="expressionOption" />
-
-            <ng-container options>
-              @for (option of expressionOptions(); track $index) {
-                <option [value]="option">{{ option }}</option>
-              }
-            </ng-container>
-          </spk-select>
-
-          <spk-form-field>
-            <input type="text" formControlName="expression" />
-          </spk-form-field>
-
-          <div class="filter-removal" (click)="removeFilterGroup($index)">
-            <spk-icon class="spk-primary">x-circle</spk-icon>
-          </div>
-        </div>
+      @for (path of pathArray(); track $index) {
+        <app-filter [path]="path" (pathChange)="patchPathAt($event, $index)" (remove)="removePathAt($index)" />
       }
-    </app-toggle-card> -->
+    </app-toggle-card>
 
     <app-toggle-card formGroupName="excludes" [disallowToggle]="true">
       <ng-container title>Exclude</ng-container>

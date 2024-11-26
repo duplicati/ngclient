@@ -20,19 +20,18 @@ form {
   flex: 1 0;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
   gap: p2r(24);
 }
 
 .left {
   padding: p2r(40);
+  overflow: hidden;
   border-right: 1px solid var(--base-level-40);
-  // display: grid;
-  // grid-template-rows: p2r(30) 1fr p2r(40);
 }
 
 .right {
   padding: p2r(40 24);
+  overflow: auto;
 }
 
 .form-actions {
@@ -44,24 +43,4 @@ form {
   display: grid;
   grid-template-columns: 1fr min-content;
   gap: p2r(8);
-}
-
-.filter-inputs {
-  display: grid;
-  grid-template-columns: p2r(160) 1fr p2r(30);
-  gap: p2r(8);
-  align-items: flex-end;
-
-  spk-select {
-    --miw: initial;
-  }
-
-  .filter-removal {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: p2r(40);
-    flex: 0 0;
-  }
 }

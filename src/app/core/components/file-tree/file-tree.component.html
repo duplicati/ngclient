@@ -34,7 +34,8 @@
               action
               #treeNode
               [class.accepted]="node.accepted === true"
-              [class.active]="node.isSelected"
+              [class.active]="node.evalState === TreeEvalEnum.Included"
+              [class.indeterminate]="node.isIndeterminate"
               [class.open]="node.children.length"
               [class.usually-hidden]="node.hidden"
               (click)="toggleNode(node.id, node)">
