@@ -27,6 +27,184 @@ type ExpressionTypeMap = {
   value: ExpressionType;
 };
 
+type FileGroupTypeMap = {
+  key: string;
+  value: string;
+};
+
+// {
+//   "FilterGroups": {
+//       "None": [],
+//       "SystemFiles": [
+//           "*.dbfseventsd",
+//           "*.fseventsd",
+//           "/.vol/",
+//           "/afs/",
+//           "/automount/",
+//           "/cores/",
+//           "/dev/",
+//           "/net/",
+//           "/Network/",
+//           "/private/Network/",
+//           "/private/var/automount/",
+//           "/private/var/db/dhcpclient/",
+//           "/private/var/db/fseventsd/",
+//           "/private/var/folders/",
+//           "/private/var/run/",
+//           "/private/var/spool/postfix/",
+//           "/private/var/vm/"
+//       ],
+//       "OperatingSystem": [
+//           "*/Library/Logs/",
+//           "/bin/",
+//           "/mach.sym",
+//           "/mach_kernel",
+//           "/Network/",
+//           "/Previous Systems*",
+//           "/sbin/",
+//           "/System/",
+//           "/Volumes/"
+//       ],
+//       "CacheFiles": [
+//           "*.hotfiles.btree*",
+//           "*.Spotlight-*/",
+//           "*/Application Support/Google/Chrome/Default/Cookies",
+//           "*/Application Support/Google/Chrome/Default/Cookies-journal",
+//           "*/backups.backupdb/",
+//           "*/cookies.sqlite-*",
+//           "*/Duplicati/control_dir_v2/",
+//           "*/Google/Chrome/*cache*",
+//           "*/Google/Chrome/*Current*",
+//           "*/Google/Chrome/*LOCK*",
+//           "*/Google/Chrome/Safe Browsing*",
+//           "*/iP* Software Updates/",
+//           "*/iPhoto Library/iPod Photo Cache*",
+//           "*/iPhoto Library/iPod Photo Cache/",
+//           "*/iTunes/Album Artwork/Cache/",
+//           "*/Library/Application Support/SyncServices/",
+//           "*/Library/Caches/",
+//           "*/Library/Calendars/*/Info.plist",
+//           "*/Library/Calendars/Calendar Cache",
+//           "*/Library/Cookies/com.apple.appstore.plist",
+//           "*/Library/Cookies/Cookies.binarycookies",
+//           "*/Library/Mail/*/Info.plist",
+//           "*/Library/Mail/AvailableFeeds/",
+//           "*/Library/Mail/Envelope Index",
+//           "*/Library/Mirrors/",
+//           "*/Library/PubSub/Database/",
+//           "*/Library/PubSub/Downloads/",
+//           "*/Library/PubSub/Feeds/",
+//           "*/Library/Safari/HistoryIndex.sk",
+//           "*/Library/Safari/Icons.db",
+//           "*/Library/Safari/WebpageIcons.db",
+//           "*/Library/Saved Application State/",
+//           "*/Mozilla/Firefox/*cache*",
+//           "*/permissions.sqlite-*",
+//           "*MobileBackups/",
+//           "/Desktop DB",
+//           "/Desktop DF",
+//           "/System/Library/Extensions/Caches/"
+//       ],
+//       "TemporaryFiles": [
+//           "*.Trash*",
+//           "*/lost+found/",
+//           "*/Microsoft User Data/Entourage Temp/",
+//           "*/Network Trash Folder/",
+//           "*/Trash/",
+//           "*/VM Storage",
+//           "/private/tmp/",
+//           "/private/var/tmp/",
+//           "/tmp/",
+//           "/var/"
+//       ],
+//       "Applications": [
+//           "/Applications/",
+//           "/Library/",
+//           "/opt/",
+//           "/usr/"
+//       ],
+//       "DefaultExcludes": [
+//           "*.dbfseventsd",
+//           "*.fseventsd",
+//           "*.hotfiles.btree*",
+//           "*.Spotlight-*/",
+//           "*.Trash*",
+//           "*/Application Support/Google/Chrome/Default/Cookies",
+//           "*/Application Support/Google/Chrome/Default/Cookies-journal",
+//           "*/backups.backupdb/",
+//           "*/cookies.sqlite-*",
+//           "*/Duplicati/control_dir_v2/",
+//           "*/Google/Chrome/*cache*",
+//           "*/Google/Chrome/*Current*",
+//           "*/Google/Chrome/*LOCK*",
+//           "*/Google/Chrome/Safe Browsing*",
+//           "*/iP* Software Updates/",
+//           "*/iPhoto Library/iPod Photo Cache*",
+//           "*/iPhoto Library/iPod Photo Cache/",
+//           "*/iTunes/Album Artwork/Cache/",
+//           "*/Library/Application Support/SyncServices/",
+//           "*/Library/Caches/",
+//           "*/Library/Calendars/*/Info.plist",
+//           "*/Library/Calendars/Calendar Cache",
+//           "*/Library/Cookies/com.apple.appstore.plist",
+//           "*/Library/Cookies/Cookies.binarycookies",
+//           "*/Library/Logs/",
+//           "*/Library/Mail/*/Info.plist",
+//           "*/Library/Mail/AvailableFeeds/",
+//           "*/Library/Mail/Envelope Index",
+//           "*/Library/Mirrors/",
+//           "*/Library/PubSub/Database/",
+//           "*/Library/PubSub/Downloads/",
+//           "*/Library/PubSub/Feeds/",
+//           "*/Library/Safari/HistoryIndex.sk",
+//           "*/Library/Safari/Icons.db",
+//           "*/Library/Safari/WebpageIcons.db",
+//           "*/Library/Saved Application State/",
+//           "*/lost+found/",
+//           "*/Microsoft User Data/Entourage Temp/",
+//           "*/Mozilla/Firefox/*cache*",
+//           "*/Network Trash Folder/",
+//           "*/permissions.sqlite-*",
+//           "*/Trash/",
+//           "*/VM Storage",
+//           "*MobileBackups/",
+//           "/.vol/",
+//           "/afs/",
+//           "/Applications/",
+//           "/automount/",
+//           "/bin/",
+//           "/cores/",
+//           "/Desktop DB",
+//           "/Desktop DF",
+//           "/dev/",
+//           "/Library/",
+//           "/mach.sym",
+//           "/mach_kernel",
+//           "/net/",
+//           "/Network/",
+//           "/opt/",
+//           "/Previous Systems*",
+//           "/private/Network/",
+//           "/private/tmp/",
+//           "/private/var/automount/",
+//           "/private/var/db/dhcpclient/",
+//           "/private/var/db/fseventsd/",
+//           "/private/var/folders/",
+//           "/private/var/run/",
+//           "/private/var/spool/postfix/",
+//           "/private/var/tmp/",
+//           "/private/var/vm/",
+//           "/sbin/",
+//           "/System/",
+//           "/tmp/",
+//           "/usr/",
+//           "/var/",
+//           "/Volumes/"
+//       ],
+//       "DefaultIncludes": []
+//   }
+// }
+
 const EXPRESSION_OPTIONS: ExpressionTypeMap[] = [
   {
     key: 'Excludes folders where name contains',
@@ -66,10 +244,43 @@ const EXPRESSION_OPTIONS: ExpressionTypeMap[] = [
   },
 ] as const;
 
+const FILE_GROUP_OPTIONS: FileGroupTypeMap[] = [
+  {
+    key: 'Applications',
+    value: 'Applications',
+  },
+  {
+    key: 'CacheFiles',
+    value: 'Cache Files',
+  },
+  {
+    key: 'TemporaryFiles',
+    value: 'Temporary Files',
+  },
+  {
+    key: 'OperatingSystem',
+    value: 'Operating System',
+  },
+  {
+    key: 'SystemFiles',
+    value: 'System Files',
+  },
+  {
+    key: 'DefaultExcludes',
+    value: 'Standard Excludes',
+  },
+];
+
 @Component({
   selector: 'app-filter',
   standalone: true,
-  imports: [FormsModule, SparkleSelectComponent, SparkleIconComponent, SparkleFormFieldComponent],
+  imports: [
+    FormsModule,
+    SparkleSelectComponent,
+    SparkleIconComponent,
+    SparkleFormFieldComponent,
+    SparkleSelectComponent,
+  ],
   templateUrl: './filter.component.html',
   styleUrl: './filter.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -80,6 +291,7 @@ export class FilterComponent {
   remove = output<void>();
 
   expressionOptions = signal(EXPRESSION_OPTIONS);
+  fileGroupOptions = signal(FILE_GROUP_OPTIONS);
 
   pathState = signal<FilterValue | null>(null);
   pathEffect = effect(
@@ -211,7 +423,7 @@ export class FilterComponent {
     this.remove.emit();
   }
 
-  displayFn(val: ExpressionTypeMap['value']) {
+  displayFn(val: ExpressionTypeMap['value'] | FileGroupTypeMap['value']) {
     const option = EXPRESSION_OPTIONS.find((x) => x.value === val);
 
     if (!option) return '';
