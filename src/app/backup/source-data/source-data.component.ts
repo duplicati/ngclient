@@ -1,6 +1,7 @@
 import { JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   SparkleButtonComponent,
@@ -12,25 +13,15 @@ import {
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { BackupState } from '../backup.state';
+import { FilterComponent } from './filter/filter.component';
 
 const fb = new FormBuilder();
 const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'] as const;
-const EXPRESSION_OPTIONS = ['Contains', 'Does not contain', 'Is greater than', 'Is less than'] as const;
-
-type ExpressionOptions = (typeof EXPRESSION_OPTIONS)[number];
-
-const createExpressionGroup = () => {
-  return fb.group({
-    expressionOption: fb.control<ExpressionOptions>(EXPRESSION_OPTIONS[0]),
-    expression: fb.nonNullable.control<string>('*'),
-  });
-};
-
-type ExpressionGroup = ReturnType<typeof createExpressionGroup>;
 
 export const createSourceDataForm = (
   defaults = {
     path: '',
+    filters: [],
     excludes: {
       hidden: false,
       system: false,
@@ -57,6 +48,7 @@ export const createSourceDataForm = (
   selector: 'app-source-data',
   standalone: true,
   imports: [
+    FormsModule,
     ReactiveFormsModule,
     SparkleFormFieldComponent,
     SparkleIconComponent,
@@ -65,6 +57,7 @@ export const createSourceDataForm = (
     SparkleToggleComponent,
     FileTreeComponent,
     ToggleCardComponent,
+    FilterComponent,
 
     JsonPipe,
   ],
@@ -80,9 +73,50 @@ export default class SourceDataComponent {
   sourceDataForm = this.#backupState.sourceDataForm;
   sourceDataFormSignal = this.#backupState.sourceDataFormSignal;
 
+  newPathCtrl = new FormControl('');
   filesLargerThan = computed(() => this.sourceDataFormSignal()?.excludes?.filesLargerThan?.size !== null);
   sizeOptions = signal(SIZE_OPTIONS);
-  expressionOptions = signal(EXPRESSION_OPTIONS);
+
+  pathSignal = toSignal(this.sourceDataForm.controls.path.valueChanges);
+  pathArray = computed(
+    () =>
+      this.pathSignal()
+        ?.split('\0')
+        .filter((x) => x.startsWith('-') || x.startsWith('+')) ?? []
+  );
+
+  addFilter(newPath = '-*') {
+    const currentPath = this.sourceDataForm.controls.path.value;
+    this.sourceDataForm.controls.path.setValue(`${currentPath!}\0${newPath}`);
+  }
+
+  patchPathAt(newPath: string, index: number) {
+    const currentPath = this.sourceDataForm.controls.path.value;
+    const nonFilterPath = currentPath!
+      .split('\0')
+      .filter((x) => !x.startsWith('-') && !x.startsWith('+'))
+      .join('\0');
+
+    const _newPath = this.pathArray()
+      .map((x, i) => (i === index ? `${newPath}` : `${x}`))
+      .join('\0');
+
+    this.sourceDataForm.controls.path.setValue(`${nonFilterPath}\0${_newPath}`);
+  }
+
+  removePathAt(index: number) {
+    const currentPath = this.sourceDataForm.controls.path.value;
+    const nonFilterPath = currentPath!
+      .split('\0')
+      .filter((x) => !x.startsWith('-') && !x.startsWith('+'))
+      .join('\0');
+
+    const _newPath = this.pathArray()
+      .filter((_, i) => i !== index)
+      .join('\0');
+
+    this.sourceDataForm.controls.path.setValue(`${nonFilterPath}\0${_newPath}`);
+  }
 
   getPath() {
     return this.sourceDataForm.value.path ?? null;
@@ -100,6 +134,12 @@ export default class SourceDataComponent {
         unit: null,
       });
     }
+  }
+
+  addNewPath() {
+    const currentPath = this.sourceDataForm.controls.path.value;
+    this.sourceDataForm.controls.path.setValue(`${currentPath}\0${this.newPathCtrl.value}`);
+    this.newPathCtrl.setValue('');
   }
 
   goBack() {

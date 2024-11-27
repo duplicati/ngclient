@@ -1,0 +1,33 @@
+@if (pathState()) {
+  <spk-select [hideClearButton]="true" [displayFn]="displayFn">
+    <input
+      type="text"
+      placeholder="Select an option..."
+      [ngModel]="pathState()?.type"
+      (ngModelChange)="updateStateType($event)" />
+
+    <ng-container options>
+      @for (option of expressionOptions(); track $index) {
+        <option [value]="option.value">{{ option.key }}</option>
+      }
+    </ng-container>
+  </spk-select>
+
+  @if (pathState()?.type === '-FileGroup' || pathState()?.type === '+FileGroup') {
+    <spk-select [hideClearButton]="true" [displayFn]="displayFn">
+      <input type="text" [ngModel]="pathState()?.expression" (ngModelChange)="updateStateExpression($event)" />
+
+      @for (option of fileGroupOptions(); track $index) {
+        <option [value]="option.value">{{ option.key }}</option>
+      }
+    </spk-select>
+  } @else {
+    <spk-form-field>
+      <input type="text" [ngModel]="pathState()?.expression" (ngModelChange)="updateStateExpression($event)" />
+    </spk-form-field>
+  }
+
+  <div class="filter-removal" (click)="removeFilter()">
+    <spk-icon class="spk-primary">x-circle</spk-icon>
+  </div>
+}
