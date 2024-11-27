@@ -1,4 +1,4 @@
-import { DatePipe, JsonPipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -26,14 +26,10 @@ export const createRestoreSelectFilesForm = () => {
 
 @Component({
   selector: 'app-select-files',
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     DatePipe,
-    JsonPipe,
-
     FileTreeComponent,
-
     SparkleButtonComponent,
     SparkleIconComponent,
     SparkleSelectComponent,

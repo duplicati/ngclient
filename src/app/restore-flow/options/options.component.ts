@@ -23,22 +23,19 @@ export const createRestoreOptionsForm = () => {
 };
 
 @Component({
-  selector: 'app-options',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-
-    ToggleCardComponent,
-    FileTreeComponent,
-
-    SparkleToggleComponent,
-    SparkleRadioComponent,
-    SparkleButtonComponent,
-    SparkleIconComponent,
-  ],
-  templateUrl: './options.component.html',
-  styleUrl: './options.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-options',
+    imports: [
+        ReactiveFormsModule,
+        ToggleCardComponent,
+        FileTreeComponent,
+        SparkleToggleComponent,
+        SparkleRadioComponent,
+        SparkleButtonComponent,
+        SparkleIconComponent,
+    ],
+    templateUrl: './options.component.html',
+    styleUrl: './options.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export default class OptionsComponent {
   #restoreFlowState = inject(RestoreFlowState);

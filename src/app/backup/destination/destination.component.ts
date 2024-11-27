@@ -1,4 +1,4 @@
-import { JsonPipe, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -14,11 +14,9 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angul
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   SparkleAlertComponent,
-  SparkleButtonGroupComponent,
   SparkleCheckboxComponent,
   SparkleDialogComponent,
   SparkleDialogService,
-  SparkleDividerComponent,
   SparkleFormFieldComponent,
   SparkleIconComponent,
   SparkleMenuComponent,
@@ -75,27 +73,21 @@ export type DestinationFormGroupValue = ReturnType<typeof createDestinationFormG
 
 @Component({
   selector: 'app-destination',
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     NgTemplateOutlet,
-
     SparkleFormFieldComponent,
     SparkleSelectComponent,
     SparkleMenuComponent,
     SparkleCheckboxComponent,
     SparkleOptionComponent,
-    SparkleButtonGroupComponent,
     SparkleIconComponent,
     SparkleToggleComponent,
-    SparkleDividerComponent,
     SparkleTooltipComponent,
     SparkleDialogComponent,
     SparkleAlertComponent,
-
     ToggleCardComponent,
     FileTreeComponent,
-    JsonPipe,
   ],
   templateUrl: './destination.component.html',
   styleUrl: './destination.component.scss',

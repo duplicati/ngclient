@@ -1,4 +1,3 @@
-import { JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -18,18 +17,14 @@ const fb = new FormBuilder();
 
 @Component({
   selector: 'app-import',
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     RouterLink,
-
     SparkleFileDragDropDirective,
     SparkleFormFieldComponent,
     SparkleIconComponent,
     SparkleButtonComponent,
     SparkleToggleComponent,
-
-    JsonPipe,
   ],
   templateUrl: './import.component.html',
   styleUrl: './import.component.scss',

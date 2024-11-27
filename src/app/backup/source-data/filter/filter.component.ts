@@ -100,7 +100,6 @@ const FILE_GROUP_OPTIONS: FileGroupTypeMap[] = [
 
 @Component({
   selector: 'app-filter',
-  standalone: true,
   imports: [
     FormsModule,
     SparkleSelectComponent,
@@ -121,60 +120,55 @@ export class FilterComponent {
   fileGroupOptions = signal(FILE_GROUP_OPTIONS);
 
   pathState = signal<FilterValue | null>(null);
-  pathEffect = effect(
-    () => {
-      const pathPart = this.path();
-      const stringWithoutDirection = pathPart.slice(1);
-      const direction = pathPart.startsWith('-') ? '-' : '+';
+  pathEffect = effect(() => {
+    const pathPart = this.path();
+    const stringWithoutDirection = pathPart.slice(1);
+    const direction = pathPart.startsWith('-') ? '-' : '+';
 
-      if (stringWithoutDirection.startsWith('/') && stringWithoutDirection.endsWith('/')) {
-        return this.pathState.set({
-          type: `${direction}Folder`,
-          path: stringWithoutDirection,
-          expression: stringWithoutDirection,
-        });
-      } else if (stringWithoutDirection.startsWith('*') && stringWithoutDirection.endsWith('*/')) {
-        return this.pathState.set({
-          type: `${direction}FolderNameIncludes`,
-          path: stringWithoutDirection,
-          expression: stringWithoutDirection.slice(1, -2),
-        });
-      } else if (stringWithoutDirection.startsWith('[.*') && stringWithoutDirection.endsWith(`[^\\/]*]`)) {
-        return this.pathState.set({
-          type: `${direction}FileNameIncludes`,
-          path: stringWithoutDirection,
-          expression: stringWithoutDirection.slice(3, -7),
-        });
-      } else if (stringWithoutDirection.startsWith('{') && stringWithoutDirection.endsWith('}')) {
-        return this.pathState.set({
-          type: `${direction}FileGroup`,
-          path: stringWithoutDirection,
-          expression: stringWithoutDirection.slice(1, -1),
-        });
-      } else if (stringWithoutDirection.startsWith('[') && stringWithoutDirection.endsWith(']')) {
-        return this.pathState.set({
-          type: `${direction}Regex`,
-          path: stringWithoutDirection,
-          expression: stringWithoutDirection.slice(1, -1),
-        });
-      } else if (stringWithoutDirection.startsWith('*.')) {
-        return this.pathState.set({
-          type: `${direction}Extension`,
-          path: stringWithoutDirection,
-          expression: stringWithoutDirection.slice(2),
-        });
-      } else {
-        return this.pathState.set({
-          type: `${direction}Expression`,
-          path: stringWithoutDirection,
-          expression: stringWithoutDirection,
-        });
-      }
-    },
-    {
-      allowSignalWrites: true,
+    if (stringWithoutDirection.startsWith('/') && stringWithoutDirection.endsWith('/')) {
+      return this.pathState.set({
+        type: `${direction}Folder`,
+        path: stringWithoutDirection,
+        expression: stringWithoutDirection,
+      });
+    } else if (stringWithoutDirection.startsWith('*') && stringWithoutDirection.endsWith('*/')) {
+      return this.pathState.set({
+        type: `${direction}FolderNameIncludes`,
+        path: stringWithoutDirection,
+        expression: stringWithoutDirection.slice(1, -2),
+      });
+    } else if (stringWithoutDirection.startsWith('[.*') && stringWithoutDirection.endsWith(`[^\\/]*]`)) {
+      return this.pathState.set({
+        type: `${direction}FileNameIncludes`,
+        path: stringWithoutDirection,
+        expression: stringWithoutDirection.slice(3, -7),
+      });
+    } else if (stringWithoutDirection.startsWith('{') && stringWithoutDirection.endsWith('}')) {
+      return this.pathState.set({
+        type: `${direction}FileGroup`,
+        path: stringWithoutDirection,
+        expression: stringWithoutDirection.slice(1, -1),
+      });
+    } else if (stringWithoutDirection.startsWith('[') && stringWithoutDirection.endsWith(']')) {
+      return this.pathState.set({
+        type: `${direction}Regex`,
+        path: stringWithoutDirection,
+        expression: stringWithoutDirection.slice(1, -1),
+      });
+    } else if (stringWithoutDirection.startsWith('*.')) {
+      return this.pathState.set({
+        type: `${direction}Extension`,
+        path: stringWithoutDirection,
+        expression: stringWithoutDirection.slice(2),
+      });
+    } else {
+      return this.pathState.set({
+        type: `${direction}Expression`,
+        path: stringWithoutDirection,
+        expression: stringWithoutDirection,
+      });
     }
-  );
+  });
 
   // TODO map to path
   updateStateType(type: ExpressionType) {

@@ -13,24 +13,21 @@ import { TasksState } from '../core/states/tasks.state';
 import { LayoutState } from './layout.state';
 
 @Component({
-  selector: 'app-layout',
-  standalone: true,
-  imports: [
-    RouterOutlet,
-    RouterLink,
-    RouterLinkActive,
-
-    SparkleSidenavComponent,
-    SparkleIconComponent,
-    SparkleListComponent,
-    SparkleButtonComponent,
-
-    ServiceHubComponent,
-    LogoComponent,
-  ],
-  templateUrl: './layout.component.html',
-  styleUrl: './layout.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-layout',
+    imports: [
+        RouterOutlet,
+        RouterLink,
+        RouterLinkActive,
+        SparkleSidenavComponent,
+        SparkleIconComponent,
+        SparkleListComponent,
+        SparkleButtonComponent,
+        ServiceHubComponent,
+        LogoComponent,
+    ],
+    templateUrl: './layout.component.html',
+    styleUrl: './layout.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export default class LayoutComponent {
   #layoutState = inject(LayoutState);

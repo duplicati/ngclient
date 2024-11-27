@@ -18,21 +18,19 @@ import { validateWhen, watchField } from '../../core/validators/custom.validator
 const fb = new FormBuilder();
 
 @Component({
-  selector: 'app-export',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    RouterLink,
-
-    SparkleButtonGroupComponent,
-    SparkleToggleComponent,
-    SparkleIconComponent,
-    SparkleFormFieldComponent,
-    SparkleButtonComponent,
-  ],
-  templateUrl: './export.component.html',
-  styleUrl: './export.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-export',
+    imports: [
+        ReactiveFormsModule,
+        RouterLink,
+        SparkleButtonGroupComponent,
+        SparkleToggleComponent,
+        SparkleIconComponent,
+        SparkleFormFieldComponent,
+        SparkleButtonComponent,
+    ],
+    templateUrl: './export.component.html',
+    styleUrl: './export.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export default class ExportComponent {
   #dupServer = inject(DuplicatiServerService);

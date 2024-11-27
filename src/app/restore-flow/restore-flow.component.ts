@@ -4,12 +4,11 @@ import { SparkleRadioComponent, SparkleStepperComponent } from '@sparkle-ui/core
 import { RestoreFlowState } from './restore-flow.state';
 
 @Component({
-  selector: 'app-restore-flow',
-  standalone: true,
-  imports: [SparkleStepperComponent, SparkleRadioComponent, RouterOutlet, RouterLink, RouterLinkActive],
-  templateUrl: './restore-flow.component.html',
-  styleUrl: './restore-flow.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-restore-flow',
+    imports: [SparkleStepperComponent, SparkleRadioComponent, RouterOutlet, RouterLink, RouterLinkActive],
+    templateUrl: './restore-flow.component.html',
+    styleUrl: './restore-flow.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export default class RestoreFlowComponent {
   #route = inject(ActivatedRoute);

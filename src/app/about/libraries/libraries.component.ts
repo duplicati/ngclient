@@ -4,12 +4,11 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { DuplicatiServerService } from '../../core/openapi';
 
 @Component({
-  selector: 'app-libraries',
-  standalone: true,
-  imports: [JsonPipe],
-  templateUrl: './libraries.component.html',
-  styleUrl: './libraries.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-libraries',
+    imports: [JsonPipe],
+    templateUrl: './libraries.component.html',
+    styleUrl: './libraries.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export default class LibrariesComponent {
   #dupServer = inject(DuplicatiServerService);

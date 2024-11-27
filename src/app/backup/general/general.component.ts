@@ -1,4 +1,3 @@
-import { JsonPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -57,7 +56,6 @@ export const NONE_OPTION = {
 
 @Component({
   selector: 'app-general',
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     SparkleFormFieldComponent,
@@ -67,7 +65,6 @@ export const NONE_OPTION = {
     SparkleProgressBarComponent,
     SparkleAlertComponent,
     SparkleTooltipComponent,
-    JsonPipe,
   ],
   templateUrl: './general.component.html',
   styleUrl: './general.component.scss',
@@ -91,19 +88,14 @@ export default class GeneralComponent {
   copiedPassword = signal(false);
   showCopyPassword = signal(false);
 
-  encryptionEffect = effect(
-    () => {
-      const encryptionField = this.encryptionFieldSignal();
+  encryptionEffect = effect(() => {
+    const encryptionField = this.encryptionFieldSignal();
 
-      if (encryptionField === '') {
-        this.copiedPassword.set(false);
-        this.showCopyPassword.set(false);
-      }
-    },
-    {
-      allowSignalWrites: true,
+    if (encryptionField === '') {
+      this.copiedPassword.set(false);
+      this.showCopyPassword.set(false);
     }
-  );
+  });
 
   calculatePasswordStrength = computed(() => {
     const form = this.generalFormSignal();

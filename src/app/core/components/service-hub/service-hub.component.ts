@@ -1,4 +1,3 @@
-import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -29,10 +28,8 @@ type Interval = ReturnType<typeof setInterval>;
 
 @Component({
   selector: 'app-service-hub',
-  standalone: true,
   imports: [
     ReactiveFormsModule,
-
     SparkleAlertComponent,
     SparkleIconComponent,
     SparkleButtonComponent,
@@ -45,7 +42,6 @@ type Interval = ReturnType<typeof setInterval>;
 export default class ServiceHubComponent {
   #sparkleAlertService = inject(SparkleAlertService);
 
-  autosize = viewChild.required<CdkTextareaAutosize>('autosize');
   isSubmitting = signal(false);
   messageSent = signal(false);
   form = fb.group({
@@ -63,40 +59,35 @@ export default class ServiceHubComponent {
   previousHistoryCount = signal<number | null>(null);
 
   constructor() {
-    effect(
-      () => {
-        const history = this.alertHistory();
+    effect(() => {
+      const history = this.alertHistory();
 
-        if (history.length && this.previousHistoryCount() !== history.length && !this.isAlertsOpen()) {
-          this.shownMessage.set({
-            ...history[0],
-            countDown: 3,
-          });
+      if (history.length && this.previousHistoryCount() !== history.length && !this.isAlertsOpen()) {
+        this.shownMessage.set({
+          ...history[0],
+          countDown: 3,
+        });
 
-          this.previousHistoryCount.set(history.length);
+        this.previousHistoryCount.set(history.length);
 
-          this.shownMessageInterval = setInterval(() => {
-            const message = this.shownMessage();
+        this.shownMessageInterval = setInterval(() => {
+          const message = this.shownMessage();
 
-            if (message?.countDown === 0) {
-              this.shownMessage.set(null);
-              this.shownMessageInterval = null;
-              return;
-            }
+          if (message?.countDown === 0) {
+            this.shownMessage.set(null);
+            this.shownMessageInterval = null;
+            return;
+          }
 
-            if (message !== null) {
-              (this.shownMessage as WritableSignal<SparkleAlertItemCountDown>).update((x) => ({
-                ...x,
-                countDown: x.countDown - 1,
-              }));
-            }
-          }, 1000);
-        }
-      },
-      {
-        allowSignalWrites: true,
+          if (message !== null) {
+            (this.shownMessage as WritableSignal<SparkleAlertItemCountDown>).update((x) => ({
+              ...x,
+              countDown: x.countDown - 1,
+            }));
+          }
+        }, 1000);
       }
-    );
+    });
 
     effect(() => {
       this.alertHistoryIsOpen();

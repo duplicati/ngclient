@@ -1,4 +1,4 @@
-import { DatePipe, JsonPipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
@@ -15,20 +15,15 @@ import { BackupsState } from '../core/states/backups.state';
 
 @Component({
   selector: 'app-home',
-  standalone: true,
   imports: [
     RouterLink,
-
     StatusBarComponent,
-
     SparkleCardComponent,
     SparkleButtonComponent,
     SparkleIconComponent,
     SparkleChipComponent,
     SparkleMenuComponent,
     SparkleProgressBarComponent,
-
-    JsonPipe,
     DatePipe,
     DurationFormatPipe,
   ],

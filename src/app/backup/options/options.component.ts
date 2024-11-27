@@ -1,4 +1,4 @@
-import { JsonPipe, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -74,11 +74,9 @@ export const createAdvancedOption = (name: string | null | undefined, defaultVal
 
 @Component({
   selector: 'app-options',
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     NgTemplateOutlet,
-
     SparkleMenuComponent,
     SparkleSelectComponent,
     SparkleButtonComponent,
@@ -88,10 +86,8 @@ export const createAdvancedOption = (name: string | null | undefined, defaultVal
     SparkleCheckboxComponent,
     SparkleOptionComponent,
     SparkleTooltipComponent,
-
     FileTreeComponent,
     ToggleCardComponent,
-    JsonPipe,
   ],
   templateUrl: './options.component.html',
   styleUrl: './options.component.scss',

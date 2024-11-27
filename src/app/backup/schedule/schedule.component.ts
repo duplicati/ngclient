@@ -1,4 +1,3 @@
-import { JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ElementRef, inject, viewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -93,7 +92,6 @@ export type ScheduleFormValue = ReturnType<typeof createScheduleForm>['value'];
 
 @Component({
   selector: 'app-schedule',
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     SparkleFormFieldComponent,
@@ -102,7 +100,6 @@ export type ScheduleFormValue = ReturnType<typeof createScheduleForm>['value'];
     SparkleIconComponent,
     SparkleButtonComponent,
     ToggleCardComponent,
-    JsonPipe,
   ],
   templateUrl: './schedule.component.html',
   styleUrl: './schedule.component.scss',

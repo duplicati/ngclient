@@ -3,7 +3,6 @@ import { RouterLink } from '@angular/router';
 import {
   SparkleButtonComponent,
   SparkleCardComponent,
-  SparkleDividerComponent,
   SparkleIconComponent,
   SparkleProgressBarComponent,
 } from '@sparkle-ui/core';
@@ -13,12 +12,10 @@ import { BackupsState } from '../core/states/backups.state';
 
 @Component({
   selector: 'app-restore',
-  standalone: true,
   imports: [
     StatusBarComponent,
     SparkleCardComponent,
     SparkleButtonComponent,
-    SparkleDividerComponent,
     SparkleIconComponent,
     SparkleProgressBarComponent,
     RouterLink,

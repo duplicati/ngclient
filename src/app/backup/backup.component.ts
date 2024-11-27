@@ -1,12 +1,7 @@
 import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import {
-  SparkleIconComponent,
-  SparkleProgressBarComponent,
-  SparkleRadioComponent,
-  SparkleStepperComponent,
-} from '@sparkle-ui/core';
+import { SparkleProgressBarComponent, SparkleRadioComponent, SparkleStepperComponent } from '@sparkle-ui/core';
 import { take } from 'rxjs';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { DuplicatiServerService, GetBackupResultDto } from '../core/openapi';
@@ -15,7 +10,6 @@ import { BackupState } from './backup.state';
 
 @Component({
   selector: 'app-backup',
-  standalone: true,
   imports: [
     RouterOutlet,
     RouterLink,
@@ -23,7 +17,6 @@ import { BackupState } from './backup.state';
     StatusBarComponent,
     SparkleRadioComponent,
     SparkleStepperComponent,
-    SparkleIconComponent,
     SparkleProgressBarComponent,
   ],
   templateUrl: './backup.component.html',
@@ -44,23 +37,18 @@ export default class BackupComponent {
   #routeParamsSignal = toSignal(this.#route.params);
   #routeUrlSignal = toSignal(this.#route.url);
 
-  paramsChanged = effect(
-    () => {
-      const backupId = this.#routeParamsSignal()?.['id'];
-      const isDraft = !!this.#routeUrlSignal()?.find((x) => x.path === 'backup-draft');
+  paramsChanged = effect(() => {
+    const backupId = this.#routeParamsSignal()?.['id'];
+    const isDraft = !!this.#routeUrlSignal()?.find((x) => x.path === 'backup-draft');
 
-      this.#backupState.backupId.set(backupId);
+    this.#backupState.backupId.set(backupId);
 
-      if (backupId !== 'new') {
-        this.getBackup(backupId, isDraft);
-      } else {
-        this.getDefaults();
-      }
-    },
-    {
-      allowSignalWrites: true,
+    if (backupId !== 'new') {
+      this.getBackup(backupId, isDraft);
+    } else {
+      this.getDefaults();
     }
-  );
+  });
 
   getDefaults() {
     this.#dupServer

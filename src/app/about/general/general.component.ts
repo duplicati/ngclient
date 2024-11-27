@@ -1,4 +1,3 @@
-import { JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -8,8 +7,7 @@ import { DuplicatiServerService } from '../../core/openapi';
 
 @Component({
   selector: 'app-general',
-  standalone: true,
-  imports: [JsonPipe, SparkleProgressBarComponent],
+  imports: [SparkleProgressBarComponent],
   templateUrl: './general.component.html',
   styleUrl: './general.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

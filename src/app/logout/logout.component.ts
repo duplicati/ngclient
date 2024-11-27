@@ -4,12 +4,11 @@ import CustomCardComponent from '../core/components/custom-card/custom-card.comp
 import { AppAuthState } from '../core/states/app-auth.state';
 
 @Component({
-  selector: 'app-logout',
-  standalone: true,
-  imports: [CustomCardComponent, SparkleButtonComponent],
-  templateUrl: './logout.component.html',
-  styleUrl: './logout.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-logout',
+    imports: [CustomCardComponent, SparkleButtonComponent],
+    templateUrl: './logout.component.html',
+    styleUrl: './logout.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export default class LogoutComponent {
   #auth = inject(AppAuthState);
