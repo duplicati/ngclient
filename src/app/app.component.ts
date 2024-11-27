@@ -5,12 +5,12 @@ import { LOCALSTORAGE } from './core/services/localstorage.token';
 import { RelayconfigState } from './core/states/relayconfig.state';
 
 @Component({
-    selector: 'app-root',
-    imports: [RouterOutlet],
-    template: `
+  selector: 'app-root',
+  imports: [RouterOutlet],
+  template: `
     <router-outlet />
   `,
-    styles: []
+  styles: [],
 })
 export class AppComponent {
   #ls = inject(LOCALSTORAGE);
