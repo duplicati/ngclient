@@ -356,17 +356,9 @@ export default class FileTreeComponent {
     const namedGroupRegex = /\(\?<(?<name>\w+)>(?<pattern>[^)]+)\)/g;
     jsRegex = jsRegex.replace(namedGroupRegex, (match, name, pattern) => `(${pattern})`);
 
-    // 3. (Optional) Add polyfill for lookbehind assertions if needed
-    //    (This is browser-dependent - might not be necessary in modern browsers)
-    if (!/(?<=)/.test(jsRegex)) {
-      // No lookbehinds, no need for polyfill
-    } else {
-      // You'll need to include a lookbehind polyfill library or implement your own
-      // Example using 'js-regex-lookbehind' library:
-      // jsRegex = require('js-regex-lookbehind')(jsRegex);
-    }
+    // TODO - Add lookbehind polyfill
 
-    // 4. Escape backslashes
+    // 3. Escape backslashes
     jsRegex = jsRegex.replace(/\\/g, '\\\\');
 
     return jsRegex;
