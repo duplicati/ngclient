@@ -1,4 +1,4 @@
-import { JsonPipe, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -73,26 +73,25 @@ export const createAdvancedOption = (name: string | null | undefined, defaultVal
 };
 
 @Component({
-    selector: 'app-options',
-    imports: [
-        ReactiveFormsModule,
-        NgTemplateOutlet,
-        SparkleMenuComponent,
-        SparkleSelectComponent,
-        SparkleButtonComponent,
-        SparkleIconComponent,
-        SparkleFormFieldComponent,
-        SparkleToggleComponent,
-        SparkleCheckboxComponent,
-        SparkleOptionComponent,
-        SparkleTooltipComponent,
-        FileTreeComponent,
-        ToggleCardComponent,
-        JsonPipe,
-    ],
-    templateUrl: './options.component.html',
-    styleUrl: './options.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-options',
+  imports: [
+    ReactiveFormsModule,
+    NgTemplateOutlet,
+    SparkleMenuComponent,
+    SparkleSelectComponent,
+    SparkleButtonComponent,
+    SparkleIconComponent,
+    SparkleFormFieldComponent,
+    SparkleToggleComponent,
+    SparkleCheckboxComponent,
+    SparkleOptionComponent,
+    SparkleTooltipComponent,
+    FileTreeComponent,
+    ToggleCardComponent,
+  ],
+  templateUrl: './options.component.html',
+  styleUrl: './options.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class OptionsComponent {
   #backupState = inject(BackupState);

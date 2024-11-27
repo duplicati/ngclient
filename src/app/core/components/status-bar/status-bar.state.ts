@@ -101,26 +101,21 @@ export class StatusBarState {
     this.#progressStatePollingInterval.set(time);
   }
 
-  serverStateEffect = effect(
-    () => {
-      if (this.#blocker()) {
-        this.stopPollingProgress();
-        return;
-      }
-
-      if (!this.#serverStateLoading() && this.#isGettingServerState()) {
-        setTimeout(() => {
-          this.startPollingProgress();
-          this.#getServerState();
-        }, 1000);
-      } else {
-        this.stopPollingProgress();
-      }
-    },
-    {
-      allowSignalWrites: true,
+  serverStateEffect = effect(() => {
+    if (this.#blocker()) {
+      this.stopPollingProgress();
+      return;
     }
-  );
+
+    if (!this.#serverStateLoading() && this.#isGettingServerState()) {
+      setTimeout(() => {
+        this.startPollingProgress();
+        this.#getServerState();
+      }, 1000);
+    } else {
+      this.stopPollingProgress();
+    }
+  });
 
   #getServerState() {
     if (this.#serverStateLoading()) return;

@@ -19,20 +19,17 @@ export class AppAuthState {
   token = this.#token.asReadonly();
   isLoggingOut = this.#isLoggingOut.asReadonly();
 
-  #tokenEffect = effect(
-    () => {
-      if (!this.#token()) {
-        this.#ls.clearAll();
-        this.#router.navigate(['/login']);
-        return;
-      }
-      const now = Date.now();
-      this.#ls.setItemParsed('tokenSetTime', now);
-      this.#ls.setItemParsed('token', this.#token());
-      this.#tokenSetTime.set(this.#token() ? now : null);
-    },
-    { allowSignalWrites: true }
-  );
+  #tokenEffect = effect(() => {
+    if (!this.#token()) {
+      this.#ls.clearAll();
+      this.#router.navigate(['/login']);
+      return;
+    }
+    const now = Date.now();
+    this.#ls.setItemParsed('tokenSetTime', now);
+    this.#ls.setItemParsed('token', this.#token());
+    this.#tokenSetTime.set(this.#token() ? now : null);
+  });
 
   login(pass = 'helloworld') {
     return this.#dupServer

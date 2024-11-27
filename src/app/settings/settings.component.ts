@@ -1,12 +1,9 @@
-import { JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   SparkleButtonComponent,
-  SparkleButtonGroupComponent,
   SparkleFormFieldComponent,
-  SparkleIconComponent,
   SparkleRadioComponent,
   SparkleSelectComponent,
 } from '@sparkle-ui/core';
@@ -111,22 +108,19 @@ type RemoteControlState =
 type Timeout = ReturnType<typeof setTimeout>;
 
 @Component({
-    selector: 'app-settings',
-    imports: [
-        FormsModule,
-        ReactiveFormsModule,
-        StatusBarComponent,
-        SparkleButtonComponent,
-        SparkleIconComponent,
-        SparkleRadioComponent,
-        SparkleFormFieldComponent,
-        SparkleButtonGroupComponent,
-        SparkleSelectComponent,
-        JsonPipe,
-    ],
-    templateUrl: './settings.component.html',
-    styleUrl: './settings.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-settings',
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    StatusBarComponent,
+    SparkleButtonComponent,
+    SparkleRadioComponent,
+    SparkleFormFieldComponent,
+    SparkleSelectComponent,
+  ],
+  templateUrl: './settings.component.html',
+  styleUrl: './settings.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class SettingsComponent {
   #layoutState = inject(LayoutState);
@@ -151,16 +145,9 @@ export default class SettingsComponent {
   remoteControlClaimUrl = signal<string | null>(null);
   // remoteControlRegisterUrl = signal<string>('');
 
-  sysInfoEffect = effect(
-    () => {
-      this.settingsForm.controls.remoteControlRegisterUrl.patchValue(
-        this.sysinfo()?.RemoteControlRegistrationUrl ?? ''
-      );
-    },
-    {
-      allowSignalWrites: true,
-    }
-  );
+  sysInfoEffect = effect(() => {
+    this.settingsForm.controls.remoteControlRegisterUrl.patchValue(this.sysinfo()?.RemoteControlRegistrationUrl ?? '');
+  });
 
   get pauseSettings() {
     return this.settingsForm.controls.pauseSettings;

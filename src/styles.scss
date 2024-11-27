@@ -1,5 +1,6 @@
 @use '@sparkle-ui/core/styles' as * with (
-  $useInterTight: false
+  $useInterTight: false,
+  $useApexcharts: false
 );
 
 body {

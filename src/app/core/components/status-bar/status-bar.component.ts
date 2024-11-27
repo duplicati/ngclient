@@ -1,15 +1,14 @@
-import { JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { SparkleButtonComponent, SparkleIconComponent, SparkleProgressBarComponent } from '@sparkle-ui/core';
+import { SparkleProgressBarComponent } from '@sparkle-ui/core';
 import { RelativeTimePipe } from '../../pipes/relative-time.pipe';
 import { StatusBarState } from './status-bar.state';
 
 @Component({
-    selector: 'app-status-bar',
-    imports: [SparkleButtonComponent, SparkleIconComponent, SparkleProgressBarComponent, RelativeTimePipe, JsonPipe],
-    templateUrl: './status-bar.component.html',
-    styleUrl: './status-bar.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-status-bar',
+  imports: [SparkleProgressBarComponent, RelativeTimePipe],
+  templateUrl: './status-bar.component.html',
+  styleUrl: './status-bar.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class StatusBarComponent {
   #statusBarState = inject(StatusBarState);

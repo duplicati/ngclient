@@ -1,4 +1,3 @@
-import { JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -7,11 +6,11 @@ import { finalize, map } from 'rxjs';
 import { DuplicatiServerService } from '../../core/openapi';
 
 @Component({
-    selector: 'app-general',
-    imports: [JsonPipe, SparkleProgressBarComponent],
-    templateUrl: './general.component.html',
-    styleUrl: './general.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-general',
+  imports: [SparkleProgressBarComponent],
+  templateUrl: './general.component.html',
+  styleUrl: './general.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class GeneralComponent {
   #sanitizer = inject(DomSanitizer);

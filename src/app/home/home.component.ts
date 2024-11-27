@@ -1,4 +1,4 @@
-import { DatePipe, JsonPipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
@@ -14,23 +14,22 @@ import { DurationFormatPipe } from '../core/pipes/duration.pipe';
 import { BackupsState } from '../core/states/backups.state';
 
 @Component({
-    selector: 'app-home',
-    imports: [
-        RouterLink,
-        StatusBarComponent,
-        SparkleCardComponent,
-        SparkleButtonComponent,
-        SparkleIconComponent,
-        SparkleChipComponent,
-        SparkleMenuComponent,
-        SparkleProgressBarComponent,
-        JsonPipe,
-        DatePipe,
-        DurationFormatPipe,
-    ],
-    templateUrl: './home.component.html',
-    styleUrl: './home.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-home',
+  imports: [
+    RouterLink,
+    StatusBarComponent,
+    SparkleCardComponent,
+    SparkleButtonComponent,
+    SparkleIconComponent,
+    SparkleChipComponent,
+    SparkleMenuComponent,
+    SparkleProgressBarComponent,
+    DatePipe,
+    DurationFormatPipe,
+  ],
+  templateUrl: './home.component.html',
+  styleUrl: './home.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class HomeComponent {
   #backupsState = inject(BackupsState);

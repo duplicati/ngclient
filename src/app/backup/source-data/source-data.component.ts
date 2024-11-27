@@ -1,4 +1,3 @@
-import { JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -45,23 +44,22 @@ export const createSourceDataForm = (
 };
 
 @Component({
-    selector: 'app-source-data',
-    imports: [
-        FormsModule,
-        ReactiveFormsModule,
-        SparkleFormFieldComponent,
-        SparkleIconComponent,
-        SparkleButtonComponent,
-        SparkleSelectComponent,
-        SparkleToggleComponent,
-        FileTreeComponent,
-        ToggleCardComponent,
-        FilterComponent,
-        JsonPipe,
-    ],
-    templateUrl: './source-data.component.html',
-    styleUrl: './source-data.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-source-data',
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    SparkleFormFieldComponent,
+    SparkleIconComponent,
+    SparkleButtonComponent,
+    SparkleSelectComponent,
+    SparkleToggleComponent,
+    FileTreeComponent,
+    ToggleCardComponent,
+    FilterComponent,
+  ],
+  templateUrl: './source-data.component.html',
+  styleUrl: './source-data.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class SourceDataComponent {
   #backupState = inject(BackupState);

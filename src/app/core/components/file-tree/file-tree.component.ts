@@ -1,4 +1,4 @@
-import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -73,26 +73,25 @@ type BackupSettings = {
 // - When rootPath get all the levels and batch them at the root level for better usability
 
 @Component({
-    selector: 'app-file-tree',
-    imports: [
-        SparkleButtonGroupComponent,
-        SparkleToggleComponent,
-        SparkleIconComponent,
-        SparkleFormFieldComponent,
-        SparkleListComponent,
-        // SparkleCheckboxComponent,
-        SparkleProgressBarComponent,
-        NgTemplateOutlet,
-        // JsonPipe,
-        FormsModule,
-        AsyncPipe,
-    ],
-    templateUrl: './file-tree.component.html',
-    styleUrl: './file-tree.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    host: {
-        '[class.disabled]': 'disabled()',
-    }
+  selector: 'app-file-tree',
+  imports: [
+    SparkleButtonGroupComponent,
+    SparkleToggleComponent,
+    SparkleIconComponent,
+    SparkleFormFieldComponent,
+    SparkleListComponent,
+    // SparkleCheckboxComponent,
+    SparkleProgressBarComponent,
+    NgTemplateOutlet,
+    // JsonPipe,
+    FormsModule,
+  ],
+  templateUrl: './file-tree.component.html',
+  styleUrl: './file-tree.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[class.disabled]': 'disabled()',
+  },
 })
 export default class FileTreeComponent {
   #dupServer = inject(DuplicatiServerService);
@@ -378,23 +377,16 @@ export default class FileTreeComponent {
     return regex.test(str);
   }
 
-  showHiddenNodesEffect = effect(() => this._showHiddenNodes.set(this.showHiddenNodes()), {
-    allowSignalWrites: true,
-  });
+  showHiddenNodesEffect = effect(() => this._showHiddenNodes.set(this.showHiddenNodes()));
 
-  pathDiscoveryMethodEffect = effect(
-    () => {
-      const discoveryMethod = this.pathDiscoveryMethod();
-      const input = this.#inputRef();
+  pathDiscoveryMethodEffect = effect(() => {
+    const discoveryMethod = this.pathDiscoveryMethod();
+    const input = this.#inputRef();
 
-      if (discoveryMethod === 'browse' && input) {
-        this.currentPath.set(input.value);
-      }
-    },
-    {
-      allowSignalWrites: true,
+    if (discoveryMethod === 'browse' && input) {
+      this.currentPath.set(input.value);
     }
-  );
+  });
 
   matchAccepts(accepts: string, node: FileTreeNode) {
     if (!accepts) return true;
@@ -411,48 +403,40 @@ export default class FileTreeComponent {
     return extensions.some((x) => fileExt.endsWith(x));
   }
 
-  currentPathEffect = effect(
-    () => {
-      const input = this.#inputRef();
+  currentPathEffect = effect(() => {
+    const input = this.#inputRef();
 
-      if (input) {
-        input.value = this.currentPath();
-        input.dispatchEvent(new Event('input'));
-      }
-    },
-    {
-      allowSignalWrites: true,
+    if (input) {
+      input.value = this.currentPath();
+      input.dispatchEvent(new Event('input'));
     }
-  );
+  });
 
   inputValueChangeAbortController: AbortController | null = null;
-  inputRefEffect = effect(
-    () => {
-      const input = this.formRef()?.nativeElement?.querySelector('input');
+  inputRefEffect = effect(() => {
+    const input = this.formRef()?.nativeElement?.querySelector('input');
 
-      if (!input) return;
+    if (!input) return;
 
-      this.#createCustomInputEventListener(input);
+    this.#createCustomInputEventListener(input);
 
-      if (this.inputValueChangeAbortController) {
-        this.inputValueChangeAbortController.abort();
-      }
+    if (this.inputValueChangeAbortController) {
+      this.inputValueChangeAbortController.abort();
+    }
 
-      this.inputValueChangeAbortController = new AbortController();
+    this.inputValueChangeAbortController = new AbortController();
 
-      input.addEventListener(
-        'inputValueChanged',
-        (event: InputValueChangedEvent) => {
-          this.currentPath.set(event.detail.value);
-        },
-        { signal: this.inputValueChangeAbortController.signal }
-      );
+    input.addEventListener(
+      'inputValueChanged',
+      (event: InputValueChangedEvent) => {
+        this.currentPath.set(event.detail.value);
+      },
+      { signal: this.inputValueChangeAbortController.signal }
+    );
 
-      this.#inputRef.set(input);
-      input.autocomplete = 'off';
-    },
-    { allowSignalWrites: true }
-  );
+    this.#inputRef.set(input);
+    input.autocomplete = 'off';
+  });
 
   ngOnInit() {
     const startingPath = this.startingPath();

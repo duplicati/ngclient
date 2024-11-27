@@ -1,4 +1,3 @@
-import { JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -17,20 +16,19 @@ import { BackupDraft, BackupsState } from '../../core/states/backups.state';
 const fb = new FormBuilder();
 
 @Component({
-    selector: 'app-import',
-    imports: [
-        ReactiveFormsModule,
-        RouterLink,
-        SparkleFileDragDropDirective,
-        SparkleFormFieldComponent,
-        SparkleIconComponent,
-        SparkleButtonComponent,
-        SparkleToggleComponent,
-        JsonPipe,
-    ],
-    templateUrl: './import.component.html',
-    styleUrl: './import.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-import',
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    SparkleFileDragDropDirective,
+    SparkleFormFieldComponent,
+    SparkleIconComponent,
+    SparkleButtonComponent,
+    SparkleToggleComponent,
+  ],
+  templateUrl: './import.component.html',
+  styleUrl: './import.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ImportComponent {
   #sparkleAlertService = inject(SparkleAlertService);

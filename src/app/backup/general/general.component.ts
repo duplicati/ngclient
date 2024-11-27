@@ -1,4 +1,3 @@
-import { JsonPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -56,21 +55,20 @@ export const NONE_OPTION = {
 };
 
 @Component({
-    selector: 'app-general',
-    imports: [
-        ReactiveFormsModule,
-        SparkleFormFieldComponent,
-        SparkleSelectComponent,
-        SparkleButtonComponent,
-        SparkleIconComponent,
-        SparkleProgressBarComponent,
-        SparkleAlertComponent,
-        SparkleTooltipComponent,
-        JsonPipe,
-    ],
-    templateUrl: './general.component.html',
-    styleUrl: './general.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-general',
+  imports: [
+    ReactiveFormsModule,
+    SparkleFormFieldComponent,
+    SparkleSelectComponent,
+    SparkleButtonComponent,
+    SparkleIconComponent,
+    SparkleProgressBarComponent,
+    SparkleAlertComponent,
+    SparkleTooltipComponent,
+  ],
+  templateUrl: './general.component.html',
+  styleUrl: './general.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class GeneralComponent {
   #router = inject(Router);
@@ -90,19 +88,14 @@ export default class GeneralComponent {
   copiedPassword = signal(false);
   showCopyPassword = signal(false);
 
-  encryptionEffect = effect(
-    () => {
-      const encryptionField = this.encryptionFieldSignal();
+  encryptionEffect = effect(() => {
+    const encryptionField = this.encryptionFieldSignal();
 
-      if (encryptionField === '') {
-        this.copiedPassword.set(false);
-        this.showCopyPassword.set(false);
-      }
-    },
-    {
-      allowSignalWrites: true,
+    if (encryptionField === '') {
+      this.copiedPassword.set(false);
+      this.showCopyPassword.set(false);
     }
-  );
+  });
 
   calculatePasswordStrength = computed(() => {
     const form = this.generalFormSignal();

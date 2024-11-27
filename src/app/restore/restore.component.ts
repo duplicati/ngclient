@@ -3,7 +3,6 @@ import { RouterLink } from '@angular/router';
 import {
   SparkleButtonComponent,
   SparkleCardComponent,
-  SparkleDividerComponent,
   SparkleIconComponent,
   SparkleProgressBarComponent,
 } from '@sparkle-ui/core';
@@ -12,19 +11,18 @@ import { BackupAndScheduleOutputDto, DuplicatiServerService } from '../core/open
 import { BackupsState } from '../core/states/backups.state';
 
 @Component({
-    selector: 'app-restore',
-    imports: [
-        StatusBarComponent,
-        SparkleCardComponent,
-        SparkleButtonComponent,
-        SparkleDividerComponent,
-        SparkleIconComponent,
-        SparkleProgressBarComponent,
-        RouterLink,
-    ],
-    templateUrl: './restore.component.html',
-    styleUrl: './restore.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-restore',
+  imports: [
+    StatusBarComponent,
+    SparkleCardComponent,
+    SparkleButtonComponent,
+    SparkleIconComponent,
+    SparkleProgressBarComponent,
+    RouterLink,
+  ],
+  templateUrl: './restore.component.html',
+  styleUrl: './restore.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class RestoreComponent {
   #backupsState = inject(BackupsState);

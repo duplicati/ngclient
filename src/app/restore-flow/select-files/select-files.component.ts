@@ -1,4 +1,4 @@
-import { DatePipe, JsonPipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -25,21 +25,20 @@ export const createRestoreSelectFilesForm = () => {
 };
 
 @Component({
-    selector: 'app-select-files',
-    imports: [
-        ReactiveFormsModule,
-        DatePipe,
-        JsonPipe,
-        FileTreeComponent,
-        SparkleButtonComponent,
-        SparkleIconComponent,
-        SparkleSelectComponent,
-        SparkleProgressBarComponent,
-    ],
-    templateUrl: './select-files.component.html',
-    styleUrl: './select-files.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [DatePipe]
+  selector: 'app-select-files',
+  imports: [
+    ReactiveFormsModule,
+    DatePipe,
+    FileTreeComponent,
+    SparkleButtonComponent,
+    SparkleIconComponent,
+    SparkleSelectComponent,
+    SparkleProgressBarComponent,
+  ],
+  templateUrl: './select-files.component.html',
+  styleUrl: './select-files.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [DatePipe],
 })
 export default class SelectFilesComponent {
   #dupServer = inject(DuplicatiServerService);
