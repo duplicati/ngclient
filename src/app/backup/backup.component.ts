@@ -14,22 +14,21 @@ import { BackupsState } from '../core/states/backups.state';
 import { BackupState } from './backup.state';
 
 @Component({
-  selector: 'app-backup',
-  standalone: true,
-  imports: [
-    RouterOutlet,
-    RouterLink,
-    RouterLinkActive,
-    StatusBarComponent,
-    SparkleRadioComponent,
-    SparkleStepperComponent,
-    SparkleIconComponent,
-    SparkleProgressBarComponent,
-  ],
-  templateUrl: './backup.component.html',
-  styleUrl: './backup.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [BackupState],
+    selector: 'app-backup',
+    imports: [
+        RouterOutlet,
+        RouterLink,
+        RouterLinkActive,
+        StatusBarComponent,
+        SparkleRadioComponent,
+        SparkleStepperComponent,
+        SparkleIconComponent,
+        SparkleProgressBarComponent,
+    ],
+    templateUrl: './backup.component.html',
+    styleUrl: './backup.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [BackupState]
 })
 export default class BackupComponent {
   #route = inject(ActivatedRoute);

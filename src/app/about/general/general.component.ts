@@ -7,12 +7,11 @@ import { finalize, map } from 'rxjs';
 import { DuplicatiServerService } from '../../core/openapi';
 
 @Component({
-  selector: 'app-general',
-  standalone: true,
-  imports: [JsonPipe, SparkleProgressBarComponent],
-  templateUrl: './general.component.html',
-  styleUrl: './general.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-general',
+    imports: [JsonPipe, SparkleProgressBarComponent],
+    templateUrl: './general.component.html',
+    styleUrl: './general.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export default class GeneralComponent {
   #sanitizer = inject(DomSanitizer);

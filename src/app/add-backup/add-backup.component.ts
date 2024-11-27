@@ -4,11 +4,10 @@ import { SparkleButtonComponent, SparkleCardComponent, SparkleIconComponent } fr
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 
 @Component({
-  selector: 'app-add-backup',
-  standalone: true,
-  imports: [StatusBarComponent, SparkleButtonComponent, SparkleCardComponent, SparkleIconComponent, RouterLink],
-  templateUrl: './add-backup.component.html',
-  styleUrl: './add-backup.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-add-backup',
+    imports: [StatusBarComponent, SparkleButtonComponent, SparkleCardComponent, SparkleIconComponent, RouterLink],
+    templateUrl: './add-backup.component.html',
+    styleUrl: './add-backup.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export default class AddBackupComponent {}

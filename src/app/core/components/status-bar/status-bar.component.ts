@@ -5,12 +5,11 @@ import { RelativeTimePipe } from '../../pipes/relative-time.pipe';
 import { StatusBarState } from './status-bar.state';
 
 @Component({
-  selector: 'app-status-bar',
-  standalone: true,
-  imports: [SparkleButtonComponent, SparkleIconComponent, SparkleProgressBarComponent, RelativeTimePipe, JsonPipe],
-  templateUrl: './status-bar.component.html',
-  styleUrl: './status-bar.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-status-bar',
+    imports: [SparkleButtonComponent, SparkleIconComponent, SparkleProgressBarComponent, RelativeTimePipe, JsonPipe],
+    templateUrl: './status-bar.component.html',
+    styleUrl: './status-bar.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export default class StatusBarComponent {
   #statusBarState = inject(StatusBarState);

@@ -73,29 +73,26 @@ export const createAdvancedOption = (name: string | null | undefined, defaultVal
 };
 
 @Component({
-  selector: 'app-options',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    NgTemplateOutlet,
-
-    SparkleMenuComponent,
-    SparkleSelectComponent,
-    SparkleButtonComponent,
-    SparkleIconComponent,
-    SparkleFormFieldComponent,
-    SparkleToggleComponent,
-    SparkleCheckboxComponent,
-    SparkleOptionComponent,
-    SparkleTooltipComponent,
-
-    FileTreeComponent,
-    ToggleCardComponent,
-    JsonPipe,
-  ],
-  templateUrl: './options.component.html',
-  styleUrl: './options.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-options',
+    imports: [
+        ReactiveFormsModule,
+        NgTemplateOutlet,
+        SparkleMenuComponent,
+        SparkleSelectComponent,
+        SparkleButtonComponent,
+        SparkleIconComponent,
+        SparkleFormFieldComponent,
+        SparkleToggleComponent,
+        SparkleCheckboxComponent,
+        SparkleOptionComponent,
+        SparkleTooltipComponent,
+        FileTreeComponent,
+        ToggleCardComponent,
+        JsonPipe,
+    ],
+    templateUrl: './options.component.html',
+    styleUrl: './options.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export default class OptionsComponent {
   #backupState = inject(BackupState);

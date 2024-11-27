@@ -111,25 +111,22 @@ type RemoteControlState =
 type Timeout = ReturnType<typeof setTimeout>;
 
 @Component({
-  selector: 'app-settings',
-  standalone: true,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-
-    StatusBarComponent,
-    SparkleButtonComponent,
-    SparkleIconComponent,
-    SparkleRadioComponent,
-    SparkleFormFieldComponent,
-    SparkleButtonGroupComponent,
-    SparkleSelectComponent,
-
-    JsonPipe,
-  ],
-  templateUrl: './settings.component.html',
-  styleUrl: './settings.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-settings',
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        StatusBarComponent,
+        SparkleButtonComponent,
+        SparkleIconComponent,
+        SparkleRadioComponent,
+        SparkleFormFieldComponent,
+        SparkleButtonGroupComponent,
+        SparkleSelectComponent,
+        JsonPipe,
+    ],
+    templateUrl: './settings.component.html',
+    styleUrl: './settings.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export default class SettingsComponent {
   #layoutState = inject(LayoutState);

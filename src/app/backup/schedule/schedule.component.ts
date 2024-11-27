@@ -92,21 +92,20 @@ export const createScheduleForm = (
 export type ScheduleFormValue = ReturnType<typeof createScheduleForm>['value'];
 
 @Component({
-  selector: 'app-schedule',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    SparkleFormFieldComponent,
-    SparkleSelectComponent,
-    SparkleToggleComponent,
-    SparkleIconComponent,
-    SparkleButtonComponent,
-    ToggleCardComponent,
-    JsonPipe,
-  ],
-  templateUrl: './schedule.component.html',
-  styleUrl: './schedule.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-schedule',
+    imports: [
+        ReactiveFormsModule,
+        SparkleFormFieldComponent,
+        SparkleSelectComponent,
+        SparkleToggleComponent,
+        SparkleIconComponent,
+        SparkleButtonComponent,
+        ToggleCardComponent,
+        JsonPipe,
+    ],
+    templateUrl: './schedule.component.html',
+    styleUrl: './schedule.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export default class ScheduleComponent {
   #backupState = inject(BackupState);

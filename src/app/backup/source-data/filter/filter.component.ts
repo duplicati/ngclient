@@ -99,18 +99,17 @@ const FILE_GROUP_OPTIONS: FileGroupTypeMap[] = [
 ];
 
 @Component({
-  selector: 'app-filter',
-  standalone: true,
-  imports: [
-    FormsModule,
-    SparkleSelectComponent,
-    SparkleIconComponent,
-    SparkleFormFieldComponent,
-    SparkleSelectComponent,
-  ],
-  templateUrl: './filter.component.html',
-  styleUrl: './filter.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-filter',
+    imports: [
+        FormsModule,
+        SparkleSelectComponent,
+        SparkleIconComponent,
+        SparkleFormFieldComponent,
+        SparkleSelectComponent,
+    ],
+    templateUrl: './filter.component.html',
+    styleUrl: './filter.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FilterComponent {
   path = input.required<string>();

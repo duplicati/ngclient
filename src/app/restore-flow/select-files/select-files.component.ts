@@ -25,24 +25,21 @@ export const createRestoreSelectFilesForm = () => {
 };
 
 @Component({
-  selector: 'app-select-files',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    DatePipe,
-    JsonPipe,
-
-    FileTreeComponent,
-
-    SparkleButtonComponent,
-    SparkleIconComponent,
-    SparkleSelectComponent,
-    SparkleProgressBarComponent,
-  ],
-  templateUrl: './select-files.component.html',
-  styleUrl: './select-files.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [DatePipe],
+    selector: 'app-select-files',
+    imports: [
+        ReactiveFormsModule,
+        DatePipe,
+        JsonPipe,
+        FileTreeComponent,
+        SparkleButtonComponent,
+        SparkleIconComponent,
+        SparkleSelectComponent,
+        SparkleProgressBarComponent,
+    ],
+    templateUrl: './select-files.component.html',
+    styleUrl: './select-files.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [DatePipe]
 })
 export default class SelectFilesComponent {
   #dupServer = inject(DuplicatiServerService);

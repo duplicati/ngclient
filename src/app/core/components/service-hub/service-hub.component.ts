@@ -28,19 +28,17 @@ type SparkleAlertItemCountDown = SparkleAlertItemInternal & {
 type Interval = ReturnType<typeof setInterval>;
 
 @Component({
-  selector: 'app-service-hub',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-
-    SparkleAlertComponent,
-    SparkleIconComponent,
-    SparkleButtonComponent,
-    SparkleAlertComponent,
-  ],
-  templateUrl: './service-hub.component.html',
-  styleUrl: './service-hub.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-service-hub',
+    imports: [
+        ReactiveFormsModule,
+        SparkleAlertComponent,
+        SparkleIconComponent,
+        SparkleButtonComponent,
+        SparkleAlertComponent,
+    ],
+    templateUrl: './service-hub.component.html',
+    styleUrl: './service-hub.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export default class ServiceHubComponent {
   #sparkleAlertService = inject(SparkleAlertService);

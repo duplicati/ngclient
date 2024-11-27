@@ -2,15 +2,14 @@ import { ChangeDetectionStrategy, Component, input, model } from '@angular/core'
 import { SparkleIconComponent } from '@sparkle-ui/core';
 
 @Component({
-  selector: 'app-toggle-card',
-  standalone: true,
-  imports: [SparkleIconComponent],
-  templateUrl: './toggle-card.component.html',
-  styleUrl: './toggle-card.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  host: {
-    '[class.active]': 'isActive()',
-  },
+    selector: 'app-toggle-card',
+    imports: [SparkleIconComponent],
+    templateUrl: './toggle-card.component.html',
+    styleUrl: './toggle-card.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    host: {
+        '[class.active]': 'isActive()',
+    }
 })
 export default class ToggleCardComponent {
   isActive = model(false);

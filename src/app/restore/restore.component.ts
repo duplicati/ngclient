@@ -12,20 +12,19 @@ import { BackupAndScheduleOutputDto, DuplicatiServerService } from '../core/open
 import { BackupsState } from '../core/states/backups.state';
 
 @Component({
-  selector: 'app-restore',
-  standalone: true,
-  imports: [
-    StatusBarComponent,
-    SparkleCardComponent,
-    SparkleButtonComponent,
-    SparkleDividerComponent,
-    SparkleIconComponent,
-    SparkleProgressBarComponent,
-    RouterLink,
-  ],
-  templateUrl: './restore.component.html',
-  styleUrl: './restore.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-restore',
+    imports: [
+        StatusBarComponent,
+        SparkleCardComponent,
+        SparkleButtonComponent,
+        SparkleDividerComponent,
+        SparkleIconComponent,
+        SparkleProgressBarComponent,
+        RouterLink,
+    ],
+    templateUrl: './restore.component.html',
+    styleUrl: './restore.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export default class RestoreComponent {
   #backupsState = inject(BackupsState);

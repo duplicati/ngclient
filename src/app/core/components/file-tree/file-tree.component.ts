@@ -73,27 +73,26 @@ type BackupSettings = {
 // - When rootPath get all the levels and batch them at the root level for better usability
 
 @Component({
-  selector: 'app-file-tree',
-  standalone: true,
-  imports: [
-    SparkleButtonGroupComponent,
-    SparkleToggleComponent,
-    SparkleIconComponent,
-    SparkleFormFieldComponent,
-    SparkleListComponent,
-    // SparkleCheckboxComponent,
-    SparkleProgressBarComponent,
-    NgTemplateOutlet,
-    // JsonPipe,
-    FormsModule,
-    AsyncPipe,
-  ],
-  templateUrl: './file-tree.component.html',
-  styleUrl: './file-tree.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  host: {
-    '[class.disabled]': 'disabled()',
-  },
+    selector: 'app-file-tree',
+    imports: [
+        SparkleButtonGroupComponent,
+        SparkleToggleComponent,
+        SparkleIconComponent,
+        SparkleFormFieldComponent,
+        SparkleListComponent,
+        // SparkleCheckboxComponent,
+        SparkleProgressBarComponent,
+        NgTemplateOutlet,
+        // JsonPipe,
+        FormsModule,
+        AsyncPipe,
+    ],
+    templateUrl: './file-tree.component.html',
+    styleUrl: './file-tree.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    host: {
+        '[class.disabled]': 'disabled()',
+    }
 })
 export default class FileTreeComponent {
   #dupServer = inject(DuplicatiServerService);

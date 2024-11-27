@@ -14,12 +14,11 @@ const DEFAULT_DATA: ConfirmDialogData = {
 };
 
 @Component({
-  selector: 'app-confirm-dialog',
-  standalone: true,
-  imports: [],
-  templateUrl: './confirm-dialog.component.html',
-  styleUrl: './confirm-dialog.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-confirm-dialog',
+    imports: [],
+    templateUrl: './confirm-dialog.component.html',
+    styleUrl: './confirm-dialog.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ConfirmDialogComponent {
   data = input<ConfirmDialogData>();

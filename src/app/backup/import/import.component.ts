@@ -17,23 +17,20 @@ import { BackupDraft, BackupsState } from '../../core/states/backups.state';
 const fb = new FormBuilder();
 
 @Component({
-  selector: 'app-import',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    RouterLink,
-
-    SparkleFileDragDropDirective,
-    SparkleFormFieldComponent,
-    SparkleIconComponent,
-    SparkleButtonComponent,
-    SparkleToggleComponent,
-
-    JsonPipe,
-  ],
-  templateUrl: './import.component.html',
-  styleUrl: './import.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-import',
+    imports: [
+        ReactiveFormsModule,
+        RouterLink,
+        SparkleFileDragDropDirective,
+        SparkleFormFieldComponent,
+        SparkleIconComponent,
+        SparkleButtonComponent,
+        SparkleToggleComponent,
+        JsonPipe,
+    ],
+    templateUrl: './import.component.html',
+    styleUrl: './import.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export default class ImportComponent {
   #sparkleAlertService = inject(SparkleAlertService);

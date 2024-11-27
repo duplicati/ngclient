@@ -56,22 +56,21 @@ export const NONE_OPTION = {
 };
 
 @Component({
-  selector: 'app-general',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    SparkleFormFieldComponent,
-    SparkleSelectComponent,
-    SparkleButtonComponent,
-    SparkleIconComponent,
-    SparkleProgressBarComponent,
-    SparkleAlertComponent,
-    SparkleTooltipComponent,
-    JsonPipe,
-  ],
-  templateUrl: './general.component.html',
-  styleUrl: './general.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-general',
+    imports: [
+        ReactiveFormsModule,
+        SparkleFormFieldComponent,
+        SparkleSelectComponent,
+        SparkleButtonComponent,
+        SparkleIconComponent,
+        SparkleProgressBarComponent,
+        SparkleAlertComponent,
+        SparkleTooltipComponent,
+        JsonPipe,
+    ],
+    templateUrl: './general.component.html',
+    styleUrl: './general.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export default class GeneralComponent {
   #router = inject(Router);

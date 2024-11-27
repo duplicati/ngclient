@@ -45,25 +45,23 @@ export const createSourceDataForm = (
 };
 
 @Component({
-  selector: 'app-source-data',
-  standalone: true,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    SparkleFormFieldComponent,
-    SparkleIconComponent,
-    SparkleButtonComponent,
-    SparkleSelectComponent,
-    SparkleToggleComponent,
-    FileTreeComponent,
-    ToggleCardComponent,
-    FilterComponent,
-
-    JsonPipe,
-  ],
-  templateUrl: './source-data.component.html',
-  styleUrl: './source-data.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-source-data',
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        SparkleFormFieldComponent,
+        SparkleIconComponent,
+        SparkleButtonComponent,
+        SparkleSelectComponent,
+        SparkleToggleComponent,
+        FileTreeComponent,
+        ToggleCardComponent,
+        FilterComponent,
+        JsonPipe,
+    ],
+    templateUrl: './source-data.component.html',
+    styleUrl: './source-data.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export default class SourceDataComponent {
   #backupState = inject(BackupState);

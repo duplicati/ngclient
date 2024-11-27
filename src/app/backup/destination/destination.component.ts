@@ -74,32 +74,29 @@ export type DestinationFormGroup = ReturnType<typeof createDestinationFormGroup>
 export type DestinationFormGroupValue = ReturnType<typeof createDestinationFormGroup>['value'];
 
 @Component({
-  selector: 'app-destination',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    NgTemplateOutlet,
-
-    SparkleFormFieldComponent,
-    SparkleSelectComponent,
-    SparkleMenuComponent,
-    SparkleCheckboxComponent,
-    SparkleOptionComponent,
-    SparkleButtonGroupComponent,
-    SparkleIconComponent,
-    SparkleToggleComponent,
-    SparkleDividerComponent,
-    SparkleTooltipComponent,
-    SparkleDialogComponent,
-    SparkleAlertComponent,
-
-    ToggleCardComponent,
-    FileTreeComponent,
-    JsonPipe,
-  ],
-  templateUrl: './destination.component.html',
-  styleUrl: './destination.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-destination',
+    imports: [
+        ReactiveFormsModule,
+        NgTemplateOutlet,
+        SparkleFormFieldComponent,
+        SparkleSelectComponent,
+        SparkleMenuComponent,
+        SparkleCheckboxComponent,
+        SparkleOptionComponent,
+        SparkleButtonGroupComponent,
+        SparkleIconComponent,
+        SparkleToggleComponent,
+        SparkleDividerComponent,
+        SparkleTooltipComponent,
+        SparkleDialogComponent,
+        SparkleAlertComponent,
+        ToggleCardComponent,
+        FileTreeComponent,
+        JsonPipe,
+    ],
+    templateUrl: './destination.component.html',
+    styleUrl: './destination.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export default class DestinationComponent {
   #router = inject(Router);
