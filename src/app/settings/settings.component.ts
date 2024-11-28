@@ -216,16 +216,14 @@ export default class SettingsComponent {
     return this.#dupServer.getApiV1Serversettings().subscribe({
       next: (res) => {
         const startupDelay = res['startup-delay'] as string;
+        const unit = startupDelay.slice(-1);
+        const timeStr = startupDelay.slice(0, -1);
+        const timeUnitOptions = ['s', 'm', 'h'];
 
         this.settingsForm.patchValue({
           pauseSettings: {
-            time: parseInt(
-              startupDelay.substring(0, startupDelay.length - 1) == ''
-                ? '0'
-                : startupDelay.substring(0, startupDelay.length - 1)
-            ),
-            timeType:
-              startupDelay.substring(-1) === '' ? ('s' as TimeTypes) : (startupDelay.substring(-1) as TimeTypes),
+            time: parseInt(timeStr == '' ? '0' : timeStr),
+            timeType: (timeUnitOptions.includes(unit) ? unit : 's') as TimeTypes,
           },
           usageStatistics: res['usage-reporter-level'],
           updateChannel: res['update-channel'] as UpdateChannel,
@@ -239,15 +237,26 @@ export default class SettingsComponent {
     return LANGUAGES.find((y) => y.value === x)?.label ?? null;
   }
 
-  typeDisplay(x: TimeTypes | null | undefined) {
-    if (x === null || x === undefined) return null;
+  typeDisplay() {
+    const _self = this;
 
-    return TIME_OPTIONS.find((y) => y.value === x)?.label ?? null;
+    return () => {
+      const x = _self.settingsForm.value.pauseSettings?.timeType;
+      if (x === null || x === undefined) return null;
+
+      return TIME_OPTIONS.find((y) => y.value === x)?.label ?? null;
+    };
   }
 
-  usageDisplay(x: UsageStatisticsType['value'] | null) {
-    if (typeof x !== 'string') return null;
-    return USAGE_STATISTICS_OPTIONS.find((y) => y.value === x)?.label ?? null;
+  usageDisplay() {
+    const _self = this;
+
+    return () => {
+      const x = _self.settingsForm.value.usageStatistics;
+      if (x === null || x === undefined) return null;
+
+      return USAGE_STATISTICS_OPTIONS.find((y) => y.value === x)?.label ?? null;
+    };
   }
 
   setDarkMode() {

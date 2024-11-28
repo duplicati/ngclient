@@ -87,7 +87,15 @@
 
     <div class="right">
       <div class="field-row" formGroupName="pauseSettings">
-        <spk-select [displayValue]="typeDisplay(settingsForm.value.pauseSettings?.timeType)">
+        <spk-select [hideClearButton]="true">
+          <input type="search" formControlName="time" />
+
+          @for (x of timeOptions(); track $index) {
+            <option [value]="x">{{ x }}</option>
+          }
+        </spk-select>
+
+        <spk-select [displayFn]="typeDisplay()" [hideClearButton]="true">
           <input type="text" formControlName="timeType" />
 
           <ng-container options>
@@ -95,16 +103,6 @@
               <option [value]="x.value" (click)="pauseSettings.controls.timeType.setValue(x.value)">
                 {{ x.label }}
               </option>
-            }
-          </ng-container>
-        </spk-select>
-
-        <spk-select>
-          <input type="search" formControlName="time" />
-
-          <ng-container options>
-            @for (x of timeOptions(); track $index) {
-              <option [value]="x" (click)="pauseSettings.controls.time.setValue(x)">{{ x }}</option>
             }
           </ng-container>
         </spk-select>
@@ -228,16 +226,14 @@
     </div>
 
     <div class="right">
-      <spk-select [displayValue]="usageDisplay(settingsForm.controls.usageStatistics.value)">
+      <spk-select [displayFn]="usageDisplay()">
         <input type="text" formControlName="usageStatistics" />
 
-        <ng-container options>
-          @for (x of usageStatisticsOptions(); track $index) {
-            <option [value]="x.value" (click)="settingsForm.controls.usageStatistics.setValue(x.value)">
-              {{ x.label }}
-            </option>
-          }
-        </ng-container>
+        @for (x of usageStatisticsOptions(); track $index) {
+          <option [value]="x.value">
+            {{ x.label }}
+          </option>
+        }
       </spk-select>
     </div>
   </section>
