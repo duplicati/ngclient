@@ -13,6 +13,10 @@ section {
   display: flex;
   flex-direction: column;
   gap: p2r(16);
+
+  div {
+    white-space: pre-wrap;
+  }
 }
 
 spk-progress-bar {

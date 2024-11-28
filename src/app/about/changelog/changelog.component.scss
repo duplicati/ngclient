@@ -1,7 +1,10 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
 :host {
   display: block;
 }
 
 h3 {
   font: var(--title-30);
+  margin: p2r(0 0 20);
 }

@@ -1,3 +1,4 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
 @use '@sparkle-ui/core/styles' as * with (
   $useInterTight: false,
   $useApexcharts: false
@@ -26,5 +27,26 @@ body {
     button {
       justify-content: flex-end;
     }
+  }
+}
+
+.markdown-output {
+  h1 {
+    margin: p2r(40 0 24);
+  }
+
+  h2 {
+    margin: p2r(0 0 20);
+  }
+
+  h3 {
+    margin: p2r(0 0 16);
+  }
+
+  h4,
+  h5,
+  h6,
+  p {
+    margin: p2r(0 0 12);
   }
 }

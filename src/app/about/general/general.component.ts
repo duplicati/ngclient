@@ -19,9 +19,7 @@ export default class GeneralComponent {
   isLoading = signal(true);
   generalInfo = toSignal(
     this.#dupServer.getApiV1Acknowledgements().pipe(
-      map((x) =>
-        x.Acknowledgements ? this.#sanitizer.bypassSecurityTrustHtml(x.Acknowledgements.replace(/\r/g, '\n')) : ''
-      ),
+      map((x) => x.Acknowledgements), // ? this.#sanitizer.bypassSecurityTrustHtml(x.Acknowledgements) : '')),
       finalize(() => this.isLoading.set(false))
     )
   );
