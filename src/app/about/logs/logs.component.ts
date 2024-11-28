@@ -1,17 +1,62 @@
-import { JsonPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { DatePipe, JsonPipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { SparkleIconComponent, SparkleTableComponent } from '@sparkle-ui/core';
+import { finalize } from 'rxjs';
 import { DuplicatiServerService } from '../../core/openapi';
 
+const COLUMNS = ['BackupID', 'Timestamp', 'Message', 'actions'] as const;
+
+type LogEvent = {
+  BackupID: number;
+  Timestamp: string;
+  Message: string;
+  Exception: string;
+};
+
 @Component({
-    selector: 'app-logs',
-    imports: [JsonPipe],
-    templateUrl: './logs.component.html',
-    styleUrl: './logs.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-logs',
+  imports: [JsonPipe, SparkleTableComponent, DatePipe, SparkleIconComponent],
+  templateUrl: './logs.component.html',
+  styleUrl: './logs.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class LogsComponent {
   #dupServer = inject(DuplicatiServerService);
 
-  logs = toSignal(this.#dupServer.getApiV1LogdataLog());
+  displayedColumns = signal(COLUMNS);
+  logsLoading = signal(true);
+  openRowIndex = signal<number | null>(null);
+  logs = signal<LogEvent[]>([]);
+
+  ngOnInit() {
+    this.init();
+  }
+
+  init() {
+    this.#dupServer
+      .getApiV1LogdataLog()
+      .pipe(finalize(() => this.logsLoading.set(false)))
+      .subscribe({
+        next: (res) => {
+          console.log(res);
+
+          this.logs.set(res as LogEvent[]);
+        },
+      });
+  }
+
+  toggleRow(index: number) {
+    this.openRowIndex.set(index === this.openRowIndex() ? null : index);
+  }
+
+  breakIntoLines(str: string) {
+    const codeLines = str.split('\n');
+    let numberedCode = '';
+
+    for (let i = 0; i < codeLines.length; i++) {
+      numberedCode += `<li>${codeLines[i]}</li>`;
+    }
+
+    return numberedCode;
+  }
 }

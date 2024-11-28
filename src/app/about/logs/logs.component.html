@@ -1,5 +1,39 @@
 <h3>Logs</h3>
 
-@for (log of logs(); track $index) {
+<!-- @for (log of logs(); track $index) {
   <pre style="white-space: wrap">{{ log | json }}</pre>
-}
+} -->
+
+<spk-table [(data)]="logs" [loading]="logsLoading()">
+  <tr table-header>
+    <th>Timestamp</th>
+    <th>Backup ID</th>
+    <th>Message</th>
+    <th></th>
+  </tr>
+
+  @for (row of logs(); track $index) {
+    <tr (click)="toggleRow($index)">
+      <td>{{ row['Timestamp'] | date: 'MMM dd. hh:mm' }}</td>
+      <td class="id">{{ row['BackupID'] >= 0 ? row['BackupID'] : '-' }}</td>
+      <td>{{ row['Message'] }}</td>
+      <td>
+        <button spk-button class="outlined small" [class.rotated-icon]="$index === openRowIndex()" type="button">
+          <spk-icon>caret-down</spk-icon>
+        </button>
+      </td>
+    </tr>
+
+    @if ($index === openRowIndex()) {
+      <tr>
+        <td [style.grid-column]="'1 / -1'" [style.height]="'auto'" style="white-space: pre-wrap">
+          <code>
+            <ol class="line-numbers-ol" [innerHTML]="breakIntoLines(row['Exception'])"></ol>
+          </code>
+        </td>
+      </tr>
+    }
+  }
+
+  <div table-no-rows>No data available</div>
+</spk-table>

@@ -50,3 +50,17 @@ body {
     margin: p2r(0 0 12);
   }
 }
+
+ol.line-numbers-ol {
+  list-style: none;
+  counter-reset: my-counter;
+
+  li {
+    counter-increment: my-counter;
+    padding-left: p2r(4);
+
+    &::marker {
+      content: counter(my-counter) ' ';
+    }
+  }
+}

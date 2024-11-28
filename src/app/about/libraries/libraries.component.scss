@@ -1,7 +1,48 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
 :host {
   display: block;
 }
 
 h3 {
   font: var(--title-30);
+  margin: p2r(0 0 20);
+}
+
+h4 {
+  font: var(--paragraph-10);
+}
+
+a {
+  text-decoration: none;
+}
+
+.license {
+  padding: p2r(16);
+  border-bottom: 1px solid var(--base-level-40);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: p2r(8);
+
+  &:first-of-type {
+    border-top: 1px solid var(--base-level-40);
+  }
+
+  .actions {
+    display: flex;
+    gap: p2r(4);
+    align-items: center;
+  }
+}
+
+.license-dialog {
+  background-color: var(--base-level-10);
+  color: var(--base-level-70);
+  padding: p2r(40 40 40 24);
+  border-radius: var(--shape-3);
+  overflow: auto;
+  max-height: p2r(500);
+  white-space: pre;
+  border: 1px solid var(--base-level-40);
 }

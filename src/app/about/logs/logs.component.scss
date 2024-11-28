@@ -1,7 +1,32 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
 :host {
   display: block;
 }
 
 h3 {
   font: var(--title-30);
+  margin: p2r(0 0 20);
+}
+
+spk-table {
+  --table-columns: auto auto 1fr auto;
+
+  td.id {
+    justify-content: center;
+  }
+
+  td:has(code) {
+    padding: p2r(16 12);
+    overflow: hidden;
+
+    code {
+      background-color: var(--grey-800);
+      color: var(--grey-100);
+      padding: p2r(40 40 40 24);
+      border-radius: var(--shape-3);
+      overflow: auto;
+      white-space: pre;
+    }
+  }
 }

@@ -1,3 +1,45 @@
 <h3>Libraries</h3>
 
-<pre>{{ licenses() | json }}</pre>
+@for (license of licenses(); track $index) {
+  <div class="license">
+    <h4>
+      {{ license.Title }} - {{ license.data?.license }}
+      @if (license.Url) {
+        <a href="{{ license.Url }}">
+          <spk-icon>link</spk-icon>
+        </a>
+      }
+    </h4>
+
+    <p>
+      {{ license.data?.description }}
+      <br />
+      <i>{{ license.data?.notes }}</i>
+    </p>
+
+    <div class="actions">
+      <button spk-button (click)="openLicense(license)">
+        Details
+        <spk-icon>arrow-square-in</spk-icon>
+      </button>
+    </div>
+  </div>
+}
+
+<spk-dialog [(isOpen)]="dialogIsOpen" [options]="{ maxWidth: '700px', width: '100%' }">
+  <header header>
+    <h3>{{ dialogLicense()?.Title }}</h3>
+  </header>
+
+  <div content>
+    @let license = dialogLicense()?.License ?? '';
+
+    <div class="license-dialog">
+      {{ license }}
+    </div>
+  </div>
+
+  <footer footer>
+    <button spk-button type="button" (click)="dialogLicense.set(null)">Close</button>
+  </footer>
+</spk-dialog>
