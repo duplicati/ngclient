@@ -49,6 +49,23 @@ body {
   p {
     margin: p2r(0 0 12);
   }
+
+  code {
+    padding: p2r(4 8);
+    border-radius: var(--shape-2);
+    background-color: var(--base-level-60);
+    color: var(--base-level-10);
+    display: inline-block;
+    font-size: 85%;
+  }
+
+  h1 code {
+    padding: 0;
+    text-decoration: underline;
+    background-color: transparent;
+    color: var(--base-level-70);
+    font-size: 100%;
+  }
 }
 
 ol.line-numbers-ol {
