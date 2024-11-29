@@ -1,0 +1,11 @@
+{
+  "locale": "de-DE",
+  "translations": {
+    "1378871011999089271": "Sicherungen",
+    "8999782137177065427": "Sicherungen werden in der Cloud gespeichert und können jederzeit wiederhergestellt werden.",
+    "2189252250041336479": " Hinzufügen {$START_TAG_SPK_ICON}plus{$CLOSE_TAG_SPK_ICON}",
+    "6366658542035335159": "Wiederherstellungen",
+    "8076205046065195949": "Wiederherstellungen werden in der Cloud gespeichert und können jederzeit wiederhergestellt werden.",
+    "6462449391546115362": " Starten {$START_TAG_SPK_ICON}arrow-right{$CLOSE_TAG_SPK_ICON}"
+  }
+}

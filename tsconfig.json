@@ -19,7 +19,8 @@
     "target": "ESNext",
     "module": "ESNext",
     "lib": ["ESNext", "dom"],
-    "typeRoots": ["node_modules/@types", "node_modules/ngxtension"]
+    "typeRoots": ["node_modules/@types", "node_modules/ngxtension"],
+    "types": ["@angular/localize"]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

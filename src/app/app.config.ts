@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+
 import { ApplicationConfig, provideExperimentalZonelessChangeDetection } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 

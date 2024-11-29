@@ -52,7 +52,7 @@ export class LOCALSTORAGE implements Storage {
     if (isPlatformServer(this.platformId)) return;
 
     for (var key in localStorage) {
-      if (!key.startsWith(this.STORAGE_VERSION)) {
+      if (!key.startsWith(this.STORAGE_VERSION) && key.includes(this.APP_NAME)) {
         localStorage.removeItem(key);
       }
     }

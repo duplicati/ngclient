@@ -1,4 +1,4 @@
-import { DatePipe, JsonPipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { SparkleIconComponent, SparkleTableComponent } from '@sparkle-ui/core';
 import { finalize } from 'rxjs';
@@ -15,7 +15,7 @@ type LogEvent = {
 
 @Component({
   selector: 'app-logs',
-  imports: [JsonPipe, SparkleTableComponent, DatePipe, SparkleIconComponent],
+  imports: [SparkleTableComponent, DatePipe, SparkleIconComponent],
   templateUrl: './logs.component.html',
   styleUrl: './logs.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

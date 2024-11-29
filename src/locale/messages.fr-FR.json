@@ -1,0 +1,11 @@
+{
+  "locale": "fr-FR",
+  "translations": {
+    "1378871011999089271": "Sauvegardes",
+    "8999782137177065427": "Les sauvegardes sont stockées dans le cloud et peuvent être restaurées à tout moment.",
+    "2189252250041336479": " Ajouter {$START_TAG_SPK_ICON}plus{$CLOSE_TAG_SPK_ICON}",
+    "6366658542035335159": "Restaurations",
+    "8076205046065195949": "Les restaurations sont stockées dans le cloud et peuvent être restaurées à tout moment.",
+    "6462449391546115362": " Démarrer {$START_TAG_SPK_ICON}arrow-right{$CLOSE_TAG_SPK_ICON}"
+  }
+}

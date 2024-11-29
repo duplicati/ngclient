@@ -1,0 +1,11 @@
+{
+  "locale": "en-US",
+  "translations": {
+    "1378871011999089271": "Backups",
+    "8999782137177065427": "Backups are stored in the cloud and can be restored at any time.",
+    "2189252250041336479": " Add {$START_TAG_SPK_ICON}plus{$CLOSE_TAG_SPK_ICON}",
+    "6366658542035335159": "Restores",
+    "8076205046065195949": "Restores are stored in the cloud and can be restored at any time.",
+    "6462449391546115362": " Start {$START_TAG_SPK_ICON}arrow-right{$CLOSE_TAG_SPK_ICON}"
+  }
+}

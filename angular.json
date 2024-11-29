@@ -37,6 +37,15 @@
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
+      "i18n": {
+        "sourceLocale": "en-US",
+        "locales": {
+          "fr-FR": {
+            "translation": "src/locale/messages.fr-FR.xlf",
+            "baseHref": "fr-FR"
+          }
+        }
+      },
       "architect": {
         "build": {
           "builder": "@angular/build:application",
@@ -44,11 +53,15 @@
             "outputPath": "dist/ngclient",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": [],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/assets",
+              {
+                "glob": "**/*.json",
+                "input": "./src/locale",
+                "output": "./locale/"
+              },
               {
                 "glob": "**/*",
                 "input": "./node_modules/@sparkle-ui/core/assets",
@@ -90,7 +103,12 @@
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
-          "builder": "@angular/build:extract-i18n"
+          "builder": "@angular/build:extract-i18n",
+          "options": {
+            "buildTarget": "ngclient:build",
+            "format": "xlf",
+            "outputPath": "src/locale"
+          }
         }
       }
     }

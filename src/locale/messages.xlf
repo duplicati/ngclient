@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en-US" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="1378871011999089271" datatype="html">
+        <source>Backups</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/home/home.component.html</context>
+          <context context-type="linenumber">8,9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8999782137177065427" datatype="html">
+        <source>Backups are stored in the cloud and can be restored at any time.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/home/home.component.html</context>
+          <context context-type="linenumber">9,10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2189252250041336479" datatype="html">
+        <source> Add <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>plus<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/home/home.component.html</context>
+          <context context-type="linenumber">12,15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6366658542035335159" datatype="html">
+        <source>Restores</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/home/home.component.html</context>
+          <context context-type="linenumber">20,21</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8076205046065195949" datatype="html">
+        <source>Restores are stored in the cloud and can be restored at any time.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/home/home.component.html</context>
+          <context context-type="linenumber">21,22</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6462449391546115362" datatype="html">
+        <source> Start <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/home/home.component.html</context>
+          <context context-type="linenumber">24,27</context>
+        </context-group>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
