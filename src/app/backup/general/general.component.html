@@ -1,8 +1,8 @@
 <form [formGroup]="generalForm" autocomplete="off" #formRef (submit)="next()">
-  <h3 class="title-30">General backup settings</h3>
+  <h3 class="title-30" i18n>General backup settings</h3>
 
   <spk-form-field>
-    <label for="backupName">
+    <label for="backupName" i18n>
       Backup name
       <sup>*</sup>
     </label>
@@ -10,7 +10,7 @@
   </spk-form-field>
 
   <spk-form-field>
-    <label for="backupDescription">Backup description</label>
+    <label for="backupDescription" i18n>Backup description</label>
     <textarea
       id="backupDescription"
       tabindex="2"
@@ -20,7 +20,7 @@
 
   @if (isNew()) {
     <spk-select [displayFn]="displayFn()">
-      <label for="encryption">Encryption</label>
+      <label for="encryption" i18n>Encryption</label>
       <input type="text" id="encryption" tabindex="3" placeholder="Encryption" formControlName="encryption" />
 
       @for (encryption of encryptionOptions(); track $index) {
@@ -31,7 +31,7 @@
     @if (encryptionFieldSignal() !== '') {
       <div class="passwords">
         <spk-form-field>
-          <label for="password">
+          <label for="password" i18n>
             Create a password
             <sup>*</sup>
           </label>
@@ -65,12 +65,12 @@
             formControlName="repeatPassword" />
 
           @if (generalForm.value.repeatPassword && generalForm.value.repeatPassword !== generalForm.value.password) {
-            <span error>Passwords do not match</span>
+            <span error i18n>Passwords do not match</span>
           }
         </spk-form-field>
 
         <div class="password-actions">
-          <button spk-button type="button" class="small" (click)="showPassword.set(!showPassword())">
+          <button spk-button type="button" class="small" (click)="showPassword.set(!showPassword())" i18n>
             @if (showPassword()) {
               <spk-icon>eye-slash</spk-icon>
               hide
@@ -80,25 +80,26 @@
             }
           </button>
 
-          <button spk-button type="button" class="small" (click)="generatePassword()">
+          <button spk-button type="button" class="small" (click)="generatePassword()" i18n>
             <spk-icon>password</spk-icon>
             Generate password
           </button>
 
           @if (showCopyPassword()) {
-            <button spk-button type="button" class="small copy" (click)="copyPassword()">
+            <button spk-button type="button" class="small copy" (click)="copyPassword()" i18n>
               @if (copiedPassword()) {
                 <spk-icon class="spk-success">check</spk-icon>
+                Copied password
               } @else {
                 <spk-icon>copy</spk-icon>
+                Copy password
               }
-              {{ copiedPassword() ? 'Copied' : 'Copy' }} password
             </button>
           }
         </div>
 
         @if (generalForm.value.password && generalForm.value.password === generalForm.value.repeatPassword) {
-          <spk-alert type="primary">
+          <spk-alert type="primary" i18n>
             Tip: Be sure to save your password. If you loose it you will lose access to your backups.
           </spk-alert>
         }
@@ -107,13 +108,13 @@
   }
 
   <div class="form-actions">
-    <button type="button" spk-button (click)="exit()">
+    <button type="button" spk-button (click)="exit()" i18n>
       <spk-icon>arrow-left</spk-icon>
       Exit
     </button>
 
     @if (encryptionFieldSignal() === '') {
-      <button spk-button class="raised primary" type="submit" [disabled]="generalForm.invalid">
+      <button spk-button class="raised primary" type="submit" [disabled]="generalForm.invalid" i18n>
         Continue
         <spk-icon>arrow-right</spk-icon>
       </button>
@@ -126,6 +127,7 @@
           spk-button
           class="raised primary"
           type="submit"
+          i18n
           [disabled]="generalForm.invalid || (showCopyPassword() && !copiedPassword())">
           Continue
           <spk-icon>arrow-right</spk-icon>

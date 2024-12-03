@@ -19,7 +19,7 @@
 @if (isAlertsOpen()) {
   <div class="alert-stream-modal">
     <div class="alert-stream-modal-content">
-      <h6 class="paragraph-20">
+      <h6 class="paragraph-20" i18n>
         Alerts
 
         <button spk-button (click)="closeAlerts()">
@@ -40,7 +40,7 @@
               }
             </spk-alert>
           } @empty {
-            <p>No alerts yet</p>
+            <p i18n>No alerts yet</p>
           }
         </div>
       </div>

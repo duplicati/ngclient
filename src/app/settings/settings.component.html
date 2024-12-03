@@ -3,16 +3,16 @@
 <form [formGroup]="settingsForm" class="content" (submit)="submit()">
   <header>
     <div class="title">
-      <h2>Settings</h2>
-      <p>Configure your backup settings.</p>
+      <h2 i18n>Settings</h2>
+      <p i18n>Configure your backup settings.</p>
     </div>
 
-    <button type="submit" spk-button class="raised primary">Save changes</button>
+    <button type="submit" spk-button class="raised primary" i18n>Save changes</button>
   </header>
 
   <section>
     <div class="left">
-      <h3>Remote access control</h3>
+      <h3 i18n>Remote access control</h3>
       <p>{{ getRemoteControlStatusText() }}</p>
     </div>
 
@@ -29,21 +29,21 @@
                 formControlName="remoteControlRegisterUrl" />
             </spk-form-field>
 
-            <button type="button" spk-button class="raised" (click)="beginRemoteRegistration()">
+            <button type="button" spk-button class="raised" (click)="beginRemoteRegistration()" i18n>
               Register for remote control
             </button>
           }
 
           @if (remoteControlState() === 'registered') {
             <div class="field-col">
-              <label>Machine is now registered, open this link to add it to your account:</label>
+              <label i18n>Machine is now registered, open this link to add it to your account:</label>
               <a href="{{ remoteControlClaimUrl() }}" target="_blank">{{ remoteControlClaimUrl() }}</a>
             </div>
           }
 
           @if (remoteControlState() === 'registering') {
             <div class="field-col">
-              <label>Registering, please wait...</label>
+              <label i18n>Registering, please wait...</label>
             </div>
           }
 
@@ -52,22 +52,22 @@
             remoteControlState() === 'registeringfaulted' ||
             remoteControlState() === 'registered'
           ) {
-            <button type="button" spk-button class="raised" (click)="cancelRemoteRegistration()">
+            <button type="button" spk-button class="raised" (click)="cancelRemoteRegistration()" i18n>
               Cancel registration
             </button>
           }
 
           @if (remoteControlState() === 'connected' || remoteControlState() === 'enabled') {
-            <button type="button" spk-button class="raised" (click)="disableRemoteControl()">
+            <button type="button" spk-button class="raised" (click)="disableRemoteControl()" i18n>
               Disable remote control
             </button>
           }
           @if (remoteControlState() === 'disabled') {
-            <button type="button" spk-button class="raised" (click)="enableRemoteControl()">
+            <button type="button" spk-button class="raised" (click)="enableRemoteControl()" i18n>
               Enable remote control
             </button>
 
-            <button type="button" spk-button class="raised warn" (click)="deleteRemoteControl()">
+            <button type="button" spk-button class="raised warn" (click)="deleteRemoteControl()" i18n>
               Delete remote control setup
             </button>
           }
@@ -78,8 +78,8 @@
 
   <section>
     <div class="left">
-      <h3>Pause after startup or hibernation</h3>
-      <p>
+      <h3 i18n>Pause after startup or hibernation</h3>
+      <p i18n>
         Duplicati will run when started, but will remain in paused state for the duration. Duplicati will occupy minimal
         system resources and no backups will be run.
       </p>
@@ -112,8 +112,8 @@
 
   <section>
     <div class="left">
-      <h3>Color theme</h3>
-      <p>Customize your application theme</p>
+      <h3 i18n>Color theme</h3>
+      <p i18n>Customize your application theme</p>
     </div>
 
     <div class="right">
@@ -134,87 +134,87 @@
     </div>
   </section>
 
-  <!-- <section>
+  <section>
     <div class="left">
-      <h3>Language</h3>
-      <p>Select a language for the platform</p>
+      <h3 i18n>Language</h3>
+      <p i18n>Select a language for the platform</p>
     </div>
 
     <div class="right">
-      <spk-select [displayValue]="languageDisplay(settingsForm.controls.language.value)">
-        <input type="search" formControlName="language" />
+      <spk-select [displayFn]="languageDisplay()" [hideClearButton]="true" (change)="saveLocale($event)">
+        <input type="search" [(ngModel)]="langCtrl" [ngModelOptions]="{ standalone: true }" />
 
         @for (x of languageOptions(); track $index) {
-          <option option [value]="x.value" (click)="settingsForm.controls.language.setValue(x.value)">
+          <option [value]="x.value">
             {{ x.label }}
           </option>
         }
       </spk-select>
     </div>
-  </section> -->
+  </section>
 
   <section>
     <div class="left">
-      <h3>Update channel</h3>
+      <h3 i18n>Update channel</h3>
       <!-- TODO -->
-      <p>Update channel selection is not implemented yet.</p>
+      <p i18n>Update channel selection is not implemented yet.</p>
     </div>
 
     <div class="right radios">
       <div class="radio-option" (click)="settingsForm.controls.updateChannel.setValue('')">
-        <spk-radio class="outlined primary">
+        <spk-radio class="outlined primary" i18n>
           Default ({{ sysinfo()?.DefaultUpdateChannel }})
           <input type="radio" name="updateChannel" value="" formControlName="updateChannel" />
         </spk-radio>
 
-        <p>Same as the base install version: {{ sysinfo()?.ServerVersionType }}</p>
+        <p i18n>Same as the base install version: {{ sysinfo()?.ServerVersionType }}</p>
       </div>
 
       <div class="radio-option" (click)="settingsForm.controls.updateChannel.setValue('stable')">
-        <spk-radio class="outlined primary">
+        <spk-radio class="outlined primary" i18n>
           Stable
           <input type="radio" name="updateChannel" value="stable" formControlName="updateChannel" />
         </spk-radio>
 
-        <p>Official releases</p>
+        <p i18n>Official releases</p>
       </div>
 
       <div class="radio-option" (click)="settingsForm.controls.updateChannel.setValue('beta')">
-        <spk-radio class="outlined primary">
+        <spk-radio class="outlined primary" i18n>
           Beta
           <input type="radio" name="updateChannel" value="beta" formControlName="updateChannel" />
         </spk-radio>
 
-        <p>
+        <p i18n>
           Try out the new features that we are working on. Currently the most stable version available. Test Restore
           data before using this in production environments.
         </p>
       </div>
 
       <div class="radio-option" (click)="settingsForm.controls.updateChannel.setValue('experimental')">
-        <spk-radio class="outlined primary">
+        <spk-radio class="outlined primary" i18n>
           Experimental
           <input type="radio" name="updateChannel" value="experimental" formControlName="updateChannel" />
         </spk-radio>
 
-        <p>Specific builds for developers only. Not for use with important data.</p>
+        <p i18n>Specific builds for developers only. Not for use with important data.</p>
       </div>
 
       <div class="radio-option" (click)="settingsForm.controls.updateChannel.setValue('canary')">
-        <spk-radio class="outlined primary">
+        <spk-radio class="outlined primary" i18n>
           Canary
           <input type="radio" name="updateChannel" value="canary" formControlName="updateChannel" />
         </spk-radio>
 
-        <p>Individual builds for developers only. Not for use with important data.</p>
+        <p i18n>Individual builds for developers only. Not for use with important data.</p>
       </div>
     </div>
   </section>
 
   <section>
     <div class="left">
-      <h3>Usage statistics</h3>
-      <p>
+      <h3 i18n>Usage statistics</h3>
+      <p i18n>
         Usage reports help us improve the user experience and evaluate impact of new features. We use them to generate
         <a href="#">public usage statistics.</a>
         <br />

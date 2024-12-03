@@ -92,10 +92,8 @@ export class RelayWebsocketService {
     const decodedData = Uint8Array.from(atob(str), (c) => c.charCodeAt(0));
 
     const stringifiedJson = this.#textDecoder.decode(decodedData);
-    if (stringifiedJson)
-      return JSON.parse(stringifiedJson);
-    else
-      return null;
+    if (stringifiedJson) return JSON.parse(stringifiedJson);
+    else return null;
   }
 
   connectToMachineServer(token: string, options?: { reconnect?: boolean }) {
@@ -177,11 +175,10 @@ export class RelayWebsocketService {
 
         const f = this.#pendingCommands[data.messageId];
         if (f) {
-          
           if (data.errorMessage) {
             f.reject(data.errorMessage);
             return;
-          } else { 
+          } else {
             const payload = JSON.parse(data.payload ?? '') as CommandResponse;
             payload.body = payload?.body == null ? null : this.utf8Atob(payload.body);
             f.resolve(payload);

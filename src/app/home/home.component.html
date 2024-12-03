@@ -28,7 +28,7 @@
   </header>
 
   <div class="content">
-    <h2>My backups</h2>
+    <h2 i18n>My backups</h2>
     <div class="backups">
       @defer (when !backupsLoading()) {
         @if (backups().length) {
@@ -36,47 +36,53 @@
             <div class="backup">
               <div class="text">
                 <h3>
-                  {{ backup.Backup?.Name ?? 'Backup name missing' }}
+                  {{ backup.Backup?.Name ?? MISSING_BACKUP_NAME }}
                   <spk-icon>database</spk-icon>
                 </h3>
 
                 <p>
-                  <span>Last successful backup:</span>
+                  <span i18n>Last successful backup:</span>
                   {{ backup.Backup?.Metadata?.['LastBackupDate'] | date: 'short' }}
                   @if (backup.Backup?.Metadata?.['LastBackupDuration']) {
                     - (took {{ backup.Backup?.Metadata?.['LastBackupDuration'] | durationFormat }})
                   } @else {
-                    N/A
+                    <ng-container i18n>N/A</ng-container>
                   }
                 </p>
 
                 <p>
-                  <span>Source:</span>
+                  <span i18n>Source:</span>
                   @if (backup.Backup?.Metadata?.['SourceSizeString']) {
                     {{ backup.Backup?.Metadata?.['SourceSizeString'] }}
                   } @else {
-                    N/A
+                    <ng-container i18n>N/A</ng-container>
                   }
                 </p>
 
                 <p>
-                  <span>Destination:</span>
+                  <span i18n>Destination:</span>
                   @if (backup.Backup?.Metadata?.['TargetSizeString']) {
                     {{ backup.Backup?.Metadata?.['TargetSizeString'] }}
                   } @else {
-                    N/A
+                    <ng-container i18n>N/A</ng-container>
                   }
                 </p>
               </div>
 
               @if (backup.Backup?.Metadata?.['BackupListCount']) {
-                <spk-chip class="simple success">{{ backup.Backup?.Metadata?.['BackupListCount'] }} Version</spk-chip>
+                <spk-chip class="simple success" i18n>
+                  {{ backup.Backup?.Metadata?.['BackupListCount'] }} Version
+                </spk-chip>
               } @else {
-                <spk-chip class="simple">No version yet</spk-chip>
+                <spk-chip class="simple" i18n>No version yet</spk-chip>
               }
 
               <div class="actions">
-                <button spk-button [class.loader]="startingBackup()" (click)="startBackup($any(backup.Backup?.ID))">
+                <button
+                  spk-button
+                  [class.loader]="startingBackup()"
+                  (click)="startBackup($any(backup.Backup?.ID))"
+                  i18n>
                   <spk-icon>play-circle</spk-icon>
                   Start
                 </button>
@@ -89,7 +95,7 @@
                   <button spk-button><spk-icon>dots-three-vertical</spk-icon></button>
 
                   <ng-container menu>
-                    <button #option [routerLink]="['/backup', backup.Backup?.ID, 'export']">
+                    <button #option [routerLink]="['/backup', backup.Backup?.ID, 'export']" i18n>
                       Export
                       <spk-icon>export</spk-icon>
                     </button>
@@ -97,7 +103,8 @@
                     <button
                       #option
                       [class.loader]="deletingBackup() === backup.Backup?.ID"
-                      (click)="deleteBackup(backup.Backup?.ID)">
+                      (click)="deleteBackup(backup.Backup?.ID)"
+                      i18n>
                       Delete
                       <spk-icon>x-circle</spk-icon>
                     </button>
@@ -107,14 +114,14 @@
             </div>
           }
         } @else {
-          No backups founds
+          <ng-container i18n>No backups founds</ng-container>
         }
       } @placeholder {
         <div class="loading-list">
           <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
 
           <div class="text">
-            <h3>Loading backups...</h3>
+            <h3 i18n>Loading backups...</h3>
           </div>
         </div>
       }

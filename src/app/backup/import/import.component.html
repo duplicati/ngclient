@@ -3,7 +3,7 @@
     Import backup configuration
 
     <div class="actions">
-      <button spk-button type="button" class="outlined" [routerLink]="['/']">
+      <button spk-button type="button" class="outlined" [routerLink]="['/']" i18n>
         <spk-icon>arrow-left</spk-icon>
         Back
       </button>
@@ -14,7 +14,8 @@
         class="raised primary"
         (click)="submit()"
         [disabled]="isImporting()"
-        [class.loader]="isImporting()">
+        [class.loader]="isImporting()"
+        i18n>
         <spk-icon>download-simple</spk-icon>
         Import
       </button>
@@ -24,7 +25,7 @@
 
 <form [formGroup]="importForm" autocomplete="off">
   <spk-form-field spkDragDrop (fileDropped)="onFileDropped($event)">
-    <label for="file">Select a configuration file</label>
+    <label for="file" i18n>Select a configuration file</label>
     <input type="file" accept=".json,.aes" (change)="onFileDropped($event)" />
 
     <spk-icon suffix>upload</spk-icon>
@@ -32,18 +33,18 @@
 
   @if (isSecureFile()) {
     <spk-form-field>
-      <label for="passphrase">Passphrase</label>
+      <label for="passphrase" i18n>Passphrase</label>
       <input type="password" formControlName="passphrase" />
     </spk-form-field>
   }
 
   <spk-toggle class="primary raised">
-    <label for="importMetadata">Import Metadata</label>
+    <label for="importMetadata" i18n>Import Metadata</label>
     <input type="checkbox" formControlName="importMetadata" />
   </spk-toggle>
 
   <spk-toggle class="primary raised">
-    <label for="direct">Save now</label>
+    <label for="direct" i18n>Save now</label>
     <input type="checkbox" formControlName="direct" />
   </spk-toggle>
 </form>

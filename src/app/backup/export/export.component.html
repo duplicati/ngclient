@@ -3,12 +3,12 @@
     Export backup configuration
 
     <div class="actions">
-      <button spk-button class="outlined" [routerLink]="['/']">
+      <button spk-button class="outlined" [routerLink]="['/']" i18n>
         <spk-icon>arrow-left</spk-icon>
         Back
       </button>
 
-      <button spk-button class="raised primary" (click)="submit()" [class.loading]="isExporting()">
+      <button spk-button class="raised primary" (click)="submit()" [class.loading]="isExporting()" i18n>
         <spk-icon>export</spk-icon>
         Export
       </button>
@@ -20,34 +20,34 @@
 
 <form [formGroup]="exportForm" autocomplete="off">
   <spk-button-group>
-    <button type="button" [class.active]="exportType() === 'cmd'" (click)="exportType.set('cmd')">
+    <button type="button" [class.active]="exportType() === 'cmd'" (click)="exportType.set('cmd')" i18n>
       <spk-icon>terminal-window</spk-icon>
       As command line
     </button>
 
-    <button type="button" [class.active]="exportType() === 'file'" (click)="exportType.set('file')">
+    <button type="button" [class.active]="exportType() === 'file'" (click)="exportType.set('file')" i18n>
       <spk-icon>file</spk-icon>
       To file
     </button>
   </spk-button-group>
 
-  <spk-toggle class="raised primary">
+  <spk-toggle class="raised primary" i18n>
     Export passwords
     <input type="checkbox" formControlName="exportPasswords" />
   </spk-toggle>
 
-  <spk-toggle class="primary raised">
+  <spk-toggle class="primary raised" i18n>
     Encrypt file
     <input type="checkbox" formControlName="encryption" />
   </spk-toggle>
 
   @if (encryptionFieldSignal()) {
     <spk-form-field>
-      <label for="password">Password</label>
+      <label for="password" i18n>Password</label>
       <input type="password" id="password" formControlName="password" />
     </spk-form-field>
     <spk-form-field>
-      <label for="repeatPassword">Repeat password</label>
+      <label for="repeatPassword" i18n>Repeat password</label>
       <input type="password" id="repeatPassword" formControlName="repeatPassword" />
     </spk-form-field>
   }

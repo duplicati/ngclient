@@ -1,4 +1,4 @@
-<h3>Libraries</h3>
+<h3 i18n>Libraries</h3>
 
 @for (license of licenses(); track $index) {
   <div class="license">
@@ -18,7 +18,7 @@
     </p>
 
     <div class="actions">
-      <button spk-button (click)="openLicense(license)">
+      <button spk-button (click)="openLicense(license)" i18n>
         Details
         <spk-icon>arrow-square-in</spk-icon>
       </button>

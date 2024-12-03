@@ -34,6 +34,7 @@ import { BackupsState } from '../core/states/backups.state';
 export default class HomeComponent {
   #backupsState = inject(BackupsState);
 
+  MISSING_BACKUP_NAME = $localize`Backup name missing`;
   backups = this.#backupsState.backups;
   backupsLoading = this.#backupsState.backupsLoading;
   startingBackup = this.#backupsState.startingBackup;

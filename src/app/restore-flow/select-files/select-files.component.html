@@ -1,11 +1,11 @@
 <form [formGroup]="selectFilesForm" #formRef (submit)="next()">
-  <h3 class="title-30">Select files</h3>
+  <h3 class="title-30" i18n>Select files</h3>
 
   @if (versionOptionsLoading()) {
     <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
   } @else {
     <spk-select [displayFn]="displayFn()">
-      <input type="number" placeholder="Select an option..." formControlName="selectedOption" />
+      <input type="number" [placeholder]="SELECT_PLACEHOLDER" formControlName="selectedOption" />
 
       <ng-container options>
         @for (option of versionOptions(); track $index) {
@@ -20,7 +20,7 @@
         [backupSettings]="backupSettings()"
         [multiSelect]="true"
         [showFiles]="true">
-        <label for="path">Path</label>
+        <label for="path" i18n>Path</label>
         <input type="text" id="path" formControlName="filesToRestore" />
       </app-file-tree>
     }
@@ -29,12 +29,12 @@
   <!-- <pre>{{ selectFilesFormSignal() | json }}</pre> -->
 
   <div class="form-actions">
-    <button spk-button type="button" (click)="exit()">
+    <button spk-button type="button" (click)="exit()" i18n>
       <spk-icon>arrow-left</spk-icon>
       Exit
     </button>
 
-    <button spk-button class="raised primary" type="submit">
+    <button spk-button class="raised primary" type="submit" i18n>
       <spk-icon>arrow-right</spk-icon>
       Continue
     </button>

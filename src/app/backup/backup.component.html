@@ -2,32 +2,43 @@
 
 <header>
   <spk-stepper>
-    <div step routerLinkActive="active" [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'general']">
+    <div
+      step
+      routerLinkActive="active"
+      [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'general']"
+      i18n>
       <spk-radio />
       General
     </div>
     <div
       step
       routerLinkActive="active"
-      [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'destination']">
+      [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'destination']"
+      i18n>
       <spk-radio />
       Destination
     </div>
     <div
       step
       routerLinkActive="active"
-      [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'source-data']">
+      [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'source-data']"
+      i18n>
       <spk-radio />
       Source Data
     </div>
     <div
       step
       routerLinkActive="active"
-      [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'schedule']">
+      [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'schedule']"
+      i18n>
       <spk-radio />
       Schedule
     </div>
-    <div step routerLinkActive="active" [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'options']">
+    <div
+      step
+      routerLinkActive="active"
+      [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'options']"
+      i18n>
       <spk-radio />
       Options
     </div>

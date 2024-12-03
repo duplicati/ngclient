@@ -2,7 +2,7 @@
 
 <form [formGroup]="sourceDataForm" #formRef (submit)="next()">
   <div class="left">
-    <h3 class="title-30">Source Data</h3>
+    <h3 class="title-30" i18n>Source Data</h3>
 
     <app-file-tree class="fill" [multiSelect]="true" [startingPath]="getPath()" [showFiles]="true">
       <label for="path">Folder path</label>
@@ -10,12 +10,12 @@
     </app-file-tree>
 
     <div class="form-actions">
-      <button spk-button type="button" (click)="goBack()">
+      <button spk-button type="button" (click)="goBack()" i18n>
         <spk-icon>arrow-left</spk-icon>
         Go back
       </button>
 
-      <button spk-button class="raised primary" type="submit">
+      <button spk-button class="raised primary" type="submit" i18n>
         <spk-icon>arrow-right</spk-icon>
         Continue
       </button>
@@ -23,10 +23,10 @@
   </div>
 
   <div class="right">
-    <h3 class="title-30">Source Data</h3>
+    <h3 class="title-30" i18n>Source Data</h3>
     <app-toggle-card [disallowToggle]="true">
-      <ng-container title>Add Path</ng-container>
-      <p description>Add a path directly from your machine.</p>
+      <ng-container title i18n>Add Path</ng-container>
+      <p description i18n>Add a path directly from your machine.</p>
 
       <div class="row-inputs">
         <spk-form-field>
@@ -40,10 +40,10 @@
     </app-toggle-card>
 
     <app-toggle-card [disallowToggle]="true">
-      <ng-container title>Filters</ng-container>
-      <p description>Customize your filters.</p>
+      <ng-container title i18n>Filters</ng-container>
+      <p description i18n>Customize your filters.</p>
 
-      <button type="button" spk-button action (click)="addFilter()">Add filter</button>
+      <button type="button" spk-button action (click)="addFilter()" i18n>Add filter</button>
 
       @for (path of pathArray(); track $index) {
         <app-filter [path]="path" (pathChange)="patchPathAt($event, $index)" (remove)="removePathAt($index)" />
@@ -51,25 +51,25 @@
     </app-toggle-card>
 
     <app-toggle-card formGroupName="excludes" [disallowToggle]="true">
-      <ng-container title>Exclude</ng-container>
-      <p description>Choose if there’s any files you want to exclude.</p>
+      <ng-container title i18n>Exclude</ng-container>
+      <p description i18n>Choose if there’s any files you want to exclude.</p>
 
-      <spk-toggle class="raised primary">
+      <spk-toggle class="raised primary" i18n>
         Hidden files
         <input type="checkbox" placeholder="Hidden files" formControlName="hidden" />
       </spk-toggle>
 
-      <spk-toggle class="raised primary">
+      <spk-toggle class="raised primary" i18n>
         System files
         <input type="checkbox" placeholder="System files" formControlName="system" />
       </spk-toggle>
 
-      <spk-toggle class="raised primary">
+      <spk-toggle class="raised primary" i18n>
         Temporary files
         <input type="checkbox" placeholder="Temporary files" formControlName="temporary" />
       </spk-toggle>
 
-      <spk-toggle class="raised primary" [class.active]="filesLargerThan()" (click)="toggleFilesLargerThan()">
+      <spk-toggle class="raised primary" [class.active]="filesLargerThan()" (click)="toggleFilesLargerThan()" i18n>
         Files larger than
       </spk-toggle>
 

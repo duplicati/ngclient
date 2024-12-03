@@ -3,11 +3,16 @@
     <button
       type="button"
       [class.active]="pathDiscoveryMethod() === 'browse'"
-      (click)="pathDiscoveryMethod.set('browse')">
+      (click)="pathDiscoveryMethod.set('browse')"
+      i18n>
       Browser path
     </button>
 
-    <button type="button" [class.active]="pathDiscoveryMethod() === 'path'" (click)="pathDiscoveryMethod.set('path')">
+    <button
+      type="button"
+      [class.active]="pathDiscoveryMethod() === 'path'"
+      (click)="pathDiscoveryMethod.set('path')"
+      i18n>
       Manually type path
     </button>
   </spk-button-group>
@@ -78,7 +83,8 @@
     <spk-toggle
       [class.active]="_showHiddenNodes()"
       class="primary raised browse-files-toggle"
-      (click)="_showHiddenNodes.set(!_showHiddenNodes())">
+      (click)="_showHiddenNodes.set(!_showHiddenNodes())"
+      i18n>
       Show hidden {{ showFiles() ? 'files' : 'folders' }}
     </spk-toggle>
   }

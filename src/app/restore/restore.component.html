@@ -1,7 +1,7 @@
 <app-status-bar />
 
 <section>
-  <h2>Where do you want to restore from?</h2>
+  <h2 i18n>Where do you want to restore from?</h2>
 
   <!-- <spk-card class="type-a">
     <img src="assets/images/backup.png" alt="" width="48px" />
@@ -36,28 +36,28 @@
           <img src="assets/images/folder.png" alt="" width="48px" />
 
           <div class="text">
-            <h3>Restore {{ backup.Backup?.Name ?? 'Backup name missing' }}</h3>
+            <h3 i18n>Restore {{ backup.Backup?.Name ?? 'Backup name missing' }}</h3>
             <p>
               {{ backup.Backup?.Metadata?.['SourceSizeString'] ?? '-' }} /
               {{ backup.Backup?.Metadata?.['BackupListCount'] ?? '-' }}
             </p>
           </div>
 
-          <button spk-button [routerLink]="['/restore-flow', backup.Backup?.ID]">
+          <button spk-button [routerLink]="['/restore-flow', backup.Backup?.ID]" i18n>
             Restore
             <spk-icon>arrow-right</spk-icon>
           </button>
         </spk-card>
       }
     } @else {
-      No backups founds
+      <ng-container i18n>No backups founds</ng-container>
     }
   } @placeholder {
     <div class="loading-list">
       <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
 
       <div class="text">
-        <h3>Loading backups...</h3>
+        <h3 i18n>Loading backups...</h3>
       </div>
     </div>
   }

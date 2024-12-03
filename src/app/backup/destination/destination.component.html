@@ -1,6 +1,6 @@
 <form [formGroup]="destinationForm" #formRef (submit)="next()">
   <header>
-    <h3 class="title-30">
+    <h3 class="title-30" i18n>
       Backup destination
 
       <div class="actions">
@@ -31,7 +31,7 @@
     </h3>
 
     @if (destinationCount() > 0) {
-      <p (click)="removeDestinationFormGroup(destinationCount() - 1)">
+      <p (click)="removeDestinationFormGroup(destinationCount() - 1)" i18n>
         Want to select another destination?
         <span class="spk-primary">Click here</span>
       </p>
@@ -44,31 +44,31 @@
   @if (destinationCount() === 0) {
     <div class="most-common-destinations">
       <div class="tile" (click)="addDestinationFormGroup('file')">
-        <h3>File system</h3>
-        <p>Store backups on your local file system.</p>
+        <h3 i18n>File system</h3>
+        <p i18n>Store backups on your local file system.</p>
       </div>
 
       <div class="tile" (click)="addDestinationFormGroup('gcs')">
         <h3>Google Cloud Storage</h3>
-        <p>Store backups in Google Cloud Storage.</p>
+        <p i18n>Store backups in Google Cloud Storage.</p>
       </div>
 
       <div class="tile" (click)="addDestinationFormGroup('s3')">
         <h3>S3 compatible bucket</h3>
-        <p>Store backups in any S3 compatible bucket.</p>
+        <p i18n>Store backups in any S3 compatible bucket.</p>
       </div>
 
       <div class="tile" (click)="addDestinationFormGroup('ssh')">
         <h3>SSH</h3>
-        <p>Store backups in SSH.</p>
+        <p i18n>Store backups in SSH.</p>
       </div>
       <div class="tile" (click)="addDestinationFormGroup('googledrive')">
         <h3>Google Drive</h3>
-        <p>Store backups in Google Drive.</p>
+        <p i18n>Store backups in Google Drive.</p>
       </div>
     </div>
 
-    <p>More destinations are coming soon.</p>
+    <p i18n>More destinations are coming soon.</p>
     <!-- <spk-menu>
         <button spk-button type="button" class="outlined">Other destinations</button>
 
@@ -119,7 +119,7 @@
         }
 
         <app-toggle-card [disallowToggle]="true">
-          <ng-container title>
+          <ng-container title i18n>
             Advanced options
 
             <spk-menu>
@@ -160,7 +160,7 @@
         </app-toggle-card>
 
         <app-toggle-card [disallowToggle]="true">
-          <ng-container title>
+          <ng-container title i18n>
             Http options
 
             <spk-menu>
@@ -517,12 +517,12 @@
   }
 
   <div class="form-actions">
-    <button spk-button type="button" (click)="goBack()">
+    <button spk-button type="button" (click)="goBack()" i18n>
       <spk-icon>arrow-left</spk-icon>
       Go back
     </button>
 
-    <button spk-button class="raised primary" type="submit">
+    <button spk-button class="raised primary" type="submit" i18n>
       <spk-icon>arrow-right</spk-icon>
       Continue
     </button>
@@ -532,8 +532,10 @@
 @if (targetUrlDialogOpen()) {
   <spk-dialog [(isOpen)]="targetUrlDialogOpen" [options]="{ maxWidth: '700px', width: '100%' }">
     <header header>
-      <h2>Edit target URL</h2>
-      <spk-alert class="warning">Be careful, this will overwrite everything you have in your destination.</spk-alert>
+      <h2 i18n>Edit target URL</h2>
+      <spk-alert class="warning" i18n>
+        Be careful, this will overwrite everything you have in your destination.
+      </spk-alert>
     </header>
 
     <div content>
@@ -545,8 +547,8 @@
     <footer footer>
       <button spk-button type="button" (click)="closeTargetUrlDialog(false)">Cancel</button>
 
-      <button spk-button class="raised primary" type="submit" (click)="closeTargetUrlDialog(true)">
-        Override target URLc
+      <button spk-button class="raised primary" type="submit" (click)="closeTargetUrlDialog(true)" i18n>
+        Override target URL
         <spk-icon>swap</spk-icon>
       </button>
     </footer>

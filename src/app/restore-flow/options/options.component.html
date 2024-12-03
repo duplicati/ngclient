@@ -1,15 +1,15 @@
 <form [formGroup]="optionsForm" #formRef (submit)="submit()">
-  <h3 class="title-30">Restore options</h3>
+  <h3 class="title-30" i18n>Restore options</h3>
 
   <app-toggle-card [disallowToggle]="true">
-    <ng-container title>Where do you want to restore files from?</ng-container>
+    <ng-container title i18n>Where do you want to restore files from?</ng-container>
 
-    <spk-radio class="raised primary">
+    <spk-radio class="raised primary" i18n>
       Original location
       <input type="radio" name="restoreFrom" value="orignal" formControlName="restoreFrom" />
     </spk-radio>
 
-    <spk-radio class="raised primary">
+    <spk-radio class="raised primary" i18n>
       Pick location
       <input type="radio" name="restoreFrom" value="pickLocation" formControlName="restoreFrom" />
     </spk-radio>
@@ -21,35 +21,35 @@
   </app-toggle-card>
 
   <app-toggle-card [disallowToggle]="true">
-    <ng-container title>How do you want to handle existing files?</ng-container>
+    <ng-container title i18n>How do you want to handle existing files?</ng-container>
 
-    <spk-radio class="raised primary">
+    <spk-radio class="raised primary" i18n>
       Overwrite
       <input type="radio" name="handleExisting" value="overwrite" formControlName="handleExisting" />
     </spk-radio>
 
-    <spk-radio class="raised primary">
+    <spk-radio class="raised primary" i18n>
       Save different versions with timestamp in file name
       <input type="radio" name="handleExisting" value="saveTimestamp" formControlName="handleExisting" />
     </spk-radio>
   </app-toggle-card>
 
   <app-toggle-card>
-    <ng-container title>Permissions</ng-container>
+    <ng-container title i18n>Permissions</ng-container>
 
-    <spk-toggle class="primary raised">
+    <spk-toggle class="primary raised" i18n>
       Restore read/write permissions
       <input type="checkbox" formControlName="permissions" />
     </spk-toggle>
   </app-toggle-card>
 
   <div class="form-actions">
-    <button spk-button type="button" (click)="goBack()">
+    <button spk-button type="button" (click)="goBack()" i18n>
       <spk-icon>arrow-left</spk-icon>
       Go back
     </button>
 
-    <button spk-button [class.loader]="isSubmitting()" class="raised primary" type="submit">
+    <button spk-button [class.loader]="isSubmitting()" class="raised primary" type="submit" i18n>
       <spk-icon>arrow-right</spk-icon>
       Submit
     </button>

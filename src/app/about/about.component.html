@@ -1,48 +1,10 @@
 <spk-tabs class="primary">
-  <button tab routerLink="/about/general" routerLinkActive="active">General</button>
-
-  <button tab routerLink="/about/changelog" routerLinkActive="active">Changelog</button>
-
-  <button tab routerLink="/about/libraries" routerLinkActive="active">Libraries</button>
-
-  <button tab routerLink="/about/system-info" routerLinkActive="active">System info</button>
-
-  <button tab routerLink="/about/logs" routerLinkActive="active">Logs</button>
+  <button tab routerLink="/about/general" routerLinkActive="active" i18n>General</button>
+  <button tab routerLink="/about/changelog" routerLinkActive="active" i18n>Changelog</button>
+  <button tab routerLink="/about/libraries" routerLinkActive="active" i18n>Libraries</button>
+  <button tab routerLink="/about/system-info" routerLinkActive="active" i18n>System info</button>
+  <button tab routerLink="/about/logs" routerLinkActive="active" i18n>Logs</button>
 </spk-tabs>
-
-<!-- <spk-tabs>
-  <button tab [routerLink]="[rootUrl, 'general']" [class.active]="isActive('general')">General</button>
-
-  <button tab [routerLink]="[rootUrl, 'notifications']" [class.active]="isActive('notifications')">
-    Notifications
-  </button>
-
-  <button tab [routerLink]="[rootUrl, 'emails']" [class.active]="isActive('emails')">Emails</button>
-
-  @if (isRootOrg()) {
-    <button tab [routerLink]="[rootUrl, 'subscription']" [class.active]="isActive('subscription')">Subscription</button>
-  }
-
-  <button tab [routerLink]="[rootUrl, 'invoices']" [class.active]="isActive('invoices')">Invoices</button>
-
-  @if (showTeams()) {
-    <button tab [routerLink]="[rootUrl, 'teams']" [class.active]="isActive('teams', true)">Teams</button>
-  }
-
-  @if (showRegisteredMachines()) {
-    <button tab [routerLink]="[rootUrl, 'registered-machines']" [class.active]="isActive('registered-machines')">
-      Registered machines
-    </button>
-  }
-
-  <div class="spacer"></div>
-
-  <button tab [routerLink]="[rootUrl, 'organizations']" [class.active]="isActive('organizations')">
-    Organizations
-  </button>
-
-  <button tab [routerLink]="[rootUrl, 'account']" [class.active]="isActive('account')">Account</button>
-</spk-tabs> -->
 
 <section>
   <router-outlet />

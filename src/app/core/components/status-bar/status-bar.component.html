@@ -10,10 +10,10 @@
       <div class="label">{{ nextBackup().backup?.Backup?.Name }} - {{ nextBackup().time | appRelativeTime }}</div>
       <!-- <spk-progress-bar class="raised" [value]="3"></spk-progress-bar> -->
     } @else if (!statusData() || statusData()?.task?.Status === 'Completed') {
-      <div class="label">No scheduled tasks</div>
+      <div class="label" i18n>No scheduled tasks</div>
       <!-- <spk-progress-bar class="raised" [value]="3"></spk-progress-bar> -->
     } @else {
-      <div class="label">Loading...</div>
+      <div class="label" i18n>Loading...</div>
       <!-- <spk-progress-bar class="raised" [value]="3"></spk-progress-bar> -->
     }
   </div>

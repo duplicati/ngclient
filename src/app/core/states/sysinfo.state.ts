@@ -26,6 +26,7 @@ export class SysinfoState {
   preload(returnObservable = false): Observable<SystemInfoDto> | void {
     const obs = this.#dupServer.getApiV1Systeminfo().pipe(
       tap((x) => this.systemInfo.set(x)),
+      tap((x) => console.log('systemInfo', x)),
       finalize(() => this.isLoaded.set(true))
     );
 

@@ -47,6 +47,8 @@ export default class SelectFilesComponent {
   #route = inject(ActivatedRoute);
   #datePipe = inject(DatePipe);
 
+  SELECT_PLACEHOLDER = $localize`Select an option...`;
+
   selectFilesForm = this.#restoreFlowState.selectFilesForm;
   selectFilesFormSignal = this.#restoreFlowState.selectFilesFormSignal;
   backupId = this.#restoreFlowState.backupId;

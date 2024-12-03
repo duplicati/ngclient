@@ -6,9 +6,9 @@
 
 <spk-table [(data)]="logs" [loading]="logsLoading()">
   <tr table-header>
-    <th>Timestamp</th>
-    <th>Backup ID</th>
-    <th>Message</th>
+    <th i18n>Timestamp</th>
+    <th i18n>Backup ID</th>
+    <th i18n>Message</th>
     <th></th>
   </tr>
 
@@ -35,5 +35,5 @@
     }
   }
 
-  <div table-no-rows>No data available</div>
+  <div table-no-rows i18n>No data available</div>
 </spk-table>

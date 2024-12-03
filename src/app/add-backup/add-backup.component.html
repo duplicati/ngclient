@@ -1,16 +1,16 @@
 <app-status-bar />
 
 <section>
-  <h2>Add a new backup</h2>
+  <h2 i18n>Add a new backup</h2>
 
   <div class="backup-types">
     <spk-card class="type-a">
       <img src="assets/images/new-backup.png" />
-      <h3>New backup</h3>
+      <h3 i18n>New backup</h3>
 
-      <p>Configure a new backup. Choose your destination, source data and schedule.</p>
+      <p i18n>Configure a new backup. Choose your destination, source data and schedule.</p>
 
-      <button spk-button class="raised primary" [routerLink]="['/backup/new']">
+      <button spk-button class="raised primary" [routerLink]="['/backup/new']" i18n>
         Add a new backup
         <spk-icon>plus</spk-icon>
       </button>
@@ -18,9 +18,9 @@
 
     <spk-card class="type-a">
       <img src="assets/images/new-backup.png" />
-      <h3>Import from file</h3>
-      <p>Import backup configuration from a file. During import you can adjust the setings.</p>
-      <button spk-button class="raised primary" [routerLink]="['/backup/import']">
+      <h3 i18n>Import from file</h3>
+      <p i18n>Import backup configuration from a file. During import you can adjust the setings.</p>
+      <button spk-button class="raised primary" [routerLink]="['/backup/import']" i18n>
         Import from file
         <spk-icon>upload-simple</spk-icon>
       </button>

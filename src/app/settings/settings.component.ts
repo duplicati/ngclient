@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   SparkleButtonComponent,
@@ -11,6 +10,7 @@ import { derivedFrom } from 'ngxtension/derived-from';
 import { map, pipe, startWith } from 'rxjs';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { DuplicatiServerService, RemoteControlStatusOutput } from '../core/openapi';
+import { LOCALSTORAGE } from '../core/services/localstorage.token';
 import { SysinfoState } from '../core/states/sysinfo.state';
 import { LayoutState } from '../layout/layout.state';
 
@@ -44,24 +44,20 @@ type TimeTypes = (typeof TIME_OPTIONS)[number]['value'];
 
 const LANGUAGES = [
   {
-    value: 'en',
+    value: 'en-US',
     label: 'English',
   },
   {
-    value: 'fr',
+    value: 'fr-FR',
     label: 'French',
   },
   {
-    value: 'de',
+    value: 'de-DE',
     label: 'German',
   },
   {
-    value: 'es',
-    label: 'Spanish',
-  },
-  {
-    value: 'it',
-    label: 'Italian',
+    value: 'da-DA',
+    label: 'Danish',
   },
 ];
 
@@ -70,27 +66,27 @@ type LangType = (typeof LANGUAGES)[number];
 const USAGE_STATISTICS_OPTIONS = [
   {
     value: '',
-    label: 'System default (information)',
+    label: $localize`System default (information)`,
   },
   {
     value: 'information',
-    label: 'Usage statistics, warnings, errors, and crashes',
+    label: $localize`Usage statistics, warnings, errors, and crashes`,
   },
   {
     value: 'warning',
-    label: 'Warnings, errors and crashes',
+    label: $localize`Warnings, errors and crashes`,
   },
   {
     value: 'error',
-    label: 'Errors and crashes',
+    label: $localize`Errors and crashes`,
   },
   {
     value: 'crash',
-    label: 'Crashes only',
+    label: $localize`Crashes only`,
   },
   {
     value: 'none',
-    label: 'None / disabled',
+    label: $localize`None / disabled`,
   },
 ];
 
@@ -126,24 +122,26 @@ export default class SettingsComponent {
   #layoutState = inject(LayoutState);
   #sysinfo = inject(SysinfoState);
   #dupServer = inject(DuplicatiServerService);
+  #ls = inject(LOCALSTORAGE);
+  #initLang = this.#ls.getItem('locale') ?? 'en-US';
 
   sysinfo = this.#sysinfo.systemInfo;
-
   isDarkMode = this.#layoutState.isDarkMode;
+
   editAs = signal<'list' | 'text'>('list');
+  langCtrl = signal<string>(this.#initLang);
+
   settingsForm = fb.group({
     pauseSettings: fb.group({
       time: fb.control<number>(0),
       timeType: fb.control<TimeTypes>('s'),
     }),
-    language: fb.control<string>('en'),
     usageStatistics: fb.control<UsageStatisticsType['value']>(''),
     updateChannel: fb.control<UpdateChannel>(''),
     remoteControlRegisterUrl: fb.control<string>(''),
   });
   remoteControlState = signal<RemoteControlState>('unknown');
   remoteControlClaimUrl = signal<string | null>(null);
-  // remoteControlRegisterUrl = signal<string>('');
 
   sysInfoEffect = effect(() => {
     this.settingsForm.controls.remoteControlRegisterUrl.patchValue(this.sysinfo()?.RemoteControlRegistrationUrl ?? '');
@@ -153,7 +151,6 @@ export default class SettingsComponent {
     return this.settingsForm.controls.pauseSettings;
   }
 
-  langSignal = toSignal(this.settingsForm.controls.language.valueChanges);
   timeTypeOptions = signal(TIME_OPTIONS);
   timeOptions = derivedFrom(
     [
@@ -170,15 +167,22 @@ export default class SettingsComponent {
     )
   );
 
-  languageOptions = computed(() =>
-    this.langSignal() ? LANGUAGES.filter((x) => x.value === this.langSignal()) : LANGUAGES
-  );
+  languageOptions = computed(() => {
+    const searchValue = this.langCtrl();
+
+    return searchValue ? LANGUAGES.filter((x) => x.label.toLowerCase().includes(searchValue.toLowerCase())) : LANGUAGES;
+  });
 
   usageStatisticsOptions = signal(USAGE_STATISTICS_OPTIONS);
 
   ngOnInit() {
     this.refreshRemoteControlStatus();
     this.getServerSettings();
+  }
+
+  saveLocale(x: string) {
+    this.#ls.setItem('locale', x);
+    window.location.reload();
   }
 
   submit() {
@@ -232,9 +236,16 @@ export default class SettingsComponent {
     });
   }
 
-  languageDisplay(x: LangType['value'] | null) {
-    if (!x) return null;
-    return LANGUAGES.find((y) => y.value === x)?.label ?? null;
+  languageDisplay() {
+    const _self = this;
+
+    return () => {
+      const x = _self.langCtrl();
+
+      if (!x) return null;
+
+      return LANGUAGES.find((y) => y.value === x)?.label ?? null;
+    };
   }
 
   typeDisplay() {

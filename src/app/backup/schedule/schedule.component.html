@@ -1,19 +1,19 @@
 <form [formGroup]="scheduleForm" #formRef (submit)="next()">
-  <h3 class="title-30">Schedule</h3>
+  <h3 class="title-30" i18n>Schedule</h3>
 
   <div class="toggle-wrap">
-    <spk-toggle class="raised primary">
+    <spk-toggle class="raised primary" i18n>
       Automatically run backups
       <input type="checkbox" formControlName="autoRun" />
     </spk-toggle>
 
-    <p>If a date was missed, the job will run as soon as possible.</p>
+    <p i18n>If a date was missed, the job will run as soon as possible.</p>
   </div>
 
   @if (scheduleFormSignal()?.autoRun) {
     <div class="row-inputs" formGroupName="nextTime">
       <spk-form-field>
-        <label for="time">Next time</label>
+        <label for="time" i18n>Next time</label>
         <input type="time" id="time" #timeRef formControlName="time" (focus)="timeRef.showPicker()" />
         <spk-icon suffix>clock</spk-icon>
       </spk-form-field>
@@ -28,7 +28,7 @@
     <ng-container formGroupName="runAgain">
       <div class="row-inputs">
         <spk-form-field>
-          <label for="repeatValue">Run again every</label>
+          <label for="repeatValue" i18n>Run again every</label>
           <input type="number" id="repeatValue" formControlName="repeatValue" />
         </spk-form-field>
 
@@ -44,40 +44,40 @@
       </div>
 
       <app-toggle-card formGroupName="allowedDays" [disallowToggle]="true">
-        <ng-container title>Allowed days</ng-container>
+        <ng-container title i18n>Allowed days</ng-container>
 
         <div class="days-wrap">
-          <spk-toggle class="raised primary">
+          <spk-toggle class="raised primary" i18n>
             Monday
             <input type="checkbox" formControlName="mon" />
           </spk-toggle>
 
-          <spk-toggle class="raised primary">
+          <spk-toggle class="raised primary" i18n>
             Tuesday
             <input type="checkbox" formControlName="tue" />
           </spk-toggle>
 
-          <spk-toggle class="raised primary">
+          <spk-toggle class="raised primary" i18n>
             Wednesday
             <input type="checkbox" formControlName="wed" />
           </spk-toggle>
 
-          <spk-toggle class="raised primary">
+          <spk-toggle class="raised primary" i18n>
             Thursday
             <input type="checkbox" formControlName="thu" />
           </spk-toggle>
 
-          <spk-toggle class="raised primary">
+          <spk-toggle class="raised primary" i18n>
             Friday
             <input type="checkbox" formControlName="fri" />
           </spk-toggle>
 
-          <spk-toggle class="raised primary">
+          <spk-toggle class="raised primary" i18n>
             Saturday
             <input type="checkbox" formControlName="sat" />
           </spk-toggle>
 
-          <spk-toggle class="raised primary">
+          <spk-toggle class="raised primary" i18n>
             Sunday
             <input type="checkbox" formControlName="sun" />
           </spk-toggle>
@@ -87,12 +87,12 @@
   }
 
   <div class="form-actions">
-    <button spk-button type="button" (click)="goBack()">
+    <button spk-button type="button" (click)="goBack()" i18n>
       <spk-icon>arrow-left</spk-icon>
       Go back
     </button>
 
-    <button spk-button class="raised primary" type="submit">
+    <button spk-button class="raised primary" type="submit" i18n>
       <spk-icon>arrow-right</spk-icon>
       Continue
     </button>

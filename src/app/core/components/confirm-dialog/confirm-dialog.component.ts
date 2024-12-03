@@ -8,17 +8,17 @@ export type ConfirmDialogData = {
 };
 
 const DEFAULT_DATA: ConfirmDialogData = {
-  title: 'Are you sure?',
-  confirmText: 'Confirm',
-  cancelText: 'Cancel',
+  title: $localize`Are you sure?`,
+  confirmText: $localize`Confirm`,
+  cancelText: $localize`Cancel`,
 };
 
 @Component({
-    selector: 'app-confirm-dialog',
-    imports: [],
-    templateUrl: './confirm-dialog.component.html',
-    styleUrl: './confirm-dialog.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-confirm-dialog',
+  imports: [],
+  templateUrl: './confirm-dialog.component.html',
+  styleUrl: './confirm-dialog.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConfirmDialogComponent {
   data = input<ConfirmDialogData>();
