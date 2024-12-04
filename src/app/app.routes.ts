@@ -1,9 +1,23 @@
-import { inject } from '@angular/core';
+import { inject, Injector } from '@angular/core';
 import { Router, Routes } from '@angular/router';
-import { zip } from 'rxjs';
+import { switchMap, zip } from 'rxjs';
 import { AppAuthState } from './core/states/app-auth.state';
+import { RelayconfigState } from './core/states/relayconfig.state';
 import { SysinfoState } from './core/states/sysinfo.state';
 import { WebModulesState } from './core/states/webmodules.state';
+
+export const PreloadGuard = () => {
+  const relayconfigState = inject(RelayconfigState);
+  const injector = inject(Injector);
+
+  if (relayconfigState.configLoaded === null) console.log('preload');
+
+  return relayconfigState.configLoaded?.pipe(
+    switchMap(() =>
+      zip(injector.get(SysinfoState).preload(true) as any, injector.get(WebModulesState).preload(true) as any)
+    )
+  );
+};
 
 export const routes: Routes = [
   {
@@ -20,11 +34,8 @@ export const routes: Routes = [
       },
       {
         path: '',
-        canActivate: [
-          () => {
-            return zip(inject(SysinfoState).preload(true) as any, inject(WebModulesState).preload(true) as any);
-          },
-        ],
+        // If in iframe wait for relay...
+        canActivate: [PreloadGuard],
         loadComponent: () => import('./layout/layout.component'),
         children: [
           {

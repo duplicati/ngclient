@@ -278,7 +278,7 @@ export default class SettingsComponent {
 
     data.RegistrationUrl && this.remoteControlClaimUrl.set(data.RegistrationUrl);
 
-    console.log(data);
+    // console.log(data);
 
     if (data.IsConnected) {
       this.remoteControlState.set('connected');
@@ -300,7 +300,7 @@ export default class SettingsComponent {
 
     const currentRemoteControlState = this.remoteControlState();
 
-    console.log(currentRemoteControlState);
+    console.log('currentRemoteControlState: ', currentRemoteControlState);
 
     // Stop any existing timer
     if (this.repeatRegisterTimer !== null) {

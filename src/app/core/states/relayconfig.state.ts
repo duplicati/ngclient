@@ -1,4 +1,5 @@
 import { Injectable, signal } from '@angular/core';
+import { Subject } from 'rxjs';
 
 export type Relayconfig = {
   accessToken: string;
@@ -10,14 +11,18 @@ export type Relayconfig = {
 })
 export class RelayconfigState {
   #config = signal<Relayconfig | null>(null);
+  #isInIframe = window.self !== window.top;
 
   config = this.#config.asReadonly();
+  configLoaded = this.#isInIframe ? new Subject<boolean>() : null;
 
   parentIframeListner: AbortController | null = null;
   parentOrigin = '*';
 
   fetchConfig(): void {
     this.#killListener();
+
+    if (!this.#isInIframe) return;
 
     this.parentIframeListner = new AbortController();
     this.#sendMessageToParent('connected');
@@ -45,7 +50,9 @@ export class RelayconfigState {
           }
 
           console.info('postMessage config set');
+
           this.#config.set(parsed as Relayconfig);
+          this.configLoaded?.next(true);
         }
       },
       {
