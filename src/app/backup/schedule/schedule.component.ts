@@ -16,31 +16,31 @@ const fb = new FormBuilder();
 const UNIT_OPTIONS = [
   {
     key: 's',
-    label: 'Seconds',
+    label: $localize`Seconds`,
   },
   {
     key: 'm',
-    label: 'Minutes',
+    label: $localize`Minutes`,
   },
   {
     key: 'h',
-    label: 'Hours',
+    label: $localize`Hours`,
   },
   {
     key: 'D',
-    label: 'Days',
+    label: $localize`Days`,
   },
   {
     key: 'W',
-    label: 'Weeks',
+    label: $localize`Weeks`,
   },
   {
     key: 'M',
-    label: 'Months',
+    label: $localize`Months`,
   },
   {
     key: 'Y',
-    label: 'Years',
+    label: $localize`Years`,
   },
 ] as const;
 

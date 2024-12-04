@@ -6,7 +6,7 @@
       Backup name
       <sup>*</sup>
     </label>
-    <input type="text" tabindex="1" placeholder="Your backup name" formControlName="name" />
+    <input type="text" tabindex="1" i18n-placeholder placeholder="Your backup name" formControlName="name" />
   </spk-form-field>
 
   <spk-form-field>
@@ -14,6 +14,7 @@
     <textarea
       id="backupDescription"
       tabindex="2"
+      i18n-placeholder
       placeholder="Your backup description"
       formControlName="description"></textarea>
   </spk-form-field>
@@ -21,7 +22,13 @@
   @if (isNew()) {
     <spk-select [displayFn]="displayFn()">
       <label for="encryption" i18n>Encryption</label>
-      <input type="text" id="encryption" tabindex="3" placeholder="Encryption" formControlName="encryption" />
+      <input
+        type="text"
+        id="encryption"
+        tabindex="3"
+        i18n-placeholder
+        placeholder="Encryption"
+        formControlName="encryption" />
 
       @for (encryption of encryptionOptions(); track $index) {
         <option [value]="encryption.Key">{{ encryption.DisplayName }}</option>
@@ -41,6 +48,7 @@
             id="password"
             tabindex="4"
             autocomplete="off"
+            i18n-placeholder
             placeholder="Password"
             formControlName="password" />
         </spk-form-field>
@@ -61,6 +69,7 @@
             id="repeatPassword"
             tabindex="5"
             autocomplete="off"
+            i18n-placeholder
             placeholder="Repeat password"
             formControlName="repeatPassword" />
 

@@ -6,7 +6,7 @@
       <spk-progress-bar
         class="raised primary"
         [value]="statusData()?.OverallProgress ? statusData()?.OverallProgress! * 100 : 3"></spk-progress-bar>
-    } @else if (nextBackup()) {
+    } @else if (nextBackup().backup || nextBackup().time) {
       <div class="label">{{ nextBackup().backup?.Backup?.Name }} - {{ nextBackup().time | appRelativeTime }}</div>
       <!-- <spk-progress-bar class="raised" [value]="3"></spk-progress-bar> -->
     } @else if (!statusData() || statusData()?.task?.Status === 'Completed') {
@@ -17,6 +17,16 @@
       <!-- <spk-progress-bar class="raised" [value]="3"></spk-progress-bar> -->
     }
   </div>
+
+  <pre>
+    Relative dayjs: {{ minsAgo | appRelativeTime }}
+    Duration format: {{ '10:11:12' | durationFormat }}
+    Angular date pipe: {{ minsAgo | date: 'shortTime' }}
+
+    Angular currency pipe: {{ 1000000.05 | currency: 'USD' }}
+    Angular decimal pipe: {{ 1000000.01 | number }}
+    Angular percent pipe: {{ 100.1 | percent }}
+  </pre>
 
   <!-- <div class="current-backup-actions">
     <button spk-button>

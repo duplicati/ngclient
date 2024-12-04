@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute, RouterOutlet } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { DAYJS } from './core/providers/dayjs';
 import { LOCALSTORAGE } from './core/services/localstorage.token';
 import { RelayconfigState } from './core/states/relayconfig.state';
 
@@ -13,6 +14,7 @@ import { RelayconfigState } from './core/states/relayconfig.state';
   styles: [],
 })
 export class AppComponent {
+  #dayjs = inject(DAYJS);
   #ls = inject(LOCALSTORAGE);
   #route = inject(ActivatedRoute);
   #relayConfigState = inject(RelayconfigState);
@@ -27,6 +29,12 @@ export class AppComponent {
       }
     });
     this.#ls.clearAllNotCurrentVersion();
+
+    // import(`/locale/dayjs/${simpleLocale}`).then((res) => {
+    //   console.log(res);
+
+    //   // make sure you load the appropriate dayjs translations...
+    // });
   }
 
   ngOnDestroy() {

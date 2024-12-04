@@ -1,6 +1,6 @@
 /// <reference types="@angular/localize" />
 
-import { ApplicationConfig, provideExperimentalZonelessChangeDetection } from '@angular/core';
+import { ApplicationConfig, LOCALE_ID, provideExperimentalZonelessChangeDetection } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
@@ -9,6 +9,7 @@ import { ENVIRONMENT_TOKEN } from '../environments/environment-token';
 import { routes } from './app.routes';
 import { httpInterceptor } from './core/interceptors/http.interceptor';
 import { httpInterceptorWebsocketRelay } from './core/interceptors/websocket.interceptor';
+import { getLocale } from './core/locales/locales.utility';
 import { DayJsProvider } from './core/providers/dayjs';
 import { LOCALSTORAGE } from './core/services/localstorage.token';
 
@@ -20,6 +21,7 @@ export const appConfig: ApplicationConfig = {
     LOCALSTORAGE,
 
     { provide: ENVIRONMENT_TOKEN, useValue: environment },
+    { provide: LOCALE_ID, useValue: getLocale() },
     DayJsProvider,
   ],
 };

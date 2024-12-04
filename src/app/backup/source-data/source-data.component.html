@@ -6,7 +6,7 @@
 
     <app-file-tree class="fill" [multiSelect]="true" [startingPath]="getPath()" [showFiles]="true">
       <label for="path">Folder path</label>
-      <input type="text" id="path" tabindex="4" placeholder="Path" formControlName="path" />
+      <input type="text" id="path" tabindex="4" i18n-placeholder placeholder="Path" formControlName="path" />
     </app-file-tree>
 
     <div class="form-actions">
@@ -30,7 +30,7 @@
 
       <div class="row-inputs">
         <spk-form-field>
-          <input type="text" placeholder="Add a direct path" [formControl]="newPathCtrl" />
+          <input type="text" i18n-placeholder placeholder="Add a direct path" [formControl]="newPathCtrl" />
         </spk-form-field>
 
         <button spk-button class="raised primary" type="button" (click)="addNewPath()">
@@ -56,17 +56,17 @@
 
       <spk-toggle class="raised primary" i18n>
         Hidden files
-        <input type="checkbox" placeholder="Hidden files" formControlName="hidden" />
+        <input type="checkbox" i18n-placeholder placeholder="Hidden files" formControlName="hidden" />
       </spk-toggle>
 
       <spk-toggle class="raised primary" i18n>
         System files
-        <input type="checkbox" placeholder="System files" formControlName="system" />
+        <input type="checkbox" i18n-placeholder placeholder="System files" formControlName="system" />
       </spk-toggle>
 
       <spk-toggle class="raised primary" i18n>
         Temporary files
-        <input type="checkbox" placeholder="Temporary files" formControlName="temporary" />
+        <input type="checkbox" i18n-placeholder placeholder="Temporary files" formControlName="temporary" />
       </spk-toggle>
 
       <spk-toggle class="raised primary" [class.active]="filesLargerThan()" (click)="toggleFilesLargerThan()" i18n>
@@ -80,7 +80,7 @@
           </spk-form-field>
 
           <spk-select>
-            <input type="text" formControlName="unit" placeholder="Select an option..." />
+            <input type="text" formControlName="unit" i18n-placeholder placeholder="Select an option..." />
 
             <ng-container options>
               @for (option of sizeOptions(); track $index) {

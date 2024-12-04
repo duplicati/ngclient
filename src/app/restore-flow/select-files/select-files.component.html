@@ -5,7 +5,7 @@
     <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
   } @else {
     <spk-select [displayFn]="displayFn()">
-      <input type="number" [placeholder]="SELECT_PLACEHOLDER" formControlName="selectedOption" />
+      <input type="number" i18n-placeholder placeholder="Select an option..." formControlName="selectedOption" />
 
       <ng-container options>
         @for (option of versionOptions(); track $index) {

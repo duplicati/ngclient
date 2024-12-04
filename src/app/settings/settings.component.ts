@@ -28,15 +28,15 @@ type UpdateChannel = '' | 'stable' | 'beta' | 'experimental' | 'canary';
 const TIME_OPTIONS = [
   {
     value: 's',
-    label: 'Seconds',
+    label: $localize`Seconds`,
   },
   {
     value: 'm',
-    label: 'Minutes',
+    label: $localize`Minutes`,
   },
   {
     value: 'h',
-    label: 'Hours',
+    label: $localize`Hours`,
   },
 ] as const;
 
@@ -56,7 +56,7 @@ const LANGUAGES = [
     label: 'German',
   },
   {
-    value: 'da-DA',
+    value: 'da-DK',
     label: 'Danish',
   },
 ];

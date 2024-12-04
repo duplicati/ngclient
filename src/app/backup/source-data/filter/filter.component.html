@@ -2,6 +2,7 @@
   <spk-select [hideClearButton]="true" [displayFn]="displayFn">
     <input
       type="text"
+      i18n-placeholder
       placeholder="Select an option..."
       [ngModel]="pathState()?.type"
       (ngModelChange)="updateStateType($event)" />

@@ -63,6 +63,16 @@
                 "output": "./locale/"
               },
               {
+                "glob": "**/*.js",
+                "input": "./node_modules/dayjs/locale",
+                "output": "./locale/dayjs/"
+              },
+              {
+                "glob": "**/*.mjs",
+                "input": "./node_modules/@angular/common/locales",
+                "output": "./locale/angular/"
+              },
+              {
                 "glob": "**/*",
                 "input": "./node_modules/@sparkle-ui/core/assets",
                 "output": "./sparkle-ui-assets/"
