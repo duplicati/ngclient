@@ -12,6 +12,25 @@ export const LOCALE_MAP = {
   'fr-FR': 'fr',
 };
 
+export const LANGUAGES = [
+  {
+    value: 'en-US',
+    label: 'English',
+  },
+  {
+    value: 'fr-FR',
+    label: 'French',
+  },
+  {
+    value: 'de-DE',
+    label: 'German',
+  },
+  {
+    value: 'da-DK',
+    label: 'Danish',
+  },
+];
+
 export function mapLocale(locale: string | null | undefined) {
   if (!locale) return 'en';
 

@@ -9,6 +9,7 @@ import {
 import { derivedFrom } from 'ngxtension/derived-from';
 import { map, pipe, startWith } from 'rxjs';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
+import { LANGUAGES } from '../core/locales/locales.utility';
 import { DuplicatiServerService, RemoteControlStatusOutput } from '../core/openapi';
 import { LOCALSTORAGE } from '../core/services/localstorage.token';
 import { SysinfoState } from '../core/states/sysinfo.state';
@@ -41,25 +42,6 @@ const TIME_OPTIONS = [
 ] as const;
 
 type TimeTypes = (typeof TIME_OPTIONS)[number]['value'];
-
-const LANGUAGES = [
-  {
-    value: 'en-US',
-    label: 'English',
-  },
-  {
-    value: 'fr-FR',
-    label: 'French',
-  },
-  {
-    value: 'de-DE',
-    label: 'German',
-  },
-  {
-    value: 'da-DK',
-    label: 'Danish',
-  },
-];
 
 type LangType = (typeof LANGUAGES)[number];
 
