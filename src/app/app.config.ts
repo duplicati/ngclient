@@ -3,6 +3,7 @@
 import { ApplicationConfig, LOCALE_ID, provideExperimentalZonelessChangeDetection } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 
+import { DecimalPipe } from '@angular/common';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { ENVIRONMENT_TOKEN } from '../environments/environment-token';
@@ -23,5 +24,6 @@ export const appConfig: ApplicationConfig = {
     { provide: ENVIRONMENT_TOKEN, useValue: environment },
     { provide: LOCALE_ID, useValue: getLocale() },
     DayJsProvider,
+    DecimalPipe,
   ],
 };

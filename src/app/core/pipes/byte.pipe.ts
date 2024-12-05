@@ -1,10 +1,21 @@
-import { Pipe, type PipeTransform } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
+import { inject, Pipe, type PipeTransform } from '@angular/core';
 
+type UserAgentData = {
+  platform: string;
+  mobile: boolean;
+  brands: {
+    brand: string;
+    version: string;
+  }[];
+};
 @Pipe({
   name: 'bytes',
   standalone: true,
 })
 export class BytesPipe implements PipeTransform {
+  decimalPipe = inject(DecimalPipe);
+
   transform(bytes: number | string | undefined | null, longForm: boolean = false): string {
     if (!bytes || bytes === 0) return '0 Bytes';
 
@@ -25,14 +36,17 @@ export class BytesPipe implements PipeTransform {
     power = Math.min(power, units.length - 1);
 
     const size = bytes / Math.pow(isMac ? 1000 : 1024, power);
-    const formattedSize = Math.round(size * 100) / 100; // Keep up to 2 decimals
+    const formattedSize = this.decimalPipe.transform(size, '1.0-2');
 
     return `${formattedSize} ${longForm ? units[power] : units[power].replace('Bytes', 'B')}`;
   }
 
   #isMac() {
-    const strings = ['mac', 'macintosh', 'os x'];
-    const validationString = ((navigator.platform || navigator.userAgent) ?? '').toLowerCase();
+    // Only works in chromium browsers
+    if (((navigator as any).userAgentData as UserAgentData)?.platform.toLowerCase().includes('mac')) return true;
+
+    const strings = ['mac', 'macintosh', 'os x', 'apple'];
+    const validationString = ((navigator.userAgent || navigator.platform || navigator.vendor) ?? '').toLowerCase();
 
     if (!validationString) return false;
 
