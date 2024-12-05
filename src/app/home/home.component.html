@@ -44,7 +44,9 @@
                   <span i18n>Last successful backup:</span>
                   {{ backup.Backup?.Metadata?.['LastBackupDate'] | date: 'short' }}
                   @if (backup.Backup?.Metadata?.['LastBackupDuration']) {
-                    - (took {{ backup.Backup?.Metadata?.['LastBackupDuration'] | durationFormat }})
+                    -
+                    <ng-container i18n>took</ng-container>
+                    {{ backup.Backup?.Metadata?.['LastBackupDuration'] | durationFormat }}
                   } @else {
                     <ng-container i18n>N/A</ng-container>
                   }

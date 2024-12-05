@@ -1,22 +1,12 @@
-import { CurrencyPipe, DatePipe, DecimalPipe, PercentPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { SparkleProgressBarComponent } from '@sparkle-ui/core';
-import { DurationFormatPipe } from '../../pipes/duration.pipe';
 import { RelativeTimePipe } from '../../pipes/relative-time.pipe';
 import { StatusBarState } from './status-bar.state';
 
 const date = new Date();
 @Component({
   selector: 'app-status-bar',
-  imports: [
-    SparkleProgressBarComponent,
-    RelativeTimePipe,
-    DatePipe,
-    CurrencyPipe,
-    DecimalPipe,
-    PercentPipe,
-    DurationFormatPipe,
-  ],
+  imports: [SparkleProgressBarComponent, RelativeTimePipe],
   templateUrl: './status-bar.component.html',
   styleUrl: './status-bar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
