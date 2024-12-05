@@ -1,0 +1,20 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
+:host {
+  display: block;
+
+  button {
+    white-space: nowrap;
+  }
+}
+
+.field-row {
+  display: flex;
+  gap: p2r(8);
+  width: 100%;
+
+  spk-form-field,
+  spk-select {
+    flex: 1 0;
+  }
+}

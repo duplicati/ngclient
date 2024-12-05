@@ -13,66 +13,11 @@
   <section>
     <div class="left">
       <h3 i18n>Remote access control</h3>
-      <p>{{ getRemoteControlStatusText() }}</p>
+      <p>{{ remoteControlStatus() }}</p>
     </div>
 
-    <div class="right remote-control">
-      @if (remoteControlState() !== 'unknown') {
-        <div class="field-row">
-          @if (remoteControlState() === 'inactive') {
-            <spk-form-field label="Registration URL" for="remoteControlRegisterUrl">
-              <input
-                type="text"
-                spk-input
-                id="remoteControlRegisterUrl"
-                name="remoteControlRegisterUrl"
-                formControlName="remoteControlRegisterUrl" />
-            </spk-form-field>
-
-            <button type="button" spk-button class="raised" (click)="beginRemoteRegistration()" i18n>
-              Register for remote control
-            </button>
-          }
-
-          @if (remoteControlState() === 'registered') {
-            <div class="field-col">
-              <label i18n>Machine is now registered, open this link to add it to your account:</label>
-              <a href="{{ remoteControlClaimUrl() }}" target="_blank">{{ remoteControlClaimUrl() }}</a>
-            </div>
-          }
-
-          @if (remoteControlState() === 'registering') {
-            <div class="field-col">
-              <label i18n>Registering, please wait...</label>
-            </div>
-          }
-
-          @if (
-            remoteControlState() === 'registering' ||
-            remoteControlState() === 'registeringfaulted' ||
-            remoteControlState() === 'registered'
-          ) {
-            <button type="button" spk-button class="raised" (click)="cancelRemoteRegistration()" i18n>
-              Cancel registration
-            </button>
-          }
-
-          @if (remoteControlState() === 'connected' || remoteControlState() === 'enabled') {
-            <button type="button" spk-button class="raised" (click)="disableRemoteControl()" i18n>
-              Disable remote control
-            </button>
-          }
-          @if (remoteControlState() === 'disabled') {
-            <button type="button" spk-button class="raised" (click)="enableRemoteControl()" i18n>
-              Enable remote control
-            </button>
-
-            <button type="button" spk-button class="raised warn" (click)="deleteRemoteControl()" i18n>
-              Delete remote control setup
-            </button>
-          }
-        </div>
-      }
+    <div class="right">
+      <app-remote-control></app-remote-control>
     </div>
   </section>
 

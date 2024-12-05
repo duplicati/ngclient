@@ -1,0 +1,42 @@
+@if (state() !== 'unknown') {
+  <div class="field-row">
+    @if (state() === 'inactive') {
+      <spk-form-field label="Registration URL" for="remoteControlRegisterUrl">
+        <input
+          type="text"
+          spk-input
+          id="remoteControlRegisterUrl"
+          name="remoteControlRegisterUrl"
+          [(ngModel)]="registerUrl" />
+      </spk-form-field>
+
+      <button type="button" spk-button class="raised" (click)="register()" i18n>Register for remote control</button>
+    }
+
+    @if (state() === 'registered') {
+      <div class="field-col">
+        <label i18n>Machine is now registered, open this link to add it to your account:</label>
+        <a href="{{ claimUrl() }}" target="_blank">{{ claimUrl() }}</a>
+      </div>
+    }
+
+    @if (state() === 'registering') {
+      <div class="field-col">
+        <label i18n>Registering, please wait...</label>
+      </div>
+    }
+
+    @if (state() === 'registering' || state() === 'registeringfaulted' || state() === 'registered') {
+      <button type="button" spk-button class="raised" (click)="cancel()" i18n>Cancel registration</button>
+    }
+
+    @if (state() === 'connected' || state() === 'enabled') {
+      <button type="button" spk-button class="raised" (click)="disable()" i18n>Disable remote control</button>
+    }
+    @if (state() === 'disabled') {
+      <button type="button" spk-button class="raised" (click)="enable()" i18n>Enable remote control</button>
+
+      <button type="button" spk-button class="raised warn" (click)="delete()" i18n>Delete remote control setup</button>
+    }
+  </div>
+}
