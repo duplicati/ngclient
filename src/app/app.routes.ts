@@ -10,12 +10,13 @@ export const PreloadGuard = () => {
   const relayconfigState = inject(RelayconfigState);
   const injector = inject(Injector);
 
-  if (relayconfigState.configLoaded === null) console.log('preload');
+  // NOTE - The injects are happning twice because we use toSignal inside so
+  // when injected they fire requests this is why they cant be combined
+  if (relayconfigState.configLoaded === null)
+    return zip([injector.get(SysinfoState).preload(true), injector.get(WebModulesState).preload(true)]);
 
   return relayconfigState.configLoaded?.pipe(
-    switchMap(() =>
-      zip(injector.get(SysinfoState).preload(true) as any, injector.get(WebModulesState).preload(true) as any)
-    )
+    switchMap(() => zip([injector.get(SysinfoState).preload(true), injector.get(WebModulesState).preload(true)]))
   );
 };
 

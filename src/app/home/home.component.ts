@@ -10,6 +10,7 @@ import {
   SparkleProgressBarComponent,
 } from '@sparkle-ui/core';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
+import { BytesPipe } from '../core/pipes/byte.pipe';
 import { DurationFormatPipe } from '../core/pipes/duration.pipe';
 import { BackupsState } from '../core/states/backups.state';
 
@@ -26,6 +27,7 @@ import { BackupsState } from '../core/states/backups.state';
     SparkleProgressBarComponent,
     DatePipe,
     DurationFormatPipe,
+    BytesPipe,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',

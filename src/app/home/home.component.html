@@ -54,8 +54,8 @@
 
                 <p>
                   <span i18n>Source:</span>
-                  @if (backup.Backup?.Metadata?.['SourceSizeString']) {
-                    {{ backup.Backup?.Metadata?.['SourceSizeString'] }}
+                  @if (backup.Backup?.Metadata?.['SourceFilesSize']) {
+                    {{ backup.Backup?.Metadata?.['SourceFilesSize'] | bytes }}
                   } @else {
                     <ng-container i18n>N/A</ng-container>
                   }
@@ -63,8 +63,8 @@
 
                 <p>
                   <span i18n>Destination:</span>
-                  @if (backup.Backup?.Metadata?.['TargetSizeString']) {
-                    {{ backup.Backup?.Metadata?.['TargetSizeString'] }}
+                  @if (backup.Backup?.Metadata?.['TargetFilesSize']) {
+                    {{ backup.Backup?.Metadata?.['TargetFilesSize'] | bytes }}
                   } @else {
                     <ng-container i18n>N/A</ng-container>
                   }

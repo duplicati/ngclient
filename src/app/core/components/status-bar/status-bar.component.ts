@@ -6,7 +6,15 @@ import { StatusBarState } from './status-bar.state';
 const date = new Date();
 @Component({
   selector: 'app-status-bar',
-  imports: [SparkleProgressBarComponent, RelativeTimePipe],
+  imports: [
+    SparkleProgressBarComponent,
+    RelativeTimePipe,
+    // DatePipe,
+    // CurrencyPipe,
+    // DecimalPipe,
+    // PercentPipe,
+    // DurationFormatPipe,
+  ],
   templateUrl: './status-bar.component.html',
   styleUrl: './status-bar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
