@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import {
   SparkleButtonComponent,
   SparkleIconComponent,
+  SparkleOptionComponent,
   SparkleProgressBarComponent,
   SparkleSelectComponent,
 } from '@sparkle-ui/core';
@@ -31,6 +32,7 @@ export const createRestoreSelectFilesForm = () => {
     DatePipe,
     FileTreeComponent,
     SparkleButtonComponent,
+    SparkleOptionComponent,
     SparkleIconComponent,
     SparkleSelectComponent,
     SparkleProgressBarComponent,

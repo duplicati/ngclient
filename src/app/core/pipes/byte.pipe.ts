@@ -9,6 +9,7 @@ type UserAgentData = {
     version: string;
   }[];
 };
+
 @Pipe({
   name: 'bytes',
   standalone: true,

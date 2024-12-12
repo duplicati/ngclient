@@ -1,6 +1,20 @@
-import { ChangeDetectionStrategy, Component, effect, input, output, signal, WritableSignal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  input,
+  output,
+  signal,
+  WritableSignal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { SparkleFormFieldComponent, SparkleIconComponent, SparkleSelectComponent } from '@sparkle-ui/core';
+import {
+  SparkleFormFieldComponent,
+  SparkleIconComponent,
+  SparkleOptionComponent,
+  SparkleSelectComponent,
+} from '@sparkle-ui/core';
 
 type ExpressionDirection = '-' | '+';
 type _ExpressionType =
@@ -103,6 +117,7 @@ const FILE_GROUP_OPTIONS: FileGroupTypeMap[] = [
   imports: [
     FormsModule,
     SparkleSelectComponent,
+    SparkleOptionComponent,
     SparkleIconComponent,
     SparkleFormFieldComponent,
     SparkleSelectComponent,
@@ -120,6 +135,13 @@ export class FilterComponent {
   fileGroupOptions = signal(FILE_GROUP_OPTIONS);
 
   pathState = signal<FilterValue | null>(null);
+  typeState = computed(() => {
+    const pathState = this.pathState();
+
+    if (!pathState) return null;
+
+    return pathState.type;
+  });
   pathEffect = effect(() => {
     const pathPart = this.path();
     const stringWithoutDirection = pathPart.slice(1);
@@ -179,7 +201,7 @@ export class FilterComponent {
       return x;
     });
 
-    this.pathChange.emit(this.pathState()!.path);
+    this.#emitPathChange();
   }
 
   updateStateExpression(expression: string) {
@@ -190,7 +212,11 @@ export class FilterComponent {
       return x;
     });
 
-    this.pathChange.emit(this.pathState()!.path);
+    this.#emitPathChange();
+  }
+
+  #emitPathChange() {
+    setTimeout(() => this.pathChange.emit(this.pathState()!.path));
   }
 
   #mapToPath(value: FilterValue) {

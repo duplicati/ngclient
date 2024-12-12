@@ -7,11 +7,9 @@
       [ngModel]="pathState()?.type"
       (ngModelChange)="updateStateType($event)" />
 
-    <ng-container options>
-      @for (option of expressionOptions(); track $index) {
-        <option [value]="option.value">{{ option.key }}</option>
-      }
-    </ng-container>
+    @for (option of expressionOptions(); track $index) {
+      <spk-option [value]="option.value">{{ option.key }}</spk-option>
+    }
   </spk-select>
 
   @if (pathState()?.type === '-FileGroup' || pathState()?.type === '+FileGroup') {
@@ -19,7 +17,7 @@
       <input type="text" [ngModel]="pathState()?.expression" (ngModelChange)="updateStateExpression($event)" />
 
       @for (option of fileGroupOptions(); track $index) {
-        <option [value]="option.value">{{ option.key }}</option>
+        <spk-option [value]="option.value">{{ option.key }}</spk-option>
       }
     </spk-select>
   } @else {

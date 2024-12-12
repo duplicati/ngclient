@@ -31,7 +31,7 @@
         formControlName="encryption" />
 
       @for (encryption of encryptionOptions(); track $index) {
-        <option [value]="encryption.Key">{{ encryption.DisplayName }}</option>
+        <spk-option [value]="encryption.Key">{{ encryption.DisplayName }}</spk-option>
       }
     </spk-select>
 

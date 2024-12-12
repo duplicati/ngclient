@@ -35,11 +35,9 @@
         <spk-select [displayFn]="displayFn">
           <input type="text" id="repeatUnit" formControlName="repeatUnit" />
 
-          <ng-container options>
-            @for (unit of unitOptions; track $index) {
-              <option [value]="unit.key">{{ unit.label }}</option>
-            }
-          </ng-container>
+          @for (unit of unitOptions; track $index) {
+            <spk-option [value]="unit.key">{{ unit.label }}</spk-option>
+          }
         </spk-select>
       </div>
 

@@ -334,11 +334,9 @@
                     }}"
                     formControlName="{{ item.formView.name }}" />
 
-                  <ng-container options>
-                    @for (option of item.formView.options; track $index) {
-                      <option [value]="option">{{ option }}</option>
-                    }
-                  </ng-container>
+                  @for (option of item.formView.options; track $index) {
+                    <spk-option [value]="option">{{ option }}</spk-option>
+                  }
                 </spk-select>
               } @else if (item.formView.type === 'NonValidatedSelectableString') {
                 <spk-select [isFreeText]="true">
@@ -363,9 +361,9 @@
 
                   <ng-container options>
                     @for (option of item.formView.loadOptions(injector)(); track $index) {
-                      <option [value]="option.value">
+                      <spk-option [value]="option.value">
                         {{ option.key }} {{ option.value ? '(' + option.value + ')' : '' }}
-                      </option>
+                      </spk-option>
                     }
                   </ng-container>
                 </spk-select>
@@ -400,11 +398,9 @@
                       <label></label>
                       <input type="search" formControlName="unit" />
 
-                      <ng-container options>
-                        @for (option of sizeOptions(); track $index) {
-                          <option [value]="option">{{ option }}</option>
-                        }
-                      </ng-container>
+                      @for (option of sizeOptions(); track $index) {
+                        <spk-option [value]="option">{{ option }}</spk-option>
+                      }
                     </spk-select>
                   </div>
                 </div>
@@ -464,19 +460,17 @@
                   </label>
                   <input type="text" id="text" formControlName="{{ item.formView.name }}" />
 
-                  <ng-container options>
-                    @for (option of item.formView.options; track $index) {
-                      @if (option === 'None') {
-                        <spk-option [value]="'None'" deselect>None</spk-option>
-                      } @else {
-                        <spk-option [value]="option">
-                          {{ option }}
+                  @for (option of item.formView.options; track $index) {
+                    @if (option === 'None') {
+                      <spk-option [value]="'None'" deselect>None</spk-option>
+                    } @else {
+                      <spk-option [value]="option">
+                        {{ option }}
 
-                          <spk-checkbox class="raised primary" />
-                        </spk-option>
-                      }
+                        <spk-checkbox class="raised primary" />
+                      </spk-option>
                     }
-                  </ng-container>
+                  }
                 </spk-select>
               } @else if (item.formView.type === 'Timespan') {
                 <spk-form-field>

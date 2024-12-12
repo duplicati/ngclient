@@ -5,6 +5,7 @@ import {
   SparkleButtonComponent,
   SparkleFormFieldComponent,
   SparkleIconComponent,
+  SparkleOptionComponent,
   SparkleSelectComponent,
   SparkleToggleComponent,
 } from '@sparkle-ui/core';
@@ -96,6 +97,7 @@ export type ScheduleFormValue = ReturnType<typeof createScheduleForm>['value'];
     ReactiveFormsModule,
     SparkleFormFieldComponent,
     SparkleSelectComponent,
+    SparkleOptionComponent,
     SparkleToggleComponent,
     SparkleIconComponent,
     SparkleButtonComponent,

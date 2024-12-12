@@ -116,7 +116,7 @@
           "builder": "@angular/build:extract-i18n",
           "options": {
             "buildTarget": "ngclient:build",
-            "format": "xlf",
+            "format": "json",
             "outputPath": "src/locale"
           }
         }

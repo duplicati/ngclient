@@ -36,20 +36,18 @@
           <input type="search" formControlName="time" />
 
           @for (x of timeOptions(); track $index) {
-            <option [value]="x">{{ x }}</option>
+            <spk-option [value]="x">{{ x }}</spk-option>
           }
         </spk-select>
 
         <spk-select [displayFn]="typeDisplay()" [hideClearButton]="true">
           <input type="text" formControlName="timeType" />
 
-          <ng-container options>
-            @for (x of timeTypeOptions(); track $index) {
-              <option [value]="x.value" (click)="pauseSettings.controls.timeType.setValue(x.value)">
-                {{ x.label }}
-              </option>
-            }
-          </ng-container>
+          @for (x of timeTypeOptions(); track $index) {
+            <spk-option [value]="x.value" (click)="pauseSettings.controls.timeType.setValue(x.value)">
+              {{ x.label }}
+            </spk-option>
+          }
         </spk-select>
       </div>
     </div>
@@ -90,9 +88,9 @@
         <input type="search" [(ngModel)]="langCtrl" [ngModelOptions]="{ standalone: true }" />
 
         @for (x of languageOptions(); track $index) {
-          <option [value]="x.value">
+          <spk-option [value]="x.value">
             {{ x.label }}
-          </option>
+          </spk-option>
         }
       </spk-select>
     </div>
@@ -175,9 +173,9 @@
         <input type="text" formControlName="usageStatistics" />
 
         @for (x of usageStatisticsOptions(); track $index) {
-          <option [value]="x.value">
+          <spk-option [value]="x.value">
             {{ x.label }}
-          </option>
+          </spk-option>
         }
       </spk-select>
     </div>

@@ -1,6 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SparkleButtonComponent, SparkleRadioComponent, SparkleSelectComponent } from '@sparkle-ui/core';
+import {
+  SparkleButtonComponent,
+  SparkleOptionComponent,
+  SparkleRadioComponent,
+  SparkleSelectComponent,
+} from '@sparkle-ui/core';
 import { derivedFrom } from 'ngxtension/derived-from';
 import { map, pipe, startWith } from 'rxjs';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
@@ -69,6 +74,7 @@ type UsageStatisticsType = (typeof USAGE_STATISTICS_OPTIONS)[number];
     ReactiveFormsModule,
     StatusBarComponent,
     RemoteControlComponent,
+    SparkleOptionComponent,
     SparkleButtonComponent,
     SparkleRadioComponent,
     SparkleSelectComponent,
