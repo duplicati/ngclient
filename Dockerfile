@@ -1,4 +1,4 @@
-FROM node:20-bullseye-slim AS base
+FROM node:22-bullseye-slim AS base
 
 # Create app directory
 WORKDIR /app
@@ -7,7 +7,7 @@ RUN apt-get update && \
   apt-get install -y curl unzip gettext-base && \
   rm -rf /var/lib/apt/lists/*
 
-RUN npm install -g @angular/cli@18
+RUN npm install -g @angular/cli@19
 # RUN npm install -g bun@canary
 RUN curl -fsSL https://bun.sh/install | bash
 ENV PATH="/root/.bun/bin:${PATH}"
