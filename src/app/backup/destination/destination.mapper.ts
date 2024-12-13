@@ -104,14 +104,12 @@ const mappings = {
       return `${fields.destinationType}://${fields.custom.path}${urlParams}`;
     },
     from: (destinationType: string, urlObj: URL, plainPath: string) => {
-      const { advanced, dynamic } = handleSearchParams(destinationType, urlObj);
       return <ValueOfDestinationFormGroup>{
         destinationType,
         custom: {
           path: urlObj.hostname + urlObj.pathname,
         },
-        dynamic,
-        advanced,
+        ...handleSearchParams(destinationType, urlObj),
       };
     },
   },
@@ -123,15 +121,12 @@ const mappings = {
       return `${fields.destinationType}://${path}${urlParams}`;
     },
     from: (destinationType: string, urlObj: URL, plainPath: string) => {
-      const { advanced, dynamic } = handleSearchParams(destinationType, urlObj);
-
       return <ValueOfDestinationFormGroup>{
         destinationType,
         custom: {
           path: urlObj.hostname + urlObj.pathname,
         },
-        dynamic: dynamic,
-        advanced: advanced,
+        ...handleSearchParams(destinationType, urlObj),
       };
     },
   },
