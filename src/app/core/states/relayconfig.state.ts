@@ -15,6 +15,7 @@ export class RelayconfigState {
 
   config = this.#config.asReadonly();
   configLoaded = this.#isInIframe ? new Subject<boolean>() : null;
+  isLoading = signal(this.#isInIframe);
 
   parentIframeListner: AbortController | null = null;
   parentOrigin = '*';
@@ -53,6 +54,8 @@ export class RelayconfigState {
 
           this.#config.set(parsed as Relayconfig);
           this.configLoaded?.next(true);
+          this.isLoading.set(false);
+          this.#sendMessageToParent('handshake-complete');
         }
       },
       {
