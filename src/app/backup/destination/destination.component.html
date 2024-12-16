@@ -302,7 +302,7 @@
                   }
                 </spk-form-field>
               } @else if (item.formView.type === 'Enumeration') {
-                <spk-select>
+                <spk-select [hideClearButton]="true">
                   <label
                     for="destination-{{ item.formGroupName }}-{{ item.index }}-{{
                       item.asHttpOptions ? 'http' : 'other'
@@ -316,14 +316,24 @@
                     }
                   </label>
                   <input
-                    type="search"
+                    type="text"
                     id="destination-{{ item.formGroupName }}-{{ item.index }}-{{
                       item.asHttpOptions ? 'http' : 'other'
                     }}"
                     formControlName="{{ item.formView.name }}" />
 
-                  @for (option of item.formView.options; track $index) {
-                    <spk-option [value]="option">{{ option }}</spk-option>
+                  @if (item.formView.loadOptions) {
+                    @for (option of item.formView.loadOptions(injector)(); track $index) {
+                      <spk-option [value]="option.value">
+                        {{ option.key }} {{ option.value ? '(' + option.value + ')' : '' }}
+                      </spk-option>
+                    }
+                  }
+
+                  @if (item.formView.options) {
+                    @for (option of item.formView.options; track $index) {
+                      <spk-option [value]="option">{{ option }}</spk-option>
+                    }
                   }
                 </spk-select>
               } @else if (item.formView.type === 'NonValidatedSelectableString') {
@@ -340,6 +350,7 @@
                       </spk-tooltip>
                     }
                   </label>
+
                   <input
                     type="search"
                     id="destination-{{ item.formGroupName }}-{{ item.index }}-{{
@@ -347,13 +358,19 @@
                     }}"
                     formControlName="{{ item.formView.name }}" />
 
-                  <ng-container options>
+                  @if (item.formView.loadOptions) {
                     @for (option of item.formView.loadOptions(injector)(); track $index) {
                       <spk-option [value]="option.value">
                         {{ option.key }} {{ option.value ? '(' + option.value + ')' : '' }}
                       </spk-option>
                     }
-                  </ng-container>
+                  }
+
+                  @if (item.formView.options) {
+                    @for (option of item.formView.options; track $index) {
+                      <spk-option [value]="option">{{ option }}</spk-option>
+                    }
+                  }
                 </spk-select>
               } @else if (item.formView.type === 'Size') {
                 <div class="form-column" [formGroupName]="item.formView.name">

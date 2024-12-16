@@ -641,12 +641,13 @@ export class BackupState {
   }
 
   addDestinationFormGroup(key: IDynamicModule['Key'], defaults?: DestinationDefault, createAdvancedFormFields = false) {
-    const item = this.destinationOptions().find((x) => x.Key === key);
+    const destinationConfig = DESTINATION_CONFIG.find((x) => x.customKey === key || x.key === key);
+    const _key = destinationConfig?.key;
+    const item = this.destinationOptions().find((x) => x.Key === _key);
     const httpOptions = this.httpOptions();
 
     if (!item || !item.Options) return;
 
-    const destinationConfig = DESTINATION_CONFIG.hasOwnProperty(key as string) && DESTINATION_CONFIG[key as string];
     const oauthField = destinationConfig && destinationConfig.oauthField ? destinationConfig.oauthField : null;
     const customFields = destinationConfig && destinationConfig.customFields ? destinationConfig.customFields : {};
     const dynamicFields = destinationConfig && destinationConfig.dynamicFields ? destinationConfig.dynamicFields : [];
@@ -788,7 +789,7 @@ export class BackupState {
 
     this.destinationForm.controls.destinations.push(
       createDestinationFormGroup({
-        key: item.Key as string,
+        key: destinationConfig?.customKey ?? (key as string),
         customGroup,
         dynamicGroup,
         advancedGroup,

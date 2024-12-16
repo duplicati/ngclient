@@ -117,7 +117,12 @@ export default class DestinationComponent {
   successfulTest = signal(false);
   destinationTypeOptionsInFocus = signal(['file', 'ssh', 's3', 'gcs', 'googledrive', 'azure']);
   destinationTypeOptions = signal(
-    Object.entries(DESTINATION_CONFIG).map(([key, { displayName, description }]) => ({ key, displayName, description }))
+    DESTINATION_CONFIG.map((x) => ({
+      key: x.customKey ?? x.key,
+      customKey: x.customKey ?? null,
+      displayName: x.displayName,
+      description: x.description,
+    }))
   );
   destinationTypeOptionsFocused = computed(() => {
     const focused = this.destinationTypeOptionsInFocus();
