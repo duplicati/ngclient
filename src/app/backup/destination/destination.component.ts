@@ -31,8 +31,8 @@ import FileTreeComponent from '../../core/components/file-tree/file-tree.compone
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { DuplicatiServerService, IDynamicModule } from '../../core/openapi';
 import { BackupState } from '../backup.state';
-import { FormView } from './destination.config';
-import { toTargetPath } from './destination.mapper';
+import { DESTINATION_CONFIG } from './destination.config';
+import { FormView, toTargetPath } from './destination.config-utilities';
 
 const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'] as const;
 
@@ -115,6 +115,22 @@ export default class DestinationComponent {
   destinationCount = computed(() => this.destinationFormSignal()?.destinations?.length ?? 0);
   sizeOptions = signal(SIZE_OPTIONS);
   successfulTest = signal(false);
+  destinationTypeOptionsInFocus = signal(['file', 'ssh', 's3', 'gcs', 'googledrive', 'azure']);
+  destinationTypeOptions = signal(
+    Object.entries(DESTINATION_CONFIG).map(([key, { title, description }]) => ({ key, title, description }))
+  );
+  destinationTypeOptionsFocused = computed(() => {
+    const focused = this.destinationTypeOptionsInFocus();
+    const options = this.destinationTypeOptions();
+
+    return focused.map((x) => options.find((y) => y.key === x)!);
+  });
+  destinationTypeOptionsNotFocused = computed(() => {
+    const focused = this.destinationTypeOptionsInFocus();
+    const options = this.destinationTypeOptions();
+
+    return options.filter((x) => !focused.includes(x.key)!);
+  });
 
   getFormFieldValue(
     destinationIndex: number,
@@ -199,8 +215,8 @@ export default class DestinationComponent {
           if (errorMessage === 'missing-folder') {
             this.#dialog.open(ConfirmDialogComponent, {
               data: {
-                title: 'Create folder',
-                message: 'The remote destination folder does not exist, do you want to create it?',
+                title: $localize`Create folder`,
+                message: $localize`The remote destination folder does not exist, do you want to create it?`,
               },
               closed: (res) => {
                 if (!res) return;
@@ -222,8 +238,8 @@ export default class DestinationComponent {
             this.#dialog.open(ConfirmDialogComponent, {
               maxWidth: '500px',
               data: {
-                title: 'Trust the certificate',
-                message: `The server is using a certificate that is not trusted.
+                title: $localize`Trust the certificate`,
+                message: $localize`The server is using a certificate that is not trusted.
           If this is a self-signed certificate, you can choose to trust this certificate.
           The server reported the certificate hash: ${certData}`,
                 confirmText: 'Trust the certificate',

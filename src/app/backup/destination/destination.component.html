@@ -35,6 +35,8 @@
         Want to select another destination?
         <span class="spk-primary">Click here</span>
       </p>
+    } @else {
+      <p i18n>More destinations are coming soon.</p>
     }
   </header>
 
@@ -43,43 +45,25 @@
 
   @if (destinationCount() === 0) {
     <div class="most-common-destinations">
-      <div class="tile" (click)="addDestinationFormGroup('file')">
-        <h3 i18n>File system</h3>
-        <p i18n>Store backups on your local file system.</p>
-      </div>
-
-      <div class="tile" (click)="addDestinationFormGroup('gcs')">
-        <h3>Google Cloud Storage</h3>
-        <p i18n>Store backups in Google Cloud Storage.</p>
-      </div>
-
-      <div class="tile" (click)="addDestinationFormGroup('s3')">
-        <h3>S3 compatible bucket</h3>
-        <p i18n>Store backups in any S3 compatible bucket.</p>
-      </div>
-
-      <div class="tile" (click)="addDestinationFormGroup('ssh')">
-        <h3>SSH</h3>
-        <p i18n>Store backups in SSH.</p>
-      </div>
-      <div class="tile" (click)="addDestinationFormGroup('googledrive')">
-        <h3>Google Drive</h3>
-        <p i18n>Store backups in Google Drive.</p>
-      </div>
+      @for (option of destinationTypeOptionsFocused(); track $index) {
+        <div class="tile" (click)="addDestinationFormGroup(option.key)">
+          <h3>{{ option.title }}</h3>
+          <p>{{ option.description }}</p>
+        </div>
+      }
     </div>
 
-    <p i18n>More destinations are coming soon.</p>
-    <!-- <spk-menu>
-        <button spk-button type="button" class="outlined">Other destinations</button>
+    <spk-menu>
+      <button spk-button type="button" class="outlined" i18n>Other destinations</button>
 
-        <ng-container menu>
-          @for (destination of destinationOptions(); track $index) {
-            <button item type="button" (click)="addDestinationFormGroup(destination.Key)">
-              {{ destination.DisplayName }}
-            </button>
-          }
-        </ng-container>
-      </spk-menu> -->
+      <ng-container menu>
+        @for (destination of destinationTypeOptionsNotFocused(); track $index) {
+          <button item type="button" (click)="addDestinationFormGroup(destination.key)">
+            {{ destination.title }}
+          </button>
+        }
+      </ng-container>
+    </spk-menu>
   }
 
   <!-- Add support for multiple destinations here -->

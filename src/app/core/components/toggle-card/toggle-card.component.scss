@@ -45,6 +45,11 @@ header {
     display: flex;
     flex-direction: column;
     gap: p2r(4);
+    flex: 1 0;
+  }
+
+  .actions:empty {
+    display: none;
   }
 }
 

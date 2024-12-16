@@ -17,7 +17,7 @@ import FileTreeComponent from '../../core/components/file-tree/file-tree.compone
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { SettingInputDto } from '../../core/openapi';
 import { BackupState } from '../backup.state';
-import { FormView } from '../destination/destination.config';
+import { FormView } from '../destination/destination.config-utilities';
 
 const fb = new FormBuilder();
 const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'] as const;

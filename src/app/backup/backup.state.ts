@@ -15,8 +15,14 @@ import {
 import { TimespanLiteralsService } from '../core/services/timespan-literals.service';
 import { SysinfoState } from '../core/states/sysinfo.state';
 import { createDestinationForm, createDestinationFormGroup, Size } from './destination/destination.component';
-import { CustomFormView, DESTINATION_CONFIG, FormView } from './destination/destination.config';
-import { DestinationFormGroup, fromTargetPath, toTargetPath } from './destination/destination.mapper';
+import { DESTINATION_CONFIG } from './destination/destination.config';
+import {
+  CustomFormView,
+  DestinationFormGroup,
+  FormView,
+  fromTargetPath,
+  toTargetPath,
+} from './destination/destination.config-utilities';
 import { createGeneralForm, NONE_OPTION } from './general/general.component';
 import { createOptionsForm, SizeOptions } from './options/options.component';
 import { createScheduleForm, Days, ScheduleFormValue } from './schedule/schedule.component';
