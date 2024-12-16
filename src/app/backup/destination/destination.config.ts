@@ -24,6 +24,7 @@ const fb = new FormBuilder();
  * 3. Then add the mapper to convert the fields to a string and back
  */
 
+// TODO - Avoid loading all "loadOptions" at once and only if their destination is selected
 // TODO - add better runtime validation for the fields
 // TODO - deprecate the customFields just replace advancedFields if they come from the backend,
 //        otherwise expect them as custom fields this way we can enforce order.
