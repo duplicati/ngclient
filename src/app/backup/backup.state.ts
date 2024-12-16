@@ -689,6 +689,10 @@ export class BackupState {
 
       if (asDynamic) {
         const overwriting = asDynamic && typeof asDynamic !== 'string';
+        const asDynamicDefaultValue = overwriting
+          ? (asDynamic?.defaultValue ?? element.DefaultValue)
+          : element.DefaultValue;
+
         const newField = {
           name: element.Name as string,
           type: element.Type as ArgumentType,
@@ -706,7 +710,7 @@ export class BackupState {
           : newField;
 
         const passedDefaultValue = defaults?.dynamic[element.Name as string];
-        const defaultValue = passedDefaultValue ?? element.DefaultValue;
+        const defaultValue = passedDefaultValue ?? asDynamicDefaultValue ?? element.DefaultValue;
 
         this.createFormField(dynamicGroup, patchedNewField, defaultValue);
 

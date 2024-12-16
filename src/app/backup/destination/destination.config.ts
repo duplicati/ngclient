@@ -24,14 +24,16 @@ const fb = new FormBuilder();
  * 3. Then add the mapper to convert the fields to a string and back
  */
 
-// TODO - Would be great to use the typing of the fields to validate the mapper if all fields are mapped
+// TODO - Add missing providers (OpenStack, Storj, Sia, Tardigrade, Tencent COS, Tahoe LAFS, WebDAV, FTP)
+// TODO - add better runtime validation for the fields
 // TODO - deprecate the customFields just replace advancedFields if they come from the backend,
 //        otherwise expect them as custom fields this way we can enforce order.
-// TODO - add support for a server/port field type
+// NTH - add support for a server/port field type
+// NTH - Would be great to use the typing of the fields to validate the mapper if all fields are mapped
 
 export const DESTINATION_CONFIG: DestinationConfig = {
   file: {
-    title: 'File system',
+    displayName: 'File system',
     description: 'Store backups on your local file system.',
     customFields: {
       path: {
@@ -64,7 +66,7 @@ export const DESTINATION_CONFIG: DestinationConfig = {
     },
   },
   ssh: {
-    title: 'SSH',
+    displayName: 'SSH',
     description: 'Store backups in SSH.',
     customFields: {
       server: {
@@ -121,7 +123,7 @@ export const DESTINATION_CONFIG: DestinationConfig = {
     },
   },
   s3: {
-    title: 'S3 compatible bucket',
+    displayName: 'S3 compatible bucket',
     description: 'Store backups in any S3 compatible bucket.',
     customFields: {
       bucket: {
@@ -164,9 +166,10 @@ export const DESTINATION_CONFIG: DestinationConfig = {
     ],
     mapper: {
       to: (fields: any): string => {
+        const { bucket, path } = fields.custom;
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
-        return `${fields.destinationType}://${fields.custom.bucket}${fields.custom.path.startsWith('/') ? fields.custom.path : '/' + fields.custom.path}${urlParams}`;
+        return `${fields.destinationType}://${bucket + addPath(path) + urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -181,7 +184,7 @@ export const DESTINATION_CONFIG: DestinationConfig = {
     },
   },
   gcs: {
-    title: 'Google Cloud Storage',
+    displayName: 'Google Cloud Storage',
     description: 'Store backups in Google Cloud Storage.',
     oauthField: 'authid',
     customFields: {
@@ -224,7 +227,7 @@ export const DESTINATION_CONFIG: DestinationConfig = {
     },
   },
   googledrive: {
-    title: 'Google Drive',
+    displayName: 'Google Drive',
     description: 'Store backups in Google Drive.',
     oauthField: 'authid',
     customFields: {
@@ -256,7 +259,7 @@ export const DESTINATION_CONFIG: DestinationConfig = {
     },
   },
   azure: {
-    title: 'Azure Blob Storage',
+    displayName: 'Azure Blob Storage',
     description: 'Store backups in Azure Blob Storage.',
     customFields: {
       path: {
@@ -296,7 +299,7 @@ export const DESTINATION_CONFIG: DestinationConfig = {
     },
   },
   onedrivev2: {
-    title: 'OneDrive',
+    displayName: 'OneDrive',
     description: 'Store backups in OneDrive.',
     oauthField: 'authid',
     customFields: {
@@ -327,64 +330,152 @@ export const DESTINATION_CONFIG: DestinationConfig = {
       },
     },
   },
-  // onedrivebusiness: {
-  //   title: 'OneDrive Business',
-  //   description: 'Store backups in OneDrive Business.',
-  //   customFields: {
-  //     server: {
-  //       type: 'String',
-  //       name: 'server',
-  //       shortDescription: 'Server',
-  //       longDescription: 'Server',
-  //       formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
-  //     },
-  //     port: {
-  //       type: 'Integer',
-  //       name: 'port',
-  //       shortDescription: 'Port',
-  //       longDescription: 'Port',
-  //       formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
-  //     },
-  //     path: {
-  //       type: 'String',
-  //       name: 'path',
-  //       shortDescription: 'Path on server',
-  //       longDescription: 'Path on server',
-  //       formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
-  //     },
-  //   },
-  //   dynamicFields: [
-  //     {
-  //       name: 'auth-username',
-  //       shortDescription: 'Account name',
-  //     },
-  //     {
-  //       name: 'auth-password',
-  //       shortDescription: 'Access key',
-  //     },
-  //   ],
-  //   mapper: {
-  //     to: (fields: any): string => {
-  //       const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
-  //       const { port, server, path } = fields.custom;
+  od4b: {
+    displayName: 'OneDrive Business',
+    description: 'Store backups in OneDrive Business.',
+    customFields: {
+      server: {
+        type: 'String',
+        name: 'server',
+        shortDescription: 'Server',
+        longDescription: 'Server',
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+      port: {
+        type: 'Integer',
+        name: 'port',
+        shortDescription: 'Port',
+        longDescription: 'Port',
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+      path: {
+        type: 'String',
+        name: 'path',
+        shortDescription: 'Path on server',
+        longDescription: 'Path on server',
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+    },
+    dynamicFields: [
+      {
+        name: 'auth-username',
+        shortDescription: 'Account name',
+      },
+      {
+        name: 'auth-password',
+        shortDescription: 'Access key',
+      },
+    ],
+    mapper: {
+      to: (fields: any): string => {
+        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
+        const { port, server, path } = fields.custom;
 
-  //       return `${fields.destinationType}://${server + addPort(port) + addPath(path) + urlParams}`;
-  //     },
-  //     from: (destinationType: string, urlObj: URL, plainPath: string) => {
-  //       return <ValueOfDestinationFormGroup>{
-  //         destinationType,
-  //         custom: {
-  //           server: urlObj.hostname,
-  //           port: urlObj.port,
-  //           path: urlObj.pathname,
-  //         },
-  //         ...fromSearchParams(destinationType, urlObj),
-  //       };
-  //     },
-  //   },
-  // },
+        return `${fields.destinationType}://${server + addPort(port) + addPath(path) + urlParams}`;
+      },
+      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        return <ValueOfDestinationFormGroup>{
+          destinationType,
+          custom: {
+            server: urlObj.hostname,
+            port: urlObj.port,
+            path: urlObj.pathname,
+          },
+          ...fromSearchParams(destinationType, urlObj),
+        };
+      },
+    },
+  },
+  mssp: {
+    displayName: 'Microsoft SharePoint',
+    description: 'Store backups in Microsoft SharePoint.',
+    customFields: {
+      server: {
+        type: 'String',
+        name: 'server',
+        shortDescription: 'Server',
+        longDescription: 'Server',
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+      port: {
+        type: 'Integer',
+        name: 'port',
+        shortDescription: 'Port',
+        longDescription: 'Port',
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+      path: {
+        type: 'String',
+        name: 'path',
+        shortDescription: 'Path on server',
+        longDescription: 'Path on server',
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+    },
+    dynamicFields: [
+      {
+        name: 'auth-username',
+        shortDescription: 'Account name',
+      },
+      {
+        name: 'auth-password',
+        shortDescription: 'Access key',
+      },
+    ],
+    mapper: {
+      to: (fields: any): string => {
+        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
+        const { port, server, path } = fields.custom;
+
+        return `${fields.destinationType}://${server + addPort(port) + addPath(path) + urlParams}`;
+      },
+      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        return <ValueOfDestinationFormGroup>{
+          destinationType,
+          custom: {
+            server: urlObj.hostname,
+            port: urlObj.port,
+            path: urlObj.pathname,
+          },
+          ...fromSearchParams(destinationType, urlObj),
+        };
+      },
+    },
+  },
+  sharepoint: {
+    displayName: 'Microsoft SharePoint v2',
+    description: 'Store backups in Microsoft SharePoint.',
+    oauthField: 'authid',
+    customFields: {
+      path: {
+        type: 'String',
+        name: 'path',
+        shortDescription: 'Path on server',
+        longDescription: 'Path on server',
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+    },
+    dynamicFields: ['authid'],
+    mapper: {
+      to: (fields: any) => {
+        const path = fields.custom.path;
+        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
+
+        return `${fields.destinationType}://${path}${urlParams}`;
+      },
+      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        return <ValueOfDestinationFormGroup>{
+          destinationType,
+          custom: {
+            path: urlObj.hostname + urlObj.pathname,
+          },
+          ...fromSearchParams(destinationType, urlObj),
+        };
+      },
+    },
+  },
   dropbox: {
-    title: 'Dropbox',
+    displayName: 'Dropbox',
     description: 'Store backups in Dropbox.',
     oauthField: 'authid',
     customFields: {
@@ -416,7 +507,7 @@ export const DESTINATION_CONFIG: DestinationConfig = {
     },
   },
   box: {
-    title: 'Box.com',
+    displayName: 'Box.com',
     description: 'Store backups in Box.com.',
     oauthField: 'authid',
     customFields: {
@@ -448,7 +539,7 @@ export const DESTINATION_CONFIG: DestinationConfig = {
     },
   },
   jottacloud: {
-    title: 'Jottacloud',
+    displayName: 'Jottacloud',
     description: 'Store backups in Jottacloud.',
     oauthField: 'authid',
     customFields: {
@@ -475,6 +566,284 @@ export const DESTINATION_CONFIG: DestinationConfig = {
             path: urlObj.hostname + urlObj.pathname,
           },
           ...fromSearchParams(destinationType, urlObj),
+        };
+      },
+    },
+  },
+  b2: {
+    displayName: 'B2 Cloud Storage',
+    description: 'Store backups in B2 Cloud Storage.',
+    customFields: {
+      bucket: {
+        type: 'String',
+        name: 'bucket',
+        shortDescription: 'Bucket name',
+        longDescription: 'Bucket name',
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+      path: {
+        type: 'String',
+        name: 'path',
+        shortDescription: 'Path in the bucket',
+        longDescription: 'Path in the bucket',
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+    },
+    dynamicFields: [
+      {
+        name: 'auth-username',
+        shortDescription: 'Application ID',
+      },
+      {
+        name: 'auth-password',
+        shortDescription: 'Application Key',
+      },
+    ],
+    mapper: {
+      to: (fields: any) => {
+        const { bucket, path } = fields.custom;
+        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
+
+        return `${fields.destinationType}://${bucket + addPath(path) + urlParams}`;
+      },
+      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        return <ValueOfDestinationFormGroup>{
+          destinationType,
+          custom: {
+            bucket: urlObj.hostname,
+            path: urlObj.pathname,
+          },
+          ...fromSearchParams(destinationType, urlObj),
+        };
+      },
+    },
+  },
+  e2: {
+    displayName: 'IDrive e2',
+    description: 'Store backups in IDrive e2.',
+    customFields: {
+      bucket: {
+        type: 'String',
+        name: 'bucket',
+        shortDescription: 'Bucket name',
+        longDescription: 'Bucket name',
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+      path: {
+        type: 'String',
+        name: 'path',
+        shortDescription: 'Path in the bucket',
+        longDescription: 'Path in the bucket',
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+    },
+    dynamicFields: [
+      {
+        name: 'auth-username',
+        shortDescription: 'Access ID',
+      },
+      {
+        name: 'auth-password',
+        shortDescription: 'Access Secret',
+      },
+    ],
+    mapper: {
+      to: (fields: any) => {
+        const { bucket, path } = fields.custom;
+        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
+
+        return `${fields.destinationType}://${bucket + addPath(path) + urlParams}`;
+      },
+      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        return <ValueOfDestinationFormGroup>{
+          destinationType,
+          custom: {
+            bucket: urlObj.hostname,
+            path: urlObj.pathname,
+          },
+          ...fromSearchParams(destinationType, urlObj),
+        };
+      },
+    },
+  },
+  mega: {
+    displayName: 'Mega.nz',
+    description: 'Store backups in Mega.nz.',
+    customFields: {
+      path: {
+        type: 'String',
+        name: 'path',
+        shortDescription: 'Path on server',
+        longDescription: 'Path on server',
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+    },
+    dynamicFields: [
+      {
+        name: 'auth-username',
+        shortDescription: 'Username',
+      },
+      {
+        name: 'auth-password',
+        shortDescription: 'Password',
+      },
+    ],
+    mapper: {
+      to: (fields: any) => {
+        const path = fields.custom.path;
+        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
+
+        return `${fields.destinationType}://${path}${urlParams}`;
+      },
+      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        return <ValueOfDestinationFormGroup>{
+          destinationType,
+          custom: {
+            path: urlObj.hostname + urlObj.pathname,
+          },
+          ...fromSearchParams(destinationType, urlObj),
+        };
+      },
+    },
+  },
+  msgroup: {
+    displayName: 'Microsoft Office 365 Group',
+    description: 'Store backups in Microsoft Office 365 Group.',
+    oauthField: 'authid',
+    customFields: {
+      groupEmail: {
+        type: 'Email',
+        name: 'groupEmail',
+        shortDescription: 'Group email',
+        longDescription: 'Group email',
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? '', [Validators.email]),
+      },
+      path: {
+        type: 'String',
+        name: 'path',
+        shortDescription: 'Path on server',
+        longDescription: 'Path on server',
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+    },
+    dynamicFields: ['authid'],
+    mapper: {
+      to: (fields: any) => {
+        const path = fields.custom.path;
+        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
+
+        return `${fields.destinationType}://${path}${urlParams}`;
+      },
+      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        return <ValueOfDestinationFormGroup>{
+          destinationType,
+          custom: {
+            path: urlObj.hostname + urlObj.pathname,
+          },
+          ...fromSearchParams(destinationType, urlObj),
+        };
+      },
+    },
+  },
+  cloudfiles: {
+    displayName: 'Rackspace CloudFiles',
+    description: 'Store backups in Rackspace CloudFiles.',
+    customFields: {
+      server: {
+        type: 'String',
+        name: 'server',
+        shortDescription: 'Server',
+        longDescription: 'Server',
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+      port: {
+        type: 'Integer',
+        name: 'port',
+        shortDescription: 'Port',
+        longDescription: 'Port',
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+      path: {
+        type: 'String',
+        name: 'path',
+        shortDescription: 'Path on server',
+        longDescription: 'Path on server',
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+    },
+    dynamicFields: [
+      {
+        name: 'auth-username',
+        shortDescription: 'Username',
+      },
+      {
+        name: 'auth-password',
+        shortDescription: 'Password',
+      },
+    ],
+    mapper: {
+      to: (fields: any): string => {
+        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
+        const { port, server, path } = fields.custom;
+
+        return `${fields.destinationType}://${server + addPort(port) + addPath(path) + urlParams}`;
+      },
+      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        return <ValueOfDestinationFormGroup>{
+          destinationType,
+          custom: {
+            server: urlObj.hostname,
+            port: urlObj.port,
+            path: urlObj.pathname,
+          },
+          ...fromSearchParams(destinationType, urlObj),
+        };
+      },
+    },
+  },
+  rclone: {
+    displayName: 'Rclone',
+    description: 'Store backups in Rclone.',
+    dynamicFields: [
+      {
+        name: 'rclone-local-repository',
+        shortDescription: 'Local repository',
+        defaultValue: '',
+      },
+      {
+        name: 'rclone-remote-repository',
+        shortDescription: 'Remote repository',
+        defaultValue: '',
+      },
+      {
+        name: 'rclone-remote-path',
+        shortDescription: 'Path on remote repository',
+        defaultValue: '',
+      },
+    ],
+    mapper: {
+      to: (fields: any): string => {
+        const rcloneRemoteRepository = fields.dynamic['rclone-remote-repository'];
+        const rcloneRemotePath = fields.dynamic['rclone-remote-path'];
+        const rest = Object.entries(fields.dynamic).filter(
+          ([key]) => !['rclone-remote-repository', 'rclone-remote-path'].includes(key)
+        );
+
+        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...rest]);
+
+        return `${fields.destinationType}://${rcloneRemoteRepository}/${rcloneRemotePath + urlParams}`;
+      },
+      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        const { advanced, dynamic } = fromSearchParams(destinationType, urlObj);
+
+        return <ValueOfDestinationFormGroup>{
+          destinationType,
+          dynamic: {
+            'rclone-remote-repository': urlObj.hostname,
+            'rclone-remote-path': urlObj.pathname,
+            ...dynamic,
+          },
+          ...advanced,
         };
       },
     },

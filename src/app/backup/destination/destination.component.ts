@@ -117,7 +117,7 @@ export default class DestinationComponent {
   successfulTest = signal(false);
   destinationTypeOptionsInFocus = signal(['file', 'ssh', 's3', 'gcs', 'googledrive', 'azure']);
   destinationTypeOptions = signal(
-    Object.entries(DESTINATION_CONFIG).map(([key, { title, description }]) => ({ key, title, description }))
+    Object.entries(DESTINATION_CONFIG).map(([key, { displayName, description }]) => ({ key, displayName, description }))
   );
   destinationTypeOptionsFocused = computed(() => {
     const focused = this.destinationTypeOptionsInFocus();
@@ -261,8 +261,8 @@ export default class DestinationComponent {
               this.#dialog.open(ConfirmDialogComponent, {
                 maxWidth: '500px',
                 data: {
-                  title: 'Approve host key?',
-                  message: `No certificate was specified, please verify that the reported host key is correct: ${reportedhostkey}`,
+                  title: $localize`Approve host key?`,
+                  message: $localize`No certificate was specified, please verify that the reported host key is correct: ${reportedhostkey}`,
                   confirmText: 'Approve',
                   cancelText: 'Cancel',
                 },
@@ -277,13 +277,13 @@ export default class DestinationComponent {
               this.#dialog.open(ConfirmDialogComponent, {
                 maxWidth: '500px',
                 data: {
-                  title: 'The host key has changed',
-                  message: `The host key has changed, please check with the server administrator if this is correct,
+                  title: $localize`The host key has changed`,
+                  message: $localize`The host key has changed, please check with the server administrator if this is correct,
 otherwise you could be the victim of a MAN-IN-THE-MIDDLE attack.
 Do you want to REPLACE your CURRENT host key ${suppliedhostkey}
 with the REPORTED host key: ${reportedhostkey}?`,
-                  confirmText: 'Approve',
-                  cancelText: 'Cancel',
+                  confirmText: $localize`Approve`,
+                  cancelText: $localize`Cancel`,
                 },
                 closed: (res) => {
                   if (!res) return;

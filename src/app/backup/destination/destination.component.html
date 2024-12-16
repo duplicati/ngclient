@@ -47,7 +47,7 @@
     <div class="most-common-destinations">
       @for (option of destinationTypeOptionsFocused(); track $index) {
         <div class="tile" (click)="addDestinationFormGroup(option.key)">
-          <h3>{{ option.title }}</h3>
+          <h3>{{ option.displayName }}</h3>
           <p>{{ option.description }}</p>
         </div>
       }
@@ -59,7 +59,7 @@
       <ng-container menu>
         @for (destination of destinationTypeOptionsNotFocused(); track $index) {
           <button item type="button" (click)="addDestinationFormGroup(destination.key)">
-            {{ destination.title }}
+            {{ destination.displayName }}
           </button>
         }
       </ng-container>
@@ -233,7 +233,9 @@
                     }}"
                     formControlName="{{ item.formView.name }}" />
                 </app-file-tree>
-              } @else if (item.formView.type === 'String' || item.formView.type === 'Path') {
+              } @else if (
+                item.formView.type === 'String' || item.formView.type === 'Path' || item.formView.type === 'Email'
+              ) {
                 <spk-form-field>
                   <label
                     for="destination-{{ item.formGroupName }}-{{ item.index }}-{{
@@ -248,7 +250,7 @@
                   </label>
 
                   <input
-                    type="text"
+                    [type]="item.formView.type === 'Email' ? 'email' : 'text'"
                     id="destination-{{ item.formGroupName }}-{{ item.index }}-{{
                       item.asHttpOptions ? 'http' : 'other'
                     }}"
@@ -256,6 +258,8 @@
 
                   @if (item.formView.type === 'Path') {
                     <spk-icon prefix>link</spk-icon>
+                  } @else if (item.formView.type === 'Email') {
+                    <spk-icon prefix>envelope</spk-icon>
                   } @else {
                     <spk-icon prefix>textbox</spk-icon>
                   }

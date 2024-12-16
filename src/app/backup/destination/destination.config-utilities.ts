@@ -16,7 +16,7 @@ export type DestinationFormGroup = FormGroup<{
 
 export type FormView = {
   name: string;
-  type: ArgumentType | 'FileTree' | 'FolderTree' | 'NonValidatedSelectableString';
+  type: ArgumentType | 'FileTree' | 'FolderTree' | 'NonValidatedSelectableString' | 'Email';
   accepts?: string;
   shortDescription?: string;
   longDescription?: string;
@@ -37,7 +37,7 @@ export type Mapping = {
 
 export type DestinationConfig = {
   [key: string]: {
-    title: string;
+    displayName: string;
     description: string;
     oauthField?: string;
     customFields?: {
