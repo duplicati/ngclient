@@ -2,14 +2,15 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } 
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { SparkleButtonComponent, SparkleFormFieldComponent } from '@sparkle-ui/core';
-import { map } from 'rxjs';
+import { SparkleButtonComponent, SparkleFormFieldComponent, SparkleIconComponent } from '@sparkle-ui/core';
+import { finalize, map, switchMap, take } from 'rxjs';
 import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
+import { DuplicatiServerService } from '../../core/openapi';
 import { BackupsState } from '../../core/states/backups.state';
 
 @Component({
   selector: 'app-database',
-  imports: [FormsModule, StatusBarComponent, SparkleButtonComponent, SparkleFormFieldComponent],
+  imports: [FormsModule, StatusBarComponent, SparkleButtonComponent, SparkleFormFieldComponent, SparkleIconComponent],
   templateUrl: './database.component.html',
   styleUrl: './database.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -17,6 +18,7 @@ import { BackupsState } from '../../core/states/backups.state';
 export default class DatabaseComponent {
   #route = inject(ActivatedRoute);
   #backups = inject(BackupsState);
+  #dupServer = inject(DuplicatiServerService);
   #firstDBPath = '';
 
   backupId = toSignal<string>(this.#route.params.pipe(map((x) => x['id'])));
@@ -29,25 +31,63 @@ export default class DatabaseComponent {
   });
 
   backupFilePath = signal<string>('');
+  lastValidatedPath = signal<string>('');
+  isValidatedPath = computed(() => this.lastValidatedPath() === this.backupFilePath());
+
+  backupFilePathEffect = effect(() => {
+    const backupFilePath = this.backupFilePath();
+
+    if (backupFilePath === '') return;
+
+    this.#dupServer.postApiV1FilesystemValidate({ requestBody: { path: backupFilePath } }).subscribe({
+      next: () => this.lastValidatedPath.set(backupFilePath),
+    });
+  });
+  isRestoring = signal(false);
+  isRepairing = signal(false);
+  isDeleting = signal(false);
 
   activeBackupEffect = effect(() => {
     const activeBackup = this.activeBackup();
 
     if (!activeBackup) return;
 
-    this.backupFilePath.set(activeBackup.Backup?.DBPath ?? '');
+    const dbPath = activeBackup.Backup?.DBPath ?? '';
+    this.backupFilePath.set(dbPath);
   });
 
   repairDatabase() {
-    alert('Not implemented');
+    this.isRepairing.set(true);
+    this.#dupServer
+      .postApiV1BackupByIdRepair({ id: this.backupId()! })
+      .pipe(
+        take(1),
+        finalize(() => this.isRepairing.set(false))
+      )
+      .subscribe();
   }
 
   deleteDatabase() {
-    alert('Not implemented');
+    this.isDeleting.set(true);
+    this.#dupServer
+      .postApiV1BackupByIdDeletedb({ id: this.backupId()! })
+      .pipe(
+        take(1),
+        finalize(() => this.isDeleting.set(false))
+      )
+      .subscribe();
   }
 
   restoreDatabase() {
-    alert('Not implemented');
+    this.isRestoring.set(true);
+    this.#dupServer
+      .postApiV1BackupByIdDeletedb({ id: this.backupId()! })
+      .pipe(
+        take(1),
+        switchMap(() => this.#dupServer.postApiV1BackupByIdRepair({ id: this.backupId()! })),
+        finalize(() => this.isRestoring.set(false))
+      )
+      .subscribe();
   }
 
   resetDatabasePath() {

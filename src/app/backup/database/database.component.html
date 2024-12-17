@@ -18,24 +18,50 @@
     </p>
 
     <div class="actions maintainance">
-      <button spk-button i18n (click)="repairDatabase()">Repair</button>
-      <button spk-button i18n (click)="deleteDatabase()">Delete</button>
-      <button spk-button i18n (click)="restoreDatabase()">Restore (delete and repair)</button>
+      <button spk-button i18n [class.loader]="isRepairing()" (click)="repairDatabase()">
+        <spk-icon>wrench</spk-icon>
+        Repair
+      </button>
+      <button spk-button i18n [class.loader]="isDeleting()" (click)="deleteDatabase()">
+        <spk-icon>trash</spk-icon>
+        Delete
+      </button>
+      <button spk-button i18n [class.loader]="isRestoring()" (click)="restoreDatabase()">
+        <spk-icon>clock-counter-clockwise</spk-icon>
+        Restore (delete and repair)
+      </button>
     </div>
   </article>
 
   <article>
     <h2 i18n>Placement</h2>
 
-    <spk-form-field>
+    <spk-form-field [class]="isValidatedPath() ? 'success' : 'warn'">
       <input type="text" [(ngModel)]="backupFilePath" />
+      @if (isValidatedPath()) {
+        <spk-icon prefix>check</spk-icon>
+      } @else {
+        <spk-icon prefix>warning</spk-icon>
+      }
     </spk-form-field>
 
     <div class="actions placement">
-      <button spk-button i18n (click)="resetDatabasePath()">Reset</button>
-      <button spk-button i18n (click)="saveDatabasePath()">Save</button>
-      <button spk-button i18n (click)="saveAndRepairDatabasePath()">Save & Repair</button>
-      <button spk-button i18n (click)="moveDatabasePath()">Move existing database</button>
+      <button spk-button i18n [disabled]="!isValidatedPath()" (click)="resetDatabasePath()">
+        <spk-icon>backspace</spk-icon>
+        Reset
+      </button>
+      <button spk-button i18n [disabled]="!isValidatedPath()" (click)="saveDatabasePath()">
+        <spk-icon>floppy-disk</spk-icon>
+        Save
+      </button>
+      <button spk-button i18n [disabled]="!isValidatedPath()" (click)="saveAndRepairDatabasePath()">
+        <spk-icon>wrench</spk-icon>
+        Save & Repair
+      </button>
+      <button spk-button i18n [disabled]="!isValidatedPath()" (click)="moveDatabasePath()">
+        <spk-icon>flow-arrow</spk-icon>
+        Move existing database
+      </button>
     </div>
   </article>
 </section>
