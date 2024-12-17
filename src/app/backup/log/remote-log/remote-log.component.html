@@ -1,0 +1,17 @@
+@if (resource.isLoading()) {
+  <spk-progress-bar class="indeterminate primary" />
+}
+
+@for (item of resource.value(); track $index) {
+  <article class="log-entry">
+    <header (click)="toggleOpenEntry(item.id)">
+      <h3>{{ item.timestamp | date: 'medium' }}</h3>
+    </header>
+
+    @if (item.id === openEntry()) {
+      <section class="log-content">
+        <code>{{ item.data | json }}</code>
+      </section>
+    }
+  </article>
+}

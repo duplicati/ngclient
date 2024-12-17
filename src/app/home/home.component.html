@@ -102,6 +102,11 @@
                       <spk-icon>export</spk-icon>
                     </button>
 
+                    <button #option [routerLink]="['/backup', backup.Backup?.ID, 'log']" i18n>
+                      Log
+                      <spk-icon>notepad</spk-icon>
+                    </button>
+
                     <button
                       #option
                       [class.loader]="deletingBackup() === backup.Backup?.ID"

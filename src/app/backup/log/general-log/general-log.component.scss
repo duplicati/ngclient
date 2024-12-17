@@ -1,0 +1,128 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
+:host {
+  display: block;
+}
+
+.log-entry {
+  display: flex;
+  flex-direction: column;
+
+  header {
+    display: flex;
+    align-items: center;
+    gap: p2r(8);
+    padding: p2r(16);
+    border-bottom: 1px solid var(--base-level-40);
+    background-color: var(--base-level-10);
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--base-level-20);
+    }
+
+    h3 {
+      font: var(--paragraph-30);
+      margin: 0;
+    }
+
+    p {
+      font: var(--paragraph-30);
+      color: var(--base-level-60);
+    }
+  }
+}
+
+details {
+  display: flex;
+  flex-direction: column;
+
+  summary {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: p2r(8);
+    padding: p2r(12);
+    border-radius: var(--shape-2);
+    background-color: var(--base-level-20);
+
+    &:focus {
+      outline: none;
+    }
+
+    &:hover {
+      background-color: var(--base-level-30);
+    }
+
+    &::marker {
+      font-size: 0;
+    }
+
+    .actions {
+      display: none;
+      justify-content: flex-end;
+      flex: 1 0;
+      gap: p2r(8);
+    }
+  }
+
+  &[open] summary .actions {
+    display: flex;
+  }
+
+  .content {
+    padding: p2r(12 16 0);
+    display: flex;
+    flex-direction: column;
+    gap: p2r(12);
+
+    p {
+      margin: 0;
+    }
+  }
+
+  code {
+    margin-top: p2r(12);
+  }
+}
+
+.extra-info {
+  grid-column: 1/-1;
+  display: flex;
+  flex-direction: column;
+  gap: p2r(16);
+
+  p {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: p2r(12);
+  }
+
+  code {
+    white-space: pre-wrap;
+    padding: p2r(16);
+    display: block;
+    border-radius: var(--shape-2);
+    background-color: var(--base-level-20);
+  }
+}
+
+.log-content {
+  padding: p2r(16);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: p2r(16);
+}
+
+.status {
+  display: block;
+  width: p2r(16);
+  height: p2r(16);
+  background-color: var(--success-500);
+  border-radius: 50%;
+
+  &.error {
+    background-color: var(--warn-500);
+  }
+}

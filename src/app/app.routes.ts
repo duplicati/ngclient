@@ -66,6 +66,10 @@ export const routes: Routes = [
             loadChildren: () => import('./backup/backup.routes'),
           },
           {
+            path: 'backup/:id/log',
+            loadComponent: () => import('./backup/log/log.component'),
+          },
+          {
             path: 'restore',
             loadComponent: () => import('./restore/restore.component'),
           },

@@ -1,0 +1,14 @@
+<spk-tabs class="primary">
+  <button tab [class.active]="activeTab() === 'general'" (click)="activeTab.set('general')" i18n>General</button>
+  <button tab [class.active]="activeTab() === 'destination'" (click)="activeTab.set('destination')" i18n>
+    Destination
+  </button>
+</spk-tabs>
+
+@if (activeTab() === 'general') {
+  <app-general-log [backupId]="backupId()!" />
+}
+
+@if (activeTab() === 'destination') {
+  <app-remote-log [backupId]="backupId()!" />
+}

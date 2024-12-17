@@ -1,0 +1,146 @@
+@if (resource.isLoading()) {
+  <spk-progress-bar class="indeterminate primary" />
+}
+
+@for (item of resource.value(); track $index) {
+  <article class="log-entry">
+    <header (click)="toggleOpenEntry(item.id)">
+      <div class="status" [class.error]="item.exception"></div>
+      <h3>{{ item.timestamp | date: 'medium' }}</h3>
+      <p>{{ item.data.MainOperation }}</p>
+    </header>
+
+    @if (item.id === openEntry()) {
+      <section class="log-content">
+        <app-toggle-card [disallowToggle]="true">
+          <ng-container title>
+            <h3 i18n>Time</h3>
+          </ng-container>
+
+          <ng-container content>
+            <p>Start: {{ item.data.BeginTime | date: 'medium' }}</p>
+            <p>End: {{ item.data.EndTime | date: 'medium' }}</p>
+            <p>Duration: {{ item.data.Duration | durationFormat }}</p>
+          </ng-container>
+        </app-toggle-card>
+
+        <app-toggle-card [disallowToggle]="true">
+          <ng-container title>
+            <h3 i18n>Source files</h3>
+          </ng-container>
+
+          <ng-container content>
+            <p>Evaluated: {{ item.data.ExaminedFiles }} ({{ item.data.SizeOfExaminedFiles | bytes }})</p>
+            <p>Opened: {{ item.data.OpenedFiles }} ({{ item.data.SizeOfOpenedFiles | bytes }})</p>
+            <p>Added: {{ item.data.AddedFiles }} ({{ item.data.SizeOfAddedFiles | bytes }})</p>
+            <p>Modified: {{ item.data.ModifiedFiles }} ({{ item.data.SizeOfModifiedFiles | bytes }})</p>
+            <p>Deleted: {{ item.data.DeletedFiles }}</p>
+            <p>Too large: {{ item.data.TooLargeFiles }}</p>
+            <p>Files with error: {{ item.data.FilesWithError }}</p>
+          </ng-container>
+        </app-toggle-card>
+
+        <div class="extra-info">
+          <spk-divider />
+
+          <details name="details">
+            <summary>
+              <spk-icon>circle-half-tilt</spk-icon>
+              Test phase
+            </summary>
+
+            <div class="content">
+              <p>Start: {{ item.data.TestResults.BeginTime | date: 'medium' }}</p>
+              <p>End: {{ item.data.TestResults.EndTime | date: 'medium' }}</p>
+              <p>Duration: {{ item.data.TestResults.Duration | durationFormat }}</p>
+              <p>Verifications: {{ item.data.TestResults.VerificationsActualLength }}</p>
+              <spk-divider />
+              <p>Warnings: {{ item.data.TestResults.WarningsActualLength }}</p>
+              <p>Errors: {{ item.data.TestResults.ErrorsActualLength }}</p>
+            </div>
+          </details>
+
+          <!-- Start 2024-09-27 09:53:26
+          Afsluttet 2024-09-27 09:53:26
+          Varighed 00:00:00
+          Slettede filer 0 (0 bytes)
+          Downloadede filer 0 (0 bytes)
+          Uploadede filer 0 (0 bytes) -->
+          <details name="details">
+            <summary>
+              <spk-icon>file-archive</spk-icon>
+              Compression phase
+            </summary>
+
+            <div class="content">
+              <p>Start: {{ item.data.CompactResults.BeginTime | date: 'medium' }}</p>
+              <p>End: {{ item.data.CompactResults.EndTime | date: 'medium' }}</p>
+              <p>Duration: {{ item.data.CompactResults.Duration | durationFormat }}</p>
+              <spk-divider />
+              <p>
+                Deleted files: {{ item.data.CompactResults.DeletedFileCount }} ({{
+                  item.data.CompactResults.DeletedFileSize | bytes
+                }})
+              </p>
+              <p>
+                Downloaded files: {{ item.data.CompactResults.DownloadedFileCount }} ({{
+                  item.data.CompactResults.DownloadedFileSize | bytes
+                }})
+              </p>
+              <p>
+                Uploaded files: {{ item.data.CompactResults.UploadedFileCount }} ({{
+                  item.data.CompactResults.UploadedFileSize | bytes
+                }})
+              </p>
+              <spk-divider />
+              <p>Warnings: {{ item.data.CompactResults.WarningsActualLength }}</p>
+              <p>Errors: {{ item.data.CompactResults.ErrorsActualLength }}</p>
+            </div>
+          </details>
+          <details name="details">
+            <summary>
+              <spk-icon>warning-circle</spk-icon>
+              Warnings {{ item.data.WarningsActualLength }}
+            </summary>
+
+            <div class="content">
+              @for (item of item.data.Warnings; track $index) {
+                <code>{{ item | json }}</code>
+              }
+            </div>
+          </details>
+          <details name="details">
+            <summary>
+              <spk-icon>warning</spk-icon>
+              Errors {{ item.data.ErrorsActualLength }}
+            </summary>
+
+            <div class="content">
+              @if (item.data.Errors.length === 0) {
+                <p>No errors</p>
+              }
+
+              @for (item of item.data.Errors; track $index) {
+                <code>{{ item | json }}</code>
+              }
+            </div>
+          </details>
+          <spk-divider />
+
+          <details>
+            <summary>
+              <spk-icon>notepad</spk-icon>
+              Complete log
+
+              <div class="actions">
+                <button spk-button class="small">Copy</button>
+              </div>
+            </summary>
+
+            <code>{{ item.data | json }}</code>
+          </details>
+        </div>
+      </section>
+    }
+  </article>
+}

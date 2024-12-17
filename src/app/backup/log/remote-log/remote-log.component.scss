@@ -1,0 +1,48 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
+:host {
+  display: block;
+}
+
+.log-entry {
+  display: flex;
+  flex-direction: column;
+
+  header {
+    display: flex;
+    align-items: center;
+    gap: p2r(8);
+    padding: p2r(16);
+    border-bottom: 1px solid var(--base-level-40);
+    background-color: var(--base-level-10);
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--base-level-20);
+    }
+
+    h3 {
+      font: var(--paragraph-30);
+      margin: 0;
+    }
+
+    p {
+      font: var(--paragraph-30);
+      color: var(--base-level-60);
+    }
+  }
+}
+
+.log-content {
+  display: flex;
+  flex-direction: column;
+  padding: p2r(16);
+}
+
+code {
+  white-space: pre-wrap;
+  padding: p2r(16);
+  display: block;
+  border-radius: var(--shape-2);
+  background-color: var(--base-level-20);
+}
