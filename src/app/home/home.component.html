@@ -8,7 +8,7 @@
         <h3 i18n>Backups</h3>
         <p i18n>Backups are stored in the cloud and can be restored at any time.</p>
       </div>
-      <button spk-button i18n>
+      <button type="button" spk-button i18n>
         Add
         <spk-icon>plus</spk-icon>
       </button>
@@ -20,7 +20,7 @@
         <h3 i18n>Restores</h3>
         <p i18n>Restores are stored in the cloud and can be restored at any time.</p>
       </div>
-      <button spk-button i18n>
+      <button type="button" spk-button i18n>
         Start
         <spk-icon>arrow-right</spk-icon>
       </button>
@@ -89,31 +89,71 @@
                   Start
                 </button>
 
-                <button spk-button [routerLink]="['/backup', backup.Backup?.ID]">
+                <button type="button" spk-button [routerLink]="['/backup', backup.Backup?.ID]">
                   <spk-icon>pencil-simple</spk-icon>
                 </button>
 
                 <spk-menu [right]="true">
-                  <button spk-button><spk-icon>dots-three-vertical</spk-icon></button>
+                  <button type="button" spk-button><spk-icon>dots-three-vertical</spk-icon></button>
 
                   <ng-container menu>
-                    <button #option [routerLink]="['/backup', backup.Backup?.ID, 'export']" i18n>
-                      Export
-                      <spk-icon>export</spk-icon>
+                    <h3 title>Operations</h3>
+
+                    <button type="button" #option [routerLink]="['/restore-flow', backup.Backup?.ID]" i18n>
+                      <spk-icon>clock-clockwise</spk-icon>
+                      Restore
                     </button>
 
-                    <button #option [routerLink]="['/backup', backup.Backup?.ID, 'log']" i18n>
-                      Log
-                      <spk-icon>notepad</spk-icon>
+                    <button type="button" #option [routerLink]="['/backup', backup.Backup?.ID, 'export']" i18n>
+                      <spk-icon>export</spk-icon>
+                      Export
                     </button>
 
                     <button
                       #option
                       [class.loader]="deletingBackup() === backup.Backup?.ID"
-                      (click)="deleteBackup(backup.Backup?.ID)"
+                      (click)="deleteBackup(backup.Backup?.ID!)"
                       i18n>
-                      Delete
                       <spk-icon>x-circle</spk-icon>
+                      Delete
+                    </button>
+
+                    <spk-divider />
+
+                    <h3 title>Advanced</h3>
+
+                    <button type="button" #option [routerLink]="['/backup', backup.Backup?.ID, 'database']" i18n>
+                      <spk-icon>database</spk-icon>
+                      Database
+                    </button>
+
+                    <button type="button" #option (click)="verifyFiles(backup.Backup?.ID!)" i18n>
+                      <spk-icon>check-square-offset</spk-icon>
+                      Verify files
+                    </button>
+
+                    <button type="button" #option (click)="compressBackup(backup.Backup?.ID!)" i18n>
+                      <spk-icon>file-archive</spk-icon>
+                      Compress now
+                    </button>
+
+                    <button type="button" #option [routerLink]="['/backup', backup.Backup?.ID, 'commandline']" i18n>
+                      <spk-icon>terminal-window</spk-icon>
+                      Commandline
+                    </button>
+
+                    <spk-divider />
+
+                    <h3 title>Reporting</h3>
+
+                    <button type="button" #option [routerLink]="['/backup', backup.Backup?.ID, 'log']" i18n>
+                      <spk-icon>notepad</spk-icon>
+                      Log
+                    </button>
+
+                    <button type="button" #option (click)="createErrorReport(backup.Backup?.ID!)" i18n>
+                      <spk-icon>file-plus</spk-icon>
+                      Create error report
                     </button>
                   </ng-container>
                 </spk-menu>

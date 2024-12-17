@@ -70,6 +70,14 @@ export const routes: Routes = [
             loadComponent: () => import('./backup/log/log.component'),
           },
           {
+            path: 'backup/:id/database',
+            loadComponent: () => import('./backup/database/database.component'),
+          },
+          {
+            path: 'backup/:id/commandline',
+            loadComponent: () => import('./backup/commandline/commandline.component'),
+          },
+          {
             path: 'restore',
             loadComponent: () => import('./restore/restore.component'),
           },
