@@ -1,6 +1,10 @@
 @use '@sparkle-ui/core/styles/helpers' as *;
 
 :host {
+  display: block;
+}
+
+section {
   display: flex;
   flex-direction: column;
   gap: p2r(32);

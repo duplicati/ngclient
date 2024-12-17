@@ -4,12 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { SparkleButtonComponent, SparkleFormFieldComponent } from '@sparkle-ui/core';
 import { map } from 'rxjs';
-import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
+import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
 import { BackupsState } from '../../core/states/backups.state';
 
 @Component({
   selector: 'app-database',
-  imports: [FormsModule, FileTreeComponent, SparkleButtonComponent, SparkleFormFieldComponent],
+  imports: [FormsModule, StatusBarComponent, SparkleButtonComponent, SparkleFormFieldComponent],
   templateUrl: './database.component.html',
   styleUrl: './database.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -43,60 +43,72 @@
         <div class="extra-info">
           <spk-divider />
 
-          <details name="details">
-            <summary>
-              <spk-icon>circle-half-tilt</spk-icon>
-              Test phase
-            </summary>
+          @if (item.data.MainOperation === 'Backup') {
+            <details name="details">
+              <summary>
+                <spk-icon>circle-half-tilt</spk-icon>
+                Test phase
+              </summary>
 
-            <div class="content">
-              <p>Start: {{ item.data.TestResults.BeginTime | date: 'medium' }}</p>
-              <p>End: {{ item.data.TestResults.EndTime | date: 'medium' }}</p>
-              <p>Duration: {{ item.data.TestResults.Duration | durationFormat }}</p>
-              <p>Verifications: {{ item.data.TestResults.VerificationsActualLength }}</p>
-              <spk-divider />
-              <p>Warnings: {{ item.data.TestResults.WarningsActualLength }}</p>
-              <p>Errors: {{ item.data.TestResults.ErrorsActualLength }}</p>
-            </div>
-          </details>
+              <div class="content">
+                <p>Start: {{ item.data.TestResults.BeginTime | date: 'medium' }}</p>
+                <p>End: {{ item.data.TestResults.EndTime | date: 'medium' }}</p>
+                <p>Duration: {{ item.data.TestResults.Duration | durationFormat }}</p>
+                <p>Verifications: {{ item.data.TestResults.VerificationsActualLength }}</p>
+                <spk-divider />
+                <p>Warnings: {{ item.data.TestResults.WarningsActualLength }}</p>
+                <p>Errors: {{ item.data.TestResults.ErrorsActualLength }}</p>
+              </div>
+            </details>
 
-          <!-- Start 2024-09-27 09:53:26
-          Afsluttet 2024-09-27 09:53:26
-          Varighed 00:00:00
-          Slettede filer 0 (0 bytes)
-          Downloadede filer 0 (0 bytes)
-          Uploadede filer 0 (0 bytes) -->
-          <details name="details">
-            <summary>
-              <spk-icon>file-archive</spk-icon>
-              Compression phase
-            </summary>
+            <details name="details">
+              <summary>
+                <spk-icon>file-archive</spk-icon>
+                Compression phase
+              </summary>
 
-            <div class="content">
-              <p>Start: {{ item.data.CompactResults.BeginTime | date: 'medium' }}</p>
-              <p>End: {{ item.data.CompactResults.EndTime | date: 'medium' }}</p>
-              <p>Duration: {{ item.data.CompactResults.Duration | durationFormat }}</p>
-              <spk-divider />
-              <p>
-                Deleted files: {{ item.data.CompactResults.DeletedFileCount }} ({{
-                  item.data.CompactResults.DeletedFileSize | bytes
-                }})
-              </p>
-              <p>
-                Downloaded files: {{ item.data.CompactResults.DownloadedFileCount }} ({{
-                  item.data.CompactResults.DownloadedFileSize | bytes
-                }})
-              </p>
-              <p>
-                Uploaded files: {{ item.data.CompactResults.UploadedFileCount }} ({{
-                  item.data.CompactResults.UploadedFileSize | bytes
-                }})
-              </p>
-              <spk-divider />
-              <p>Warnings: {{ item.data.CompactResults.WarningsActualLength }}</p>
-              <p>Errors: {{ item.data.CompactResults.ErrorsActualLength }}</p>
-            </div>
-          </details>
+              <div class="content">
+                <p>Start: {{ item.data.CompactResults.BeginTime | date: 'medium' }}</p>
+                <p>End: {{ item.data.CompactResults.EndTime | date: 'medium' }}</p>
+                <p>Duration: {{ item.data.CompactResults.Duration | durationFormat }}</p>
+                <spk-divider />
+                <p>
+                  Deleted files: {{ item.data.CompactResults.DeletedFileCount }} ({{
+                    item.data.CompactResults.DeletedFileSize | bytes
+                  }})
+                </p>
+                <p>
+                  Downloaded files: {{ item.data.CompactResults.DownloadedFileCount }} ({{
+                    item.data.CompactResults.DownloadedFileSize | bytes
+                  }})
+                </p>
+                <p>
+                  Uploaded files: {{ item.data.CompactResults.UploadedFileCount }} ({{
+                    item.data.CompactResults.UploadedFileSize | bytes
+                  }})
+                </p>
+                <spk-divider />
+                <p>Warnings: {{ item.data.CompactResults.WarningsActualLength }}</p>
+                <p>Errors: {{ item.data.CompactResults.ErrorsActualLength }}</p>
+              </div>
+            </details>
+          }
+
+          @if (item.data.MainOperation === 'Test') {
+            <details name="details">
+              <summary>
+                <spk-icon>warning-circle</spk-icon>
+                Verifications {{ $any(item.data).VerificationsActualLength }}
+              </summary>
+
+              <div class="content">
+                @for (item of $any(item.data).Verifications; track $index) {
+                  <code>{{ item | json }}</code>
+                }
+              </div>
+            </details>
+          }
+
           <details name="details">
             <summary>
               <spk-icon>warning-circle</spk-icon>
@@ -109,6 +121,7 @@
               }
             </div>
           </details>
+
           <details name="details">
             <summary>
               <spk-icon>warning</spk-icon>

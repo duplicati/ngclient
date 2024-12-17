@@ -12,7 +12,7 @@ import ToggleCardComponent from '../../../core/components/toggle-card/toggle-car
 import { DuplicatiServerService } from '../../../core/openapi';
 import { BytesPipe } from '../../../core/pipes/byte.pipe';
 import { DurationFormatPipe } from '../../../core/pipes/duration.pipe';
-import { DuplicatiBackupResult } from '../log.types';
+import { BackupResult } from '../log.types';
 
 type LogEntry = {
   ID: number;
@@ -28,7 +28,7 @@ type LogEntryEvaluated = {
   operationId: number;
   timestamp: number;
   type: string;
-  data: DuplicatiBackupResult;
+  data: BackupResult;
   exception: unknown;
 };
 

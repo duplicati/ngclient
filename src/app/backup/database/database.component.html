@@ -1,37 +1,41 @@
-<article>
-  <h1 i18n>Local database for {{ activeBackup()?.Backup?.Name }}</h1>
-  <p i18n>
-    Each backup has a local database associated with it, which stores information about the remote backup on the local
-    machine. This makes it faster to perform many operations, and reduces the amount of data that needs to be downloaded
-    for each operation.
-  </p>
-</article>
+<app-status-bar />
 
-<article>
-  <h2 i18n>Maintainance</h2>
-  <p i18n>
-    If the backup and the remote storage is out of sync, Duplicati will require that you perform a repair operation to
-    synchronize the database. If the repair is unsuccessful, you can delete the local database and re-generate.
-  </p>
+<section>
+  <article>
+    <h1 i18n>Local database for {{ activeBackup()?.Backup?.Name }}</h1>
+    <p i18n>
+      Each backup has a local database associated with it, which stores information about the remote backup on the local
+      machine. This makes it faster to perform many operations, and reduces the amount of data that needs to be
+      downloaded for each operation.
+    </p>
+  </article>
 
-  <div class="actions maintainance">
-    <button spk-button i18n (click)="repairDatabase()">Repair</button>
-    <button spk-button i18n (click)="deleteDatabase()">Delete</button>
-    <button spk-button i18n (click)="restoreDatabase()">Restore (delete and repair)</button>
-  </div>
-</article>
+  <article>
+    <h2 i18n>Maintainance</h2>
+    <p i18n>
+      If the backup and the remote storage is out of sync, Duplicati will require that you perform a repair operation to
+      synchronize the database. If the repair is unsuccessful, you can delete the local database and re-generate.
+    </p>
 
-<article>
-  <h2 i18n>Placement</h2>
+    <div class="actions maintainance">
+      <button spk-button i18n (click)="repairDatabase()">Repair</button>
+      <button spk-button i18n (click)="deleteDatabase()">Delete</button>
+      <button spk-button i18n (click)="restoreDatabase()">Restore (delete and repair)</button>
+    </div>
+  </article>
 
-  <spk-form-field>
-    <input type="text" [(ngModel)]="backupFilePath" />
-  </spk-form-field>
+  <article>
+    <h2 i18n>Placement</h2>
 
-  <div class="actions placement">
-    <button spk-button i18n (click)="resetDatabasePath()">Reset</button>
-    <button spk-button i18n (click)="saveDatabasePath()">Save</button>
-    <button spk-button i18n (click)="saveAndRepairDatabasePath()">Save & Repair</button>
-    <button spk-button i18n (click)="moveDatabasePath()">Move existing database</button>
-  </div>
-</article>
+    <spk-form-field>
+      <input type="text" [(ngModel)]="backupFilePath" />
+    </spk-form-field>
+
+    <div class="actions placement">
+      <button spk-button i18n (click)="resetDatabasePath()">Reset</button>
+      <button spk-button i18n (click)="saveDatabasePath()">Save</button>
+      <button spk-button i18n (click)="saveAndRepairDatabasePath()">Save & Repair</button>
+      <button spk-button i18n (click)="moveDatabasePath()">Move existing database</button>
+    </div>
+  </article>
+</section>

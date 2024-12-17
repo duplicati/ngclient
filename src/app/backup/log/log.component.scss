@@ -2,64 +2,14 @@
 
 :host {
   display: block;
-  padding: p2r(0 12);
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  padding: p2r(16 24);
 }
 
 spk-tabs {
   margin-bottom: p2r(16);
-}
-
-.log-entry {
-  display: flex;
-  flex-direction: column;
-
-  header {
-    display: flex;
-    align-items: center;
-    gap: p2r(8);
-    padding: p2r(16);
-    border-bottom: 1px solid var(--base-level-40);
-    background-color: var(--base-level-10);
-    cursor: pointer;
-
-    &:hover {
-      background-color: var(--base-level-20);
-    }
-
-    h3 {
-      font: var(--paragraph-30);
-      margin: 0;
-    }
-
-    p {
-      font: var(--paragraph-30);
-      color: var(--base-level-60);
-    }
-  }
-}
-
-.extra-info {
-  grid-column: 1/-1;
-  display: flex;
-  flex-direction: column;
-  gap: p2r(16);
-}
-
-.log-content {
-  padding: p2r(16);
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: p2r(16);
-}
-
-.status {
-  display: block;
-  width: p2r(16);
-  height: p2r(16);
-  background-color: var(--success-500);
-  border-radius: 50%;
-
-  &.error {
-    background-color: var(--warn-500);
-  }
 }

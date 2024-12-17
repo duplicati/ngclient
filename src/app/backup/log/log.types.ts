@@ -82,7 +82,7 @@ export interface TestResults {
   BackendStatistics: BackendStatistics;
 }
 
-export interface DuplicatiBackupResult {
+export interface BackupResult {
   DeletedFiles: number;
   DeletedFolders: number;
   ModifiedFiles: number;
@@ -123,3 +123,29 @@ export interface DuplicatiBackupResult {
   Errors: string[];
   BackendStatistics: BackendStatistics;
 }
+
+interface VerificationItem {
+  Key: string;
+  Value: any[];
+}
+
+export interface TestResult {
+  MainOperation: string;
+  VerificationsActualLength: number;
+  Verifications: VerificationItem[];
+  ParsedResult: string;
+  Interrupted: boolean;
+  Version: string;
+  EndTime: string;
+  BeginTime: string;
+  Duration: string;
+  MessagesActualLength: number;
+  WarningsActualLength: number;
+  ErrorsActualLength: number;
+  Messages: string[];
+  Warnings: string[];
+  Errors: string[];
+  BackendStatistics: BackendStatistics;
+}
+
+export type DuplicatiBackupResult = BackupResult | TestResult;
