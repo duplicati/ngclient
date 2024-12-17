@@ -10,6 +10,7 @@ import {
 import LogoComponent from '../core/components/logo/logo.component';
 import ServiceHubComponent from '../core/components/service-hub/service-hub.component';
 import { BackupsState } from '../core/states/backups.state';
+import { RelayconfigState } from '../core/states/relayconfig.state';
 import { LayoutState } from './layout.state';
 
 @Component({
@@ -33,7 +34,9 @@ import { LayoutState } from './layout.state';
 export default class LayoutComponent {
   #layoutState = inject(LayoutState);
   #backupsState = inject(BackupsState);
+  #relayConfigState = inject(RelayconfigState);
 
+  relayIsEnabled = this.#relayConfigState.relayIsEnabled;
   isDarkMode = this.#layoutState.isDarkMode;
 
   ngOnInit() {

@@ -11,8 +11,10 @@ export type Relayconfig = {
 })
 export class RelayconfigState {
   #config = signal<Relayconfig | null>(null);
+  #relayIsEnabled = signal(false);
   #isInIframe = window.self !== window.top;
 
+  relayIsEnabled = this.#relayIsEnabled.asReadonly();
   config = this.#config.asReadonly();
   configLoaded = this.#isInIframe ? new Subject<boolean>() : null;
   isLoading = signal(this.#isInIframe);
@@ -25,6 +27,7 @@ export class RelayconfigState {
 
     if (!this.#isInIframe) return;
 
+    this.#relayIsEnabled.set(true);
     this.parentIframeListner = new AbortController();
     this.#sendMessageToParent('connected');
 
@@ -37,16 +40,19 @@ export class RelayconfigState {
 
           if (!parsed?.['accessToken'] || !parsed?.['clientId']) {
             this.#sendMessageToParent('error:invalid-config');
+            this.#relayIsEnabled.set(false);
             return;
           }
 
           if (typeof parsed['clientId'] !== 'string') {
             this.#sendMessageToParent('error:invalid-config');
+            this.#relayIsEnabled.set(false);
             return;
           }
 
           if (typeof parsed['accessToken'] !== 'string') {
             this.#sendMessageToParent('error:invalid-config');
+            this.#relayIsEnabled.set(false);
             return;
           }
 

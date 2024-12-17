@@ -37,10 +37,12 @@
     <div class="spacer"></div>
 
     <spk-list class="base-level-20 primary">
-      <button action (click)="changeDefaultClientTo('ngax')" i18n>
-        <spk-icon>skip-back</spk-icon>
-        Revert to NGAX client
-      </button>
+      @if (!relayIsEnabled()) {
+        <button action (click)="changeDefaultClientTo('ngax')" i18n>
+          <spk-icon>skip-back</spk-icon>
+          Revert to NGAX client
+        </button>
+      }
 
       <spk-divider />
 
