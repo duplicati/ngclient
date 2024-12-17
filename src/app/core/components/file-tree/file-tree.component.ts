@@ -442,6 +442,8 @@ export default class FileTreeComponent {
     const startingPath = this.startingPath();
 
     if (startingPath) {
+      console.log(startingPath);
+
       this.currentPath.set(startingPath);
       this.#fetchPathSegmentsRecursively(startingPath);
     } else {
@@ -507,6 +509,17 @@ export default class FileTreeComponent {
         this.#getPath(node, path);
       }
     }
+  }
+
+  #findActiveNodeAndScrollTo() {
+    setTimeout(() => {
+      const treeRef = this.treeContainerRef()?.nativeElement;
+      const activeNode = treeRef?.querySelector('.active');
+
+      if (activeNode) {
+        activeNode.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 100);
   }
 
   #createCustomInputEventListener(input: HTMLInputElement) {
@@ -623,6 +636,8 @@ export default class FileTreeComponent {
             const arrayUniqueByKey = [
               ...new Map([...y, ...allNewNodes].map((item) => [item.resolvedpath ?? item.id, item])).values(),
             ];
+
+            this.#findActiveNodeAndScrollTo();
 
             return arrayUniqueByKey as TreeNode[];
           });

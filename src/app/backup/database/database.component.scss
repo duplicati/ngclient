@@ -1,3 +1,27 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  gap: p2r(32);
+  padding: p2r(32);
+}
+
+article {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(16);
+}
+
+h1 {
+  font: var(--title-20);
+}
+
+h2 {
+  font: var(--title-30);
+}
+
+.actions {
+  display: flex;
+  gap: p2r(8);
 }

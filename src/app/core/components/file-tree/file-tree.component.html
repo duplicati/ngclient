@@ -18,11 +18,6 @@
   </spk-button-group>
 }
 
-<!-- <spk-form-field>
-  <label for="search">Search</label>
-  <input type="text" id="search" [(ngModel)]="treeSearchQuery" />
-</spk-form-field> -->
-
 <div class="section" [class.hidden]="pathDiscoveryMethod() !== 'browse'">
   <ng-content select="label" ngProjectAs="label"></ng-content>
 
@@ -32,7 +27,7 @@
     }
 
     <ng-template #recursiveTree let-data>
-      <spk-list [style.padding-left.rem]="data.level * 0.5">
+      <spk-list [style.padding-left.rem]="data.level * 0.25">
         @for (node of data.children; track node.id) {
           @if ((node.hidden && _showHiddenNodes()) || !node.hidden) {
             <div
