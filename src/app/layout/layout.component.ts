@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import {
   SparkleButtonComponent,
+  SparkleDividerComponent,
   SparkleIconComponent,
   SparkleListComponent,
   SparkleSidenavComponent,
@@ -21,6 +22,7 @@ import { LayoutState } from './layout.state';
     SparkleIconComponent,
     SparkleListComponent,
     SparkleButtonComponent,
+    SparkleDividerComponent,
     ServiceHubComponent,
     LogoComponent,
   ],
@@ -40,5 +42,17 @@ export default class LayoutComponent {
 
   toggleBodyClass() {
     this.#layoutState.toggleBodyClass();
+  }
+
+  changeDefaultClientTo(client: 'ngclient' | 'ngax') {
+    this.#setClientDefault(client);
+    window.location.replace(`/${client}`);
+  }
+
+  #setClientDefault(client: 'ngclient' | 'ngax') {
+    var d = new Date();
+    d.setTime(d.getTime() + 90 * 24 * 60 * 60 * 1000);
+
+    document.cookie = 'default-theme=' + client + '; expires=' + d.toUTCString() + '; path=/';
   }
 }
