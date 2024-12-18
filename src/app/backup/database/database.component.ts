@@ -46,6 +46,9 @@ export default class DatabaseComponent {
   isRestoring = signal(false);
   isRepairing = signal(false);
   isDeleting = signal(false);
+  isSavingDbPath = signal(false);
+  isSavingAndRepairing = signal(false);
+  isMovingDb = signal(false);
 
   activeBackupEffect = effect(() => {
     const activeBackup = this.activeBackup();
@@ -95,14 +98,45 @@ export default class DatabaseComponent {
   }
 
   saveDatabasePath() {
-    alert('Not implemented');
+    this.isSavingDbPath.set(true);
+    this.#dupServer
+      .postApiV1BackupByIdUpdatedb({
+        id: this.backupId()!,
+        requestBody: {
+          path: this.backupFilePath(),
+        },
+      })
+      .pipe(finalize(() => this.isSavingDbPath.set(false)))
+      .subscribe();
   }
 
   saveAndRepairDatabasePath() {
-    alert('Not implemented');
+    this.isSavingAndRepairing.set(true);
+    this.#dupServer
+      .postApiV1BackupByIdUpdatedb({
+        id: this.backupId()!,
+        requestBody: {
+          path: this.backupFilePath(),
+        },
+      })
+      .pipe(
+        switchMap(() => {
+          return this.#dupServer.postApiV1BackupByIdRepair({ id: this.backupId()! });
+        }),
+        finalize(() => this.isSavingAndRepairing.set(false))
+      );
   }
 
   moveDatabasePath() {
-    alert('Not implemented');
+    this.isMovingDb.set(true);
+    this.#dupServer
+      .postApiV1BackupByIdMovedb({
+        id: this.backupId()!,
+        requestBody: {
+          path: this.backupFilePath(),
+        },
+      })
+      .pipe(finalize(() => this.isMovingDb.set(false)))
+      .subscribe();
   }
 }
