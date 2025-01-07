@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { SparkleProgressBarComponent } from '@sparkle-ui/core';
 import { RelativeTimePipe } from '../../pipes/relative-time.pipe';
@@ -9,7 +10,7 @@ const date = new Date();
   imports: [
     SparkleProgressBarComponent,
     RelativeTimePipe,
-    // DatePipe,
+    DatePipe,
     // CurrencyPipe,
     // DecimalPipe,
     // PercentPipe,

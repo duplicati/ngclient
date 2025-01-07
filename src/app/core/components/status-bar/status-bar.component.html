@@ -1,20 +1,16 @@
 <div class="current-backup">
   <div class="current-backup-progress">
     @if (statusData()?.task?.Status && statusData()?.task?.Status !== 'Completed') {
-      <div class="label">{{ statusData()?.task?.Status }} - {{ statusData()?.backup?.Backup?.Name }}</div>
-
-      <spk-progress-bar
-        class="raised primary"
-        [value]="statusData()?.OverallProgress ? statusData()?.OverallProgress! * 100 : 3"></spk-progress-bar>
+      <div>{{ statusData()?.backup?.Backup?.Name }} - {{ statusData()!.statusText }}</div>
+      <spk-progress-bar class="raised primary" [value]="statusData()!.progress * 100"></spk-progress-bar>
     } @else if (nextBackup().backup || nextBackup().time) {
-      <div class="label">{{ nextBackup().backup?.Backup?.Name }} - {{ nextBackup().time | appRelativeTime }}</div>
-      <!-- <spk-progress-bar class="raised" [value]="3"></spk-progress-bar> -->
-    } @else if (!statusData() || statusData()?.task?.Status === 'Completed') {
-      <div class="label" i18n>No scheduled tasks</div>
-      <!-- <spk-progress-bar class="raised" [value]="3"></spk-progress-bar> -->
+      <div class="label">
+        {{ nextBackup().backup?.Backup?.Name }} - {{ nextBackup().time | appRelativeTime }}
+        {{ nextBackup().time | date: 'shortTime' }}
+      </div>
+      <spk-progress-bar class="raised" [value]="3"></spk-progress-bar>
     } @else {
       <div class="label" i18n>Loading...</div>
-      <!-- <spk-progress-bar class="raised" [value]="3"></spk-progress-bar> -->
     }
   </div>
 

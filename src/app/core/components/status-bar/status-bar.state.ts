@@ -8,6 +8,7 @@ import {
   ProgressStateService,
   ServerStatusDto,
 } from '../../openapi';
+import { BytesPipe } from '../../pipes/byte.pipe';
 import { Backup, BackupsState } from '../../states/backups.state';
 
 type Task = GetApiV1TaskByTaskidResponse;
@@ -17,18 +18,62 @@ export type Status = GetApiV1ProgressstateResponse & {
   backup?: Backup | null;
 };
 
+export type StatusWithContent = Status & {
+  progress: number;
+  statusText: string;
+};
+
+const STATUS_STATES: Record<string, string> = {
+  Backup_Begin: $localize`Starting backup …`,
+  Backup_PreBackupVerify: $localize`Verifying backend data …`,
+  Backup_PostBackupTest: $localize`Verifying remote data …`,
+  Backup_PreviousBackupFinalize: $localize`Completing previous backup …`,
+  Backup_ProcessingFiles: $localize`Processing files to backup …`,
+  Backup_Finalize: $localize`Completing backup …`,
+  Backup_WaitForUpload: $localize`Waiting for upload to finish …`,
+  Backup_Delete: $localize`Deleting unwanted files …`,
+  Backup_Compact: $localize`Compacting remote data …`,
+  Backup_VerificationUpload: $localize`Uploading verification file …`,
+  Backup_PostBackupVerify: $localize`Verifying backend data …`,
+  Backup_Complete: $localize`Backup complete!`,
+  Restore_Begin: $localize`Starting restore …`,
+  Restore_RecreateDatabase: $localize`Rebuilding local database …`,
+  Restore_PreRestoreVerify: $localize`Verifying remote data …`,
+  Restore_CreateFileList: $localize`Building list of files to restore …`,
+  Restore_CreateTargetFolders: $localize`Creating target folders …`,
+  Restore_ScanForExistingFiles: $localize`Scanning existing files …`,
+  Restore_ScanForLocalBlocks: $localize`Scanning for local blocks …`,
+  Restore_PatchWithLocalBlocks: $localize`Patching files with local blocks …`,
+  Restore_DownloadingRemoteFiles: $localize`Downloading files …`,
+  Restore_PostRestoreVerify: $localize`Verifying restored files …`,
+  Restore_Complete: $localize`Restore complete!`,
+  Recreate_Running: $localize`Recreating database …`,
+  Vacuum_Running: $localize`Vacuuming database …`,
+  Repair_Running: $localize`Repairing database …`,
+  Verify_Running: $localize`Verifying files …`,
+  BugReport_Running: $localize`Creating bug report …`,
+  Delete_Listing: $localize`Listing remote files …`,
+  Delete_Deleting: $localize`Deleting remote files …`,
+  'PurgeFiles_Begin,': $localize`Listing remote files for purge …`,
+  'PurgeFiles_Process,': $localize`Purging files …`,
+  'PurgeFiles_Compact,': $localize`Compacting remote data …`,
+  'PurgeFiles_Complete,': $localize`Purging files complete!`,
+  Error: $localize`Error!`,
+};
+
 @Injectable({
   providedIn: 'root',
 })
 export class StatusBarState {
   #MIN_POLL_INTERVAL = 1000;
+  #bytesPipe = inject(BytesPipe);
   #progState = inject(ProgressStateService);
   #dupServer = inject(DuplicatiServerService);
   #backupState = inject(BackupsState);
   #isPollingProgressState = signal(false);
   #isFetching = signal(false);
   #progressStatePollingInterval = signal<number | null>(this.#MIN_POLL_INTERVAL);
-  #statusData = signal<Status | null>(null);
+  #statusData = signal<StatusWithContent | null>(null);
   #isGettingServerState = signal(false);
   #serverStateLoading = signal(false);
   #serverState = signal<ServerStatusDto | null>(null);
@@ -117,6 +162,63 @@ export class StatusBarState {
     }
   });
 
+  private calculateProgress(status: Status): number {
+    let pg = -1;
+
+    if (status.task && status) {
+      if (status.Phase === 'Backup_ProcessingFiles' || status.Phase === 'Restore_DownloadingRemoteFiles') {
+        if (status.StillCounting) {
+          pg = 0;
+        } else {
+          const unaccountedbytes = status.CurrentFilecomplete ? 0 : status.CurrentFileoffset;
+          const filesleft = status.TotalFileCount! - status.ProcessedFileCount!;
+          const sizeleft = status.TotalFileSize! - status.ProcessedFileSize! - unaccountedbytes!;
+          pg = (status.ProcessedFileSize! + unaccountedbytes!) / status.TotalFileSize!;
+
+          if (status.ProcessedFileCount === 0) {
+            pg = 0;
+          } else if (pg >= 0.9) {
+            pg = 0.9;
+          }
+        }
+      } else if (status.Phase === 'Backup_Finalize' || status.Phase === 'Backup_WaitForUpload') {
+        pg = 0.9;
+      } else if (status.Phase === 'Backup_Delete' || status.Phase === 'Backup_Compact') {
+        pg = 0.95;
+      } else if (status.Phase === 'Backup_VerificationUpload' || status.Phase === 'Backup_PostBackupVerify') {
+        pg = 0.98;
+      } else if (status.Phase === 'Backup_Complete' || status.Phase === 'Backup_WaitForUpload') {
+        pg = 1;
+      } else if (status.OverallProgress! > 0) {
+        pg = status.OverallProgress!;
+      }
+    }
+    return pg;
+  }
+
+  private constructStatusText(status: Status): string {
+    let text = 'Running …';
+
+    if (status.task && status) {
+      text = status.Phase ? STATUS_STATES[status.Phase] : 'Running …';
+
+      if (status.Phase === 'Backup_ProcessingFiles' || status.Phase === 'Restore_DownloadingRemoteFiles') {
+        if (status.StillCounting) {
+          text = `Counting (${status.TotalFileCount} files found, ${this.#bytesPipe.transform(status.TotalFileSize)})`;
+        } else {
+          const unaccountedbytes = status.CurrentFilecomplete ? 0 : status.CurrentFileoffset;
+          const filesleft = status.TotalFileCount! - status.ProcessedFileCount!;
+          const sizeleft = status.TotalFileSize! - status.ProcessedFileSize! - unaccountedbytes!;
+          const speedTxt = status.BackendSpeed! < 0 ? '' : ` at ${this.#bytesPipe.transform(status.BackendSpeed)}/s`;
+          const restoringText = status.Phase === 'Restore_DownloadingRemoteFiles' ? 'Restoring: ' : '';
+
+          text = `${restoringText}${filesleft} files (${this.#bytesPipe.transform(sizeleft)}) to go ${speedTxt}`;
+        }
+      }
+    }
+    return text;
+  }
+
   #getServerState() {
     if (this.#serverStateLoading()) return;
 
@@ -181,7 +283,11 @@ export class StatusBarState {
             this.#isPollingProgressState.set(true);
           }
 
-          this.#statusData.set(res);
+          this.#statusData.set({
+            ...res,
+            progress: this.calculateProgress(res),
+            statusText: this.constructStatusText(res),
+          });
         },
         error: (err) => {
           if (err.status === 404) {

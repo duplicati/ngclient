@@ -11,6 +11,7 @@ import { routes } from './app.routes';
 import { httpInterceptor } from './core/interceptors/http.interceptor';
 import { httpInterceptorWebsocketRelay } from './core/interceptors/websocket.interceptor';
 import { getLocale } from './core/locales/locales.utility';
+import { BytesPipe } from './core/pipes/byte.pipe';
 import { DayJsProvider } from './core/providers/dayjs';
 import { LOCALSTORAGE } from './core/services/localstorage.token';
 
@@ -25,5 +26,6 @@ export const appConfig: ApplicationConfig = {
     { provide: LOCALE_ID, useValue: getLocale() },
     DayJsProvider,
     DecimalPipe,
+    BytesPipe,
   ],
 };
