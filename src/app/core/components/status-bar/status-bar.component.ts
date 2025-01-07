@@ -23,6 +23,7 @@ const date = new Date();
 export default class StatusBarComponent {
   #statusBarState = inject(StatusBarState);
 
+  runningTaskText = $localize`Running task`;
   minsAgo = date.setMinutes(date.getMinutes() - 1);
 
   statusData = this.#statusBarState.statusData;
