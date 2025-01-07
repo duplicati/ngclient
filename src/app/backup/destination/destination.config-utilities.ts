@@ -109,7 +109,18 @@ export function toTargetPath(fields: DestinationFormGroupValue): string {
 export function fromTargetPath(targetPath: string) {
   const canParse = URL.canParse(targetPath);
   const destinationType = targetPath.split('://')[0];
-  const fakeProtocolPrefixed = 'http://' + targetPath.split('://')[1];
+  const path = targetPath.split('://')[1];
+  const fakeProtocolPrefixed = 'http://' + path;
+
+  // Only local files allow the shortcut file paths like file://%MUSIC%/music.mp3 to music folder
+  if (path.startsWith('%') && destinationType === 'file') {
+    return DESTINATION_CONFIG.find((x) => x.customKey === destinationType || x.key === destinationType)?.mapper.from(
+      destinationType,
+      new URL('http://localhost'),
+      targetPath
+    );
+  }
+
   const urlObj = new URL(fakeProtocolPrefixed);
 
   if (!canParse) {
