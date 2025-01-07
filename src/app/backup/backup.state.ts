@@ -113,6 +113,7 @@ export class BackupState {
         ?.GenericModules?.find((x) => x.Key === 'http-options')
         ?.Options?.map(this.#mapCommandLineArgumentsToFormViews) ?? []
   );
+
   advancedOptions = computed(() => {
     return this.#sysinfo.systemInfo()?.Options?.map(this.#mapCommandLineArgumentsToFormViews) ?? [];
   });
@@ -443,16 +444,25 @@ export class BackupState {
 
     const pathFilters = sourceDataFormValue.path?.split('\0') ?? [];
 
-    const encryption =
-      generalFormValue.encryption === ''
-        ? {
-            Name: '--no-encryption',
-            Value: 'True',
-          }
-        : {
-            Name: 'encryption-module',
-            Value: generalFormValue.encryption ?? null,
-          };
+    let encryption = [
+      {
+        Name: '--no-encryption',
+        Value: 'True',
+      },
+    ];
+
+    if (generalFormValue.encryption !== '') {
+      encryption = [
+        {
+          Name: 'encryption-module',
+          Value: generalFormValue.encryption! ?? null,
+        },
+        {
+          Name: 'passphrase',
+          Value: generalFormValue.password! ?? null,
+        },
+      ];
+    }
 
     const advancedOptions = this.advancedOptions();
     const mappedAdvancedOptions = Object.entries(optionsFormValue.advancedOptions ?? {})
@@ -487,7 +497,7 @@ export class BackupState {
         };
       });
 
-    const settings = [encryption, ...mappedAdvancedOptions];
+    const settings = [...encryption, ...mappedAdvancedOptions];
 
     const excludes = Object.entries(sourceDataFormValue.excludes ?? {})
       .filter(([key, val]) => val && key !== 'filesLargerThan')
