@@ -53,14 +53,15 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return `${fields.destinationType}://${fields.custom.path}${urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
-        const hasLeadingSlash = plainPath.indexOf('file:///') === 0;
-        const hostNameCapitalFirstLetter =
-          plainPath.split(hasLeadingSlash ? '///' : '//')[1].substring(0, 1) + urlObj.hostname.substring(1);
+        const hasLeadingSlash = plainPath.startsWith('file:///');
+        const _tempPath = hasLeadingSlash ? plainPath.split('file:///')[1] : plainPath.split('file://')[1];
+        const isShortcut = _tempPath.startsWith('%');
+        const path = isShortcut ? _tempPath : '/' + _tempPath;
 
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path: `${hasLeadingSlash ? '/' : ''}${hostNameCapitalFirstLetter}${urlObj.pathname}`,
+            path,
           },
           ...fromSearchParams(destinationType, urlObj),
         };
