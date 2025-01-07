@@ -50,7 +50,7 @@ export type Days = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
 
 export const createScheduleForm = (
   defaults = {
-    autoRun: false,
+    autoRun: true,
     nextTime: { time: '13:00', date: new Date().toISOString().split('T')[0] },
     runAgain: {
       repeatValue: 1,
