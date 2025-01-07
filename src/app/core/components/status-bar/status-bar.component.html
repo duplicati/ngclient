@@ -1,7 +1,7 @@
 <div class="current-backup">
   <div class="current-backup-progress">
     @if (statusData()?.task?.Status && statusData()?.task?.Status !== 'Completed') {
-      <div>{{ statusData()?.backup?.Backup?.Name ?? runningTaskText }} - {{ statusData()!.statusText }}</div>
+      <div>{{ statusData()!.actionText }} - {{ statusData()!.statusText }}</div>
       <spk-progress-bar class="raised primary" [value]="statusData()!.progress * 100"></spk-progress-bar>
     } @else if (nextBackup().backup || nextBackup().time) {
       <div class="label">

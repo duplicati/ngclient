@@ -21,6 +21,7 @@ export type Status = GetApiV1ProgressstateResponse & {
 export type StatusWithContent = Status & {
   progress: number;
   statusText: string;
+  actionText: string;
 };
 
 const STATUS_STATES: Record<string, string> = {
@@ -287,6 +288,7 @@ export class StatusBarState {
             ...res,
             progress: this.calculateProgress(res),
             statusText: this.constructStatusText(res),
+            actionText: res.backup?.Backup?.Name ?? $localize`Running task`,
           });
         },
         error: (err) => {
