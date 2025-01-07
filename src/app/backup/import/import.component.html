@@ -1,9 +1,9 @@
 <header>
-  <h3>
+  <h3 i18n>
     Import backup configuration
 
     <div class="actions">
-      <button spk-button type="button" class="outlined" [routerLink]="['/']" i18n>
+      <button spk-button type="button" class="outlined" [routerLink]="['/']">
         <spk-icon>arrow-left</spk-icon>
         Back
       </button>
@@ -14,8 +14,7 @@
         class="raised primary"
         (click)="submit()"
         [disabled]="isImporting()"
-        [class.loader]="isImporting()"
-        i18n>
+        [class.loader]="isImporting()">
         <spk-icon>download-simple</spk-icon>
         Import
       </button>
