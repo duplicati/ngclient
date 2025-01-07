@@ -3,31 +3,31 @@
 <section>
   <h2 i18n>Where do you want to restore from?</h2>
 
-  <!-- <spk-card class="type-a">
+  <spk-card class="type-a">
     <img src="assets/images/backup.png" alt="" width="48px" />
     <div class="text">
       <h3>Direct restore from backup files</h3>
       <p>Point to your backup files and restore from there.</p>
     </div>
-    <button spk-button [routerLink]="['/restore-flow']">
-      Start
-      <spk-icon>play-circle</spk-icon>
-    </button>
-  </spk-card> -->
-
-  <!-- <spk-card class="type-a">
-    <img src="assets/images/restore.png" alt="" width="48px" />
-    <div class="text">
-      <h3>Restore from configuration</h3>
-      <p>Load destination from an exported job or a storage provider</p>
-    </div>
-    <button spk-button>
+    <button spk-button [routerLink]="['/restore-from-files']">
       Start
       <spk-icon>play-circle</spk-icon>
     </button>
   </spk-card>
 
-  <spk-divider>Or existing</spk-divider> -->
+  <spk-card class="type-a">
+    <img src="assets/images/restore.png" alt="" width="48px" />
+    <div class="text">
+      <h3>Restore from configuration</h3>
+      <p>Load destination from an exported job or a storage provider</p>
+    </div>
+    <button spk-button [routerLink]="['/restore/from-config']">
+      Start
+      <spk-icon>play-circle</spk-icon>
+    </button>
+  </spk-card>
+
+  <spk-divider>Or existing</spk-divider>
 
   @defer (when !backupsLoading()) {
     @if (backups().length) {
@@ -43,7 +43,7 @@
             </p>
           </div>
 
-          <button spk-button [routerLink]="['/restore-flow', backup.Backup?.ID]" i18n>
+          <button spk-button [routerLink]="['/restore', backup.Backup?.ID]" i18n>
             Restore
             <spk-icon>arrow-right</spk-icon>
           </button>

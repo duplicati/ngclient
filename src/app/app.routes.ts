@@ -79,26 +79,31 @@ export const routes: Routes = [
           },
           {
             path: 'restore',
-            loadComponent: () => import('./restore/restore.component'),
-          },
-          {
-            path: 'restore-flow/:id',
-            loadComponent: () => import('./restore-flow/restore-flow.component'),
             children: [
               {
                 path: '',
-                redirectTo: 'select-files',
-                pathMatch: 'full',
+                loadComponent: () => import('./restore/restore.component'),
               },
               {
-                path: 'select-files',
-                loadComponent: () => import('./restore-flow/select-files/select-files.component'),
-              },
-              {
-                path: 'options',
-                loadComponent: () => import('./restore-flow/options/options.component'),
+                path: 'from-config',
+                loadComponent: () => import('./restore/restore-from-config/restore-from-config.component'),
               },
             ],
+          },
+          {
+            path: 'restore-from-files',
+            loadComponent: () => import('./restore-flow/restore-flow.component'),
+            loadChildren: () => import('./restore-flow/restore-flow.routes'),
+          },
+          {
+            path: 'restore-draft/:id',
+            loadComponent: () => import('./restore-flow/restore-flow.component'),
+            loadChildren: () => import('./restore-flow/restore-flow.routes'),
+          },
+          {
+            path: 'restore/:id',
+            loadComponent: () => import('./restore-flow/restore-flow.component'),
+            loadChildren: () => import('./restore-flow/restore-flow.routes'),
           },
           {
             path: 'settings',
