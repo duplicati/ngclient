@@ -1,0 +1,23 @@
+<form [formGroup]="encryptionForm" (submit)="next()">
+  <spk-form-field>
+    <label for="password" i18n>Password</label>
+    <input
+      type="password"
+      id="password"
+      i18n-placeholder
+      placeholder="Enter backup passphrase if defined."
+      formControlName="passphrase" />
+  </spk-form-field>
+
+  <div class="form-actions">
+    <button spk-button type="button" (click)="back()" i18n>
+      <spk-icon>arrow-left</spk-icon>
+      Back
+    </button>
+
+    <button spk-button class="raised primary" type="submit" i18n>
+      <spk-icon>arrow-right</spk-icon>
+      Continue
+    </button>
+  </div>
+</form>
