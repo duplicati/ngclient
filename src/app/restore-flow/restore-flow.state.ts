@@ -123,7 +123,7 @@ export class RestoreFlowState {
           this.versionOptions.set(filesets);
           this.backup.set(backup);
 
-          if (setFirstToForm) {
+          if (setFirstToForm && filesets.length > 0) {
             this.selectFilesForm.controls.selectedOption.setValue(filesets[0].Version as number);
           }
         },

@@ -106,6 +106,7 @@ export default class FileTreeComponent {
   rootPath = input<string | undefined>(undefined);
   backupSettings = input<BackupSettings | null>(null);
   showHiddenNodes = input(false);
+  hideShortcuts = input(false);
   includes = output<string[]>();
   excludes = output<string[]>();
 
@@ -650,7 +651,7 @@ export default class FileTreeComponent {
 
     (this.#getFilePath(newPath) as Observable<any>).pipe(finalize(() => this.isLoading.set(false))).subscribe({
       next: (x) => {
-        const alignDataArray = this.isByBackupSettings()
+        let alignDataArray = this.isByBackupSettings()
           ? x['Files'].map((y: { Path: string; Size: any }) => {
               return {
                 text: y.Path.split('/')
@@ -681,7 +682,11 @@ export default class FileTreeComponent {
             ...new Map([...y, ...newArray].map((item) => [item.resolvedpath ?? item.id, item])).values(),
           ];
 
-          return arrayUniqueByKey as TreeNode[];
+          if (this.hideShortcuts()) {
+            return arrayUniqueByKey.filter((x: TreeNode) => !x.id!.startsWith('%')) as TreeNode[];
+          } else {
+            return arrayUniqueByKey as TreeNode[];
+          }
         });
       },
     });
