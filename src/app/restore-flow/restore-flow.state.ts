@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { finalize, forkJoin, take } from 'rxjs';
 import { DuplicatiServerService, GetBackupResultDto, IListResultFileset } from '../core/openapi';
 import { createRestoreOptionsForm } from './options/options.component';
+import { createEncryptionForm } from './restore-encryption/restore-encryption.component';
 import { createRestoreSelectFilesForm } from './select-files/select-files.component';
 
 @Injectable({
@@ -13,19 +14,37 @@ export class RestoreFlowState {
   #router = inject(Router);
   #dupServer = inject(DuplicatiServerService);
 
-  backupId = signal<'string' | null>(null);
+  backupId = signal<string | null>(null);
   backup = signal<GetBackupResultDto | null>(null);
+  destinationTargetUrl = signal<string | null>(null);
   selectFilesForm = createRestoreSelectFilesForm();
   optionsForm = createRestoreOptionsForm();
+  encryptionForm = createEncryptionForm();
   optionsFormSignal = toSignal(this.optionsForm.valueChanges);
   selectFilesFormSignal = toSignal(this.selectFilesForm.valueChanges);
   versionOptionsLoading = signal(false);
   versionOptions = signal<IListResultFileset[]>([]);
   isSubmitting = signal(false);
+  isDraft = signal(false);
+  isFileRestore = signal(false);
 
-  init(id: 'string') {
+  init(id: 'string', isFileRestore = false, isDraft = false) {
     this.backupId.set(id);
-    this.#getBackupData(id, true);
+
+    this.isFileRestore.set(isFileRestore);
+    this.isDraft.set(isDraft);
+
+    if (isFileRestore) {
+      this.#router.navigate(['/restore-from-files/destination']);
+    }
+
+    if (!isFileRestore) {
+      this.getBackup(id, true);
+    }
+  }
+
+  updateTargetUrl(targetUrl: string | null) {
+    this.destinationTargetUrl.set(targetUrl);
   }
 
   // restoreFrom: fb.control<'orignal' | 'pickLocation'>('orignal'),
@@ -84,7 +103,7 @@ export class RestoreFlowState {
     this.versionOptions();
   }
 
-  #getBackupData(id: string, setFirstToForm = false) {
+  getBackup(id: string, setFirstToForm = false) {
     this.versionOptionsLoading.set(true);
 
     forkJoin([

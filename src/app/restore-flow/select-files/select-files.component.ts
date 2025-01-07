@@ -1,5 +1,6 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -10,7 +11,7 @@ import {
   SparkleSelectComponent,
 } from '@sparkle-ui/core';
 import { derivedFrom } from 'ngxtension/derived-from';
-import { map, of, pipe, startWith, switchMap } from 'rxjs';
+import { finalize, map, of, pipe, startWith, switchMap } from 'rxjs';
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
 import { DuplicatiServerService } from '../../core/openapi';
 import { RestoreFlowState } from '../restore-flow.state';
@@ -51,9 +52,12 @@ export default class SelectFilesComponent {
 
   selectFilesForm = this.#restoreFlowState.selectFilesForm;
   selectFilesFormSignal = this.#restoreFlowState.selectFilesFormSignal;
+  selectedOptionSignal = toSignal(this.selectFilesForm.controls.selectedOption.valueChanges);
   backupId = this.#restoreFlowState.backupId;
   versionOptionsLoading = this.#restoreFlowState.versionOptionsLoading;
   versionOptions = this.#restoreFlowState.versionOptions;
+  isDraft = this.#restoreFlowState.isDraft;
+  isFileRestore = this.#restoreFlowState.isFileRestore;
   backupSettings = computed(() => {
     const id = this.backupId();
     const selectedOption = this.selectFilesFormSignal()?.selectedOption;
@@ -69,6 +73,28 @@ export default class SelectFilesComponent {
       id,
       time,
     };
+  });
+
+  isRepairing = signal(false);
+  repairEffect = effect(() => {
+    const isDraft = this.#restoreFlowState.isDraft();
+    const newSelectedOption = this.selectedOptionSignal();
+
+    if (isDraft && newSelectedOption) {
+      const backupId = this.backupId();
+
+      this.isRepairing.set(true);
+      this.#dupServer
+        .postApiV1BackupByIdRepairupdate({
+          id: backupId!,
+          requestBody: {
+            only_paths: true,
+            time: new Date().toISOString(),
+          },
+        })
+        .pipe(finalize(() => this.isRepairing.set(false)))
+        .subscribe();
+    }
   });
 
   rootPathLoaded = signal(false);
@@ -121,7 +147,11 @@ export default class SelectFilesComponent {
     this.#router.navigate(['options'], { relativeTo: this.#route.parent });
   }
 
-  exit() {
-    this.#restoreFlowState.exit();
+  back() {
+    if (this.#restoreFlowState.isFileRestore()) {
+      this.#router.navigate(['encryption'], { relativeTo: this.#route.parent });
+    } else {
+      this.#restoreFlowState.exit();
+    }
   }
 }

@@ -1,12 +1,42 @@
+<app-status-bar />
+
 <spk-stepper>
-  <div step routerLinkActive="active" [routerLink]="['/restore-flow', backupId(), 'select-files']" i18n>
-    <spk-radio />
-    Select files
-  </div>
-  <div step routerLinkActive="active" [routerLink]="['/restore-flow', backupId(), 'options']" i18n>
-    <spk-radio />
-    Options
-  </div>
+  @if (isFileRestore()) {
+    <div step routerLinkActive="active" [routerLink]="['/restore-from-files/destination']" i18n>
+      <spk-radio />
+      Destination
+    </div>
+    <div step routerLinkActive="active" [routerLink]="['/restore-from-files/encryption']" i18n>
+      <spk-radio />
+      Encryption
+    </div>
+    <div step routerLinkActive="active" [routerLink]="['/restore-from-files/select-files']" i18n>
+      <spk-radio />
+      Select files
+    </div>
+    <div step routerLinkActive="active" [routerLink]="['/restore-from-files/options']" i18n>
+      <spk-radio />
+      Options
+    </div>
+  } @else if (isDraft()) {
+    <div step routerLinkActive="active" [routerLink]="['/restore-draft', backupId()]" i18n>
+      <spk-radio />
+      Select files
+    </div>
+    <div step routerLinkActive="active" [routerLink]="['/restore-draft', backupId(), 'options']" i18n>
+      <spk-radio />
+      Options
+    </div>
+  } @else {
+    <div step routerLinkActive="active" [routerLink]="['/restore', backupId()]" i18n>
+      <spk-radio />
+      Select files
+    </div>
+    <div step routerLinkActive="active" [routerLink]="['/restore', backupId(), 'options']" i18n>
+      <spk-radio />
+      Options
+    </div>
+  }
 </spk-stepper>
 
 <section>

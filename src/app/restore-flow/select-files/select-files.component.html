@@ -4,7 +4,7 @@
   @if (versionOptionsLoading()) {
     <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
   } @else {
-    <spk-select [displayFn]="displayFn()">
+    <spk-select [displayFn]="displayFn()" [hideClearButton]="true">
       <input type="text" i18n-placeholder placeholder="Select an option..." formControlName="selectedOption" />
 
       @for (option of versionOptions(); track $index) {
@@ -14,7 +14,11 @@
       }
     </spk-select>
 
-    @if (rootPathLoaded()) {
+    @if (isDraft() && isRepairing()) {
+      <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
+    }
+
+    @if (rootPathLoaded() && ((isDraft() && !isRepairing()) || !isDraft())) {
       <app-file-tree
         [rootPath]="rootPath()"
         [backupSettings]="backupSettings()"
@@ -29,9 +33,9 @@
   <!-- <pre>{{ selectFilesFormSignal() | json }}</pre> -->
 
   <div class="form-actions">
-    <button spk-button type="button" (click)="exit()" i18n>
+    <button spk-button type="button" (click)="back()" i18n>
       <spk-icon>arrow-left</spk-icon>
-      Exit
+      {{ isFileRestore() ? 'Back' : 'Exit' }}
     </button>
 
     <button spk-button class="raised primary" type="submit" i18n>
