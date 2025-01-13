@@ -126,6 +126,7 @@ export default class CommandlineComponent {
   submit() {
     this.isSubmitting.set(true);
     const baseCmd = this.baseCmdForm.value;
+    const optionsForm = this.optionsForm.value;
     const targetUrl = baseCmd.targetUrl ?? '';
     const baseArgs = baseCmd.arguments?.split('\n') ?? [];
     const stdForm = this.standardFields.value;
@@ -138,7 +139,6 @@ export default class CommandlineComponent {
       `--backup-name=${stdForm['backup-name']}`,
       `--dbpath=${stdForm.dbpath}`,
       `--backup-id=${stdForm['backup-id']}`,
-      // `--dblock-size=${stdForm['dblock-size']}`,
       ...filters.filter((x) => x).map((x) => (x!.startsWith('-') ? `--exclude=${x?.slice(1)}` : `--include=${x}`)),
       ...this.#backupState
         .mapFormsToSettings()
@@ -146,7 +146,7 @@ export default class CommandlineComponent {
       '--disable-module=console-password-input',
     ];
 
-    return console.log('command', command);
+    // return console.log('command', command);
     this.#dupServer
       .postApiV1Commandline({
         requestBody: command,

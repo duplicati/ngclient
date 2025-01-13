@@ -8,7 +8,10 @@
     </button>
   </div>
 
-  <h3 i18n>Running commandline task...</h3>
+  <h3 i18n>
+    Running commandline task...
+    <button type="button" class="small" spk-button (click)="abort()">Abort</button>
+  </h3>
 
   <div class="status" i18n>
     @if (status() === 'starting') {
@@ -21,6 +24,10 @@
 
     @if (status() === 'finished') {
       Finished!
+    }
+
+    @if (status() === 'aborted') {
+      Aborted!
     }
   </div>
 

@@ -5,7 +5,7 @@ import { SparkleButtonComponent, SparkleIconComponent } from '@sparkle-ui/core';
 import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
 import { CommandLineLogOutputDto, DuplicatiServerService } from '../../core/openapi';
 
-type Status = 'starting' | 'started' | 'finished';
+type Status = 'starting' | 'started' | 'finished' | 'aborted';
 
 @Component({
   selector: 'app-commandline-result',
@@ -47,5 +47,14 @@ export default class CommandlineResultComponent {
     if (res.Started === true && res.Finished === false) {
       this.status.set('started');
     }
+  }
+
+  abort() {
+    this.#dupServer.postApiV1CommandlineByRunidAbort({ runid: this.runId() }).subscribe({
+      next: (res) => {
+        this.status.set('aborted');
+        clearInterval(this.interval);
+      },
+    });
   }
 }
