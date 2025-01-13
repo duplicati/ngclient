@@ -15,6 +15,11 @@ header {
   align-items: center;
   justify-content: space-between;
   padding: p2r(32 0);
+  position: sticky;
+  top: 0;
+  background: var(--base-level-10);
+  z-index: 1000;
+  border-bottom: 1px solid var(--base-level-40);
 
   .title {
     display: flex;
@@ -29,6 +34,10 @@ section {
   gap: p2r(16);
   padding: p2r(32 0);
   border-top: 1px solid var(--base-level-40);
+
+  &:first-of-type {
+    border-top: 0;
+  }
 
   .left {
     display: flex;

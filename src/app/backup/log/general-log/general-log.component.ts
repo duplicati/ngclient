@@ -63,17 +63,17 @@ export class GeneralLogComponent {
   resource = rxResource({
     request: () => ({ id: this.backupId()!, ...this.pagination() }),
     loader: ({ request: params }) =>
-      this.#dupServer.getApiV1BackupByIdLog({ id: params.id }).pipe(
+      this.#dupServer.getApiV1BackupByIdLog({ id: params.id, pagesize: 100 }).pipe(
         map((x) => {
           return (x as LogEntry[]).map((y) => {
             return {
               id: y.ID,
               operationId: y.OperationID,
-              timestamp: y.Timestamp,
+              timestamp: y.Timestamp * 1000,
               type: y.Type,
               data: JSON.parse(y.Message),
               exception: JSON.stringify(y.Exception) === '{}' ? null : y.Exception,
-            } as LogEntryEvaluated;
+            } as Partial<LogEntryEvaluated>;
           });
         })
       ),

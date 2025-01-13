@@ -14,7 +14,7 @@
       }
     </spk-select>
 
-    @if (isDraft() && isRepairing()) {
+    @if ((isDraft() && isRepairing()) || !rootPathLoaded()) {
       <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
     }
 

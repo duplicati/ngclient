@@ -1,1 +1,354 @@
-<h1>Command line page is coming soon</h1>
+<app-status-bar />
+
+<section>
+  <div class="back">
+    <button type="button" class="small" spk-button routerLink="/" i18n>
+      <spk-icon>arrow-left</spk-icon>
+      Back
+    </button>
+  </div>
+
+  @if (!finishedLoading()) {
+    <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
+  } @else {
+    <form [formGroup]="baseCmdForm">
+      <spk-select>
+        <label for="command" i18n>Command</label>
+        <input type="text" id="command" formControlName="command" />
+
+        @for (item of commandOptions(); track $index) {
+          <spk-option [value]="item">{{ item }}</spk-option>
+        }
+      </spk-select>
+
+      <spk-form-field>
+        <label for="targetUrl" i18n>TargetUrl</label>
+        <textarea id="targetUrl" autocomplete="off" formControlName="targetUrl"></textarea>
+      </spk-form-field>
+
+      <spk-form-field>
+        <label for="arguments" i18n>Commandline Arguments</label>
+        <textarea id="arguments" autocomplete="off" formControlName="arguments"></textarea>
+      </spk-form-field>
+    </form>
+
+    <spk-divider i18n>Advanced options</spk-divider>
+
+    <form [formGroup]="standardFields">
+      <spk-form-field>
+        <label for="backup-id" i18n>Backup ID</label>
+        <input id="backup-id" formControlName="backup-id" />
+      </spk-form-field>
+
+      <spk-form-field>
+        <label for="backup-name" i18n>Backup Name</label>
+        <input id="backup-name" formControlName="backup-name" />
+      </spk-form-field>
+
+      <app-toggle-card [disallowToggle]="true">
+        <ng-container title i18n>Filters</ng-container>
+        <ng-container content formGroupName="filters">
+          @for (filterCtrl of standardFields.controls.filters.controls; track $index) {
+            <spk-form-field>
+              <input id="filter-{{ $index }}" [formControl]="filterCtrl" />
+            </spk-form-field>
+          }
+        </ng-container>
+      </app-toggle-card>
+    </form>
+
+    <form [formGroup]="optionsForm">
+      <div class="remote-volume-wrap">
+        <div class="row-inputs" formGroupName="remoteVolumeSize">
+          <spk-form-field>
+            <label for="size" i18n>Remote volume size</label>
+            <input type="number" id="size" formControlName="size" />
+          </spk-form-field>
+
+          <spk-select>
+            <input type="text" i18n-placeholder placeholder="Select an option..." formControlName="unit" />
+
+            @for (option of sizeOptions(); track $index) {
+              <spk-option [value]="option">{{ option }}</spk-option>
+            }
+          </spk-select>
+        </div>
+
+        <p i18n>
+          The backups will be split up into multiple files called volumes. Here you can set the maximum size of the
+          individual volume files.
+          <a href="#" class="spk-primary">Read more</a>
+        </p>
+      </div>
+
+      <app-toggle-card [disallowToggle]="true">
+        <ng-container title i18n>
+          Advanced options
+
+          <spk-menu>
+            <button spk-button type="button" class="outlined small">
+              Add advanced option
+              <spk-icon>plus</spk-icon>
+            </button>
+
+            <ng-container menu>
+              @for (option of nonSelectedOptions(); track $index) {
+                <button #option type="button" (click)="addNewOption(option)">{{ option.name }}</button>
+              }
+            </ng-container>
+          </spk-menu>
+        </ng-container>
+
+        @for (option of selectedOptions(); track $index) {
+          <ng-container
+            *ngTemplateOutlet="
+              fieldTemplate;
+              context: {
+                $implicit: {
+                  index: $index,
+                  formView: option,
+                  formGroupName: 'advancedOptions',
+                  destinationType: null,
+                  oauthField: null,
+                },
+              }
+            "></ng-container>
+        }
+      </app-toggle-card>
+
+      <ng-template #fieldTemplate let-item>
+        <div class="field-row">
+          <ng-container [formGroupName]="item.formGroupName">
+            @if (item.formView.type === 'FileTree') {
+              <app-file-tree
+                [startingPath]="getFormFieldValue(0, item.formGroupName, item.formView.name)"
+                [accepts]="item.formView.accepts"
+                [showFiles]="true"
+                [showHiddenNodes]="true"
+                [selectFiles]="true">
+                <label for="destination-{{ item.formGroupName }}-{{ item.index }}">
+                  {{ item.formView.shortDescription ?? item.formView.name }}
+                  @if (item.formView.longDescription) {
+                    <spk-tooltip class="primary" [message]="item.formView.longDescription">
+                      <spk-icon>question</spk-icon>
+                    </spk-tooltip>
+                  }
+                </label>
+                <input
+                  type="text"
+                  id="destination-{{ item.formGroupName }}-{{ item.index }}"
+                  formControlName="{{ item.formView.name }}" />
+              </app-file-tree>
+            } @else if (item.formView.type === 'FolderTree') {
+              <app-file-tree [startingPath]="getFormFieldValue(0, item.formGroupName, item.formView.name)">
+                <label for="destination-{{ item.formGroupName }}-{{ item.index }}">
+                  {{ item.formView.shortDescription ?? item.formView.name }}
+                  @if (item.formView.longDescription) {
+                    <spk-tooltip class="primary" [message]="item.formView.longDescription">
+                      <spk-icon>question</spk-icon>
+                    </spk-tooltip>
+                  }
+                </label>
+                <input
+                  type="text"
+                  id="destination-{{ item.formGroupName }}-{{ item.index }}"
+                  formControlName="{{ item.formView.name }}" />
+              </app-file-tree>
+            } @else if (item.formView.type === 'String' || item.formView.type === 'Path') {
+              <spk-form-field>
+                <label for="destination-{{ item.formGroupName }}-{{ item.index }}">
+                  {{ item.formView.shortDescription ?? item.formView.name }}
+                  @if (item.formView.longDescription) {
+                    <spk-tooltip class="primary" [message]="item.formView.longDescription">
+                      <spk-icon>question</spk-icon>
+                    </spk-tooltip>
+                  }
+                </label>
+
+                <input
+                  type="text"
+                  id="destination-{{ item.formGroupName }}-{{ item.index }}"
+                  formControlName="{{ item.formView.name }}" />
+
+                @if (item.formView.type === 'Path') {
+                  <spk-icon prefix>link</spk-icon>
+                } @else {
+                  <spk-icon prefix>textbox</spk-icon>
+                }
+              </spk-form-field>
+            } @else if (item.formView.type === 'Password') {
+              <spk-form-field>
+                <label for="destination-{{ item.formGroupName }}-{{ item.index }}">
+                  {{ item.formView.shortDescription ?? item.formView.name }}
+                </label>
+                <input
+                  [type]="$any(item.formView).showPassword ? 'text' : 'password'"
+                  autocomplete="off"
+                  id="destination-{{ item.formGroupName }}-{{ item.index }}"
+                  formControlName="{{ item.formView.name }}" />
+
+                @if (item.oauthField === item.formView.name) {
+                  <span prefix class="link" (click)="oauthStartTokenCreation(item.formViewType)">AuthID</span>
+                } @else {
+                  <spk-icon prefix>password</spk-icon>
+                }
+                @if ($any(item.formView).showPassword) {
+                  <spk-icon
+                    class="clickable"
+                    suffix
+                    (click)="$any(item.formView).showPassword = !$any(item.formView).showPassword">
+                    eye
+                  </spk-icon>
+                } @else {
+                  <spk-icon
+                    class="clickable"
+                    suffix
+                    (click)="$any(item.formView).showPassword = !$any(item.formView).showPassword">
+                    eye-slash
+                  </spk-icon>
+                }
+              </spk-form-field>
+            } @else if (item.formView.type === 'Enumeration') {
+              <spk-select>
+                <label for="destination-{{ item.formGroupName }}-{{ item.index }}">
+                  {{ item.formView.shortDescription ?? item.formView.name }}
+
+                  @if (item.formView.longDescription) {
+                    <spk-tooltip class="primary" [message]="item.formView.longDescription">
+                      <spk-icon>question</spk-icon>
+                    </spk-tooltip>
+                  }
+                </label>
+                <input
+                  type="search"
+                  id="destination-{{ item.formGroupName }}-{{ item.index }}"
+                  formControlName="{{ item.formView.name }}" />
+
+                @for (option of item.formView.options; track $index) {
+                  <spk-option [value]="option">{{ option }}</spk-option>
+                }
+              </spk-select>
+            } @else if (item.formView.type === 'Size') {
+              <div class="form-column" [formGroupName]="item.formView.name">
+                <label for="destination-{{ item.formGroupName }}-{{ item.index }}">
+                  {{ item.formView.shortDescription ?? item.formView.name }}
+
+                  @if (item.formView.longDescription) {
+                    <spk-tooltip class="primary" [message]="item.formView.longDescription">
+                      <spk-icon>question</spk-icon>
+                    </spk-tooltip>
+                  }
+                </label>
+
+                <div class="form-row">
+                  <spk-form-field>
+                    <input
+                      type="number"
+                      id="destination-{{ item.formGroupName }}-{{ item.index }}"
+                      formControlName="size" />
+
+                    <spk-icon prefix>resize</spk-icon>
+                  </spk-form-field>
+
+                  <spk-select>
+                    <label></label>
+                    <input type="search" formControlName="unit" />
+
+                    @for (option of sizeOptions(); track $index) {
+                      <spk-option [value]="option">{{ option }}</spk-option>
+                    }
+                  </spk-select>
+                </div>
+              </div>
+            } @else if (item.formView.type === 'Integer') {
+              <spk-form-field>
+                <label for="destination-{{ item.formGroupName }}-{{ item.index }}">
+                  {{ item.formView.shortDescription ?? item.formView.name }}
+                  @if (item.formView.longDescription) {
+                    <spk-tooltip class="primary" [message]="item.formView.longDescription">
+                      <spk-icon>question</spk-icon>
+                    </spk-tooltip>
+                  }
+                </label>
+                <input
+                  type="number"
+                  id="destination-{{ item.formGroupName }}-{{ item.index }}"
+                  formControlName="{{ item.formView.name }}" />
+                <spk-icon prefix>numpad</spk-icon>
+              </spk-form-field>
+            } @else if (item.formView.type === 'Boolean') {
+              <spk-toggle class="primary raised">
+                <label for="destination-{{ item.formGroupName }}-{{ item.index }}">
+                  {{ item.formView.shortDescription ?? item.formView.name }}
+                  @if (item.formView.longDescription) {
+                    <spk-tooltip class="primary" [message]="item.formView.longDescription">
+                      <spk-icon>question</spk-icon>
+                    </spk-tooltip>
+                  }
+                </label>
+                <input
+                  type="checkbox"
+                  id="destination-{{ item.formGroupName }}-{{ item.index }}"
+                  formControlName="{{ item.formView.name }}" />
+              </spk-toggle>
+            } @else if (item.formView.type === 'Flags') {
+              <spk-select [selectMultiple]="true" class="primary">
+                <label for="destination-{{ item.formGroupName }}-{{ item.index }}">
+                  {{ item.formView.shortDescription ?? item.formView.name }}
+                  @if (item.formView.longDescription) {
+                    <spk-tooltip class="primary" [message]="item.formView.longDescription">
+                      <spk-icon>question</spk-icon>
+                    </spk-tooltip>
+                  }
+                </label>
+                <input type="text" id="text" formControlName="{{ item.formView.name }}" />
+
+                @for (option of item.formView.options; track $index) {
+                  @if (option === 'None') {
+                    <spk-option [value]="'None'" deselect>None</spk-option>
+                  } @else {
+                    <spk-option [value]="option">
+                      {{ option }}
+
+                      <spk-checkbox class="raised primary" />
+                    </spk-option>
+                  }
+                }
+              </spk-select>
+            } @else if (item.formView.type === 'Timespan') {
+              <spk-form-field>
+                <label for="destination-{{ item.formGroupName }}-{{ item.index }}">
+                  {{ item.formView.shortDescription ?? item.formView.name }}
+                  @if (item.formView.longDescription) {
+                    <spk-tooltip class="primary" [message]="item.formView.longDescription">
+                      <spk-icon>question</spk-icon>
+                    </spk-tooltip>
+                  }
+                </label>
+                <input
+                  type="text"
+                  id="destination-{{ item.formGroupName }}-{{ item.index }}"
+                  formControlName="{{ item.formView.name }}" />
+
+                <!-- <span error>
+            {{ destinationForm.controls.destinations.controls[index]?.hasError('pattern') }}
+          </span> -->
+              </spk-form-field>
+            }
+          </ng-container>
+
+          <button spk-button class="outlined" type="button" (click)="removeFormView(item.formView, 0)">
+            <spk-icon>x-circle</spk-icon>
+          </button>
+        </div>
+      </ng-template>
+
+      <div class="form-actions">
+        <button spk-button class="raised primary" [class.loader]="isSubmitting()" (click)="submit()" i18n>
+          <spk-icon>arrow-right</spk-icon>
+          Run "{{ baseCmdForm.value.command }}" command now
+        </button>
+      </div>
+    </form>
+  }
+</section>

@@ -5,7 +5,11 @@
 @for (item of resource.value(); track $index) {
   <article class="log-entry">
     <header (click)="toggleOpenEntry(item.id)">
-      <h3>{{ item.timestamp | date: 'medium' }}</h3>
+      <h3>{{ item.timestamp | date: 'medium' }}: {{ item.operation }} {{ item.path }}</h3>
+
+      <div class="actions">
+        <spk-icon class="toggle-indicator" [class.open]="item.id === openEntry()">caret-down</spk-icon>
+      </div>
     </header>
 
     @if (item.id === openEntry()) {

@@ -1,6 +1,13 @@
 <app-status-bar />
 
 <section>
+  <div class="back">
+    <button type="button" class="small" spk-button routerLink="/" i18n>
+      <spk-icon>arrow-left</spk-icon>
+      Back
+    </button>
+  </div>
+
   <spk-tabs class="primary">
     <button tab [class.active]="activeTab() === 'general'" (click)="activeTab.set('general')" i18n>General</button>
     <button tab [class.active]="activeTab() === 'destination'" (click)="activeTab.set('destination')" i18n>

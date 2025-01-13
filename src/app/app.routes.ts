@@ -1,7 +1,6 @@
 import { inject, Injector } from '@angular/core';
-import { Router, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { switchMap, zip } from 'rxjs';
-import { AppAuthState } from './core/states/app-auth.state';
 import { RelayconfigState } from './core/states/relayconfig.state';
 import { SysinfoState } from './core/states/sysinfo.state';
 import { WebModulesState } from './core/states/webmodules.state';
@@ -12,12 +11,15 @@ export const PreloadGuard = () => {
 
   // NOTE - The injects are happning twice because we use toSignal inside so
   // when injected they fire requests this is why they cant be combined
-  if (relayconfigState.configLoaded === null)
-    return zip([injector.get(SysinfoState).preload(true), injector.get(WebModulesState).preload(true)]);
+  const zipArr = [
+    injector.get(SysinfoState).preload(true),
+    injector.get(SysinfoState).preloadFilterGroups(true),
+    injector.get(WebModulesState).preload(true),
+  ];
 
-  return relayconfigState.configLoaded?.pipe(
-    switchMap(() => zip([injector.get(SysinfoState).preload(true), injector.get(WebModulesState).preload(true)]))
-  );
+  if (relayconfigState.configLoaded === null) return zip(zipArr);
+
+  return relayconfigState.configLoaded?.pipe(switchMap(() => zip(zipArr)));
 };
 
 export const routes: Routes = [
@@ -26,7 +28,23 @@ export const routes: Routes = [
     children: [
       {
         path: 'login',
-        canActivate: [() => (inject(AppAuthState).token() !== null ? inject(Router).navigate(['/']) : true)],
+        canActivate: [
+          // () => {
+          //   const appAuthState = inject(AppAuthState);
+          //   const router = inject(Router);
+          //   return appAuthState.refreshToken().pipe(
+          //     take(1),
+          //     map((res) => {
+          //       if (res.AccessToken) {
+          //         router.navigate(['/']);
+          //       }
+          //     }),
+          //     catchError((err) => {
+          //       return of(true);
+          //     })
+          //   );
+          // },
+        ],
         loadComponent: () => import('./login/login.component'),
       },
       {
@@ -76,6 +94,10 @@ export const routes: Routes = [
           {
             path: 'backup/:id/commandline',
             loadComponent: () => import('./backup/commandline/commandline.component'),
+          },
+          {
+            path: 'backup/:id/commandline/:runId',
+            loadComponent: () => import('./backup/commandline-result/commandline-result.component'),
           },
           {
             path: 'restore',

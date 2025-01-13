@@ -1,8 +1,19 @@
 <form [formGroup]="loginForm" (submit)="submit()">
   <div class="login-row">
     <spk-form-field>
+      <label for="password">
+        Password
+
+        <a
+          href="https://docs.duplicati.com/detailed-descriptions/duplicati-access-password"
+          target="_blank"
+          rel="noopener noreferrer">
+          <spk-icon>question</spk-icon>
+        </a>
+      </label>
       <input
         type="password"
+        name="password"
         autocomplete="current-password"
         i18n-placeholder
         placeholder="Enter your password"

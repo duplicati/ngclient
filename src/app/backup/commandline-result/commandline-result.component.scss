@@ -1,0 +1,22 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
+:host {
+  display: block;
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: p2r(40);
+  gap: p2r(20);
+}
+
+code {
+  background-color: var(--grey-800);
+  color: var(--grey-100);
+  padding: p2r(40 40 40 24);
+  border-radius: var(--shape-3);
+  overflow: auto;
+  white-space: pre;
+}

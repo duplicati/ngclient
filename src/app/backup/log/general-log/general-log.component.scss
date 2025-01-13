@@ -7,6 +7,7 @@
 .log-entry {
   display: flex;
   flex-direction: column;
+  cursor: pointer;
 
   header {
     display: flex;
@@ -30,6 +31,18 @@
       font: var(--paragraph-30);
       color: var(--base-level-60);
     }
+  }
+}
+
+.toggle-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: p2r(20);
+  transition: transform 125ms linear;
+
+  &.open {
+    transform: rotate(180deg);
   }
 }
 
@@ -59,15 +72,24 @@ details {
     }
 
     .actions {
-      display: none;
+      display: flex;
       justify-content: flex-end;
       flex: 1 0;
       gap: p2r(8);
+      user-select: none;
+
+      spk-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: p2r(32);
+        transition: transform 125ms linear;
+      }
     }
   }
 
-  &[open] summary .actions {
-    display: flex;
+  &[open] summary .actions spk-icon {
+    transform: rotate(180deg);
   }
 
   .content {
@@ -83,6 +105,13 @@ details {
 
   code {
     margin-top: p2r(12);
+    position: relative;
+
+    button {
+      position: absolute;
+      top: p2r(12);
+      right: p2r(12);
+    }
   }
 }
 
@@ -124,5 +153,9 @@ details {
 
   &.error {
     background-color: var(--warn-500);
+  }
+
+  &.warn {
+    background-color: var(--tertiary-500);
   }
 }

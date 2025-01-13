@@ -444,61 +444,7 @@ export class BackupState {
 
     const pathFilters = sourceDataFormValue.path?.split('\0') ?? [];
 
-    let encryption = [
-      {
-        Name: '--no-encryption',
-        Value: 'True',
-      },
-    ];
-
-    if (generalFormValue.encryption !== '') {
-      encryption = [
-        {
-          Name: 'encryption-module',
-          Value: generalFormValue.encryption! ?? null,
-        },
-        {
-          Name: 'passphrase',
-          Value: generalFormValue.password! ?? null,
-        },
-      ];
-    }
-
-    const advancedOptions = this.advancedOptions();
-    const mappedAdvancedOptions = Object.entries(optionsFormValue.advancedOptions ?? {})
-      .filter(([key, value]) => key && value)
-      .map(([key, value]) => {
-        const option = advancedOptions.find((y) => y.name === key);
-
-        if (option?.type === 'Size') {
-          return {
-            Name: key,
-            Value: `${(value as any).size}${(value as any).unit.toLowerCase()}`,
-          };
-        }
-
-        if (option?.type === 'Integer') {
-          return {
-            Name: key,
-            Value: (value as number).toString(),
-          };
-        }
-
-        if (option?.type === 'Boolean') {
-          return {
-            Name: key,
-            Value: (value as boolean).toString(),
-          };
-        }
-
-        return {
-          Name: key,
-          Value: value,
-        };
-      });
-
-    const settings = [...encryption, ...mappedAdvancedOptions];
-
+    const settings = this.mapFormsToSettings();
     const excludes = Object.entries(sourceDataFormValue.excludes ?? {})
       .filter(([key, val]) => val && key !== 'filesLargerThan')
       .map(([key]) => key);
@@ -549,6 +495,74 @@ export class BackupState {
       //   Operation: this.backupId() ? 'Update' : 'Create',
       // },
     };
+  }
+
+  mapFormsToSettings() {
+    const advancedOptions = this.advancedOptions();
+    const optionsFormValue = this.optionsForm.value;
+    const generalFormValue = this.generalForm.value;
+
+    let encryption = [
+      {
+        Name: '--no-encryption',
+        Value: 'True',
+      },
+    ];
+
+    if (generalFormValue.encryption !== '') {
+      encryption = [
+        {
+          Name: 'encryption-module',
+          Value: generalFormValue.encryption! ?? null,
+        },
+        {
+          Name: 'passphrase',
+          Value: generalFormValue.password! ?? null,
+        },
+      ];
+    }
+
+    const dblockSize = optionsFormValue.remoteVolumeSize?.size
+      ? {
+          Name: 'dblock-size',
+          Value: `${optionsFormValue.remoteVolumeSize.size}${optionsFormValue.remoteVolumeSize.unit!.toLowerCase()}`,
+        }
+      : {
+          Name: 'dblock-size',
+          Value: '50mb',
+        };
+    const mappedAdvancedOptions = Object.entries(optionsFormValue.advancedOptions ?? {})
+      .filter(([key, value]) => key && value)
+      .map(([key, value]) => {
+        const option = advancedOptions.find((y) => y.name === key);
+
+        if (option?.type === 'Size') {
+          return {
+            Name: key,
+            Value: `${(value as any).size}${(value as any).unit.toLowerCase()}`,
+          };
+        }
+
+        if (option?.type === 'Integer') {
+          return {
+            Name: key,
+            Value: (value as number).toString(),
+          };
+        }
+
+        if (option?.type === 'Boolean') {
+          return {
+            Name: key,
+            Value: (value as boolean).toString(),
+          };
+        }
+
+        return {
+          Name: key,
+          Value: value,
+        };
+      });
+    return [...encryption, dblockSize, ...mappedAdvancedOptions];
   }
 
   #getTargetUrl(destinationFormArray: FormArray<DestinationFormGroup>) {

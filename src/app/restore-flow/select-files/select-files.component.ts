@@ -60,7 +60,8 @@ export default class SelectFilesComponent {
   isFileRestore = this.#restoreFlowState.isFileRestore;
   backupSettings = computed(() => {
     const id = this.backupId();
-    const selectedOption = this.selectFilesFormSignal()?.selectedOption;
+    const selected = this.selectFilesFormSignal();
+    const selectedOption = selected?.selectedOption ? parseInt(selected?.selectedOption as any) : null;
 
     if (!(typeof selectedOption === 'number') || !id) return null;
 
@@ -103,7 +104,9 @@ export default class SelectFilesComponent {
     pipe(
       startWith([null, null]),
       switchMap(([selectFilesFormSignal, backupId]) => {
-        const selectedOption = selectFilesFormSignal?.selectedOption;
+        const selectedOption = selectFilesFormSignal?.selectedOption
+          ? parseInt(selectFilesFormSignal?.selectedOption as any)
+          : null;
         const id = backupId;
 
         if (!(typeof selectedOption === 'number') || !id) return of('/');

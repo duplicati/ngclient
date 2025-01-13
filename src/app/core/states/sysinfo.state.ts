@@ -1,5 +1,4 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { finalize, Observable, tap } from 'rxjs';
 import { DuplicatiServerService, SystemInfoDto } from '../openapi';
 
@@ -17,16 +16,31 @@ export class SysinfoState {
   isLoaded = signal(false);
   systemInfo = signal<SystemInfoDto | null>(null);
 
-  filterGroups = toSignal(this.#dupServer.getApiV1SysteminfoFiltergroups() as Observable<FilterGroups>);
-
+  filterGroups = signal<FilterGroups | null>(null);
   backendModules = computed(() => {
     return this.systemInfo()?.BackendModules ?? [];
   });
 
   preload(returnObservable = false): Observable<SystemInfoDto> | void {
-    const obs = this.#dupServer.getApiV1Systeminfo().pipe(
-      tap((x) => this.systemInfo.set(x)),
-      // tap((x) => console.log('systemInfo', x)),
+    const obs = (this.#dupServer.getApiV1Systeminfo() as Observable<SystemInfoDto>).pipe(
+      tap((systemInfo) => {
+        this.systemInfo.set(systemInfo);
+      }),
+      finalize(() => this.isLoaded.set(true))
+    );
+
+    if (returnObservable) {
+      return obs;
+    }
+
+    obs.subscribe();
+  }
+
+  preloadFilterGroups(returnObservable = false): Observable<FilterGroups> | void {
+    const obs = (this.#dupServer.getApiV1SysteminfoFiltergroups() as Observable<FilterGroups>).pipe(
+      tap((filterGroups) => {
+        this.filterGroups.set(filterGroups);
+      }),
       finalize(() => this.isLoaded.set(true))
     );
 

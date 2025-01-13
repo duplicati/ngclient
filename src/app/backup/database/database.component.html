@@ -1,6 +1,13 @@
 <app-status-bar />
 
 <section>
+  <div class="back">
+    <button type="button" class="small" spk-button routerLink="/" i18n>
+      <spk-icon>arrow-left</spk-icon>
+      Back
+    </button>
+  </div>
+
   <article>
     <h1 i18n>Local database for {{ activeBackup()?.Backup?.Name }}</h1>
     <p i18n>

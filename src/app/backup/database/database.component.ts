@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { SparkleButtonComponent, SparkleFormFieldComponent, SparkleIconComponent } from '@sparkle-ui/core';
 import { finalize, map, switchMap, take } from 'rxjs';
 import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
@@ -10,7 +10,14 @@ import { BackupsState } from '../../core/states/backups.state';
 
 @Component({
   selector: 'app-database',
-  imports: [FormsModule, StatusBarComponent, SparkleButtonComponent, SparkleFormFieldComponent, SparkleIconComponent],
+  imports: [
+    FormsModule,
+    StatusBarComponent,
+    SparkleButtonComponent,
+    SparkleFormFieldComponent,
+    SparkleIconComponent,
+    RouterLink,
+  ],
   templateUrl: './database.component.html',
   styleUrl: './database.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

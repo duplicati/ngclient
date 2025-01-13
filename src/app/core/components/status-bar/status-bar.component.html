@@ -5,10 +5,10 @@
       <spk-progress-bar class="raised primary" [value]="statusData()!.progress * 100"></spk-progress-bar>
     } @else if (nextBackup().backup || nextBackup().time) {
       <div class="label">
-        {{ nextBackup().backup?.Backup?.Name }} - {{ nextBackup().time | appRelativeTime }}
+        {{ nextBackup().backup?.Backup?.Name }} - {{ nextBackup().time | appRelativeTime }} at
         {{ nextBackup().time | date: 'shortTime' }}
       </div>
-      <spk-progress-bar class="raised" [value]="3"></spk-progress-bar>
+      <!-- <spk-progress-bar class="raised" [value]="3"></spk-progress-bar> -->
     } @else {
       <div class="label" i18n>Loading...</div>
     }

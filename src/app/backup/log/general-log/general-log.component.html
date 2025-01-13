@@ -4,10 +4,28 @@
 
 @for (item of resource.value(); track $index) {
   <article class="log-entry">
-    <header (click)="toggleOpenEntry(item.id)">
-      <div class="status" [class.error]="item.exception"></div>
+    <header (click)="toggleOpenEntry(item.id!)">
+      @if (item.data?.ErrorsActualLength && item.data?.ErrorsActualLength! > 0) {
+        <div class="status error"></div>
+      } @else if (item.data?.WarningsActualLength && item.data?.WarningsActualLength! > 0) {
+        <div class="status warn"></div>
+      } @else {
+        <div class="status"></div>
+      }
       <h3>{{ item.timestamp | date: 'medium' }}</h3>
-      <p>{{ item.data.MainOperation }}</p>
+      <p>
+        {{ item.data?.MainOperation }}
+
+        @if (item.data?.WarningsActualLength && item.data?.WarningsActualLength! > 0) {
+          ({{ item.data?.WarningsActualLength }} warnings)
+        }
+      </p>
+
+      <div class="spacer"></div>
+
+      <div class="action">
+        <spk-icon class="toggle-indicator" [class.open]="item.id === openEntry()">caret-down</spk-icon>
+      </div>
     </header>
 
     @if (item.id === openEntry()) {
@@ -18,9 +36,9 @@
           </ng-container>
 
           <ng-container content>
-            <p>Start: {{ item.data.BeginTime | date: 'medium' }}</p>
-            <p>End: {{ item.data.EndTime | date: 'medium' }}</p>
-            <p>Duration: {{ item.data.Duration | durationFormat }}</p>
+            <p i18n>Start: {{ item.data?.BeginTime | date: 'medium' }}</p>
+            <p i18n>End: {{ item.data?.EndTime | date: 'medium' }}</p>
+            <p i18n>Duration: {{ item.data?.Duration | durationFormat }}</p>
           </ng-container>
         </app-toggle-card>
 
@@ -30,34 +48,38 @@
           </ng-container>
 
           <ng-container content>
-            <p>Evaluated: {{ item.data.ExaminedFiles }} ({{ item.data.SizeOfExaminedFiles | bytes }})</p>
-            <p>Opened: {{ item.data.OpenedFiles }} ({{ item.data.SizeOfOpenedFiles | bytes }})</p>
-            <p>Added: {{ item.data.AddedFiles }} ({{ item.data.SizeOfAddedFiles | bytes }})</p>
-            <p>Modified: {{ item.data.ModifiedFiles }} ({{ item.data.SizeOfModifiedFiles | bytes }})</p>
-            <p>Deleted: {{ item.data.DeletedFiles }}</p>
-            <p>Too large: {{ item.data.TooLargeFiles }}</p>
-            <p>Files with error: {{ item.data.FilesWithError }}</p>
+            <p i18n>Evaluated: {{ item.data?.ExaminedFiles }} ({{ item.data?.SizeOfExaminedFiles | bytes }})</p>
+            <p i18n>Opened: {{ item.data?.OpenedFiles }} ({{ item.data?.SizeOfOpenedFiles | bytes }})</p>
+            <p i18n>Added: {{ item.data?.AddedFiles }} ({{ item.data?.SizeOfAddedFiles | bytes }})</p>
+            <p i18n>Modified: {{ item.data?.ModifiedFiles }} ({{ item.data?.SizeOfModifiedFiles | bytes }})</p>
+            <p i18n>Deleted: {{ item.data?.DeletedFiles }}</p>
+            <p i18n>Too large: {{ item.data?.TooLargeFiles }}</p>
+            <p i18n>Files with error: {{ item.data?.FilesWithError }}</p>
           </ng-container>
         </app-toggle-card>
 
         <div class="extra-info">
           <spk-divider />
 
-          @if (item.data.MainOperation === 'Backup') {
+          @if (item.data?.MainOperation === 'Backup') {
             <details name="details">
-              <summary>
+              <summary i18n>
                 <spk-icon>circle-half-tilt</spk-icon>
                 Test phase
+
+                <div class="actions">
+                  <spk-icon class="toggle-indicator">caret-down</spk-icon>
+                </div>
               </summary>
 
               <div class="content">
-                <p>Start: {{ item.data.TestResults.BeginTime | date: 'medium' }}</p>
-                <p>End: {{ item.data.TestResults.EndTime | date: 'medium' }}</p>
-                <p>Duration: {{ item.data.TestResults.Duration | durationFormat }}</p>
-                <p>Verifications: {{ item.data.TestResults.VerificationsActualLength }}</p>
+                <p i18n>Start: {{ item.data?.TestResults?.BeginTime | date: 'medium' }}</p>
+                <p i18n>End: {{ item.data?.TestResults?.EndTime | date: 'medium' }}</p>
+                <p i18n>Duration: {{ item.data?.TestResults?.Duration | durationFormat }}</p>
+                <p i18n>Verifications: {{ item.data?.TestResults?.VerificationsActualLength }}</p>
                 <spk-divider />
-                <p>Warnings: {{ item.data.TestResults.WarningsActualLength }}</p>
-                <p>Errors: {{ item.data.TestResults.ErrorsActualLength }}</p>
+                <p i18n>Warnings: {{ item.data?.TestResults?.WarningsActualLength }}</p>
+                <p i18n>Errors: {{ item.data?.TestResults?.ErrorsActualLength }}</p>
               </div>
             </details>
 
@@ -65,40 +87,48 @@
               <summary>
                 <spk-icon>file-archive</spk-icon>
                 Compression phase
+
+                <div class="actions">
+                  <spk-icon class="toggle-indicator">caret-down</spk-icon>
+                </div>
               </summary>
 
               <div class="content">
-                <p>Start: {{ item.data.CompactResults.BeginTime | date: 'medium' }}</p>
-                <p>End: {{ item.data.CompactResults.EndTime | date: 'medium' }}</p>
-                <p>Duration: {{ item.data.CompactResults.Duration | durationFormat }}</p>
+                <p i18n>Start: {{ item.data?.CompactResults?.BeginTime | date: 'medium' }}</p>
+                <p i18n>End: {{ item.data?.CompactResults?.EndTime | date: 'medium' }}</p>
+                <p i18n>Duration: {{ item.data?.CompactResults?.Duration | durationFormat }}</p>
                 <spk-divider />
-                <p>
-                  Deleted files: {{ item.data.CompactResults.DeletedFileCount }} ({{
-                    item.data.CompactResults.DeletedFileSize | bytes
+                <p i18n>
+                  Deleted files: {{ item.data?.CompactResults?.DeletedFileCount }} ({{
+                    item.data?.CompactResults?.DeletedFileSize | bytes
                   }})
                 </p>
-                <p>
-                  Downloaded files: {{ item.data.CompactResults.DownloadedFileCount }} ({{
-                    item.data.CompactResults.DownloadedFileSize | bytes
+                <p i18n>
+                  Downloaded files: {{ item.data?.CompactResults?.DownloadedFileCount }} ({{
+                    item.data?.CompactResults?.DownloadedFileSize | bytes
                   }})
                 </p>
-                <p>
-                  Uploaded files: {{ item.data.CompactResults.UploadedFileCount }} ({{
-                    item.data.CompactResults.UploadedFileSize | bytes
+                <p i18n>
+                  Uploaded files: {{ item.data?.CompactResults?.UploadedFileCount }} ({{
+                    item.data?.CompactResults?.UploadedFileSize | bytes
                   }})
                 </p>
                 <spk-divider />
-                <p>Warnings: {{ item.data.CompactResults.WarningsActualLength }}</p>
-                <p>Errors: {{ item.data.CompactResults.ErrorsActualLength }}</p>
+                <p i18n>Warnings: {{ item.data?.CompactResults?.WarningsActualLength }}</p>
+                <p i18n>Errors: {{ item.data?.CompactResults?.ErrorsActualLength }}</p>
               </div>
             </details>
           }
 
-          @if (item.data.MainOperation === 'Test') {
+          @if (item.data?.MainOperation === 'Test') {
             <details name="details">
-              <summary>
+              <summary i18n>
                 <spk-icon>warning-circle</spk-icon>
                 Verifications {{ $any(item.data).VerificationsActualLength }}
+
+                <div class="actions">
+                  <spk-icon class="toggle-indicator">caret-down</spk-icon>
+                </div>
               </summary>
 
               <div class="content">
@@ -110,30 +140,38 @@
           }
 
           <details name="details">
-            <summary>
+            <summary i18n>
               <spk-icon>warning-circle</spk-icon>
-              Warnings {{ item.data.WarningsActualLength }}
+              Warnings {{ item.data?.WarningsActualLength }}
+
+              <div class="actions">
+                <spk-icon class="toggle-indicator">caret-down</spk-icon>
+              </div>
             </summary>
 
             <div class="content">
-              @for (item of item.data.Warnings; track $index) {
+              @for (item of item.data?.Warnings; track $index) {
                 <code>{{ item | json }}</code>
               }
             </div>
           </details>
 
           <details name="details">
-            <summary>
+            <summary i18n>
               <spk-icon>warning</spk-icon>
-              Errors {{ item.data.ErrorsActualLength }}
+              Errors {{ item.data?.ErrorsActualLength }}
+
+              <div class="actions">
+                <spk-icon class="toggle-indicator">caret-down</spk-icon>
+              </div>
             </summary>
 
             <div class="content">
-              @if (item.data.Errors.length === 0) {
+              @if (item.data?.Errors?.length === 0) {
                 <p>No errors</p>
               }
 
-              @for (item of item.data.Errors; track $index) {
+              @for (item of item.data?.Errors; track $index) {
                 <code>{{ item | json }}</code>
               }
             </div>
@@ -141,16 +179,20 @@
           <spk-divider />
 
           <details>
-            <summary>
+            <summary i18n>
               <spk-icon>notepad</spk-icon>
               Complete log
 
               <div class="actions">
-                <button spk-button class="small">Copy</button>
+                <spk-icon class="toggle-indicator">caret-down</spk-icon>
               </div>
             </summary>
 
-            <code>{{ item.data | json }}</code>
+            <code>
+              <button spk-button class="small">Copy</button>
+
+              {{ item.data | json }}
+            </code>
           </details>
         </div>
       </section>

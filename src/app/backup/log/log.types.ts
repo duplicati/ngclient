@@ -34,28 +34,28 @@ export interface BackendStatistics {
 }
 
 export interface CompactResults {
-  DeletedFileCount: number;
-  DownloadedFileCount: number;
-  UploadedFileCount: number;
-  DeletedFileSize: number;
-  DownloadedFileSize: number;
-  UploadedFileSize: number;
-  Dryrun: boolean;
-  VacuumResults: null;
-  MainOperation: string;
-  ParsedResult: string;
-  Interrupted: boolean;
-  Version: string;
-  EndTime: string;
-  BeginTime: string;
-  Duration: string;
-  MessagesActualLength: number;
-  WarningsActualLength: number;
-  ErrorsActualLength: number;
-  Messages: string[] | null;
-  Warnings: string[] | null;
-  Errors: string[] | null;
-  BackendStatistics: BackendStatistics;
+  DeletedFileCount?: number;
+  DownloadedFileCount?: number;
+  UploadedFileCount?: number;
+  DeletedFileSize?: number;
+  DownloadedFileSize?: number;
+  UploadedFileSize?: number;
+  Dryrun?: boolean;
+  VacuumResults?: null;
+  MainOperation?: string;
+  ParsedResult?: string;
+  Interrupted?: boolean;
+  Version?: string;
+  EndTime?: string;
+  BeginTime?: string;
+  Duration?: string;
+  MessagesActualLength?: number;
+  WarningsActualLength?: number;
+  ErrorsActualLength?: number;
+  Messages?: string[] | null;
+  Warnings?: string[] | null;
+  Errors?: string[] | null;
+  BackendStatistics?: BackendStatistics;
 }
 
 export interface Verification {

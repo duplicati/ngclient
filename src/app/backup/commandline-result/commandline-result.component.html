@@ -1,0 +1,33 @@
+<app-status-bar />
+
+<section>
+  <div class="back">
+    <button type="button" class="small" spk-button routerLink="/" i18n>
+      <spk-icon>arrow-left</spk-icon>
+      Back
+    </button>
+  </div>
+
+  <h3 i18n>Running commandline task...</h3>
+
+  <div class="status" i18n>
+    @if (status() === 'starting') {
+      Starting...
+    }
+
+    @if (status() === 'started') {
+      Started!
+    }
+
+    @if (status() === 'finished') {
+      Finished!
+    }
+  </div>
+
+  <code>
+    @for (item of messageLog(); track $index) {
+      {{ item }}
+      <br />
+    }
+  </code>
+</section>

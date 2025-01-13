@@ -1,7 +1,7 @@
 import { DatePipe, JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, input, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { SparkleProgressBarComponent } from '@sparkle-ui/core';
+import { SparkleIconComponent, SparkleProgressBarComponent } from '@sparkle-ui/core';
 import { map } from 'rxjs';
 import { DuplicatiServerService } from '../../../core/openapi';
 
@@ -28,9 +28,11 @@ type RemoteLogEntryEvaluated = {
   data: Data;
 };
 
+const now = new Date();
+
 @Component({
   selector: 'app-remote-log',
-  imports: [JsonPipe, SparkleProgressBarComponent, DatePipe],
+  imports: [JsonPipe, SparkleProgressBarComponent, SparkleIconComponent, DatePipe],
   templateUrl: './remote-log.component.html',
   styleUrl: './remote-log.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -49,13 +51,15 @@ export class RemoteLogComponent {
   resource = rxResource({
     request: () => ({ id: this.backupId()!, ...this.pagination() }),
     loader: ({ request: params }) =>
-      this.#dupServer.getApiV1BackupByIdRemotelog({ id: params.id }).pipe(
+      this.#dupServer.getApiV1BackupByIdRemotelog({ id: params.id, pagesize: 100 }).pipe(
         map((x) => {
+          console.log(x);
+
           return (x as RemoteLogEntry[]).map((y, i) => {
             const newItem = {
               id: y.ID,
               operationId: y.OperationID,
-              timestamp: y.Timestamp,
+              timestamp: y.Timestamp * 1000,
               operation: y.Operation,
               path: y.Path,
               data: typeof y.Data === 'string' ? JSON.parse(y.Data) : null,
