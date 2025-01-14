@@ -1,0 +1,22 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
+:host {
+  display: block;
+}
+
+h3 {
+  font: var(--title-30);
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(16);
+}
+
+.field-row {
+  display: flex;
+  align-items: center;
+  gap: p2r(8);
+  width: 100%;
+}

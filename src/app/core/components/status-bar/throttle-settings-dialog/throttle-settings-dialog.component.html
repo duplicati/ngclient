@@ -1,0 +1,63 @@
+<header header>
+  <h3 i18n>Throttle network speed</h3>
+</header>
+
+<div content>
+  <div class="column">
+    <div class="field-row">
+      <spk-checkbox
+        [class.active]="maxUploadActive()"
+        class="primary raised"
+        (click)="maxUploadActive.set(!maxUploadActive())"
+        i18n>
+        Max upload speed
+      </spk-checkbox>
+
+      <spk-form-field>
+        <input type="number" [(ngModel)]="maxUpload" [disabled]="!maxUploadActive()" />
+      </spk-form-field>
+
+      <spk-select [hideClearButton]="true">
+        <input type="text" [(ngModel)]="maxUploadUnit" />
+
+        @for (option of sizeOptions(); track $index) {
+          <spk-option [value]="option">{{ option }}</spk-option>
+        }
+      </spk-select>
+    </div>
+
+    <div class="field-row">
+      <spk-checkbox
+        [class.active]="maxDownloadActive()"
+        class="primary raised"
+        (click)="maxDownloadActive.set(!maxDownloadActive())"
+        i18n>
+        Max download speed
+      </spk-checkbox>
+
+      <spk-form-field>
+        <input type="number" [(ngModel)]="maxDownload" [disabled]="!maxDownloadActive()" />
+      </spk-form-field>
+
+      <spk-select [hideClearButton]="true">
+        <input type="text" [(ngModel)]="maxDownloadUnit" />
+
+        @for (option of sizeOptions(); track $index) {
+          <spk-option [value]="option">{{ option }}</spk-option>
+        }
+      </spk-select>
+    </div>
+
+    <p i18n>
+      Note that speeds are entered in bytes, and line speeds are typically reported in bits. Use a factor of 8 to
+      convert, such that an 8 mbit/s line is equivalent to 1 MByte/s.
+    </p>
+  </div>
+</div>
+
+<footer footer>
+  <button spk-button (click)="closed.emit(false)" i18n>Cancel</button>
+  <button spk-button class="raised primary" [class.loader]="isSubmitting()" (click)="submit()" i18n>
+    Update settings
+  </button>
+</footer>

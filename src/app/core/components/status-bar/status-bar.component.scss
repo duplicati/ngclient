@@ -11,7 +11,9 @@
 
 .current-backup {
   display: flex;
+  justify-content: space-between;
   align-items: center;
+  width: 100%;
   gap: p2r(8);
 }
 

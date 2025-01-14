@@ -1,8 +1,14 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { SparkleProgressBarComponent } from '@sparkle-ui/core';
+import {
+  SparkleButtonComponent,
+  SparkleDialogService,
+  SparkleIconComponent,
+  SparkleProgressBarComponent,
+} from '@sparkle-ui/core';
 import { RelativeTimePipe } from '../../pipes/relative-time.pipe';
 import { StatusBarState } from './status-bar.state';
+import ThrottleSettingsDialogComponent from './throttle-settings-dialog/throttle-settings-dialog.component';
 
 const date = new Date();
 @Component({
@@ -11,6 +17,8 @@ const date = new Date();
     SparkleProgressBarComponent,
     RelativeTimePipe,
     DatePipe,
+    SparkleIconComponent,
+    SparkleButtonComponent,
     // CurrencyPipe,
     // DecimalPipe,
     // PercentPipe,
@@ -22,6 +30,7 @@ const date = new Date();
 })
 export default class StatusBarComponent {
   #statusBarState = inject(StatusBarState);
+  #dialog = inject(SparkleDialogService);
 
   minsAgo = date.setMinutes(date.getMinutes() - 1);
 
@@ -32,6 +41,13 @@ export default class StatusBarComponent {
     backup: (this.serverState()?.ProposedSchedule?.[0] as any)?.backup,
     time: (this.serverState()?.ProposedSchedule?.[0] as any)?.Item2,
   }));
+
+  openThrottleSettingsDialog() {
+    this.#dialog.open(ThrottleSettingsDialogComponent, {
+      maxWidth: '550px',
+      width: '100%',
+    });
+  }
 
   ngOnInit() {
     this.#statusBarState.start();

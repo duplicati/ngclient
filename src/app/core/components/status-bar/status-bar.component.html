@@ -27,16 +27,16 @@
     Angular percent pipe: {{ 100.1 | percent }}
   </pre> -->
 
-  <!-- <div class="current-backup-actions">
-    <button spk-button>
+  <div class="current-backup-actions">
+    <!-- <button spk-button>
       <spk-icon>play-circle</spk-icon>
       Start
-    </button>
+    </button> -->
 
-    <button spk-button disabled>
-      <spk-icon>x-circle</spk-icon>
+    <button spk-button (click)="openThrottleSettingsDialog()">
+      <spk-icon>speedometer</spk-icon>
     </button>
-  </div> -->
+  </div>
 </div>
 
 <!-- <div class="actions">
