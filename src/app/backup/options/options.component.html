@@ -4,7 +4,12 @@
   <div class="remote-volume-wrap">
     <div class="row-inputs" formGroupName="remoteVolumeSize">
       <spk-form-field>
-        <label for="size" i18n>Remote volume size</label>
+        <label for="size" i18n>
+          Remote volume size
+          @if (exceededVolumeSize()) {
+            <spk-icon class="warning">warning</spk-icon>
+          }
+        </label>
         <input type="number" id="size" formControlName="size" />
       </spk-form-field>
 
@@ -17,10 +22,19 @@
       </spk-select>
     </div>
 
+    @if (exceededVolumeSize()) {
+      <p class="warning" i18n>
+        The chosen size is outside the recommended range. This may cause performance issues, excessively large temporary
+        files or other problems.
+      </p>
+    }
     <p i18n>
       The backups will be split up into multiple files called volumes. Here you can set the maximum size of the
       individual volume files.
-      <a href="#" class="spk-primary">Read more</a>
+      <a href="https://forum.duplicati.com/t/choosing-sizes-in-duplicati/17683" target="_blank" class="spk-primary">
+        Read more
+        <spk-icon suffix>arrow-square-out</spk-icon>
+      </a>
     </p>
   </div>
 
@@ -28,7 +42,7 @@
     <label for="size" i18n>Backup retention</label>
     <input type="text" formControlName="backupRetention" />
 
-    @for (option of rentationOptions(); track $index) {
+    @for (option of retentionOptions(); track $index) {
       <spk-option [value]="option.value">{{ option.name }}</spk-option>
     }
   </spk-select>

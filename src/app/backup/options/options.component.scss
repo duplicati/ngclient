@@ -58,6 +58,9 @@ form {
   display: flex;
   flex-direction: column;
   gap: p2r(4);
+  p.warning {
+      color: rgb(125, 125, 0);
+    }
 }
 
 .row-inputs {
