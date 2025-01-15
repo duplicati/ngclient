@@ -101,34 +101,34 @@
   <section>
     <div class="left">
       <h3 i18n>Update channel</h3>
-      <!-- TODO -->
-      <p i18n>Update channel selection is not implemented yet.</p>
+      <p>
+        @if (updateChannel() !== '' && sysinfo()?.ServerVersion) {
+          {{ sysinfo()?.ServerVersion }}
+        }
+      </p>
+
+      @if (updatingChannel()) {
+        <spk-progress-bar class="indeterminate primary" />
+      }
     </div>
 
     <div class="right radios">
-      <div class="radio-option" (click)="settingsForm.controls.updateChannel.setValue('')">
-        <spk-radio class="outlined primary" i18n>
+      <div class="radio-option" (click)="setNewChannel('')">
+        <spk-radio class="primary raised" [class.active]="updateChannel() === ''" i18n>
           Default ({{ sysinfo()?.DefaultUpdateChannel }})
-          <input type="radio" name="updateChannel" value="" formControlName="updateChannel" />
         </spk-radio>
 
         <p i18n>Same as the base install version: {{ sysinfo()?.ServerVersionType }}</p>
       </div>
 
-      <div class="radio-option" (click)="settingsForm.controls.updateChannel.setValue('stable')">
-        <spk-radio class="outlined primary" i18n>
-          Stable
-          <input type="radio" name="updateChannel" value="stable" formControlName="updateChannel" />
-        </spk-radio>
+      <div class="radio-option" (click)="setNewChannel('stable')">
+        <spk-radio class="primary raised" [class.active]="updateChannel() === 'stable'" i18n>Stable</spk-radio>
 
         <p i18n>Official releases</p>
       </div>
 
-      <div class="radio-option" (click)="settingsForm.controls.updateChannel.setValue('beta')">
-        <spk-radio class="outlined primary" i18n>
-          Beta
-          <input type="radio" name="updateChannel" value="beta" formControlName="updateChannel" />
-        </spk-radio>
+      <div class="radio-option" (click)="setNewChannel('beta')">
+        <spk-radio class="primary raised" [class.active]="updateChannel() === 'beta'" i18n>Beta</spk-radio>
 
         <p i18n>
           Try out the new features that we are working on. Currently the most stable version available. Test Restore
@@ -136,20 +136,16 @@
         </p>
       </div>
 
-      <div class="radio-option" (click)="settingsForm.controls.updateChannel.setValue('experimental')">
-        <spk-radio class="outlined primary" i18n>
+      <div class="radio-option" (click)="setNewChannel('experimental')">
+        <spk-radio class="primary raised" [class.active]="updateChannel() === 'experimental'" i18n>
           Experimental
-          <input type="radio" name="updateChannel" value="experimental" formControlName="updateChannel" />
         </spk-radio>
 
         <p i18n>Specific builds for developers only. Not for use with important data.</p>
       </div>
 
-      <div class="radio-option" (click)="settingsForm.controls.updateChannel.setValue('canary')">
-        <spk-radio class="outlined primary" i18n>
-          Canary
-          <input type="radio" name="updateChannel" value="canary" formControlName="updateChannel" />
-        </spk-radio>
+      <div class="radio-option" (click)="setNewChannel('canary')">
+        <spk-radio class="primary raised" [class.active]="updateChannel() === 'canary'" i18n>Canary</spk-radio>
 
         <p i18n>Individual builds for developers only. Not for use with important data.</p>
       </div>
@@ -182,17 +178,4 @@
       </spk-select>
     </div>
   </section>
-
-  <!-- <section>
-    <div class="left">
-      <h3>Add advanced options</h3>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-      <spk-button-group>
-        <button type="button" [class.active]="editAs() === 'list'" (click)="editAs.set('list')">Edit as list</button>
-        <button type="button" [class.active]="editAs() === 'text'" (click)="editAs.set('text')">Edit as text</button>
-      </spk-button-group>
-    </div>
-
-    <div class="right">Empty for now</div>
-  </section> -->
 </form>

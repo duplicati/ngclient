@@ -3,11 +3,12 @@ import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   SparkleButtonComponent,
   SparkleOptionComponent,
+  SparkleProgressBarComponent,
   SparkleRadioComponent,
   SparkleSelectComponent,
 } from '@sparkle-ui/core';
 import { derivedFrom } from 'ngxtension/derived-from';
-import { map, pipe, startWith } from 'rxjs';
+import { catchError, finalize, map, of, pipe, startWith } from 'rxjs';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { LANGUAGES } from '../core/locales/locales.utility';
 import { DuplicatiServerService } from '../core/openapi';
@@ -78,6 +79,7 @@ type UsageStatisticsType = (typeof USAGE_STATISTICS_OPTIONS)[number];
     SparkleButtonComponent,
     SparkleRadioComponent,
     SparkleSelectComponent,
+    SparkleProgressBarComponent,
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss',
@@ -105,8 +107,31 @@ export default class SettingsComponent {
       timeType: fb.control<TimeTypes>('s'),
     }),
     usageStatistics: fb.control<UsageStatisticsType['value']>(''),
-    updateChannel: fb.control<UpdateChannel>(''),
   });
+
+  updatingChannel = signal(false);
+  updateChannel = signal<UpdateChannel>('');
+
+  setNewChannel(channel: UpdateChannel) {
+    const prevChannel = this.updateChannel();
+
+    this.updateChannel.set(channel);
+
+    this.#dupServer
+      .patchApiV1Serversettings({
+        requestBody: {
+          'update-channel': channel,
+        },
+      })
+      .pipe(
+        finalize(() => this.updatingChannel.set(false)),
+        catchError(() => {
+          this.updateChannel.set(prevChannel);
+          return of(null);
+        })
+      )
+      .subscribe();
+  }
 
   get pauseSettings() {
     return this.settingsForm.controls.pauseSettings;
@@ -169,17 +194,9 @@ export default class SettingsComponent {
         requestBody: {
           'usage-reporter-level': this.settingsForm.controls.usageStatistics.value,
           'startup-delay': startupDelay === '0s' ? '' : startupDelay,
-          'update-channel': this.settingsForm.controls.updateChannel.value,
         },
       })
-      .subscribe({
-        next: (res) => {
-          console.log('res', res);
-        },
-        error: (err) => {
-          console.error('err', err);
-        },
-      });
+      .subscribe();
   }
 
   getServerSettings() {
@@ -196,8 +213,9 @@ export default class SettingsComponent {
             timeType: (timeUnitOptions.includes(unit) ? unit : 's') as TimeTypes,
           },
           usageStatistics: res['usage-reporter-level'],
-          updateChannel: res['update-channel'] as UpdateChannel,
         });
+
+        this.updateChannel.set(res['update-channel'] as UpdateChannel);
       },
     });
   }
