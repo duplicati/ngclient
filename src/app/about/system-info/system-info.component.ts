@@ -1,19 +1,17 @@
-import { JsonPipe, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { SparkleIconComponent, SparkleListComponent } from '@sparkle-ui/core';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 
 @Component({
   selector: 'app-system-info',
-  imports: [JsonPipe, SparkleListComponent, SparkleIconComponent, NgTemplateOutlet],
+  imports: [SparkleListComponent, SparkleIconComponent, NgTemplateOutlet],
   templateUrl: './system-info.component.html',
   styleUrl: './system-info.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class SystemInfoComponent {
   #sysInfo = inject(SysinfoState);
-
-  // systemInfo = this.#sysInfo.systemInfo;
 
   treeStructure = computed(() => {
     const sysInfo = this.#sysInfo.systemInfo();

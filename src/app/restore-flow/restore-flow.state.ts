@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { finalize, forkJoin, take } from 'rxjs';
+import { finalize, forkJoin, retry, take, timeout } from 'rxjs';
 import { DuplicatiServerService, GetBackupResultDto, IListResultFileset } from '../core/openapi';
 import { createRestoreOptionsForm } from './options/options.component';
 import { createEncryptionForm } from './restore-encryption/restore-encryption.component';
@@ -70,6 +70,8 @@ export class RestoreFlowState {
     const selectFilesFormValue = this.selectFilesForm.value;
     const selectedOption = this.versionOptions()?.find((x) => x.Version === selectFilesFormValue.selectedOption);
 
+    console.log(selectedOption);
+
     this.#dupServer
       .postApiV1BackupByIdRestore({
         id: id ?? '',
@@ -110,9 +112,11 @@ export class RestoreFlowState {
       this.#dupServer.getApiV1BackupById({
         id,
       }),
-      this.#dupServer.getApiV1BackupByIdFilesets({
-        id,
-      }),
+      this.#dupServer
+        .getApiV1BackupByIdFilesets({
+          id,
+        })
+        .pipe(timeout(10000), retry()),
     ])
       .pipe(
         take(1),

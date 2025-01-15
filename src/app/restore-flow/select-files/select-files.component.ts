@@ -11,7 +11,7 @@ import {
   SparkleSelectComponent,
 } from '@sparkle-ui/core';
 import { derivedFrom } from 'ngxtension/derived-from';
-import { finalize, map, of, pipe, startWith, switchMap } from 'rxjs';
+import { finalize, map, of, pipe, startWith, switchMap, takeUntil } from 'rxjs';
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
 import { DuplicatiServerService } from '../../core/openapi';
 import { RestoreFlowState } from '../restore-flow.state';
@@ -111,6 +111,7 @@ export default class SelectFilesComponent {
 
         if (!(typeof selectedOption === 'number') || !id) return of('/');
 
+        this.rootPathLoaded.set(false);
         const option = this.versionOptions()?.find((x) => x.Version === selectedOption);
 
         return this.#dupServer
@@ -121,15 +122,21 @@ export default class SelectFilesComponent {
             folderContents: true,
           })
           .pipe(
+            takeUntil(this.selectFilesForm.controls.selectedOption.valueChanges),
             map((x) => {
-              this.rootPathLoaded.set(true);
-
               return (x['Files'] as any)[0].Path;
+            }),
+            finalize(() => {
+              this.rootPathLoaded.set(true);
             })
           );
       })
     )
   );
+
+  abortLoading() {
+    this.selectFilesForm.controls.selectedOption.setValue(null);
+  }
 
   displayFn() {
     const options = this.versionOptions();
@@ -137,12 +144,15 @@ export default class SelectFilesComponent {
     return (val: string) => {
       if (!val) return '';
 
-      const item = options?.find((x) => x.Version?.toString() === val);
+      const item = options?.find((x) => {
+        return typeof x.Version === 'number' && x.Version.toString() === val;
+      });
 
       if (!item) {
         return '';
       }
-      return `${item.Version}: ${this.#datePipe.transform(item.Time, 'd MMM y, h:mm')}`;
+
+      return `${item.Version}: ${this.#datePipe.transform(item.Time, 'medium')}`;
     };
   }
 
