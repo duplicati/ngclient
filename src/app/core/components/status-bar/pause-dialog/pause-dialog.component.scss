@@ -1,0 +1,23 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
+:host {
+  --dialog-p: #{p2r(24)};
+  display: block;
+}
+
+h3 {
+  font: var(--title-30);
+}
+
+.radios {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(8);
+}
+
+.check-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(8);
+  padding: p2r(32 0 0);
+}

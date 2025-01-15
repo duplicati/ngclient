@@ -1,0 +1,35 @@
+<header header>
+  <h3 i18n>Pause settings</h3>
+</header>
+
+<div content>
+  <div class="radios">
+    @for (option of pauseOptions(); track $index) {
+      <spk-radio
+        [class.active]="pauseOption() === option.value"
+        class="primary raised"
+        (click)="pauseOption.set(option.value)">
+        {{ option.label }}
+      </spk-radio>
+    }
+  </div>
+
+  <div class="check-wrap">
+    <spk-checkbox
+      [class.active]="pauseTransfers()"
+      class="primary raised"
+      (click)="pauseTransfers.set(!pauseTransfers())"
+      i18n>
+      Also pause transfers
+    </spk-checkbox>
+
+    <spk-alert type="warning" i18n>If you pause transfers they could time out and cause retries or failures.</spk-alert>
+  </div>
+</div>
+
+<footer footer>
+  <button spk-button (click)="closed.emit()" i18n>Cancel</button>
+  <button spk-button class="raised primary" [class.loader]="isSubmitting()" (click)="submit()" i18n>
+    Update settings
+  </button>
+</footer>

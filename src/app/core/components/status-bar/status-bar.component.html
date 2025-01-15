@@ -28,10 +28,15 @@
   </pre> -->
 
   <div class="current-backup-actions">
-    <!-- <button spk-button>
-      <spk-icon>play-circle</spk-icon>
-      Start
-    </button> -->
+    <button spk-button i18n [class.loader]="isResuming()" (click)="pauseResume()">
+      @if (isRunning()) {
+        <spk-icon>pause</spk-icon>
+        Pause
+      } @else {
+        <spk-icon>play</spk-icon>
+        Start
+      }
+    </button>
 
     <button spk-button (click)="openThrottleSettingsDialog()">
       <spk-icon>speedometer</spk-icon>
