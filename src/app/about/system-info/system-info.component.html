@@ -1,3 +1,33 @@
 <h3 i18n>System info</h3>
 
-<pre>{{ systemInfo() | json }}</pre>
+<ng-template #recursiveTree let-data>
+  <spk-list [style.padding-left.rem]="data.level * 0.25">
+    @for (node of data.children; track node.id) {
+      <div
+        action
+        #treeNode
+        [class.cannot-toggle]="node.children.length === 0"
+        [class.open]="node.isOpen()"
+        (click)="node.children.length > 0 && toggleNode(node)">
+        @if (node.children.length > 0) {
+          <spk-icon [class.open]="node.isOpen()">caret-down</spk-icon>
+        } @else {
+          <spk-icon>dot</spk-icon>
+        }
+
+        <div class="text">{{ node.text }}</div>
+      </div>
+
+      @if (node.isOpen()) {
+        <ng-container
+          *ngTemplateOutlet="
+            recursiveTree;
+            context: { $implicit: { children: node.children, level: data.level + 1 } }
+          "></ng-container>
+      }
+    }
+  </spk-list>
+</ng-template>
+
+<ng-container
+  *ngTemplateOutlet="recursiveTree; context: { $implicit: { children: treeStructure(), level: 0 } }"></ng-container>

@@ -1,8 +1,26 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
 }
 
 h3 {
   font: var(--title-30);
   margin: p2r(0 0 20);
+}
+
+spk-icon {
+  font-size: p2r(16);
+}
+
+spk-list {
+  padding: 0;
+  [action] {
+    padding: 0;
+
+    &.cannot-toggle {
+      cursor: initial;
+    }
+  }
 }
