@@ -1,5 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -13,6 +14,7 @@ import {
   SparkleToggleComponent,
   SparkleTooltipComponent,
 } from '@sparkle-ui/core';
+import { debounceTime, of } from 'rxjs';
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { SettingInputDto } from '../../core/openapi';
@@ -43,6 +45,9 @@ const RETENTION_OPTIONS = [
     name: 'Custom backup retention',
   },
 ] as const;
+
+const MaxVolumeSize = 1024 * 1024 * 1024 * 2; // 2GiB
+const MinVolumeSize = 1024 * 1024 * 5; // 5MiB
 
 export type SizeOptions = (typeof SIZE_OPTIONS)[number];
 type RetentionOptions = (typeof RETENTION_OPTIONS)[number];
@@ -104,7 +109,27 @@ export default class OptionsComponent {
   nonSelectedOptions = this.#backupState.nonSelectedOptions;
   isSubmitting = this.#backupState.isSubmitting;
   sizeOptions = signal(SIZE_OPTIONS);
-  rentationOptions = signal(RETENTION_OPTIONS);
+  retentionOptions = signal(RETENTION_OPTIONS);
+  volumeSizeSignal = toSignal(
+      this.optionsForm.controls.remoteVolumeSize.get('size')?.valueChanges.pipe(debounceTime(300)) ?? of(null)
+    );
+  volumeUnitSignal = toSignal(
+      this.optionsForm.controls.remoteVolumeSize.get('unit')?.valueChanges.pipe(debounceTime(300)) ?? of(null)
+    );
+  exceededVolumeSize = computed(() => {
+    const currentSize = this.volumeSizeSignal()
+     ?? this.optionsForm.controls.remoteVolumeSize.get('size')?.value;
+    const currentUnit = this.volumeUnitSignal()
+      ?? this.optionsForm.controls.remoteVolumeSize.get('unit')?.value;
+
+    console.log(currentSize, currentUnit);
+    if (currentSize === null || currentSize === undefined || currentUnit === null || currentUnit === undefined) {
+      return false;
+    }
+
+    const current = currentSize * Math.pow(1024, SIZE_OPTIONS.indexOf(currentUnit));
+    return current > MaxVolumeSize || current < MinVolumeSize;
+  });
 
   oauthStartTokenCreation(_: any) {}
   getFormFieldValue(
@@ -126,7 +151,7 @@ export default class OptionsComponent {
   }
 
   retentionOptionDisplayFn() {
-    const items = this.rentationOptions();
+    const items = this.retentionOptions();
     return (val: string) => {
       const item = items.find((x) => x.value === val);
 
