@@ -12,7 +12,7 @@
       }
     </spk-select>
 
-    @if ((isDraft() && isRepairing()) || versionOptionsLoading()) {
+    @if ((isDraft() && isRepairing()) || versionOptionsLoading() || loadingRootPath()) {
       <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
 
       <button spk-button type="button" (click)="abortLoading()" i18n>Cancel</button>

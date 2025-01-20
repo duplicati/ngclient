@@ -87,6 +87,7 @@ export default class SelectFilesComponent {
   });
 
   rootPath = signal<string | undefined>(undefined);
+  loadingRootPath = signal(false);
   getRootPath(backupSettings: BackupSettings) {
     const params: GetApiV1BackupByIdFilesData = {
       id: backupSettings.id + '',
@@ -95,11 +96,13 @@ export default class SelectFilesComponent {
       folderContents: false,
     };
 
+    this.loadingRootPath.set(true);
     this.#dupServer
       .getApiV1BackupByIdFiles(params)
       .pipe(
         finalize(() => {
           this.showFileTree.set(true);
+          this.loadingRootPath.set(false);
         })
       )
       .subscribe({
