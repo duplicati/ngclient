@@ -56,6 +56,19 @@ section {
   }
 }
 
+.passphrase-form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: p2r(16);
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: p2r(8);
+  }
+}
+
 .themes {
   display: flex;
   gap: p2r(8);

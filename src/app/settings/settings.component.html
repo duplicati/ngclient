@@ -1,17 +1,15 @@
 <app-status-bar />
 
-<form [formGroup]="settingsForm" class="content" (submit)="submit()">
-  <header>
-    <div class="title">
-      <h2 i18n>Settings</h2>
-      <p i18n>Configure your backup settings.</p>
-    </div>
+<header>
+  <div class="title">
+    <h2 i18n>Settings</h2>
+    <p i18n>Configure your backup settings.</p>
+  </div>
 
-    <button type="submit" spk-button class="raised primary" i18n [disabled]="settingsForm.untouched">
-      Save changes
-    </button>
-  </header>
+  <button type="submit" spk-button class="raised primary" i18n [disabled]="settingsForm.untouched">Save changes</button>
+</header>
 
+<div class="content">
   <section>
     <div class="left">
       <h3 i18n>Remote access control</h3>
@@ -20,38 +18,6 @@
 
     <div class="right">
       <app-remote-control></app-remote-control>
-    </div>
-  </section>
-
-  <section>
-    <div class="left">
-      <h3 i18n>Pause after startup or hibernation</h3>
-      <p i18n>
-        Duplicati will run when started, but will remain in paused state for the duration. Duplicati will occupy minimal
-        system resources and no backups will be run.
-      </p>
-    </div>
-
-    <div class="right">
-      <div class="field-row" formGroupName="pauseSettings">
-        <spk-select [hideClearButton]="true">
-          <input type="search" formControlName="time" />
-
-          @for (x of timeOptions(); track $index) {
-            <spk-option [value]="x">{{ x }}</spk-option>
-          }
-        </spk-select>
-
-        <spk-select [displayFn]="typeDisplay()" [hideClearButton]="true">
-          <input type="text" formControlName="timeType" />
-
-          @for (x of timeTypeOptions(); track $index) {
-            <spk-option [value]="x.value" (click)="pauseSettings.controls.timeType.setValue(x.value)">
-              {{ x.label }}
-            </spk-option>
-          }
-        </spk-select>
-      </div>
     </div>
   </section>
 
@@ -76,6 +42,78 @@
           (click)="setDarkMode()" />
         <!-- <img src="assets/images/system-theme.png" alt="system theme" /> -->
       </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="left">
+      <h3 i18n>Passwords</h3>
+      <p i18n>Change server passphrase</p>
+    </div>
+
+    <div class="right passphrase-form">
+      @if (showPassphraseForm()) {
+        <spk-form-field>
+          <label for="password" i18n>Passphrase</label>
+          <input
+            type="password"
+            name="password"
+            autocomplete="disabled"
+            i18n-placeholder
+            placeholder="Enter new password"
+            tabindex="1"
+            [(ngModel)]="passphrase" />
+        </spk-form-field>
+
+        <spk-form-field>
+          <label for="repeatPassword" i18n>Repeat passphrase</label>
+          <input
+            type="password"
+            name="repeatPassword"
+            autocomplete="disabled"
+            i18n-placeholder
+            placeholder="Repeat password"
+            tabindex="2"
+            [disabled]="passphrase().length === 0"
+            [(ngModel)]="repeatPassphrase" />
+
+          @if (passphrase().length !== 0 && passphrase() === repeatPassphrase()) {
+            <spk-icon suffix class="spk-success">check</spk-icon>
+          } @else {
+            <spk-icon suffix>prohibit</spk-icon>
+          }
+        </spk-form-field>
+
+        <div class="actions">
+          <button spk-button [class.loader]="isUpdating()" (click)="cancelPasswordChange()" i18n>Cancel</button>
+
+          @if (passphrase().length !== 0 && passphrase() === repeatPassphrase()) {
+            <button spk-button class="raised primary" [class.loader]="isUpdating()" (click)="updatePassphrase()" i18n>
+              Update passphrase
+            </button>
+          } @else {
+            <spk-tooltip i18n-message message="Password have to be filled and have to match" class="primary">
+              <button
+                spk-button
+                class="raised primary"
+                [class.loader]="isUpdating()"
+                [disabled]="true"
+                (click)="updatePassphrase()"
+                i18n>
+                Update passphrase
+              </button>
+            </spk-tooltip>
+          }
+        </div>
+      } @else {
+        <div class="actions">
+          <button spk-button i18n (click)="openPassphraseForm()" i18n>Change password</button>
+
+          @if (passwordUpdated()) {
+            <spk-icon class="spk-success">check</spk-icon>
+          }
+        </div>
+      }
     </div>
   </section>
 
@@ -106,7 +144,7 @@
 
     <div class="right">
       <spk-toggle class="primary raised" [class.active]="disableTrayIconLogin()" (click)="saveDisableTrayIconLogin()">
-        <label for="disable-tray-icon-login" i18n>Disable the tray icon login</label>
+        <label i18n>Disable the tray icon login</label>
       </spk-toggle>
     </div>
   </section>
@@ -161,6 +199,42 @@
         <spk-radio class="primary raised" [class.active]="updateChannel() === 'canary'" i18n>Canary</spk-radio>
 
         <p i18n>Individual builds for developers only. Not for use with important data.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<spk-divider />
+
+<form [formGroup]="settingsForm" class="content" (submit)="submit()">
+  <section>
+    <div class="left">
+      <h3 i18n>Pause after startup or hibernation</h3>
+      <p i18n>
+        Duplicati will run when started, but will remain in paused state for the duration. Duplicati will occupy minimal
+        system resources and no backups will be run.
+      </p>
+    </div>
+
+    <div class="right">
+      <div class="field-row" formGroupName="pauseSettings">
+        <spk-select [hideClearButton]="true">
+          <input type="search" formControlName="time" />
+
+          @for (x of timeOptions(); track $index) {
+            <spk-option [value]="x">{{ x }}</spk-option>
+          }
+        </spk-select>
+
+        <spk-select [displayFn]="typeDisplay()" [hideClearButton]="true">
+          <input type="text" formControlName="timeType" />
+
+          @for (x of timeTypeOptions(); track $index) {
+            <spk-option [value]="x.value" (click)="pauseSettings.controls.timeType.setValue(x.value)">
+              {{ x.label }}
+            </spk-option>
+          }
+        </spk-select>
       </div>
     </div>
   </section>

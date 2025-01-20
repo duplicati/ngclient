@@ -1,12 +1,17 @@
+import { JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   SparkleButtonComponent,
+  SparkleDividerComponent,
+  SparkleFormFieldComponent,
+  SparkleIconComponent,
   SparkleOptionComponent,
   SparkleProgressBarComponent,
   SparkleRadioComponent,
   SparkleSelectComponent,
   SparkleToggleComponent,
+  SparkleTooltipComponent,
 } from '@sparkle-ui/core';
 import { derivedFrom } from 'ngxtension/derived-from';
 import { catchError, finalize, map, of, pipe, startWith } from 'rxjs';
@@ -82,6 +87,11 @@ type UsageStatisticsType = (typeof USAGE_STATISTICS_OPTIONS)[number];
     SparkleSelectComponent,
     SparkleProgressBarComponent,
     SparkleToggleComponent,
+    SparkleTooltipComponent,
+    SparkleFormFieldComponent,
+    SparkleIconComponent,
+    SparkleDividerComponent,
+    JsonPipe,
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss',
@@ -159,6 +169,44 @@ export default class SettingsComponent {
         })
       )
       .subscribe();
+  }
+
+  showPassphraseForm = signal(false);
+  isUpdating = signal(false);
+  passphrase = signal('');
+  repeatPassphrase = signal('');
+  passwordUpdated = signal(false);
+
+  updatePassphrase() {
+    if (this.passphrase() !== this.repeatPassphrase()) return;
+
+    this.isUpdating.set(true);
+
+    this.#dupServer
+      .patchApiV1Serversettings({
+        requestBody: {
+          'server-passphrase': this.passphrase(),
+        },
+      })
+      .pipe(finalize(() => this.isUpdating.set(false)))
+      .subscribe({
+        next: () => {
+          this.showPassphraseForm.set(false);
+          this.passwordUpdated.set(true);
+
+          setTimeout(() => {
+            this.passwordUpdated.set(false);
+          }, 3000);
+        },
+      });
+  }
+
+  openPassphraseForm() {
+    this.showPassphraseForm.set(true);
+  }
+
+  cancelPasswordChange() {
+    this.showPassphraseForm.set(false);
   }
 
   get pauseSettings() {

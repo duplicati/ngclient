@@ -1,0 +1,13 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
+:host {
+  display: block;
+
+  --dialog-p: #{p2r(24)};
+}
+
+[content] {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(16);
+}
