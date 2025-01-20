@@ -1,15 +1,17 @@
 <app-status-bar />
 
-<header>
-  <div class="title">
-    <h2 i18n>Settings</h2>
-    <p i18n>Configure your backup settings.</p>
-  </div>
-
-  <button type="submit" spk-button class="raised primary" i18n [disabled]="settingsForm.untouched">Save changes</button>
-</header>
-
 <div class="content">
+  <header>
+    <div class="title">
+      <h2 i18n>Settings</h2>
+      <p i18n>Configure your backup settings.</p>
+    </div>
+
+    <button type="submit" spk-button class="raised primary" i18n [disabled]="settingsForm.untouched">
+      Save changes
+    </button>
+  </header>
+
   <section>
     <div class="left">
       <h3 i18n>Remote access control</h3>
