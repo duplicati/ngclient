@@ -11,7 +11,7 @@ import {
 } from '@sparkle-ui/core';
 import { finalize } from 'rxjs';
 import FileTreeComponent, { BackupSettings } from '../../core/components/file-tree/file-tree.component';
-import { DuplicatiServerService } from '../../core/openapi';
+import { DuplicatiServerService, GetApiV1BackupByIdFilesData } from '../../core/openapi';
 import { RestoreFlowState } from '../restore-flow.state';
 
 const fb = new FormBuilder();
@@ -77,13 +77,38 @@ export default class SelectFilesComponent {
 
       if (!time) return;
 
-      this.showFileTree.set(true);
       this.backupSettings.set({
         id: id + '',
         time,
       } as BackupSettings);
+      this.getRootPath(this.backupSettings()!);
     });
   });
+
+  rootPath = signal<string | undefined>(undefined);
+  getRootPath(backupSettings: BackupSettings) {
+    const params: GetApiV1BackupByIdFilesData = {
+      id: backupSettings.id + '',
+      time: backupSettings.time,
+      prefixOnly: true,
+      folderContents: false,
+    };
+
+    this.#dupServer
+      .getApiV1BackupByIdFiles(params)
+      .pipe(
+        finalize(() => {
+          this.showFileTree.set(true);
+        })
+      )
+      .subscribe({
+        next: (res) => {
+          const path = (res as any)['Files'][0].Path;
+          // console.log(res, path);
+          this.rootPath.set(path);
+        },
+      });
+  }
 
   isRepairing = signal(false);
   repairEffect = effect(() => {

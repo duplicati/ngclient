@@ -450,6 +450,9 @@ export default class FileTreeComponent {
 
   ngOnInit() {
     const startingPath = this.startingPath();
+    const rootPath = this.rootPath();
+
+    console.log(rootPath);
 
     if (startingPath) {
       console.log(startingPath);
@@ -572,14 +575,11 @@ export default class FileTreeComponent {
     const backupSettings = this.backupSettings()!;
     const params: GetApiV1BackupByIdFilesData = {
       id: backupSettings.id + '',
-      time: backupSettings.time,
       prefixOnly: false,
       folderContents: true,
+      time: backupSettings.time,
+      filter: path ? '@' + path : undefined,
     };
-
-    if (path && path !== '/') {
-      params.filter = '@' + path;
-    }
 
     return this.#dupServer.getApiV1BackupByIdFiles(params);
   }
@@ -657,6 +657,8 @@ export default class FileTreeComponent {
 
   #getPath(node: FileTreeNode | null = null, newPath = '/') {
     this.isLoading.set(true);
+
+    console.log(newPath);
 
     (this.#getFilePath(newPath) as Observable<any>).pipe(finalize(() => this.isLoading.set(false))).subscribe({
       next: (x) => {
