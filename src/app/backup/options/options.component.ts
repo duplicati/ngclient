@@ -111,18 +111,15 @@ export default class OptionsComponent {
   sizeOptions = signal(SIZE_OPTIONS);
   retentionOptions = signal(RETENTION_OPTIONS);
   volumeSizeSignal = toSignal(
-      this.optionsForm.controls.remoteVolumeSize.get('size')?.valueChanges.pipe(debounceTime(300)) ?? of(null)
-    );
+    this.optionsForm.controls.remoteVolumeSize.get('size')?.valueChanges.pipe(debounceTime(300)) ?? of(null)
+  );
   volumeUnitSignal = toSignal(
-      this.optionsForm.controls.remoteVolumeSize.get('unit')?.valueChanges.pipe(debounceTime(300)) ?? of(null)
-    );
+    this.optionsForm.controls.remoteVolumeSize.get('unit')?.valueChanges.pipe(debounceTime(300)) ?? of(null)
+  );
   exceededVolumeSize = computed(() => {
-    const currentSize = this.volumeSizeSignal()
-     ?? this.optionsForm.controls.remoteVolumeSize.get('size')?.value;
-    const currentUnit = this.volumeUnitSignal()
-      ?? this.optionsForm.controls.remoteVolumeSize.get('unit')?.value;
+    const currentSize = this.volumeSizeSignal() ?? this.optionsForm.controls.remoteVolumeSize.get('size')?.value;
+    const currentUnit = this.volumeUnitSignal() ?? this.optionsForm.controls.remoteVolumeSize.get('unit')?.value;
 
-    console.log(currentSize, currentUnit);
     if (currentSize === null || currentSize === undefined || currentUnit === null || currentUnit === undefined) {
       return false;
     }
