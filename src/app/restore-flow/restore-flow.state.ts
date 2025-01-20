@@ -22,6 +22,7 @@ export class RestoreFlowState {
   encryptionForm = createEncryptionForm();
   optionsFormSignal = toSignal(this.optionsForm.valueChanges);
   selectFilesFormSignal = toSignal(this.selectFilesForm.valueChanges);
+  selectOptionSignal = toSignal(this.selectFilesForm.controls.selectedOption.valueChanges);
   versionOptionsLoading = signal(false);
   versionOptions = signal<IListResultFileset[]>([]);
   isSubmitting = signal(false);
@@ -47,30 +48,12 @@ export class RestoreFlowState {
     this.destinationTargetUrl.set(targetUrl);
   }
 
-  // restoreFrom: fb.control<'orignal' | 'pickLocation'>('orignal'),
-  // restoreFromPath: fb.control<string>(''),
-  // handleExisting: fb.control<'overwrite' | 'saveTimestamp'>('overwrite'),
-  // permissions: fb.control<boolean>(false),
-  // {
-  //   "paths": [
-  //     "string"
-  //   ],
-  //   "passphrase": "string",
-  //   "time": "string",
-  //   "restore_path": "string",
-  //   "overwrite": true,
-  //   "permissions": true,
-  //   "skip_metadata": true
-  // }
   submit() {
     this.isSubmitting.set(true);
-
     const id = this.backupId();
     const optionsValue = this.optionsForm.value;
     const selectFilesFormValue = this.selectFilesForm.value;
     const selectedOption = this.versionOptions()?.find((x) => x.Version === selectFilesFormValue.selectedOption);
-
-    console.log(selectedOption);
 
     this.#dupServer
       .postApiV1BackupByIdRestore({
@@ -116,7 +99,7 @@ export class RestoreFlowState {
         .getApiV1BackupByIdFilesets({
           id,
         })
-        .pipe(timeout(10000), retry()),
+        .pipe(timeout(12000), retry()),
     ])
       .pipe(
         take(1),

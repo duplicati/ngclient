@@ -63,7 +63,7 @@ declare global {
   }
 }
 
-type BackupSettings = {
+export type BackupSettings = {
   id: string;
   time: string;
 };
@@ -103,6 +103,7 @@ export default class FileTreeComponent {
   startingPath = input<string | null>(null);
   rootPath = input<string | undefined>(undefined);
   backupSettings = input<BackupSettings | null>(null);
+  pathRefreshTrigger = input(false);
   showHiddenNodes = input(false);
   hideShortcuts = input(false);
   includes = output<string[]>();
@@ -119,7 +120,17 @@ export default class FileTreeComponent {
   treeNodes = signal<TreeNode[]>([]);
 
   filterGroups = this.#sysInfo.filterGroups();
-  isByBackupSettings = computed(() => this.rootPath() && this.backupSettings()?.id && this.backupSettings()?.time);
+  isByBackupSettings = computed(() => {
+    const backupSettings = this.backupSettings();
+
+    console.log('isByBackupSettings', backupSettings);
+
+    if (backupSettings === undefined || backupSettings?.id === undefined || backupSettings?.time === undefined) {
+      return false;
+    }
+
+    return true;
+  });
   searchableTreeNodes = computed<TreeNode[]>(() => {
     const query = this.treeSearchQuery();
     return query
@@ -560,13 +571,13 @@ export default class FileTreeComponent {
   #getBackupFiles(path: string | null) {
     const backupSettings = this.backupSettings()!;
     const params: GetApiV1BackupByIdFilesData = {
-      id: backupSettings.id,
+      id: backupSettings.id + '',
       time: backupSettings.time,
       prefixOnly: false,
       folderContents: true,
     };
 
-    if (path) {
+    if (path && path !== '/') {
       params.filter = '@' + path;
     }
 

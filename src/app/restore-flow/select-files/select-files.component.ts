@@ -1,6 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -10,9 +9,8 @@ import {
   SparkleProgressBarComponent,
   SparkleSelectComponent,
 } from '@sparkle-ui/core';
-import { derivedFrom } from 'ngxtension/derived-from';
-import { finalize, map, of, pipe, startWith, switchMap, takeUntil } from 'rxjs';
-import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
+import { finalize } from 'rxjs';
+import FileTreeComponent, { BackupSettings } from '../../core/components/file-tree/file-tree.component';
 import { DuplicatiServerService } from '../../core/openapi';
 import { RestoreFlowState } from '../restore-flow.state';
 
@@ -52,34 +50,45 @@ export default class SelectFilesComponent {
 
   selectFilesForm = this.#restoreFlowState.selectFilesForm;
   selectFilesFormSignal = this.#restoreFlowState.selectFilesFormSignal;
-  selectedOptionSignal = toSignal(this.selectFilesForm.controls.selectedOption.valueChanges);
+  selectOptionSignal = this.#restoreFlowState.selectOptionSignal;
   backupId = this.#restoreFlowState.backupId;
   versionOptionsLoading = this.#restoreFlowState.versionOptionsLoading;
   versionOptions = this.#restoreFlowState.versionOptions;
   isDraft = this.#restoreFlowState.isDraft;
   isFileRestore = this.#restoreFlowState.isFileRestore;
-  backupSettings = computed(() => {
+
+  showFileTree = signal<boolean>(false);
+  backupSettings = signal<BackupSettings | null>(null);
+
+  backupSettingsEffect = effect(() => {
     const id = this.backupId();
-    const selected = this.selectFilesFormSignal();
-    const selectedOption = selected?.selectedOption ? parseInt(selected?.selectedOption as any) : null;
+    const newOption =
+      typeof this.selectOptionSignal() === 'string'
+        ? parseInt(this.selectOptionSignal() as any)
+        : this.selectOptionSignal();
 
-    if (!(typeof selectedOption === 'number') || !id) return null;
+    this.showFileTree.set(false);
 
-    const option = this.versionOptions()?.find((x) => x.Version === selectedOption);
-    const time = option?.Time ?? null;
+    setTimeout(() => {
+      if (!(typeof newOption === 'number') || !id) return;
 
-    if (!time) return null;
+      const option = this.versionOptions()?.find((x) => x.Version === newOption);
+      const time = option?.Time ?? null;
 
-    return {
-      id,
-      time,
-    };
+      if (!time) return;
+
+      this.showFileTree.set(true);
+      this.backupSettings.set({
+        id: id + '',
+        time,
+      } as BackupSettings);
+    });
   });
 
   isRepairing = signal(false);
   repairEffect = effect(() => {
     const isDraft = this.#restoreFlowState.isDraft();
-    const newSelectedOption = this.selectedOptionSignal();
+    const newSelectedOption = this.selectOptionSignal();
 
     if (isDraft && newSelectedOption) {
       const backupId = this.backupId();
@@ -97,42 +106,6 @@ export default class SelectFilesComponent {
         .subscribe();
     }
   });
-
-  rootPathLoaded = signal(false);
-  rootPath = derivedFrom(
-    [this.selectFilesFormSignal, this.backupId],
-    pipe(
-      startWith([null, null]),
-      switchMap(([selectFilesFormSignal, backupId]) => {
-        const selectedOption = selectFilesFormSignal?.selectedOption
-          ? parseInt(selectFilesFormSignal?.selectedOption as any)
-          : null;
-        const id = backupId;
-
-        if (!(typeof selectedOption === 'number') || !id) return of('/');
-
-        this.rootPathLoaded.set(false);
-        const option = this.versionOptions()?.find((x) => x.Version === selectedOption);
-
-        return this.#dupServer
-          .getApiV1BackupByIdFiles({
-            id,
-            time: option?.Time ?? '',
-            prefixOnly: false,
-            folderContents: true,
-          })
-          .pipe(
-            takeUntil(this.selectFilesForm.controls.selectedOption.valueChanges),
-            map((x) => {
-              return (x['Files'] as any)[0].Path;
-            }),
-            finalize(() => {
-              this.rootPathLoaded.set(true);
-            })
-          );
-      })
-    )
-  );
 
   abortLoading() {
     this.selectFilesForm.controls.selectedOption.setValue(null);

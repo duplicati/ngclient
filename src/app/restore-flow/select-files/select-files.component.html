@@ -12,32 +12,22 @@
       }
     </spk-select>
 
-    @if ((isDraft() && isRepairing()) || !rootPathLoaded()) {
+    @if ((isDraft() && isRepairing()) || versionOptionsLoading()) {
       <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
 
       <button spk-button type="button" (click)="abortLoading()" i18n>Cancel</button>
     }
 
-    <!-- <pre>Hello: {{ selectFilesFormSignal()?.selectedOption }}</pre> -->
-
-    @if (
-      rootPathLoaded() &&
-      selectFilesFormSignal()?.selectedOption !== null &&
-      ((isDraft() && !isRepairing()) || !isDraft()) &&
-      selectFilesFormSignal()?.selectedOption
-    ) {
-      <app-file-tree
-        [rootPath]="rootPath()"
-        [backupSettings]="backupSettings()"
-        [multiSelect]="true"
-        [showFiles]="true">
-        <label for="path" i18n>Path</label>
-        <input type="text" id="path" formControlName="filesToRestore" />
-      </app-file-tree>
+    <!-- This is to reset the file tree on backupSettings change -->
+    @if (showFileTree()) {
+      @if (((isDraft() && !isRepairing()) || !isDraft()) && backupSettings()) {
+        <app-file-tree [backupSettings]="backupSettings()" [multiSelect]="true" [showFiles]="true">
+          <label for="path" i18n>Path</label>
+          <input type="text" id="path" formControlName="filesToRestore" />
+        </app-file-tree>
+      }
     }
   }
-
-  <!-- <pre>{{ selectFilesFormSignal() | json }}</pre> -->
 
   <div class="form-actions">
     <button spk-button type="button" (click)="back()" i18n>
