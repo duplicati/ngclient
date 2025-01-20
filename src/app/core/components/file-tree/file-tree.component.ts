@@ -123,8 +123,6 @@ export default class FileTreeComponent {
   isByBackupSettings = computed(() => {
     const backupSettings = this.backupSettings();
 
-    console.log('isByBackupSettings', backupSettings);
-
     if (backupSettings === undefined || backupSettings?.id === undefined || backupSettings?.time === undefined) {
       return false;
     }
@@ -174,7 +172,7 @@ export default class FileTreeComponent {
       ? {
           id: rootPath,
           resolvedpath: rootPath,
-          text: rootPath?.replaceAll('/', ''),
+          text: rootPath,
           parentPath: '',
           children: [],
           evalState: TreeEvalEnum.None,
@@ -450,13 +448,8 @@ export default class FileTreeComponent {
 
   ngOnInit() {
     const startingPath = this.startingPath();
-    const rootPath = this.rootPath();
-
-    console.log(rootPath);
 
     if (startingPath) {
-      console.log(startingPath);
-
       this.currentPath.set(startingPath);
       this.#fetchPathSegmentsRecursively(startingPath);
     } else {
@@ -657,8 +650,6 @@ export default class FileTreeComponent {
 
   #getPath(node: FileTreeNode | null = null, newPath = '/') {
     this.isLoading.set(true);
-
-    console.log(newPath);
 
     (this.#getFilePath(newPath) as Observable<any>).pipe(finalize(() => this.isLoading.set(false))).subscribe({
       next: (x) => {

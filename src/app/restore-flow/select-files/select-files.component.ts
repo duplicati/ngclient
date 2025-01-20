@@ -67,21 +67,22 @@ export default class SelectFilesComponent {
         ? parseInt(this.selectOptionSignal() as any)
         : this.selectOptionSignal();
 
+    if (!(typeof newOption === 'number') || !id) return;
+
+    const option = this.versionOptions()?.find((x) => x.Version === newOption);
+    const time = option?.Time ?? null;
+
+    if (!time) return;
+
     this.showFileTree.set(false);
 
     setTimeout(() => {
-      if (!(typeof newOption === 'number') || !id) return;
-
-      const option = this.versionOptions()?.find((x) => x.Version === newOption);
-      const time = option?.Time ?? null;
-
-      if (!time) return;
-
-      this.backupSettings.set({
+      const settings = {
         id: id + '',
         time,
-      } as BackupSettings);
-      this.getRootPath(this.backupSettings()!);
+      } as BackupSettings;
+      this.backupSettings.set(settings);
+      this.getRootPath(settings);
     });
   });
 
