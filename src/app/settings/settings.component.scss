@@ -69,6 +69,12 @@ section {
   }
 }
 
+.remote-access-form {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(16);
+}
+
 .themes {
   display: flex;
   gap: p2r(8);

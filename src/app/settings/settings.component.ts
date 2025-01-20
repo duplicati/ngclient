@@ -1,7 +1,7 @@
-import { JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
+  SparkleAlertComponent,
   SparkleButtonComponent,
   SparkleDividerComponent,
   SparkleFormFieldComponent,
@@ -91,7 +91,7 @@ type UsageStatisticsType = (typeof USAGE_STATISTICS_OPTIONS)[number];
     SparkleFormFieldComponent,
     SparkleIconComponent,
     SparkleDividerComponent,
-    JsonPipe,
+    SparkleAlertComponent,
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss',
@@ -139,6 +139,59 @@ export default class SettingsComponent {
         finalize(() => this.updatingChannel.set(false)),
         catchError(() => {
           this.updateChannel.set(prevChannel);
+          return of(null);
+        })
+      )
+      .subscribe();
+  }
+
+  allowRemoteAccess = signal(false); // if true then send 'any' if false then send 'loopback'
+  allowedHostnames = signal<string>('');
+  loadedAllowedHostnames = signal<string>('');
+  updatingRemoteAccess = signal(false);
+  updatingAllowedHosts = signal(false);
+
+  updateRemoteAccess() {
+    const prevValue = this.allowRemoteAccess();
+    const newValue = !prevValue;
+
+    this.allowRemoteAccess.set(newValue);
+
+    if (!newValue) {
+      this.#dupServer
+        .patchApiV1Serversettings({
+          requestBody: {
+            'server-listen-interface': newValue ? 'any' : 'loopback',
+          },
+        })
+        .pipe(
+          finalize(() => this.updatingRemoteAccess.set(false)),
+          catchError(() => {
+            this.allowRemoteAccess.set(prevValue);
+            return of(null);
+          })
+        )
+        .subscribe();
+    }
+  }
+
+  updateAllowedHostnames() {
+    const loadedAllowedHostnames = this.loadedAllowedHostnames();
+    const allowedHostnames = this.allowedHostnames();
+
+    this.updatingAllowedHosts.set(true);
+
+    this.#dupServer
+      .patchApiV1Serversettings({
+        requestBody: {
+          'server-listen-interface': 'any',
+          'allowed-hostnames': allowedHostnames,
+        },
+      })
+      .pipe(
+        finalize(() => this.updatingAllowedHosts.set(false)),
+        catchError(() => {
+          this.allowedHostnames.set(loadedAllowedHostnames);
           return of(null);
         })
       )
@@ -293,6 +346,9 @@ export default class SettingsComponent {
 
         this.disableTrayIconLogin.set(res['disable-tray-icon-login'] === 'False' ? false : true);
         this.updateChannel.set(res['update-channel'] as UpdateChannel);
+        this.allowRemoteAccess.set(res['server-listen-interface'] === 'any');
+        this.allowedHostnames.set(res['allowed-hostnames']);
+        this.loadedAllowedHostnames.set(res['allowed-hostnames']);
       },
     });
   }

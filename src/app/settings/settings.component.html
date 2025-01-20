@@ -138,13 +138,57 @@
 
   <section>
     <div class="left">
-      <h3 i18n>Tray icon</h3>
-      <p i18n>Disable the tray icon login</p>
+      <h3 i18n>Allow remote access (requires restart)</h3>
+      <p i18n>
+        By allowing remote access, the server listens to requests from any machine on your network. If you enable this
+        option, make sure you are always using the computer on a secure firewall protected network.
+      </p>
+    </div>
+
+    <div class="right remote-access-form">
+      <spk-toggle class="primary raised" [class.active]="allowRemoteAccess()" (click)="updateRemoteAccess()">
+        <label i18n>Allow remote access</label>
+      </spk-toggle>
+
+      @if (allowRemoteAccess()) {
+        <spk-form-field>
+          <label for="allowedHostnames" i18n>Allowed hostnames</label>
+          <textarea type="text" id="allowedHostnames" [(ngModel)]="allowedHostnames"></textarea>
+        </spk-form-field>
+
+        <spk-alert type="primary" i18n>
+          To prevent various DNS based attacks, Duplicati limits the allowed hostnames to the ones listed here. Direct
+          IP access and localhost is always allowed. Multiple hostnames can be supplied with a semicolon separator. If
+          any of the allowed hostnames is an asterisk (*), all hostnames are allowed and this feature is disabled. If
+          the field is empty, only IP address and localhost access is allowed.
+        </spk-alert>
+
+        <button
+          spk-button
+          class="raised primary"
+          [class.loader]="updatingAllowedHosts()"
+          (click)="updateAllowedHostnames()"
+          i18n>
+          Update allowed hostnames
+        </button>
+      }
+    </div>
+  </section>
+
+  <section>
+    <div class="left">
+      <h3 i18n>Prevent tray icon automatic log-in</h3>
+      <p i18n>
+        By default, the tray icon will open the user interface with a token that unlocks the user interface. This
+        ensures that you can access the user interface from the tray icon, while requiring others to enter a password.
+        If you prefer having to type in the password, even when accessing the user interface from the tray icon, enable
+        this option.
+      </p>
     </div>
 
     <div class="right">
       <spk-toggle class="primary raised" [class.active]="disableTrayIconLogin()" (click)="saveDisableTrayIconLogin()">
-        <label i18n>Disable the tray icon login</label>
+        <label i18n>Prevent tray icon automatic log-in</label>
       </spk-toggle>
     </div>
   </section>
