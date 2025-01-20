@@ -6,6 +6,7 @@ import {
   SparkleProgressBarComponent,
   SparkleRadioComponent,
   SparkleSelectComponent,
+  SparkleToggleComponent,
 } from '@sparkle-ui/core';
 import { derivedFrom } from 'ngxtension/derived-from';
 import { catchError, finalize, map, of, pipe, startWith } from 'rxjs';
@@ -80,6 +81,7 @@ type UsageStatisticsType = (typeof USAGE_STATISTICS_OPTIONS)[number];
     SparkleRadioComponent,
     SparkleSelectComponent,
     SparkleProgressBarComponent,
+    SparkleToggleComponent,
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss',
@@ -127,6 +129,32 @@ export default class SettingsComponent {
         finalize(() => this.updatingChannel.set(false)),
         catchError(() => {
           this.updateChannel.set(prevChannel);
+          return of(null);
+        })
+      )
+      .subscribe();
+  }
+
+  updatingDisableTrayIconLogin = signal(false);
+  disableTrayIconLogin = signal(false);
+
+  saveDisableTrayIconLogin() {
+    const prevValue = this.disableTrayIconLogin();
+    const newValue = !prevValue;
+
+    this.updatingDisableTrayIconLogin.set(true);
+    this.disableTrayIconLogin.set(newValue);
+
+    this.#dupServer
+      .patchApiV1Serversettings({
+        requestBody: {
+          'disable-tray-icon-login': newValue ? 'True' : 'False',
+        },
+      })
+      .pipe(
+        finalize(() => this.updatingDisableTrayIconLogin.set(false)),
+        catchError(() => {
+          this.disableTrayIconLogin.set(prevValue);
           return of(null);
         })
       )
@@ -215,6 +243,7 @@ export default class SettingsComponent {
           usageStatistics: res['usage-reporter-level'],
         });
 
+        this.disableTrayIconLogin.set(res['disable-tray-icon-login'] === 'False' ? false : true);
         this.updateChannel.set(res['update-channel'] as UpdateChannel);
       },
     });

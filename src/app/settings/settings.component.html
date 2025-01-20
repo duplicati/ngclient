@@ -100,6 +100,19 @@
 
   <section>
     <div class="left">
+      <h3 i18n>Tray icon</h3>
+      <p i18n>Disable the tray icon login</p>
+    </div>
+
+    <div class="right">
+      <spk-toggle class="primary raised" [class.active]="disableTrayIconLogin()" (click)="saveDisableTrayIconLogin()">
+        <label for="disable-tray-icon-login" i18n>Disable the tray icon login</label>
+      </spk-toggle>
+    </div>
+  </section>
+
+  <section>
+    <div class="left">
       <h3 i18n>Update channel</h3>
       <p>
         @if (updateChannel() !== '' && sysinfo()?.ServerVersion) {
