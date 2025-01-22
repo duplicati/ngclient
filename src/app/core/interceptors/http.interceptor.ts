@@ -16,9 +16,10 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const ls = inject(LOCALSTORAGE);
   const env = inject(ENVIRONMENT_TOKEN);
-  const sparkleAlertService = inject(SparkleAlertService);
   const locale = ls.getItem('locale');
+  const sparkleAlertService = inject(SparkleAlertService);
   const mappedLocale = mapLocale(locale);
+  const loginRequest = req.url === '/api/v1/auth/login';
 
   let modifiedRequest = req;
 
@@ -40,11 +41,11 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((error) => {
       sparkleAlertService.error(error.message);
 
-      if (error.status === 401 && !refreshRequest) {
+      if (!loginRequest && error.status === 401 && !refreshRequest) {
         refreshRequest = auth.refreshToken().pipe(shareReplay());
       }
 
-      if (error.status === 401) {
+      if (!loginRequest && error.status === 401) {
         return refreshRequest!.pipe(
           switchMap(() => {
             return next(

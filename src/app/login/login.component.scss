@@ -14,6 +14,11 @@ form {
   gap: p2r(24);
 }
 
+spk-alert {
+  max-width: p2r(320);
+  margin: 0 auto;
+}
+
 h3 {
   font: var(--title-30);
 }

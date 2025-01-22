@@ -1,5 +1,14 @@
 <form [formGroup]="loginForm" (submit)="submit()">
+  @if (failedLogin()) {
+    <spk-alert type="warning">
+      Remember to enter a password, if you can't remember the password open the duplicati client on the machine in
+      question and make sure you open it through the tray icon then go into settings to change the password.
+    </spk-alert>
+  }
+
   <div class="login-row">
+    <input type="text" hidden autocomplete="off" name="username" formControlName="user" />
+
     <spk-form-field>
       <label for="password">
         Password
@@ -11,6 +20,7 @@
           <spk-icon>question</spk-icon>
         </a>
       </label>
+
       <input
         type="password"
         name="password"
