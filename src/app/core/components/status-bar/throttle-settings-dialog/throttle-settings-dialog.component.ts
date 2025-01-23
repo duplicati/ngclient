@@ -84,6 +84,22 @@ export default class ThrottleSettingsDialogComponent {
     });
   }
 
+  blockDecimalKeys($event: KeyboardEvent) {
+    if (['.', ','].includes($event.key)) return $event.preventDefault();
+  }
+
+  cleanupInputAfterPasting($event: ClipboardEvent) {
+    $event.preventDefault();
+
+    const clipboardData = $event.clipboardData?.getData('text/plain');
+
+    if (!clipboardData) return;
+
+    const cleanedData = clipboardData.replaceAll(/[\.,]/g, '');
+
+    ($event.target as HTMLInputElement).value = cleanedData;
+  }
+
   submit() {
     this.isSubmitting.set(true);
 
@@ -94,8 +110,6 @@ export default class ThrottleSettingsDialogComponent {
     const downloadSpeed = this.maxDownloadActive()
       ? `${this.maxDownload()}${UNIT_MAP[this.maxDownloadUnit().replace('/s', '') as keyof typeof UNIT_MAP]}`
       : '';
-
-    console.log(uploadSpeed, downloadSpeed);
 
     this.#dupServer
       .patchApiV1Serversettings({

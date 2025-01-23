@@ -14,7 +14,12 @@
       </spk-checkbox>
 
       <spk-form-field>
-        <input type="number" [(ngModel)]="maxUpload" [disabled]="!maxUploadActive()" />
+        <input
+          type="number"
+          (paste)="cleanupInputAfterPasting($event)"
+          (keydown)="blockDecimalKeys($event)"
+          [(ngModel)]="maxUpload"
+          [disabled]="!maxUploadActive()" />
       </spk-form-field>
 
       <spk-select [hideClearButton]="true">
@@ -36,7 +41,12 @@
       </spk-checkbox>
 
       <spk-form-field>
-        <input type="number" [(ngModel)]="maxDownload" [disabled]="!maxDownloadActive()" />
+        <input
+          type="number"
+          (paste)="cleanupInputAfterPasting($event)"
+          (keydown)="blockDecimalKeys($event)"
+          [(ngModel)]="maxDownload"
+          [disabled]="!maxDownloadActive()" />
       </spk-form-field>
 
       <spk-select [hideClearButton]="true">
