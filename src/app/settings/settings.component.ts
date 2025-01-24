@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   SparkleAlertComponent,
@@ -21,8 +21,10 @@ import { DuplicatiServerService } from '../core/openapi';
 import { LOCALSTORAGE } from '../core/services/localstorage.token';
 import { SysinfoState } from '../core/states/sysinfo.state';
 import { LayoutState } from '../layout/layout.state';
+import AdvancedOptionsSettingsComponent from './advanced-options-settings/advanced-options-settings.component';
 import { RemoteControlComponent } from './remote-control/remote-control.component';
 import { RemoteControlState } from './remote-control/remote-control.state';
+import { ServerSettingsService } from './server-settings.service';
 
 const fb = new FormBuilder();
 
@@ -81,6 +83,7 @@ type UsageStatisticsType = (typeof USAGE_STATISTICS_OPTIONS)[number];
     ReactiveFormsModule,
     StatusBarComponent,
     RemoteControlComponent,
+    AdvancedOptionsSettingsComponent,
     SparkleOptionComponent,
     SparkleButtonComponent,
     SparkleRadioComponent,
@@ -101,6 +104,7 @@ export default class SettingsComponent {
   #layoutState = inject(LayoutState);
   #sysinfo = inject(SysinfoState);
   #dupServer = inject(DuplicatiServerService);
+  #serverSettingsService = inject(ServerSettingsService);
   #remoteControlState = inject(RemoteControlState);
   #ls = inject(LOCALSTORAGE);
   #initLang = this.#ls.getItem('locale') ?? 'en-US';
@@ -296,10 +300,6 @@ export default class SettingsComponent {
     return new Array(typeLen).fill(0).map((_, i) => i);
   }
 
-  ngOnInit() {
-    this.getServerSettings();
-  }
-
   saveLocale(x: string) {
     this.#ls.setItem('locale', x);
     window.location.reload();
@@ -328,30 +328,30 @@ export default class SettingsComponent {
       .subscribe();
   }
 
-  getServerSettings() {
-    return this.#dupServer.getApiV1Serversettings().subscribe({
-      next: (res) => {
-        const startupDelay = res['startup-delay'] as string;
-        const unit = startupDelay.slice(-1);
-        const timeStr = startupDelay.slice(0, -1);
-        const timeUnitOptions = ['s', 'm', 'h'];
+  serverSettingsEffect = effect(() => {
+    const serverSettings = this.#serverSettingsService.serverSettings();
 
-        this.settingsForm.patchValue({
-          pauseSettings: {
-            time: parseInt(timeStr == '' ? '0' : timeStr),
-            timeType: (timeUnitOptions.includes(unit) ? unit : 's') as TimeTypes,
-          },
-          usageStatistics: res['usage-reporter-level'],
-        });
+    if (serverSettings === undefined) return;
 
-        this.disableTrayIconLogin.set(res['disable-tray-icon-login'] === 'False' ? false : true);
-        this.updateChannel.set(res['update-channel'] as UpdateChannel);
-        this.allowRemoteAccess.set(res['server-listen-interface'] === 'any');
-        this.allowedHostnames.set(res['allowed-hostnames']);
-        this.loadedAllowedHostnames.set(res['allowed-hostnames']);
+    const startupDelay = serverSettings['startup-delay'] as string;
+    const unit = startupDelay.slice(-1);
+    const timeStr = startupDelay.slice(0, -1);
+    const timeUnitOptions = ['s', 'm', 'h'];
+
+    this.settingsForm.patchValue({
+      pauseSettings: {
+        time: parseInt(timeStr == '' ? '0' : timeStr),
+        timeType: (timeUnitOptions.includes(unit) ? unit : 's') as TimeTypes,
       },
+      usageStatistics: serverSettings['usage-reporter-level'],
     });
-  }
+
+    this.disableTrayIconLogin.set(serverSettings['disable-tray-icon-login'] === 'False' ? false : true);
+    this.updateChannel.set(serverSettings['update-channel'] as UpdateChannel);
+    this.allowRemoteAccess.set(serverSettings['server-listen-interface'] === 'any');
+    this.allowedHostnames.set(serverSettings['allowed-hostnames']);
+    this.loadedAllowedHostnames.set(serverSettings['allowed-hostnames']);
+  });
 
   languageDisplay() {
     const _self = this;

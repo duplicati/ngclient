@@ -23,7 +23,7 @@ export const createRestoreOptionsForm = () => {
 };
 
 @Component({
-    selector: 'app-options',
+    selector: 'app-advanced-options-settings',
     imports: [
         ReactiveFormsModule,
         ToggleCardComponent,

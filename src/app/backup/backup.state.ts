@@ -612,6 +612,23 @@ export class BackupState {
     });
   }
 
+  addFreeTextOption(name: string, value: string, formViewOptions?: Partial<FormView>) {
+    const group = this.optionsForm.controls.advancedOptions;
+    const option: FormView = {
+      name,
+      type: 'String',
+      defaultValue: value,
+      ...formViewOptions,
+    };
+
+    this.createFormField(group, option, value);
+    this.selectedOptions.update((y) => {
+      y.push(option);
+
+      return y;
+    });
+  }
+
   createFormField(group: FormGroup, element: FormView, defaultValue?: any) {
     if (
       element.type === 'String' ||
@@ -646,7 +663,7 @@ export class BackupState {
     }
 
     if (element.type === 'Boolean') {
-      group.addControl(element.name as string, fb.control(defaultValue === 'true'));
+      group.addControl(element.name as string, fb.control(defaultValue === 'true' || defaultValue === 'True'));
       return;
     }
 

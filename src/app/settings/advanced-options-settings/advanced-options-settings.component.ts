@@ -1,8 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, effect, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
 import {
   SparkleButtonComponent,
   SparkleCheckboxComponent,
@@ -14,11 +12,13 @@ import {
   SparkleToggleComponent,
   SparkleTooltipComponent,
 } from '@sparkle-ui/core';
-import { debounceTime, of } from 'rxjs';
+import { finalize } from 'rxjs';
+import { BackupState } from '../../backup/backup.state';
+import { FormView } from '../../backup/destination/destination.config-utilities';
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
-import { BackupState } from '../backup.state';
-import { FormView } from '../destination/destination.config-utilities';
+import { DuplicatiServerService } from '../../core/openapi';
+import { ServerSettingsService } from '../server-settings.service';
 
 const fb = new FormBuilder();
 const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'] as const;
@@ -86,38 +86,48 @@ export const createOptionsForm = (
     FileTreeComponent,
     ToggleCardComponent,
   ],
-  templateUrl: './options.component.html',
-  styleUrl: './options.component.scss',
+  templateUrl: './advanced-options-settings.component.html',
+  styleUrl: './advanced-options-settings.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [BackupState],
 })
-export default class OptionsComponent {
+export default class AdvancedOptionsSettingsComponent {
   #backupState = inject(BackupState);
-  #router = inject(Router);
-  #route = inject(ActivatedRoute);
+  #serverSettingsService = inject(ServerSettingsService);
+  #dupServer = inject(DuplicatiServerService);
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
 
   optionsForm = this.#backupState.optionsForm;
   selectedOptions = this.#backupState.selectedOptions;
   nonSelectedOptions = this.#backupState.nonSelectedOptions;
-  isSubmitting = this.#backupState.isSubmitting;
+  isSubmitting = signal(false);
+  isLoadingOptions = signal(true);
   sizeOptions = signal(SIZE_OPTIONS);
-  retentionOptions = signal(RETENTION_OPTIONS);
-  volumeSizeSignal = toSignal(
-    this.optionsForm.controls.remoteVolumeSize.get('size')?.valueChanges.pipe(debounceTime(300)) ?? of(null)
-  );
-  volumeUnitSignal = toSignal(
-    this.optionsForm.controls.remoteVolumeSize.get('unit')?.valueChanges.pipe(debounceTime(300)) ?? of(null)
-  );
-  exceededVolumeSize = computed(() => {
-    const currentSize = this.volumeSizeSignal() ?? this.optionsForm.controls.remoteVolumeSize.get('size')?.value;
-    const currentUnit = this.volumeUnitSignal() ?? this.optionsForm.controls.remoteVolumeSize.get('unit')?.value;
+  serverSettingsEffect = effect(() => {
+    const serverSettings = this.#serverSettingsService.serverSettings();
 
-    if (currentSize === null || currentSize === undefined || currentUnit === null || currentUnit === undefined) {
-      return false;
-    }
+    if (serverSettings === undefined) return;
 
-    const current = currentSize * Math.pow(1024, SIZE_OPTIONS.indexOf(currentUnit));
-    return current > MaxVolumeSize || current < MinVolumeSize;
+    this.isLoadingOptions.set(true);
+
+    const availableOptions = this.#backupState.nonSelectedOptions();
+    const entries = Object.entries(serverSettings);
+    entries.forEach(([key, value], index) => {
+      if (key.startsWith('--')) {
+        const formControlName = key.replace('--', '');
+        const option = availableOptions.find((option) => option.name === formControlName);
+
+        if (option !== undefined) {
+          this.addNewOption(option, value);
+        } else {
+          this.addFreeTextOption(formControlName, value);
+        }
+      }
+
+      if (index === entries.length - 1) {
+        this.isLoadingOptions.set(false);
+      }
+    });
   });
 
   oauthStartTokenCreation(_: any) {}
@@ -131,46 +141,54 @@ export default class OptionsComponent {
     return group.controls[formControlName].value;
   }
 
-  removeFormView(option: FormView, _: any) {
-    this.#backupState.removeOptionFromFormGroup(option);
+  removeFormView(option: FormView) {
+    const key = '--' + option.name;
+    this.#dupServer
+      .patchApiV1Serversettings({
+        requestBody: {
+          [key]: null,
+        },
+      })
+      .subscribe({
+        next: (res) => {
+          window.location.reload();
+        },
+      });
   }
 
-  addNewOption(option: FormView) {
-    this.#backupState.addOptionToFormGroup(option);
+  addNewOption(option: FormView, defaultValue?: any) {
+    this.#backupState.addOptionToFormGroup(option, defaultValue);
   }
 
-  retentionOptionDisplayFn() {
-    const items = this.retentionOptions();
-    return (val: string) => {
-      const item = items.find((x) => x.value === val);
-
-      if (!item) {
-        return '';
-      }
-
-      return item.name;
-    };
-  }
-
-  displayFn() {
-    const items = this.#backupState.advancedOptions();
-
-    return (val: string) => {
-      const item = items.find((x) => x.name === val);
-
-      if (!item) {
-        return '';
-      }
-
-      return `${item.name}`;
-    };
-  }
-
-  goBack() {
-    this.#router.navigate(['schedule'], { relativeTo: this.#route.parent });
+  addFreeTextOption(name: string, value: string) {
+    this.#backupState.addFreeTextOption(name, value, {
+      // shortDescription: 'Free text',
+      // longDescription: 'Free text',
+    });
   }
 
   submit() {
-    this.#backupState.submit();
+    this.isSubmitting.set(true);
+
+    const advancedOptions = this.optionsForm.value.advancedOptions;
+
+    if (!advancedOptions) return;
+
+    const mappedAdvancedOptions = this.#prefixKeysWithDashes(advancedOptions!);
+
+    this.#dupServer
+      .patchApiV1Serversettings({
+        requestBody: mappedAdvancedOptions,
+      })
+      .pipe(finalize(() => this.isSubmitting.set(false)))
+      .subscribe();
+  }
+
+  #prefixKeysWithDashes(obj: Record<string, any>) {
+    let newObj: Record<string, any> = {};
+    for (const key in obj) {
+      newObj[`--${key}`] = obj[key];
+    }
+    return newObj;
   }
 }
