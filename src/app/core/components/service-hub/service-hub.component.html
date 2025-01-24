@@ -2,6 +2,14 @@
   <spk-icon>info</spk-icon>
 </button>
 
+<button spk-button [class]="notifications().length ? 'warn' : ''" (click)="toggleNotifications()">
+  @if (this.notifications().length) {
+    <spk-icon>bell-ringing</spk-icon>
+  } @else {
+    <spk-icon>bell</spk-icon>
+  }
+</button>
+
 @if (shownMessage()) {
   <div class="preview-alert-wrap">
     <spk-alert [type]="shownMessage()?.type ?? 'error'">
@@ -16,13 +24,33 @@
   </div>
 }
 
+@if (isNotificationsOpen()) {
+  <div class="alert-stream-modal">
+    <div class="alert-stream-modal-content">
+      <h6 class="paragraph-20" i18n>
+        Notifications
+
+        <button spk-button (click)="toggleNotifications()">
+          <spk-icon>x-circle</spk-icon>
+        </button>
+      </h6>
+
+      <div class="alert-stream-modal-list-scroller" #scroller>
+        <div class="alert-stream-modal-list">
+          <app-notifications />
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
 @if (isAlertsOpen()) {
   <div class="alert-stream-modal">
     <div class="alert-stream-modal-content">
       <h6 class="paragraph-20" i18n>
         Alerts
 
-        <button spk-button (click)="closeAlerts()">
+        <button spk-button (click)="toggleAlerts()">
           <spk-icon>x-circle</spk-icon>
         </button>
       </h6>

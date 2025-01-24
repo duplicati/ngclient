@@ -1,0 +1,134 @@
+@for (notification of notifications(); track notification.ID) {
+  <spk-alert [type]="getAlertType(notification.Type)">
+    <div sparkle-alert-title>{{ notification.Title }}</div>
+
+    <div sparkle-alert-content class="content">
+      @if (notification.Action !== 'update:new' && notification.Action !== 'update:manual') {
+        {{ notification.Message }}
+      }
+
+      @if (notification?.DownloadLink) {
+        <div i18n>
+          If the backup file was not downloaded automatically,
+          <a [href]="notification.DownloadLink" target="_blank">right click and choose "Save as …"</a>
+        </div>
+      }
+
+      <div class="actions">
+        @if (notification.Message?.includes('please run repair')) {
+          <button spk-button class="small outlined" (click)="doRepair(notification.BackupID!)" i18n>Repair</button>
+        }
+
+        @if (notification.Action?.startsWith('bug-report:created:') && !notification.DownloadLink) {
+          <button spk-button class="small outlined" (click)="doDownloadBugreport(notification)" i18n>Download</button>
+        }
+
+        @if (notification.Action === 'update:new') {
+          <div class="message">
+            <ng-container i18n>New update found:</ng-container>
+            <a [href]="serverState()?.UpdateDownloadLink">{{ notification.Message }}</a>
+
+            @if (serverState()?.UpdaterState === 'Downloading') {
+              <spk-progress-bar [value]="serverState()?.UpdateDownloadProgress" />
+            }
+
+            <button spk-button class="small outlined" (click)="doShowUpdate()" i18n>Show Update</button>
+          </div>
+        }
+
+        @if (notification.Action === 'backup:show-log') {
+          <button spk-button class="small outlined" (click)="doShowLog(notification.BackupID!)" i18n>Show Log</button>
+        }
+
+        <button spk-button class="small outlined" (click)="deleteNotificationByIndex($index)" i18n>Dismiss</button>
+      </div>
+    </div>
+  </spk-alert>
+}
+<!-- 
+<ul class="notification">
+  @for (item of notificationsSignal(); track item.ID) {
+    @if ($index < 4) {
+      <li [class]="item.Type.toLowerCase()">
+        <div class="title">{{ item.Title }}</div>
+        <div class="content">
+          @if (item.Action !== 'update:new' && item.Action !== 'update:manual') {
+            <div class="message">{{ item.Message }}</div>
+          }
+          
+          @if (item.DownloadLink) {
+            <div>
+              If the backup file was not downloaded automatically, 
+              <a [href]="item.DownloadLink" target="_blank">right click and choose "Save as …"</a>.
+            </div>
+          }
+          
+          @if (item.Action !== 'update:new' && item.Action !== 'update:manual') {
+            <div class="buttons">
+              <a (click)="doDismiss(item.ID)" class="button dismiss">Dismiss</a>
+              
+              @if (item.Action === 'backup:show-log') {
+                <a (click)="doShowLog(item.BackupID!)" class="button showlog">Show</a>
+              }
+              
+              @if (item.Message.includes('please run repair')) {
+                <a (click)="doRepair(item.BackupID!)" class="button repairdb">Repair</a>
+              }
+              
+              @if (item.Action.startsWith('bug-report:created:') && !item.DownloadLink) {
+                <a (click)="doDownloadBugreport(item)" class="button downloadbugreport">Download</a>
+              }
+              
+              <div class="clear"></div>
+            </div>
+          }
+          
+          @if (item.Action === 'update:new') {
+            <div class="message">
+              New update found: <a [href]="updateState().downloadLink">{{ item.Message }}</a>
+            </div>
+            
+            @if (updateState().state === 'Downloading') {
+              <progress-bar 
+                [text]="'Downloading update...'" 
+                [progress]="updateState().downloadProgress">
+              </progress-bar>
+            }
+            
+            <div class="buttons">
+              <a (click)="doDismiss(item.ID)" class="button dismiss">Dismiss</a>
+              <a [href]="updateState().downloadLink" class="button installupdate">Download</a>
+              <a (click)="doShowUpdate()" class="button showupdate">Show</a>
+              <div class="clear"></div>
+            </div>
+          }
+          
+          @if (item.Action === 'update:manual') {
+            <div class="message">
+              Manual update found: <a [href]="item.Message" target="_blank" rel="external">
+                {{ item.Message }}
+              </a>
+            </div>
+            
+            <div class="buttons">
+              <a (click)="doDismiss(item.ID)" class="button dismiss">Dismiss</a>
+              <a [href]="item.Message" target="_blank" rel="external" class="button showupdate">Show</a>
+              <div class="clear"></div>
+            </div>
+          }
+        </div>
+      </li>
+    }
+  }
+  
+  @if (notificationsSignal().length > 1) {
+    <li class="error">
+      <div class="content">
+        <div class="buttons">
+          <a (click)="doDismissAll()" class="button dismiss">Dismiss all</a>
+          <div class="clear"></div>
+        </div>
+      </div>
+    </li>
+  }
+</ul> -->

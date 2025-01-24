@@ -9,6 +9,7 @@ import {
 import { finalize } from 'rxjs';
 import { DuplicatiServerService } from '../../openapi';
 import { RelativeTimePipe } from '../../pipes/relative-time.pipe';
+import { RelayconfigState } from '../../states/relayconfig.state';
 import { PauseDialogComponent } from './pause-dialog/pause-dialog.component';
 import { StatusBarState } from './status-bar.state';
 import ThrottleSettingsDialogComponent from './throttle-settings-dialog/throttle-settings-dialog.component';
@@ -35,6 +36,7 @@ export default class StatusBarComponent {
   #dupServer = inject(DuplicatiServerService);
   #statusBarState = inject(StatusBarState);
   #dialog = inject(SparkleDialogService);
+  #relayconfigState = inject(RelayconfigState);
 
   minsAgo = date.setMinutes(date.getMinutes() - 1);
 
@@ -75,11 +77,8 @@ export default class StatusBarComponent {
       .subscribe();
   }
 
-  ngOnInit() {
-    this.#statusBarState.start();
-  }
-
-  ngOnDestroy() {
-    this.#statusBarState.stop();
+  ngAfterViewInit() {
+    const defaultConnectionMethod = this.#relayconfigState.relayIsEnabled() ? 'longpoll' : 'websocket';
+    this.#statusBarState.setConnectionMethod(defaultConnectionMethod);
   }
 }

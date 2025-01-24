@@ -18,6 +18,8 @@ import {
   SparkleButtonComponent,
   SparkleIconComponent,
 } from '@sparkle-ui/core';
+import { NotificationsComponent } from '../../../notifications/notifications.component';
+import { NotificationsState } from '../../../notifications/notifications.state';
 
 const fb = new FormBuilder();
 
@@ -34,6 +36,7 @@ type Interval = ReturnType<typeof setInterval>;
     SparkleIconComponent,
     SparkleButtonComponent,
     SparkleAlertComponent,
+    NotificationsComponent,
   ],
   templateUrl: './service-hub.component.html',
   styleUrl: './service-hub.component.scss',
@@ -41,6 +44,7 @@ type Interval = ReturnType<typeof setInterval>;
 })
 export default class ServiceHubComponent {
   #sparkleAlertService = inject(SparkleAlertService);
+  #notificationsState = inject(NotificationsState);
 
   isSubmitting = signal(false);
   messageSent = signal(false);
@@ -48,6 +52,7 @@ export default class ServiceHubComponent {
     message: fb.control('', [Validators.required]),
   });
 
+  notifications = this.#notificationsState.notifications;
   shownMessage = signal<SparkleAlertItemCountDown | null>(null);
   shownMessageInterval: Interval | null = null;
   alertHistory = this.#sparkleAlertService.alertHistory;
@@ -56,6 +61,7 @@ export default class ServiceHubComponent {
   numberOfOpenAlerts = computed(() => this.alertHistory().filter((x) => x.isOpen).length);
   scroller = viewChild<ElementRef<HTMLDivElement>>('scroller');
   isAlertsOpen = model<boolean>(false);
+  isNotificationsOpen = model<boolean>(false);
   previousHistoryCount = signal<number | null>(null);
 
   constructor() {
@@ -110,8 +116,12 @@ export default class ServiceHubComponent {
     }
   }
 
-  closeAlerts() {
-    this.isAlertsOpen.set(false);
+  toggleNotifications() {
+    this.isNotificationsOpen.set(!this.isNotificationsOpen());
+
+    if (this.isAlertsOpen()) {
+      this.toggleAlerts();
+    }
   }
 
   private scrollToBottom() {

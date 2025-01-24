@@ -1,6 +1,7 @@
 import { inject, Injector } from '@angular/core';
 import { Routes } from '@angular/router';
 import { map, switchMap, zip } from 'rxjs';
+import { StatusBarState } from './core/components/status-bar/status-bar.state';
 import { AppAuthState } from './core/states/app-auth.state';
 import { RelayconfigState } from './core/states/relayconfig.state';
 import { SysinfoState } from './core/states/sysinfo.state';
@@ -18,7 +19,9 @@ export const TokenInMemoryGuard = () => {
 
 export const PreloadGuard = () => {
   const relayconfigState = inject(RelayconfigState);
+  const statusBarState = inject(StatusBarState);
   const injector = inject(Injector);
+  const defaultConnectionMethod = relayconfigState.relayIsEnabled() ? 'longpoll' : 'websocket';
 
   // NOTE - The injects are happning twice because we use toSignal inside so
   // when injected they fire requests this is why they cant be combined
@@ -28,7 +31,7 @@ export const PreloadGuard = () => {
     injector.get(WebModulesState).preload(true),
   ];
 
-  if (relayconfigState.configLoaded === null) return zip(zipArr);
+  if (relayconfigState.configLoaded === null) return zip(zipArr).pipe(map(() => defaultConnectionMethod));
 
   return relayconfigState.configLoaded?.pipe(switchMap(() => zip(zipArr)));
 };

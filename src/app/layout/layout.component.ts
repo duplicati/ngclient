@@ -13,6 +13,7 @@ import ServiceHubComponent from '../core/components/service-hub/service-hub.comp
 import { DuplicatiServerService } from '../core/openapi';
 import { BackupsState } from '../core/states/backups.state';
 import { RelayconfigState } from '../core/states/relayconfig.state';
+import { NotificationsState } from '../notifications/notifications.state';
 import { ChangePassphraseAlertDialogComponent } from './change-passphrase-alert-dialog/change-passphrase-alert-dialog.component';
 import { LayoutState } from './layout.state';
 
@@ -40,11 +41,13 @@ export default class LayoutComponent {
   #backupsState = inject(BackupsState);
   #relayConfigState = inject(RelayconfigState);
   #dialog = inject(SparkleDialogService);
+  #notificaitonsState = inject(NotificationsState);
 
   relayIsEnabled = this.#relayConfigState.relayIsEnabled;
   isDarkMode = this.#layoutState.isDarkMode;
 
   ngOnInit() {
+    this.#notificaitonsState.init();
     this.#backupsState.getBackups(true);
     return this.#dupServer.getApiV1Serversettings().subscribe({
       next: (res) => {

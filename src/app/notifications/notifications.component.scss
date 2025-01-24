@@ -1,0 +1,19 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(8);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(4);
+}
+
+.actions {
+  display: flex;
+  gap: p2r(4);
+  justify-content: flex-end;
+}
