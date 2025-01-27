@@ -102,11 +102,12 @@
 
     [action] {
       padding: 0;
-      gap: p2r(4);
+      gap: 0;
       border: 1px solid transparent;
 
       &.active {
-        border-color: var(--base-level-40);
+        border-color: transparent;
+        --list-active-bg: var(--primary-level-20);
       }
 
       &.indeterminate {
@@ -126,12 +127,18 @@
       }
 
       .icon {
-        width: p2r(24);
+        width: p2r(48);
+        gap: p2r(4);
         height: p2r(24);
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
+
+        &.file {
+          width: p2r(32);
+          padding: p2r(0 4);
+        }
       }
     }
   }

@@ -8,6 +8,54 @@
     </button>
   </div>
 
+  @let _backup = backup();
+  @if (_backup) {
+    <div class="backup">
+      <div class="text">
+        <h3>
+          {{ _backup.Backup?.Name ?? MISSING_BACKUP_NAME }}
+          <spk-icon>database</spk-icon>
+        </h3>
+
+        <p>
+          <span i18n>Last successful backup:</span>
+          {{ _backup.Backup?.Metadata?.['LastBackupDate'] | date: 'short' }}
+          @if (_backup.Backup?.Metadata?.['LastBackupDuration']) {
+            -
+            <ng-container i18n>took</ng-container>
+            {{ _backup.Backup?.Metadata?.['LastBackupDuration'] | durationFormat }}
+          } @else {
+            <ng-container i18n>N/A</ng-container>
+          }
+        </p>
+
+        <p>
+          <span i18n>Source:</span>
+          @if (_backup.Backup?.Metadata?.['SourceFilesSize']) {
+            {{ _backup.Backup?.Metadata?.['SourceFilesSize'] | bytes }}
+          } @else {
+            <ng-container i18n>N/A</ng-container>
+          }
+        </p>
+
+        <p>
+          <span i18n>Destination:</span>
+          @if (_backup.Backup?.Metadata?.['TargetFilesSize']) {
+            {{ _backup.Backup?.Metadata?.['TargetFilesSize'] | bytes }}
+          } @else {
+            <ng-container i18n>N/A</ng-container>
+          }
+        </p>
+      </div>
+
+      @if (_backup.Backup?.Metadata?.['BackupListCount']) {
+        <spk-chip class="simple success" i18n>{{ _backup.Backup?.Metadata?.['BackupListCount'] }} Version</spk-chip>
+      } @else {
+        <spk-chip class="simple" i18n>No version yet</spk-chip>
+      }
+    </div>
+  }
+
   <spk-tabs class="primary">
     <button tab [class.active]="activeTab() === 'general'" (click)="activeTab.set('general')" i18n>General</button>
     <button tab [class.active]="activeTab() === 'destination'" (click)="activeTab.set('destination')" i18n>

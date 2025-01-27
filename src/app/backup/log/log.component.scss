@@ -8,8 +8,47 @@ section {
   display: flex;
   flex-direction: column;
   padding: p2r(16 24);
+  gap: p2r(16);
 }
 
 spk-tabs {
   margin-bottom: p2r(16);
+}
+
+.backup {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: p2r(32);
+  gap: p2r(16);
+  border: 1px solid var(--base-level-40);
+  border-radius: var(--shape-3);
+  box-shadow: var(--shadow-1);
+
+  .text {
+    display: flex;
+    flex-direction: column;
+    gap: p2r(8);
+    width: 100%;
+    max-width: 40%;
+
+    h3 {
+      display: flex;
+      align-items: center;
+      gap: p2r(8);
+
+      spk-icon {
+        color: var(--base-level-60);
+      }
+    }
+
+    p {
+      font: var(--paragraph-30);
+      color: var(--base-level-60);
+
+      span {
+        color: var(--base-level-70);
+      }
+    }
+  }
 }
