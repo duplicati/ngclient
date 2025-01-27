@@ -12,7 +12,7 @@ export class ServerStateService {
   #wsService = inject(ServerStatusWebSocketService);
   #longPollService = inject(ServerStatusLongPollService);
 
-  #connectionMethod = signal<ConnectionMethod>('websocket');
+  #connectionMethod = signal<ConnectionMethod>('longpoll');
   connectionStatus = computed(() => {
     const method = this.#connectionMethod();
 
