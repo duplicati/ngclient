@@ -104,6 +104,10 @@ export class NotificationsComponent {
     this.#router.navigate(['/about/changelog']);
   }
 
+  doShowLink(link: string) {
+    window.open(link, '_blank');
+  }
+
   doDownloadBugreport(item: ExtendedNotificationDto) {
     const id = item.Action!.slice('bug-report:created:'.length);
 

@@ -40,6 +40,26 @@
           <button spk-button class="small outlined" (click)="doShowLog(notification.BackupID!)" i18n>Show Log</button>
         }
 
+        @if (notification.Action === 'config:issue:unencrypted-database') {
+          <button
+            spk-button
+            class="small outlined"
+            (click)="doShowLink('https://docs.duplicati.com/detailed-descriptions/the-server-database')"
+            i18n>
+            Show Help
+          </button>
+        }
+
+        @if (notification.Action === 'config:issue:windows-folder-used') {
+          <button
+            spk-button
+            class="small outlined"
+            (click)="doShowLink('https://docs.duplicati.com/detailed-descriptions/the-server-database')"
+            i18n>
+            Show Help
+          </button>
+        }
+
         <button spk-button class="small outlined" (click)="deleteNotificationByIndex($index)" i18n>Dismiss</button>
       </div>
     </div>
