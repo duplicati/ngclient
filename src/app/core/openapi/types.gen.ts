@@ -187,6 +187,24 @@ export type IListResultFileset = {
     readonly FileSizes?: number;
 };
 
+export type ImportBackupInputDto = {
+    config?: (string) | null;
+    cmdline?: (boolean) | null;
+    import_metadata?: (boolean) | null;
+    direct?: (boolean) | null;
+    passphrase?: (string) | null;
+};
+
+export type ImportBackupOutputDto = {
+    Id?: (string) | null;
+    data?: unknown;
+};
+
+export type Int64StringTuple = {
+    Item1?: number;
+    Item2?: (string) | null;
+};
+
 export type IProgressEventData = {
     readonly BackupID?: (string) | null;
     readonly TaskID?: number;
@@ -220,38 +238,6 @@ export type IRunnerData = {
     Operation?: DuplicatiOperation;
 };
 
-export type ISetting = {
-    readonly Filter?: (string) | null;
-    Name?: (string) | null;
-    Value?: (string) | null;
-    Argument?: ICommandLineArgument;
-};
-
-export type IWebModule = {
-    readonly Key?: (string) | null;
-    readonly DisplayName?: (string) | null;
-    readonly Description?: (string) | null;
-    readonly SupportedCommands?: Array<ICommandLineArgument> | null;
-};
-
-export type ImportBackupInputDto = {
-    config?: (string) | null;
-    cmdline?: (boolean) | null;
-    import_metadata?: (boolean) | null;
-    direct?: (boolean) | null;
-    passphrase?: (string) | null;
-};
-
-export type ImportBackupOutputDto = {
-    Id?: (string) | null;
-    data?: unknown;
-};
-
-export type Int64StringTuple = {
-    Item1?: number;
-    Item2?: (string) | null;
-};
-
 export type IsBackupActiveDto = {
     Status?: (string) | null;
     Active?: boolean;
@@ -261,8 +247,22 @@ export type IsDbUsedElsewhereDto = {
     inuse?: boolean;
 };
 
+export type ISetting = {
+    readonly Filter?: (string) | null;
+    Name?: (string) | null;
+    Value?: (string) | null;
+    Argument?: ICommandLineArgument;
+};
+
 export type IssueSigninTokenInputDto = {
     Password?: (string) | null;
+};
+
+export type IWebModule = {
+    readonly Key?: (string) | null;
+    readonly DisplayName?: (string) | null;
+    readonly Description?: (string) | null;
+    readonly SupportedCommands?: Array<ICommandLineArgument> | null;
 };
 
 export type LicenseDto = {
@@ -293,12 +293,12 @@ export type LogEntry = {
     TaskID?: (string) | null;
 };
 
-export type LogMessageType = 'ExplicitOnly' | 'Profiling' | 'Verbose' | 'Retry' | 'Information' | 'DryRun' | 'Warning' | 'Error';
-
 export type LoginInputDto = {
     Password?: (string) | null;
     RememberMe?: (boolean) | null;
 };
+
+export type LogMessageType = 'ExplicitOnly' | 'Profiling' | 'Verbose' | 'Retry' | 'Information' | 'DryRun' | 'Warning' | 'Error';
 
 export type NotificationDto = {
     ID?: number;

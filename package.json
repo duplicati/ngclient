@@ -27,7 +27,7 @@
     "@angular/platform-browser": "^19.1.0",
     "@angular/platform-browser-dynamic": "^19.1.0",
     "@angular/router": "^19.1.0",
-    "@sparkle-ui/core": "^0.5.33",
+    "@sparkle-ui/core": "^0.5.35",
     "dayjs": "^1.11.13",
     "marked": "^15.0.6",
     "ngxtension": "^4.2.1",
@@ -39,7 +39,7 @@
     "@angular/cli": "^19.1.0",
     "@angular/compiler-cli": "^19.1.0",
     "@angular/localize": "^19.1.0",
-    "@hey-api/openapi-ts": "^0.53.6",
+    "@hey-api/openapi-ts": "^0.62.3",
     "prettier": "^3.3.3",
     "typescript": "~5.7.0"
   }
