@@ -1,6 +1,5 @@
 import { registerLocaleData } from '@angular/common';
 import { loadTranslations } from '@angular/localize';
-import { $localize } from '@angular/localize/init';
 
 export const DEFAULT_LOCALE = 'en-US';
 export const SUPPORTED_LOCALES = ['en-US', 'de-DE', 'fr-FR', 'da-DK'] as const;
@@ -49,7 +48,7 @@ export function getLocale(): Locales {
     .then((r) => r.json())
     .then((json) => {
       loadTranslations(json.translations);
-      $localize.locale = locale;
+      ($localize as any).locale = locale;
     });
 
   return locale;
