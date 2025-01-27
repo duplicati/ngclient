@@ -51,10 +51,6 @@ export type BackupInputDto = {
     } | null;
 };
 
-export type Boolean__f__AnonymousType1 = {
-    success?: boolean;
-};
-
 export type ChangelogDto = {
     Version?: (string) | null;
     Changelog?: (string) | null;
@@ -109,16 +105,16 @@ export type FilterDto = {
     Expression?: (string) | null;
 };
 
+export type FilterGroupsDto = {
+    FilterGroups?: {
+        [key: string]: Array<(string)>;
+    } | null;
+};
+
 export type FilterInputDto = {
     Order?: number;
     Include?: boolean;
     Expression?: (string) | null;
-};
-
-export type GenerateCaptchaOutput = {
-    Token?: (string) | null;
-    Answer?: (string) | null;
-    NoVisualChallenge?: boolean;
 };
 
 export type GetBackupResultDto = {
@@ -415,11 +411,6 @@ export type SingleOperationTokenOutputDto = {
     Token?: (string) | null;
 };
 
-export type SolveCaptchaInputDto = {
-    target?: (string) | null;
-    answer?: (string) | null;
-};
-
 export type SpecialFolderDto = {
     ID?: (string) | null;
     Path?: (string) | null;
@@ -447,6 +438,7 @@ export type SystemInfoDto = {
     DefaultUpdateChannel?: (string) | null;
     DefaultUsageReportLevel?: (string) | null;
     ServerTime?: string;
+    ServerTimeZone?: (string) | null;
     OSType?: (string) | null;
     OSVersion?: (string) | null;
     DirectorySeparator?: string;
@@ -465,17 +457,25 @@ export type SystemInfoDto = {
     WebModules?: Array<IDynamicModule> | null;
     ConnectionModules?: Array<IDynamicModule> | null;
     ServerModules?: Array<unknown> | null;
+    SecretProviderModules?: Array<IDynamicModule> | null;
     UsingAlternateUpdateURLs?: boolean;
     LogLevels?: Array<(string)> | null;
     SpecialFolders?: Array<SpecialFolderDto> | null;
     BrowserLocale?: LocaleDto;
     SupportedLocales?: Array<LocaleDto> | null;
     BrowserLocaleSupported?: boolean;
+    TimeZones?: Array<TimeZoneDto> | null;
 };
 
 export type TaskStartedDto = {
     Status?: (string) | null;
     ID?: number;
+};
+
+export type TimeZoneDto = {
+    ID?: (string) | null;
+    DisplayName?: (string) | null;
+    CurrentUTCOffset?: (string) | null;
 };
 
 export type TreeNodeDto = {
@@ -549,6 +549,8 @@ export type PostApiV1AuthIssuetokenByOperationData = {
 
 export type PostApiV1AuthIssuetokenByOperationResponse = (SingleOperationTokenOutputDto);
 
+export type PostApiV1AuthIssueForeverTokenResponse = (AccessTokenOutput);
+
 export type GetApiV1BackupdefaultsResponse = (string);
 
 export type GetApiV1BackupsResponse = (Array<BackupAndScheduleOutputDto>);
@@ -573,25 +575,6 @@ export type GetApiV1BugreportByReportidData = {
 };
 
 export type GetApiV1BugreportByReportidResponse = (unknown);
-
-export type GetApiV1CaptchaByTokenData = {
-    token: string;
-};
-
-export type GetApiV1CaptchaByTokenResponse = (unknown);
-
-export type PostApiV1CaptchaByTokenData = {
-    requestBody: SolveCaptchaInputDto;
-    token: string;
-};
-
-export type PostApiV1CaptchaByTokenResponse = (Boolean__f__AnonymousType1);
-
-export type PostApiV1CaptchaData = {
-    requestBody: SolveCaptchaInputDto;
-};
-
-export type PostApiV1CaptchaResponse = (GenerateCaptchaOutput);
 
 export type GetApiV1ChangelogData = {
     fromUpdate?: boolean;
@@ -747,6 +730,7 @@ export type GetApiV1ServerstateResponse = (ServerStatusDto);
 
 export type PostApiV1ServerstatePauseData = {
     duration?: string;
+    pauseTransfers?: boolean;
 };
 
 export type PostApiV1ServerstatePauseResponse = (unknown);
@@ -755,7 +739,7 @@ export type PostApiV1ServerstateResumeResponse = (unknown);
 
 export type GetApiV1SysteminfoResponse = (SystemInfoDto);
 
-export type GetApiV1SysteminfoFiltergroupsResponse = (unknown);
+export type GetApiV1SysteminfoFiltergroupsResponse = (FilterGroupsDto);
 
 export type GetApiV1TaskByTaskidData = {
     taskid: number;
@@ -763,17 +747,11 @@ export type GetApiV1TaskByTaskidData = {
 
 export type GetApiV1TaskByTaskidResponse = (GetTaskStateDto);
 
-export type PostApiV1TaskByTaskidStopaftercurrentfileData = {
+export type PostApiV1TaskByTaskidStopData = {
     taskid: number;
 };
 
-export type PostApiV1TaskByTaskidStopaftercurrentfileResponse = (unknown);
-
-export type PostApiV1TaskByTaskidStopnowData = {
-    taskid: number;
-};
-
-export type PostApiV1TaskByTaskidStopnowResponse = (unknown);
+export type PostApiV1TaskByTaskidStopResponse = (unknown);
 
 export type PostApiV1TaskByTaskidAbortData = {
     taskid: number;
@@ -829,8 +807,6 @@ export type PutApiV1BackupByIdData = {
 export type PutApiV1BackupByIdResponse = (unknown);
 
 export type DeleteApiV1BackupByIdData = {
-    captchaAnswer?: string;
-    captchaToken?: string;
     deleteLocalDb?: boolean;
     deleteRemoteFiles?: boolean;
     force?: boolean;

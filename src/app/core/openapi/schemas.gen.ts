@@ -179,16 +179,6 @@ export const BackupInputDtoSchema = {
     additionalProperties: false
 } as const;
 
-export const Boolean__f__AnonymousType1Schema = {
-    type: 'object',
-    properties: {
-        success: {
-            type: 'boolean'
-        }
-    },
-    additionalProperties: false
-} as const;
-
 export const ChangelogDtoSchema = {
     type: 'object',
     properties: {
@@ -368,6 +358,23 @@ export const FilterDtoSchema = {
     additionalProperties: false
 } as const;
 
+export const FilterGroupsDtoSchema = {
+    type: 'object',
+    properties: {
+        FilterGroups: {
+            type: 'object',
+            additionalProperties: {
+                type: 'array',
+                items: {
+                    type: 'string'
+                }
+            },
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const FilterInputDtoSchema = {
     type: 'object',
     properties: {
@@ -381,24 +388,6 @@ export const FilterInputDtoSchema = {
         Expression: {
             type: 'string',
             nullable: true
-        }
-    },
-    additionalProperties: false
-} as const;
-
-export const GenerateCaptchaOutputSchema = {
-    type: 'object',
-    properties: {
-        Token: {
-            type: 'string',
-            nullable: true
-        },
-        Answer: {
-            type: 'string',
-            nullable: true
-        },
-        NoVisualChallenge: {
-            type: 'boolean'
         }
     },
     additionalProperties: false
@@ -1443,21 +1432,6 @@ export const SingleOperationTokenOutputDtoSchema = {
     additionalProperties: false
 } as const;
 
-export const SolveCaptchaInputDtoSchema = {
-    type: 'object',
-    properties: {
-        target: {
-            type: 'string',
-            nullable: true
-        },
-        answer: {
-            type: 'string',
-            nullable: true
-        }
-    },
-    additionalProperties: false
-} as const;
-
 export const SpecialFolderDtoSchema = {
     type: 'object',
     properties: {
@@ -1546,6 +1520,10 @@ export const SystemInfoDtoSchema = {
         ServerTime: {
             type: 'string',
             format: 'date-time'
+        },
+        ServerTimeZone: {
+            type: 'string',
+            nullable: true
         },
         OSType: {
             type: 'string',
@@ -1638,6 +1616,13 @@ export const SystemInfoDtoSchema = {
             items: {},
             nullable: true
         },
+        SecretProviderModules: {
+            type: 'array',
+            items: {
+                '$ref': '#/components/schemas/IDynamicModule'
+            },
+            nullable: true
+        },
         UsingAlternateUpdateURLs: {
             type: 'boolean'
         },
@@ -1667,6 +1652,13 @@ export const SystemInfoDtoSchema = {
         },
         BrowserLocaleSupported: {
             type: 'boolean'
+        },
+        TimeZones: {
+            type: 'array',
+            items: {
+                '$ref': '#/components/schemas/TimeZoneDto'
+            },
+            nullable: true
         }
     },
     additionalProperties: false
@@ -1682,6 +1674,25 @@ export const TaskStartedDtoSchema = {
         ID: {
             type: 'integer',
             format: 'int64'
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const TimeZoneDtoSchema = {
+    type: 'object',
+    properties: {
+        ID: {
+            type: 'string',
+            nullable: true
+        },
+        DisplayName: {
+            type: 'string',
+            nullable: true
+        },
+        CurrentUTCOffset: {
+            type: 'string',
+            nullable: true
         }
     },
     additionalProperties: false
