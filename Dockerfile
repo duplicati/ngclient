@@ -16,7 +16,7 @@ RUN bun --version
 RUN ng version
 
 # Copy lock files
-COPY package.json package-lock.json bun.lockb ./
+COPY package.json package-lock.json ./
 
 # Define the build-time variable with a default value
 ARG BUILD_ENV=dev
