@@ -10,9 +10,9 @@ export type Relayconfig = {
   providedIn: 'root',
 })
 export class RelayconfigState {
-  #config = signal<Relayconfig | null>(null);
-  #relayIsEnabled = signal(false);
+  #config = signal<Relayconfig | null>(null);  
   #isInIframe = window.self !== window.top;
+  #relayIsEnabled = signal(!this.#isInIframe);
 
   relayIsEnabled = this.#relayIsEnabled.asReadonly();
   config = this.#config.asReadonly();
