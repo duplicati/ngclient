@@ -1,7 +1,7 @@
 import { effect, inject, Injectable, signal } from '@angular/core';
 import { ENVIRONMENT_TOKEN } from '../../../environments/environment-token';
 
-type SocketProtocolState = 'disconnected' | 'connect' | 'welcome' | 'authenticated' | 'error';
+type SocketProtocolState = 'disconnected' | 'connecting' | 'connect' | 'welcome' | 'authenticated' | 'error';
 
 type MessageType = 'authportal' | 'list' | 'welcome' | 'command' | 'warning' | 'auth';
 
@@ -98,16 +98,17 @@ export class RelayWebsocketService {
 
   connectToMachineServer(token: string, options?: { reconnect?: boolean }) {
     const reconnect = options?.reconnect ?? false;
+    const state = this.wsState();
 
-    if (this.#ws && this.wsState() === 'authenticated' && !reconnect) {
-      return;
+    if (state === 'disconnected' || state === 'error' || reconnect) {
+      this.#ws?.close();
+      this.#ws = null;
     }
 
-    if (this.#ws && this.wsState() !== 'authenticated') {
-      this.#ws.close();
-    }
+    if (this.#ws) return;
 
     this.#ws = new WebSocket(this.#env.machineServerUrl);
+    this.#wsState.set('connecting');
 
     this.#ws.onopen = () => {
       this.#wsState.set('connect');
