@@ -1,9 +1,15 @@
 import { HttpEvent, HttpHandlerFn, HttpHeaders, HttpInterceptorFn, HttpRequest, HttpResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { ENVIRONMENT_TOKEN } from '../../../environments/environment-token';
 import { RelayWebsocketService, RequestMethod } from '../services/relay-websocket.service';
 import { RelayconfigState } from '../states/relayconfig.state';
+
+type CallState = {
+  relayconfigState: RelayconfigState,
+  defaultTimeout: number,
+  relayWebsocket: RelayWebsocketService
+};
 
 function bufferToStringBase64(str: any) {
   // TODO - Handle files... (Probably a buffer already and should just be returned as is)
@@ -16,15 +22,12 @@ function bufferToStringBase64(str: any) {
   return window.btoa(String.fromCharCode(...uint8Array));
 }
 
-function handleRequest(req: HttpRequest<unknown>, next: HttpHandlerFn)
+function handleRequest(state: CallState, req: HttpRequest<unknown>, next: HttpHandlerFn)
 {
-  const relayconfigState = inject(RelayconfigState);
-  const relayconfig = relayconfigState.config();
-  const environment = inject(ENVIRONMENT_TOKEN);
+  const relayconfig = state.relayconfigState.config();
 
   if (relayconfig === null) return next(req);
 
-  const relayWebsocket = inject(RelayWebsocketService);
   const bodyBase64 = bufferToStringBase64(req.body);
   const headers: { [key: string]: string } = {};
   req.headers.keys().forEach((key) => {
@@ -32,9 +35,9 @@ function handleRequest(req: HttpRequest<unknown>, next: HttpHandlerFn)
   });
 
   const timeoutHeaderValue = req.headers.get('timeout');
-  const timeoutValue = timeoutHeaderValue !== null ? parseInt(timeoutHeaderValue) : environment.defaultTimeout;
+  const timeoutValue = timeoutHeaderValue !== null ? parseInt(timeoutHeaderValue) : state.defaultTimeout;
 
-  const p = relayWebsocket.sendCommand(
+  const p = state.relayWebsocket.sendCommand(
     relayconfig.accessToken,
     relayconfig.clientId,
     req.method as RequestMethod,
@@ -66,19 +69,28 @@ function handleRequest(req: HttpRequest<unknown>, next: HttpHandlerFn)
   });
 }
 
-export const httpInterceptorWebsocketRelay: HttpInterceptorFn = (req, next) => {
-  const relayconfigState = inject(RelayconfigState);
-  const relayconfig = relayconfigState.config();
+export const httpInterceptorWebsocketRelay: HttpInterceptorFn = (req, next) => {  
+  // Prepare the state object as we cannot inject later
+  const state: CallState = {
+    relayconfigState: inject(RelayconfigState),
+    defaultTimeout: inject(ENVIRONMENT_TOKEN).defaultTimeout,
+    relayWebsocket: inject(RelayWebsocketService)
+  };
 
-  if (relayconfigState.configLoaded !== null && relayconfig === null)
-    console.log('Waiting for config to load...');
-  else if (relayconfig === null) console.log('Config not loaded, passing request');
-  else console.log('Config loaded, handling request');
+  const relayconfig = state.relayconfigState.config();
 
   // If the config is not loaded, wait for it to load before handling the request
-  if (relayconfigState.configLoaded !== null && relayconfig === null)
-    return relayconfigState.configLoaded.pipe((_) => handleRequest(req, next));
+  if (state.relayconfigState.configLoaded !== null && relayconfig === null)
+  {
+    const sub = new Subject<HttpEvent<any>>();
+    state.relayconfigState.configLoaded.subscribe(res => { 
+      if (res) 
+        handleRequest(state, req, next).subscribe(sub);
+    });
+    
+    return sub;
+  }
 
   // Otherwise, handle the request immediately
-  return handleRequest(req, next);
+  return handleRequest(state, req, next);
 };

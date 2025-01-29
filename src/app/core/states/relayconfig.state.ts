@@ -27,8 +27,6 @@ export class RelayconfigState {
 
     if (!this.#isInIframe) return;
 
-    console.log('fetching config');
-
     this.#relayIsEnabled.set(true);
     this.parentIframeListner = new AbortController();
     this.#sendMessageToParent('connected');
