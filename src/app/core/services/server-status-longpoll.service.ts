@@ -1,7 +1,9 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { of, Subject } from 'rxjs';
 import { catchError, finalize, takeUntil } from 'rxjs/operators';
+import { ENVIRONMENT_TOKEN } from '../../../environments/environment-token';
 import { DuplicatiServerService, ServerStatusDto } from '../openapi';
+import { RelayconfigState } from '../states/relayconfig.state';
 
 type ConnectionStatus = 'connected' | 'disconnected' | 'connecting';
 
@@ -19,6 +21,12 @@ export class ServerStatusLongPollService {
 
   connectionStatus = this.#connectionStatus.asReadonly();
   serverState = this.#serverState.asReadonly();
+  // Due to a bug in the Duplicati client, the max duration is 100s when relay is enabled  
+  duration = inject(RelayconfigState).relayIsEnabled() 
+    // We need to fix the server-status-longpoll service to inject the timeout into the request
+    // in a way that can be extracted by the rellay-websocket service, then we can bump it to 100s
+    ? (((inject(ENVIRONMENT_TOKEN).defaultTimeout / 1000) - 5) + 's')
+    : '299s';
 
   start() {
     this.#awaitingPoll.set(true);
@@ -54,7 +62,7 @@ export class ServerStatusLongPollService {
       .getApiV1Serverstate({
         lastEventId: this.#lastEventId(),
         longpoll: this.#lastEventId() > 0,
-        duration: '299s',
+        duration: this.duration,
       })
       .pipe(
         takeUntil(this.#destroy$),
