@@ -1,4 +1,4 @@
-import { HttpEvent, HttpHeaders, HttpInterceptorFn, HttpResponse } from '@angular/common/http';
+import { HttpEvent, HttpHandlerFn, HttpHeaders, HttpInterceptorFn, HttpRequest, HttpResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ENVIRONMENT_TOKEN } from '../../../environments/environment-token';
@@ -16,7 +16,8 @@ function bufferToStringBase64(str: any) {
   return window.btoa(String.fromCharCode(...uint8Array));
 }
 
-export const httpInterceptorWebsocketRelay: HttpInterceptorFn = (req, next) => {
+function handleRequest(req: HttpRequest<unknown>, next: HttpHandlerFn)
+{
   const relayconfigState = inject(RelayconfigState);
   const relayconfig = relayconfigState.config();
   const environment = inject(ENVIRONMENT_TOKEN);
@@ -63,4 +64,16 @@ export const httpInterceptorWebsocketRelay: HttpInterceptorFn = (req, next) => {
       observer.complete();
     });
   });
+}
+
+export const httpInterceptorWebsocketRelay: HttpInterceptorFn = (req, next) => {
+  const relayconfigState = inject(RelayconfigState);
+  const relayconfig = relayconfigState.config();
+
+  // If the config is not loaded, wait for it to load before handling the request
+  if (relayconfigState.configLoaded !== null && relayconfig === null)
+    return relayconfigState.configLoaded.pipe((_) => handleRequest(req, next));
+
+  // Otherwise, handle the request immediately
+  return handleRequest(req, next);
 };
