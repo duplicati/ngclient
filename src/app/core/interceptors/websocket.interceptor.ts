@@ -70,6 +70,11 @@ export const httpInterceptorWebsocketRelay: HttpInterceptorFn = (req, next) => {
   const relayconfigState = inject(RelayconfigState);
   const relayconfig = relayconfigState.config();
 
+  if (relayconfigState.configLoaded !== null && relayconfig === null)
+    console.log('Waiting for config to load...');
+  else if (relayconfig === null) console.log('Config not loaded, passing request');
+  else console.log('Config loaded, handling request');
+
   // If the config is not loaded, wait for it to load before handling the request
   if (relayconfigState.configLoaded !== null && relayconfig === null)
     return relayconfigState.configLoaded.pipe((_) => handleRequest(req, next));
