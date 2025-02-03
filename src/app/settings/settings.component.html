@@ -7,7 +7,7 @@
       <p i18n>Configure your backup settings.</p>
     </div>
 
-    <button type="submit" spk-button class="raised primary" i18n [disabled]="settingsForm.untouched">
+    <button type="submit" spk-button class="raised primary" i18n [disabled]="settingsForm.untouched" (click)="submit()" >
       Save changes
     </button>
   </header>
