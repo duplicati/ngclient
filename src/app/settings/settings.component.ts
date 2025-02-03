@@ -140,6 +140,7 @@ export default class SettingsComponent {
         },
       })
       .pipe(
+        this.#serverSettingsService.withRefresh(),
         finalize(() => this.updatingChannel.set(false)),
         catchError(() => {
           this.updateChannel.set(prevChannel);
@@ -169,6 +170,7 @@ export default class SettingsComponent {
           },
         })
         .pipe(
+          this.#serverSettingsService.withRefresh(),
           finalize(() => this.updatingRemoteAccess.set(false)),
           catchError(() => {
             this.allowRemoteAccess.set(prevValue);
@@ -193,6 +195,7 @@ export default class SettingsComponent {
         },
       })
       .pipe(
+        this.#serverSettingsService.withRefresh(),
         finalize(() => this.updatingAllowedHosts.set(false)),
         catchError(() => {
           this.allowedHostnames.set(loadedAllowedHostnames);
@@ -219,6 +222,7 @@ export default class SettingsComponent {
         },
       })
       .pipe(
+        this.#serverSettingsService.withRefresh(),
         finalize(() => this.updatingDisableTrayIconLogin.set(false)),
         catchError(() => {
           this.disableTrayIconLogin.set(prevValue);
@@ -245,7 +249,10 @@ export default class SettingsComponent {
           'server-passphrase': this.passphrase(),
         },
       })
-      .pipe(finalize(() => this.isUpdating.set(false)))
+      .pipe(
+        this.#serverSettingsService.withRefresh(),
+        finalize(() => this.isUpdating.set(false))
+      )
       .subscribe({
         next: () => {
           this.showPassphraseForm.set(false);
@@ -325,6 +332,7 @@ export default class SettingsComponent {
           'startup-delay': startupDelay === '0s' ? '' : startupDelay,
         },
       })
+      .pipe(this.#serverSettingsService.withRefresh())
       .subscribe();
   }
 
