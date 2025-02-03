@@ -20,5 +20,5 @@ section {
   display: flex;
   justify-content: center;
   flex: 1 0;
-  overflow: hidden;
+  @include overflowScrolling();
 }

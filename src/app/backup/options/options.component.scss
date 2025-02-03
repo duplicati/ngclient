@@ -11,6 +11,7 @@ form {
   display: flex;
   flex-direction: column;
   gap: p2r(24);
+  padding-bottom: p2r(24);
 }
 
 .form-actions {
@@ -59,8 +60,8 @@ form {
   flex-direction: column;
   gap: p2r(4);
   p.warning {
-      color: rgb(125, 125, 0);
-    }
+    color: rgb(125, 125, 0);
+  }
 }
 
 .row-inputs {
