@@ -18,14 +18,14 @@ export class BytesPipe implements PipeTransform {
   decimalPipe = inject(DecimalPipe);
 
   transform(bytes: number | string | undefined | null, longForm: boolean = false): string {
-    if (!bytes || bytes === 0) return '0 Bytes';
+    if (!bytes || bytes === 0) return '';
 
     if (typeof bytes === 'string') {
       bytes = parseInt(bytes);
     }
 
     if (isNaN(bytes)) {
-      return '0 Bytes';
+      return '';
     }
 
     const isMac = this.#isMac();
@@ -38,6 +38,7 @@ export class BytesPipe implements PipeTransform {
 
     const size = bytes / Math.pow(isMac ? 1000 : 1024, power);
     const formattedSize = this.decimalPipe.transform(size, '1.0-2');
+    if (!formattedSize) return '';
 
     return `${formattedSize} ${longForm ? units[power] : units[power].replace('Bytes', 'B')}`;
   }
