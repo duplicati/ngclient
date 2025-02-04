@@ -9,6 +9,8 @@
         {{ nextBackup().time | date: 'shortTime' }}
       </div>
       <!-- <spk-progress-bar class="raised" [value]="3"></spk-progress-bar> -->
+    } @else if (!serverState()?.ActiveTask) {
+      <div class="label" i18n>No scheduled tasks</div>
     } @else {
       <div class="label" i18n>Loading...</div>
     }

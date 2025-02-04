@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { WebModulesService } from '../../core/services/webmodules.service';
 import {
@@ -259,6 +260,63 @@ export const DESTINATION_CONFIG: DestinationConfig = [
           destinationType,
           custom: {
             path: urlObj.hostname + urlObj.pathname,
+          },
+          ...fromSearchParams(destinationType, urlObj),
+        };
+      },
+    },
+  },
+  {
+    key: 'pcloud',
+    displayName: 'pCloud',
+    description: 'Store backups in pCloud.',
+    oauthField: 'authid',
+    customFields: {
+      server: {
+        type: 'Enumeration',
+        name: 'server',
+        loadOptions: () => {
+          return signal([
+            {
+              key: 'pCloud Global',
+              value: 'api.pcloud.com',
+            },
+            {
+              key: 'pCloud Europe',
+              value: 'eapi.pcloud.com',
+            },
+          ]);
+        },
+        shortDescription: 'Server',
+        longDescription: 'Server',
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+      path: {
+        type: 'Path',
+        name: 'path',
+        shortDescription: 'Folder path',
+        longDescription: 'Folder path',
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+    },
+    dynamicFields: ['authid'],
+    mapper: {
+      to: (fields: any): string => {
+        const path = fields.custom.path;
+        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
+
+        return `${fields.destinationType}://${path}${urlParams}`;
+      },
+      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        const pathWithoutPrefixSlash = urlObj.pathname.replace(/^\//, '');
+
+        console.log('pathWithoutPrefixSlash', pathWithoutPrefixSlash);
+
+        return <ValueOfDestinationFormGroup>{
+          destinationType,
+          custom: {
+            server: urlObj.hostname,
+            path: pathWithoutPrefixSlash,
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -1230,6 +1288,61 @@ export const DESTINATION_CONFIG: DestinationConfig = [
             server: urlObj.hostname,
             port: urlObj.port,
             path: urlObj.pathname,
+          },
+          ...fromSearchParams(destinationType, urlObj),
+        };
+      },
+    },
+  },
+  {
+    key: 'cifs',
+    displayName: 'CIFS',
+    description: 'Store backups in CIFS.',
+    customFields: {
+      server: {
+        type: 'String',
+        name: 'server',
+        shortDescription: 'Server',
+        longDescription: 'Server',
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+      share: {
+        type: 'String',
+        name: 'share',
+        shortDescription: 'Share Name',
+        longDescription: 'Share Name',
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+      path: {
+        type: 'String',
+        name: 'path',
+        shortDescription: 'Path on server',
+        longDescription: 'Path on server',
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+    },
+    dynamicFields: ['transport', 'auth-username', 'auth-password', 'auth-domain'],
+    mapper: {
+      to: (fields: any): string => {
+        const { share, server, path, username, password } = fields.custom;
+        const obj = {
+          ['auth-username']: username,
+          ['auth-password']: password,
+        };
+        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(obj)]);
+
+        return `${fields.destinationType}://${server + addPath(share) + addPath(path) + urlParams}`;
+      },
+      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        const share = urlObj.pathname.split('/')[1];
+        const path = urlObj.pathname.split('/').slice(2).join('/');
+
+        return <ValueOfDestinationFormGroup>{
+          destinationType,
+          custom: {
+            server: urlObj.hostname,
+            share,
+            path,
           },
           ...fromSearchParams(destinationType, urlObj),
         };
