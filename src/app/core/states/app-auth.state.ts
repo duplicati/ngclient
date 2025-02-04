@@ -1,6 +1,7 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { finalize, Observable, take, tap } from 'rxjs';
+import { catchError, finalize, map, Observable, of, take, tap } from 'rxjs';
 import { AccessTokenOutput, DuplicatiServerService } from '../openapi';
 import { RelayconfigState } from './relayconfig.state';
 
@@ -11,6 +12,7 @@ const dummytoken = 'dummytoken';
 })
 export class AppAuthState {
   #router = inject(Router);
+  #http = inject(HttpClient);
   #dupServer = inject(DuplicatiServerService);
   #relayConfigState = inject(RelayconfigState);
   #token = signal<string | null>(null);
@@ -50,6 +52,27 @@ export class AppAuthState {
       take(1),
       tap((res) => this.#token.set(res.AccessToken ?? null))
     );
+  }
+
+  checkProxyAuthed() {
+    const headers = new HttpHeaders({
+      'custom-proxy-check': 'true',
+    });
+
+    return this.#http
+      .get('/api/v1/systeminfo', {
+        headers,
+      })
+      .pipe(
+        map(() => {
+          this.#token.set('PROXY_AUTHED_FAKE_TOKEN');
+
+          return true;
+        }),
+        catchError(() => {
+          return of(false);
+        })
+      );
   }
 
   logout() {

@@ -1,6 +1,6 @@
 import { inject, Injector } from '@angular/core';
 import { Routes } from '@angular/router';
-import { map, switchMap, zip } from 'rxjs';
+import { map, of, switchMap, zip } from 'rxjs';
 import { StatusBarState } from './core/components/status-bar/status-bar.state';
 import { AppAuthState } from './core/states/app-auth.state';
 import { RelayconfigState } from './core/states/relayconfig.state';
@@ -13,7 +13,15 @@ export const TokenInMemoryGuard = () => {
   if (auth.token()) {
     return true;
   } else {
-    return auth.refreshToken().pipe(map(() => true));
+    return auth.checkProxyAuthed().pipe(
+      switchMap((authed) => {
+        if (authed) {
+          return of(true);
+        }
+
+        return auth.refreshToken().pipe(map(() => true));
+      })
+    );
   }
 };
 

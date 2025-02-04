@@ -20,11 +20,15 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   const sparkleAlertService = inject(SparkleAlertService);
   const mappedLocale = mapLocale(locale);
   const loginRequest = req.url === '/api/v1/auth/login';
+  const token = auth.token();
 
   let modifiedRequest = req;
 
-  if (auth.token() && req.url.startsWith(env.baseUrl)) {
-    let newHeaders = req.headers.set('Authorization', `Bearer ${auth.token()}`);
+  const hasCustomProxyHeader = req.headers.has('custom-proxy-check');
+  const IS_PROXY_REQUEST = hasCustomProxyHeader || token === 'PROXY_AUTHED_FAKE_TOKEN';
+
+  if (token && req.url.startsWith(env.baseUrl) && !IS_PROXY_REQUEST) {
+    let newHeaders = req.headers.set('Authorization', `Bearer ${token}`);
 
     if (locale && locale !== 'en-US') {
       newHeaders = newHeaders.set('X-Ui-Language', mappedLocale);
@@ -41,11 +45,11 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((error) => {
       sparkleAlertService.error(error.message);
 
-      if (!loginRequest && error.status === 401 && !refreshRequest) {
+      if (!loginRequest && !IS_PROXY_REQUEST && error.status === 401 && !refreshRequest) {
         refreshRequest = auth.refreshToken().pipe(shareReplay());
       }
 
-      if (!loginRequest && error.status === 401) {
+      if (!loginRequest && !IS_PROXY_REQUEST && error.status === 401) {
         return refreshRequest!.pipe(
           switchMap(() => {
             return next(
