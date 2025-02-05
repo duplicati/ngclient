@@ -7,7 +7,7 @@ import { ENVIRONMENT_TOKEN } from '../../../environments/environment-token';
 import { mapLocale } from '../locales/locales.utility';
 import { AccessTokenOutput } from '../openapi';
 import { LOCALSTORAGE } from '../services/localstorage.token';
-import { AppAuthState } from '../states/app-auth.state';
+import { AppAuthState, dummytoken } from '../states/app-auth.state';
 
 let refreshRequest: Observable<AccessTokenOutput> | null = null;
 
@@ -25,7 +25,7 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   let modifiedRequest = req;
 
   const hasCustomProxyHeader = req.headers.has('custom-proxy-check');
-  const IS_PROXY_REQUEST = hasCustomProxyHeader || token === 'PROXY_AUTHED_FAKE_TOKEN';
+  const IS_PROXY_REQUEST = hasCustomProxyHeader || token === dummytoken;
 
   if (token && req.url.startsWith(env.baseUrl) && !IS_PROXY_REQUEST) {
     let newHeaders = req.headers.set('Authorization', `Bearer ${token}`);
@@ -37,8 +37,6 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
     modifiedRequest = req.clone({
       headers: newHeaders,
     });
-
-    modifiedRequest;
   }
 
   return next(modifiedRequest).pipe(

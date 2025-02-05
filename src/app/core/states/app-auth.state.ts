@@ -5,7 +5,7 @@ import { catchError, finalize, map, Observable, of, take, tap } from 'rxjs';
 import { AccessTokenOutput, DuplicatiServerService } from '../openapi';
 import { RelayconfigState } from './relayconfig.state';
 
-const dummytoken = 'dummytoken';
+export const dummytoken = 'PROXY_AUTHED_FAKE_TOKEN';
 
 @Injectable({
   providedIn: 'root',
@@ -65,7 +65,7 @@ export class AppAuthState {
       })
       .pipe(
         map(() => {
-          this.#token.set('PROXY_AUTHED_FAKE_TOKEN');
+          this.#token.set(dummytoken);
 
           return true;
         }),

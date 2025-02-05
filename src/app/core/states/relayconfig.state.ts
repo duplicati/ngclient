@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { Subject } from 'rxjs';
+import { ReplaySubject } from 'rxjs';
 
 export type Relayconfig = {
   accessToken: string;
@@ -16,7 +16,7 @@ export class RelayconfigState {
 
   relayIsEnabled = this.#relayIsEnabled.asReadonly();
   config = this.#config.asReadonly();
-  configLoaded = this.#isInIframe ? new Subject<boolean>() : null;
+  configLoaded = this.#isInIframe ? new ReplaySubject<boolean>() : null;
   isLoading = signal(this.#isInIframe);
 
   parentIframeListner: AbortController | null = null;
