@@ -49,7 +49,7 @@ export type CommandResponse = {
 };
 
 const ClientVersion = '1.0.0';
-const ClientId = 'portal-proxy-client';
+const ClientId = `portal-proxy-client-${crypto.randomUUID()}`;
 const ProtocolVersion = 1;
 
 @Injectable({
