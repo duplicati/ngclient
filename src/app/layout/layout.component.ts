@@ -16,6 +16,7 @@ import { RelayconfigState } from '../core/states/relayconfig.state';
 import { NotificationsState } from '../notifications/notifications.state';
 import { ChangePassphraseAlertDialogComponent } from './change-passphrase-alert-dialog/change-passphrase-alert-dialog.component';
 import { LayoutState } from './layout.state';
+import { AppAuthState } from '../core/states/app-auth.state';
 
 @Component({
   selector: 'app-layout',
@@ -29,7 +30,7 @@ import { LayoutState } from './layout.state';
     SparkleButtonComponent,
     SparkleDividerComponent,
     ServiceHubComponent,
-    LogoComponent,
+    LogoComponent
   ],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss',
@@ -42,6 +43,7 @@ export default class LayoutComponent {
   #relayConfigState = inject(RelayconfigState);
   #dialog = inject(SparkleDialogService);
   #notificaitonsState = inject(NotificationsState);
+  #auth = inject(AppAuthState);
 
   relayIsEnabled = this.#relayConfigState.relayIsEnabled;
   isDarkMode = this.#layoutState.isDarkMode;
@@ -70,6 +72,10 @@ export default class LayoutComponent {
   changeDefaultClientTo(client: 'ngclient' | 'ngax') {
     this.#setClientDefault(client);
     window.location.replace(`/${client}`);
+  }
+
+  logout() {
+    this.#auth.logout();
   }
 
   #setClientDefault(client: 'ngclient' | 'ngax') {
