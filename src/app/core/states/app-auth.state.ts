@@ -37,8 +37,6 @@ export class AppAuthState {
 
   refreshToken() {
     // In relay mode, the requests are proxied and authenticated by the client
-    // TODO: This should be fixed by probing the API, as we can be
-    // pre-authenticated if running behind a proxy
     if (this.#relayConfigState.relayIsEnabled()) {
       this.#token.set(dummytoken);
 
