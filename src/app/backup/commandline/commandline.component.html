@@ -12,14 +12,10 @@
     <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
   } @else {
     <form [formGroup]="baseCmdForm">
-      <spk-select>
+      <spk-select-new [options]="commandOptions() ?? []" [inlineSearch]="true" placeholder="Select a command...">
         <label for="command" i18n>Command</label>
         <input type="text" id="command" formControlName="command" />
-
-        @for (item of commandOptions(); track $index) {
-          <spk-option [value]="item">{{ item }}</spk-option>
-        }
-      </spk-select>
+      </spk-select-new>
 
       <spk-form-field>
         <label for="targetUrl" i18n>TargetUrl</label>
@@ -65,13 +61,21 @@
             <input type="number" id="size" formControlName="size" />
           </spk-form-field>
 
-          <spk-select>
+          <!-- <spk-select>
             <input type="text" i18n-placeholder placeholder="Select an option..." formControlName="unit" />
 
             @for (option of sizeOptions(); track $index) {
               <spk-option [value]="option">{{ option }}</spk-option>
             }
-          </spk-select>
+          </spk-select> -->
+
+          <spk-select-new
+            i18n-placeholder
+            placeholder="Select an option..."
+            [options]="sizeOptions()"
+            [inlineSearch]="true">
+            <input type="text" formControlName="unit" />
+          </spk-select-new>
         </div>
 
         <p i18n>

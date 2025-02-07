@@ -13,6 +13,7 @@ import {
   SparkleOptionComponent,
   SparkleProgressBarComponent,
   SparkleSelectComponent,
+  SparkleSelectNewComponent,
   SparkleToggleComponent,
   SparkleTooltipComponent,
 } from '@sparkle-ui/core';
@@ -43,6 +44,7 @@ const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'] as const;
     SparkleOptionComponent,
     SparkleDividerComponent,
     SparkleTooltipComponent,
+    SparkleSelectNewComponent,
     SparkleProgressBarComponent,
     SparkleCheckboxComponent,
     SparkleIconComponent,
@@ -61,7 +63,7 @@ export default class CommandlineComponent {
 
   #routeParamsSignal = toSignal(this.#route.params);
   commandOptions = toSignal(this.#commandline.getApiV1Commandline());
-  sizeOptions = signal(SIZE_OPTIONS);
+  sizeOptions = signal<string[]>(SIZE_OPTIONS as any);
   isSubmitting = signal(false);
 
   standardFields = fb.group({

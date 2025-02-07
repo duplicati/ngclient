@@ -1,4 +1,11 @@
-import { HttpEvent, HttpHandlerFn, HttpHeaders, HttpInterceptorFn, HttpRequest, HttpResponse } from '@angular/common/http';
+import {
+  HttpEvent,
+  HttpHandlerFn,
+  HttpHeaders,
+  HttpInterceptorFn,
+  HttpRequest,
+  HttpResponse,
+} from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { ENVIRONMENT_TOKEN } from '../../../environments/environment-token';
@@ -6,9 +13,9 @@ import { RelayWebsocketService, RequestMethod } from '../services/relay-websocke
 import { RelayconfigState } from '../states/relayconfig.state';
 
 type CallState = {
-  relayconfigState: RelayconfigState,
-  defaultTimeout: number,
-  relayWebsocket: RelayWebsocketService
+  relayconfigState: RelayconfigState;
+  defaultTimeout: number;
+  relayWebsocket: RelayWebsocketService;
 };
 
 function bufferToStringBase64(str: any) {
@@ -22,8 +29,7 @@ function bufferToStringBase64(str: any) {
   return window.btoa(String.fromCharCode(...uint8Array));
 }
 
-function handleRequest(state: CallState, req: HttpRequest<unknown>, next: HttpHandlerFn)
-{
+function handleRequest(state: CallState, req: HttpRequest<unknown>, next: HttpHandlerFn) {
   const relayconfig = state.relayconfigState.config();
 
   if (relayconfig === null) return next(req);
@@ -35,7 +41,12 @@ function handleRequest(state: CallState, req: HttpRequest<unknown>, next: HttpHa
   });
 
   const timeoutHeaderValue = req.headers.get('timeout');
-  const timeoutValue = timeoutHeaderValue !== null ? parseInt(timeoutHeaderValue) : state.defaultTimeout;
+
+  let timeoutValue = timeoutHeaderValue !== null ? parseInt(timeoutHeaderValue) : state.defaultTimeout;
+
+  if (req.url.startsWith('/api/v1/serverstate') && req.url.includes('longpoll=true')) {
+    timeoutValue = 1000 * 100; // 100s
+  }
 
   const p = state.relayWebsocket.sendCommand(
     relayconfig.accessToken,
@@ -69,25 +80,23 @@ function handleRequest(state: CallState, req: HttpRequest<unknown>, next: HttpHa
   });
 }
 
-export const httpInterceptorWebsocketRelay: HttpInterceptorFn = (req, next) => {  
+export const httpInterceptorWebsocketRelay: HttpInterceptorFn = (req, next) => {
   // Prepare the state object as we cannot inject later
   const state: CallState = {
     relayconfigState: inject(RelayconfigState),
     defaultTimeout: inject(ENVIRONMENT_TOKEN).defaultTimeout,
-    relayWebsocket: inject(RelayWebsocketService)
+    relayWebsocket: inject(RelayWebsocketService),
   };
 
   const relayconfig = state.relayconfigState.config();
 
   // If the config is not loaded, wait for it to load before handling the request
-  if (state.relayconfigState.configLoaded !== null && relayconfig === null)
-  {
+  if (state.relayconfigState.configLoaded !== null && relayconfig === null) {
     const sub = new Subject<HttpEvent<any>>();
-    state.relayconfigState.configLoaded.subscribe(res => { 
-      if (res) 
-        handleRequest(state, req, next).subscribe(sub);
+    state.relayconfigState.configLoaded.subscribe((res) => {
+      if (res) handleRequest(state, req, next).subscribe(sub);
     });
-    
+
     return sub;
   }
 
