@@ -45,7 +45,7 @@ function handleRequest(state: CallState, req: HttpRequest<unknown>, next: HttpHa
   let timeoutValue = timeoutHeaderValue !== null ? parseInt(timeoutHeaderValue) : state.defaultTimeout;
 
   if (req.url.startsWith('/api/v1/serverstate') && req.url.includes('longpoll=true')) {
-    timeoutValue = 1000 * 100; // 100s
+    timeoutValue = 1000 * 99; // 99s
   }
 
   const p = state.relayWebsocket.sendCommand(

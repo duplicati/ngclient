@@ -40,3 +40,7 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Sparkle generated files
+/src/assets/spk.css
+/src/assets/spk.woff2

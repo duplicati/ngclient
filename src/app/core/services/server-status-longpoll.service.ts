@@ -22,7 +22,7 @@ export class ServerStatusLongPollService {
   serverState = this.#serverState.asReadonly();
 
   // Due to a bug in the Duplicati client, the max duration is 100s when relay is enabled
-  duration = inject(RelayconfigState).relayIsEnabled() ? '99s' : '299s';
+  duration = inject(RelayconfigState).relayIsEnabled() ? '94s' : '299s';
 
   start() {
     this.#awaitingPoll.set(true);

@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { finalize, forkJoin, retry, take, timeout } from 'rxjs';
+import { finalize, forkJoin, retry, take } from 'rxjs';
 import { DuplicatiServerService, GetBackupResultDto, IListResultFileset } from '../core/openapi';
 import { createRestoreOptionsForm } from './options/options.component';
 import { createEncryptionForm } from './restore-encryption/restore-encryption.component';
@@ -99,7 +99,7 @@ export class RestoreFlowState {
         .getApiV1BackupByIdFilesets({
           id,
         })
-        .pipe(timeout(12000), retry()),
+        .pipe(retry(3)),
     ])
       .pipe(
         take(1),

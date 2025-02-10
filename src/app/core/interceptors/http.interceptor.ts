@@ -19,15 +19,17 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   const locale = ls.getItem('locale');
   const sparkleAlertService = inject(SparkleAlertService);
   const mappedLocale = mapLocale(locale);
-  const loginRequest = req.url === '/api/v1/auth/login';
+  const isLoginRequest = req.url === '/api/v1/auth/login';
+  const isRefreshRequest = req.url === '/api/v1/auth/refresh';
+  const isProgressStateRequest = req.url === '/api/v1/progressstate';
   const token = auth.token();
 
   let modifiedRequest = req;
 
   const hasCustomProxyHeader = req.headers.has('custom-proxy-check');
-  const IS_PROXY_REQUEST = hasCustomProxyHeader || token === dummytoken;
+  const IS_PROXY_DETECT_REQUEST = hasCustomProxyHeader || token === dummytoken;
 
-  if (token && req.url.startsWith(env.baseUrl) && !IS_PROXY_REQUEST) {
+  if (token && req.url.startsWith(env.baseUrl) && !IS_PROXY_DETECT_REQUEST) {
     let newHeaders = req.headers.set('Authorization', `Bearer ${token}`);
 
     if (locale && locale !== 'en-US') {
@@ -41,27 +43,39 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(modifiedRequest).pipe(
     catchError((error) => {
-      sparkleAlertService.error(error.message);
+      // Suppress error handling for proxy detection requests
+      if (!IS_PROXY_DETECT_REQUEST)
+      {
+        // Suppress 404 errors for progressstate requests, API needs to change
+        if (!(isProgressStateRequest && error.status === 404))
+          sparkleAlertService.error(error.message);
 
-      if (!loginRequest && !IS_PROXY_REQUEST && error.status === 401 && !refreshRequest) {
-        refreshRequest = auth.refreshToken().pipe(shareReplay());
-      }
+        // Don't error handle refresh requests
+        if (isRefreshRequest && error.status === 401) {
+          auth.logout();
+          router.navigate(['/logout']);
+        }
 
-      if (!loginRequest && !IS_PROXY_REQUEST && error.status === 401) {
-        return refreshRequest!.pipe(
-          switchMap(() => {
-            return next(
-              req.clone({
-                headers: req.headers.set('Authorization', `Bearer ${auth.token()}`),
-              })
+        if (!isLoginRequest && !isRefreshRequest) {
+          if (error.status === 401) {
+            refreshRequest ??= auth.refreshToken().pipe(shareReplay());
+
+            return refreshRequest!.pipe(
+              switchMap(() => {
+                return next(
+                  req.clone({
+                    headers: req.headers.set('Authorization', `Bearer ${auth.token()}`),
+                  })
+                );
+              }),
+              catchError((err) => {
+                router.navigate(['/logout']);
+                return throwError(() => err);
+              }),
+              finalize(() => (refreshRequest = null))
             );
-          }),
-          catchError((err) => {
-            router.navigate(['/logout']);
-            return throwError(() => err);
-          }),
-          finalize(() => (refreshRequest = null))
-        );
+          }
+        }
       }
 
       const errorMsg = `Error Code: ${error.status}, Message: ${error.message}`;
