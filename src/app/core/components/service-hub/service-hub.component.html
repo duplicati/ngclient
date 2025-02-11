@@ -1,8 +1,8 @@
-<button spk-button [class]="alertHistory().length ? 'warn' : ''" (click)="toggleAlerts()">
+<button spk-button [class]="alertHistory().length ? 'error' : ''" (click)="toggleAlerts()">
   <spk-icon>info</spk-icon>
 </button>
 
-<button spk-button [class]="notifications().length ? 'warn' : ''" (click)="toggleNotifications()">
+<button spk-button [class]="notifications().length ? 'error' : ''" (click)="toggleNotifications()">
   @if (this.notifications().length) {
     <spk-icon>bell-ringing</spk-icon>
   } @else {
@@ -12,7 +12,7 @@
 
 @if (shownMessage()) {
   <div class="preview-alert-wrap">
-    <spk-alert [type]="shownMessage()?.type ?? 'error'">
+    <spk-alert [class]="shownMessage()?.type ?? 'error'">
       <div sparkle-alert-title>{{ shownMessage()?.title }}</div>
 
       @if (shownMessage()?.content) {
@@ -58,7 +58,7 @@
       <div class="alert-stream-modal-list-scroller" #scroller>
         <div class="alert-stream-modal-list">
           @for (alert of alertHistory(); track $index) {
-            <spk-alert #alerts [type]="alert.type" [id]="alert.id">
+            <spk-alert #alerts [class]="alert.type" [id]="alert.id">
               <div title>{{ alert.title }}</div>
 
               @if (alert.content) {

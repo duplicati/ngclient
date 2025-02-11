@@ -43,7 +43,7 @@
   <article>
     <h2 i18n>Placement</h2>
 
-    <spk-form-field [class]="isValidatedPath() ? 'success' : 'warn'">
+    <spk-form-field [class]="isValidatedPath() ? 'success' : 'error'">
       <input type="text" [(ngModel)]="backupFilePath" />
       @if (isValidatedPath()) {
         <spk-icon prefix>check</spk-icon>

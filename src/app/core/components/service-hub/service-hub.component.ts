@@ -112,6 +112,7 @@ export default class ServiceHubComponent {
       this.isAlertsOpen.set(false);
     } else {
       this.isAlertsOpen.set(true);
+      this.isNotificationsOpen.set(false);
       this.resetPreviewMessage();
     }
   }
@@ -120,7 +121,7 @@ export default class ServiceHubComponent {
     this.isNotificationsOpen.set(!this.isNotificationsOpen());
 
     if (this.isAlertsOpen()) {
-      this.toggleAlerts();
+      this.isAlertsOpen.set(false);
     }
   }
 

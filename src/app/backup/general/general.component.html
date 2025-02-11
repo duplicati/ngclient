@@ -56,8 +56,8 @@
         @if (generalForm.value.password) {
           <spk-progress-bar
             class="raised"
-            [class.warn]="calculatePasswordStrength() === 1"
-            [class.tertiary]="calculatePasswordStrength() === 2"
+            [class.error]="calculatePasswordStrength() === 1"
+            [class.warn]="calculatePasswordStrength() === 2"
             [class.primary]="calculatePasswordStrength() === 4"
             [class.success]="calculatePasswordStrength() === 5"
             [value]="calculatePasswordStrength() * (100 / 5)"></spk-progress-bar>

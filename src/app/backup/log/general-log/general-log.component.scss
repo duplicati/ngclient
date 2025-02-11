@@ -152,10 +152,10 @@ details {
   border-radius: 50%;
 
   &.error {
-    background-color: var(--warn-500);
+    background-color: var(--error-500);
   }
 
   &.warn {
-    background-color: var(--tertiary-500);
+    background-color: var(--warn-500);
   }
 }

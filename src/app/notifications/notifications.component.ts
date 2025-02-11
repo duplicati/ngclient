@@ -13,7 +13,7 @@ import { NotificationsState } from './notifications.state';
 
 const NOTIFICATION_TYPE_MAP: Record<string, SparkleAlertType> = {
   Error: 'error',
-  Warning: 'warning',
+  Warning: 'warn',
   Information: 'primary',
 };
 

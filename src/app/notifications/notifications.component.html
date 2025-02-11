@@ -1,5 +1,5 @@
 @for (notification of notifications(); track notification.ID) {
-  <spk-alert [type]="getAlertType(notification.Type)">
+  <spk-alert [class]="getAlertType(notification.Type)">
     <div sparkle-alert-title>{{ notification.Title }}</div>
 
     <div sparkle-alert-content class="content">
