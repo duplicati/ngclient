@@ -11,12 +11,12 @@ import {
 import LogoComponent from '../core/components/logo/logo.component';
 import ServiceHubComponent from '../core/components/service-hub/service-hub.component';
 import { DuplicatiServerService } from '../core/openapi';
+import { AppAuthState } from '../core/states/app-auth.state';
 import { BackupsState } from '../core/states/backups.state';
 import { RelayconfigState } from '../core/states/relayconfig.state';
 import { NotificationsState } from '../notifications/notifications.state';
 import { ChangePassphraseAlertDialogComponent } from './change-passphrase-alert-dialog/change-passphrase-alert-dialog.component';
 import { LayoutState } from './layout.state';
-import { AppAuthState } from '../core/states/app-auth.state';
 
 @Component({
   selector: 'app-layout',
@@ -30,7 +30,7 @@ import { AppAuthState } from '../core/states/app-auth.state';
     SparkleButtonComponent,
     SparkleDividerComponent,
     ServiceHubComponent,
-    LogoComponent
+    LogoComponent,
   ],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss',
@@ -82,6 +82,6 @@ export default class LayoutComponent {
     var d = new Date();
     d.setTime(d.getTime() + 90 * 24 * 60 * 60 * 1000);
 
-    document.cookie = 'default-theme=' + client + '; expires=' + d.toUTCString() + '; path=/';
+    document.cookie = 'default-client=' + client + '; expires=' + d.toUTCString() + '; path=/';
   }
 }
