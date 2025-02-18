@@ -2,10 +2,11 @@ import { registerLocaleData } from '@angular/common';
 import { loadTranslations } from '@angular/localize';
 
 export const DEFAULT_LOCALE = 'en-US';
-export const SUPPORTED_LOCALES = ['en-US', 'de-DE', 'fr-FR', 'da-DK'] as const;
+export const SUPPORTED_LOCALES = ['en-US', 'en-GB', 'de-DE', 'fr-FR', 'da-DK'] as const;
 export type Locales = (typeof SUPPORTED_LOCALES)[number];
 export const LOCALE_MAP = {
   'en-US': 'en',
+  'en-GB': 'en-GB',
   'da-DK': 'da',
   'de-DE': 'de',
   'fr-FR': 'fr',
@@ -14,7 +15,11 @@ export const LOCALE_MAP = {
 export const LANGUAGES = [
   {
     value: 'en-US',
-    label: 'English',
+    label: 'English (en-US)',
+  },
+  {
+    value: 'en-GB',
+    label: 'English (en-GB)',
   },
   {
     value: 'fr-FR',

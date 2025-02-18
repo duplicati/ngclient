@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   SparkleAlertComponent,
@@ -10,6 +10,7 @@ import {
   SparkleProgressBarComponent,
   SparkleRadioComponent,
   SparkleSelectComponent,
+  SparkleSelectNewComponent,
   SparkleToggleComponent,
   SparkleTooltipComponent,
 } from '@sparkle-ui/core';
@@ -95,6 +96,7 @@ type UsageStatisticsType = (typeof USAGE_STATISTICS_OPTIONS)[number];
     SparkleIconComponent,
     SparkleDividerComponent,
     SparkleAlertComponent,
+    SparkleSelectNewComponent,
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss',
@@ -113,6 +115,7 @@ export default class SettingsComponent {
   isDarkMode = this.#layoutState.isDarkMode;
 
   editAs = signal<'list' | 'text'>('list');
+  previousLang = this.#initLang;
   langCtrl = signal<string>(this.#initLang);
 
   remoteControlStatus = this.#remoteControlState.status;
@@ -277,12 +280,7 @@ export default class SettingsComponent {
     return this.settingsForm.controls.pauseSettings;
   }
 
-  languageOptions = computed(() => {
-    const searchValue = this.langCtrl();
-
-    return searchValue ? LANGUAGES.filter((x) => x.label.toLowerCase().includes(searchValue.toLowerCase())) : LANGUAGES;
-  });
-
+  languageOptions = signal(LANGUAGES);
   usageStatisticsOptions = signal(USAGE_STATISTICS_OPTIONS);
 
   timeTypeOptions = signal(TIME_OPTIONS);
@@ -307,7 +305,12 @@ export default class SettingsComponent {
     return new Array(typeLen).fill(0).map((_, i) => i);
   }
 
-  saveLocale(x: string) {
+  updateLocale(__x: unknown[]) {
+    const _x = __x[0] as { value: string; label: string } | null | undefined;
+    const x = _x?.value ?? '';
+
+    if (!x || x === '' || x === this.previousLang) return;
+
     this.#ls.setItem('locale', x);
     window.location.reload();
   }

@@ -7,7 +7,7 @@
       <p i18n>Configure your backup settings.</p>
     </div>
 
-    <button type="submit" spk-button class="raised primary" i18n [disabled]="settingsForm.untouched" (click)="submit()" >
+    <button type="submit" spk-button class="raised primary" i18n [disabled]="settingsForm.untouched" (click)="submit()">
       Save changes
     </button>
   </header>
@@ -126,15 +126,15 @@
     </div>
 
     <div class="right">
-      <spk-select [displayFn]="languageDisplay()" [hideClearButton]="true" (change)="saveLocale($event)">
-        <input type="search" [(ngModel)]="langCtrl" [ngModelOptions]="{ standalone: true }" />
-
-        @for (x of languageOptions(); track $index) {
-          <spk-option [value]="x.value">
-            {{ x.label }}
-          </spk-option>
-        }
-      </spk-select>
+      <spk-select-new
+        [options]="languageOptions()"
+        (selectedOptionsChange)="updateLocale($event)"
+        value="value"
+        label="label"
+        [isClearable]="false"
+        [inlineSearch]="true">
+        <input #input type="text" [ngModel]="langCtrl()" [ngModelOptions]="{ standalone: true }" />
+      </spk-select-new>
     </div>
   </section>
 

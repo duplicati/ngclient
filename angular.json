@@ -40,6 +40,10 @@
       "i18n": {
         "sourceLocale": "en-US",
         "locales": {
+          "en-GB": {
+            "translation": "src/locale/messages.en-GB.xlf",
+            "baseHref": "en-GB"
+          },
           "fr-FR": {
             "translation": "src/locale/messages.fr-FR.xlf",
             "baseHref": "fr-FR"
@@ -64,12 +68,12 @@
                 "output": "./locale/"
               },
               {
-                "glob": "**/{da,en,fr,de}.js",
+                "glob": "**/{da,en,en-gb,fr,de}.js",
                 "input": "./node_modules/dayjs/locale",
                 "output": "./locale/dayjs/"
               },
               {
-                "glob": "**/{da,en,fr,de}.mjs",
+                "glob": "**/{da,en,en-GB,fr,de}.mjs",
                 "input": "./node_modules/@angular/common/locales",
                 "output": "./locale/angular/"
               },
