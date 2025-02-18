@@ -44,3 +44,4 @@ Thumbs.db
 # Sparkle generated files
 /src/assets/spk.css
 /src/assets/spk.woff2
+/src/assets/spk-*.woff2
