@@ -1,5 +1,4 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { ENVIRONMENT_TOKEN } from '../../../environments/environment-token';
 import { ServerStatusDto } from '../openapi'; // Adjust import based on your OpenAPI generated types
 import { AppAuthState } from '../states/app-auth.state';
 
@@ -10,7 +9,6 @@ type ConnectionStatus = 'connected' | 'disconnected' | 'connecting';
 })
 export class ServerStatusWebSocketService {
   #auth = inject(AppAuthState);
-  #env = inject(ENVIRONMENT_TOKEN);
   #websocket: WebSocket | null = null;
 
   #connectionStatus = signal<ConnectionStatus>('disconnected');
