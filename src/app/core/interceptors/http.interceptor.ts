@@ -44,11 +44,9 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   return next(modifiedRequest).pipe(
     catchError((error) => {
       // Suppress error handling for proxy detection requests
-      if (!IS_PROXY_DETECT_REQUEST)
-      {
+      if (!IS_PROXY_DETECT_REQUEST) {
         // Suppress 404 errors for progressstate requests, API needs to change
-        if (!(isProgressStateRequest && error.status === 404))
-          sparkleAlertService.error(error.message);
+        if (!(isProgressStateRequest && error.status === 404)) sparkleAlertService.error(error.message);
 
         // Don't error handle refresh requests
         if (isRefreshRequest && error.status === 401) {
@@ -67,10 +65,6 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
                     headers: req.headers.set('Authorization', `Bearer ${auth.token()}`),
                   })
                 );
-              }),
-              catchError((err) => {
-                router.navigate(['/logout']);
-                return throwError(() => err);
               }),
               finalize(() => (refreshRequest = null))
             );
