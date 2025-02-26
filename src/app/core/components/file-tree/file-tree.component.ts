@@ -197,7 +197,9 @@ export default class FileTreeComponent {
 
     for (const node of nodes) {
       const itemPath = (node.id as string).replace(rootPath ?? '', '');
-      const pathParts = itemPath.split('/').filter(Boolean);
+      const isWindows = itemPath.includes('\\');
+      const pathDelimiter = isWindows ? '\\' : '/';
+      const pathParts = itemPath.split(pathDelimiter).filter(Boolean);
 
       let evaluatedPath = '';
       let parentNode = root;
@@ -267,10 +269,13 @@ export default class FileTreeComponent {
     // Then find first excluded or included node per pathWithDir
     for (let i = 0; i < pathsWithDir.length; i++) {
       const pathPart = pathsWithDir[i];
-      const x = pathPart.slice(1);
+      const x = pathPart.slice(1); // Remove direction
       const dir = pathPart.startsWith('-') ? 'exclude' : 'include';
+      const isWindows = nodeId.includes('\\');
+      const pathDelimiter = isWindows ? '\\' : '/';
+      const pathToTest = isWindows ? x.slice(2) : x;
 
-      if (x.startsWith('/') && x.endsWith('/')) {
+      if (pathToTest.startsWith(pathDelimiter) && x.endsWith(pathDelimiter)) {
         // Works - Folder
         if (nodeType !== 'folder') continue;
         const res = nodeId === x;
@@ -282,14 +287,14 @@ export default class FileTreeComponent {
         }
       }
 
-      if (x.startsWith('*') && x.endsWith('*/')) {
+      if (x.startsWith('*') && x.endsWith(`*${pathDelimiter}`)) {
         // Works - FolderNameIncludes
         if (nodeType !== 'folder') continue;
         const trimmedX = x.slice(1, -2);
 
         if (trimmedX === '') break;
 
-        const res = nodeId?.includes(trimmedX + '/');
+        const res = nodeId?.includes(trimmedX + pathDelimiter);
 
         if (res) {
           result = dir === 'include' ? TreeEvalEnum.Included : TreeEvalEnum.Excluded;
@@ -297,7 +302,7 @@ export default class FileTreeComponent {
         }
       }
 
-      if (x.startsWith('[.*') && x.endsWith('[^\\/]*]')) {
+      if (x.startsWith('[.*') && x.endsWith(`[^\\${pathDelimiter}]*]`)) {
         // Works - FileNameIncludes
         if (nodeType !== 'file') continue;
 
@@ -339,6 +344,12 @@ export default class FileTreeComponent {
 
       // Works - Expression
       if (x === '') continue;
+
+      // Matching file or folder
+      if (x === nodeId) {
+        result = dir === 'include' ? TreeEvalEnum.Included : TreeEvalEnum.Excluded;
+        break;
+      }
 
       const res = this.#globMatch(nodeId!, x, true);
 
@@ -592,14 +603,29 @@ export default class FileTreeComponent {
       .filter((x) => !x.startsWith('-'))
       .filter(Boolean);
 
-    const segmentArr = pathArr.map((x) => x.split('/').filter(Boolean));
+    const segmentArr = pathArr.map((x) => {
+      const isWindows = x.indexOf(':') === 1;
+
+      return x.split(isWindows ? '\\' : '/').filter((y) => {
+        if (y.includes('.')) {
+          return false;
+        }
+
+        return y;
+      });
+    });
 
     let urlPieces: string[] = [this.rootPath() ?? '/'];
 
     segmentArr.forEach((segments) => {
       segments.forEach((_, index) => {
-        const urlCombined = segments.slice(0, index + 1).join('/');
-        const urlPiece = urlCombined.startsWith('%') ? urlCombined : '/' + urlCombined;
+        const isWindows = segments[0].endsWith(':');
+        const urlCombined = segments.slice(0, index + 1).join(isWindows ? '\\' : '/');
+        let urlPiece = urlCombined;
+
+        if (urlPiece.indexOf(':') === -1 && !urlPiece.startsWith('%')) {
+          urlPiece = '/' + urlCombined;
+        }
 
         if (!urlPieces.includes(urlPiece)) {
           urlPieces.push(urlPiece);
@@ -609,7 +635,7 @@ export default class FileTreeComponent {
 
     this.isLoading.set(true);
 
-    forkJoin([...urlPieces.map((urlPiece) => this.#getFilePath(urlPiece === '/' ? urlPiece : urlPiece))])
+    forkJoin([...urlPieces.map((urlPiece) => this.#getFilePath(urlPiece))])
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (results) => {
@@ -660,7 +686,7 @@ export default class FileTreeComponent {
                   .filter((part) => part !== '')
                   .pop(),
                 id: y.Path,
-                cls: y.Path.endsWith('/') ? 'folder' : 'file',
+                cls: y.Path.endsWith('/') || y.Path.endsWith('\\') ? 'folder' : 'file',
                 leaf: node !== null,
                 resolvedpath: y.Path,
                 hidden: false,
@@ -670,7 +696,10 @@ export default class FileTreeComponent {
 
         this.treeNodes.update((y) => {
           const newArray = alignDataArray.map((z: any) => {
-            const cls = (z.id.startsWith('%') && z.id.endsWith('%')) || z.id.endsWith('/') ? 'folder' : 'file';
+            const cls =
+              (z.id.startsWith('%') && z.id.endsWith('%')) || z.id.endsWith('/') || z.id.endsWith('\\')
+                ? 'folder'
+                : 'file';
 
             return {
               ...z,

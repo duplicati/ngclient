@@ -118,6 +118,14 @@
         opacity: 0.6;
       }
 
+      &.root {
+        gap: p2r(4);
+
+        .icon {
+          width: p2r(24);
+        }
+      }
+
       .text {
         flex: 1 0;
         height: 100%;

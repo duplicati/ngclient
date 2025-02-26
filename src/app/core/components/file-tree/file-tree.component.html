@@ -38,6 +38,7 @@
               [class.indeterminate]="node.isIndeterminate"
               [class.open]="node.children.length"
               [class.usually-hidden]="node.hidden"
+              [class.root]="data.level === 0"
               (click)="toggleNode(node.id, node)">
               <div class="icon" [class.file]="node.cls === 'file'">
                 @if (node.id !== '/') {
