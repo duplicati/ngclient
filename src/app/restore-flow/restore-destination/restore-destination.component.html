@@ -51,12 +51,12 @@
       }
     </div>
 
-    <spk-menu>
+    <spk-menu [searchable]="true">
       <button spk-button type="button" class="outlined" i18n>Other destinations</button>
 
       <ng-container menu>
         @for (destination of destinationTypeOptionsNotFocused(); track $index) {
-          <button item type="button" (click)="addDestinationFormGroup(destination.key)">
+          <button #option type="button" (click)="addDestinationFormGroup(destination.key)">
             {{ destination.displayName }}
           </button>
         }
@@ -104,7 +104,7 @@
           <ng-container title i18n>
             Advanced options
 
-            <spk-menu>
+            <spk-menu [searchable]="true">
               <button
                 spk-button
                 type="button"
@@ -116,7 +116,7 @@
 
               <ng-container menu>
                 @for (option of notSelectedAdvancedFormPair(); track $index) {
-                  <button item type="button" (click)="addAdvancedFormPair(option, 0)">
+                  <button #option type="button" (click)="addAdvancedFormPair(option, 0)">
                     {{ option.name }}
                   </button>
                 }
@@ -145,7 +145,7 @@
           <ng-container title i18n>
             Http options
 
-            <spk-menu>
+            <spk-menu [searchable]="true">
               <button
                 spk-button
                 type="button"
@@ -157,7 +157,7 @@
 
               <ng-container menu>
                 @for (option of notSelectedHttpOptions(); track $index) {
-                  <button item type="button" (click)="addHttpOption(option, 0)">
+                  <button #option type="button" (click)="addHttpOption(option, 0)">
                     {{ option.name }}
                   </button>
                 }

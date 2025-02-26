@@ -58,8 +58,6 @@ export class RemoteControlState {
 
     data.RegistrationUrl && this.claimUrl.set(data.RegistrationUrl);
 
-    // console.log(data);
-
     if (data.IsConnected) {
       this.state.set('connected');
     } else if (data.IsEnabled) {
@@ -79,8 +77,6 @@ export class RemoteControlState {
     }
 
     const currentState = this.state();
-
-    console.log('currentState: ', currentState);
 
     // Stop any existing timer
     if (this.repeatRegisterTimer !== null) {

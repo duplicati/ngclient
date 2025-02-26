@@ -70,7 +70,6 @@ export class NotificationsState {
 
     this.#tempStream.set(notifications);
     notifications.splice(notificationIndex, 1);
-    console.log('notifications', notifications);
 
     this.#notificationStream.set(notifications);
 

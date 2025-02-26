@@ -38,8 +38,6 @@ export default class LogsComponent {
       .pipe(finalize(() => this.logsLoading.set(false)))
       .subscribe({
         next: (res) => {
-          console.log(res);
-
           this.logs.set(res as LogEvent[]);
         },
       });

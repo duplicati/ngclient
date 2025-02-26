@@ -18,19 +18,19 @@ import { validateWhen, watchField } from '../../core/validators/custom.validator
 const fb = new FormBuilder();
 
 @Component({
-    selector: 'app-export',
-    imports: [
-        ReactiveFormsModule,
-        RouterLink,
-        SparkleButtonGroupComponent,
-        SparkleToggleComponent,
-        SparkleIconComponent,
-        SparkleFormFieldComponent,
-        SparkleButtonComponent,
-    ],
-    templateUrl: './export.component.html',
-    styleUrl: './export.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-export',
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    SparkleButtonGroupComponent,
+    SparkleToggleComponent,
+    SparkleIconComponent,
+    SparkleFormFieldComponent,
+    SparkleButtonComponent,
+  ],
+  templateUrl: './export.component.html',
+  styleUrl: './export.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ExportComponent {
   #dupServer = inject(DuplicatiServerService);
@@ -92,9 +92,7 @@ export default class ExportComponent {
             this.downloadFile(res, `${backupName}.${fileExt}`);
             this.#router.navigate(['/']);
           },
-          error: (err) => {
-            console.log('err', err);
-          },
+          error: (err) => {},
         });
     } else {
       this.#dupServer
@@ -106,12 +104,9 @@ export default class ExportComponent {
         .pipe(finalize(() => this.isExporting.set(false)))
         .subscribe({
           next: (res) => {
-            console.log('res', res);
             this.exportedCmd.set(res.Command ?? null);
           },
-          error: (err) => {
-            console.log('err', err);
-          },
+          error: (err) => {},
         });
     }
   }
