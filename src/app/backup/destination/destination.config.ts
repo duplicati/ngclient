@@ -57,7 +57,8 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const hasLeadingSlash = plainPath.startsWith('file:///');
         const _tempPath = hasLeadingSlash ? plainPath.split('file:///')[1] : plainPath.split('file://')[1];
         const isShortcut = _tempPath.startsWith('%');
-        const path = isShortcut ? _tempPath : '/' + _tempPath;
+        const isWindows = _tempPath.slice(1).startsWith(':\\');
+        const path = isWindows || isShortcut ? _tempPath : '/' + _tempPath;
 
         return <ValueOfDestinationFormGroup>{
           destinationType,

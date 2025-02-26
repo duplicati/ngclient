@@ -25,7 +25,8 @@ type _ExpressionType =
   | 'Regex'
   | 'FileGroup'
   | 'Expression'
-  | 'File';
+  | 'File'
+  | 'Unknown';
 
 type ExpressionType = `${ExpressionDirection}${_ExpressionType}`;
 
@@ -83,6 +84,10 @@ const EXPRESSION_OPTIONS: ExpressionTypeMap[] = [
     key: 'Excludes expression',
     value: '-Expression',
   },
+  {
+    key: 'None',
+    value: '-Unknown',
+  },
 ] as const;
 
 const FILE_GROUP_OPTIONS: FileGroupTypeMap[] = [
@@ -128,6 +133,7 @@ const FILE_GROUP_OPTIONS: FileGroupTypeMap[] = [
 })
 export class FilterComponent {
   path = input.required<string>();
+  osType = input<string>();
   pathChange = output<string>();
   remove = output<void>();
 
@@ -144,50 +150,65 @@ export class FilterComponent {
   });
   pathEffect = effect(() => {
     const pathPart = this.path();
-    const stringWithoutDirection = pathPart.slice(1);
+    const x = pathPart.slice(1);
     const direction = pathPart.startsWith('-') ? '-' : '+';
+    const isWindows = this.osType() === 'Windows';
+    const pathDelimiter = isWindows ? '\\' : '/';
+    const isShortCut = x.startsWith('%');
 
-    if (stringWithoutDirection.startsWith('/') && stringWithoutDirection.endsWith('/')) {
+    if (x === '') {
+      return this.pathState.set({
+        type: '-Unknown',
+        path: '___none___',
+        expression: '',
+      });
+    }
+
+    if (
+      (isShortCut && x.endsWith(pathDelimiter)) ||
+      (isWindows && x.slice(2).startsWith('\\') && x.endsWith('\\')) ||
+      (x.startsWith(pathDelimiter) && x.endsWith(pathDelimiter))
+    ) {
       return this.pathState.set({
         type: `${direction}Folder`,
-        path: stringWithoutDirection,
-        expression: stringWithoutDirection,
+        path: x,
+        expression: x,
       });
-    } else if (stringWithoutDirection.startsWith('*') && stringWithoutDirection.endsWith('*/')) {
+    } else if (x.startsWith('*') && x.endsWith(`*${pathDelimiter}`)) {
       return this.pathState.set({
         type: `${direction}FolderNameIncludes`,
-        path: stringWithoutDirection,
-        expression: stringWithoutDirection.slice(1, -2),
+        path: x,
+        expression: x.slice(1, -2),
       });
-    } else if (stringWithoutDirection.startsWith('[.*') && stringWithoutDirection.endsWith(`[^\\/]*]`)) {
+    } else if (x.startsWith('[.*') && x.endsWith(`[^\\${pathDelimiter}]*]`)) {
       return this.pathState.set({
         type: `${direction}FileNameIncludes`,
-        path: stringWithoutDirection,
-        expression: stringWithoutDirection.slice(3, -7),
+        path: x,
+        expression: x.slice(3, -7),
       });
-    } else if (stringWithoutDirection.startsWith('{') && stringWithoutDirection.endsWith('}')) {
+    } else if (x.startsWith('{') && x.endsWith('}')) {
       return this.pathState.set({
         type: `${direction}FileGroup`,
-        path: stringWithoutDirection,
-        expression: stringWithoutDirection.slice(1, -1),
+        path: x,
+        expression: x.slice(1, -1),
       });
-    } else if (stringWithoutDirection.startsWith('[') && stringWithoutDirection.endsWith(']')) {
+    } else if (x.startsWith('[') && x.endsWith(']')) {
       return this.pathState.set({
         type: `${direction}Regex`,
-        path: stringWithoutDirection,
-        expression: stringWithoutDirection.slice(1, -1),
+        path: x,
+        expression: x.slice(1, -1),
       });
-    } else if (stringWithoutDirection.startsWith('*.')) {
+    } else if (x.startsWith('*.')) {
       return this.pathState.set({
         type: `${direction}Extension`,
-        path: stringWithoutDirection,
-        expression: stringWithoutDirection.slice(2),
+        path: x,
+        expression: x.slice(2),
       });
     } else {
       return this.pathState.set({
         type: `${direction}Expression`,
-        path: stringWithoutDirection,
-        expression: stringWithoutDirection,
+        path: x,
+        expression: x,
       });
     }
   });
@@ -220,50 +241,59 @@ export class FilterComponent {
   }
 
   #mapToPath(value: FilterValue) {
-    const direction = value.type.slice(0, 1);
+    const dir = value.type.slice(0, 1);
     const valueType = value.type.slice(1);
+    const isWindows = this.osType() === 'Windows';
+    const pathDelimiter = isWindows ? '\\' : '/';
+    const shouldHandleWindows = isWindows && !value.expression.startsWith('%');
+    const expression = shouldHandleWindows ? value.expression.slice(2) : value.expression;
+    const isShortCut = value.path.startsWith('%');
+
+    if (valueType === 'Unknown') {
+      return `${dir}${value.expression}`;
+    }
 
     if (valueType === 'Folder') {
-      const hasTrailingSlash = value.expression.endsWith('/');
-      const hasLeadingSlash = value.expression.startsWith('/');
+      const hasLeadingSlash = isShortCut || expression.startsWith(pathDelimiter);
+      const hasTrailingSlash = expression.endsWith(pathDelimiter);
 
       if (hasTrailingSlash && hasLeadingSlash) {
-        return `${direction}${value.expression}`;
+        return `${dir}${value.expression}`;
       }
 
       if (hasTrailingSlash) {
-        return `${direction}${value.expression}/`;
+        return `${dir}${value.expression}${pathDelimiter}`;
       }
 
       if (hasLeadingSlash) {
-        return `${direction}/${value.expression}`;
+        return `${dir}${pathDelimiter}${value.expression}`;
       }
 
-      return `${direction}/${value.expression}/`;
+      return `${dir}${pathDelimiter}${value.expression}${pathDelimiter}`;
     }
 
     if (valueType === 'FolderNameIncludes') {
-      return `${direction}*${value.expression}*/`;
+      return `${dir}*${value.expression}*${pathDelimiter}`;
     }
 
     if (valueType === 'FileNameIncludes') {
-      return `${direction}[.*${value.expression}[^\\/]*]`;
+      return `${dir}[.*${value.expression}[^\\${pathDelimiter}]*]`;
     }
 
     if (valueType === 'FileGroup') {
-      return `${direction}{${value.expression}}`;
+      return `${dir}{${value.expression}}`;
     }
 
     if (valueType === 'Regex') {
-      return `${direction}[${value.expression}]`;
+      return `${dir}[${value.expression}]`;
     }
 
     if (valueType === 'Extension') {
-      return `${direction}*.${value.expression}`;
+      return `${dir}*.${value.expression}`;
     }
 
     // Expression
-    return `${direction}${value.expression}`;
+    return `${dir}${value.expression}`;
   }
 
   removeFilter() {

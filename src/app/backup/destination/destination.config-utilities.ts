@@ -121,15 +121,21 @@ export function fromTargetPath(targetPath: string) {
     );
   }
 
-  const urlObj = new URL(fakeProtocolPrefixed);
+  try {
+    const urlObj = new URL(fakeProtocolPrefixed);
+
+    return DESTINATION_CONFIG.find((x) => x.customKey === destinationType || x.key === destinationType)?.mapper.from(
+      destinationType,
+      urlObj,
+      targetPath
+    );
+  } catch (error) {
+    console.error('Error while parsing target path', error);
+  }
 
   if (!canParse) {
     throw new Error('Invalid target path');
   }
 
-  return DESTINATION_CONFIG.find((x) => x.customKey === destinationType || x.key === destinationType)?.mapper.from(
-    destinationType,
-    urlObj,
-    targetPath
-  );
+  return null;
 }

@@ -74,13 +74,14 @@ export default class SourceDataComponent {
   newPathCtrl = new FormControl('');
   filesLargerThan = computed(() => this.sourceDataFormSignal()?.excludes?.filesLargerThan?.size !== null);
   sizeOptions = signal(SIZE_OPTIONS);
+  osType = this.#backupState.osType;
 
   pathSignal = toSignal(this.sourceDataForm.controls.path.valueChanges);
   pathArray = computed(
     () =>
-      this.pathSignal()
+      (this.pathSignal()
         ?.split('\0')
-        .filter((x) => x.startsWith('-') || x.startsWith('+')) ?? []
+        .filter((x) => x.startsWith('-') || x.startsWith('+') || x === '___none___') as string[]) ?? []
   );
 
   addFilter(newPath = '-*') {

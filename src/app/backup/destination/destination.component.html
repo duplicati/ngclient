@@ -191,6 +191,7 @@
                   [startingPath]="getFormFieldValue(0, item.formGroupName, item.formView.name)"
                   [accepts]="item.formView.accepts"
                   [showFiles]="true"
+                  [hideShortcuts]="true"
                   [showHiddenNodes]="true"
                   [selectFiles]="true">
                   <label
@@ -212,7 +213,9 @@
                     formControlName="{{ item.formView.name }}" />
                 </app-file-tree>
               } @else if (item.formView.type === 'FolderTree') {
-                <app-file-tree [startingPath]="getFormFieldValue(0, item.formGroupName, item.formView.name)">
+                <app-file-tree
+                  [hideShortcuts]="true"
+                  [startingPath]="getFormFieldValue(0, item.formGroupName, item.formView.name)">
                   <label
                     for="destination-{{ item.formGroupName }}-{{ item.index }}-{{
                       item.asHttpOptions ? 'http' : 'other'

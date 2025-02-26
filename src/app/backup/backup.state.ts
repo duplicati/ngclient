@@ -70,6 +70,7 @@ export class BackupState {
   finishedLoading = signal(false);
   backupDefaults = signal<any>(null);
   isNew = computed(() => this.backupId() === 'new');
+  osType = computed(() => this.#sysinfo.systemInfo()?.OSType);
 
   selectedOptions = signal<FormView[]>([]);
   selectedAdvancedFormPair = signal<FormView[]>([]);
@@ -214,13 +215,9 @@ export class BackupState {
         .pipe(finalize(() => this.isSubmitting.set(false)))
         .subscribe({
           next: (res) => {
-            console.log('submitted res', res);
-
             this.exit();
           },
-          error: (err) => {
-            console.error('submitted error', err);
-          },
+          error: (err) => {},
         });
     } else {
       this.#dupServer
@@ -231,13 +228,9 @@ export class BackupState {
         .pipe(finalize(() => this.isSubmitting.set(false)))
         .subscribe({
           next: (res) => {
-            console.log('submitted res', res);
-
             this.exit();
           },
-          error: (err) => {
-            console.error('submitted error', err);
-          },
+          error: (err) => {},
         });
     }
   }

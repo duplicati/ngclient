@@ -10,6 +10,13 @@
     --miw: initial;
   }
 
+  spk-form-field {
+    min-width: 110px;
+    input {
+      min-width: 110px;
+    }
+  }
+
   .filter-removal {
     cursor: pointer;
     display: flex;

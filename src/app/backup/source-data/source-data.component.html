@@ -47,7 +47,11 @@
 
       @if (pathSignal()?.length) {
         @for (path of pathArray(); track $index) {
-          <app-filter [path]="path" (pathChange)="patchPathAt($event, $index)" (remove)="removePathAt($index)" />
+          <app-filter
+            [path]="path"
+            [osType]="osType() ?? ''"
+            (pathChange)="patchPathAt($event, $index)"
+            (remove)="removePathAt($index)" />
         }
       }
     </app-toggle-card>

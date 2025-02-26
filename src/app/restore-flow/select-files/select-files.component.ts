@@ -108,7 +108,6 @@ export default class SelectFilesComponent {
       .subscribe({
         next: (res) => {
           const path = (res as any)['Files'][0].Path;
-          // console.log(res, path);
           this.rootPath.set(path);
         },
       });
