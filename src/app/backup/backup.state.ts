@@ -352,7 +352,7 @@ export class BackupState {
   mapScheduleToForm(schedule: ScheduleDto | null) {
     if (!schedule) {
       this.scheduleForm.patchValue({
-        autoRun: true,
+        autoRun: false,
       });
 
       return;
