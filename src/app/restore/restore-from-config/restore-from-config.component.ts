@@ -98,8 +98,6 @@ export default class RestoreFromConfigComponent {
       )
       .subscribe({
         next: (res) => {
-          console.log('/restore-draft', res.ID);
-
           this.#router.navigate(['/restore-draft', res.ID]);
         },
         error: (err) => {

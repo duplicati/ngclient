@@ -53,8 +53,6 @@ export class RemoteLogComponent {
     loader: ({ request: params }) =>
       this.#dupServer.getApiV1BackupByIdRemotelog({ id: params.id, pagesize: 100 }).pipe(
         map((x) => {
-          console.log(x);
-
           return (x as RemoteLogEntry[]).map((y, i) => {
             const newItem = {
               id: y.ID,

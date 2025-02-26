@@ -148,7 +148,6 @@ export default class CommandlineComponent {
       '--disable-module=console-password-input',
     ];
 
-    // return console.log('command', command);
     this.#dupServer
       .postApiV1Commandline({
         requestBody: command,
@@ -157,8 +156,6 @@ export default class CommandlineComponent {
         if (response.Status === 'OK') {
           this.#router.navigate(['backup', this.backupId(), 'commandline', response.ID]);
         }
-
-        // TODO Handle errors
       });
   }
 
@@ -189,8 +186,6 @@ export default class CommandlineComponent {
   }
 
   addNewOption(option: FormView) {
-    console.log('option', option);
-
     this.#backupState.addOptionToFormGroup(option);
   }
 }

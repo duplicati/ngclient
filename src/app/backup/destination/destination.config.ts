@@ -310,8 +310,6 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         const pathWithoutPrefixSlash = urlObj.pathname.replace(/^\//, '');
 
-        console.log('pathWithoutPrefixSlash', pathWithoutPrefixSlash);
-
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {

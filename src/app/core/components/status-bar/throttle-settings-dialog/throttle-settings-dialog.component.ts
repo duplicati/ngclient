@@ -70,8 +70,6 @@ export default class ThrottleSettingsDialogComponent {
         const uploadSpeed = _uploadSpeed === '' ? 10 : parseInt(_uploadSpeed);
         const downloadSpeed = _downloadSpeed === '' ? 10 : parseInt(_downloadSpeed);
 
-        console.log(_uploadSpeed);
-
         this.maxUploadUnit.set((REVERSE_UNIT_MAP[uploadSpeedUnit] + '/s') as SizeOptions);
         this.maxDownloadUnit.set((REVERSE_UNIT_MAP[downloadSpeedUnit] + '/s') as SizeOptions);
 
