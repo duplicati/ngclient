@@ -3,12 +3,10 @@ import { ChangeDetectionStrategy, Component, effect, ElementRef, inject, signal,
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import {
   SparkleButtonComponent,
-  SparkleCheckboxComponent,
   SparkleFormFieldComponent,
   SparkleIconComponent,
   SparkleMenuComponent,
-  SparkleOptionComponent,
-  SparkleSelectComponent,
+  SparkleSelectNewComponent,
   SparkleToggleComponent,
   SparkleTooltipComponent,
 } from '@sparkle-ui/core';
@@ -21,7 +19,7 @@ import { DuplicatiServerService } from '../../core/openapi';
 import { ServerSettingsService } from '../server-settings.service';
 
 const fb = new FormBuilder();
-const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'] as const;
+const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
 const RETENTION_OPTIONS = [
   {
     value: '',
@@ -75,14 +73,12 @@ export const createOptionsForm = (
     ReactiveFormsModule,
     NgTemplateOutlet,
     SparkleMenuComponent,
-    SparkleSelectComponent,
     SparkleButtonComponent,
     SparkleIconComponent,
     SparkleFormFieldComponent,
     SparkleToggleComponent,
-    SparkleCheckboxComponent,
-    SparkleOptionComponent,
     SparkleTooltipComponent,
+    SparkleSelectNewComponent,
     FileTreeComponent,
     ToggleCardComponent,
   ],

@@ -9,12 +9,7 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {
-  SparkleFormFieldComponent,
-  SparkleIconComponent,
-  SparkleOptionComponent,
-  SparkleSelectComponent,
-} from '@sparkle-ui/core';
+import { SparkleFormFieldComponent, SparkleIconComponent, SparkleSelectNewComponent } from '@sparkle-ui/core';
 
 type ExpressionDirection = '-' | '+';
 type _ExpressionType =
@@ -119,14 +114,7 @@ const FILE_GROUP_OPTIONS: FileGroupTypeMap[] = [
 
 @Component({
   selector: 'app-filter',
-  imports: [
-    FormsModule,
-    SparkleSelectComponent,
-    SparkleOptionComponent,
-    SparkleIconComponent,
-    SparkleFormFieldComponent,
-    SparkleSelectComponent,
-  ],
+  imports: [FormsModule, SparkleIconComponent, SparkleFormFieldComponent, SparkleSelectNewComponent],
   templateUrl: './filter.component.html',
   styleUrl: './filter.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

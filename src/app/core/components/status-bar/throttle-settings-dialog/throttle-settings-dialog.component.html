@@ -22,13 +22,9 @@
           [disabled]="!maxUploadActive()" />
       </spk-form-field>
 
-      <spk-select [hideClearButton]="true">
+      <spk-select-new [isClearable]="false" [options]="sizeOptions()">
         <input type="text" [(ngModel)]="maxUploadUnit" />
-
-        @for (option of sizeOptions(); track $index) {
-          <spk-option [value]="option">{{ option }}</spk-option>
-        }
-      </spk-select>
+      </spk-select-new>
     </div>
 
     <div class="field-row">
@@ -49,13 +45,9 @@
           [disabled]="!maxDownloadActive()" />
       </spk-form-field>
 
-      <spk-select [hideClearButton]="true">
+      <spk-select-new [isClearable]="false" [options]="sizeOptions()">
         <input type="text" [(ngModel)]="maxDownloadUnit" />
-
-        @for (option of sizeOptions(); track $index) {
-          <spk-option [value]="option">{{ option }}</spk-option>
-        }
-      </spk-select>
+      </spk-select-new>
     </div>
 
     <p i18n>

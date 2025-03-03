@@ -6,8 +6,7 @@ import {
   SparkleButtonComponent,
   SparkleFormFieldComponent,
   SparkleIconComponent,
-  SparkleOptionComponent,
-  SparkleSelectComponent,
+  SparkleSelectNewComponent,
   SparkleToggleComponent,
 } from '@sparkle-ui/core';
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
@@ -16,7 +15,7 @@ import { BackupState } from '../backup.state';
 import { FilterComponent } from './filter/filter.component';
 
 const fb = new FormBuilder();
-const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'] as const;
+const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
 
 export const createSourceDataForm = (
   defaults = {
@@ -50,11 +49,10 @@ export const createSourceDataForm = (
     FormsModule,
     ReactiveFormsModule,
     SparkleFormFieldComponent,
-    SparkleOptionComponent,
     SparkleIconComponent,
     SparkleButtonComponent,
-    SparkleSelectComponent,
     SparkleToggleComponent,
+    SparkleSelectNewComponent,
     FileTreeComponent,
     ToggleCardComponent,
     FilterComponent,

@@ -3,8 +3,8 @@
 :host {
   display: block;
   width: 100%;
-  max-width: p2r(520);
-  padding: p2r(40);
+  max-width: p2r(650);
+  justify-self: flex-end;
 }
 
 form {
@@ -59,8 +59,8 @@ form {
   flex-direction: column;
   gap: p2r(4);
   p.warning {
-      color: rgb(125, 125, 0);
-    }
+    color: rgb(125, 125, 0);
+  }
 }
 
 .row-inputs {

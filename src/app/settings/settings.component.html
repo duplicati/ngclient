@@ -133,7 +133,7 @@
         label="label"
         [isClearable]="false"
         [inlineSearch]="true">
-        <input #input type="text" [ngModel]="langCtrl()" [ngModelOptions]="{ standalone: true }" />
+        <input type="text" [ngModel]="langCtrl()" [ngModelOptions]="{ standalone: true }" />
       </spk-select-new>
     </div>
   </section>
@@ -264,23 +264,17 @@
 
     <div class="right">
       <div class="field-row" formGroupName="pauseSettings">
-        <spk-select [hideClearButton]="true">
-          <input type="search" formControlName="time" />
+        <spk-range-slider [unit]="timeTypeSignal() ?? ''" class="raised primary">
+          <input type="range" [min]="timeRange()[0]" [max]="timeRange()[1]" formControlName="time" />
+        </spk-range-slider>
 
-          @for (x of timeOptions(); track $index) {
-            <spk-option [value]="x">{{ x }}</spk-option>
-          }
-        </spk-select>
-
-        <spk-select [displayFn]="typeDisplay()" [hideClearButton]="true">
+        <spk-select-new [options]="timeTypeOptions()" [isClearable]="false" label="label" value="value">
           <input type="text" formControlName="timeType" />
 
-          @for (x of timeTypeOptions(); track $index) {
-            <spk-option [value]="x.value" (click)="pauseSettings.controls.timeType.setValue(x.value)">
-              {{ x.label }}
-            </spk-option>
-          }
-        </spk-select>
+          <ng-template let-option>
+            {{ option.label }}
+          </ng-template>
+        </spk-select-new>
       </div>
     </div>
   </section>
@@ -300,24 +294,19 @@
     </div>
 
     <div class="right">
-      <spk-select [displayFn]="usageDisplay()">
+      <spk-select-new [options]="usageStatisticsOptions()" label="label" value="value">
         <input type="text" formControlName="usageStatistics" />
 
-        @for (x of usageStatisticsOptions(); track $index) {
-          <spk-option [value]="x.value">
-            {{ x.label }}
-          </spk-option>
-        }
-      </spk-select>
+        <ng-template let-option>
+          {{ option.label }}
+        </ng-template>
+      </spk-select-new>
     </div>
   </section>
 
   <section>
-    <div class="left">
+    <div class="advanced-settings">
       <h3 i18n>Advanced options</h3>
-    </div>
-
-    <div class="right">
       <app-advanced-options-settings />
     </div>
   </section>

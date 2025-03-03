@@ -637,8 +637,8 @@ export class BackupState {
     }
 
     if (element.type === 'Size') {
-      const withNoDigits = defaultValue!.replace(/[0-9]/g, '') as Size | undefined;
-      const onlyDigits = defaultValue!.replace(/[^0-9]/g, '');
+      const withNoDigits = (defaultValue ?? '').replace(/[0-9]/g, '') as Size | undefined;
+      const onlyDigits = (defaultValue ?? '').replace(/[^0-9]/g, '');
 
       group.addControl(
         element.name as string,

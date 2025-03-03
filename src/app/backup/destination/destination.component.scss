@@ -123,3 +123,7 @@ form {
 textarea ~ grammarly-extension {
   display: none;
 }
+
+spk-select-new {
+  --miw: p2r(120);
+}

@@ -5,8 +5,7 @@ import {
   SparkleButtonComponent,
   SparkleFormFieldComponent,
   SparkleIconComponent,
-  SparkleOptionComponent,
-  SparkleSelectComponent,
+  SparkleSelectNewComponent,
   SparkleToggleComponent,
 } from '@sparkle-ui/core';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
@@ -43,7 +42,7 @@ const UNIT_OPTIONS = [
     key: 'Y',
     label: $localize`Years`,
   },
-] as const;
+];
 
 type Unit = (typeof UNIT_OPTIONS)[number]['key'];
 export type Days = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
@@ -54,7 +53,7 @@ export const createScheduleForm = (
     nextTime: { time: '13:00', date: new Date().toISOString().split('T')[0] },
     runAgain: {
       repeatValue: 1,
-      repeatUnit: 'D' as Unit,
+      repeatUnit: 'D' as string,
       allowedDays: {
         mon: false,
         tue: false,
@@ -75,7 +74,7 @@ export const createScheduleForm = (
     }),
     runAgain: fb.group({
       repeatValue: fb.control<number>(defaults.runAgain.repeatValue),
-      repeatUnit: fb.control<Unit>(defaults.runAgain.repeatUnit),
+      repeatUnit: fb.control<string>(defaults.runAgain.repeatUnit),
       allowedDays: fb.group({
         mon: fb.control<boolean>(defaults.runAgain.allowedDays.mon),
         tue: fb.control<boolean>(defaults.runAgain.allowedDays.tue),
@@ -96,11 +95,10 @@ export type ScheduleFormValue = ReturnType<typeof createScheduleForm>['value'];
   imports: [
     ReactiveFormsModule,
     SparkleFormFieldComponent,
-    SparkleSelectComponent,
-    SparkleOptionComponent,
     SparkleToggleComponent,
     SparkleIconComponent,
     SparkleButtonComponent,
+    SparkleSelectNewComponent,
     ToggleCardComponent,
   ],
   templateUrl: './schedule.component.html',

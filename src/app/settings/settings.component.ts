@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   SparkleAlertComponent,
@@ -6,16 +7,14 @@ import {
   SparkleDividerComponent,
   SparkleFormFieldComponent,
   SparkleIconComponent,
-  SparkleOptionComponent,
   SparkleProgressBarComponent,
   SparkleRadioComponent,
-  SparkleSelectComponent,
+  SparkleRangeSliderComponent,
   SparkleSelectNewComponent,
   SparkleToggleComponent,
   SparkleTooltipComponent,
 } from '@sparkle-ui/core';
-import { derivedFrom } from 'ngxtension/derived-from';
-import { catchError, finalize, map, of, pipe, startWith } from 'rxjs';
+import { catchError, finalize, of } from 'rxjs';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { LANGUAGES } from '../core/locales/locales.utility';
 import { DuplicatiServerService } from '../core/openapi';
@@ -44,7 +43,7 @@ const TIME_OPTIONS = [
     value: 'h',
     label: $localize`Hours`,
   },
-] as const;
+];
 
 type TimeTypes = (typeof TIME_OPTIONS)[number]['value'];
 
@@ -85,10 +84,9 @@ type UsageStatisticsType = (typeof USAGE_STATISTICS_OPTIONS)[number];
     StatusBarComponent,
     RemoteControlComponent,
     AdvancedOptionsSettingsComponent,
-    SparkleOptionComponent,
     SparkleButtonComponent,
     SparkleRadioComponent,
-    SparkleSelectComponent,
+    SparkleRangeSliderComponent,
     SparkleProgressBarComponent,
     SparkleToggleComponent,
     SparkleTooltipComponent,
@@ -284,20 +282,29 @@ export default class SettingsComponent {
   usageStatisticsOptions = signal(USAGE_STATISTICS_OPTIONS);
 
   timeTypeOptions = signal(TIME_OPTIONS);
-  timeOptions = derivedFrom(
-    [
-      this.pauseSettings.controls.timeType.valueChanges.pipe(startWith('s')),
-      this.pauseSettings.controls.time.valueChanges.pipe(startWith(null)),
-    ],
-    pipe(
-      map(([timeType, time]) => {
-        const timeOptions = this.#createTimeOptions(timeType as TimeTypes);
+  timeTypeSignal = toSignal(this.pauseSettings.controls.timeType.valueChanges);
+  timeRange = computed(() => {
+    const timeType = this.timeTypeSignal();
 
-        return time !== null ? timeOptions.filter((x) => x.toString().includes(time.toString())) : timeOptions;
-      }),
-      startWith([])
-    )
-  );
+    return timeType === 'h' ? [0, 24] : [0, 60];
+  });
+  // timeOptions =
+
+  // derivedFrom(
+  //   [
+  //     this.pauseSettings.controls.timeType.valueChanges.pipe(startWith('s')),
+  //     this.pauseSettings.controls.time.valueChanges.pipe(startWith(null)),
+  //   ],
+  //   pipe(
+  //     map(([timeType, time]) => {
+  //       console.log(timeType, time);
+  //       const timeOptions = this.#createTimeOptions(timeType as TimeTypes);
+
+  //       return time !== null ? timeOptions.filter((x) => x.toString().includes(time.toString())) : timeOptions;
+  //     }),
+  //     startWith([])
+  //   )
+  // );
 
   #createTimeOptions(type: TimeTypes) {
     const typeLen = type === 'h' ? 25 : 61;
@@ -316,17 +323,8 @@ export default class SettingsComponent {
   }
 
   submit() {
-    // var patchdata = {
-    //     'server-passphrase': $scope.changeServerPassword ? $scope.remotePassword : '',
-    //     'allowed-hostnames': $scope.remoteHostnames,
-    //     'server-listen-interface': $scope.allowRemoteAccess ? 'any' : 'loopback',
-    //     'startup-delay': $scope.startupDelayDurationValue + '' + $scope.startupDelayDurationMultiplier,
-    //     'update-channel': $scope.updateChannel,
-    //     'usage-reporter-level': $scope.usageReporterLevel,
-    //     'disable-tray-icon-login': $scope.disableTrayIconLogin
-    // };
-
-    const startupDelay = `${this.pauseSettings.controls.time.value}${this.pauseSettings.controls.timeType.value}`;
+    const pauseValue = this.pauseSettings.value;
+    const startupDelay = `${pauseValue.time}${pauseValue.timeType}`;
 
     this.#dupServer
       .patchApiV1Serversettings({
@@ -349,19 +347,22 @@ export default class SettingsComponent {
     const timeStr = startupDelay.slice(0, -1);
     const timeUnitOptions = ['s', 'm', 'h'];
 
-    this.settingsForm.patchValue({
-      pauseSettings: {
-        time: parseInt(timeStr == '' ? '0' : timeStr),
-        timeType: (timeUnitOptions.includes(unit) ? unit : 's') as TimeTypes,
-      },
-      usageStatistics: serverSettings['usage-reporter-level'],
-    });
-
     this.disableTrayIconLogin.set(serverSettings['disable-tray-icon-login'] === 'False' ? false : true);
     this.updateChannel.set(serverSettings['update-channel'] as UpdateChannel);
     this.allowRemoteAccess.set(serverSettings['server-listen-interface'] === 'any');
     this.allowedHostnames.set(serverSettings['allowed-hostnames']);
     this.loadedAllowedHostnames.set(serverSettings['allowed-hostnames']);
+
+    console.log(serverSettings['usage-reporter-level']);
+    queueMicrotask(() => {
+      this.settingsForm.patchValue({
+        pauseSettings: {
+          time: parseInt(timeStr == '' ? '0' : timeStr),
+          timeType: (timeUnitOptions.includes(unit) ? unit : 's') as TimeTypes,
+        },
+        usageStatistics: serverSettings['usage-reporter-level'] ?? '',
+      });
+    });
   });
 
   languageDisplay() {

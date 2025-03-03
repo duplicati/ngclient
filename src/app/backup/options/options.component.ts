@@ -5,12 +5,10 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   SparkleButtonComponent,
-  SparkleCheckboxComponent,
   SparkleFormFieldComponent,
   SparkleIconComponent,
   SparkleMenuComponent,
-  SparkleOptionComponent,
-  SparkleSelectComponent,
+  SparkleSelectNewComponent,
   SparkleToggleComponent,
   SparkleTooltipComponent,
 } from '@sparkle-ui/core';
@@ -21,7 +19,7 @@ import { BackupState } from '../backup.state';
 import { FormView } from '../destination/destination.config-utilities';
 
 const fb = new FormBuilder();
-const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'] as const;
+const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
 const RETENTION_OPTIONS = [
   {
     value: '',
@@ -43,7 +41,7 @@ const RETENTION_OPTIONS = [
     value: 'custom',
     name: $localize`Custom backup retention`,
   },
-] as const;
+];
 
 const MaxVolumeSize = 1024 * 1024 * 1024 * 2; // 2GiB
 const MinVolumeSize = 1024 * 1024 * 5; // 5MiB
@@ -75,13 +73,11 @@ export const createOptionsForm = (
     ReactiveFormsModule,
     NgTemplateOutlet,
     SparkleMenuComponent,
-    SparkleSelectComponent,
     SparkleButtonComponent,
     SparkleIconComponent,
     SparkleFormFieldComponent,
     SparkleToggleComponent,
-    SparkleCheckboxComponent,
-    SparkleOptionComponent,
+    SparkleSelectNewComponent,
     SparkleTooltipComponent,
     FileTreeComponent,
     ToggleCardComponent,

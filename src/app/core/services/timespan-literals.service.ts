@@ -19,7 +19,7 @@ export class TimespanLiteralsService {
     );
   }
 
-  toString(value: number, unit: Unit) {
+  toString(value: number, unit: string) {
     return `${value}${unit}`;
   }
 }

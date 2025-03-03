@@ -32,13 +32,9 @@
           <input type="number" id="repeatValue" formControlName="repeatValue" />
         </spk-form-field>
 
-        <spk-select [displayFn]="displayFn">
+        <spk-select-new [options]="unitOptions" [isClearable]="false" value="key" label="label">
           <input type="text" id="repeatUnit" formControlName="repeatUnit" />
-
-          @for (unit of unitOptions; track $index) {
-            <spk-option [value]="unit.key">{{ unit.label }}</spk-option>
-          }
-        </spk-select>
+        </spk-select-new>
       </div>
 
       <app-toggle-card formGroupName="allowedDays" [disallowToggle]="true">

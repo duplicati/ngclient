@@ -85,13 +85,9 @@
             <input type="number" formControlName="size" />
           </spk-form-field>
 
-          <spk-select>
+          <spk-select-new [options]="sizeOptions()" [isClearable]="false">
             <input type="text" formControlName="unit" i18n-placeholder placeholder="Select an option..." />
-
-            @for (option of sizeOptions(); track $index) {
-              <spk-option [value]="option">{{ option }}</spk-option>
-            }
-          </spk-select>
+          </spk-select-new>
         </div>
       }
     </app-toggle-card>

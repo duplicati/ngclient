@@ -15,9 +15,8 @@ import {
   SparkleButtonComponent,
   SparkleFormFieldComponent,
   SparkleIconComponent,
-  SparkleOptionComponent,
   SparkleProgressBarComponent,
-  SparkleSelectComponent,
+  SparkleSelectNewComponent,
   SparkleTooltipComponent,
 } from '@sparkle-ui/core';
 import { IDynamicModule } from '../../core/openapi';
@@ -60,10 +59,9 @@ export const NONE_OPTION = {
   imports: [
     ReactiveFormsModule,
     SparkleFormFieldComponent,
-    SparkleSelectComponent,
+    SparkleSelectNewComponent,
     SparkleButtonComponent,
     SparkleIconComponent,
-    SparkleOptionComponent,
     SparkleProgressBarComponent,
     SparkleAlertComponent,
     SparkleTooltipComponent,

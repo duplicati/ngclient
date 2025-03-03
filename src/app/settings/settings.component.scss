@@ -126,3 +126,10 @@ section {
     flex: 1 0;
   }
 }
+
+.advanced-settings {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: p2r(16);
+}

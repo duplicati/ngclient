@@ -129,8 +129,9 @@
             }
           </spk-form-field>
         } @else if (item.formView.type === 'Enumeration') {
-          <spk-select>
-            <label for="destination-{{ item.formGroupName }}-{{ item.index }}">
+          <spk-select-new [options]="item.formView.options" [isClearable]="false" [optionTemplate]="enumOptionTemplate">
+            <label
+              for="destination-{{ item.formGroupName }}-{{ item.index }}-{{ item.asHttpOptions ? 'http' : 'other' }}">
               {{ item.formView.shortDescription ?? item.formView.name }}
 
               @if (item.formView.longDescription) {
@@ -140,14 +141,14 @@
               }
             </label>
             <input
-              type="search"
-              id="destination-{{ item.formGroupName }}-{{ item.index }}"
+              type="text"
+              id="destination-{{ item.formGroupName }}-{{ item.index }}-{{ item.asHttpOptions ? 'http' : 'other' }}"
               formControlName="{{ item.formView.name }}" />
+          </spk-select-new>
 
-            @for (option of item.formView.options; track $index) {
-              <spk-option [value]="option">{{ option }}</spk-option>
-            }
-          </spk-select>
+          <ng-template let-option #enumOptionTemplate>
+            {{ option }}
+          </ng-template>
         } @else if (item.formView.type === 'Size') {
           <div class="form-column" [formGroupName]="item.formView.name">
             <label for="destination-{{ item.formGroupName }}-{{ item.index }}">
@@ -170,14 +171,13 @@
                 <spk-icon prefix>resize</spk-icon>
               </spk-form-field>
 
-              <spk-select>
-                <label></label>
-                <input type="search" formControlName="unit" />
-
-                @for (option of sizeOptions(); track $index) {
-                  <spk-option [value]="option">{{ option }}</spk-option>
-                }
-              </spk-select>
+              <spk-select-new
+                i18n-placeholder
+                placeholder="Select an option..."
+                [options]="sizeOptions()"
+                [inlineSearch]="true">
+                <input type="text" formControlName="unit" />
+              </spk-select-new>
             </div>
           </div>
         } @else if (item.formView.type === 'Integer') {
@@ -212,7 +212,11 @@
               formControlName="{{ item.formView.name }}" />
           </spk-toggle>
         } @else if (item.formView.type === 'Flags') {
-          <spk-select [selectMultiple]="true" class="primary">
+          <spk-select-new
+            [options]="item.formView.options"
+            [selectMultiple]="true"
+            class="primary raised"
+            [optionTemplate]="optionTemplate">
             <label for="destination-{{ item.formGroupName }}-{{ item.index }}">
               {{ item.formView.shortDescription ?? item.formView.name }}
               @if (item.formView.longDescription) {
@@ -222,19 +226,11 @@
               }
             </label>
             <input type="text" id="text" formControlName="{{ item.formView.name }}" />
+          </spk-select-new>
 
-            @for (option of item.formView.options; track $index) {
-              @if (option === 'None') {
-                <spk-option [value]="'None'" deselect>None</spk-option>
-              } @else {
-                <spk-option [value]="option">
-                  {{ option }}
-
-                  <spk-checkbox class="raised primary" />
-                </spk-option>
-              }
-            }
-          </spk-select>
+          <ng-template let-option #optionTemplate>
+            {{ option }}
+          </ng-template>
         } @else if (item.formView.type === 'Timespan') {
           <spk-form-field>
             <label for="destination-{{ item.formGroupName }}-{{ item.index }}">

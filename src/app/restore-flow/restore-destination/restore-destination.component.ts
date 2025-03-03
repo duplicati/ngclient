@@ -15,14 +15,13 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angul
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   SparkleAlertComponent,
-  SparkleCheckboxComponent,
   SparkleDialogComponent,
   SparkleDialogService,
   SparkleFormFieldComponent,
   SparkleIconComponent,
   SparkleMenuComponent,
-  SparkleOptionComponent,
-  SparkleSelectComponent,
+  SparkleProgressBarComponent,
+  SparkleSelectNewComponent,
   SparkleToggleComponent,
   SparkleTooltipComponent,
 } from '@sparkle-ui/core';
@@ -36,7 +35,7 @@ import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.c
 import { DuplicatiServerService, IDynamicModule } from '../../core/openapi';
 import { RestoreFlowState } from '../restore-flow.state';
 
-const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'] as const;
+const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
 
 export type Size = (typeof SIZE_OPTIONS)[number];
 const fb = new FormBuilder();
@@ -79,15 +78,14 @@ export type DestinationFormGroupValue = ReturnType<typeof createDestinationFormG
     ReactiveFormsModule,
     NgTemplateOutlet,
     SparkleFormFieldComponent,
-    SparkleSelectComponent,
     SparkleMenuComponent,
-    SparkleCheckboxComponent,
-    SparkleOptionComponent,
     SparkleIconComponent,
     SparkleToggleComponent,
     SparkleTooltipComponent,
     SparkleDialogComponent,
     SparkleAlertComponent,
+    SparkleSelectNewComponent,
+    SparkleProgressBarComponent,
     ToggleCardComponent,
     FileTreeComponent,
   ],
