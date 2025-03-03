@@ -1,15 +1,15 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   SparkleButtonComponent,
   SparkleIconComponent,
-  SparkleOptionComponent,
   SparkleProgressBarComponent,
-  SparkleSelectComponent,
+  SparkleSelectNewComponent,
 } from '@sparkle-ui/core';
-import { finalize } from 'rxjs';
+import { finalize, takeUntil } from 'rxjs';
+import { Subject } from '../../../../dist/ngclient/browser/chunk-WVQPHCSY';
 import FileTreeComponent, { BackupSettings } from '../../core/components/file-tree/file-tree.component';
 import { DuplicatiServerService, GetApiV1BackupByIdFilesData } from '../../core/openapi';
 import { RestoreFlowState } from '../restore-flow.state';
@@ -27,13 +27,13 @@ export const createRestoreSelectFilesForm = () => {
 @Component({
   selector: 'app-select-files',
   imports: [
+    FormsModule,
     ReactiveFormsModule,
     DatePipe,
     FileTreeComponent,
     SparkleButtonComponent,
-    SparkleOptionComponent,
     SparkleIconComponent,
-    SparkleSelectComponent,
+    SparkleSelectNewComponent,
     SparkleProgressBarComponent,
   ],
   templateUrl: './select-files.component.html',
@@ -59,6 +59,9 @@ export default class SelectFilesComponent {
 
   showFileTree = signal<boolean>(false);
   backupSettings = signal<BackupSettings | null>(null);
+  rootPath = signal<string | undefined>(undefined);
+  loadingRootPath = signal(false);
+  isRepairing = signal(false);
 
   backupSettingsEffect = effect(() => {
     const id = this.backupId();
@@ -86,34 +89,6 @@ export default class SelectFilesComponent {
     });
   });
 
-  rootPath = signal<string | undefined>(undefined);
-  loadingRootPath = signal(false);
-  getRootPath(backupSettings: BackupSettings) {
-    const params: GetApiV1BackupByIdFilesData = {
-      id: backupSettings.id + '',
-      time: backupSettings.time,
-      prefixOnly: true,
-      folderContents: false,
-    };
-
-    this.loadingRootPath.set(true);
-    this.#dupServer
-      .getApiV1BackupByIdFiles(params)
-      .pipe(
-        finalize(() => {
-          this.showFileTree.set(true);
-          this.loadingRootPath.set(false);
-        })
-      )
-      .subscribe({
-        next: (res) => {
-          const path = (res as any)['Files'][0].Path;
-          this.rootPath.set(path);
-        },
-      });
-  }
-
-  isRepairing = signal(false);
   repairEffect = effect(() => {
     const isDraft = this.#restoreFlowState.isDraft();
     const newSelectedOption = this.selectOptionSignal();
@@ -135,8 +110,37 @@ export default class SelectFilesComponent {
     }
   });
 
+  getRootPath(backupSettings: BackupSettings) {
+    const params: GetApiV1BackupByIdFilesData = {
+      id: backupSettings.id + '',
+      time: backupSettings.time,
+      prefixOnly: true,
+      folderContents: false,
+    };
+
+    this.loadingRootPath.set(true);
+    this.#dupServer
+      .getApiV1BackupByIdFiles(params)
+      .pipe(
+        takeUntil(this.abortLoading$.subscribe()),
+        finalize(() => {
+          this.showFileTree.set(true);
+          this.loadingRootPath.set(false);
+        })
+      )
+      .subscribe({
+        next: (res) => {
+          const path = (res as any)['Files'][0].Path;
+          this.rootPath.set(path);
+        },
+      });
+  }
+
+  abortLoading$ = new Subject();
   abortLoading() {
-    this.selectFilesForm.controls.selectedOption.setValue(null);
+    this.showFileTree.set(false);
+    this.loadingRootPath.set(false);
+    this.abortLoading$.next();
   }
 
   displayFn() {

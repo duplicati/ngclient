@@ -1,9 +1,5 @@
 <h3>Logs</h3>
 
-<!-- @for (log of logs(); track $index) {
-  <pre style="white-space: wrap">{{ log | json }}</pre>
-} -->
-
 <spk-table [(data)]="logs" [loading]="logsLoading()">
   <tr table-header>
     <th i18n>Timestamp</th>

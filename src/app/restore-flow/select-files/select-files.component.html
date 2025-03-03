@@ -4,18 +4,16 @@
   @if (versionOptionsLoading()) {
     <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
   } @else {
-    <spk-select [displayFn]="displayFn()" [hideClearButton]="true">
-      <input type="text" i18n-placeholder placeholder="Select an option..." formControlName="selectedOption" />
+    <spk-select-new [options]="versionOptions()" [isClearable]="true" value="Version" (cleared)="abortLoading()">
+      <input type="text" #input i18n-placeholder placeholder="Select an option..." formControlName="selectedOption" />
 
-      @for (option of versionOptions(); track $index) {
-        <spk-option [value]="option.Version">{{ option.Version }}: {{ option.Time | date: 'medium' }}</spk-option>
-      }
-    </spk-select>
+      <ng-template let-option>
+        <div class="custom-option">{{ option.Version }}: {{ option.Time | date: 'medium' }}</div>
+      </ng-template>
+    </spk-select-new>
 
     @if ((isDraft() && isRepairing()) || versionOptionsLoading() || loadingRootPath()) {
       <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
-
-      <button spk-button type="button" (click)="abortLoading()" i18n>Cancel</button>
     }
 
     <!-- This is to reset the file tree on backupSettings change -->

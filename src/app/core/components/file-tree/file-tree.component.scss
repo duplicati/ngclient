@@ -121,6 +121,10 @@
       &.root {
         gap: p2r(4);
 
+        .icon:has(spk-icon:nth-child(2)) {
+          width: p2r(48);
+        }
+
         .icon {
           width: p2r(24);
         }
