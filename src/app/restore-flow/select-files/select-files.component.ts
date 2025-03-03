@@ -8,8 +8,7 @@ import {
   SparkleProgressBarComponent,
   SparkleSelectNewComponent,
 } from '@sparkle-ui/core';
-import { finalize, takeUntil } from 'rxjs';
-import { Subject } from '../../../../dist/ngclient/browser/chunk-WVQPHCSY';
+import { finalize, Subject, takeUntil } from 'rxjs';
 import FileTreeComponent, { BackupSettings } from '../../core/components/file-tree/file-tree.component';
 import { DuplicatiServerService, GetApiV1BackupByIdFilesData } from '../../core/openapi';
 import { RestoreFlowState } from '../restore-flow.state';
@@ -122,7 +121,7 @@ export default class SelectFilesComponent {
     this.#dupServer
       .getApiV1BackupByIdFiles(params)
       .pipe(
-        takeUntil(this.abortLoading$.subscribe()),
+        takeUntil(this.abortLoading$),
         finalize(() => {
           this.showFileTree.set(true);
           this.loadingRootPath.set(false);
@@ -140,7 +139,7 @@ export default class SelectFilesComponent {
   abortLoading() {
     this.showFileTree.set(false);
     this.loadingRootPath.set(false);
-    this.abortLoading$.next();
+    this.abortLoading$.next(true);
   }
 
   displayFn() {
