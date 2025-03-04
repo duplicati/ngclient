@@ -4,13 +4,13 @@
   @if (versionOptionsLoading()) {
     <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
   } @else {
-    <spk-select-new [options]="versionOptions()" [isClearable]="true" value="Version" (cleared)="abortLoading()">
+    <spk-select [options]="versionOptions()" [isClearable]="true" value="Version" (cleared)="abortLoading()">
       <input type="text" i18n-placeholder placeholder="Select an option..." formControlName="selectedOption" />
 
       <ng-template let-option>
         <div class="custom-option">{{ option.Version }}: {{ option.Time | date: 'medium' }}</div>
       </ng-template>
-    </spk-select-new>
+    </spk-select>
 
     @if ((isDraft() && isRepairing()) || versionOptionsLoading() || loadingRootPath()) {
       <spk-progress-bar class="indeterminate primary"></spk-progress-bar>

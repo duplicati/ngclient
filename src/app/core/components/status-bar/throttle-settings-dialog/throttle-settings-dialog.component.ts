@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { SparkleCheckboxComponent, SparkleFormFieldComponent, SparkleSelectNewComponent } from '@sparkle-ui/core';
+import { SparkleCheckboxComponent, SparkleFormFieldComponent, SparkleSelectComponent } from '@sparkle-ui/core';
 import { finalize } from 'rxjs';
 import { DuplicatiServerService } from '../../../openapi';
 
@@ -23,7 +23,7 @@ const REVERSE_UNIT_MAP = Object.entries(UNIT_MAP).reduce((obj, [key, value]) => 
 type SizeOptions = (typeof SIZE_OPTIONS)[number];
 @Component({
   selector: 'app-throttle-settings-dialog',
-  imports: [FormsModule, SparkleFormFieldComponent, SparkleCheckboxComponent, SparkleSelectNewComponent],
+  imports: [FormsModule, SparkleFormFieldComponent, SparkleCheckboxComponent, SparkleSelectComponent],
   templateUrl: './throttle-settings-dialog.component.html',
   styleUrl: './throttle-settings-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

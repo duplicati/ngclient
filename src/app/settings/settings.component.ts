@@ -10,7 +10,7 @@ import {
   SparkleProgressBarComponent,
   SparkleRadioComponent,
   SparkleRangeSliderComponent,
-  SparkleSelectNewComponent,
+  SparkleSelectComponent,
   SparkleToggleComponent,
   SparkleTooltipComponent,
 } from '@sparkle-ui/core';
@@ -94,7 +94,7 @@ type UsageStatisticsType = (typeof USAGE_STATISTICS_OPTIONS)[number];
     SparkleIconComponent,
     SparkleDividerComponent,
     SparkleAlertComponent,
-    SparkleSelectNewComponent,
+    SparkleSelectComponent,
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss',

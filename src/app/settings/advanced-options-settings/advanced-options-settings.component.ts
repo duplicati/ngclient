@@ -6,7 +6,7 @@ import {
   SparkleFormFieldComponent,
   SparkleIconComponent,
   SparkleMenuComponent,
-  SparkleSelectNewComponent,
+  SparkleSelectComponent,
   SparkleToggleComponent,
   SparkleTooltipComponent,
 } from '@sparkle-ui/core';
@@ -78,7 +78,7 @@ export const createOptionsForm = (
     SparkleFormFieldComponent,
     SparkleToggleComponent,
     SparkleTooltipComponent,
-    SparkleSelectNewComponent,
+    SparkleSelectComponent,
     FileTreeComponent,
     ToggleCardComponent,
   ],

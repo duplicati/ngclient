@@ -20,7 +20,7 @@
   </spk-form-field>
 
   @if (isNew()) {
-    <spk-select-new [options]="encryptionOptions()" [isClearable]="false" value="Key" label="DisplayName">
+    <spk-select [options]="encryptionOptions()" [isClearable]="false" value="Key" label="DisplayName">
       <label for="encryption" i18n>Encryption</label>
       <input
         type="text"
@@ -33,7 +33,7 @@
       <ng-template let-option>
         {{ option.DisplayName }}
       </ng-template>
-    </spk-select-new>
+    </spk-select>
 
     @if (encryptionFieldSignal() !== '') {
       <div class="passwords">

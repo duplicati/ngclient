@@ -5,7 +5,7 @@ import {
   SparkleButtonComponent,
   SparkleFormFieldComponent,
   SparkleIconComponent,
-  SparkleSelectNewComponent,
+  SparkleSelectComponent,
   SparkleToggleComponent,
 } from '@sparkle-ui/core';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
@@ -98,7 +98,7 @@ export type ScheduleFormValue = ReturnType<typeof createScheduleForm>['value'];
     SparkleToggleComponent,
     SparkleIconComponent,
     SparkleButtonComponent,
-    SparkleSelectNewComponent,
+    SparkleSelectComponent,
     ToggleCardComponent,
   ],
   templateUrl: './schedule.component.html',

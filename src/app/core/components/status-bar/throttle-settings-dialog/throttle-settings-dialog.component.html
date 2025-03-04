@@ -22,9 +22,9 @@
           [disabled]="!maxUploadActive()" />
       </spk-form-field>
 
-      <spk-select-new [isClearable]="false" [options]="sizeOptions()">
+      <spk-select [isClearable]="false" [options]="sizeOptions()">
         <input type="text" [(ngModel)]="maxUploadUnit" />
-      </spk-select-new>
+      </spk-select>
     </div>
 
     <div class="field-row">
@@ -45,9 +45,9 @@
           [disabled]="!maxDownloadActive()" />
       </spk-form-field>
 
-      <spk-select-new [isClearable]="false" [options]="sizeOptions()">
+      <spk-select [isClearable]="false" [options]="sizeOptions()">
         <input type="text" [(ngModel)]="maxDownloadUnit" />
-      </spk-select-new>
+      </spk-select>
     </div>
 
     <p i18n>

@@ -27,7 +27,7 @@
     "@angular/platform-browser": "^19.1.0",
     "@angular/platform-browser-dynamic": "^19.1.6",
     "@angular/router": "^19.1.6",
-    "@sparkle-ui/core": "^0.8.7",
+    "@sparkle-ui/core": "^0.9.0",
     "dayjs": "^1.11.13",
     "marked": "^15.0.7",
     "ngxtension": "^4.3.2",

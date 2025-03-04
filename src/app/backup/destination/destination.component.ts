@@ -20,7 +20,7 @@ import {
   SparkleIconComponent,
   SparkleMenuComponent,
   SparkleProgressBarComponent,
-  SparkleSelectNewComponent,
+  SparkleSelectComponent,
   SparkleToggleComponent,
   SparkleTooltipComponent,
 } from '@sparkle-ui/core';
@@ -82,7 +82,7 @@ export type DestinationFormGroupValue = ReturnType<typeof createDestinationFormG
     SparkleTooltipComponent,
     SparkleDialogComponent,
     SparkleAlertComponent,
-    SparkleSelectNewComponent,
+    SparkleSelectComponent,
     SparkleProgressBarComponent,
     ToggleCardComponent,
     FileTreeComponent,

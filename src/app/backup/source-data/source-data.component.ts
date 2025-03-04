@@ -6,7 +6,7 @@ import {
   SparkleButtonComponent,
   SparkleFormFieldComponent,
   SparkleIconComponent,
-  SparkleSelectNewComponent,
+  SparkleSelectComponent,
   SparkleToggleComponent,
 } from '@sparkle-ui/core';
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
@@ -52,7 +52,7 @@ export const createSourceDataForm = (
     SparkleIconComponent,
     SparkleButtonComponent,
     SparkleToggleComponent,
-    SparkleSelectNewComponent,
+    SparkleSelectComponent,
     FileTreeComponent,
     ToggleCardComponent,
     FilterComponent,

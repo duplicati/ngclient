@@ -1,17 +1,17 @@
 @if (pathState()) {
-  <spk-select-new [options]="expressionOptions()" [isClearable]="false" value="value" label="key">
+  <spk-select [options]="expressionOptions()" [isClearable]="false" value="value" label="key">
     <input
       type="text"
       i18n-placeholder
       placeholder="Select an option..."
       [ngModel]="pathState()?.type"
       (ngModelChange)="updateStateType($event)" />
-  </spk-select-new>
+  </spk-select>
 
   @if (pathState()?.type === '-FileGroup' || pathState()?.type === '+FileGroup') {
-    <spk-select-new [options]="fileGroupOptions()" [isClearable]="false" value="value" label="key">
+    <spk-select [options]="fileGroupOptions()" [isClearable]="false" value="value" label="key">
       <input type="text" [ngModel]="pathState()?.expression" (ngModelChange)="updateStateExpression($event)" />
-    </spk-select-new>
+    </spk-select>
   } @else {
     <spk-form-field>
       <input type="text" [ngModel]="pathState()?.expression" (ngModelChange)="updateStateExpression($event)" />

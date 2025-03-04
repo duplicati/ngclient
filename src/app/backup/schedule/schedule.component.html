@@ -32,9 +32,9 @@
           <input type="number" id="repeatValue" formControlName="repeatValue" />
         </spk-form-field>
 
-        <spk-select-new [options]="unitOptions" [isClearable]="false" value="key" label="label">
+        <spk-select [options]="unitOptions" [isClearable]="false" value="key" label="label">
           <input type="text" id="repeatUnit" formControlName="repeatUnit" />
-        </spk-select-new>
+        </spk-select>
       </div>
 
       <app-toggle-card formGroupName="allowedDays" [disallowToggle]="true">

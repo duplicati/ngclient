@@ -6,7 +6,7 @@ import {
   SparkleButtonComponent,
   SparkleIconComponent,
   SparkleProgressBarComponent,
-  SparkleSelectNewComponent,
+  SparkleSelectComponent,
 } from '@sparkle-ui/core';
 import { finalize, Subject, takeUntil } from 'rxjs';
 import FileTreeComponent, { BackupSettings } from '../../core/components/file-tree/file-tree.component';
@@ -32,7 +32,7 @@ export const createRestoreSelectFilesForm = () => {
     FileTreeComponent,
     SparkleButtonComponent,
     SparkleIconComponent,
-    SparkleSelectNewComponent,
+    SparkleSelectComponent,
     SparkleProgressBarComponent,
   ],
   templateUrl: './select-files.component.html',

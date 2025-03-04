@@ -126,7 +126,7 @@
     </div>
 
     <div class="right">
-      <spk-select-new
+      <spk-select
         [options]="languageOptions()"
         (selectedOptionsChange)="updateLocale($event)"
         value="value"
@@ -134,7 +134,7 @@
         [isClearable]="false"
         [inlineSearch]="true">
         <input type="text" [ngModel]="langCtrl()" [ngModelOptions]="{ standalone: true }" />
-      </spk-select-new>
+      </spk-select>
     </div>
   </section>
 
@@ -268,13 +268,13 @@
           <input type="range" [min]="timeRange()[0]" [max]="timeRange()[1]" formControlName="time" />
         </spk-range-slider>
 
-        <spk-select-new [options]="timeTypeOptions()" [isClearable]="false" label="label" value="value">
+        <spk-select [options]="timeTypeOptions()" [isClearable]="false" label="label" value="value">
           <input type="text" formControlName="timeType" />
 
           <ng-template let-option>
             {{ option.label }}
           </ng-template>
-        </spk-select-new>
+        </spk-select>
       </div>
     </div>
   </section>
@@ -294,13 +294,13 @@
     </div>
 
     <div class="right">
-      <spk-select-new [options]="usageStatisticsOptions()" label="label" value="value">
+      <spk-select [options]="usageStatisticsOptions()" label="label" value="value">
         <input type="text" formControlName="usageStatistics" />
 
         <ng-template let-option>
           {{ option.label }}
         </ng-template>
-      </spk-select-new>
+      </spk-select>
     </div>
   </section>
 
