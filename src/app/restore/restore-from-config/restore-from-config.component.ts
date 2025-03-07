@@ -9,7 +9,7 @@ import {
   SparkleIconComponent,
 } from '@sparkle-ui/core';
 import { finalize, switchMap } from 'rxjs';
-import { DuplicatiServerService } from '../../core/openapi';
+import { BackupAndScheduleInputDto, DuplicatiServerService } from '../../core/openapi';
 import { BackupDraft } from '../../core/states/backups.state';
 
 const fb = new FormBuilder();
@@ -89,8 +89,13 @@ export default class RestoreFromConfigComponent {
       })
       .pipe(
         switchMap((res) => {
+          const data = res.data as BackupDraft;
+          const draft : BackupAndScheduleInputDto = {
+            Backup: data.Backup
+          };
+          
           return this.#dupServer.postApiV1Backups({
-            requestBody: res.data as BackupDraft,
+            requestBody: draft,
             temporary: true,
           });
         }),
