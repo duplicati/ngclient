@@ -288,29 +288,6 @@ export default class SettingsComponent {
 
     return timeType === 'h' ? [0, 24] : [0, 60];
   });
-  // timeOptions =
-
-  // derivedFrom(
-  //   [
-  //     this.pauseSettings.controls.timeType.valueChanges.pipe(startWith('s')),
-  //     this.pauseSettings.controls.time.valueChanges.pipe(startWith(null)),
-  //   ],
-  //   pipe(
-  //     map(([timeType, time]) => {
-  //       console.log(timeType, time);
-  //       const timeOptions = this.#createTimeOptions(timeType as TimeTypes);
-
-  //       return time !== null ? timeOptions.filter((x) => x.toString().includes(time.toString())) : timeOptions;
-  //     }),
-  //     startWith([])
-  //   )
-  // );
-
-  #createTimeOptions(type: TimeTypes) {
-    const typeLen = type === 'h' ? 25 : 61;
-
-    return new Array(typeLen).fill(0).map((_, i) => i);
-  }
 
   updateLocale(__x: unknown[]) {
     const _x = __x[0] as { value: string; label: string } | null | undefined;

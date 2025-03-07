@@ -49,7 +49,11 @@ export function getLocale(): Locales {
   if (locale === DEFAULT_LOCALE) return locale;
 
   import(/* @vite-ignore */ `/locale/angular/${mappedLocale}.mjs`).then((m) => registerLocaleData(m.default));
-  fetch(`/locale/messages.${locale}.json`)
+
+  // Until we have a proper translation system, we need to load the message translations manually
+  let tempLocale = locale === 'en-GB' ? 'en' : locale;
+
+  fetch(`/locale/messages.${tempLocale}.json`)
     .then((r) => r.json())
     .then((json) => {
       loadTranslations(json.translations);
