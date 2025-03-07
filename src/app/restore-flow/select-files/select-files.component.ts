@@ -10,6 +10,7 @@ import {
 } from '@sparkle-ui/core';
 import { finalize, Subject, takeUntil } from 'rxjs';
 import FileTreeComponent, { BackupSettings } from '../../core/components/file-tree/file-tree.component';
+import { StatusBarState } from '../../core/components/status-bar/status-bar.state';
 import { DuplicatiServerService, GetApiV1BackupByIdFilesData } from '../../core/openapi';
 import { RestoreFlowState } from '../restore-flow.state';
 
@@ -46,6 +47,7 @@ export default class SelectFilesComponent {
   #router = inject(Router);
   #route = inject(ActivatedRoute);
   #datePipe = inject(DatePipe);
+  #statusbarState = inject(StatusBarState);
 
   selectFilesForm = this.#restoreFlowState.selectFilesForm;
   selectFilesFormSignal = this.#restoreFlowState.selectFilesFormSignal;
@@ -62,8 +64,25 @@ export default class SelectFilesComponent {
   loadingRootPath = signal(false);
   isRepairing = signal(false);
 
+  loadingEffect = effect(() => {
+    const versionOptionsLoading = this.versionOptionsLoading();
+
+    if (versionOptionsLoading) return;
+
+    const versionOptions = this.versionOptions();
+
+    if (versionOptions && versionOptions?.length > 0) {
+      const firstOption = versionOptions[0].Version;
+
+      if (Number.isInteger(firstOption)) {
+        this.selectFilesForm.controls.selectedOption.setValue(firstOption!);
+      }
+    }
+  });
+
   backupSettingsEffect = effect(() => {
     const id = this.backupId();
+    const isRepairing = this.isRepairing();
     const newOption =
       typeof this.selectOptionSignal() === 'string'
         ? parseInt(this.selectOptionSignal() as any)
@@ -74,11 +93,11 @@ export default class SelectFilesComponent {
     const option = this.versionOptions()?.find((x) => x.Version === newOption);
     const time = option?.Time ?? null;
 
-    if (!time) return;
+    if (!time || isRepairing) return;
 
     this.showFileTree.set(false);
 
-    setTimeout(() => {
+    queueMicrotask(() => {
       const settings = {
         id: id + '',
         time,
@@ -91,8 +110,13 @@ export default class SelectFilesComponent {
   repairEffect = effect(() => {
     const isDraft = this.#restoreFlowState.isDraft();
     const newSelectedOption = this.selectOptionSignal();
+    const versionOptions = this.versionOptions();
 
     if (isDraft && newSelectedOption) {
+      const option = versionOptions.find((x) => x.Version === parseInt(newSelectedOption as any));
+
+      if (option === undefined) return;
+
       const backupId = this.backupId();
 
       this.isRepairing.set(true);
@@ -101,11 +125,22 @@ export default class SelectFilesComponent {
           id: backupId!,
           requestBody: {
             only_paths: true,
-            time: new Date().toISOString(),
+            time: option.Time,
           },
         })
-        .pipe(finalize(() => this.isRepairing.set(false)))
-        .subscribe();
+        .subscribe((res) => {
+          const taskId = res.ID!;
+
+          // Maybe listen for status bar instead of polling since it knows when the task is done
+          var timerId = window.setInterval(() => {
+            this.#dupServer.getApiV1TaskByTaskid({ taskid: taskId }).subscribe((r2) => {
+              if (r2.Status === 'Completed') {
+                clearInterval(timerId);
+                this.isRepairing.set(false);
+              }
+            });
+          }, 1000);
+        });
     }
   });
 
@@ -116,6 +151,8 @@ export default class SelectFilesComponent {
       prefixOnly: true,
       folderContents: false,
     };
+
+    if (this.isRepairing()) return;
 
     this.loadingRootPath.set(true);
     this.#dupServer
