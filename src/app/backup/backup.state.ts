@@ -11,6 +11,7 @@ import {
   ICommandLineArgument,
   IDynamicModule,
   ScheduleDto,
+  SettingInputDto,
 } from '../core/openapi';
 import { TimespanLiteralsService } from '../core/services/timespan-literals.service';
 import { SysinfoState } from '../core/states/sysinfo.state';
@@ -63,6 +64,7 @@ export class BackupState {
   scheduleForm = createScheduleForm();
   destinationForm = createDestinationForm();
   optionsForm = createOptionsForm();
+  settings = signal<SettingInputDto[]>([]);
 
   isDraft = signal(false);
   backupId = signal<'new' | 'string' | null>(null);
@@ -377,14 +379,16 @@ export class BackupState {
 
   mapOptionsToForms(backup: BackupDto) {
     const modulesToIgnore = ['--no-encryption', '--exclude-files-attributes', '--skip-files-larger-than'];
-    const advancedOptions = this.advancedOptions();
 
-    backup.Settings?.forEach((x) => {
+    const modulesWithoutIgnored = backup.Settings?.filter(
+      (x) => ![...modulesToIgnore, 'dblock-size'].includes(x.Name!)
+    );
+    this.settings.set(modulesWithoutIgnored ?? []);
+
+    modulesWithoutIgnored?.forEach((x) => {
       if (x.Name === 'encryption-module') {
         return this.generalForm.controls.encryption.setValue(x.Value ?? '');
       }
-
-      if (x.Name && modulesToIgnore.includes(x.Name)) return;
 
       if (x.Name === 'dblock-size') {
         const size = x.Value?.replace(/[^0-9]/g, '');
@@ -395,14 +399,6 @@ export class BackupState {
           unit: unit ? (unit.toUpperCase() as SizeOptions) : null,
         });
       }
-
-      if (x.Name && x.Value) {
-        const option = advancedOptions.find((y) => y.name === x.Name);
-
-        if (!option) return;
-
-        this.addOptionToFormGroup(option, x.Value);
-      }
     });
   }
 
@@ -412,7 +408,6 @@ export class BackupState {
 
   #mapFormsToBackup() {
     const generalFormValue = this.generalForm.value;
-    const optionsFormValue = this.optionsForm.value;
     const scheduleFormValue = this.scheduleForm.value;
     const sourceDataFormValue = this.sourceDataForm.value;
     const destinationFormValue = this.destinationForm.value;
@@ -492,9 +487,9 @@ export class BackupState {
   }
 
   mapFormsToSettings() {
-    const advancedOptions = this.advancedOptions();
     const optionsFormValue = this.optionsForm.value;
     const generalFormValue = this.generalForm.value;
+    const modulesToIgnore = ['--no-encryption', '--exclude-files-attributes', '--skip-files-larger-than'];
 
     let encryption = [
       {
@@ -525,38 +520,27 @@ export class BackupState {
           Name: 'dblock-size',
           Value: '50mb',
         };
-    const mappedAdvancedOptions = Object.entries(optionsFormValue.advancedOptions ?? {})
-      .filter(([key, value]) => key && value)
-      .map(([key, value]) => {
-        const option = advancedOptions.find((y) => y.name === key);
 
-        if (option?.type === 'Size') {
-          return {
-            Name: key,
-            Value: `${(value as any).size}${(value as any).unit.toLowerCase()}`,
-          };
+    const settings = this.settings()
+      .filter((x) => !modulesToIgnore.includes(x.Name!))
+      .map((y) => {
+        let Value = y.Value;
+
+        if (typeof y.Value === 'number') {
+          Value = (y.Value as number).toString();
         }
 
-        if (option?.type === 'Integer') {
-          return {
-            Name: key,
-            Value: (value as number).toString(),
-          };
-        }
-
-        if (option?.type === 'Boolean') {
-          return {
-            Name: key,
-            Value: (value as boolean).toString(),
-          };
+        if (typeof y.Value === 'boolean') {
+          Value = (y.Value as Boolean) ? 'True' : 'False';
         }
 
         return {
-          Name: key,
-          Value: value,
+          Name: y.Name,
+          Value,
         };
       });
-    return [...encryption, dblockSize, ...mappedAdvancedOptions];
+
+    return [...encryption, dblockSize, ...settings];
   }
 
   #getTargetUrl(destinationFormArray: FormArray<DestinationFormGroup>) {

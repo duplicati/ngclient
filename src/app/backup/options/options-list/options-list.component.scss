@@ -1,3 +1,48 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
 :host {
   display: block;
+}
+
+spk-select {
+  --miw: p2r(120);
+}
+
+spk-toggle {
+  spk-icon {
+    font-size: p2r(16);
+  }
+}
+
+.field-row {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr p2r(40);
+  gap: p2r(8);
+
+  .remove-btn {
+    align-self: flex-end;
+  }
+}
+
+.form-column {
+  display: flex;
+  flex-direction: column;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: p2r(4);
+  }
+
+  spk-icon {
+    font-size: p2r(16);
+  }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  gap: p2r(8);
+  align-items: flex-end;
 }

@@ -1,6 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { finalize, Observable, tap } from 'rxjs';
-import { DuplicatiServerService, SystemInfoDto } from '../openapi';
+import { FormView } from '../../backup/destination/destination.config-utilities';
+import { ArgumentType, DuplicatiServerService, ICommandLineArgument, SystemInfoDto } from '../openapi';
 
 type FilterGroups = {
   FilterGroups: {
@@ -19,6 +20,31 @@ export class SysinfoState {
   filterGroups = signal<FilterGroups | null>(null);
   backendModules = computed(() => {
     return this.systemInfo()?.BackendModules ?? [];
+  });
+
+  allOptionsGrouped = computed(() => {
+    const defaultOptions = {
+      displayName: 'Default',
+      options: this.systemInfo()?.Options?.map(this.#mapCommandLineArgumentsToFormViews) ?? [],
+    };
+
+    const generic =
+      this.systemInfo()?.GenericModules?.map((x) => {
+        return {
+          displayName: x.DisplayName ?? x.Key,
+          options: x.Options?.map(this.#mapCommandLineArgumentsToFormViews) ?? [],
+        };
+      }) ?? [];
+
+    const compression =
+      this.systemInfo()?.CompressionModules?.map((x) => {
+        return {
+          displayName: x.DisplayName ?? x.Key,
+          options: x.Options?.map(this.#mapCommandLineArgumentsToFormViews) ?? [],
+        };
+      }) ?? [];
+
+    return [defaultOptions, ...generic, ...compression];
   });
 
   preload(returnObservable = false): Observable<SystemInfoDto> | void {
@@ -49,5 +75,15 @@ export class SysinfoState {
     }
 
     obs.subscribe();
+  }
+
+  #mapCommandLineArgumentsToFormViews(x: ICommandLineArgument) {
+    return {
+      name: x.Name as string,
+      type: x.Type as ArgumentType,
+      shortDescription: x.ShortDescription ?? undefined,
+      longDescription: x.LongDescription ?? undefined,
+      options: x.ValidValues,
+    } as FormView;
   }
 }

@@ -1,4 +1,3 @@
-import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
@@ -7,16 +6,11 @@ import {
   SparkleButtonComponent,
   SparkleFormFieldComponent,
   SparkleIconComponent,
-  SparkleMenuComponent,
   SparkleSelectComponent,
-  SparkleToggleComponent,
-  SparkleTooltipComponent,
 } from '@sparkle-ui/core';
 import { debounceTime, of } from 'rxjs';
-import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
-import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { BackupState } from '../backup.state';
-import { FormView } from '../destination/destination.config-utilities';
+import { OptionsListComponent } from './options-list/options-list.component';
 
 const fb = new FormBuilder();
 const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
@@ -71,16 +65,11 @@ export const createOptionsForm = (
   selector: 'app-advanced-options-settings',
   imports: [
     ReactiveFormsModule,
-    NgTemplateOutlet,
-    SparkleMenuComponent,
+    OptionsListComponent,
     SparkleButtonComponent,
     SparkleIconComponent,
     SparkleFormFieldComponent,
-    SparkleToggleComponent,
     SparkleSelectComponent,
-    SparkleTooltipComponent,
-    FileTreeComponent,
-    ToggleCardComponent,
   ],
   templateUrl: './options.component.html',
   styleUrl: './options.component.scss',
@@ -96,14 +85,18 @@ export default class OptionsComponent {
   selectedOptions = this.#backupState.selectedOptions;
   nonSelectedOptions = this.#backupState.nonSelectedOptions;
   isSubmitting = this.#backupState.isSubmitting;
+  settings = this.#backupState.settings;
+
   sizeOptions = signal(SIZE_OPTIONS);
   retentionOptions = signal(RETENTION_OPTIONS);
+
   volumeSizeSignal = toSignal(
     this.optionsForm.controls.remoteVolumeSize.get('size')?.valueChanges.pipe(debounceTime(300)) ?? of(null)
   );
   volumeUnitSignal = toSignal(
     this.optionsForm.controls.remoteVolumeSize.get('unit')?.valueChanges.pipe(debounceTime(300)) ?? of(null)
   );
+
   exceededVolumeSize = computed(() => {
     const currentSize = this.volumeSizeSignal() ?? this.optionsForm.controls.remoteVolumeSize.get('size')?.value;
     const currentUnit = this.volumeUnitSignal() ?? this.optionsForm.controls.remoteVolumeSize.get('unit')?.value;
@@ -115,52 +108,6 @@ export default class OptionsComponent {
     const current = currentSize * Math.pow(1024, SIZE_OPTIONS.indexOf(currentUnit));
     return current > MaxVolumeSize || current < MinVolumeSize;
   });
-
-  oauthStartTokenCreation(_: any) {}
-  getFormFieldValue(
-    destinationIndex: number,
-    formGroupName: 'custom' | 'dynamic' | 'advanced',
-    formControlName: string
-  ) {
-    const group = this.optionsForm.controls.advancedOptions as any;
-
-    return group.controls[formControlName].value;
-  }
-
-  removeFormView(option: FormView, _: any) {
-    this.#backupState.removeOptionFromFormGroup(option);
-  }
-
-  addNewOption(option: FormView) {
-    this.#backupState.addOptionToFormGroup(option);
-  }
-
-  retentionOptionDisplayFn() {
-    const items = this.retentionOptions();
-    return (val: string) => {
-      const item = items.find((x) => x.value === val);
-
-      if (!item) {
-        return '';
-      }
-
-      return item.name;
-    };
-  }
-
-  displayFn() {
-    const items = this.#backupState.advancedOptions();
-
-    return (val: string) => {
-      const item = items.find((x) => x.name === val);
-
-      if (!item) {
-        return '';
-      }
-
-      return `${item.name}`;
-    };
-  }
 
   goBack() {
     this.#router.navigate(['schedule'], { relativeTo: this.#route.parent });

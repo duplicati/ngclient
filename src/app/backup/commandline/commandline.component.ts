@@ -138,7 +138,7 @@ export default class CommandlineComponent {
       ...filters.filter((x) => x).map((x) => (x!.startsWith('-') ? `--exclude=${x?.slice(1)}` : `--include=${x}`)),
       ...this.#backupState
         .mapFormsToSettings()
-        .map((x) => (x.Name.startsWith('--') ? `${x.Name}=${x.Value}` : `--${x.Name}=${x.Value}`)),
+        .map((x) => (x.Name!.startsWith('--') ? `${x.Name}=${x.Value}` : `--${x.Name}=${x.Value}`)),
       '--disable-module=console-password-input',
     ];
 
