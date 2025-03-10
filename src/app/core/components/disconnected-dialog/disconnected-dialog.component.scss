@@ -1,3 +1,6 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
 :host {
   display: block;
+  padding: p2r(16);
 }
