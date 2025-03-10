@@ -72,17 +72,17 @@ export class ServerStatusWebSocketService {
       console.log('WebSocket connection closed', event);
       this.#connectionStatus.set('disconnected');
 
-      if (!this.#disconnectedDialog) {
-        this.#disconnectedDialog = this.dialog.open(DisconnectedDialogComponent, {
-          closeOnButton: false,
-          closeOnEsc: false,
-          closeOnOutsideClick: false,
-        });
-        this.#disconnectedDialog.component.reconnectTimer.set(15000);
-      }
-
       // Attempt reconnection
       if (this.shouldConnect()) {
+        if (!this.#disconnectedDialog) {
+          this.#disconnectedDialog = this.dialog.open(DisconnectedDialogComponent, {
+            closeOnButton: false,
+            closeOnEsc: false,
+            closeOnOutsideClick: false,
+          });
+          this.#disconnectedDialog.component.reconnectTimer.set(15000);
+        }
+
         setTimeout(() => this.#connect(), 5000);
       }
     };
