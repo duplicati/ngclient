@@ -1,15 +1,18 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { ReplaySubject } from 'rxjs';
+import { LOCALSTORAGE } from '../services/localstorage.token';
 
 export type Relayconfig = {
   accessToken: string;
   clientId: string;
+  locale: string;
 };
 
 @Injectable({
   providedIn: 'root',
 })
 export class RelayconfigState {
+  #ls = inject(LOCALSTORAGE);
   #config = signal<Relayconfig | null>(null);
   #isInIframe = window.self !== window.top;
   #relayIsEnabled = signal(this.#isInIframe);
@@ -57,6 +60,14 @@ export class RelayconfigState {
           }
 
           console.info('postMessage config set');
+
+          const currentLocale = this.#ls.getItem('locale') ?? 'en-US';
+          const newLocale = (parsed['locale'] as string) ?? 'en-US';
+
+          if (currentLocale !== newLocale) {
+            this.#ls.setItem('locale', newLocale);
+            window.location.reload();
+          }
 
           this.#config.set(parsed as Relayconfig);
           this.configLoaded?.next(true);

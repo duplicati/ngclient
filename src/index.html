@@ -16,9 +16,25 @@
         font-stretch: 75% 125%;
         font-style: normal;
       }
+
+      body > .loading {
+        font-family: 'Inter Tight', sans-serif;
+        font-size: 24px;
+        color: #000;
+        display: none;
+        height: 100vh;
+        width: 100vw;
+        align-items: center;
+        justify-content: center;
+      }
+
+      body:not(:has(app-root router-outlet ~ *)) > .loading {
+        display: flex;
+      }
     </style>
   </head>
   <body>
     <app-root></app-root>
+    <div class="loading">Loading ...</div>
   </body>
 </html>

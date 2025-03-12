@@ -342,40 +342,6 @@ export default class SettingsComponent {
     });
   });
 
-  languageDisplay() {
-    const _self = this;
-
-    return () => {
-      const x = _self.langCtrl();
-
-      if (!x) return null;
-
-      return LANGUAGES.find((y) => y.value === x)?.label ?? null;
-    };
-  }
-
-  typeDisplay() {
-    const _self = this;
-
-    return () => {
-      const x = _self.settingsForm.value.pauseSettings?.timeType;
-      if (x === null || x === undefined) return null;
-
-      return TIME_OPTIONS.find((y) => y.value === x)?.label ?? null;
-    };
-  }
-
-  usageDisplay() {
-    const _self = this;
-
-    return () => {
-      const x = _self.settingsForm.value.usageStatistics;
-      if (x === null || x === undefined) return null;
-
-      return USAGE_STATISTICS_OPTIONS.find((y) => y.value === x)?.label ?? null;
-    };
-  }
-
   setDarkMode() {
     this.#layoutState.setDarkMode();
   }
