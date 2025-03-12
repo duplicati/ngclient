@@ -69,7 +69,7 @@
               },
               {
                 "glob": "**/{da,en,en-gb,fr,de}.js",
-                "input": "./node_modules/dayjs/locale",
+                "input": "./node_modules/dayjs/esm/locale",
                 "output": "./locale/dayjs/"
               },
               {

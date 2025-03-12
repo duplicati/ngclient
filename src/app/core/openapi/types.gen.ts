@@ -425,7 +425,7 @@ export type StringDateTimeTuple = {
     Item2?: string;
 };
 
-export type SuggestedStatusIcon = 'Ready' | 'ReadyWarning' | 'ReadyError' | 'Paused' | 'Active' | 'ActivePaused';
+export type SuggestedStatusIcon = 'Ready' | 'ReadyWarning' | 'ReadyError' | 'Paused' | 'Active' | 'ActivePaused' | 'Disconnected';
 
 export type SystemInfoDto = {
     APIVersion?: number;
