@@ -14,6 +14,12 @@ spk-toggle {
   }
 }
 
+.placeholder {
+  color: var(--base-level-60R);
+  text-align: center;
+  padding: p2r(32 16);
+}
+
 .field-row {
   display: grid;
   align-items: center;
@@ -27,6 +33,7 @@ spk-toggle {
 
 .form-column {
   display: flex;
+  gap: 0.25rem;
   flex-direction: column;
 
   label {
@@ -45,4 +52,10 @@ spk-toggle {
   grid-template-columns: 3fr 1fr;
   gap: p2r(8);
   align-items: flex-end;
+}
+
+.actions {
+  display: flex;
+  gap: p2r(8);
+  justify-content: flex-end;
 }

@@ -1,28 +1,61 @@
 <spk-toggle-card [disallowToggle]="true">
-  <ng-container title i18n>
-    Advanced options
+  <ng-container title>
+    <ng-container i18n>Advanced options</ng-container>
 
-    <spk-menu [searchable]="true">
-      <button spk-button type="button" class="outlined small">
-        Add advanced option
-        <spk-icon>plus</spk-icon>
-      </button>
+    <div class="actions">
+      @if (hasFreeTextSettings()) {
+        <button spk-button type="button" class="outlined small" (click)="addFreeTextSetting()" i18n>
+          New custom option
+          <spk-icon>pen</spk-icon>
+        </button>
+      }
 
-      <ng-container menu>
-        @for (group of nonSelectedOptionsGrouped(); track $index) {
-          <h3 title>{{ group.displayName }}</h3>
+      <spk-menu [searchable]="true">
+        <button spk-button type="button" class="outlined small" i18n>
+          Add advanced option
+          <spk-icon>plus</spk-icon>
+        </button>
 
-          @for (option of group.options; track $index) {
-            <button #option type="button" (click)="addSetting(option)">{{ option.name }}</button>
+        <ng-container menu>
+          @for (group of nonSelectedOptionsGrouped(); track $index) {
+            <h3 title>{{ group.displayName }}</h3>
+
+            @for (option of group.options; track $index) {
+              <button #option type="button" (click)="addSetting(option)">{{ option.name }}</button>
+            }
           }
-        }
-      </ng-container>
-    </spk-menu>
+        </ng-container>
+      </spk-menu>
+    </div>
   </ng-container>
+
+  @if (selectedSettings().length === 0) {
+    <div class="placeholder">Add a setting above to get started.</div>
+  }
 
   @for (item of selectedSettings(); track $index) {
     <div class="field-row">
-      @if (item.FormView.type === 'FileTree') {
+      @if (item.FormView.type === 'FreeText') {
+        <div class="form-column">
+          <label>
+            {{ item.FormView.shortDescription }}
+          </label>
+
+          <div class="form-row">
+            <spk-form-field>
+              <input type="text" [ngModel]="item.Name" (ngModelChange)="updateFreeTextSettingName(item, $event)" />
+
+              <spk-icon prefix>rectangle-dashed</spk-icon>
+            </spk-form-field>
+
+            <spk-form-field>
+              <input type="text" [ngModel]="item.Value()" (ngModelChange)="updateSettingValue(item, $event)" />
+
+              <spk-icon prefix>textbox</spk-icon>
+            </spk-form-field>
+          </div>
+        </div>
+      } @else if (item.FormView.type === 'FileTree') {
         <app-file-tree
           [startingPath]="item.Value()"
           [accepts]="item.FormView.accepts"

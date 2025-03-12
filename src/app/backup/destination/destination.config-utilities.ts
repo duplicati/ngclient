@@ -16,7 +16,7 @@ export type DestinationFormGroup = FormGroup<{
 
 export type FormView = {
   name: string;
-  type: ArgumentType | 'FileTree' | 'FolderTree' | 'NonValidatedSelectableString' | 'Email';
+  type: ArgumentType | 'FileTree' | 'FolderTree' | 'NonValidatedSelectableString' | 'Email' | 'FreeText';
   accepts?: string;
   shortDescription?: string;
   longDescription?: string;

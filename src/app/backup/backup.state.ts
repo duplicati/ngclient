@@ -486,7 +486,7 @@ export class BackupState {
     };
   }
 
-  mapFormsToSettings() {
+  mapFormsToSettings(settingsIgnoreList: string[] = []) {
     const optionsFormValue = this.optionsForm.value;
     const generalFormValue = this.generalForm.value;
     const modulesToIgnore = ['--no-encryption', '--exclude-files-attributes', '--skip-files-larger-than'];
@@ -521,8 +521,9 @@ export class BackupState {
           Value: '50mb',
         };
 
+    const _settingsIgnoreList = [...settingsIgnoreList, ...modulesToIgnore];
     const settings = this.settings()
-      .filter((x) => !modulesToIgnore.includes(x.Name!))
+      .filter((x) => !_settingsIgnoreList.includes(x.Name!))
       .map((y) => {
         let Value = y.Value;
 

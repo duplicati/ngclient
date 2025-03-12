@@ -1,4 +1,3 @@
-import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
@@ -8,18 +7,14 @@ import {
   SparkleDividerComponent,
   SparkleFormFieldComponent,
   SparkleIconComponent,
-  SparkleMenuComponent,
   SparkleProgressBarComponent,
   SparkleSelectComponent,
-  SparkleToggleComponent,
-  SparkleTooltipComponent,
 } from '@sparkle-ui/core';
-import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
 import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { BackupDto, CommandlineService, DuplicatiServerService, GetBackupResultDto } from '../../core/openapi';
 import { BackupState } from '../backup.state';
-import { FormView } from '../destination/destination.config-utilities';
+import { OptionsListComponent } from '../options/options-list/options-list.component';
 
 const fb = new FormBuilder();
 const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'] as const;
@@ -28,17 +23,13 @@ const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'] as const;
   selector: 'app-commandline',
   imports: [
     StatusBarComponent,
-    FileTreeComponent,
+    OptionsListComponent,
     ToggleCardComponent,
     ReactiveFormsModule,
-    NgTemplateOutlet,
     RouterLink,
     SparkleFormFieldComponent,
-    SparkleMenuComponent,
     SparkleButtonComponent,
-    SparkleToggleComponent,
     SparkleDividerComponent,
-    SparkleTooltipComponent,
     SparkleSelectComponent,
     SparkleProgressBarComponent,
     SparkleIconComponent,
@@ -72,11 +63,11 @@ export default class CommandlineComponent {
     targetUrl: fb.control(''),
     arguments: fb.control(''),
   });
+
   optionsForm = this.#backupState.optionsForm;
-  selectedOptions = this.#backupState.selectedOptions;
-  nonSelectedOptions = this.#backupState.nonSelectedOptions;
   finishedLoading = this.#backupState.finishedLoading;
   backupId = this.#backupState.backupId;
+  settings = this.#backupState.settings;
 
   #e = effect(() => {
     const backupId = this.#routeParamsSignal()?.['id'];
@@ -137,7 +128,7 @@ export default class CommandlineComponent {
       `--backup-id=${stdForm['backup-id']}`,
       ...filters.filter((x) => x).map((x) => (x!.startsWith('-') ? `--exclude=${x?.slice(1)}` : `--include=${x}`)),
       ...this.#backupState
-        .mapFormsToSettings()
+        .mapFormsToSettings(['backup-id', 'backup-name', 'dbpath'])
         .map((x) => (x.Name!.startsWith('--') ? `${x.Name}=${x.Value}` : `--${x.Name}=${x.Value}`)),
       '--disable-module=console-password-input',
     ];
@@ -162,24 +153,5 @@ export default class CommandlineComponent {
       targetUrl: targetBaseUrl ?? '',
       arguments: backup.Sources?.join('\n') ?? '',
     });
-  }
-
-  oauthStartTokenCreation(_: any) {}
-  getFormFieldValue(
-    destinationIndex: number,
-    formGroupName: 'custom' | 'dynamic' | 'advanced',
-    formControlName: string
-  ) {
-    const group = this.optionsForm.controls.advancedOptions as any;
-
-    return group.controls[formControlName].value;
-  }
-
-  removeFormView(option: FormView, _: any) {
-    this.#backupState.removeOptionFromFormGroup(option);
-  }
-
-  addNewOption(option: FormView) {
-    this.#backupState.addOptionToFormGroup(option);
   }
 }

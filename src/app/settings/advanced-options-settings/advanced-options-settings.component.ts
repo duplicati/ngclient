@@ -1,86 +1,22 @@
-import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, ElementRef, inject, signal, viewChild } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import {
-  SparkleButtonComponent,
-  SparkleFormFieldComponent,
-  SparkleIconComponent,
-  SparkleMenuComponent,
-  SparkleSelectComponent,
-  SparkleToggleComponent,
-  SparkleTooltipComponent,
-} from '@sparkle-ui/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { SparkleAlertComponent, SparkleButtonComponent, SparkleIconComponent } from '@sparkle-ui/core';
 import { finalize } from 'rxjs';
 import { BackupState } from '../../backup/backup.state';
-import { FormView } from '../../backup/destination/destination.config-utilities';
-import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
-import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
+import { OptionsListComponent } from '../../backup/options/options-list/options-list.component';
 import { DuplicatiServerService } from '../../core/openapi';
 import { ServerSettingsService } from '../server-settings.service';
 
-const fb = new FormBuilder();
 const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
-const RETENTION_OPTIONS = [
-  {
-    value: '',
-    name: $localize`Keep all backups`,
-  },
-  {
-    value: 'time',
-    name: $localize`Delete backups that are older than`,
-  },
-  {
-    value: 'versions',
-    name: $localize`Keep a specific number of backups`,
-  },
-  {
-    value: 'smart',
-    name: $localize`Smart backup retention`,
-  },
-  {
-    value: 'custom',
-    name: $localize`Custom backup retention`,
-  },
-] as const;
-
-const MaxVolumeSize = 1024 * 1024 * 1024 * 2; // 2GiB
-const MinVolumeSize = 1024 * 1024 * 5; // 5MiB
-
-export type SizeOptions = (typeof SIZE_OPTIONS)[number];
-type RetentionOptions = (typeof RETENTION_OPTIONS)[number];
-
-export const createOptionsForm = (
-  defaults = {
-    remoteVolumeSize: 50,
-    size: 'MB' as SizeOptions,
-    backupRetention: '' as RetentionOptions['value'],
-    advancedOptions: [],
-  }
-) => {
-  return fb.group({
-    remoteVolumeSize: fb.group({
-      size: fb.control<number>(defaults.remoteVolumeSize),
-      unit: fb.control<SizeOptions>(defaults.size),
-    }),
-    backupRetention: fb.control<RetentionOptions['value']>(defaults.backupRetention),
-    advancedOptions: fb.group({}),
-  });
-};
 
 @Component({
   selector: 'app-advanced-options-settings',
   imports: [
     ReactiveFormsModule,
-    NgTemplateOutlet,
-    SparkleMenuComponent,
+    OptionsListComponent,
     SparkleButtonComponent,
     SparkleIconComponent,
-    SparkleFormFieldComponent,
-    SparkleToggleComponent,
-    SparkleTooltipComponent,
-    SparkleSelectComponent,
-    FileTreeComponent,
-    ToggleCardComponent,
+    SparkleAlertComponent,
   ],
   templateUrl: './advanced-options-settings.component.html',
   styleUrl: './advanced-options-settings.component.scss',
@@ -94,97 +30,78 @@ export default class AdvancedOptionsSettingsComponent {
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
 
   optionsForm = this.#backupState.optionsForm;
-  selectedOptions = this.#backupState.selectedOptions;
-  nonSelectedOptions = this.#backupState.nonSelectedOptions;
+  settings = this.#backupState.settings;
   isSubmitting = signal(false);
   isLoadingOptions = signal(true);
+  saved = signal(false);
   sizeOptions = signal(SIZE_OPTIONS);
+
+  lastRecievedServerSettings = signal<{ [key: string]: string }>({});
   serverSettingsEffect = effect(() => {
     const serverSettings = this.#serverSettingsService.serverSettings();
 
     if (serverSettings === undefined) return;
 
+    this.lastRecievedServerSettings.set(serverSettings);
     this.isLoadingOptions.set(true);
 
-    const availableOptions = this.#backupState.nonSelectedOptions();
-    const entries = Object.entries(serverSettings);
-    entries.forEach(([key, value], index) => {
+    const serverSettingEntries = Object.entries(serverSettings);
+    serverSettingEntries.forEach(([key, value], index) => {
       if (key.startsWith('--')) {
-        const formControlName = key.replace('--', '');
-        const option = availableOptions.find((option) => option.name === formControlName);
+        const name = key.replace('--', '');
 
-        if (option !== undefined) {
-          this.addNewOption(option, value);
-        } else {
-          this.addFreeTextOption(formControlName, value);
-        }
+        this.settings.update((x) => {
+          if (x.some((option) => option.Name === name)) return x;
+
+          x.push({
+            Name: name,
+            Value: value,
+          });
+
+          return x;
+        });
       }
 
-      if (index === entries.length - 1) {
+      if (index === serverSettingEntries.length - 1) {
         this.isLoadingOptions.set(false);
       }
     });
   });
 
-  oauthStartTokenCreation(_: any) {}
-  getFormFieldValue(
-    destinationIndex: number,
-    formGroupName: 'custom' | 'dynamic' | 'advanced',
-    formControlName: string
-  ) {
-    const group = this.optionsForm.controls.advancedOptions as any;
-
-    return group.controls[formControlName].value;
-  }
-
-  removeFormView(option: FormView) {
-    const key = '--' + option.name;
-    this.#dupServer
-      .patchApiV1Serversettings({
-        requestBody: {
-          [key]: null,
-        },
-      })
-      .subscribe({
-        next: (res) => {
-          window.location.reload();
-        },
-      });
-  }
-
-  addNewOption(option: FormView, defaultValue?: any) {
-    this.#backupState.addOptionToFormGroup(option, defaultValue);
-  }
-
-  addFreeTextOption(name: string, value: string) {
-    this.#backupState.addFreeTextOption(name, value, {
-      // shortDescription: 'Free text',
-      // longDescription: 'Free text',
-    });
-  }
-
   submit() {
     this.isSubmitting.set(true);
 
-    const advancedOptions = this.optionsForm.value.advancedOptions;
+    const settings = this.settings();
+    const lastRecievedServerSettings = this.lastRecievedServerSettings();
+    const currentSettingNames = settings.map((s) => s.Name!);
+    const lastSettingKeys = Object.keys(lastRecievedServerSettings);
+    const removedSettings = lastSettingKeys.filter((key) => !currentSettingNames.includes(key.replace('--', '')));
+    const reduced = settings.reduce(
+      (acc, curr) => {
+        acc[`--${curr.Name!}`] = curr.Value!;
+        return acc;
+      },
+      {} as { [key: string]: string | null }
+    );
 
-    if (!advancedOptions) return;
-
-    const mappedAdvancedOptions = this.#prefixKeysWithDashes(advancedOptions!);
+    removedSettings.forEach((key) => {
+      reduced[key] = null;
+    });
 
     this.#dupServer
       .patchApiV1Serversettings({
-        requestBody: mappedAdvancedOptions,
+        requestBody: reduced,
       })
       .pipe(finalize(() => this.isSubmitting.set(false)))
-      .subscribe();
-  }
+      .subscribe({
+        next: () => {
+          this.#serverSettingsService.refreshServerSettings();
+          this.saved.set(true);
 
-  #prefixKeysWithDashes(obj: Record<string, any>) {
-    let newObj: Record<string, any> = {};
-    for (const key in obj) {
-      newObj[`--${key}`] = obj[key];
-    }
-    return newObj;
+          setTimeout(() => {
+            this.saved.set(false);
+          }, 3000);
+        },
+      });
   }
 }

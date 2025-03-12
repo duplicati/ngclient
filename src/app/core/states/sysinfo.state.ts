@@ -47,6 +47,12 @@ export class SysinfoState {
     return [defaultOptions, ...generic, ...compression];
   });
 
+  allOptions = computed(() => {
+    return this.allOptionsGrouped().reduce((acc, curr) => {
+      return [...acc, ...curr.options];
+    }, [] as FormView[]);
+  });
+
   preload(returnObservable = false): Observable<SystemInfoDto> | void {
     const obs = (this.#dupServer.getApiV1Systeminfo() as Observable<SystemInfoDto>).pipe(
       tap((systemInfo) => {

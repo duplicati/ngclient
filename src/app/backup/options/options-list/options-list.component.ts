@@ -56,17 +56,17 @@ export class OptionsListComponent {
 
   options = model.required<SettingInputDto[]>();
   hiddenOptions = input<string[]>([]);
+  hasFreeTextSettings = input(false);
 
   allOptionsGrouped = this.#sysInfo.allOptionsGrouped;
+  allOptions = this.#sysInfo.allOptions;
+  sizeOptions = signal(SIZE_OPTIONS);
 
   selectedSettings = computed(() => {
     const hiddenNames = this.hiddenOptions();
-
-    return this.options()
+    const predefinedSettings = this.options()
       .map((setting) => {
-        const option = this.allOptionsGrouped()
-          .flatMap((group) => group.options)
-          .find((opt) => opt.name === setting.Name);
+        const option = this.allOptions().find((opt) => opt.name === setting.Name);
 
         if (option && !hiddenNames.includes(option.name)) {
           if (option.type === 'Size') {
@@ -100,10 +100,24 @@ export class OptionsListComponent {
             Value: valueSignal,
             FormView: option,
           } as SettingItem;
+        } else if (this.hasFreeTextSettings()) {
+          return {
+            ...setting,
+            Value: signal(setting.Value),
+            FormView: {
+              name: setting.Name,
+              type: 'FreeText',
+              shortDescription: 'Custom settings argument',
+              longDescription: 'Custom settings argument',
+            },
+          };
         }
+
         return null;
       })
-      .filter(Boolean) as (SettingItem | SizeSettingItem)[];
+      .filter((x) => x !== null) as (SettingItem | SizeSettingItem)[];
+
+    return predefinedSettings;
   });
 
   nonSelectedOptionsGrouped = computed(() => {
@@ -126,7 +140,22 @@ export class OptionsListComponent {
       .filter((group) => group.options.length > 0);
   });
 
-  sizeOptions = signal(SIZE_OPTIONS);
+  addFreeTextSetting() {
+    if (!this.hasFreeTextSettings()) return;
+
+    // TODO Add dialog to prompt for name of the field show that its sluggified
+
+    this.options.update((settings) => {
+      return [
+        ...settings,
+        {
+          Filter: null,
+          Name: '',
+          Value: '',
+        },
+      ];
+    });
+  }
 
   addSetting(option: FormView) {
     this.options.update((settings) => {
@@ -162,6 +191,16 @@ export class OptionsListComponent {
       }
 
       newSettings[index].Value = newValue;
+      return newSettings;
+    });
+  }
+
+  updateFreeTextSettingName(option: SettingItem, newValue: string) {
+    this.options.update((settings) => {
+      const newSettings = [...settings];
+      const index = newSettings.findIndex((s) => s.Name === option.Name);
+
+      newSettings[index].Name = newValue;
       return newSettings;
     });
   }

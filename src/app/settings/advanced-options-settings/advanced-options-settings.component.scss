@@ -7,6 +7,13 @@
   justify-self: flex-end;
 }
 
+.actions {
+  display: flex;
+  gap: p2r(8);
+  justify-content: flex-end;
+  margin-bottom: p2r(8);
+}
+
 form {
   display: flex;
   flex-direction: column;
