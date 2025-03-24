@@ -22,6 +22,7 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   const isLoginRequest = req.url === '/api/v1/auth/login';
   const isRefreshRequest = req.url === '/api/v1/auth/refresh';
   const isProgressStateRequest = req.url === '/api/v1/progressstate';
+  const isConnectionTestRequest = req.url === '/api/v1/remoteoperation/test';
   const token = auth.token();
 
   let modifiedRequest = req;
@@ -45,8 +46,19 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((error) => {
       // Suppress error handling for proxy detection requests
       if (!IS_PROXY_DETECT_REQUEST) {
-        // Suppress 404 errors for progressstate requests, API needs to change
-        if (!(isProgressStateRequest && error.status === 404)) sparkleAlertService.error(error.message);
+        
+        if ((isProgressStateRequest && error.status === 404))
+        {
+          // Suppress 404 errors for progressstate requests, API needs to change
+        }
+        else if ((isConnectionTestRequest))
+        {
+          // Suppress errors for connection test requests, API needs to change
+        }
+        else
+        { 
+          sparkleAlertService.error(error.message);
+        }
 
         // Don't error handle refresh requests
         if (isRefreshRequest && error.status === 401) {
