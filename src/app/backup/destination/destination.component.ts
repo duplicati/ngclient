@@ -214,6 +214,7 @@ export default class DestinationComponent {
         },
         error: (err) => {
           const errorMessage = err.error.error.Error;
+          this.successfulTest.set(false);
 
           if (errorMessage === 'missing-folder') {
             this.#dialog.open(ConfirmDialogComponent, {
