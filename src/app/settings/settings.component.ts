@@ -163,23 +163,21 @@ export default class SettingsComponent {
 
     this.allowRemoteAccess.set(newValue);
 
-    if (!newValue) {
-      this.#dupServer
-        .patchApiV1Serversettings({
-          requestBody: {
-            'server-listen-interface': newValue ? 'any' : 'loopback',
-          },
+    this.#dupServer
+      .patchApiV1Serversettings({
+        requestBody: {
+          'server-listen-interface': newValue ? 'any' : 'loopback',
+        },
+      })
+      .pipe(
+        this.#serverSettingsService.withRefresh(),
+        finalize(() => this.updatingRemoteAccess.set(false)),
+        catchError(() => {
+          this.allowRemoteAccess.set(prevValue);
+          return of(null);
         })
-        .pipe(
-          this.#serverSettingsService.withRefresh(),
-          finalize(() => this.updatingRemoteAccess.set(false)),
-          catchError(() => {
-            this.allowRemoteAccess.set(prevValue);
-            return of(null);
-          })
-        )
-        .subscribe();
-    }
+      )
+      .subscribe();
   }
 
   updateAllowedHostnames() {
