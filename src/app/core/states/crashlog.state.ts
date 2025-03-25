@@ -6,20 +6,20 @@ import { DuplicatiServerService } from "../openapi";
   providedIn: 'root',
 })
 export class CrashLogState {
-      #dupServer = inject(DuplicatiServerService);
-    
-      isLoaded = signal(false);
-      crashLog = signal<string | null>(null);
+  #dupServer = inject(DuplicatiServerService);
 
-      load() {
-        if (this.isLoaded()) return;
-        this.#dupServer
-        .getApiV1LogdataCrashlog()
-        .pipe(finalize(() => this.isLoaded.set(true)))
-        .subscribe({
-            next: (res) => {
-            this.crashLog.set(res.Logdata ?? null);
-            }
-        });
-    }
+  isLoaded = signal(false);
+  crashLog = signal<string | null>(null);
+
+  load() {
+    if (this.isLoaded()) return;
+    this.#dupServer
+      .getApiV1LogdataCrashlog()
+      .pipe(finalize(() => this.isLoaded.set(true)))
+      .subscribe({
+          next: (res) => {
+          this.crashLog.set(res.Logdata ?? null);
+          }
+      });
+  }
 }
