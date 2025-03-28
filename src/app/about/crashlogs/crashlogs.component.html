@@ -1,0 +1,17 @@
+<h3>Crash log</h3>
+
+@if (logsLoading()) {
+  <div class="loading">Loading ...</div>
+} @else if (crashLog() == null || crashLog()?.length === 0) {
+  <div class="loading">No crash log found</div>
+} @else {
+  <div [style.grid-column]="'1 / -1'" [style.height]="'auto'" style="white-space: pre-wrap">
+    <code>
+      <ol class="line-numbers-ol">
+        @for (line of breakIntoLines(crashLog()); track $index) {
+          <li>{{ line }}</li>
+        }
+      </ol>
+    </code>
+  </div>
+}

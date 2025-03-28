@@ -5,11 +5,11 @@ import { SparkleAlertService } from '@sparkle-ui/core';
 import { catchError, finalize, Observable, shareReplay, switchMap, throwError } from 'rxjs';
 import { ENVIRONMENT_TOKEN } from '../../../environments/environment-token';
 import { mapLocale } from '../locales/locales.utility';
-import { AccessTokenOutput } from '../openapi';
 import { LOCALSTORAGE } from '../services/localstorage.token';
 import { AppAuthState, dummytoken } from '../states/app-auth.state';
+import { AccessTokenOutputDto } from '../openapi';
 
-let refreshRequest: Observable<AccessTokenOutput> | null = null;
+let refreshRequest: Observable<AccessTokenOutputDto> | null = null;
 
 export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AppAuthState);
