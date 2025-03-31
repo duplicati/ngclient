@@ -16,6 +16,20 @@ import { SysinfoState } from '../../../core/states/sysinfo.state';
 import { FormView } from '../../destination/destination.config-utilities';
 
 const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
+const TIME_OPTIONS = [
+  {
+    value: 's',
+    label: $localize`Seconds`,
+  },
+  {
+    value: 'm',
+    label: $localize`Minutes`,
+  },
+  {
+    value: 'h',
+    label: $localize`Hours`,
+  },
+];
 
 type SettingItem = {
   Filter?: string | null;
@@ -30,6 +44,15 @@ type SizeSettingItem = {
   Value: ReturnType<typeof signal<string | null>>;
   unit: ReturnType<typeof signal<string>>;
   size: ReturnType<typeof signal<number>>;
+  FormView: FormView;
+};
+
+type TimespanSettingItem = {
+  Filter?: string | null;
+  Name?: string | null;
+  Value: ReturnType<typeof signal<string | null>>;
+  unit: ReturnType<typeof signal<string>>;
+  timespan: ReturnType<typeof signal<number>>;
   FormView: FormView;
 };
 
@@ -61,6 +84,7 @@ export class OptionsListComponent {
   allOptionsGrouped = this.#sysInfo.allOptionsGrouped;
   allOptions = this.#sysInfo.allOptions;
   sizeOptions = signal(SIZE_OPTIONS);
+  timeOptions = signal(TIME_OPTIONS);
 
   selectedSettings = computed(() => {
     const hiddenNames = this.hiddenOptions();
@@ -82,6 +106,21 @@ export class OptionsListComponent {
               size,
               FormView: option,
             } as SizeSettingItem;
+          }
+
+          if (option.type === 'Timespan') {
+            const _unit = setting.Value?.replace(/[0-9]/g, '');
+            const _time = setting.Value?.replace(/[^0-9]/g, '');
+            const unit = signal(_unit && _unit !== '' ? _unit : 's');
+            const time = signal(_time && _time !== '' ? parseInt(_time!) : '');
+
+            return {
+              ...setting,
+              Value: computed(() => time() + unit()),
+              unit,
+              timespan: time,
+              FormView: option,
+            } as TimespanSettingItem;
           }
 
           let _value: any = setting.Value ?? '';
@@ -218,6 +257,25 @@ export class OptionsListComponent {
 
       if (property === 'unit') {
         newSettings[index].Value = `${_option.size()}${newValue}`;
+      }
+
+      return newSettings;
+    });
+  }
+
+  updateTimespanSetting(option: SettingItem, newValue: string, property: 'timespan' | 'unit') {
+    const _option = option as TimespanSettingItem;
+
+    this.options.update((settings) => {
+      const newSettings = [...settings];
+      const index = newSettings.findIndex((s) => s.Name === _option.Name);
+
+      if (property === 'timespan') {
+        newSettings[index].Value = `${newValue}${_option.unit()}`;
+      }
+
+      if (property === 'unit') {
+        newSettings[index].Value = `${_option.timespan()}${newValue}`;
       }
 
       return newSettings;

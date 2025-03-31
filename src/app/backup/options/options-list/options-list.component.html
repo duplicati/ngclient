@@ -42,13 +42,13 @@
           </label>
 
           <div class="form-row">
-            <spk-form-field>
+            <spk-form-field class="stretch">
               <input type="text" [ngModel]="item.Name" (ngModelChange)="updateFreeTextSettingName(item, $event)" />
 
               <spk-icon prefix>rectangle-dashed</spk-icon>
             </spk-form-field>
 
-            <spk-form-field>
+            <spk-form-field class="stretch">
               <input type="text" [ngModel]="item.Value()" (ngModelChange)="updateSettingValue(item, $event)" />
 
               <spk-icon prefix>textbox</spk-icon>
@@ -95,7 +95,7 @@
       } @else if (
         item.FormView.type === 'String' || item.FormView.type === 'Path' || item.FormView.type === 'Decimal'
       ) {
-        <spk-form-field>
+        <spk-form-field class="stretch">
           <label for="destination-{{ item.Name }}-{{ $index }}">
             {{ item.FormView.shortDescription }}
             @if (item.FormView.longDescription) {
@@ -118,7 +118,7 @@
           }
         </spk-form-field>
       } @else if (item.FormView.type === 'Password') {
-        <spk-form-field>
+        <spk-form-field class="stretch">
           <label for="destination-{{ item.Name }}-{{ $index }}">
             {{ item.FormView.shortDescription }}
           </label>
@@ -174,7 +174,7 @@
           </label>
 
           <div class="form-row">
-            <spk-form-field>
+            <spk-form-field class="stretch">
               <input
                 type="number"
                 id="destination-{{ item.Name }}-{{ $index }}"
@@ -186,6 +186,7 @@
 
             <spk-select
               i18n-placeholder
+              class="stretch"
               placeholder="Select an item..."
               [options]="sizeOptions()"
               [isClearable]="false">
@@ -250,21 +251,47 @@
           {{ item }}
         </ng-template>
       } @else if (item.FormView.type === 'Timespan') {
-        <spk-form-field>
+        <div class="form-column">
           <label for="destination-{{ item.Name }}-{{ $index }}">
             {{ item.FormView.shortDescription }}
+
             @if (item.FormView.longDescription) {
               <spk-tooltip class="primary" [message]="item.FormView.longDescription">
                 <spk-icon>question</spk-icon>
               </spk-tooltip>
             }
           </label>
-          <input
-            type="text"
-            id="destination-{{ item.Name }}-{{ $index }}"
-            [ngModel]="item.Value()"
-            (ngModelChange)="updateSettingValue(item, $event)" />
-        </spk-form-field>
+
+          <div class="form-row">
+            <spk-form-field class="stretch">
+              <input
+                type="number"
+                id="destination-{{ item.Name }}-{{ $index }}"
+                [ngModel]="$any(item).timespan()"
+                (ngModelChange)="updateTimespanSetting(item, $event, 'timespan')" />
+
+              <spk-icon prefix>resize</spk-icon>
+            </spk-form-field>
+
+            <spk-select
+              i18n-placeholder
+              class="stretch"
+              placeholder="Select an item..."
+              [options]="timeOptions()"
+              value="value"
+              label="label"
+              [isClearable]="false">
+              <input
+                type="text"
+                [ngModel]="$any(item).unit()"
+                (ngModelChange)="updateTimespanSetting(item, $event, 'unit')" />
+
+              <ng-template let-option>
+                {{ option.label }}
+              </ng-template>
+            </spk-select>
+          </div>
+        </div>
       }
 
       <button spk-button class="outlined remove-btn" type="button" (click)="removeSetting(item)">

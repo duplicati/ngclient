@@ -68,10 +68,6 @@ form {
   display: flex;
   align-items: flex-end;
   gap: p2r(8);
-
-  > * {
-    flex: 1 0;
-  }
 }
 
 .advanced-option {
