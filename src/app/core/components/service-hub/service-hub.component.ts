@@ -125,6 +125,10 @@ export default class ServiceHubComponent {
     }
   }
 
+  deleteAlertByIndex(id: string) {
+    this.#sparkleAlertService.removeAlert(id);
+  }
+
   private scrollToBottom() {
     if (this.scroller() && this.scroller()?.nativeElement) {
       this.scroller()!.nativeElement.scrollTo(0, this.scroller()!.nativeElement.scrollHeight);

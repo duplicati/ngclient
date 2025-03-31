@@ -4,7 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import {
   SparkleAlertService,
   SparkleButtonComponent,
-  SparkleFileDragDropDirective,
+  SparkleFileUploadComponent,
   SparkleFormFieldComponent,
   SparkleIconComponent,
   SparkleToggleComponent,
@@ -20,11 +20,11 @@ const fb = new FormBuilder();
   imports: [
     ReactiveFormsModule,
     RouterLink,
-    SparkleFileDragDropDirective,
     SparkleFormFieldComponent,
     SparkleIconComponent,
     SparkleButtonComponent,
     SparkleToggleComponent,
+    SparkleFileUploadComponent,
   ],
   templateUrl: './import.component.html',
   styleUrl: './import.component.scss',
@@ -47,11 +47,10 @@ export default class ImportComponent {
     passphrase: fb.control<string>(''),
   });
 
-  selectedFile = signal<File | null>(null);
+  selectedFile = signal<File[]>([]);
 
-  onFileDropped(event: Event) {
-    const files = (event.target as HTMLInputElement)?.files;
-    const file = files?.item(0);
+  onFileDropped(files: File[]) {
+    const file = files[0];
 
     if (file) {
       const reader = new FileReader();

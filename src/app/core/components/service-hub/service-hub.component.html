@@ -58,7 +58,7 @@
       <div class="alert-stream-modal-list-scroller" #scroller>
         <div class="alert-stream-modal-list">
           @for (alert of alertHistory(); track $index) {
-            <spk-alert #alerts [class]="alert.type" [id]="alert.id">
+            <spk-alert #alerts [class]="alert.type" [id]="alert.id" (click)="deleteAlertByIndex(alert.id)">
               <div title>{{ alert.title }}</div>
 
               @if (alert.content) {
