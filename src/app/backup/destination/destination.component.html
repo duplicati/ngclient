@@ -237,7 +237,7 @@
               } @else if (
                 item.formView.type === 'String' || item.formView.type === 'Path' || item.formView.type === 'Email'
               ) {
-                <spk-form-field>
+                <spk-form-field class="stretch">
                   <label
                     for="destination-{{ item.formGroupName }}-{{ item.index }}-{{
                       item.asHttpOptions ? 'http' : 'other'
@@ -266,7 +266,7 @@
                   }
                 </spk-form-field>
               } @else if (item.formView.type === 'Password') {
-                <spk-form-field>
+                <spk-form-field class="stretch">
                   <label
                     for="destination-{{ item.formGroupName }}-{{ item.index }}-{{
                       item.asHttpOptions ? 'http' : 'other'
@@ -387,7 +387,7 @@
                   </label>
 
                   <div class="form-row">
-                    <spk-form-field>
+                    <spk-form-field class="stretch">
                       <input
                         type="number"
                         id="destination-{{ item.formGroupName }}-{{ item.index }}-{{
@@ -408,7 +408,7 @@
                   </div>
                 </div>
               } @else if (item.formView.type === 'Integer') {
-                <spk-form-field>
+                <spk-form-field class="stretch">
                   <label
                     for="destination-{{ item.formGroupName }}-{{ item.index }}-{{
                       item.asHttpOptions ? 'http' : 'other'
@@ -469,7 +469,7 @@
                   {{ option }}
                 </ng-template>
               } @else if (item.formView.type === 'Timespan') {
-                <spk-form-field>
+                <spk-form-field class="stretch">
                   <label
                     for="destination-{{ item.formGroupName }}-{{ item.index }}-{{
                       item.asHttpOptions ? 'http' : 'other'
@@ -529,7 +529,7 @@
     </header>
 
     <div content>
-      <spk-form-field>
+      <spk-form-field class="stretch">
         <textarea id="targetUrl" autocomplete="off" [formControl]="targetUrlCtrl"></textarea>
       </spk-form-field>
     </div>

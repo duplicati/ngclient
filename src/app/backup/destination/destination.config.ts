@@ -1328,7 +1328,14 @@ export const DESTINATION_CONFIG: DestinationConfig = [
           ['auth-username']: username,
           ['auth-password']: password,
         };
-        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(obj)]);
+
+        const asMap = new Map([
+          ...Object.entries(obj),
+          ...Object.entries(fields.advanced),
+          ...Object.entries(fields.dynamic),
+        ]);
+
+        const urlParams = toSearchParams(Array.from(asMap));
 
         return `${fields.destinationType}://${server + addPath(share) + addPath(path) + urlParams}`;
       },
@@ -1369,26 +1376,32 @@ export const DESTINATION_CONFIG: DestinationConfig = [
           ['auth-username']: username,
           ['auth-password']: password,
         };
-        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(obj)]);
+
+        const asMap = new Map([
+          ...Object.entries(obj),
+          ...Object.entries(fields.advanced),
+          ...Object.entries(fields.dynamic),
+        ]);
+
+        const urlParams = toSearchParams(Array.from(asMap));
 
         return `${fields.destinationType}://${path + urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         let path = urlObj.hostname ?? '';
-        if (urlObj.pathname && path !== '')
-          path += '/';
-         path + urlObj.pathname;
+        if (urlObj.pathname && path !== '') path += '/';
+        path + urlObj.pathname;
 
         return <ValueOfDestinationFormGroup>{
           destinationType,
-          custom: {            
-            path
+          custom: {
+            path,
           },
           ...fromSearchParams(destinationType, urlObj),
         };
       },
     },
-  },  
+  },
 
   // Validated against the old destination test url
   {
