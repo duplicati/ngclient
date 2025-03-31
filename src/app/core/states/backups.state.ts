@@ -103,9 +103,10 @@ export class BackupsState {
       })
       .pipe(
         take(1),
-        tap(() => this.getBackups()),
         finalize(() => this.#deletingBackup.set(null))
       )
-      .subscribe();
+      .subscribe({
+        next: () => this.getBackups(true),
+      });
   }
 }
