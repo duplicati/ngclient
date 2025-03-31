@@ -214,6 +214,7 @@ export default class DestinationComponent {
         },
         error: (err) => {
           const errorMessage = err.error.error.Error;
+          this.successfulTest.set(false);
 
           if (errorMessage === 'missing-folder') {
             this.#dialog.open(ConfirmDialogComponent, {
@@ -233,6 +234,8 @@ export default class DestinationComponent {
                   .subscribe();
               },
             });
+            
+            return;
           }
 
           if (errorMessage.startsWith('incorrect-cert:')) {
@@ -254,6 +257,8 @@ export default class DestinationComponent {
                 this.#backupState.addHttpOptionByName('accept-specified-ssl-hash', certData);
               },
             });
+            
+            return;
           }
 
           if (errorMessage.startsWith('incorrect-host-key:')) {
@@ -295,7 +300,22 @@ with the REPORTED host key: ${reportedhostkey}?`,
                 },
               });
             }
+     
+            return;
           }
+
+          // General error
+          this.#dialog.open(ConfirmDialogComponent, {
+            maxWidth: '500px',
+            data: {
+              title: $localize`Test connection failed`,
+              message: errorMessage,
+              cancelText: 'OK',
+            },
+            closed: _ => {
+            },
+          });          
+          
         },
       });
   }

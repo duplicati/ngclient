@@ -1348,6 +1348,47 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
     },
   },
+  {
+    key: 'filen',
+    displayName: 'Filen.io',
+    description: 'Store backups in Filen.io.',
+    customFields: {
+      path: {
+        type: 'String',
+        name: 'path',
+        shortDescription: 'Path on server',
+        longDescription: 'Path on server',
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+    },
+    dynamicFields: ['auth-username', 'auth-password'],
+    mapper: {
+      to: (fields: any): string => {
+        const { path, username, password } = fields.custom;
+        const obj = {
+          ['auth-username']: username,
+          ['auth-password']: password,
+        };
+        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(obj)]);
+
+        return `${fields.destinationType}://${path + urlParams}`;
+      },
+      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        let path = urlObj.hostname ?? '';
+        if (urlObj.pathname && path !== '')
+          path += '/';
+         path + urlObj.pathname;
+
+        return <ValueOfDestinationFormGroup>{
+          destinationType,
+          custom: {            
+            path
+          },
+          ...fromSearchParams(destinationType, urlObj),
+        };
+      },
+    },
+  },  
 
   // Validated against the old destination test url
   {

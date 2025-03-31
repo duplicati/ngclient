@@ -186,6 +186,10 @@ export const routes: Routes = [
                     path: 'logs',
                     loadComponent: () => import('./about/logs/logs.component'),
                   },
+                  {
+                    path: 'crashlogs',
+                    loadComponent: () => import('./about/crashlogs/crashlogs.component'),
+                  },
                 ],
               },
             ],

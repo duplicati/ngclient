@@ -24,7 +24,11 @@
       <tr>
         <td [style.grid-column]="'1 / -1'" [style.height]="'auto'" style="white-space: pre-wrap">
           <code>
-            <ol class="line-numbers-ol" [innerHTML]="breakIntoLines(row['Exception'])"></ol>
+            <ol class="line-numbers-ol">
+              @for (line of breakIntoLines(row['Exception']); track $index) {
+                <li>{{ line }}</li>
+              }
+            </ol>
           </code>
         </td>
       </tr>

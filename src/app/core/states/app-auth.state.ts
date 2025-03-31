@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, finalize, map, Observable, of, take, tap } from 'rxjs';
-import { AccessTokenOutput, DuplicatiServerService } from '../openapi';
+import { AccessTokenOutputDto, DuplicatiServerService } from '../openapi';
 import { RelayconfigState } from './relayconfig.state';
 
 export const dummytoken = 'PROXY_AUTHED_FAKE_TOKEN';
@@ -40,7 +40,7 @@ export class AppAuthState {
     if (this.#relayConfigState.relayIsEnabled()) {
       this.#token.set(dummytoken);
 
-      return new Observable<AccessTokenOutput>((observer) => {
+      return new Observable<AccessTokenOutputDto>((observer) => {
         observer.next({ AccessToken: dummytoken });
         observer.complete();
       });

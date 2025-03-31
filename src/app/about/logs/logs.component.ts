@@ -47,14 +47,10 @@ export default class LogsComponent {
     this.openRowIndex.set(index === this.openRowIndex() ? null : index);
   }
 
-  breakIntoLines(str: string) {
-    const codeLines = str.split('\n');
-    let numberedCode = '';
+  breakIntoLines(str: string | null): string[] {
+    if (!str)
+      return [];
 
-    for (let i = 0; i < codeLines.length; i++) {
-      numberedCode += `<li>${codeLines[i]}</li>`;
-    }
-
-    return numberedCode;
+    return str.split('\n');
   }
 }

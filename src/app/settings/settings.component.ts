@@ -76,6 +76,81 @@ const USAGE_STATISTICS_OPTIONS = [
 
 type UsageStatisticsType = (typeof USAGE_STATISTICS_OPTIONS)[number];
 
+const SORT_OPTIONS = [
+  {
+    value: 'id',
+    label: $localize`Backup ID`,    
+  },
+  {
+    value: 'name',
+    label: $localize`Backup name`,
+  },
+  {
+    value: 'lastrun',
+    label: $localize`Last run time`,
+  },
+  {
+    value: 'nextrun',
+    label: $localize`Next run time`,    
+  },
+  {
+    value: 'schedule',
+    label: $localize`Is scheduled`,
+  },
+  {
+    value: 'backend',
+    label: $localize`Destination type`,
+  },
+  {
+    value: 'sourcesize',
+    label: $localize`Source size`,
+  },
+  {
+    value: 'destinationsize',
+    label: $localize`Destination size`,
+  },
+  {
+    value: 'duration',
+    label: $localize`Duration`,
+  },
+  {
+    value: '-id',
+    label: $localize`Backup ID (decending)`,    
+  },
+  {
+    value: '-name',
+    label: $localize`Backup name (decending)`,
+  },
+  {
+    value: '-lastrun',
+    label: $localize`Last run time (decending)`,
+  },
+  {
+    value: '-nextrun',
+    label: $localize`Next run time (decending)`,    
+  },
+  {
+    value: '-schedule',
+    label: $localize`Is scheduled (decending)`,
+  },
+  {
+    value: '-backend',
+    label: $localize`Destination type (decending)`,
+  },
+  {
+    value: '-sourcesize',
+    label: $localize`Source size (decending)`,
+  },
+  {
+    value: '-destinationsize',
+    label: $localize`Destination size (decending)`,
+  },
+  {
+    value: '-duration',
+    label: $localize`Duration (decending)`,
+  },
+]
+
 @Component({
   selector: 'app-settings',
   imports: [
@@ -115,6 +190,7 @@ export default class SettingsComponent {
   editAs = signal<'list' | 'text'>('list');
   previousLang = this.#initLang;
   langCtrl = signal<string>(this.#initLang);
+  sortOrderCtrl = signal<string>('');
 
   remoteControlStatus = this.#remoteControlState.status;
 
@@ -128,6 +204,9 @@ export default class SettingsComponent {
 
   updatingChannel = signal(false);
   updateChannel = signal<UpdateChannel>('');
+
+  prevSortOrder = signal('');
+  updatingSortOrder = signal(false);
 
   setNewChannel(channel: UpdateChannel) {
     const prevChannel = this.updateChannel();
@@ -163,23 +242,21 @@ export default class SettingsComponent {
 
     this.allowRemoteAccess.set(newValue);
 
-    if (!newValue) {
-      this.#dupServer
-        .patchApiV1Serversettings({
-          requestBody: {
-            'server-listen-interface': newValue ? 'any' : 'loopback',
-          },
+    this.#dupServer
+      .patchApiV1Serversettings({
+        requestBody: {
+          'server-listen-interface': newValue ? 'any' : 'loopback',
+        },
+      })
+      .pipe(
+        this.#serverSettingsService.withRefresh(),
+        finalize(() => this.updatingRemoteAccess.set(false)),
+        catchError(() => {
+          this.allowRemoteAccess.set(prevValue);
+          return of(null);
         })
-        .pipe(
-          this.#serverSettingsService.withRefresh(),
-          finalize(() => this.updatingRemoteAccess.set(false)),
-          catchError(() => {
-            this.allowRemoteAccess.set(prevValue);
-            return of(null);
-          })
-        )
-        .subscribe();
-    }
+      )
+      .subscribe();
   }
 
   updateAllowedHostnames() {
@@ -204,6 +281,32 @@ export default class SettingsComponent {
         })
       )
       .subscribe();
+  }
+
+    updateSortOrder(__x: unknown[]) {
+      const _x = __x[0] as { value: string; label: string } | null | undefined;
+      const x = _x?.value ?? '';
+
+      if (!x || x === '' || x === this.prevSortOrder()) return;
+      const prevSortOrder = this.prevSortOrder();
+
+      this.updatingSortOrder.set(true);
+
+      this.#dupServer
+        .patchApiV1Serversettings({
+          requestBody: {
+            'backup-list-sort-order': x,
+          },
+        })
+        .pipe(
+          this.#serverSettingsService.withRefresh(),
+          finalize(() => this.updatingSortOrder.set(false)),
+          catchError(() => {
+            this.sortOrderCtrl.set(prevSortOrder);
+            return of(null);
+          })
+        )
+        .subscribe();
   }
 
   updatingDisableTrayIconLogin = signal(false);
@@ -278,6 +381,7 @@ export default class SettingsComponent {
     return this.settingsForm.controls.pauseSettings;
   }
 
+  sortOptions = signal(SORT_OPTIONS);
   languageOptions = signal(LANGUAGES);
   usageStatisticsOptions = signal(USAGE_STATISTICS_OPTIONS);
 
@@ -329,6 +433,8 @@ export default class SettingsComponent {
     this.allowRemoteAccess.set(serverSettings['server-listen-interface'] === 'any');
     this.allowedHostnames.set(serverSettings['allowed-hostnames']);
     this.loadedAllowedHostnames.set(serverSettings['allowed-hostnames']);
+    this.prevSortOrder.set(serverSettings['backup-list-sort-order'] as string);
+    this.sortOrderCtrl.set(this.prevSortOrder());
 
     console.log(serverSettings['usage-reporter-level']);
     queueMicrotask(() => {

@@ -197,6 +197,28 @@
 
   <section>
     <div class="left">
+      <h3 i18n>Backup list sort order</h3>
+      <p i18n>Choose the order to display backups on the starting page in</p>
+      @if (updatingSortOrder()) {
+        <spk-progress-bar class="indeterminate primary" />
+      }
+    </div>
+
+    <div class="right">
+      <spk-select
+        [options]="sortOptions()"
+        (selectedOptionsChange)="updateSortOrder($event)"
+        value="value"
+        label="label"
+        [isClearable]="false"
+        [inlineSearch]="true">
+        <input type="text" [ngModel]="sortOrderCtrl()" [ngModelOptions]="{ standalone: true }" />
+      </spk-select>
+    </div>
+  </section>
+
+  <section>
+    <div class="left">
       <h3 i18n>Update channel</h3>
       <p>
         @if (updateChannel() !== '' && sysinfo()?.ServerVersion) {
