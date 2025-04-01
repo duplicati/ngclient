@@ -651,7 +651,7 @@ export class BackupState {
       return;
     }
 
-    if (element.type === 'Timespan') {
+    if (element.type === 'Timespan' || element.type === 'DateTime') {
       group.addControl(
         element.name as string,
         fb.control<string>(defaultValue as string, [Validators.pattern(/([-+]?\d{1,3}[smhDWMY])+/)])

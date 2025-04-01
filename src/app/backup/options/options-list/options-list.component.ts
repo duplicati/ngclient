@@ -108,7 +108,7 @@ export class OptionsListComponent {
             } as SizeSettingItem;
           }
 
-          if (option.type === 'Timespan') {
+          if (option.type === 'Timespan' || option.type == 'DateTime') {
             const _unit = setting.Value?.replace(/[0-9]/g, '');
             const _time = setting.Value?.replace(/[^0-9]/g, '');
             const unit = signal(_unit && _unit !== '' ? _unit : 's');
