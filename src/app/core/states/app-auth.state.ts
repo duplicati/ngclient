@@ -31,7 +31,7 @@ export class AppAuthState {
       })
       .pipe(
         take(1),
-        tap((res) => res.AccessToken && this.#token.set(res.AccessToken))
+        tap((res: AccessTokenOutputDto) => res.AccessToken && this.#token.set(res.AccessToken))
       );
   }
 
@@ -48,7 +48,7 @@ export class AppAuthState {
 
     return this.#dupServer.postApiV1AuthRefresh().pipe(
       take(1),
-      tap((res) => res.AccessToken && this.#token.set(res.AccessToken))
+      tap((res: AccessTokenOutputDto) => res.AccessToken && this.#token.set(res.AccessToken))
     );
   }
 
@@ -58,7 +58,7 @@ export class AppAuthState {
     });
 
     return this.#http
-      .get('/api/v1/systeminfo', {
+      .get('/api/v1/auth/validate', {
         headers,
       })
       .pipe(

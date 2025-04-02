@@ -10,6 +10,10 @@ export type AcknowlegdementDto = {
 
 export type ArgumentType = 'String' | 'Integer' | 'Boolean' | 'Timespan' | 'Size' | 'Enumeration' | 'Path' | 'Password' | 'Flags' | 'Decimal' | 'Unknown';
 
+export type AuthValidateDto = {
+    valid?: boolean;
+};
+
 export type BackupAndScheduleInputDto = {
     Backup?: BackupInputDto;
     Schedule?: ScheduleInputDto;
@@ -555,7 +559,13 @@ export type PostApiV1AuthIssuetokenByOperationResponse = (SingleOperationTokenOu
 
 export type PostApiV1AuthIssueForeverTokenResponse = (AccessTokenOutputDto);
 
+export type GetApiV1AuthValidateResponse = (AuthValidateDto);
+
 export type GetApiV1BackupdefaultsResponse = (string);
+
+export type GetApiV1BackupsData = {
+    orderBy?: string;
+};
 
 export type GetApiV1BackupsResponse = (Array<BackupAndScheduleOutputDto>);
 
