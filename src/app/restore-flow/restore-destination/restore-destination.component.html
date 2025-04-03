@@ -468,7 +468,7 @@
                 <ng-template let-option #optionTemplate>
                   {{ option }}
                 </ng-template>
-              } @else if (item.formView.type === 'Timespan') {
+              } @else if (item.formView.type === 'Timespan' || item.formView.type === 'DateTime') {
                 <spk-form-field>
                   <label
                     for="destination-{{ item.formGroupName }}-{{ item.index }}-{{

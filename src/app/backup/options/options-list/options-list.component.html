@@ -250,7 +250,7 @@
         <ng-template let-item #optionTemplate>
           {{ item }}
         </ng-template>
-      } @else if (item.FormView.type === 'Timespan') {
+      } @else if (item.FormView.type === 'Timespan' || item.FormView.type === 'DateTime') {
         <div class="form-column">
           <label for="destination-{{ item.Name }}-{{ $index }}">
             {{ item.FormView.shortDescription }}

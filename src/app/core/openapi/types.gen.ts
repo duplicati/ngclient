@@ -8,7 +8,7 @@ export type AcknowlegdementDto = {
     Acknowledgements?: (string) | null;
 };
 
-export type ArgumentType = 'String' | 'Integer' | 'Boolean' | 'Timespan' | 'Size' | 'Enumeration' | 'Path' | 'Password' | 'Flags' | 'Decimal' | 'Unknown';
+export type ArgumentType = 'String' | 'Integer' | 'Boolean' | 'Timespan' | 'DateTime' | 'Size' | 'Enumeration' | 'Path' | 'Password' | 'Flags' | 'Decimal' | 'Unknown';
 
 export type BackupAndScheduleInputDto = {
     Backup?: BackupInputDto;
