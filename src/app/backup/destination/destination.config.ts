@@ -303,10 +303,10 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     dynamicFields: ['authid'],
     mapper: {
       to: (fields: any): string => {
-        const path = fields.custom.path;
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
+        const { server, path } = fields.custom;
 
-        return `${fields.destinationType}://${path}${urlParams}`;
+        return `${fields.destinationType}://${server + addPath(path) + urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         const pathWithoutPrefixSlash = urlObj.pathname.replace(/^\//, '');
