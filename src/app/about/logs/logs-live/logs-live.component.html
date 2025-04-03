@@ -1,0 +1,59 @@
+@if (logLevel() === 'Disabled') {
+  <div class="live-view-disabled" i18n>Live logs are disabled</div>
+} @else {
+  <spk-table [data]="logs()" [loading]="logsLoading()" [style.grid-template-columns]="'auto 1fr auto'">
+    <tr table-header>
+      <th i18n>When</th>
+      <th i18n>Message</th>
+      <th class="sticky-end"></th>
+    </tr>
+
+    @for (row of logs(); track $index) {
+      <tr (click)="toggleRow($index)">
+        <td>{{ row['When'] | date: 'MMM dd. hh:mm' }}</td>
+        <td>{{ subStringMessage(row['Message']) }}</td>
+        <td class="sticky-end">
+          <button spk-button class="outlined small" [class.rotated-icon]="$index === openRowIndex()" type="button">
+            <spk-icon>caret-down</spk-icon>
+          </button>
+        </td>
+      </tr>
+
+      @if ($index === openRowIndex()) {
+        <tr>
+          <td class="expanded-cell">
+            <spk-list class="primary">
+              <div item>ID: {{ row['ID'] }}</div>
+              <div item>Type: {{ row['Type'] }}</div>
+              <div item>Tag: {{ row['Tag'] }}</div>
+              <div item>TaskID: {{ row['TaskID'] }}</div>
+              <div item>MessageID: {{ row['MessageID'] }}</div>
+            </spk-list>
+
+            @if (row['Exception']) {
+              <code>
+                <ol class="line-numbers-ol">
+                  @for (line of breakIntoLines(row['Exception']); track $index) {
+                    <li>{{ line }}</li>
+                  }
+                </ol>
+              </code>
+            }
+
+            @if (row['Message']) {
+              <code>
+                <ol class="line-numbers-ol">
+                  @for (line of breakIntoLines(row['Message']); track $index) {
+                    <li>{{ line }}</li>
+                  }
+                </ol>
+              </code>
+            }
+          </td>
+        </tr>
+      }
+    }
+
+    <div table-no-rows i18n>No data available</div>
+  </spk-table>
+}

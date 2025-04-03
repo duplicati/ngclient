@@ -1,39 +1,68 @@
-<h3>Logs</h3>
+<div class="filters">
+  <spk-button-group>
+    <button type="button" routerLink="/about/logs/stored" routerLinkActive="active" i18n>
+      <spk-icon>archive</spk-icon>
+      Stored
+    </button>
 
-<spk-table [(data)]="logs" [loading]="logsLoading()">
-  <tr table-header>
-    <th i18n>Timestamp</th>
-    <th i18n>Backup ID</th>
-    <th i18n>Message</th>
-    <th></th>
-  </tr>
+    <button type="button" routerLink="/about/logs/live" routerLinkActive="active" i18n>
+      <spk-icon>play</spk-icon>
+      Live
+    </button>
+  </spk-button-group>
 
-  @for (row of logs(); track $index) {
-    <tr (click)="toggleRow($index)">
-      <td>{{ row['Timestamp'] | date: 'MMM dd. hh:mm' }}</td>
-      <td class="id">{{ row['BackupID'] >= 0 ? row['BackupID'] : '-' }}</td>
-      <td>{{ row['Message'] }}</td>
-      <td>
-        <button spk-button class="outlined small" [class.rotated-icon]="$index === openRowIndex()" type="button">
-          <spk-icon>caret-down</spk-icon>
+  @if (currentUrl().startsWith('/about/logs/live')) {
+    <spk-menu [openIndicator]="true">
+      <button spk-button type="button" i18n>Log level: {{ logLevelByLabel() }}</button>
+
+      <ng-container menu>
+        <button spk-button type="button" class="small" (click)="updateLogLevel('Disabled')" i18n>
+          <spk-icon>bell-simple-slash</spk-icon>
+          Disabled
         </button>
-      </td>
-    </tr>
 
-    @if ($index === openRowIndex()) {
-      <tr>
-        <td [style.grid-column]="'1 / -1'" [style.height]="'auto'" style="white-space: pre-wrap">
-          <code>
-            <ol class="line-numbers-ol">
-              @for (line of breakIntoLines(row['Exception']); track $index) {
-                <li>{{ line }}</li>
-              }
-            </ol>
-          </code>
-        </td>
-      </tr>
-    }
+        <button spk-button type="button" class="small" (click)="updateLogLevel('Verbose')" i18n>
+          <spk-icon>megaphone-simple</spk-icon>
+          Verbose
+        </button>
+
+        <button spk-button type="button" class="small" (click)="updateLogLevel('ExplicitOnly')" i18n>
+          <spk-icon>flow-arrow</spk-icon>
+          Explicit only
+        </button>
+
+        <button spk-button type="button" class="small" (click)="updateLogLevel('Profiling')" i18n>
+          <spk-icon>speedometer</spk-icon>
+          Profiling
+        </button>
+
+        <button spk-button type="button" class="small" (click)="updateLogLevel('Retry')" i18n>
+          <spk-icon>arrow-arc-left</spk-icon>
+          Retry
+        </button>
+
+        <button spk-button type="button" class="small" (click)="updateLogLevel('Information')" i18n>
+          <spk-icon>info</spk-icon>
+          Information
+        </button>
+
+        <button spk-button type="button" class="small" (click)="updateLogLevel('DryRun')" i18n>
+          <spk-icon>person-simple-run</spk-icon>
+          Dry run
+        </button>
+
+        <button spk-button type="button" class="small" (click)="updateLogLevel('Warning')" i18n>
+          <spk-icon>warning</spk-icon>
+          Warning
+        </button>
+
+        <button spk-button type="button" class="small" (click)="updateLogLevel('Error')" i18n>
+          <spk-icon>warning-octagon</spk-icon>
+          Error
+        </button>
+      </ng-container>
+    </spk-menu>
   }
+</div>
 
-  <div table-no-rows i18n>No data available</div>
-</spk-table>
+<router-outlet />

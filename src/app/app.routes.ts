@@ -184,7 +184,7 @@ export const routes: Routes = [
                   },
                   {
                     path: 'logs',
-                    loadComponent: () => import('./about/logs/logs.component'),
+                    loadChildren: () => import('./about/logs/logs.routes'),
                   },
                   {
                     path: 'crashlogs',

@@ -1,0 +1,37 @@
+<spk-table [(data)]="logs" [loading]="logsLoading()">
+  <tr table-header>
+    <th i18n>Timestamp</th>
+    <th i18n>Backup ID</th>
+    <th i18n>Message</th>
+    <th></th>
+  </tr>
+
+  @for (row of logs(); track $index) {
+    <tr (click)="toggleRow($index)">
+      <td>{{ row['Timestamp'] | date: 'MMM dd. hh:mm' }}</td>
+      <td class="id">{{ row['BackupID'] >= 0 ? row['BackupID'] : '-' }}</td>
+      <td>{{ row['Message'] }}</td>
+      <td>
+        <button spk-button class="outlined small" [class.rotated-icon]="$index === openRowIndex()" type="button">
+          <spk-icon>caret-down</spk-icon>
+        </button>
+      </td>
+    </tr>
+
+    @if ($index === openRowIndex()) {
+      <tr>
+        <td [style.grid-column]="'1 / -1'" [style.height]="'auto'" style="white-space: pre-wrap">
+          <code>
+            <ol class="line-numbers-ol">
+              @for (line of breakIntoLines(row['Exception']); track $index) {
+                <li>{{ line }}</li>
+              }
+            </ol>
+          </code>
+        </td>
+      </tr>
+    }
+  }
+
+  <div table-no-rows i18n>No data available</div>
+</spk-table>

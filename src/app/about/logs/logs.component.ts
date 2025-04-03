@@ -1,56 +1,39 @@
-import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { SparkleIconComponent, SparkleTableComponent } from '@sparkle-ui/core';
-import { finalize } from 'rxjs';
-import { DuplicatiServerService } from '../../core/openapi';
-
-const COLUMNS = ['BackupID', 'Timestamp', 'Message', 'actions'] as const;
-
-type LogEvent = {
-  BackupID: number;
-  Timestamp: string;
-  Message: string;
-  Exception: string;
-};
+import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { SparkleButtonGroupComponent, SparkleIconComponent, SparkleMenuComponent } from '@sparkle-ui/core';
+import { LogsLiveState } from './logs-live/logs-live.state';
 
 @Component({
   selector: 'app-logs',
-  imports: [SparkleTableComponent, DatePipe, SparkleIconComponent],
+  imports: [
+    SparkleButtonGroupComponent,
+    SparkleIconComponent,
+    SparkleMenuComponent,
+    RouterOutlet,
+    RouterLinkActive,
+    RouterLink,
+  ],
   templateUrl: './logs.component.html',
   styleUrl: './logs.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class LogsComponent {
-  #dupServer = inject(DuplicatiServerService);
+  #router = inject(Router);
+  #logsLiveState = inject(LogsLiveState);
 
-  displayedColumns = signal(COLUMNS);
-  logsLoading = signal(true);
-  openRowIndex = signal<number | null>(null);
-  logs = signal<LogEvent[]>([]);
+  logLevel = this.#logsLiveState.logLevel;
+  logLevelByLabel = this.#logsLiveState.logLevelByLabel;
+  currentUrl = signal(this.#router.url);
 
-  ngOnInit() {
-    this.init();
+  constructor() {
+    this.#router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.currentUrl.set(event.urlAfterRedirects);
+      }
+    });
   }
 
-  init() {
-    this.#dupServer
-      .getApiV1LogdataLog()
-      .pipe(finalize(() => this.logsLoading.set(false)))
-      .subscribe({
-        next: (res) => {
-          this.logs.set(res as LogEvent[]);
-        },
-      });
-  }
-
-  toggleRow(index: number) {
-    this.openRowIndex.set(index === this.openRowIndex() ? null : index);
-  }
-
-  breakIntoLines(str: string | null): string[] {
-    if (!str)
-      return [];
-
-    return str.split('\n');
+  updateLogLevel(logLevel: string) {
+    this.#logsLiveState.updateLogLevel(logLevel);
   }
 }
