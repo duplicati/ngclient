@@ -1,0 +1,8 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
+:host {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  gap: p2r(8);
+  align-items: flex-end;
+}

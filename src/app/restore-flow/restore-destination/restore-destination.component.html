@@ -469,7 +469,16 @@
                   {{ option }}
                 </ng-template>
               } @else if (item.formView.type === 'Timespan' || item.formView.type === 'DateTime') {
-                <spk-form-field>
+                <app-timespan
+                  [formControlName]="item.formView.name"
+                  [customId]="
+                    'destination-' +
+                    item.formGroupName +
+                    '-' +
+                    item.index +
+                    '-' +
+                    (item.asHttpOptions ? 'http' : 'other')
+                  ">
                   <label
                     for="destination-{{ item.formGroupName }}-{{ item.index }}-{{
                       item.asHttpOptions ? 'http' : 'other'
@@ -481,17 +490,7 @@
                       </spk-tooltip>
                     }
                   </label>
-                  <input
-                    type="text"
-                    id="destination-{{ item.formGroupName }}-{{ item.index }}-{{
-                      item.asHttpOptions ? 'http' : 'other'
-                    }}"
-                    formControlName="{{ item.formView.name }}" />
-
-                  <!-- <span error>
-                      {{ destinationForm.controls.destinations.controls[index]?.hasError('pattern') }}
-                    </span> -->
-                </spk-form-field>
+                </app-timespan>
               }
             </ng-container>
 

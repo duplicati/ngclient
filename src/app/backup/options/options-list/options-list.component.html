@@ -42,13 +42,13 @@
           </label>
 
           <div class="form-row">
-            <spk-form-field class="stretch">
+            <spk-form-field>
               <input type="text" [ngModel]="item.Name" (ngModelChange)="updateFreeTextSettingName(item, $event)" />
 
               <spk-icon prefix>rectangle-dashed</spk-icon>
             </spk-form-field>
 
-            <spk-form-field class="stretch">
+            <spk-form-field>
               <input type="text" [ngModel]="item.Value()" (ngModelChange)="updateSettingValue(item, $event)" />
 
               <spk-icon prefix>textbox</spk-icon>
@@ -95,7 +95,7 @@
       } @else if (
         item.FormView.type === 'String' || item.FormView.type === 'Path' || item.FormView.type === 'Decimal'
       ) {
-        <spk-form-field class="stretch">
+        <spk-form-field>
           <label for="destination-{{ item.Name }}-{{ $index }}">
             {{ item.FormView.shortDescription }}
             @if (item.FormView.longDescription) {
@@ -118,7 +118,7 @@
           }
         </spk-form-field>
       } @else if (item.FormView.type === 'Password') {
-        <spk-form-field class="stretch">
+        <spk-form-field>
           <label for="destination-{{ item.Name }}-{{ $index }}">
             {{ item.FormView.shortDescription }}
           </label>
@@ -174,7 +174,7 @@
           </label>
 
           <div class="form-row">
-            <spk-form-field class="stretch">
+            <spk-form-field>
               <input
                 type="number"
                 id="destination-{{ item.Name }}-{{ $index }}"
@@ -186,7 +186,6 @@
 
             <spk-select
               i18n-placeholder
-              class="stretch"
               placeholder="Select an item..."
               [options]="sizeOptions()"
               [isClearable]="false">
@@ -263,7 +262,7 @@
           </label>
 
           <div class="form-row">
-            <spk-form-field class="stretch">
+            <spk-form-field>
               <input
                 type="number"
                 id="destination-{{ item.Name }}-{{ $index }}"
@@ -275,7 +274,6 @@
 
             <spk-select
               i18n-placeholder
-              class="stretch"
               placeholder="Select an item..."
               [options]="timeOptions()"
               value="value"

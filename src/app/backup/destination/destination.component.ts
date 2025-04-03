@@ -27,6 +27,7 @@ import {
 import { finalize } from 'rxjs';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
+import { TimespanComponent } from '../../core/components/timespan/timespan.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { DuplicatiServerService, IDynamicModule } from '../../core/openapi';
 import { BackupState } from '../backup.state';
@@ -84,6 +85,7 @@ export type DestinationFormGroupValue = ReturnType<typeof createDestinationFormG
     SparkleAlertComponent,
     SparkleSelectComponent,
     SparkleProgressBarComponent,
+    TimespanComponent,
     ToggleCardComponent,
     FileTreeComponent,
   ],
@@ -234,7 +236,7 @@ export default class DestinationComponent {
                   .subscribe();
               },
             });
-            
+
             return;
           }
 
@@ -257,7 +259,7 @@ export default class DestinationComponent {
                 this.#backupState.addHttpOptionByName('accept-specified-ssl-hash', certData);
               },
             });
-            
+
             return;
           }
 
@@ -300,7 +302,7 @@ with the REPORTED host key: ${reportedhostkey}?`,
                 },
               });
             }
-     
+
             return;
           }
 
@@ -312,10 +314,8 @@ with the REPORTED host key: ${reportedhostkey}?`,
               message: errorMessage,
               cancelText: 'OK',
             },
-            closed: _ => {
-            },
-          });          
-          
+            closed: (_) => {},
+          });
         },
       });
   }

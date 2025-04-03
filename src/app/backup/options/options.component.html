@@ -3,7 +3,7 @@
 
   <div class="remote-volume-wrap">
     <div class="row-inputs" formGroupName="remoteVolumeSize">
-      <spk-form-field class="stretch">
+      <spk-form-field>
         <label for="size" i18n>
           Remote volume size
           @if (exceededVolumeSize()) {
@@ -39,7 +39,7 @@
     </p>
   </div>
 
-  <spk-select class="stretch" [options]="retentionOptions()" [inlineSearch]="true" value="value" label="name">
+  <spk-select [options]="retentionOptions()" [inlineSearch]="true" value="value" label="name">
     <label for="size" i18n>Backup retention</label>
     <input type="text" formControlName="backupRetention" />
   </spk-select>

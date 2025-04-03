@@ -31,6 +31,7 @@ import { DESTINATION_CONFIG } from '../../backup/destination/destination.config'
 import { FormView, toTargetPath } from '../../backup/destination/destination.config-utilities';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
+import { TimespanComponent } from '../../core/components/timespan/timespan.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { DuplicatiServerService, IDynamicModule } from '../../core/openapi';
 import { RestoreFlowState } from '../restore-flow.state';
@@ -86,6 +87,7 @@ export type DestinationFormGroupValue = ReturnType<typeof createDestinationFormG
     SparkleAlertComponent,
     SparkleSelectComponent,
     SparkleProgressBarComponent,
+    TimespanComponent,
     ToggleCardComponent,
     FileTreeComponent,
   ],

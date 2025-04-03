@@ -23,7 +23,7 @@
 </header>
 
 <form [formGroup]="importForm" autocomplete="off">
-  <spk-file-upload class="stretch" [files]="selectedFile()" (filesChange)="onFileDropped($event)" accept=".json,.aes" />
+  <spk-file-upload [files]="selectedFile()" (filesChange)="onFileDropped($event)" accept=".json,.aes" />
 
   @if (isSecureFile()) {
     <spk-form-field>
