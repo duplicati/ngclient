@@ -9,6 +9,8 @@ import { LOCALSTORAGE } from '../services/localstorage.token';
 import { AppAuthState, dummytoken } from '../states/app-auth.state';
 import { AccessTokenOutputDto } from '../openapi';
 
+const RELOAD_TIMEOUT_MS = 5000;
+
 let refreshRequest: Observable<AccessTokenOutputDto> | null = null;
 
 export const httpInterceptor: HttpInterceptorFn = (req, next) => {
@@ -64,6 +66,12 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
         if (isRefreshRequest && error.status === 401) {
           auth.logout();
           router.navigate(['/logout']);
+        }
+
+        if ((isRefreshRequest || isLoginRequest)  && error.status === 500) {
+          setTimeout(() => {
+            window.location.reload();
+          }, RELOAD_TIMEOUT_MS);
         }
 
         if (!isLoginRequest && !isRefreshRequest) {
