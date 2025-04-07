@@ -28,7 +28,24 @@
   </header>
 
   <div class="content">
-    <h2 i18n>My backups</h2>
+    <h2>
+      <ng-container i18n>My backups</ng-container>
+
+      <spk-menu>
+        <button type="button" class="small" spk-button i18n>
+          Order by:
+          <strong>{{ orderBy() }}</strong>
+          <spk-icon>arrows-down-up</spk-icon>
+        </button>
+
+        <ng-container menu>
+          <button type="button" (click)="setOrderBy('id')" i18n>Create order</button>
+          <button type="button" (click)="setOrderBy('backend')" i18n>Destination type</button>
+          <button type="button" (click)="setOrderBy('lastrun')" i18n>Last run</button>
+          <button type="button" (click)="setOrderBy('name')" i18n>Name</button>
+        </ng-container>
+      </spk-menu>
+    </h2>
     <div class="backups">
       @defer (when !backupsLoading()) {
         @if (backups().length) {
@@ -99,18 +116,17 @@
                   <ng-container menu>
                     <h3 title>Operations</h3>
 
-                    <button type="button" #option [routerLink]="['/restore', backup.Backup?.ID]" i18n>
+                    <button type="button" [routerLink]="['/restore', backup.Backup?.ID]" i18n>
                       <spk-icon>clock-counter-clockwise</spk-icon>
                       Restore
                     </button>
 
-                    <button type="button" #option [routerLink]="['/backup', backup.Backup?.ID, 'export']" i18n>
+                    <button type="button" [routerLink]="['/backup', backup.Backup?.ID, 'export']" i18n>
                       <spk-icon>export</spk-icon>
                       Export
                     </button>
 
                     <button
-                      #option
                       [class.loader]="deletingBackup() === backup.Backup?.ID"
                       (click)="deleteBackup(backup.Backup?.ID!)"
                       i18n>
@@ -122,22 +138,22 @@
 
                     <h3 title>Advanced</h3>
 
-                    <button type="button" #option [routerLink]="['/backup', backup.Backup?.ID, 'database']" i18n>
+                    <button type="button" [routerLink]="['/backup', backup.Backup?.ID, 'database']" i18n>
                       <spk-icon>database</spk-icon>
                       Database
                     </button>
 
-                    <button type="button" #option (click)="verifyFiles(backup.Backup?.ID!)" i18n>
+                    <button type="button" (click)="verifyFiles(backup.Backup?.ID!)" i18n>
                       <spk-icon>check-square-offset</spk-icon>
                       Verify files
                     </button>
 
-                    <button type="button" #option (click)="compressBackup(backup.Backup?.ID!)" i18n>
+                    <button type="button" (click)="compressBackup(backup.Backup?.ID!)" i18n>
                       <spk-icon>file-archive</spk-icon>
                       Compress now
                     </button>
 
-                    <button type="button" #option [routerLink]="['/backup', backup.Backup?.ID, 'commandline']" i18n>
+                    <button type="button" [routerLink]="['/backup', backup.Backup?.ID, 'commandline']" i18n>
                       <spk-icon>terminal-window</spk-icon>
                       Commandline
                     </button>
@@ -146,12 +162,12 @@
 
                     <h3 title>Reporting</h3>
 
-                    <button type="button" #option [routerLink]="['/backup', backup.Backup?.ID, 'log']" i18n>
+                    <button type="button" [routerLink]="['/backup', backup.Backup?.ID, 'log']" i18n>
                       <spk-icon>notepad</spk-icon>
                       Log
                     </button>
 
-                    <button type="button" #option (click)="createErrorReport(backup.Backup?.ID!)" i18n>
+                    <button type="button" (click)="createErrorReport(backup.Backup?.ID!)" i18n>
                       <spk-icon>file-plus</spk-icon>
                       Create error report
                     </button>

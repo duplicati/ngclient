@@ -557,6 +557,10 @@ export type PostApiV1AuthIssueForeverTokenResponse = (AccessTokenOutputDto);
 
 export type GetApiV1BackupdefaultsResponse = (string);
 
+export type GetApiV1BackupsData = {
+    orderBy?: string;
+};
+
 export type GetApiV1BackupsResponse = (Array<BackupAndScheduleOutputDto>);
 
 export type PostApiV1BackupsData = {

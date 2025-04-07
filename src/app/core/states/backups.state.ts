@@ -17,6 +17,9 @@ export type BackupDraft = Backup & {
   DisplayNames: { [key: string]: string };
 };
 
+const ORDER_BY_MAP = ['id', 'backend', 'lastrun', 'name'] as const;
+export type OrderBy = (typeof ORDER_BY_MAP)[number];
+
 @Injectable({
   providedIn: 'root',
 })
@@ -29,6 +32,9 @@ export class BackupsState {
   #startingBackup = signal(false);
   #deletingBackup = signal<string | null>(null);
 
+  #orderBy = signal<OrderBy>('id');
+
+  orderBy = this.#orderBy.asReadonly();
   backups = this.#backups.asReadonly();
   backupsLoading = this.#backupsLoading.asReadonly();
   startingBackup = this.#startingBackup.asReadonly();
@@ -47,6 +53,11 @@ export class BackupsState {
     ]);
 
     return backupDraftId;
+  }
+
+  setOrderBy(orderBy: OrderBy) {
+    this.#orderBy.set(orderBy);
+    this.getBackups(true);
   }
 
   removeDraftBackupById(id: string) {
@@ -70,7 +81,9 @@ export class BackupsState {
     this.#timestamp = now;
     this.#backupsLoading.set(true);
     this.#dupServer
-      .getApiV1Backups()
+      .getApiV1Backups({
+        orderBy: this.#orderBy(),
+      })
       .pipe(
         take(1),
         tap((res) => this.#backups.set(res)),

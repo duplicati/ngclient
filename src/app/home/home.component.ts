@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
   SparkleButtonComponent,
@@ -14,7 +14,26 @@ import StatusBarComponent from '../core/components/status-bar/status-bar.compone
 import { DuplicatiServerService } from '../core/openapi';
 import { BytesPipe } from '../core/pipes/byte.pipe';
 import { DurationFormatPipe } from '../core/pipes/duration.pipe';
-import { BackupsState } from '../core/states/backups.state';
+import { BackupsState, OrderBy } from '../core/states/backups.state';
+
+const ORDER_BY_MAP = [
+  {
+    value: 'id',
+    label: $localize`Create order`,
+  },
+  {
+    value: 'backend',
+    label: $localize`Destination type`,
+  },
+  {
+    value: 'lastrun',
+    label: $localize`Last run`,
+  },
+  {
+    value: 'name',
+    label: $localize`Name`,
+  },
+] as const;
 
 @Component({
   selector: 'app-home',
@@ -41,13 +60,19 @@ export default class HomeComponent {
   #dupServer = inject(DuplicatiServerService);
 
   MISSING_BACKUP_NAME = $localize`Backup name missing`;
+  orderBy = computed(() => ORDER_BY_MAP.find((x) => x.value === this.#backupsState.orderBy())?.label);
   backups = this.#backupsState.backups;
   backupsLoading = this.#backupsState.backupsLoading;
   startingBackup = this.#backupsState.startingBackup;
   deletingBackup = this.#backupsState.deletingBackup;
+  ORDER_BY_MAP = ORDER_BY_MAP;
 
   ngOnInit() {
     this.#backupsState.getBackups(true);
+  }
+
+  setOrderBy(orderBy: OrderBy) {
+    this.#backupsState.setOrderBy(orderBy);
   }
 
   startBackup(id: string) {
