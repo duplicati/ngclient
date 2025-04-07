@@ -1,5 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { finalize, take, tap } from 'rxjs';
+import { randomUUID } from '../functions/crypto';
 import { DuplicatiServerService } from '../openapi';
 import { Subscribed } from '../types/subscribed';
 
@@ -35,7 +36,7 @@ export class BackupsState {
   draftBackups = this.#draftBackups.asReadonly();
 
   addDraftBackup(backup: BackupDraft) {
-    const backupDraftId = crypto.randomUUID();
+    const backupDraftId = randomUUID();
 
     this.#draftBackups.set([
       ...this.#draftBackups(),

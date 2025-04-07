@@ -1,5 +1,6 @@
 import { effect, inject, Injectable, signal } from '@angular/core';
 import { ENVIRONMENT_TOKEN } from '../../../environments/environment-token';
+import { randomUUID } from '../functions/crypto';
 
 type SocketProtocolState = 'disconnected' | 'connecting' | 'connect' | 'welcome' | 'authenticated' | 'error';
 
@@ -49,7 +50,7 @@ export type CommandResponse = {
 };
 
 const ClientVersion = '1.0.0';
-const ClientId = `portal-proxy-client-${crypto.randomUUID()}`;
+const ClientId = `portal-proxy-client-${randomUUID()}`;
 const ProtocolVersion = 1;
 
 @Injectable({
@@ -228,7 +229,7 @@ export class RelayWebsocketService {
     }
 
     return new Promise<CommandResponse>((resolve, reject) => {
-      const messageId = crypto.randomUUID();
+      const messageId = randomUUID();
 
       const request: CommandRequest = {
         method,
