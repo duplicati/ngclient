@@ -8,26 +8,15 @@
         {{ nextBackup().backup?.Backup?.Name }} - {{ nextBackup().time | appRelativeTime }} at
         {{ nextBackup().time | date: 'shortTime' }}
       </div>
-      <!-- <spk-progress-bar class="raised" [value]="3"></spk-progress-bar> -->
     } @else if (!serverState()?.ActiveTask) {
       <div class="label" i18n>No scheduled tasks</div>
     } @else {
-      <div class="label" i18n>Loading...</div>
+      <div class="label label-loading" i18n>
+        Loading
+        <spk-spinner [style.--spinner-size]="'12px'" [style.--spinner-thickness]="'2px'"></spk-spinner>
+      </div>
     }
   </div>
-
-  <!-- <pre>
-    Relative dayjs: {{ minsAgo | appRelativeTime }}
-    Duration format: {{ '10:11:12' | durationFormat }}
-    Angular date pipe: {{ minsAgo | date: 'shortTime' }}
-    Angular date pipe: {{ minsAgo | date: 'short' }}
-    Angular date pipe: {{ minsAgo | date: 'shortDate' }}
-    Angular date pipe: {{ minsAgo | date: 'long' }}
-    Angular date pipe: {{ minsAgo | date }}
-    Angular currency pipe: {{ 1000000.05 | currency: 'USD' }}
-    Angular decimal pipe: {{ 1000000.01 | number }}
-    Angular percent pipe: {{ 100.1 | percent }}
-  </pre> -->
 
   <div class="current-backup-actions">
     <button spk-button i18n [class.loader]="isResuming()" (click)="pauseResume()">
@@ -45,10 +34,3 @@
     </button>
   </div>
 </div>
-
-<!-- <div class="actions">
-  <button spk-button>
-    <spk-icon>gauge</spk-icon>
-    Throttle settings
-  </button>
-</div> -->

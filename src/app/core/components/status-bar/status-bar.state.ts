@@ -5,6 +5,7 @@ import {
   GetApiV1ProgressstateResponse,
   GetApiV1TaskByTaskidResponse,
   ProgressStateService,
+  ServerStatusDto,
 } from '../../openapi';
 import { BytesPipe } from '../../pipes/byte.pipe';
 import { ServerStateService } from '../../services/server-state.service';
@@ -73,17 +74,29 @@ export class StatusBarState {
   #statusData = signal<StatusWithContent | null>(null);
 
   statusData = this.#statusData.asReadonly();
+
+  lastState: ServerStatusDto | null = null;
   serverState = computed(() => {
     const serverState = this.#serverState.serverState();
 
-    if (!serverState) return null;
+    if (!serverState) return this.lastState;
 
     serverState.ProposedSchedule = serverState.ProposedSchedule?.map((x) => ({
       ...x,
       backup: x.Item1 ? this.#backupState.getBackupById(x.Item1) : null,
     }));
 
+    this.lastState = serverState;
+
     return serverState;
+  });
+
+  serverStateEffect = effect(() => {
+    const newState = this.#serverState.serverState();
+
+    if (!newState?.ActiveTask) {
+      this.#backupState.getBackups(true);
+    }
   });
 
   isFetching = this.#isFetching.asReadonly();

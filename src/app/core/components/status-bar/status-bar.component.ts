@@ -5,6 +5,7 @@ import {
   SparkleDialogService,
   SparkleIconComponent,
   SparkleProgressBarComponent,
+  SparkleSpinnerComponent,
 } from '@sparkle-ui/core';
 import { finalize } from 'rxjs';
 import { DuplicatiServerService } from '../../openapi';
@@ -23,10 +24,7 @@ const date = new Date();
     DatePipe,
     SparkleIconComponent,
     SparkleButtonComponent,
-    // CurrencyPipe,
-    // DecimalPipe,
-    // PercentPipe,
-    // DurationFormatPipe,
+    SparkleSpinnerComponent,
   ],
   templateUrl: './status-bar.component.html',
   styleUrl: './status-bar.component.scss',

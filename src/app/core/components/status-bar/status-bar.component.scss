@@ -28,3 +28,9 @@
   display: flex;
   gap: p2r(8);
 }
+
+.label-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: p2r(4);
+}

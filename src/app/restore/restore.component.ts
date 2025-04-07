@@ -34,7 +34,7 @@ export default class RestoreComponent {
   backupsLoading = this.#backupsState.backupsLoading;
 
   ngOnInit() {
-    this.#backupsState.getBackups();
+    this.#backupsState.getBackups(true);
   }
 
   restoreNow(backup: BackupAndScheduleOutputDto) {

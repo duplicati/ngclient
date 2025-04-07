@@ -56,7 +56,6 @@ export class BackupsState {
     return this.#backups().find((x) => x.Backup?.ID === id) ?? null;
   }
 
-  // TODO add cache that can be force refreshed
   getBackups(forceRefresh = false) {
     const timestamp = this.#timestamp;
     const now = Date.now();
@@ -88,7 +87,7 @@ export class BackupsState {
       })
       .pipe(
         take(1),
-        tap(() => this.getBackups()),
+        tap(() => this.getBackups(true)),
         finalize(() => this.#startingBackup.set(false))
       )
       .subscribe();
