@@ -20,8 +20,14 @@ import {
   SparkleProgressBarComponent,
   SparkleToggleComponent,
 } from '@sparkle-ui/core';
-import { finalize, forkJoin, Observable } from 'rxjs';
-import { DuplicatiServerService, GetApiV1BackupByIdFilesData, TreeNodeDto } from '../../openapi';
+import { catchError, finalize, forkJoin, map, Observable, of } from 'rxjs';
+import {
+  DuplicatiServerService,
+  GetApiV1BackupByIdFilesData,
+  GetApiV1BackupByIdFilesResponse,
+  PostApiV1FilesystemResponse,
+  TreeNodeDto,
+} from '../../openapi';
 import { SysinfoState } from '../../states/sysinfo.state';
 
 enum TreeEvalEnum {
@@ -69,7 +75,6 @@ export type BackupSettings = {
 };
 
 // TODO
-// - Scroll to newly selected node by path
 // - When rootPath get all the levels and batch them at the root level for better usability
 
 @Component({
@@ -635,13 +640,31 @@ export default class FileTreeComponent {
 
     this.isLoading.set(true);
 
-    forkJoin([...urlPieces.map((urlPiece) => this.#getFilePath(urlPiece))])
+    type ResultType<T> = {
+      status: 'success' | 'error';
+      value: T;
+      url: string;
+    };
+
+    type FilePathResult = ResultType<GetApiV1BackupByIdFilesResponse | PostApiV1FilesystemResponse>;
+
+    const observables: Observable<FilePathResult>[] = urlPieces.map((urlPiece) => {
+      return (this.#getFilePath(urlPiece) as any).pipe(
+        map((data) => ({ status: 'success', value: data, url: urlPiece }) as FilePathResult),
+        catchError((err) => of({ status: 'error', value: err, url: urlPiece } as FilePathResult))
+      );
+    });
+
+    forkJoin(observables)
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
-        next: (results) => {
+        next: (res) => {
+          const results = res.filter((x) => x.status === 'success') as FilePathResult[];
+          const errors = res.filter((x) => x.status === 'error') as FilePathResult[];
+
           this.treeNodes.update((y) => {
             const allNewNodes = results.flatMap((x) => {
-              return (x as any).map((z: any) => {
+              return (x.value as any).map((z: any) => {
                 const path = z.id;
                 const parentPath = path && path.split('/').filter(Boolean).slice(0, -1).join('/');
                 const _pathWithoutTrailingSlash = path && path.split('/').filter(Boolean).join('/');

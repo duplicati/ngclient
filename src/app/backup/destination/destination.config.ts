@@ -684,7 +684,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
           destinationType,
           custom: {
             bucket: urlObj.hostname,
-            path: urlObj.pathname,
+            path: decodeURIComponent(urlObj.pathname),
           },
           ...fromSearchParams(destinationType, urlObj),
         };
