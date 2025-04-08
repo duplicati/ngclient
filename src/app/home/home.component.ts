@@ -1,5 +1,4 @@
-import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
   SparkleButtonComponent,
@@ -14,6 +13,7 @@ import StatusBarComponent from '../core/components/status-bar/status-bar.compone
 import { DuplicatiServerService } from '../core/openapi';
 import { BytesPipe } from '../core/pipes/byte.pipe';
 import { DurationFormatPipe } from '../core/pipes/duration.pipe';
+import { RelativeTimePipe } from '../core/pipes/relative-time.pipe';
 import { BackupsState, OrderBy } from '../core/states/backups.state';
 
 const ORDER_BY_MAP = [
@@ -47,9 +47,9 @@ const ORDER_BY_MAP = [
     SparkleDividerComponent,
     SparkleMenuComponent,
     SparkleProgressBarComponent,
-    DatePipe,
     DurationFormatPipe,
     BytesPipe,
+    RelativeTimePipe,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -65,7 +65,8 @@ export default class HomeComponent {
   backupsLoading = this.#backupsState.backupsLoading;
   startingBackup = this.#backupsState.startingBackup;
   deletingBackup = this.#backupsState.deletingBackup;
-  ORDER_BY_MAP = ORDER_BY_MAP;
+
+  timeType = signal<'relative' | 'actual'>('relative');
 
   ngOnInit() {
     this.#backupsState.getBackups(true);

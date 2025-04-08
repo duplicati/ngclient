@@ -15,7 +15,7 @@ import {
 } from '../core/openapi';
 import { TimespanLiteralsService } from '../core/services/timespan-literals.service';
 import { SysinfoState } from '../core/states/sysinfo.state';
-import { createDestinationForm, createDestinationFormGroup, Size } from './destination/destination.component';
+import { createDestinationForm, createDestinationFormGroup } from './destination/destination.component';
 import { DESTINATION_CONFIG } from './destination/destination.config';
 import {
   CustomFormView,
@@ -272,22 +272,13 @@ export class BackupState {
     const excludes = backup.Settings?.find((x) => x.Name === '--exclude-files-attributes')?.Value ?? '';
     const filesLargerThan = backup.Settings?.find((x) => x.Name === '--skip-files-larger-than') ?? null;
 
-    const withNoDigits = (filesLargerThan?.Value!.replace(/[0-9]/g, '') as Size) ?? null;
-    const onlyDigits = filesLargerThan?.Value!.replace(/[^0-9]/g, '') ?? null;
-
     const sourceObj = {
       path: [...path, ...filters].join('\0'),
       excludes: {
         hiddenFiles: excludes.includes('hidden'),
         systemFiles: excludes.includes('system'),
         tempFiles: excludes.includes('temporary'),
-        filesLargerThan:
-          withNoDigits && onlyDigits
-            ? {
-                size: parseInt(onlyDigits),
-                unit: withNoDigits.toUpperCase(),
-              }
-            : null,
+        filesLargerThan: filesLargerThan?.Value?.toUpperCase() ?? null,
       },
     };
 
@@ -623,16 +614,7 @@ export class BackupState {
     }
 
     if (element.type === 'Size') {
-      const withNoDigits = (defaultValue ?? '').replace(/[0-9]/g, '') as Size | undefined;
-      const onlyDigits = (defaultValue ?? '').replace(/[^0-9]/g, '');
-
-      group.addControl(
-        element.name as string,
-        fb.group({
-          size: fb.control<number>(onlyDigits ? parseInt(onlyDigits) : 50),
-          unit: fb.control<string>(withNoDigits ? withNoDigits.toUpperCase() : 'MB'),
-        })
-      );
+      group.addControl(element.name as string, fb.control(defaultValue));
       return;
     }
 

@@ -14,7 +14,7 @@ import {
   SparkleToggleComponent,
   SparkleTooltipComponent,
 } from '@sparkle-ui/core';
-import { catchError, finalize, of } from 'rxjs';
+import { catchError, debounceTime, finalize, of, tap } from 'rxjs';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { LANGUAGES } from '../core/locales/locales.utility';
 import { DuplicatiServerService } from '../core/openapi';
@@ -79,7 +79,7 @@ type UsageStatisticsType = (typeof USAGE_STATISTICS_OPTIONS)[number];
 const SORT_OPTIONS = [
   {
     value: 'id',
-    label: $localize`Backup ID`,    
+    label: $localize`Backup ID`,
   },
   {
     value: 'name',
@@ -91,7 +91,7 @@ const SORT_OPTIONS = [
   },
   {
     value: 'nextrun',
-    label: $localize`Next run time`,    
+    label: $localize`Next run time`,
   },
   {
     value: 'schedule',
@@ -115,7 +115,7 @@ const SORT_OPTIONS = [
   },
   {
     value: '-id',
-    label: $localize`Backup ID (decending)`,    
+    label: $localize`Backup ID (decending)`,
   },
   {
     value: '-name',
@@ -127,7 +127,7 @@ const SORT_OPTIONS = [
   },
   {
     value: '-nextrun',
-    label: $localize`Next run time (decending)`,    
+    label: $localize`Next run time (decending)`,
   },
   {
     value: '-schedule',
@@ -149,7 +149,7 @@ const SORT_OPTIONS = [
     value: '-duration',
     label: $localize`Duration (decending)`,
   },
-]
+];
 
 @Component({
   selector: 'app-settings',
@@ -201,6 +201,15 @@ export default class SettingsComponent {
     }),
     usageStatistics: fb.control<UsageStatisticsType['value']>(''),
   });
+
+  ngOnInit() {
+    this.settingsForm.controls.pauseSettings.valueChanges
+      .pipe(
+        debounceTime(300),
+        tap(() => this.updateStartupDelay())
+      )
+      .subscribe();
+  }
 
   updatingChannel = signal(false);
   updateChannel = signal<UpdateChannel>('');
@@ -283,30 +292,30 @@ export default class SettingsComponent {
       .subscribe();
   }
 
-    updateSortOrder(__x: unknown[]) {
-      const _x = __x[0] as { value: string; label: string } | null | undefined;
-      const x = _x?.value ?? '';
+  updateSortOrder(__x: unknown[]) {
+    const _x = __x[0] as { value: string; label: string } | null | undefined;
+    const x = _x?.value ?? '';
 
-      if (!x || x === '' || x === this.prevSortOrder()) return;
-      const prevSortOrder = this.prevSortOrder();
+    if (!x || x === '' || x === this.prevSortOrder()) return;
+    const prevSortOrder = this.prevSortOrder();
 
-      this.updatingSortOrder.set(true);
+    this.updatingSortOrder.set(true);
 
-      this.#dupServer
-        .patchApiV1Serversettings({
-          requestBody: {
-            'backup-list-sort-order': x,
-          },
+    this.#dupServer
+      .patchApiV1Serversettings({
+        requestBody: {
+          'backup-list-sort-order': x,
+        },
+      })
+      .pipe(
+        this.#serverSettingsService.withRefresh(),
+        finalize(() => this.updatingSortOrder.set(false)),
+        catchError(() => {
+          this.sortOrderCtrl.set(prevSortOrder);
+          return of(null);
         })
-        .pipe(
-          this.#serverSettingsService.withRefresh(),
-          finalize(() => this.updatingSortOrder.set(false)),
-          catchError(() => {
-            this.sortOrderCtrl.set(prevSortOrder);
-            return of(null);
-          })
-        )
-        .subscribe();
+      )
+      .subscribe();
   }
 
   updatingDisableTrayIconLogin = signal(false);
@@ -403,15 +412,25 @@ export default class SettingsComponent {
     window.location.reload();
   }
 
-  submit() {
+  updateStartupDelay() {
     const pauseValue = this.pauseSettings.value;
     const startupDelay = `${pauseValue.time}${pauseValue.timeType}`;
 
     this.#dupServer
       .patchApiV1Serversettings({
         requestBody: {
-          'usage-reporter-level': this.settingsForm.controls.usageStatistics.value,
           'startup-delay': startupDelay === '0s' ? '' : startupDelay,
+        },
+      })
+      .pipe(this.#serverSettingsService.withRefresh())
+      .subscribe();
+  }
+
+  updateUsageStatistics() {
+    this.#dupServer
+      .patchApiV1Serversettings({
+        requestBody: {
+          'usage-reporter-level': this.settingsForm.controls.usageStatistics.value,
         },
       })
       .pipe(this.#serverSettingsService.withRefresh())
@@ -436,7 +455,6 @@ export default class SettingsComponent {
     this.prevSortOrder.set(serverSettings['backup-list-sort-order'] as string);
     this.sortOrderCtrl.set(this.prevSortOrder());
 
-    console.log(serverSettings['usage-reporter-level']);
     queueMicrotask(() => {
       this.settingsForm.patchValue({
         pauseSettings: {

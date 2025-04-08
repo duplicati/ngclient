@@ -19,6 +19,19 @@ export class SysinfoState {
 
   filterGroups = signal<FilterGroups | null>(null);
   backendModules = computed(() => {
+    // KEEP - for debugging to find a field by type
+    //
+    // const modules = this.systemInfo()?.BackendModules ?? [];
+    //
+    // for (let index = 0; index < modules.length; index++) {
+    //   const module = modules[index];
+
+    //   const sizeField = module.Options?.find((x) => x.Type === 'Size');
+
+    //   console.log('module.DisplayName', module.DisplayName);
+    //   console.log('sizeField', sizeField);
+    // }
+
     return this.systemInfo()?.BackendModules ?? [];
   });
 

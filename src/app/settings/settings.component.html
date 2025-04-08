@@ -6,10 +6,6 @@
       <h2 i18n>Settings</h2>
       <p i18n>Configure your backup settings.</p>
     </div>
-
-    <button type="submit" spk-button class="raised primary" i18n [disabled]="settingsForm.untouched" (click)="submit()">
-      Save changes
-    </button>
   </header>
 
   <section>
@@ -274,7 +270,7 @@
 
 <spk-divider />
 
-<form [formGroup]="settingsForm" class="content" (submit)="submit()">
+<form [formGroup]="settingsForm" class="content">
   <section>
     <div class="left">
       <h3 i18n>Pause after startup or hibernation</h3>
@@ -316,7 +312,11 @@
     </div>
 
     <div class="right">
-      <spk-select [options]="usageStatisticsOptions()" label="label" value="value">
+      <spk-select
+        [options]="usageStatisticsOptions()"
+        label="label"
+        value="value"
+        (selectedOptionsChange)="updateUsageStatistics()">
         <input type="text" formControlName="usageStatistics" />
 
         <ng-template let-option>

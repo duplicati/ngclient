@@ -8,13 +8,17 @@ import { DAYJS } from '../providers/dayjs';
 export class DurationFormatPipe implements PipeTransform {
   #dayjs = inject(DAYJS);
 
-  transform(value: string | undefined | null, ...args: unknown[]): unknown {
+  transform(value: string | undefined | null, forceActualDuration = false, ...args: unknown[]): unknown {
     if (!value) return '';
 
     const _value = value.split('.')[0];
     const hours = parseInt(_value.split(':')[0]) ?? 0;
     const minutes = parseInt(_value.split(':')[1]) ?? 0;
     const seconds = parseInt(_value.split(':')[2]) ?? 0;
+
+    if (forceActualDuration) {
+      return `${hours}h ${minutes}m ${seconds}s`;
+    }
 
     return this.#dayjs
       .duration({

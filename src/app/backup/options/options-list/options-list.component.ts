@@ -11,25 +11,13 @@ import {
   SparkleTooltipComponent,
 } from '@sparkle-ui/core';
 import FileTreeComponent from '../../../core/components/file-tree/file-tree.component';
+import { SizeComponent } from '../../../core/components/size/size.component';
+import { TimespanComponent } from '../../../core/components/timespan/timespan.component';
 import { SettingInputDto } from '../../../core/openapi';
 import { SysinfoState } from '../../../core/states/sysinfo.state';
 import { FormView } from '../../destination/destination.config-utilities';
 
 const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
-const TIME_OPTIONS = [
-  {
-    value: 's',
-    label: $localize`Seconds`,
-  },
-  {
-    value: 'm',
-    label: $localize`Minutes`,
-  },
-  {
-    value: 'h',
-    label: $localize`Hours`,
-  },
-];
 
 type SettingItem = {
   Filter?: string | null;
@@ -47,15 +35,6 @@ type SizeSettingItem = {
   FormView: FormView;
 };
 
-type TimespanSettingItem = {
-  Filter?: string | null;
-  Name?: string | null;
-  Value: ReturnType<typeof signal<string | null>>;
-  unit: ReturnType<typeof signal<string>>;
-  timespan: ReturnType<typeof signal<number>>;
-  FormView: FormView;
-};
-
 @Component({
   selector: 'app-options-list',
   imports: [
@@ -69,6 +48,8 @@ type TimespanSettingItem = {
     SparkleIconComponent,
     SparkleSelectComponent,
     SparkleToggleComponent,
+    SizeComponent,
+    TimespanComponent,
   ],
   templateUrl: './options-list.component.html',
   styleUrl: './options-list.component.scss',
@@ -83,8 +64,7 @@ export class OptionsListComponent {
 
   allOptionsGrouped = this.#sysInfo.allOptionsGrouped;
   allOptions = this.#sysInfo.allOptions;
-  sizeOptions = signal(SIZE_OPTIONS);
-  timeOptions = signal(TIME_OPTIONS);
+  // sizeOptions = signal(SIZE_OPTIONS);
 
   selectedSettings = computed(() => {
     const hiddenNames = this.hiddenOptions();
@@ -93,35 +73,20 @@ export class OptionsListComponent {
         const option = this.allOptions().find((opt) => opt.name === setting.Name);
 
         if (option && !hiddenNames.includes(option.name)) {
-          if (option.type === 'Size') {
-            const _unit = setting.Value?.replace(/[0-9]/g, '');
-            const _size = setting.Value?.replace(/[^0-9]/g, '');
-            const unit = signal(_unit && _unit !== '' ? _unit : 'MB');
-            const size = signal(_size && _size !== '' ? parseInt(_size!) : '');
+          // if (option.type === 'Size') {
+          //   const _unit = setting.Value?.replace(/[0-9]/g, '');
+          //   const _size = setting.Value?.replace(/[^0-9]/g, '');
+          //   const unit = signal(_unit && _unit !== '' ? _unit : 'MB');
+          //   const size = signal(_size && _size !== '' ? parseInt(_size!) : '');
 
-            return {
-              ...setting,
-              Value: computed(() => size() + unit()),
-              unit,
-              size,
-              FormView: option,
-            } as SizeSettingItem;
-          }
-
-          if (option.type === 'Timespan' || option.type == 'DateTime') {
-            const _unit = setting.Value?.replace(/[0-9]/g, '');
-            const _time = setting.Value?.replace(/[^0-9]/g, '');
-            const unit = signal(_unit && _unit !== '' ? _unit : 's');
-            const time = signal(_time && _time !== '' ? parseInt(_time!) : '');
-
-            return {
-              ...setting,
-              Value: computed(() => time() + unit()),
-              unit,
-              timespan: time,
-              FormView: option,
-            } as TimespanSettingItem;
-          }
+          //   return {
+          //     ...setting,
+          //     Value: computed(() => size() + unit()),
+          //     unit,
+          //     size,
+          //     FormView: option,
+          //   } as SizeSettingItem;
+          // }
 
           let _value: any = setting.Value ?? '';
 
@@ -244,43 +209,24 @@ export class OptionsListComponent {
     });
   }
 
-  updateSizeSetting(option: SettingItem, newValue: string, property: 'size' | 'unit') {
-    const _option = option as SizeSettingItem;
+  // updateSizeSetting(option: SettingItem, newValue: string, property: 'size' | 'unit') {
+  //   const _option = option as SizeSettingItem;
 
-    this.options.update((settings) => {
-      const newSettings = [...settings];
-      const index = newSettings.findIndex((s) => s.Name === _option.Name);
+  //   this.options.update((settings) => {
+  //     const newSettings = [...settings];
+  //     const index = newSettings.findIndex((s) => s.Name === _option.Name);
 
-      if (property === 'size') {
-        newSettings[index].Value = `${newValue}${_option.unit()}`;
-      }
+  //     if (property === 'size') {
+  //       newSettings[index].Value = `${newValue}${_option.unit()}`;
+  //     }
 
-      if (property === 'unit') {
-        newSettings[index].Value = `${_option.size()}${newValue}`;
-      }
+  //     if (property === 'unit') {
+  //       newSettings[index].Value = `${_option.size()}${newValue}`;
+  //     }
 
-      return newSettings;
-    });
-  }
-
-  updateTimespanSetting(option: SettingItem, newValue: string, property: 'timespan' | 'unit') {
-    const _option = option as TimespanSettingItem;
-
-    this.options.update((settings) => {
-      const newSettings = [...settings];
-      const index = newSettings.findIndex((s) => s.Name === _option.Name);
-
-      if (property === 'timespan') {
-        newSettings[index].Value = `${newValue}${_option.unit()}`;
-      }
-
-      if (property === 'unit') {
-        newSettings[index].Value = `${_option.timespan()}${newValue}`;
-      }
-
-      return newSettings;
-    });
-  }
+  //     return newSettings;
+  //   });
+  // }
 
   removeSetting(settingToRemove: SettingItem | SizeSettingItem) {
     this.options.update((settings) => {

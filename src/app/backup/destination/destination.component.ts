@@ -27,6 +27,7 @@ import {
 import { finalize } from 'rxjs';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
+import { SizeComponent } from '../../core/components/size/size.component';
 import { TimespanComponent } from '../../core/components/timespan/timespan.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { DuplicatiServerService, IDynamicModule } from '../../core/openapi';
@@ -34,9 +35,6 @@ import { BackupState } from '../backup.state';
 import { DESTINATION_CONFIG } from './destination.config';
 import { FormView, toTargetPath } from './destination.config-utilities';
 
-const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
-
-export type Size = (typeof SIZE_OPTIONS)[number];
 const fb = new FormBuilder();
 
 export const createDestinationForm = (
@@ -88,6 +86,7 @@ export type DestinationFormGroupValue = ReturnType<typeof createDestinationFormG
     TimespanComponent,
     ToggleCardComponent,
     FileTreeComponent,
+    SizeComponent,
   ],
   templateUrl: './destination.component.html',
   styleUrl: './destination.component.scss',
@@ -113,7 +112,6 @@ export default class DestinationComponent {
   destinationOptions = this.#backupState.destinationOptions;
   destinationFormSignal = this.#backupState.destinationFormSignal;
   destinationCount = computed(() => this.destinationFormSignal()?.destinations?.length ?? 0);
-  sizeOptions = signal(SIZE_OPTIONS);
   successfulTest = signal(false);
   destinationTypeOptionsInFocus = signal(['file', 'ssh', 's3', 'gcs', 'googledrive', 'azure']);
   destinationTypeOptions = signal(

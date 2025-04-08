@@ -59,8 +59,6 @@ export class RelayconfigState {
             return;
           }
 
-          console.info('postMessage config set');
-
           const currentLocale = this.#ls.getItem('locale') ?? 'en-US';
           const newLocale = (parsed['locale'] as string) ?? 'en-US';
 

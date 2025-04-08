@@ -5,7 +5,7 @@
       <spk-progress-bar class="raised primary" [value]="statusData()!.progress * 100"></spk-progress-bar>
     } @else if (nextBackup().backup || nextBackup().time) {
       <div class="label">
-        {{ nextBackup().backup?.Backup?.Name }} - {{ nextBackup().time | appRelativeTime }} at
+        {{ nextBackup().backup?.Backup?.Name }} - {{ nextBackup().time | relativeTime }} at
         {{ nextBackup().time | date: 'shortTime' }}
       </div>
     } @else if (!serverState()?.ActiveTask) {

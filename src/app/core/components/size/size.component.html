@@ -1,4 +1,6 @@
-<ng-content select="label" ngProjectAs="label" />
+<div class="label">
+  <ng-content select="label" ngProjectAs="label" />
+</div>
 
 <spk-form-field [attr.readonly]="readonly() || undefined">
   <input type="number" [id]="customId()" [(ngModel)]="timespan" [disabled]="readonly()" />
@@ -8,9 +10,7 @@
 </spk-form-field>
 
 <spk-select
-  i18n-placeholder
-  placeholder="Select an item..."
-  [options]="timeOptions()"
+  [options]="sizeOptions()"
   value="value"
   label="label"
   [style.--miw]="0"
@@ -18,7 +18,5 @@
   [isClearable]="false">
   <input type="text" [(ngModel)]="unit" />
 
-  <ng-template let-option>
-    {{ option.label }}
-  </ng-template>
+  <ng-template let-option>{{ option.label }}{{ hasPerSecond() ? '/s' : '' }}</ng-template>
 </spk-select>

@@ -31,20 +31,35 @@
     <h2>
       <ng-container i18n>My backups</ng-container>
 
-      <spk-menu>
-        <button type="button" class="small" spk-button i18n>
-          Order by:
-          <strong>{{ orderBy() }}</strong>
-          <spk-icon>arrows-down-up</spk-icon>
-        </button>
+      <div class="actions">
+        <spk-menu>
+          <button type="button" class="small" spk-button i18n>
+            Time:
+            <strong>{{ timeType() }}</strong>
+            <spk-icon>clock</spk-icon>
+          </button>
 
-        <ng-container menu>
-          <button type="button" (click)="setOrderBy('id')" i18n>Create order</button>
-          <button type="button" (click)="setOrderBy('backend')" i18n>Destination type</button>
-          <button type="button" (click)="setOrderBy('lastrun')" i18n>Last run</button>
-          <button type="button" (click)="setOrderBy('name')" i18n>Name</button>
-        </ng-container>
-      </spk-menu>
+          <ng-container menu>
+            <button type="button" (click)="timeType.set('relative')" i18n>Relative time</button>
+            <button type="button" (click)="timeType.set('actual')" i18n>Actual time</button>
+          </ng-container>
+        </spk-menu>
+
+        <spk-menu>
+          <button type="button" class="small" spk-button i18n>
+            Order by:
+            <strong>{{ orderBy() }}</strong>
+            <spk-icon>arrows-down-up</spk-icon>
+          </button>
+
+          <ng-container menu>
+            <button type="button" (click)="setOrderBy('id')" i18n>Create order</button>
+            <button type="button" (click)="setOrderBy('backend')" i18n>Destination type</button>
+            <button type="button" (click)="setOrderBy('lastrun')" i18n>Last run</button>
+            <button type="button" (click)="setOrderBy('name')" i18n>Name</button>
+          </ng-container>
+        </spk-menu>
+      </div>
     </h2>
     <div class="backups">
       @defer (when !backupsLoading()) {
@@ -59,11 +74,13 @@
 
                 <p>
                   <span i18n>Last successful backup:</span>
-                  {{ backup.Backup?.Metadata?.['LastBackupDate'] | date: 'short' }}
+                  {{ backup.Backup?.Metadata?.['LastBackupDate'] | relativeTime: timeType() === 'actual' }}
+                </p>
+
+                <p>
+                  <span i18n>Duration:</span>
                   @if (backup.Backup?.Metadata?.['LastBackupDuration']) {
-                    -
-                    <ng-container i18n>took</ng-container>
-                    {{ backup.Backup?.Metadata?.['LastBackupDuration'] | durationFormat }}
+                    {{ backup.Backup?.Metadata?.['LastBackupDuration'] | durationFormat: timeType() === 'actual' }}
                   } @else {
                     <ng-container i18n>N/A</ng-container>
                   }

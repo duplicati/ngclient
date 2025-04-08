@@ -372,7 +372,14 @@
                   <spk-progress-bar class="indeterminate primary" />
                 }
               } @else if (item.formView.type === 'Size') {
-                <div class="form-column" [formGroupName]="item.formView.name">
+                <app-size
+                  [inputType]="item.Name"
+                  [formControlName]="item.formView.name"
+                  [customId]="
+                    `destination-{{ item.formGroupName }}-{{ item.index }}-{{
+                      item.asHttpOptions ? 'http' : 'other'
+                    }}`
+                  ">
                   <label
                     for="destination-{{ item.formGroupName }}-{{ item.index }}-{{
                       item.asHttpOptions ? 'http' : 'other'
@@ -385,28 +392,7 @@
                       </spk-tooltip>
                     }
                   </label>
-
-                  <div class="form-row">
-                    <spk-form-field>
-                      <input
-                        type="number"
-                        id="destination-{{ item.formGroupName }}-{{ item.index }}-{{
-                          item.asHttpOptions ? 'http' : 'other'
-                        }}"
-                        formControlName="size" />
-
-                      <spk-icon prefix>resize</spk-icon>
-                    </spk-form-field>
-
-                    <spk-select
-                      i18n-placeholder
-                      placeholder="Select an option..."
-                      [options]="sizeOptions()"
-                      [inlineSearch]="true">
-                      <input type="text" formControlName="unit" />
-                    </spk-select>
-                  </div>
-                </div>
+                </app-size>
               } @else if (item.formView.type === 'Integer') {
                 <spk-form-field>
                   <label
@@ -470,6 +456,7 @@
                 </ng-template>
               } @else if (item.formView.type === 'Timespan' || item.formView.type === 'DateTime') {
                 <app-timespan
+                  [inputType]="item.formView.name"
                   [formControlName]="item.formView.name"
                   [customId]="
                     'destination-' +

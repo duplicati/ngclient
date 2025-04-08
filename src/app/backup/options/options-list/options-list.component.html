@@ -162,40 +162,21 @@
           {{ item }}
         </ng-template>
       } @else if (item.FormView.type === 'Size') {
-        <div class="form-column">
+        <app-size
+          [inputType]="item.Name"
+          [(ngModel)]="item.Value"
+          [customId]="
+            `destination-{{ item.Name }}-{{ $index }}`
+          ">
           <label for="destination-{{ item.Name }}-{{ $index }}">
-            {{ item.FormView.shortDescription }}
-
+            {{ item.FormView.shortDescription ?? item.FormView.name }}
             @if (item.FormView.longDescription) {
               <spk-tooltip class="primary" [message]="item.FormView.longDescription">
                 <spk-icon>question</spk-icon>
               </spk-tooltip>
             }
           </label>
-
-          <div class="form-row">
-            <spk-form-field>
-              <input
-                type="number"
-                id="destination-{{ item.Name }}-{{ $index }}"
-                [ngModel]="$any(item).size()"
-                (ngModelChange)="updateSizeSetting(item, $event, 'size')" />
-
-              <spk-icon prefix>resize</spk-icon>
-            </spk-form-field>
-
-            <spk-select
-              i18n-placeholder
-              placeholder="Select an item..."
-              [options]="sizeOptions()"
-              [isClearable]="false">
-              <input
-                type="text"
-                [ngModel]="$any(item).unit()"
-                (ngModelChange)="updateSizeSetting(item, $event, 'unit')" />
-            </spk-select>
-          </div>
-        </div>
+        </app-size>
       } @else if (item.FormView.type === 'Integer') {
         <spk-form-field>
           <label for="destination-{{ item.Name }}-{{ $index }}">
@@ -250,46 +231,21 @@
           {{ item }}
         </ng-template>
       } @else if (item.FormView.type === 'Timespan' || item.FormView.type === 'DateTime') {
-        <div class="form-column">
+        <app-timespan
+          [inputType]="item.Name"
+          [(ngModel)]="item.Value"
+          [customId]="
+            `destination-{{ item.Name }}-{{ $index }}`
+          ">
           <label for="destination-{{ item.Name }}-{{ $index }}">
-            {{ item.FormView.shortDescription }}
-
+            {{ item.FormView.shortDescription ?? item.FormView.name }}
             @if (item.FormView.longDescription) {
               <spk-tooltip class="primary" [message]="item.FormView.longDescription">
                 <spk-icon>question</spk-icon>
               </spk-tooltip>
             }
           </label>
-
-          <div class="form-row">
-            <spk-form-field>
-              <input
-                type="number"
-                id="destination-{{ item.Name }}-{{ $index }}"
-                [ngModel]="$any(item).timespan()"
-                (ngModelChange)="updateTimespanSetting(item, $event, 'timespan')" />
-
-              <spk-icon prefix>resize</spk-icon>
-            </spk-form-field>
-
-            <spk-select
-              i18n-placeholder
-              placeholder="Select an item..."
-              [options]="timeOptions()"
-              value="value"
-              label="label"
-              [isClearable]="false">
-              <input
-                type="text"
-                [ngModel]="$any(item).unit()"
-                (ngModelChange)="updateTimespanSetting(item, $event, 'unit')" />
-
-              <ng-template let-option>
-                {{ option.label }}
-              </ng-template>
-            </spk-select>
-          </div>
-        </div>
+        </app-timespan>
       }
 
       <button spk-button class="outlined remove-btn" type="button" (click)="removeSetting(item)">
