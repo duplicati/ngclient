@@ -28,3 +28,11 @@ h3 {
   align-items: flex-end;
   gap: p2r(8);
 }
+
+.logo-login
+{
+  top: p2r(20); 
+  left: p2r(20); 
+  padding: p2r(20); 
+  position: fixed;
+}
