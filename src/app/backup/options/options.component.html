@@ -39,10 +39,42 @@
     </p>
   </div>
 
-  <spk-select [options]="retentionOptions()" [inlineSearch]="true" value="value" label="name">
+  <spk-select [options]="retentionOptions()" [inlineSearch]="false" [isClearable]="false" value="value" label="name">
     <label for="size" i18n>Backup retention</label>
     <input type="text" formControlName="backupRetention" />
   </spk-select>
+
+  @if (optionsForm.get('backupRetention')?.value === 'all') {
+    <p i18n>Nothing will be deleted. The backup size will grow with each change.</p>
+  } @else if (optionsForm.get('backupRetention')?.value === 'time') {
+    <p i18n>If at least one newer backup is found, all backups older than this date are deleted.</p>
+    <spk-form-field>
+      <label for="backupRetentionTime" i18n>Time to keep versions</label>
+      <input type="text" id="backupRetentionTime" formControlName="backupRetentionTime" />
+    </spk-form-field>
+  } @else if (optionsForm.get('backupRetention')?.value === 'versions') {
+    <p i18n>Once there are more backups than the specified number, the oldest backups are deleted.</p>
+    <spk-form-field>
+      <label for="backupRetentionVersions" i18n>Number of versions</label>
+      <input type="number" id="backupRetentionVersions" formControlName="backupRetentionVersions" />
+    </spk-form-field>
+  } @else if (optionsForm.get('backupRetention')?.value === 'smart') {
+    <p i18n>
+      Over time backups will be deleted automatically. There will remain one backup for each of the last 7 days, each of
+      the last 4 weeks, each of the last 12 months. There will always be at least one remaining backup.
+    </p>
+  } @else if (optionsForm.get('backupRetention')?.value === 'custom') {
+    <p i18n>
+      Enter a retention strategy manually. Placeholders are D/W/Y for days/weeks/years and U for unlimited. The syntax
+      is: 7D:1D,4W:1W,36M:1M. This example keeps one backup for each of the next 7 days, one for each of the next 4
+      weeks, and one for each of the next 36 months. This can also be written as 1W:1D,1M:1W,3Y:1M.
+    </p>
+    <spk-form-field>
+      <p i18n>Once there are more backups than the specified number, the oldest backups are deleted.</p>
+      <label for="backupRetentionCustom" i18n>Retention expression</label>
+      <input type="number" id="backupRetentionCustom" formControlName="backupRetentionCustom" />
+    </spk-form-field>
+  }
 
   <app-options-list
     [(options)]="settings"
@@ -53,6 +85,9 @@
       '--skip-files-larger-than',
       'dblock-size',
       'no-encryption',
+      'keep-time',
+      'keep-versions',
+      'retention-policy',
     ]" />
 
   <div class="form-actions">

@@ -6,7 +6,7 @@ import {
   SparkleButtonComponent,
   SparkleFormFieldComponent,
   SparkleIconComponent,
-  SparkleSelectComponent,
+  SparkleSelectComponent
 } from '@sparkle-ui/core';
 import { debounceTime, of } from 'rxjs';
 import { BackupState } from '../backup.state';
@@ -16,7 +16,7 @@ const fb = new FormBuilder();
 const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
 const RETENTION_OPTIONS = [
   {
-    value: '',
+    value: 'all',
     name: $localize`Keep all backups`,
   },
   {
@@ -47,7 +47,10 @@ export const createOptionsForm = (
   defaults = {
     remoteVolumeSize: 50,
     size: 'MB' as SizeOptions,
-    backupRetention: '' as RetentionOptions['value'],
+    backupRetention: 'all' as RetentionOptions['value'],
+    backupRetentionTime: '',
+    backupRetentionVersions: 0,
+    backupRetentionCustom: '',
     advancedOptions: [],
   }
 ) => {
@@ -57,6 +60,9 @@ export const createOptionsForm = (
       unit: fb.control<SizeOptions>(defaults.size),
     }),
     backupRetention: fb.control<RetentionOptions['value']>(defaults.backupRetention),
+    backupRetentionTime: fb.control<string>(defaults.backupRetentionTime),
+    backupRetentionVersions: fb.control<number>(defaults.backupRetentionVersions),
+    backupRetentionCustom: fb.control<string>(defaults.backupRetentionCustom),
     advancedOptions: fb.group({}),
   });
 };
@@ -69,7 +75,7 @@ export const createOptionsForm = (
     SparkleButtonComponent,
     SparkleIconComponent,
     SparkleFormFieldComponent,
-    SparkleSelectComponent,
+    SparkleSelectComponent
   ],
   templateUrl: './options.component.html',
   styleUrl: './options.component.scss',

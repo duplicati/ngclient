@@ -29,6 +29,8 @@ import { createOptionsForm, SizeOptions } from './options/options.component';
 import { createScheduleForm, Days, ScheduleFormValue } from './schedule/schedule.component';
 import { createSourceDataForm } from './source-data/source-data.component';
 
+const SMART_RETENTION = '1W:1D,4W:1W,12M:1M';
+
 const fb = new FormBuilder();
 
 export type DestinationFormPair = {
@@ -374,7 +376,9 @@ export class BackupState {
     const modulesWithoutIgnored = backup.Settings?.filter(
       (x) => ![...modulesToIgnore, 'dblock-size'].includes(x.Name!)
     );
-    this.settings.set(modulesWithoutIgnored ?? []);
+    this.settings.set(modulesWithoutIgnored ?? []);    
+
+    var retentionValue = 'all';
 
     modulesWithoutIgnored?.forEach((x) => {
       if (x.Name === 'encryption-module') {
@@ -390,7 +394,28 @@ export class BackupState {
           unit: unit ? (unit.toUpperCase() as SizeOptions) : null,
         });
       }
+
+      if (x.Name === 'keep-time') {
+        retentionValue = 'time';
+        return this.optionsForm.controls.backupRetentionTime.setValue(x.Value ?? '');
+      }
+
+      if (x.Name === 'keep-versions') {
+        retentionValue = 'versions';
+        return this.optionsForm.controls.backupRetentionVersions.setValue(x.Value ? parseInt(x.Value) : null);
+      }
+
+      if (x.Name === 'retention-policy') {
+        if (x.Value === SMART_RETENTION) {
+          retentionValue = 'smart';
+        } else {
+          retentionValue = 'custom';
+          return this.optionsForm.controls.backupRetentionCustom.setValue(x.Value ?? '');
+        }
+      }
     });
+
+    this.optionsForm.controls.backupRetention.setValue(retentionValue);
   }
 
   getCurrentTargetUrl() {
@@ -512,7 +537,32 @@ export class BackupState {
           Value: '50mb',
         };
 
-    const _settingsIgnoreList = [...settingsIgnoreList, ...modulesToIgnore];
+    const retention = optionsFormValue.backupRetention;
+    const removedRetentionOptions = ['keep-time', 'keep-versions', 'retention-policy'];
+    var retentionValues = [];
+    if (retention === 'time') {
+      retentionValues.push({
+        Name: 'keep-time',
+        Value: optionsFormValue.backupRetentionTime ?? '',
+      });
+    } else if (retention === 'versions') {
+      retentionValues.push({
+        Name: 'keep-versions',
+        Value: optionsFormValue.backupRetentionVersions?.toString() ?? '',
+      });
+    } else if (retention === 'custom') {
+      retentionValues.push({
+        Name: 'retention-policy',
+        Value: optionsFormValue.backupRetentionCustom ?? '',
+      });
+    } else if (retention === 'smart') {
+      retentionValues.push({
+        Name: 'retention-policy',
+        Value: SMART_RETENTION,
+      });
+    }
+
+    const _settingsIgnoreList = [...settingsIgnoreList, ...modulesToIgnore, ...removedRetentionOptions];
     const settings = this.settings()
       .filter((x) => !_settingsIgnoreList.includes(x.Name!))
       .map((y) => {
@@ -532,7 +582,7 @@ export class BackupState {
         };
       });
 
-    return [...encryption, dblockSize, ...settings];
+    return [...encryption, dblockSize, ...retentionValues, ...settings];
   }
 
   #getTargetUrl(destinationFormArray: FormArray<DestinationFormGroup>) {
