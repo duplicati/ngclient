@@ -66,9 +66,11 @@ export function addPath(path: string | null | undefined) {
 export function fromSearchParams(destinationType: string, urlObj: URL) {
   const advanced: { [key: string]: any } = {};
   const dynamic: { [key: string]: any } = {};
+  const config = DESTINATION_CONFIG.find((x) => x.key === destinationType);
 
   urlObj.searchParams.forEach((value, key) => {
-    if (DESTINATION_CONFIG.find((x) => x.key === destinationType)?.dynamicFields?.includes(key)) {
+    const isDynamic = config?.dynamicFields?.some((x) => x === key || (<any>x)?.name === key);
+    if (isDynamic) {
       dynamic[key] = decodeURIComponent(value);
     } else {
       advanced[key] = decodeURIComponent(value);

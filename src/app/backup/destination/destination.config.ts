@@ -1363,8 +1363,8 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       path: {
         type: 'String',
         name: 'path',
-        shortDescription: 'Path on server',
-        longDescription: 'Path on server',
+        shortDescription: 'Path on Filen',
+        longDescription: 'Path on Filen',
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
@@ -1389,8 +1389,8 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         let path = urlObj.hostname ?? '';
-        if (urlObj.pathname && path !== '') path += '/';
-        path + urlObj.pathname;
+        if (urlObj.pathname && path !== '' && urlObj.pathname[0] != '/') path += '/';
+        path += urlObj.pathname;
 
         return <ValueOfDestinationFormGroup>{
           destinationType,
@@ -1402,6 +1402,68 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
     },
   },
+  {
+    key: 'filejump',
+    displayName: 'Filejump',
+    description: 'Store backups in Filejump.',
+    customFields: {
+      path: {
+        type: 'String',
+        name: 'path',
+        shortDescription: 'Path on Filejump',
+        longDescription: 'Path on Filejump',
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      }
+    },
+    dynamicFields: [ 
+      {
+        type: 'Password',
+        name: 'api-token',
+        shortDescription: 'API Token',
+        longDescription: 'Filejump API Token',
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+      // TODO: Support password based auth?
+      // 'auth-username', 
+      // 'auth-password'
+    ],
+    mapper: {
+      to: (fields: any): string => {
+        const { path, username, password, apitoken } = fields.custom;
+        const obj = (apitoken || '').trim() === ''
+          ? {
+              ['auth-username']: username,
+              ['auth-password']: password,
+            }
+          : {
+              ['api-token']: apitoken,
+            };
+
+        const asMap = new Map([
+          ...Object.entries(obj),
+          ...Object.entries(fields.advanced),
+          ...Object.entries(fields.dynamic),
+        ]);
+
+        const urlParams = toSearchParams(Array.from(asMap));
+
+        return `${fields.destinationType}://${path + urlParams}`;
+      },
+      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        let path = urlObj.hostname ?? '';
+        if (urlObj.pathname && path !== '' && urlObj.pathname[0] != '/') path += '/';
+        path += urlObj.pathname;
+
+        return <ValueOfDestinationFormGroup>{
+          destinationType,
+          custom: {
+            path,
+          },
+          ...fromSearchParams(destinationType, urlObj),
+        };
+      },
+    },
+  },  
 
   // Validated against the old destination test url
   {
