@@ -19,19 +19,19 @@ const SHORT_TIME_OPTIONS = [
 
 const DEFAULT_TIME_OPTIONS = [
   {
-    value: 'y',
+    value: 'Y',
     label: $localize`Years`,
   },
   {
-    value: 'm',
+    value: 'M',
     label: $localize`Months`,
   },
   {
-    value: 'w',
+    value: 'W',
     label: $localize`Weeks`,
   },
   {
-    value: 'd',
+    value: 'D',
     label: $localize`Days`,
   },
 ];
@@ -64,8 +64,8 @@ export class TimespanComponent implements ControlValueAccessor {
   inputType = input<string | null>();
 
   timespan = signal(0);
-  #defaultUnit = 'd';
-  unit = signal('d');
+  #defaultUnit = 'D';
+  unit = signal(this.#defaultUnit);
   isShortTime = computed(() => this.inputType() === 'timespan');
   timeOptions = computed(() => {
     if (this.isShortTime()) {
@@ -86,8 +86,7 @@ export class TimespanComponent implements ControlValueAccessor {
 
   inputTypeEffect = effect(() => {
     const _ = this.timeOptions();
-
-    const overrideDefaultUnit = this.isShortTime() ? 's' : 'd';
+    const overrideDefaultUnit = this.isShortTime() ? 's' : 'D';
     this.#defaultUnit = overrideDefaultUnit;
     this.unit.set(overrideDefaultUnit);
   });
@@ -96,7 +95,7 @@ export class TimespanComponent implements ControlValueAccessor {
     const isShortTime = this.isShortTime();
 
     if (value) {
-      const regex = isShortTime ? /(\d+)([smh])/i : /^(\d+)([ymwd])$/i;
+      const regex = isShortTime ? /(\d+)([smh])/i : /^(\d+)([YMWD])$/i;
       const match = value.match(regex);
 
       if (match) {

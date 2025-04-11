@@ -1,27 +1,15 @@
-<form [formGroup]="optionsForm" #formRef (submit)="submit()">
+<section>
   <h3 class="title-30" i18n>Options</h3>
 
   <div class="remote-volume-wrap">
-    <div class="row-inputs" formGroupName="remoteVolumeSize">
-      <spk-form-field>
-        <label for="size" i18n>
-          Remote volume size
-          @if (exceededVolumeSize()) {
-            <spk-icon class="warning">warning</spk-icon>
-          }
-        </label>
-        <input type="number" id="size" formControlName="size" />
-      </spk-form-field>
-
-      <spk-select
-        i18n-placeholder
-        placeholder="Select an option..."
-        [isClearable]="false"
-        [options]="sizeOptions()"
-        [inlineSearch]="true">
-        <input type="text" formControlName="unit" />
-      </spk-select>
-    </div>
+    <app-size [customId]="'size'" [(ngModel)]="optionsFields.remoteVolumeSize">
+      <label for="size" i18n>
+        Remote volume size
+        @if (exceededVolumeSize()) {
+          <spk-icon class="warning">warning</spk-icon>
+        }
+      </label>
+    </app-size>
 
     @if (exceededVolumeSize()) {
       <p class="warning" i18n>
@@ -39,31 +27,30 @@
     </p>
   </div>
 
-  <spk-select [options]="retentionOptions()" [inlineSearch]="false" [isClearable]="false" value="value" label="name">
+  <spk-select [options]="retentionOptions()" [inlineSearch]="true" [isClearable]="false" value="value" label="name">
     <label for="size" i18n>Backup retention</label>
-    <input type="text" formControlName="backupRetention" />
+    <input type="text" [(ngModel)]="optionsFields.backupRetention" />
   </spk-select>
 
-  @if (optionsForm.get('backupRetention')?.value === 'all') {
+  @if (optionsFields.backupRetention() === 'all') {
     <p i18n>Nothing will be deleted. The backup size will grow with each change.</p>
-  } @else if (optionsForm.get('backupRetention')?.value === 'time') {
+  } @else if (optionsFields.backupRetention() === 'time') {
     <p i18n>If at least one newer backup is found, all backups older than this date are deleted.</p>
-    <spk-form-field>
+    <app-timespan [customId]="'backupRetentionTime'" [(ngModel)]="optionsFields.backupRetentionTime">
       <label for="backupRetentionTime" i18n>Time to keep versions</label>
-      <input type="text" id="backupRetentionTime" formControlName="backupRetentionTime" />
-    </spk-form-field>
-  } @else if (optionsForm.get('backupRetention')?.value === 'versions') {
+    </app-timespan>
+  } @else if (optionsFields.backupRetention() === 'versions') {
     <p i18n>Once there are more backups than the specified number, the oldest backups are deleted.</p>
     <spk-form-field>
       <label for="backupRetentionVersions" i18n>Number of versions</label>
-      <input type="number" id="backupRetentionVersions" formControlName="backupRetentionVersions" />
+      <input type="number" id="backupRetentionVersions" [(ngModel)]="optionsFields.backupRetentionVersions" />
     </spk-form-field>
-  } @else if (optionsForm.get('backupRetention')?.value === 'smart') {
+  } @else if (optionsFields.backupRetention() === 'smart') {
     <p i18n>
       Over time backups will be deleted automatically. There will remain one backup for each of the last 7 days, each of
       the last 4 weeks, each of the last 12 months. There will always be at least one remaining backup.
     </p>
-  } @else if (optionsForm.get('backupRetention')?.value === 'custom') {
+  } @else if (optionsFields.backupRetention() === 'custom') {
     <p i18n>
       Enter a retention strategy manually. Placeholders are D/W/Y for days/weeks/years and U for unlimited. The syntax
       is: 7D:1D,4W:1W,36M:1M. This example keeps one backup for each of the next 7 days, one for each of the next 4
@@ -72,7 +59,7 @@
     <spk-form-field>
       <p i18n>Once there are more backups than the specified number, the oldest backups are deleted.</p>
       <label for="backupRetentionCustom" i18n>Retention expression</label>
-      <input type="number" id="backupRetentionCustom" formControlName="backupRetentionCustom" />
+      <input type="text" id="backupRetentionCustom" [(ngModel)]="optionsFields.backupRetentionCustom" />
     </spk-form-field>
   }
 
@@ -96,9 +83,9 @@
       Go back
     </button>
 
-    <button spk-button class="raised primary" [class.loader]="isSubmitting()" type="submit" i18n>
+    <button spk-button class="raised primary" [class.loader]="isSubmitting()" (click)="submit()" i18n>
       <spk-icon>arrow-right</spk-icon>
       Submit
     </button>
   </div>
-</form>
+</section>

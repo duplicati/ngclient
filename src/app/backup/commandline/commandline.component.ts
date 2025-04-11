@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   SparkleButtonComponent,
@@ -10,6 +10,7 @@ import {
   SparkleProgressBarComponent,
   SparkleSelectComponent,
 } from '@sparkle-ui/core';
+import { SizeComponent } from '../../core/components/size/size.component';
 import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { BackupDto, CommandlineService, DuplicatiServerService, GetBackupResultDto } from '../../core/openapi';
@@ -22,6 +23,7 @@ const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'] as const;
 @Component({
   selector: 'app-commandline',
   imports: [
+    FormsModule,
     StatusBarComponent,
     OptionsListComponent,
     ToggleCardComponent,
@@ -33,6 +35,7 @@ const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'] as const;
     SparkleSelectComponent,
     SparkleProgressBarComponent,
     SparkleIconComponent,
+    SizeComponent,
   ],
   templateUrl: './commandline.component.html',
   styleUrl: './commandline.component.scss',
@@ -50,6 +53,7 @@ export default class CommandlineComponent {
   commandOptions = toSignal(this.#commandline.getApiV1Commandline());
   sizeOptions = signal<string[]>(SIZE_OPTIONS as any);
   isSubmitting = signal(false);
+  optionsFields = this.#backupState.optionsFields;
 
   standardFields = fb.group({
     'backup-id': fb.control(''),
@@ -64,7 +68,6 @@ export default class CommandlineComponent {
     arguments: fb.control(''),
   });
 
-  optionsForm = this.#backupState.optionsForm;
   finishedLoading = this.#backupState.finishedLoading;
   backupId = this.#backupState.backupId;
   settings = this.#backupState.settings;
@@ -113,7 +116,6 @@ export default class CommandlineComponent {
   submit() {
     this.isSubmitting.set(true);
     const baseCmd = this.baseCmdForm.value;
-    const optionsForm = this.optionsForm.value;
     const targetUrl = baseCmd.targetUrl ?? '';
     const baseArgs = baseCmd.arguments?.split('\n') ?? [];
     const stdForm = this.standardFields.value;
