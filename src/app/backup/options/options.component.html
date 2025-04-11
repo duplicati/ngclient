@@ -1,27 +1,15 @@
-<form [formGroup]="optionsForm" #formRef (submit)="submit()">
+<section>
   <h3 class="title-30" i18n>Options</h3>
 
   <div class="remote-volume-wrap">
-    <div class="row-inputs" formGroupName="remoteVolumeSize">
-      <spk-form-field>
-        <label for="size" i18n>
-          Remote volume size
-          @if (exceededVolumeSize()) {
-            <spk-icon class="warning">warning</spk-icon>
-          }
-        </label>
-        <input type="number" id="size" formControlName="size" />
-      </spk-form-field>
-
-      <spk-select
-        i18n-placeholder
-        placeholder="Select an option..."
-        [isClearable]="false"
-        [options]="sizeOptions()"
-        [inlineSearch]="true">
-        <input type="text" formControlName="unit" />
-      </spk-select>
-    </div>
+    <app-size [customId]="'size'" [(ngModel)]="optionsFields.remoteVolumeSize">
+      <label for="size" i18n>
+        Remote volume size
+        @if (exceededVolumeSize()) {
+          <spk-icon class="warning">warning</spk-icon>
+        }
+      </label>
+    </app-size>
 
     @if (exceededVolumeSize()) {
       <p class="warning" i18n>
@@ -39,10 +27,13 @@
     </p>
   </div>
 
-  <spk-select [options]="retentionOptions()" [inlineSearch]="true" value="value" label="name">
+  <spk-select [options]="retentionOptions()" [isClearable]="false" [inlineSearch]="true" value="value" label="name">
     <label for="size" i18n>Backup retention</label>
-    <input type="text" formControlName="backupRetention" />
+    <input type="text" [(ngModel)]="optionsFields.backupRetention" />
   </spk-select>
+
+  <pre>{{ optionsFields.backupRetention() | json }}</pre>
+  <pre>{{ retentionOptions() | json }}</pre>
 
   <app-options-list
     [(options)]="settings"
@@ -61,9 +52,9 @@
       Go back
     </button>
 
-    <button spk-button class="raised primary" [class.loader]="isSubmitting()" type="submit" i18n>
+    <button spk-button class="raised primary" [class.loader]="isSubmitting()" (click)="submit()" i18n>
       <spk-icon>arrow-right</spk-icon>
       Submit
     </button>
   </div>
-</form>
+</section>

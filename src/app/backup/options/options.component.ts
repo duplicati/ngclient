@@ -1,18 +1,12 @@
+import { JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  SparkleButtonComponent,
-  SparkleFormFieldComponent,
-  SparkleIconComponent,
-  SparkleSelectComponent,
-} from '@sparkle-ui/core';
-import { debounceTime, of } from 'rxjs';
+import { SparkleButtonComponent, SparkleIconComponent, SparkleSelectComponent } from '@sparkle-ui/core';
+import { SizeComponent } from '../../core/components/size/size.component';
 import { BackupState } from '../backup.state';
 import { OptionsListComponent } from './options-list/options-list.component';
 
-const fb = new FormBuilder();
 const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
 const RETENTION_OPTIONS = [
   {
@@ -40,36 +34,17 @@ const RETENTION_OPTIONS = [
 const MaxVolumeSize = 1024 * 1024 * 1024 * 2; // 2GiB
 const MinVolumeSize = 1024 * 1024 * 5; // 5MiB
 
-export type SizeOptions = (typeof SIZE_OPTIONS)[number];
-type RetentionOptions = (typeof RETENTION_OPTIONS)[number];
-
-export const createOptionsForm = (
-  defaults = {
-    remoteVolumeSize: 50,
-    size: 'MB' as SizeOptions,
-    backupRetention: '' as RetentionOptions['value'],
-    advancedOptions: [],
-  }
-) => {
-  return fb.group({
-    remoteVolumeSize: fb.group({
-      size: fb.control<number>(defaults.remoteVolumeSize),
-      unit: fb.control<SizeOptions>(defaults.size),
-    }),
-    backupRetention: fb.control<RetentionOptions['value']>(defaults.backupRetention),
-    advancedOptions: fb.group({}),
-  });
-};
-
 @Component({
   selector: 'app-advanced-options-settings',
   imports: [
+    FormsModule,
     ReactiveFormsModule,
     OptionsListComponent,
     SparkleButtonComponent,
     SparkleIconComponent,
-    SparkleFormFieldComponent,
     SparkleSelectComponent,
+    SizeComponent,
+    JsonPipe,
   ],
   templateUrl: './options.component.html',
   styleUrl: './options.component.scss',
@@ -81,25 +56,27 @@ export default class OptionsComponent {
   #route = inject(ActivatedRoute);
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
 
-  optionsForm = this.#backupState.optionsForm;
   selectedOptions = this.#backupState.selectedOptions;
   nonSelectedOptions = this.#backupState.nonSelectedOptions;
   isSubmitting = this.#backupState.isSubmitting;
   settings = this.#backupState.settings;
+  optionsFields = this.#backupState.optionsFields;
 
-  sizeOptions = signal(SIZE_OPTIONS);
   retentionOptions = signal(RETENTION_OPTIONS);
 
-  volumeSizeSignal = toSignal(
-    this.optionsForm.controls.remoteVolumeSize.get('size')?.valueChanges.pipe(debounceTime(300)) ?? of(null)
-  );
-  volumeUnitSignal = toSignal(
-    this.optionsForm.controls.remoteVolumeSize.get('unit')?.valueChanges.pipe(debounceTime(300)) ?? of(null)
-  );
+  sizeSplit = computed(() => {
+    const value = this.optionsFields.remoteVolumeSize();
+    const match = value.match(/^(\d+)(bytes|kb|mb|gb|tb|pb|b)$/i);
+
+    return {
+      value: match ? parseInt(match[1], 10) : 0,
+      unit: match ? match[2].toUpperCase() : 'MB',
+    };
+  });
 
   exceededVolumeSize = computed(() => {
-    const currentSize = this.volumeSizeSignal() ?? this.optionsForm.controls.remoteVolumeSize.get('size')?.value;
-    const currentUnit = this.volumeUnitSignal() ?? this.optionsForm.controls.remoteVolumeSize.get('unit')?.value;
+    const currentSize = this.sizeSplit().value;
+    const currentUnit = this.sizeSplit().unit;
 
     if (currentSize === null || currentSize === undefined || currentUnit === null || currentUnit === undefined) {
       return false;

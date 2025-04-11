@@ -29,7 +29,6 @@ export default class AdvancedOptionsSettingsComponent {
   #dupServer = inject(DuplicatiServerService);
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
 
-  optionsForm = this.#backupState.optionsForm;
   settings = this.#backupState.settings;
   isSubmitting = signal(false);
   isLoadingOptions = signal(true);

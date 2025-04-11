@@ -25,7 +25,6 @@ import {
   toTargetPath,
 } from './destination/destination.config-utilities';
 import { createGeneralForm, NONE_OPTION } from './general/general.component';
-import { createOptionsForm, SizeOptions } from './options/options.component';
 import { createScheduleForm, Days, ScheduleFormValue } from './schedule/schedule.component';
 import { createSourceDataForm } from './source-data/source-data.component';
 
@@ -63,8 +62,11 @@ export class BackupState {
   sourceDataForm = createSourceDataForm();
   scheduleForm = createScheduleForm();
   destinationForm = createDestinationForm();
-  optionsForm = createOptionsForm();
   settings = signal<SettingInputDto[]>([]);
+  optionsFields = {
+    remoteVolumeSize: signal('50MB'),
+    backupRetention: signal(''),
+  };
 
   isDraft = signal(false);
   backupId = signal<'new' | 'string' | null>(null);
@@ -369,26 +371,33 @@ export class BackupState {
   }
 
   mapOptionsToForms(backup: BackupDto) {
-    const modulesToIgnore = ['--no-encryption', '--exclude-files-attributes', '--skip-files-larger-than'];
+    const modulesToIgnore = [
+      '--no-encryption',
+      '--exclude-files-attributes',
+      '--skip-files-larger-than',
+      'dblock-size',
+      'keep-time',
+    ];
 
-    const modulesWithoutIgnored = backup.Settings?.filter(
-      (x) => ![...modulesToIgnore, 'dblock-size'].includes(x.Name!)
-    );
+    const modulesWithoutIgnored = backup.Settings?.filter((x) => !modulesToIgnore.includes(x.Name!));
+    const ignoredModules = backup.Settings?.filter((x) => modulesToIgnore.includes(x.Name!));
+
     this.settings.set(modulesWithoutIgnored ?? []);
 
     modulesWithoutIgnored?.forEach((x) => {
       if (x.Name === 'encryption-module') {
         return this.generalForm.controls.encryption.setValue(x.Value ?? '');
       }
+    });
 
+    ignoredModules?.forEach((x) => {
       if (x.Name === 'dblock-size') {
-        const size = x.Value?.replace(/[^0-9]/g, '');
-        const unit = x.Value?.replace(/[0-9]/g, '');
+        this.optionsFields.remoteVolumeSize.set(x.Value ?? '50MB');
+      }
 
-        return this.optionsForm.controls.remoteVolumeSize.setValue({
-          size: size ? parseInt(size) : null,
-          unit: unit ? (unit.toUpperCase() as SizeOptions) : null,
-        });
+      if (x.Name === 'keep-time') {
+        this.optionsFields.backupRetention.set(x.Value ?? '');
+        return;
       }
     });
   }
@@ -478,9 +487,14 @@ export class BackupState {
   }
 
   mapFormsToSettings(settingsIgnoreList: string[] = []) {
-    const optionsFormValue = this.optionsForm.value;
     const generalFormValue = this.generalForm.value;
-    const modulesToIgnore = ['--no-encryption', '--exclude-files-attributes', '--skip-files-larger-than'];
+    const modulesToIgnore = [
+      '--no-encryption',
+      '--exclude-files-attributes',
+      '--skip-files-larger-than',
+      '--keep-time',
+      '--dblock-size',
+    ];
 
     let encryption = [
       {
@@ -502,15 +516,16 @@ export class BackupState {
       ];
     }
 
-    const dblockSize = optionsFormValue.remoteVolumeSize?.size
-      ? {
-          Name: 'dblock-size',
-          Value: `${optionsFormValue.remoteVolumeSize.size}${optionsFormValue.remoteVolumeSize.unit!.toLowerCase()}`,
-        }
-      : {
-          Name: 'dblock-size',
-          Value: '50mb',
-        };
+    const optionFields = [
+      {
+        Name: 'dblock-size',
+        Value: this.optionsFields.remoteVolumeSize(),
+      },
+      {
+        Name: 'keep-time',
+        Value: this.optionsFields.backupRetention(),
+      },
+    ];
 
     const _settingsIgnoreList = [...settingsIgnoreList, ...modulesToIgnore];
     const settings = this.settings()
@@ -532,7 +547,7 @@ export class BackupState {
         };
       });
 
-    return [...encryption, dblockSize, ...settings];
+    return [...encryption, ...optionFields, ...settings];
   }
 
   #getTargetUrl(destinationFormArray: FormArray<DestinationFormGroup>) {
@@ -558,46 +573,46 @@ export class BackupState {
     return newObj;
   }
 
-  removeOptionFromFormGroup(option: FormView) {
-    const optionName = option.name;
+  // removeOptionFromFormGroup(option: FormView) {
+  //   const optionName = option.name;
 
-    if (!optionName) return;
+  //   if (!optionName) return;
 
-    this.optionsForm.controls.advancedOptions.removeControl(optionName);
-    this.selectedOptions.update((y) => {
-      y = y.filter((x) => x.name !== optionName);
+  //   this.optionsForm.controls.advancedOptions.removeControl(optionName);
+  //   this.selectedOptions.update((y) => {
+  //     y = y.filter((x) => x.name !== optionName);
 
-      return y;
-    });
-  }
+  //     return y;
+  //   });
+  // }
 
-  addOptionToFormGroup(option: FormView, defaultValueOverride?: string) {
-    const group = this.optionsForm.controls.advancedOptions;
+  // addOptionToFormGroup(option: FormView, defaultValueOverride?: string) {
+  //   const group = this.optionsForm.controls.advancedOptions;
 
-    this.createFormField(group, option, defaultValueOverride ?? option.defaultValue);
-    this.selectedOptions.update((y) => {
-      y.push(option);
+  //   this.createFormField(group, option, defaultValueOverride ?? option.defaultValue);
+  //   this.selectedOptions.update((y) => {
+  //     y.push(option);
 
-      return y;
-    });
-  }
+  //     return y;
+  //   });
+  // }
 
-  addFreeTextOption(name: string, value: string, formViewOptions?: Partial<FormView>) {
-    const group = this.optionsForm.controls.advancedOptions;
-    const option: FormView = {
-      name,
-      type: 'String',
-      defaultValue: value,
-      ...formViewOptions,
-    };
+  // addFreeTextOption(name: string, value: string, formViewOptions?: Partial<FormView>) {
+  //   const group = this.optionsForm.controls.advancedOptions;
+  //   const option: FormView = {
+  //     name,
+  //     type: 'String',
+  //     defaultValue: value,
+  //     ...formViewOptions,
+  //   };
 
-    this.createFormField(group, option, value);
-    this.selectedOptions.update((y) => {
-      y.push(option);
+  //   this.createFormField(group, option, value);
+  //   this.selectedOptions.update((y) => {
+  //     y.push(option);
 
-      return y;
-    });
-  }
+  //     return y;
+  //   });
+  // }
 
   createFormField(group: FormGroup, element: FormView, defaultValue?: any) {
     if (
@@ -805,6 +820,8 @@ export class BackupState {
     this.destinationForm.reset();
     this.sourceDataForm.reset();
     this.scheduleForm.reset();
-    this.optionsForm.reset();
+    this.optionsFields.remoteVolumeSize.set('50MB');
+    this.optionsFields.backupRetention.set('');
+    this.settings.set([]);
   }
 }
