@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { SparkleFormFieldComponent, SparkleSelectComponent } from '@sparkle-ui/core';
+import { SparkleFormFieldComponent, SparkleMenuComponent } from '@sparkle-ui/core';
 
 const SHORT_TIME_OPTIONS = [
   {
@@ -47,7 +47,7 @@ const SHORT_FIELD_TYPES = [
 
 @Component({
   selector: 'app-timespan',
-  imports: [SparkleSelectComponent, SparkleFormFieldComponent, FormsModule],
+  imports: [SparkleMenuComponent, SparkleFormFieldComponent, FormsModule],
   templateUrl: './timespan.component.html',
   styleUrl: './timespan.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -66,7 +66,17 @@ export class TimespanComponent implements ControlValueAccessor {
   timespan = signal(0);
   #defaultUnit = 'D';
   unit = signal(this.#defaultUnit);
-  isShortTime = computed(() => this.inputType() === 'timespan');
+  unitLabel = computed(() => {
+    const options = this.timeOptions();
+    const index = options.findIndex((x) => x.value === this.unit());
+    return options[index]?.label ?? this.unit();
+  });
+
+  isShortTime = computed(() => {
+    const inputType = this.inputType();
+    return inputType && SHORT_FIELD_TYPES.includes(inputType);
+  });
+
   timeOptions = computed(() => {
     if (this.isShortTime()) {
       return SHORT_TIME_OPTIONS;
@@ -90,6 +100,10 @@ export class TimespanComponent implements ControlValueAccessor {
     this.#defaultUnit = overrideDefaultUnit;
     this.unit.set(overrideDefaultUnit);
   });
+
+  updateUnit(unit: string) {
+    this.unit.set(unit);
+  }
 
   writeValue(value: string): void {
     const isShortTime = this.isShortTime();

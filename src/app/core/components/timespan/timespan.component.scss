@@ -18,7 +18,11 @@
     grid-area: input;
   }
 
-  spk-select {
+  spk-menu {
     grid-area: unit;
+
+    button.trigger {
+      width: 100%;
+    }
   }
 }
