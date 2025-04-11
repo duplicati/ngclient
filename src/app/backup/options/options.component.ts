@@ -1,16 +1,17 @@
-import { JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SparkleButtonComponent, SparkleIconComponent, SparkleSelectComponent } from '@sparkle-ui/core';
+import { SparkleButtonComponent, SparkleFormFieldComponent, SparkleIconComponent, SparkleSelectComponent } from '@sparkle-ui/core';
 import { SizeComponent } from '../../core/components/size/size.component';
+import { TimespanComponent } from '../../core/components/timespan/timespan.component';
 import { BackupState } from '../backup.state';
 import { OptionsListComponent } from './options-list/options-list.component';
 
+export type RetentionType = 'all' | 'time' | 'versions' | 'smart' | 'custom';
 const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
-const RETENTION_OPTIONS = [
+const RETENTION_OPTIONS: { value: RetentionType; name: string }[] = [
   {
-    value: '',
+    value: 'all',
     name: $localize`Keep all backups`,
   },
   {
@@ -44,7 +45,8 @@ const MinVolumeSize = 1024 * 1024 * 5; // 5MiB
     SparkleIconComponent,
     SparkleSelectComponent,
     SizeComponent,
-    JsonPipe,
+    TimespanComponent,
+    SparkleFormFieldComponent,
   ],
   templateUrl: './options.component.html',
   styleUrl: './options.component.scss',

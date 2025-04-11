@@ -25,8 +25,11 @@ import {
   toTargetPath,
 } from './destination/destination.config-utilities';
 import { createGeneralForm, NONE_OPTION } from './general/general.component';
+import { RetentionType } from './options/options.component';
 import { createScheduleForm, Days, ScheduleFormValue } from './schedule/schedule.component';
 import { createSourceDataForm } from './source-data/source-data.component';
+
+const SMART_RETENTION = '1W:1D,4W:1W,12M:1M';
 
 const fb = new FormBuilder();
 
@@ -65,7 +68,11 @@ export class BackupState {
   settings = signal<SettingInputDto[]>([]);
   optionsFields = {
     remoteVolumeSize: signal('50MB'),
-    backupRetention: signal(''),
+    backupRetention: signal<RetentionType>('all'),
+    backupRetentionTime: signal(''),
+    backupRetentionVersions: signal<number | null>(0),
+    backupRetentionCustom: signal(''),
+
   };
 
   isDraft = signal(false);
@@ -377,29 +384,48 @@ export class BackupState {
       '--skip-files-larger-than',
       'dblock-size',
       'keep-time',
+      'keep-versions',
+      'retention-policy',
     ];
 
     const modulesWithoutIgnored = backup.Settings?.filter((x) => !modulesToIgnore.includes(x.Name!));
     const ignoredModules = backup.Settings?.filter((x) => modulesToIgnore.includes(x.Name!));
 
     this.settings.set(modulesWithoutIgnored ?? []);
-
     modulesWithoutIgnored?.forEach((x) => {
       if (x.Name === 'encryption-module') {
         return this.generalForm.controls.encryption.setValue(x.Value ?? '');
       }
     });
 
+    var retentionValue : RetentionType = 'all';
     ignoredModules?.forEach((x) => {
+      console.log('x', x.Name);
       if (x.Name === 'dblock-size') {
         this.optionsFields.remoteVolumeSize.set(x.Value ?? '50MB');
       }
 
       if (x.Name === 'keep-time') {
-        this.optionsFields.backupRetention.set(x.Value ?? '');
-        return;
+        retentionValue = 'time';
+        return this.optionsFields.backupRetentionTime.set(x.Value ?? '');
+      }
+
+      if (x.Name === 'keep-versions') {
+        retentionValue = 'versions';
+        return this.optionsFields.backupRetentionVersions.set(x.Value ? parseInt(x.Value) : null);
+      }
+
+      if (x.Name === 'retention-policy') {
+        if (x.Value === SMART_RETENTION) {
+          retentionValue = 'smart';
+        } else {
+          retentionValue = 'custom';
+          return this.optionsFields.backupRetentionCustom.set(x.Value ?? '');
+        }
       }
     });
+
+    this.optionsFields.backupRetention.set(retentionValue);
   }
 
   getCurrentTargetUrl() {
@@ -492,8 +518,10 @@ export class BackupState {
       '--no-encryption',
       '--exclude-files-attributes',
       '--skip-files-larger-than',
-      '--keep-time',
-      '--dblock-size',
+      'keep-time',
+      'keep-versions',
+      'retention-policy',
+      'dblock-size',      
     ];
 
     let encryption = [
@@ -521,11 +549,37 @@ export class BackupState {
         Name: 'dblock-size',
         Value: this.optionsFields.remoteVolumeSize(),
       },
-      {
-        Name: 'keep-time',
-        Value: this.optionsFields.backupRetention(),
-      },
     ];
+
+    switch(this.optionsFields.backupRetention()) {
+      case 'time':
+        optionFields.push({
+          Name: 'keep-time',
+          Value: this.optionsFields.backupRetentionTime(),
+        });
+        break;
+      
+      case 'versions':
+        optionFields.push({
+          Name: 'keep-versions',
+          Value: this.optionsFields.backupRetentionVersions()?.toString() ?? '',
+        });
+        break;
+
+      case 'custom':
+        optionFields.push({
+          Name: 'retention-policy',
+          Value: this.optionsFields.backupRetentionCustom(),
+        });
+        break;
+
+      case 'smart':
+        optionFields.push({
+          Name: 'retention-policy',
+          Value: SMART_RETENTION,
+        });
+        break;
+    }
 
     const _settingsIgnoreList = [...settingsIgnoreList, ...modulesToIgnore];
     const settings = this.settings()
@@ -821,7 +875,7 @@ export class BackupState {
     this.sourceDataForm.reset();
     this.scheduleForm.reset();
     this.optionsFields.remoteVolumeSize.set('50MB');
-    this.optionsFields.backupRetention.set('');
+    this.optionsFields.backupRetention.set('all');
     this.settings.set([]);
   }
 }
