@@ -26,7 +26,7 @@ import {
 } from './destination/destination.config-utilities';
 import { createGeneralForm, NONE_OPTION } from './general/general.component';
 import { RetentionType } from './options/options.component';
-import { createScheduleForm, Days, ScheduleFormValue } from './schedule/schedule.component';
+import { Days, SCHEDULE_FIELD_DEFAULTS } from './schedule/schedule.component';
 import { createSourceDataForm } from './source-data/source-data.component';
 
 const SMART_RETENTION = '1W:1D,4W:1W,12M:1M';
@@ -63,7 +63,11 @@ export class BackupState {
 
   generalForm = createGeneralForm();
   sourceDataForm = createSourceDataForm();
-  scheduleForm = createScheduleForm();
+  scheduleFields = {
+    autoRun: signal(SCHEDULE_FIELD_DEFAULTS.autoRun),
+    nextTime: signal<Partial<typeof SCHEDULE_FIELD_DEFAULTS.nextTime>>(SCHEDULE_FIELD_DEFAULTS.nextTime),
+    runAgain: signal(SCHEDULE_FIELD_DEFAULTS.runAgain),
+  };
   destinationForm = createDestinationForm();
   settings = signal<SettingInputDto[]>([]);
   optionsFields = {
@@ -72,7 +76,6 @@ export class BackupState {
     backupRetentionTime: signal(''),
     backupRetentionVersions: signal<number | null>(0),
     backupRetentionCustom: signal(''),
-
   };
 
   isDraft = signal(false);
@@ -115,7 +118,6 @@ export class BackupState {
   destinationFormSignal = toSignal(this.destinationForm.valueChanges);
   generalFormSignal = toSignal(this.generalForm.valueChanges);
   encryptionFieldSignal = toSignal(this.generalForm.controls.encryption.valueChanges);
-  scheduleFormSignal = toSignal(this.scheduleForm.valueChanges);
 
   destinationOptions = computed(() => this.#sysinfo.backendModules() ?? []);
 
@@ -347,9 +349,7 @@ export class BackupState {
 
   mapScheduleToForm(schedule: ScheduleDto | null) {
     if (!schedule) {
-      this.scheduleForm.patchValue({
-        autoRun: false,
-      });
+      this.scheduleFields.autoRun.set(false);
 
       return;
     }
@@ -357,24 +357,21 @@ export class BackupState {
     const res = this.#timespanLiteralService.fromString(schedule.Repeat) ?? null;
     const nextTime = this.#evaluateTimeString(schedule.Time);
 
-    const patchObj: ScheduleFormValue = {
-      nextTime,
-      runAgain: {
-        repeatValue: res?.value ?? 1,
-        repeatUnit: res?.unit ?? 'D',
-        allowedDays: {
-          mon: schedule.AllowedDays?.includes('mon') ?? false,
-          tue: schedule.AllowedDays?.includes('tue') ?? false,
-          wed: schedule.AllowedDays?.includes('wed') ?? false,
-          thu: schedule.AllowedDays?.includes('thu') ?? false,
-          fri: schedule.AllowedDays?.includes('fri') ?? false,
-          sat: schedule.AllowedDays?.includes('sat') ?? false,
-          sun: schedule.AllowedDays?.includes('sun') ?? false,
-        },
+    this.scheduleFields.autoRun.set(true);
+    this.scheduleFields.nextTime.update((x) => ({ ...x, ...nextTime }));
+    this.scheduleFields.runAgain.set({
+      repeatValue: res?.value ?? 1,
+      repeatUnit: res?.unit ?? 'D',
+      allowedDays: {
+        mon: schedule.AllowedDays?.includes('mon') ?? false,
+        tue: schedule.AllowedDays?.includes('tue') ?? false,
+        wed: schedule.AllowedDays?.includes('wed') ?? false,
+        thu: schedule.AllowedDays?.includes('thu') ?? false,
+        fri: schedule.AllowedDays?.includes('fri') ?? false,
+        sat: schedule.AllowedDays?.includes('sat') ?? false,
+        sun: schedule.AllowedDays?.includes('sun') ?? false,
       },
-    };
-
-    this.scheduleForm.patchValue(patchObj);
+    });
   }
 
   mapOptionsToForms(backup: BackupDto) {
@@ -398,7 +395,7 @@ export class BackupState {
       }
     });
 
-    var retentionValue : RetentionType = 'all';
+    var retentionValue: RetentionType = 'all';
     ignoredModules?.forEach((x) => {
       console.log('x', x.Name);
       if (x.Name === 'dblock-size') {
@@ -432,9 +429,17 @@ export class BackupState {
     return this.#getTargetUrl(this.destinationForm.controls.destinations as any);
   }
 
+  getScheduleFormValue() {
+    return {
+      autoRun: this.scheduleFields.autoRun(),
+      nextTime: this.scheduleFields.nextTime(),
+      runAgain: this.scheduleFields.runAgain(),
+    };
+  }
+
   #mapFormsToBackup() {
     const generalFormValue = this.generalForm.value;
-    const scheduleFormValue = this.scheduleForm.value;
+    const scheduleFormValue = this.getScheduleFormValue();
     const sourceDataFormValue = this.sourceDataForm.value;
     const destinationFormValue = this.destinationForm.value;
 
@@ -521,7 +526,7 @@ export class BackupState {
       'keep-time',
       'keep-versions',
       'retention-policy',
-      'dblock-size',      
+      'dblock-size',
     ];
 
     let encryption = [
@@ -551,14 +556,14 @@ export class BackupState {
       },
     ];
 
-    switch(this.optionsFields.backupRetention()) {
+    switch (this.optionsFields.backupRetention()) {
       case 'time':
         optionFields.push({
           Name: 'keep-time',
           Value: this.optionsFields.backupRetentionTime(),
         });
         break;
-      
+
       case 'versions':
         optionFields.push({
           Name: 'keep-versions',
@@ -616,15 +621,11 @@ export class BackupState {
     }
 
     const date = new Date(t);
-    const newObj: ScheduleFormValue['nextTime'] = {
+
+    return {
       time: `${('' + date.getHours()).padStart(2, '0')}:${('' + date.getMinutes()).padStart(2, '0')}`,
+      date: date.toISOString().split('T')[0],
     };
-
-    if (t.indexOf('T') !== -1) {
-      newObj.date = date.toISOString().split('T')[0];
-    }
-
-    return newObj;
   }
 
   // removeOptionFromFormGroup(option: FormView) {
@@ -873,7 +874,9 @@ export class BackupState {
     this.destinationForm.controls.destinations.clear();
     this.destinationForm.reset();
     this.sourceDataForm.reset();
-    this.scheduleForm.reset();
+    this.scheduleFields.autoRun.set(SCHEDULE_FIELD_DEFAULTS.autoRun);
+    this.scheduleFields.nextTime.set(SCHEDULE_FIELD_DEFAULTS.nextTime);
+    this.scheduleFields.runAgain.set(SCHEDULE_FIELD_DEFAULTS.runAgain);
     this.optionsFields.remoteVolumeSize.set('50MB');
     this.optionsFields.backupRetention.set('all');
     this.settings.set([]);
