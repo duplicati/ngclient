@@ -403,21 +403,33 @@ export class BackupState {
       }
 
       if (x.Name === 'keep-time') {
-        retentionValue = 'time';
-        return this.optionsFields.backupRetentionTime.set(x.Value ?? '');
+        // If this is not filled correctly, revert to 'all'
+        const v = x.Value ?? '';
+        if (v !== '') {
+          retentionValue = 'time';
+          return this.optionsFields.backupRetentionTime.set(x.Value ?? '');
+        }
       }
 
       if (x.Name === 'keep-versions') {
-        retentionValue = 'versions';
-        return this.optionsFields.backupRetentionVersions.set(x.Value ? parseInt(x.Value) : null);
+        // If this is not filled correctly, revert to 'all'
+        const v = x.Value ?? '';
+        if (v !== '') {
+          retentionValue = 'versions';
+          return this.optionsFields.backupRetentionVersions.set(x.Value ? parseInt(x.Value) : null);
+        }
       }
 
       if (x.Name === 'retention-policy') {
-        if (x.Value === SMART_RETENTION) {
-          retentionValue = 'smart';
-        } else {
-          retentionValue = 'custom';
-          return this.optionsFields.backupRetentionCustom.set(x.Value ?? '');
+        // If this is not filled correctly, revert to 'all'
+        const v = x.Value ?? '';
+        if (v !== '') {
+          if (x.Value === SMART_RETENTION) {
+            retentionValue = 'smart';
+          } else {
+            retentionValue = 'custom';
+            return this.optionsFields.backupRetentionCustom.set(x.Value ?? '');
+          }
         }
       }
     });
