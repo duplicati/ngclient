@@ -216,11 +216,14 @@ export default class DestinationComponent {
           const errorMessage = err.error.error.Error;
           this.successfulTest.set(false);
 
+          // TODO: This is duplicated in restore-destination.component.ts
           if (errorMessage === 'missing-folder') {
             this.#dialog.open(ConfirmDialogComponent, {
               data: {
                 title: $localize`Create folder`,
                 message: $localize`The remote destination folder does not exist, do you want to create it?`,
+                confirmText: $localize`Create folder`,
+                cancelText: $localize`Cancel`,
               },
               closed: (res) => {
                 if (!res) return;
@@ -231,7 +234,21 @@ export default class DestinationComponent {
                       path: targetUrl,
                     },
                   })
-                  .subscribe();
+                  .subscribe({
+                    next: () => {
+                      this.#dialog.open(ConfirmDialogComponent, {
+                        data: {
+                          title: $localize`Folder created`,
+                          message: $localize`The remote destination folder was created successfully.`,
+                          confirmText: $localize`OK`,
+                          cancelText: null,
+                        },
+                        closed: () => {
+                          this.testDestination(destinationIndex);
+                        },
+                      });
+                    }
+                  });
               },
             });
 
@@ -248,8 +265,8 @@ export default class DestinationComponent {
                 message: $localize`The server is using a certificate that is not trusted.
           If this is a self-signed certificate, you can choose to trust this certificate.
           The server reported the certificate hash: ${certData}`,
-                confirmText: 'Trust the certificate',
-                cancelText: 'Cancel',
+                confirmText: $localize`Trust the certificate`,
+                cancelText: $localize`Cancel`,
               },
               closed: (res: boolean) => {
                 if (!res) return;
@@ -271,8 +288,8 @@ export default class DestinationComponent {
                 data: {
                   title: $localize`Approve host key?`,
                   message: $localize`No certificate was specified, please verify that the reported host key is correct: ${reportedhostkey}`,
-                  confirmText: 'Approve',
-                  cancelText: 'Cancel',
+                  confirmText: $localize`Approve`,
+                  cancelText: $localize`Cancel`,
                 },
                 closed: (res) => {
                   if (!res) return;
@@ -310,7 +327,7 @@ with the REPORTED host key: ${reportedhostkey}?`,
             data: {
               title: $localize`Test connection failed`,
               message: errorMessage,
-              cancelText: 'OK',
+              cancelText: $localize`OK`,
             },
             closed: (_) => {},
           });
