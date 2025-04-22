@@ -61,7 +61,6 @@ export default class RestoreEncryptionComponent {
         next: (backup) => {
           const id = backup.ID!;
 
-          this.#restoreFlowState.getBackup(id);
           this.#router.navigate([`/restore-draft/${id}`]);
         },
         error: (err) => {

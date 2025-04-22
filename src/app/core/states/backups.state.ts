@@ -72,7 +72,7 @@ export class BackupsState {
     const timestamp = this.#timestamp;
     const now = Date.now();
     const cacheTimeLimit = timestamp && now - timestamp < 15 * 60 * 1000;
-    const preventMultipleRequests = false; //timestamp && now - timestamp < 100;
+    const preventMultipleRequests = timestamp && now - timestamp < 100;
 
     if (preventMultipleRequests || (!forceRefresh && cacheTimeLimit && this.#backups().length)) {
       return;

@@ -17,8 +17,6 @@ import { SettingInputDto } from '../../../core/openapi';
 import { SysinfoState } from '../../../core/states/sysinfo.state';
 import { FormView } from '../../destination/destination.config-utilities';
 
-const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
-
 type SettingItem = {
   Filter?: string | null;
   Name?: string | null;
@@ -64,7 +62,6 @@ export class OptionsListComponent {
 
   allOptionsGrouped = this.#sysInfo.allOptionsGrouped;
   allOptions = this.#sysInfo.allOptions;
-  // sizeOptions = signal(SIZE_OPTIONS);
 
   selectedSettings = computed(() => {
     const hiddenNames = this.hiddenOptions();
@@ -73,21 +70,6 @@ export class OptionsListComponent {
         const option = this.allOptions().find((opt) => opt.name === setting.Name);
 
         if (option && !hiddenNames.includes(option.name)) {
-          // if (option.type === 'Size') {
-          //   const _unit = setting.Value?.replace(/[0-9]/g, '');
-          //   const _size = setting.Value?.replace(/[^0-9]/g, '');
-          //   const unit = signal(_unit && _unit !== '' ? _unit : 'MB');
-          //   const size = signal(_size && _size !== '' ? parseInt(_size!) : '');
-
-          //   return {
-          //     ...setting,
-          //     Value: computed(() => size() + unit()),
-          //     unit,
-          //     size,
-          //     FormView: option,
-          //   } as SizeSettingItem;
-          // }
-
           let _value: any = setting.Value ?? '';
 
           if (option.type === 'Boolean') {
@@ -208,25 +190,6 @@ export class OptionsListComponent {
       return newSettings;
     });
   }
-
-  // updateSizeSetting(option: SettingItem, newValue: string, property: 'size' | 'unit') {
-  //   const _option = option as SizeSettingItem;
-
-  //   this.options.update((settings) => {
-  //     const newSettings = [...settings];
-  //     const index = newSettings.findIndex((s) => s.Name === _option.Name);
-
-  //     if (property === 'size') {
-  //       newSettings[index].Value = `${newValue}${_option.unit()}`;
-  //     }
-
-  //     if (property === 'unit') {
-  //       newSettings[index].Value = `${_option.size()}${newValue}`;
-  //     }
-
-  //     return newSettings;
-  //   });
-  // }
 
   removeSetting(settingToRemove: SettingItem | SizeSettingItem) {
     this.options.update((settings) => {
