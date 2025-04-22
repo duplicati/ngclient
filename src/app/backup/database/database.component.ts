@@ -40,6 +40,7 @@ export default class DatabaseComponent {
   backupFilePath = signal<string>('');
   lastValidatedPath = signal<string>('');
   isValidatedPath = computed(() => this.lastValidatedPath() === this.backupFilePath());
+  pathHasChanged = computed(() => this.backupFilePath() !== this.#firstDBPath);
 
   backupFilePathEffect = effect(() => {
     const backupFilePath = this.backupFilePath();
@@ -50,6 +51,7 @@ export default class DatabaseComponent {
       next: () => this.lastValidatedPath.set(backupFilePath),
     });
   });
+
   isRestoring = signal(false);
   isRepairing = signal(false);
   isDeleting = signal(false);
