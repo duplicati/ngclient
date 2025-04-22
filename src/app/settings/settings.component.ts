@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   SparkleAlertComponent,
   SparkleButtonComponent,
@@ -14,7 +13,7 @@ import {
   SparkleToggleComponent,
   SparkleTooltipComponent,
 } from '@sparkle-ui/core';
-import { catchError, debounceTime, finalize, of, tap } from 'rxjs';
+import { catchError, finalize, of } from 'rxjs';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { LANGUAGES } from '../core/locales/locales.utility';
 import { DuplicatiServerService } from '../core/openapi';
@@ -26,7 +25,33 @@ import { RemoteControlComponent } from './remote-control/remote-control.componen
 import { RemoteControlState } from './remote-control/remote-control.state';
 import { ServerSettingsService } from './server-settings.service';
 
-const fb = new FormBuilder();
+import { CreateSignalOptions, WritableSignal } from '@angular/core';
+import { SIGNAL, SignalGetter, signalSetFn, signalUpdateFn } from '@angular/core/primitives/signals';
+import { createSignal } from 'ngxtension/create-signal';
+
+export function debounceSignal<T>(initialValue: T, time: number, options?: CreateSignalOptions<T>): WritableSignal<T> {
+  const signalFn = createSignal(initialValue) as SignalGetter<T> & WritableSignal<T>;
+  const node = signalFn[SIGNAL];
+  if (options?.equal) {
+    node.equal = options.equal;
+  }
+
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+  signalFn.set = (newValue: T) => {
+    clearTimeout(timeoutId);
+
+    timeoutId = setTimeout(() => signalSetFn(node, newValue), time);
+  };
+
+  signalFn.update = (updateFn: (value: T) => T) => {
+    clearTimeout(timeoutId);
+
+    timeoutId = setTimeout(() => signalUpdateFn(node, updateFn), time);
+  };
+
+  return signalFn;
+}
 
 type UpdateChannel = '' | 'stable' | 'beta' | 'experimental' | 'canary';
 
@@ -49,7 +74,7 @@ type TimeTypes = (typeof TIME_OPTIONS)[number]['value'];
 
 const USAGE_STATISTICS_OPTIONS = [
   {
-    value: '',
+    value: 'none',
     label: $localize`System default (information)`,
   },
   {
@@ -191,30 +216,11 @@ export default class SettingsComponent {
   previousLang = this.#initLang;
   langCtrl = signal<string>(this.#initLang);
   sortOrderCtrl = signal<string>('');
-
+  usageStatistics = signal<UsageStatisticsType['value']>('');
+  updatingUsageStatistics = signal(false);
   remoteControlStatus = this.#remoteControlState.status;
-
-  settingsForm = fb.group({
-    pauseSettings: fb.group({
-      time: fb.control<number>(0),
-      timeType: fb.control<TimeTypes>('s'),
-    }),
-    usageStatistics: fb.control<UsageStatisticsType['value']>(''),
-  });
-
-  ngOnInit() {
-    this.settingsForm.controls.pauseSettings.valueChanges
-      .pipe(
-        debounceTime(300),
-        tap(() => this.updateStartupDelay())
-      )
-      .subscribe();
-  }
-
   updatingChannel = signal(false);
   updateChannel = signal<UpdateChannel>('');
-
-  prevSortOrder = signal('');
   updatingSortOrder = signal(false);
 
   setNewChannel(channel: UpdateChannel) {
@@ -229,7 +235,6 @@ export default class SettingsComponent {
         },
       })
       .pipe(
-        this.#serverSettingsService.withRefresh(),
         finalize(() => this.updatingChannel.set(false)),
         catchError(() => {
           this.updateChannel.set(prevChannel);
@@ -258,7 +263,6 @@ export default class SettingsComponent {
         },
       })
       .pipe(
-        this.#serverSettingsService.withRefresh(),
         finalize(() => this.updatingRemoteAccess.set(false)),
         catchError(() => {
           this.allowRemoteAccess.set(prevValue);
@@ -282,7 +286,6 @@ export default class SettingsComponent {
         },
       })
       .pipe(
-        this.#serverSettingsService.withRefresh(),
         finalize(() => this.updatingAllowedHosts.set(false)),
         catchError(() => {
           this.allowedHostnames.set(loadedAllowedHostnames);
@@ -292,23 +295,21 @@ export default class SettingsComponent {
       .subscribe();
   }
 
-  updateSortOrder(__x: unknown[]) {
-    const _x = __x[0] as { value: string; label: string } | null | undefined;
-    const x = _x?.value ?? '';
+  updateSortOrder(sortOrder: string) {
+    const prevSortOrder = this.sortOrderCtrl();
 
-    if (!x || x === '' || x === this.prevSortOrder()) return;
-    const prevSortOrder = this.prevSortOrder();
+    if (!sortOrder || sortOrder === '' || sortOrder === prevSortOrder) return;
 
     this.updatingSortOrder.set(true);
+    this.sortOrderCtrl.set(sortOrder);
 
     this.#dupServer
       .patchApiV1Serversettings({
         requestBody: {
-          'backup-list-sort-order': x,
+          'backup-list-sort-order': sortOrder,
         },
       })
       .pipe(
-        this.#serverSettingsService.withRefresh(),
         finalize(() => this.updatingSortOrder.set(false)),
         catchError(() => {
           this.sortOrderCtrl.set(prevSortOrder);
@@ -335,7 +336,6 @@ export default class SettingsComponent {
         },
       })
       .pipe(
-        this.#serverSettingsService.withRefresh(),
         finalize(() => this.updatingDisableTrayIconLogin.set(false)),
         catchError(() => {
           this.disableTrayIconLogin.set(prevValue);
@@ -362,10 +362,7 @@ export default class SettingsComponent {
           'server-passphrase': this.passphrase(),
         },
       })
-      .pipe(
-        this.#serverSettingsService.withRefresh(),
-        finalize(() => this.isUpdating.set(false))
-      )
+      .pipe(finalize(() => this.isUpdating.set(false)))
       .subscribe({
         next: () => {
           this.showPassphraseForm.set(false);
@@ -386,35 +383,44 @@ export default class SettingsComponent {
     this.showPassphraseForm.set(false);
   }
 
-  get pauseSettings() {
-    return this.settingsForm.controls.pauseSettings;
-  }
-
   sortOptions = signal(SORT_OPTIONS);
   languageOptions = signal(LANGUAGES);
   usageStatisticsOptions = signal(USAGE_STATISTICS_OPTIONS);
 
   timeTypeOptions = signal(TIME_OPTIONS);
-  timeTypeSignal = toSignal(this.pauseSettings.controls.timeType.valueChanges);
+  timeType = signal<TimeTypes>('s');
+  timeValue = debounceSignal<number | undefined>(undefined, 300);
   timeRange = computed(() => {
-    const timeType = this.timeTypeSignal();
+    const timeType = this.timeType();
 
     return timeType === 'h' ? [0, 24] : [0, 60];
   });
 
-  updateLocale(__x: unknown[]) {
-    const _x = __x[0] as { value: string; label: string } | null | undefined;
-    const x = _x?.value ?? '';
+  timeValueEffect = effect(() => {
+    const _ = this.timeValue();
 
-    if (!x || x === '' || x === this.previousLang) return;
+    this.updateStartupDelay();
+  });
 
-    this.#ls.setItem('locale', x);
+  updateLocale(newLocale: string) {
+    if (!newLocale || newLocale === '' || newLocale === this.previousLang) return;
+
+    this.#ls.setItem('locale', newLocale);
     window.location.reload();
   }
 
   updateStartupDelay() {
-    const pauseValue = this.pauseSettings.value;
-    const startupDelay = `${pauseValue.time}${pauseValue.timeType}`;
+    const serverSettings = this.#serverSettingsService.serverSettings();
+    const timeValue = this.timeValue();
+    const timeType = this.timeType();
+    const startupDelay = `${timeValue}${timeType}`;
+
+    if (
+      typeof timeValue !== 'number' ||
+      startupDelay === '' ||
+      (serverSettings && serverSettings['startup-delay'] === startupDelay)
+    )
+      return;
 
     this.#dupServer
       .patchApiV1Serversettings({
@@ -422,18 +428,34 @@ export default class SettingsComponent {
           'startup-delay': startupDelay === '0s' ? '' : startupDelay,
         },
       })
-      .pipe(this.#serverSettingsService.withRefresh())
       .subscribe();
   }
 
-  updateUsageStatistics() {
+  updateTimeType(newTimeType: string) {
+    this.timeType.set(newTimeType);
+  }
+
+  updateUsageStatistics(newUsageStatistics: string) {
+    const previousUsageStatistics = this.usageStatistics();
+
+    if (!newUsageStatistics || newUsageStatistics === '' || newUsageStatistics === previousUsageStatistics) return;
+
+    this.usageStatistics.set(newUsageStatistics);
+    this.updatingUsageStatistics.set(true);
+
     this.#dupServer
       .patchApiV1Serversettings({
         requestBody: {
-          'usage-reporter-level': this.settingsForm.controls.usageStatistics.value,
+          'usage-reporter-level': this.usageStatistics() === 'none' ? '' : this.usageStatistics(),
         },
       })
-      .pipe(this.#serverSettingsService.withRefresh())
+      .pipe(
+        finalize(() => this.updatingUsageStatistics.set(false)),
+        catchError(() => {
+          this.usageStatistics.set(previousUsageStatistics);
+          return of(null);
+        })
+      )
       .subscribe();
   }
 
@@ -452,18 +474,13 @@ export default class SettingsComponent {
     this.allowRemoteAccess.set(serverSettings['server-listen-interface'] === 'any');
     this.allowedHostnames.set(serverSettings['allowed-hostnames']);
     this.loadedAllowedHostnames.set(serverSettings['allowed-hostnames']);
-    this.prevSortOrder.set(serverSettings['backup-list-sort-order'] as string);
-    this.sortOrderCtrl.set(this.prevSortOrder());
+    this.sortOrderCtrl.set(serverSettings['backup-list-sort-order'] as string);
+    this.usageStatistics.set(
+      serverSettings['usage-reporter-level'] === '' ? 'none' : serverSettings['usage-reporter-level']
+    );
 
-    queueMicrotask(() => {
-      this.settingsForm.patchValue({
-        pauseSettings: {
-          time: parseInt(timeStr == '' ? '0' : timeStr),
-          timeType: (timeUnitOptions.includes(unit) ? unit : 's') as TimeTypes,
-        },
-        usageStatistics: serverSettings['usage-reporter-level'] ?? '',
-      });
-    });
+    this.timeType.set(timeUnitOptions.includes(unit) ? unit : 's');
+    this.timeValue.set(parseInt(timeStr == '' ? '0' : timeStr));
   });
 
   setDarkMode() {

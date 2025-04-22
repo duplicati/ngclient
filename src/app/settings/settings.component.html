@@ -122,14 +122,12 @@
     </div>
 
     <div class="right">
-      <spk-select
-        [options]="languageOptions()"
-        (selectedOptionsChange)="updateLocale($event)"
-        value="value"
-        label="label"
-        [isClearable]="false"
-        [inlineSearch]="true">
-        <input type="text" [ngModel]="langCtrl()" [ngModelOptions]="{ standalone: true }" />
+      <spk-select [options]="languageOptions()" value="value" label="label" [isClearable]="false" [inlineSearch]="true">
+        <input
+          type="text"
+          [ngModel]="langCtrl()"
+          (ngModelChange)="updateLocale($event)"
+          [ngModelOptions]="{ standalone: true }" />
       </spk-select>
     </div>
   </section>
@@ -201,14 +199,12 @@
     </div>
 
     <div class="right">
-      <spk-select
-        [options]="sortOptions()"
-        (selectedOptionsChange)="updateSortOrder($event)"
-        value="value"
-        label="label"
-        [isClearable]="false"
-        [inlineSearch]="true">
-        <input type="text" [ngModel]="sortOrderCtrl()" [ngModelOptions]="{ standalone: true }" />
+      <spk-select [options]="sortOptions()" value="value" label="label" [isClearable]="false" [inlineSearch]="true">
+        <input
+          type="text"
+          [ngModel]="sortOrderCtrl()"
+          (ngModelChange)="updateSortOrder($event)"
+          [ngModelOptions]="{ standalone: true }" />
       </spk-select>
     </div>
   </section>
@@ -270,7 +266,7 @@
 
 <spk-divider />
 
-<form [formGroup]="settingsForm" class="content">
+<div class="content">
   <section>
     <div class="left">
       <h3 i18n>Pause after startup or hibernation</h3>
@@ -281,13 +277,18 @@
     </div>
 
     <div class="right">
-      <div class="field-row" formGroupName="pauseSettings">
-        <spk-range-slider [unit]="timeTypeSignal() ?? ''" class="raised primary">
-          <input type="range" [min]="timeRange()[0]" [max]="timeRange()[1]" formControlName="time" />
+      <div class="field-row">
+        <spk-range-slider [unit]="timeType()" class="raised primary">
+          <input
+            type="range"
+            [min]="timeRange()[0]"
+            [max]="timeRange()[1]"
+            [ngModel]="timeValue"
+            [ngModelOptions]="{ standalone: true }" />
         </spk-range-slider>
 
         <spk-select [options]="timeTypeOptions()" [isClearable]="false" label="label" value="value">
-          <input type="text" formControlName="timeType" />
+          <input type="text" [ngModel]="timeType()" (ngModelChange)="updateTimeType($event)" />
 
           <ng-template let-option>
             {{ option.label }}
@@ -314,10 +315,14 @@
     <div class="right">
       <spk-select
         [options]="usageStatisticsOptions()"
+        [isLoading]="updatingUsageStatistics()"
         label="label"
-        value="value"
-        (selectedOptionsChange)="updateUsageStatistics()">
-        <input type="text" formControlName="usageStatistics" />
+        value="value">
+        <input
+          type="text"
+          [ngModel]="usageStatistics()"
+          (ngModelChange)="updateUsageStatistics($event)"
+          [ngModelOptions]="{ standalone: true }" />
 
         <ng-template let-option>
           {{ option.label }}
@@ -325,7 +330,7 @@
       </spk-select>
     </div>
   </section>
-</form>
+</div>
 
 <div class="content">
   <section>
