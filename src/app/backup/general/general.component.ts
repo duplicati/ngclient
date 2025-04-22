@@ -97,6 +97,12 @@ export default class GeneralComponent {
     }
   });
 
+  nameAndDescriptionValid = computed(() => {
+    const formControls = this.generalForm.controls;
+
+    return formControls?.name && formControls.name.valid && formControls?.description && formControls.description.valid;
+  });
+
   calculatePasswordStrength = computed(() => {
     const form = this.generalFormSignal();
     const password = form?.password ?? '';

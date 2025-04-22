@@ -344,6 +344,7 @@ export class BackupState {
     if (encryption && encryption !== '') {
       baseUpdate.encryption = encryption;
     }
+
     this.generalForm.patchValue(baseUpdate);
   }
 

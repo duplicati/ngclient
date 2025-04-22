@@ -122,8 +122,8 @@
       Exit
     </button>
 
-    @if (encryptionFieldSignal() === '') {
-      <button spk-button class="raised primary" type="submit" [disabled]="generalForm.invalid" i18n>
+    @if (encryptionFieldSignal() === '' || !isNew()) {
+      <button spk-button class="raised primary" type="submit" [disabled]="nameAndDescriptionValid() === false" i18n>
         Continue
         <spk-icon>arrow-right</spk-icon>
       </button>
