@@ -5,9 +5,9 @@ import { SparkleAlertService } from '@sparkle-ui/core';
 import { catchError, finalize, Observable, shareReplay, switchMap, throwError } from 'rxjs';
 import { ENVIRONMENT_TOKEN } from '../../../environments/environment-token';
 import { mapLocale } from '../locales/locales.utility';
+import { AccessTokenOutputDto } from '../openapi';
 import { LOCALSTORAGE } from '../services/localstorage.token';
 import { AppAuthState, dummytoken } from '../states/app-auth.state';
-import { AccessTokenOutputDto } from '../openapi';
 
 let refreshRequest: Observable<AccessTokenOutputDto> | null = null;
 
@@ -44,20 +44,16 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(modifiedRequest).pipe(
     catchError((error) => {
+      const errorMsg = error.error.Error || `Error Code: ${error.status}, Message: ${error.message}`;
+
       // Suppress error handling for proxy detection requests
       if (!IS_PROXY_DETECT_REQUEST) {
-        
-        if ((isProgressStateRequest && error.status === 404))
-        {
+        if (isProgressStateRequest && error.status === 404) {
           // Suppress 404 errors for progressstate requests, API needs to change
-        }
-        else if ((isConnectionTestRequest))
-        {
+        } else if (isConnectionTestRequest) {
           // Suppress errors for connection test requests, API needs to change
-        }
-        else
-        { 
-          sparkleAlertService.error(error.message);
+        } else {
+          sparkleAlertService.error(errorMsg);
         }
 
         // Don't error handle refresh requests
@@ -83,8 +79,6 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
           }
         }
       }
-
-      const errorMsg = `Error Code: ${error.status}, Message: ${error.message}`;
 
       return throwError(() => {
         return {
