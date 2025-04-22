@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/cor
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { SparkleRadioComponent, SparkleStepperComponent } from '@sparkle-ui/core';
+import { BackupState } from '../backup/backup.state';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { RestoreFlowState } from './restore-flow.state';
 
@@ -18,6 +19,7 @@ import { RestoreFlowState } from './restore-flow.state';
   templateUrl: './restore-flow.component.html',
   styleUrl: './restore-flow.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [RestoreFlowState, BackupState],
 })
 export default class RestoreFlowComponent {
   #route = inject(ActivatedRoute);
