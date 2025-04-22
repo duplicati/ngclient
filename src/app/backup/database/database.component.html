@@ -18,13 +18,13 @@
   </article>
 
   <article>
-    <h2 i18n>Maintainance</h2>
+    <h2 i18n>Maintenance</h2>
     <p i18n>
       If the backup and the remote storage is out of sync, Duplicati will require that you perform a repair operation to
       synchronize the database. If the repair is unsuccessful, you can delete the local database and re-generate.
     </p>
 
-    <div class="actions maintainance">
+    <div class="actions maintenance">
       <button spk-button i18n [class.loader]="isRepairing()" (click)="repairDatabase()">
         <spk-icon>wrench</spk-icon>
         Repair

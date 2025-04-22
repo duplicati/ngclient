@@ -12,8 +12,7 @@
   @if (_data().cancelText) {
     <button spk-button class="" (click)="close('cancel')">{{ _data().cancelText }}</button>
   }
-
-  @if (!_data().confirmText) {
+  @if (_data().confirmText) {
     <button spk-button class="raised primary" (click)="close('confirm')">{{ _data().confirmText }}</button>
   }
 </footer>

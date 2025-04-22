@@ -3,13 +3,13 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
 export type ConfirmDialogData = {
   title: string;
   message?: string;
-  confirmText?: string;
+  confirmText?: string | null;
   cancelText?: string;
 };
 
 const DEFAULT_DATA: ConfirmDialogData = {
   title: $localize`Are you sure?`,
-  confirmText: $localize`Confirm`,
+  confirmText: undefined,
   cancelText: $localize`Cancel`,
 };
 
