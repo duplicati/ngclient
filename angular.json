@@ -112,7 +112,11 @@
             },
             "development": {
               "buildTarget": "ngclient:build:development",
-              "proxyConfig": "src/proxy.conf.mjs"
+              "proxyConfig": "src/proxy-localhost.conf.mjs"
+            },
+            "windows": {
+              "buildTarget": "ngclient:build:development",
+              "proxyConfig": "src/proxy-parallels.conf.mjs"
             }
           },
           "defaultConfiguration": "development"

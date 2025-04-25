@@ -13,3 +13,11 @@
 - Phosphor Icons - https://phosphoricons.com/
 
 ### Run the project
+
+### Testing the client on windows
+
+- Open windows on parallels then run backend on port 8200
+  - `cd [BACKEND_PATH]\Executables\net8\Duplicati.Server`
+  - `dotnet run -- --webservice-password=helloworld --webservice-interface=any` (insert your test password)
+- `npm run start:windows`
+- Debug on your mac in `localhost:4200`
