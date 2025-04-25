@@ -145,11 +145,12 @@ export class FilterComponent {
     const isShortCut = x.startsWith('%');
 
     if (x === '') {
-      return this.pathState.set({
-        type: '-Unknown',
-        path: '___none___',
-        expression: '',
-      });
+      return;
+      // this.pathState.set({
+      //   type: '-Unknown',
+      //   path: '___none___',
+      //   expression: '',
+      // });
     }
 
     if (
@@ -221,6 +222,10 @@ export class FilterComponent {
       return x;
     });
 
+    if (this.pathState()!.path === '' || this.pathState()!.path === '-') {
+      return;
+    }
+
     this.#emitPathChange();
   }
 
@@ -237,6 +242,10 @@ export class FilterComponent {
     const expression = shouldHandleWindows ? value.expression.slice(2) : value.expression;
     const isShortCut = value.path.startsWith('%');
 
+    if (valueType === '') {
+      return '';
+    }
+
     if (valueType === 'Unknown') {
       return `${dir}${value.expression}`;
     }
@@ -245,16 +254,19 @@ export class FilterComponent {
       const hasLeadingSlash = isShortCut || expression.startsWith(pathDelimiter);
       const hasTrailingSlash = expression.endsWith(pathDelimiter);
 
+      console.log('hasTrailingSlash', hasTrailingSlash);
+      console.log('hasLeadingSlash', hasLeadingSlash);
+
       if (hasTrailingSlash && hasLeadingSlash) {
         return `${dir}${value.expression}`;
       }
 
-      if (hasTrailingSlash) {
-        return `${dir}${value.expression}${pathDelimiter}`;
-      }
-
       if (hasLeadingSlash) {
         return `${dir}${pathDelimiter}${value.expression}`;
+      }
+
+      if (hasTrailingSlash) {
+        return `${dir}${value.expression}${pathDelimiter}`;
       }
 
       return `${dir}${pathDelimiter}${value.expression}${pathDelimiter}`;

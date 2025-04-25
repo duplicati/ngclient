@@ -39,7 +39,6 @@ enum TreeEvalEnum {
 }
 
 type TreeNode = TreeNodeDto & {
-  // isSelected: boolean;
   accepted?: boolean;
   parentPath: string;
 };
@@ -47,8 +46,6 @@ type TreeNode = TreeNodeDto & {
 type FileTreeNode = TreeNode & {
   children: FileTreeNode[];
   evalState: TreeEvalEnum;
-  // isIncluded: boolean;
-  // isExcluded: boolean;
   isIndeterminate: boolean;
 };
 
@@ -60,7 +57,6 @@ interface CustomEventMap {
 
 declare global {
   interface HTMLInputElement {
-    // Extend HTMLElement to cover input elements
     addEventListener<K extends keyof CustomEventMap>(
       type: K,
       listener: (this: HTMLElement, ev: CustomEventMap[K]) => any,
@@ -73,9 +69,6 @@ export type BackupSettings = {
   id: string;
   time: string;
 };
-
-// TODO
-// - When rootPath get all the levels and batch them at the root level for better usability
 
 @Component({
   selector: 'app-file-tree',
@@ -123,6 +116,7 @@ export default class FileTreeComponent {
   #inputRef = signal<HTMLInputElement | null>(null);
   treeSearchQuery = signal<string>('');
   treeNodes = signal<TreeNode[]>([]);
+  isWindows = computed(() => this.#sysInfo.systemInfo()?.OSType === 'Windows');
 
   filterGroups = this.#sysInfo.filterGroups();
   isByBackupSettings = computed(() => {
@@ -148,7 +142,6 @@ export default class FileTreeComponent {
       .split('\0')
       .filter((x) => x !== '' && x !== '/');
 
-    // Maybe just convert/replace filterGroup expressions with filterGroups content
     let currentPaths = structuredClone(_currentPaths);
 
     for (let index = 0; index < currentPaths.length; index++) {
@@ -161,7 +154,6 @@ export default class FileTreeComponent {
         const filterGroup = this.filterGroups?.['FilterGroups'][groupName];
 
         if (filterGroup && filterGroup.length) {
-          // Insert the new array at the current path index replacing the old one
           const _filterGroup = filterGroup.map((x) => `-${x}`);
           currentPaths.splice(index, 1, ..._filterGroup);
         }
@@ -172,6 +164,7 @@ export default class FileTreeComponent {
     const nodeMap = new Map<string, FileTreeNode>();
     const rootPath = this.rootPath();
     const accepts = this.accepts();
+    const isWindows = this.isWindows();
 
     const root: FileTreeNode = rootPath
       ? {
@@ -202,7 +195,6 @@ export default class FileTreeComponent {
 
     for (const node of nodes) {
       const itemPath = (node.id as string).replace(rootPath ?? '', '');
-      const isWindows = itemPath.includes('\\');
       const pathDelimiter = isWindows ? '\\' : '/';
       const pathParts = itemPath.split(pathDelimiter).filter(Boolean);
 
@@ -216,7 +208,7 @@ export default class FileTreeComponent {
           const evalState =
             node.hidden === true && showHiddenNodes
               ? TreeEvalEnum.None
-              : this.#eval(currentPaths, node.id!, node.cls!, parentNode);
+              : this.#eval(currentPaths, node.id!, node.cls!, parentNode, isWindows);
 
           const newNode: FileTreeNode = {
             id: node.id,
@@ -245,9 +237,13 @@ export default class FileTreeComponent {
     return [root];
   });
 
-  // TODO - on single select we might not wanna do all this compute for every selected node or not even for child nodes
-  // NOTE - fileGroups are handled by exploding the fileGroup and injecting its paths into the currentPath
-  #eval(currentPaths: string[], nodeId: string, nodeType: string, parentNode: FileTreeNode): TreeEvalEnum {
+  #eval(
+    currentPaths: string[],
+    nodeId: string,
+    nodeType: string,
+    parentNode: FileTreeNode,
+    isWindows: boolean
+  ): TreeEvalEnum {
     if (parentNode.evalState === TreeEvalEnum.Excluded) return TreeEvalEnum.ExcludedByParent;
 
     let result = TreeEvalEnum.None;
@@ -257,7 +253,6 @@ export default class FileTreeComponent {
 
     if (pathsWithoutDir.length === 0) return result;
 
-    // Find first excluded or included node per pathWithoutDir
     for (let index = 0; index < pathsWithoutDir.length; index++) {
       const x = pathsWithoutDir[index];
 
@@ -271,12 +266,10 @@ export default class FileTreeComponent {
 
     if (pathsWithDir.length === 0) return result;
 
-    // Then find first excluded or included node per pathWithDir
     for (let i = 0; i < pathsWithDir.length; i++) {
       const pathPart = pathsWithDir[i];
-      const x = pathPart.slice(1); // Remove direction
+      const x = pathPart.slice(1);
       const dir = pathPart.startsWith('-') ? 'exclude' : 'include';
-      const isWindows = nodeId.includes('\\');
       const pathDelimiter = isWindows ? '\\' : '/';
       const pathToTest = isWindows ? x.slice(2) : x;
 
@@ -598,6 +591,7 @@ export default class FileTreeComponent {
   }
 
   #fetchPathSegmentsRecursively(path: string) {
+    const isWindows = this.isWindows();
     const deselectedPaths = path
       .split('\0')
       .filter((x) => x.startsWith('-'))
@@ -609,8 +603,6 @@ export default class FileTreeComponent {
       .filter(Boolean);
 
     const segmentArr = pathArr.map((x) => {
-      const isWindows = x.indexOf(':') === 1;
-
       return x.split(isWindows ? '\\' : '/').filter((y) => {
         if (y.includes('.')) {
           return false;
@@ -624,7 +616,6 @@ export default class FileTreeComponent {
 
     segmentArr.forEach((segments) => {
       segments.forEach((_, index) => {
-        const isWindows = segments[0].endsWith(':');
         const urlCombined = segments.slice(0, index + 1).join(isWindows ? '\\' : '/');
         let urlPiece = urlCombined;
 
@@ -666,6 +657,7 @@ export default class FileTreeComponent {
             const allNewNodes = results.flatMap((x) => {
               return (x.value as any).map((z: any) => {
                 const path = z.id;
+                const resolvedPath = z.id.startsWith('%') && z.id.endsWith('%') ? z.resolvedpath + '/' : z.id;
                 const parentPath = path && path.split('/').filter(Boolean).slice(0, -1).join('/');
                 const _pathWithoutTrailingSlash = path && path.split('/').filter(Boolean).join('/');
                 const pathWithoutTrailingSlash = '/' + _pathWithoutTrailingSlash;
@@ -674,20 +666,19 @@ export default class FileTreeComponent {
                     return this.multiSelect() ? pathWithoutTrailingSlash.startsWith(x) : pathWithoutTrailingSlash === x;
                   }) > -1;
 
-                const hi = pathArr.findIndex((x) => x === path) > -1;
+                const pathExistInArray = pathArr.findIndex((x) => x === path) > -1;
                 const isDeselected = deselectedPaths.findIndex((x) => x === pathWithoutTrailingSlash) > -1;
 
                 return {
                   ...z,
+                  cls: resolvedPath.endsWith('/') || resolvedPath.endsWith('\\') ? 'folder' : 'file',
                   parentPath: parentPath.startsWith('%') ? parentPath : '/' + parentPath,
-                  isSelected: (found && !isDeselected) || hi, // TODO - Use deselected paths to disable
+                  isSelected: (found && !isDeselected) || pathExistInArray,
                 };
               });
             });
 
-            const arrayUniqueByKey = [
-              ...new Map([...y, ...allNewNodes].map((item) => [item.resolvedpath ?? item.id, item])).values(),
-            ];
+            const arrayUniqueByKey = [...new Map([...y, ...allNewNodes].map((item) => [item.id, item])).values()];
 
             this.#findActiveNodeAndScrollTo();
 
@@ -728,13 +719,10 @@ export default class FileTreeComponent {
               ...z,
               cls,
               parentPath: newPath,
-              // isSelected: (this.multiSelect() && node?.isSelected) ?? false,
             };
           });
 
-          const arrayUniqueByKey = [
-            ...new Map([...y, ...newArray].map((item) => [item.resolvedpath ?? item.id, item])).values(),
-          ];
+          const arrayUniqueByKey = [...new Map([...y, ...newArray].map((item) => [item.id, item])).values()];
 
           if (this.hideShortcuts()) {
             return arrayUniqueByKey.filter((x: TreeNode) => !x.id!.startsWith('%')) as TreeNode[];

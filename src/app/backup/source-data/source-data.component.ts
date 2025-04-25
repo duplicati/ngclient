@@ -12,7 +12,7 @@ import {
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { BackupState } from '../backup.state';
-import { FilterComponent } from './filter/filter.component';
+import { NewFilterComponent } from './new-filter/new-filter.component';
 
 const fb = new FormBuilder();
 const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
@@ -53,9 +53,9 @@ export const createSourceDataForm = (
     SparkleButtonComponent,
     SparkleToggleComponent,
     SparkleSelectComponent,
+    NewFilterComponent,
     FileTreeComponent,
     ToggleCardComponent,
-    FilterComponent,
   ],
   templateUrl: './source-data.component.html',
   styleUrl: './source-data.component.scss',
@@ -81,6 +81,55 @@ export default class SourceDataComponent {
         ?.split('\0')
         .filter((x) => x.startsWith('-') || x.startsWith('+') || x === '___none___') as string[]) ?? []
   );
+  nonFilterPaths = computed(() =>
+    this.pathSignal()
+      ?.split('\0')
+      .filter((x) => !x.startsWith('-') && !x.startsWith('+') && x !== '')
+  );
+
+  oldPath = signal<string | null>(null);
+  editingPath = signal<string | null>(null);
+  addingNewPath = signal(false);
+
+  editPath(oldPath: string) {
+    this.oldPath.set(oldPath);
+    this.editingPath.set(oldPath);
+  }
+
+  updatePath() {
+    const oldPath = this.oldPath();
+    const newPath = this.editingPath();
+
+    if (!oldPath || !newPath || newPath === oldPath) {
+      this.oldPath.set(null);
+      this.editingPath.set(null);
+
+      return;
+    }
+
+    const currentPath = this.sourceDataForm.controls.path.value;
+
+    this.sourceDataForm.controls.path.setValue(currentPath?.replace(oldPath, newPath) ?? '');
+    this.oldPath.set(null);
+    this.editingPath.set(null);
+  }
+
+  cancelEditPath() {
+    this.oldPath.set(null);
+    this.editingPath.set(null);
+  }
+
+  removePath(path: string) {
+    const currentPath = this.sourceDataForm.controls.path.value ?? '';
+    const indexOfPath = currentPath.indexOf(path);
+
+    if (indexOfPath === -1) return;
+
+    const pathToRemove = indexOfPath === 0 ? path : '\0' + path;
+    const nonFilterPath = currentPath.replace(pathToRemove, '');
+
+    this.sourceDataForm.controls.path.setValue(nonFilterPath);
+  }
 
   addFilter(newPath = '-*') {
     const currentPath = this.sourceDataForm.controls.path.value;

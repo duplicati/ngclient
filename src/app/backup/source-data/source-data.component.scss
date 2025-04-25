@@ -39,8 +39,25 @@ form {
   justify-content: space-between;
 }
 
+spk-divider {
+  margin: p2r(12 0);
+}
+
 .row-inputs {
   display: grid;
   grid-template-columns: 1fr min-content;
+  gap: p2r(4);
+}
+
+.paths {
+  display: flex;
+  flex-direction: column;
   gap: p2r(8);
+}
+
+.path {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr min-content min-content;
+  gap: p2r(4);
 }

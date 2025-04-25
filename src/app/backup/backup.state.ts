@@ -334,6 +334,7 @@ export class BackupState {
 
   mapGeneralToForm(backup: BackupDto) {
     const encryptionModule = backup.Settings?.find((x) => x.Name === 'encryption-module');
+    const passphrase = backup.Settings?.find((x) => x.Name === 'passphrase')?.Value ?? '';
     const encryption = encryptionModule?.Value && encryptionModule.Value.length ? encryptionModule.Value : '';
 
     const baseUpdate: Partial<typeof this.generalForm.value> = {
@@ -343,6 +344,11 @@ export class BackupState {
 
     if (encryption && encryption !== '') {
       baseUpdate.encryption = encryption;
+    }
+
+    if (passphrase && passphrase !== '') {
+      baseUpdate.password = passphrase;
+      baseUpdate.repeatPassword = passphrase;
     }
 
     this.generalForm.patchValue(baseUpdate);
@@ -381,6 +387,7 @@ export class BackupState {
       '--exclude-files-attributes',
       '--skip-files-larger-than',
       'dblock-size',
+      'passphrase',
       'keep-time',
       'keep-versions',
       'retention-policy',
@@ -391,7 +398,7 @@ export class BackupState {
 
     this.settings.set(modulesWithoutIgnored ?? []);
     modulesWithoutIgnored?.forEach((x) => {
-      if (x.Name === 'encryption-module') {
+      if (x.Name === 'encryption-module' && this.isNew()) {
         return this.generalForm.controls.encryption.setValue(x.Value ?? '');
       }
     });
@@ -536,6 +543,8 @@ export class BackupState {
       '--no-encryption',
       '--exclude-files-attributes',
       '--skip-files-larger-than',
+      'encryption-module',
+      'passphrase',
       'keep-time',
       'keep-versions',
       'retention-policy',

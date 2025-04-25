@@ -23,19 +23,54 @@
   </div>
 
   <div class="right">
-    <h3 class="title-30" i18n>Source Data</h3>
     <app-toggle-card [disallowToggle]="true">
-      <ng-container title i18n>Add Path</ng-container>
+      <ng-container title i18n>Paths</ng-container>
       <p description i18n>Add a path directly from your machine.</p>
 
-      <div class="row-inputs">
-        <spk-form-field>
-          <input type="text" i18n-placeholder placeholder="Add a direct path" [formControl]="newPathCtrl" />
-        </spk-form-field>
+      <div class="paths">
+        @for (path of nonFilterPaths(); track $index) {
+          <div class="path">
+            @if (oldPath() === path) {
+              <spk-form-field class="small">
+                <input
+                  type="text"
+                  i18n-placeholder
+                  placeholder="Edit path"
+                  [(ngModel)]="editingPath"
+                  [ngModelOptions]="{ standalone: true }" />
+              </spk-form-field>
 
-        <button spk-button class="raised primary" type="button" (click)="addNewPath()">
-          <spk-icon>plus</spk-icon>
-        </button>
+              <button spk-button type="button" class="small" (click)="updatePath()">
+                <spk-icon>floppy-disk</spk-icon>
+              </button>
+
+              <button spk-button type="button" class="small" (click)="cancelEditPath()">
+                <spk-icon>x-bold</spk-icon>
+              </button>
+            } @else {
+              <spk-form-field class="small" [attr.readonly]="true">
+                <input type="text" [ngModel]="path" [ngModelOptions]="{ standalone: true }" />
+              </spk-form-field>
+
+              <button spk-button type="button" class="small" (click)="editPath(path)">
+                <spk-icon>pen</spk-icon>
+              </button>
+              <button spk-button type="button" class="small" (click)="removePath(path)">
+                <spk-icon>trash-simple</spk-icon>
+              </button>
+            }
+          </div>
+        }
+
+        <div class="row-inputs">
+          <spk-form-field>
+            <input type="text" i18n-placeholder placeholder="Add a direct path" [formControl]="newPathCtrl" />
+          </spk-form-field>
+
+          <button spk-button class="raised primary" type="button" (click)="addNewPath()">
+            <spk-icon>plus</spk-icon>
+          </button>
+        </div>
       </div>
     </app-toggle-card>
 
@@ -47,11 +82,11 @@
 
       @if (pathSignal()?.length) {
         @for (path of pathArray(); track $index) {
-          <app-filter
+          <app-new-filter
             [path]="path"
             [osType]="osType() ?? ''"
             (pathChange)="patchPathAt($event, $index)"
-            (remove)="removePathAt($index)" />
+            (remove)="removePathAt($index)"></app-new-filter>
         }
       }
     </app-toggle-card>

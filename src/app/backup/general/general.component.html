@@ -122,6 +122,7 @@
       Exit
     </button>
 
+    <pre>hello{{ nameAndDescriptionValid() }}</pre>
     @if (encryptionFieldSignal() === '' || !isNew()) {
       <button spk-button class="raised primary" type="submit" [disabled]="nameAndDescriptionValid() === false" i18n>
         Continue

@@ -98,6 +98,7 @@ export default class GeneralComponent {
   });
 
   nameAndDescriptionValid = computed(() => {
+    const _ = this.generalFormSignal();
     const formControls = this.generalForm.controls;
 
     return formControls?.name && formControls.name.valid && formControls?.description && formControls.description.valid;
