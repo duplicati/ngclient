@@ -40,8 +40,8 @@
           </button>
 
           <ng-container menu>
-            <button type="button" (click)="timeType.set('relative')" i18n>Relative time</button>
-            <button type="button" (click)="timeType.set('actual')" i18n>Actual time</button>
+            <button type="button" (click)="setTimeType('relative')" i18n>Relative time</button>
+            <button type="button" (click)="setTimeType('actual')" i18n>Actual time</button>
           </ng-container>
         </spk-menu>
 
@@ -53,10 +53,11 @@
           </button>
 
           <ng-container menu>
-            <button type="button" (click)="setOrderBy('id')" i18n>Create order</button>
-            <button type="button" (click)="setOrderBy('backend')" i18n>Destination type</button>
-            <button type="button" (click)="setOrderBy('lastrun')" i18n>Last run</button>
-            <button type="button" (click)="setOrderBy('name')" i18n>Name</button>
+            @for (order of sortOrderOptions(); track $index) {
+              <button type="button" [class.active]="orderBy() === order.value" (click)="setOrderBy(order.value)" i18n>
+                {{ order.label }}
+              </button>
+            }
           </ng-container>
         </spk-menu>
       </div>
