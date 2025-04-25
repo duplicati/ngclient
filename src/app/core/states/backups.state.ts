@@ -2,6 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { finalize, take, tap } from 'rxjs';
 import { randomUUID } from '../functions/crypto';
 import { DuplicatiServerService } from '../openapi';
+import { LOCALSTORAGE } from '../services/localstorage.token';
 import { Subscribed } from '../types/subscribed';
 
 export type BackupRes = Subscribed<ReturnType<DuplicatiServerService['getApiV1Backups']>>;
@@ -17,13 +18,91 @@ export type BackupDraft = Backup & {
   DisplayNames: { [key: string]: string };
 };
 
-const ORDER_BY_MAP = ['id', 'backend', 'lastrun', 'name'] as const;
-export type OrderBy = (typeof ORDER_BY_MAP)[number];
+const LOCALSTORAGE_BACKUP_LIST_ORDER_BY = 'backupListOrderBy';
+const LOCALSTORAGE_BACKUP_LIST_SHOW_ACTUAL_TIMES = 'backupListShowActualTimes';
+
+const SORT_OPTIONS = [
+  {
+    value: 'id',
+    label: $localize`Backup ID`,
+  },
+  {
+    value: 'name',
+    label: $localize`Backup name`,
+  },
+  {
+    value: 'lastrun',
+    label: $localize`Last run time`,
+  },
+  {
+    value: 'nextrun',
+    label: $localize`Next run time`,
+  },
+  {
+    value: 'schedule',
+    label: $localize`Is scheduled`,
+  },
+  {
+    value: 'backend',
+    label: $localize`Destination type`,
+  },
+  {
+    value: 'sourcesize',
+    label: $localize`Source size`,
+  },
+  {
+    value: 'destinationsize',
+    label: $localize`Destination size`,
+  },
+  {
+    value: 'duration',
+    label: $localize`Duration`,
+  },
+  {
+    value: '-id',
+    label: $localize`Backup ID (decending)`,
+  },
+  {
+    value: '-name',
+    label: $localize`Backup name (decending)`,
+  },
+  {
+    value: '-lastrun',
+    label: $localize`Last run time (decending)`,
+  },
+  {
+    value: '-nextrun',
+    label: $localize`Next run time (decending)`,
+  },
+  {
+    value: '-schedule',
+    label: $localize`Is scheduled (decending)`,
+  },
+  {
+    value: '-backend',
+    label: $localize`Destination type (decending)`,
+  },
+  {
+    value: '-sourcesize',
+    label: $localize`Source size (decending)`,
+  },
+  {
+    value: '-destinationsize',
+    label: $localize`Destination size (decending)`,
+  },
+  {
+    value: '-duration',
+    label: $localize`Duration (decending)`,
+  },
+] as const;
+export type OrderBy = (typeof SORT_OPTIONS)[number]['value'];
+export type TimeType = 'actual' | 'relative';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BackupsState {
+  #ls = inject(LOCALSTORAGE);
   #dupServer = inject(DuplicatiServerService);
   #timestamp: number | null = null;
   #draftBackups = signal<BackupDraftItem[]>([]);
@@ -32,10 +111,13 @@ export class BackupsState {
   #startingBackup = signal(false);
   #deletingBackup = signal<string | null>(null);
 
-  #orderBy = signal<OrderBy>('id');
+  #timeType = signal<TimeType>(this.#ls.getItemParsed<TimeType>(LOCALSTORAGE_BACKUP_LIST_SHOW_ACTUAL_TIMES, true) ?? 'relative');
+  #orderBy = signal(this.#ls.getItemParsed<OrderBy>(LOCALSTORAGE_BACKUP_LIST_ORDER_BY, true) ?? 'id');
 
+  orderByOptions = signal(SORT_OPTIONS);
   orderBy = this.#orderBy.asReadonly();
   backups = this.#backups.asReadonly();
+  timeType = this.#timeType.asReadonly();
   backupsLoading = this.#backupsLoading.asReadonly();
   startingBackup = this.#startingBackup.asReadonly();
   deletingBackup = this.#deletingBackup.asReadonly();
@@ -56,8 +138,14 @@ export class BackupsState {
   }
 
   setOrderBy(orderBy: OrderBy) {
+    this.#ls.setItemParsed(LOCALSTORAGE_BACKUP_LIST_ORDER_BY, orderBy, true);
     this.#orderBy.set(orderBy);
     this.getBackups(true);
+  }
+
+  setTimeType(timeType: TimeType) {
+    this.#ls.setItemParsed(LOCALSTORAGE_BACKUP_LIST_SHOW_ACTUAL_TIMES, timeType, true);
+    this.#timeType.set(timeType);
   }
 
   removeDraftBackupById(id: string) {

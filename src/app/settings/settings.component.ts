@@ -101,81 +101,6 @@ const USAGE_STATISTICS_OPTIONS = [
 
 type UsageStatisticsType = (typeof USAGE_STATISTICS_OPTIONS)[number];
 
-const SORT_OPTIONS = [
-  {
-    value: 'id',
-    label: $localize`Backup ID`,
-  },
-  {
-    value: 'name',
-    label: $localize`Backup name`,
-  },
-  {
-    value: 'lastrun',
-    label: $localize`Last run time`,
-  },
-  {
-    value: 'nextrun',
-    label: $localize`Next run time`,
-  },
-  {
-    value: 'schedule',
-    label: $localize`Is scheduled`,
-  },
-  {
-    value: 'backend',
-    label: $localize`Destination type`,
-  },
-  {
-    value: 'sourcesize',
-    label: $localize`Source size`,
-  },
-  {
-    value: 'destinationsize',
-    label: $localize`Destination size`,
-  },
-  {
-    value: 'duration',
-    label: $localize`Duration`,
-  },
-  {
-    value: '-id',
-    label: $localize`Backup ID (decending)`,
-  },
-  {
-    value: '-name',
-    label: $localize`Backup name (decending)`,
-  },
-  {
-    value: '-lastrun',
-    label: $localize`Last run time (decending)`,
-  },
-  {
-    value: '-nextrun',
-    label: $localize`Next run time (decending)`,
-  },
-  {
-    value: '-schedule',
-    label: $localize`Is scheduled (decending)`,
-  },
-  {
-    value: '-backend',
-    label: $localize`Destination type (decending)`,
-  },
-  {
-    value: '-sourcesize',
-    label: $localize`Source size (decending)`,
-  },
-  {
-    value: '-destinationsize',
-    label: $localize`Destination size (decending)`,
-  },
-  {
-    value: '-duration',
-    label: $localize`Duration (decending)`,
-  },
-];
-
 @Component({
   selector: 'app-settings',
   imports: [
@@ -215,13 +140,11 @@ export default class SettingsComponent {
   editAs = signal<'list' | 'text'>('list');
   previousLang = this.#initLang;
   langCtrl = signal<string>(this.#initLang);
-  sortOrderCtrl = signal<string>('');
   usageStatistics = signal<UsageStatisticsType['value']>('');
   updatingUsageStatistics = signal(false);
   remoteControlStatus = this.#remoteControlState.status;
   updatingChannel = signal(false);
   updateChannel = signal<UpdateChannel>('');
-  updatingSortOrder = signal(false);
 
   setNewChannel(channel: UpdateChannel) {
     const prevChannel = this.updateChannel();
@@ -295,30 +218,6 @@ export default class SettingsComponent {
       .subscribe();
   }
 
-  updateSortOrder(sortOrder: string) {
-    const prevSortOrder = this.sortOrderCtrl();
-
-    if (!sortOrder || sortOrder === '' || sortOrder === prevSortOrder) return;
-
-    this.updatingSortOrder.set(true);
-    this.sortOrderCtrl.set(sortOrder);
-
-    this.#dupServer
-      .patchApiV1Serversettings({
-        requestBody: {
-          'backup-list-sort-order': sortOrder,
-        },
-      })
-      .pipe(
-        finalize(() => this.updatingSortOrder.set(false)),
-        catchError(() => {
-          this.sortOrderCtrl.set(prevSortOrder);
-          return of(null);
-        })
-      )
-      .subscribe();
-  }
-
   updatingDisableTrayIconLogin = signal(false);
   disableTrayIconLogin = signal(false);
 
@@ -383,7 +282,6 @@ export default class SettingsComponent {
     this.showPassphraseForm.set(false);
   }
 
-  sortOptions = signal(SORT_OPTIONS);
   languageOptions = signal(LANGUAGES);
   usageStatisticsOptions = signal(USAGE_STATISTICS_OPTIONS);
 
@@ -474,7 +372,6 @@ export default class SettingsComponent {
     this.allowRemoteAccess.set(serverSettings['server-listen-interface'] === 'any');
     this.allowedHostnames.set(serverSettings['allowed-hostnames']);
     this.loadedAllowedHostnames.set(serverSettings['allowed-hostnames']);
-    this.sortOrderCtrl.set(serverSettings['backup-list-sort-order'] as string);
     this.usageStatistics.set(
       serverSettings['usage-reporter-level'] === '' ? 'none' : serverSettings['usage-reporter-level']
     );
