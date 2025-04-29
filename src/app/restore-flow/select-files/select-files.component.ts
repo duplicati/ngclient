@@ -49,6 +49,10 @@ export default class SelectFilesComponent {
   #route = inject(ActivatedRoute);
   #datePipe = inject(DatePipe);
 
+  // Prevent effects from hammering the API
+  #requestedRootPathLoadId: string | null = null;
+  #requestedRepairVersion: string | null = null;
+
   selectFilesForm = this.#restoreFlowState.selectFilesForm;
   selectFilesFormSignal = this.#restoreFlowState.selectFilesFormSignal;
   selectOptionSignal = this.#restoreFlowState.selectOptionSignal;
@@ -63,10 +67,6 @@ export default class SelectFilesComponent {
   rootPath = signal<string | undefined>(undefined);
   loadingRootPath = signal(false);
   isRepairing = signal(false);
-
-  // Prevent effects from hammering the API
-  requestedRootPathLoadId: string | null = null;
-  requestedRepairVersion: string | null = null;
 
   loadingEffect = effect(() => {
     const versionOptionsLoading = this.versionOptionsLoading();
@@ -124,10 +124,10 @@ export default class SelectFilesComponent {
       const backupId = this.backupId();
       const versionId = `${backupId}+${option.Time}`;
 
-      if (this.requestedRepairVersion === versionId)
+      if (this.#requestedRepairVersion === versionId)
           return;
       
-      this.requestedRepairVersion = versionId;
+      this.#requestedRepairVersion = versionId;
       this.isRepairing.set(true);
       this.#dupServer
         .postApiV1BackupByIdRepairupdate({
@@ -140,7 +140,7 @@ export default class SelectFilesComponent {
         .pipe(
           takeUntil(this.abortLoading$),
           finalize(() => {
-            this.requestedRepairVersion = null;
+            this.#requestedRepairVersion = null;
           })
         )
         .subscribe((res) => {
@@ -168,9 +168,9 @@ export default class SelectFilesComponent {
     };
 
     const requestId = backupSettings.id + '';
-    if (this.isRepairing() || this.requestedRootPathLoadId === requestId) return;
+    if (this.isRepairing() || this.#requestedRootPathLoadId === requestId) return;
 
-    this.requestedRootPathLoadId = requestId;
+    this.#requestedRootPathLoadId = requestId;
     this.loadingRootPath.set(true);
     if (this.#sysinfo.hasV2ListOperations()) {
       this.#dupServer
@@ -188,7 +188,7 @@ export default class SelectFilesComponent {
           finalize(() => {
             this.showFileTree.set(true);
             this.loadingRootPath.set(false);
-            this.requestedRootPathLoadId = null;
+            this.#requestedRootPathLoadId = null;
           })
         )
         .subscribe({
