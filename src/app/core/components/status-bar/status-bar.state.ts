@@ -153,6 +153,10 @@ export class StatusBarState {
             statusText: this.#constructStatusText(res),
             actionText: res.backup?.Backup?.Name ?? $localize`Running task`,
           });
+
+          if (res.task?.Status === 'Completed') {
+            this.stopPollingProgress();
+          }
         },
         error: (err) => {
           if (err.status === 404) {

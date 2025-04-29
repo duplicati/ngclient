@@ -1,4 +1,3 @@
-import { JsonPipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -35,7 +34,6 @@ const fb = new FormBuilder();
     SparkleAlertComponent,
     SparkleProgressBarComponent,
     SparkleTooltipComponent,
-    JsonPipe,
   ],
   templateUrl: './export.component.html',
   styleUrl: './export.component.scss',

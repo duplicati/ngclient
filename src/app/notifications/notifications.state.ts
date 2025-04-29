@@ -1,26 +1,26 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { effect, inject, Injectable, signal } from '@angular/core';
 import { catchError, finalize, forkJoin, of, take, tap } from 'rxjs';
+import { StatusBarState } from '../core/components/status-bar/status-bar.state';
 import { DuplicatiServerService, NotificationDto } from '../core/openapi';
-import { ServerStateService } from '../core/services/server-state.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NotificationsState {
   #dupServer = inject(DuplicatiServerService);
-  #serverStateService = inject(ServerStateService);
+  #statusBarState = inject(StatusBarState);
 
-  serverState = computed(() => {
-    const serverState = this.#serverStateService.serverState();
+  serverState = this.#statusBarState.serverState;
+
+  serverStateEffect = effect(() => {
+    const serverState = this.#statusBarState.serverState();
 
     if (serverState?.LastNotificationUpdateID) {
       this.updateLastNotificationEventId(serverState?.LastNotificationUpdateID);
     }
-
-    return serverState;
   });
 
-  #lastNotificationEventId = signal<number>(-1);
+  #lastNotificationEventId = -1;
   #isloadingNotifications = signal(false);
   #notificationStream = signal<NotificationDto[]>([]);
   #tempStream = signal<NotificationDto[]>([]);
@@ -34,11 +34,11 @@ export class NotificationsState {
   }
 
   updateLastNotificationEventId(eventId: number) {
-    const currentEventId = this.#lastNotificationEventId();
+    const currentEventId = this.#lastNotificationEventId;
 
     if (currentEventId === eventId) return;
 
-    this.#lastNotificationEventId.set(eventId);
+    this.#lastNotificationEventId = eventId;
     this.getNotifications();
   }
 
