@@ -63,6 +63,7 @@ export default class SelectFilesComponent {
   rootPath = signal<string | undefined>(undefined);
   loadingRootPath = signal(false);
   isRepairing = signal(false);
+  requestedRootPathLoadId = signal<string | null>(null);
 
   loadingEffect = effect(() => {
     const versionOptionsLoading = this.versionOptionsLoading();
@@ -97,14 +98,17 @@ export default class SelectFilesComponent {
 
     this.showFileTree.set(false);
 
-    queueMicrotask(() => {
-      const settings = {
-        id: id + '',
-        time,
-      } as BackupSettings;
-      this.backupSettings.set(settings);
-      this.getRootPath(settings);
-    });
+    if (this.requestedRootPathLoadId() !== id + '') {
+      this.requestedRootPathLoadId.set(id + '');
+      queueMicrotask(() => {
+        const settings = {
+          id: id + '',
+          time,
+        } as BackupSettings;
+        this.backupSettings.set(settings);
+        this.getRootPath(settings);
+      });
+    }
   });
 
   repairEffect = effect(() => {
