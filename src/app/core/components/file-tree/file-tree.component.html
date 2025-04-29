@@ -77,7 +77,7 @@
       *ngTemplateOutlet="recursiveTree; context: { $implicit: { children: treeStructure(), level: 0 } }"></ng-container>
   </div>
 
-  @if (!accepts()) {
+  @if (!accepts() && !isByBackupSettings()) {
     <spk-toggle
       [class.active]="_showHiddenNodes()"
       class="primary raised browse-files-toggle"
