@@ -586,13 +586,8 @@ export default class FileTreeComponent {
         }}
       )
       .pipe(
-        map((res) => {
-          if (!res.Success)
-            throw new Error(res.Error ?? "Unknown error");
-
-          return res.Data ?? [];
-        }
-      ));
+        map((res) => res.Data ?? [])
+      );
     } else {
       const params: GetApiV1BackupByIdFilesData = {
         id: backupSettings.id + '',
@@ -604,11 +599,8 @@ export default class FileTreeComponent {
 
       return this.#dupServer.getApiV1BackupByIdFiles(params)
         .pipe(
-          map((res) => {
-            return res['Files'] ?? [];
-          }
-        ));
-
+          map((res) => res['Files'] ?? [])
+        );
     }
   }
 

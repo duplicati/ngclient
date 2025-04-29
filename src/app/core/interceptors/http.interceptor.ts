@@ -2,7 +2,7 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { SparkleAlertService } from '@sparkle-ui/core';
-import { catchError, finalize, Observable, shareReplay, switchMap, throwError } from 'rxjs';
+import { catchError, finalize, map, Observable, shareReplay, switchMap, throwError } from 'rxjs';
 import { ENVIRONMENT_TOKEN } from '../../../environments/environment-token';
 import { mapLocale } from '../locales/locales.utility';
 import { AccessTokenOutputDto } from '../openapi';
@@ -23,6 +23,7 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   const isRefreshRequest = req.url === '/api/v1/auth/refresh';
   const isProgressStateRequest = req.url === '/api/v1/progressstate';
   const isConnectionTestRequest = req.url === '/api/v1/remoteoperation/test';
+  const isV2Request = req.url.startsWith('/api/v2/');
   const token = auth.token();
 
   let modifiedRequest = req;
@@ -43,6 +44,21 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
   return next(modifiedRequest).pipe(
+    map((event) => {
+      // V2 responses returns http status 200 and the error message in the body
+      if (event.type === 4 && event.status === 200 && isV2Request) {
+        const body = (event.body as any);
+        if (body?.Success === false) {
+          throw {
+            error: {
+              Error: body?.Error ?? 'Unknown error'
+            },
+            body: body,
+          };
+        }
+      }
+      return event;
+    }),
     catchError((error) => {
       const errorMsg = error.error.Error || `Error Code: ${error.status}, Message: ${error.message}`;
 
