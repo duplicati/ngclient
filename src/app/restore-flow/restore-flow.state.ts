@@ -1,7 +1,9 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
+import { SparkleDialogService } from '@sparkle-ui/core';
 import { finalize, forkJoin, retry, take } from 'rxjs';
+import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServerService, GetBackupResultDto, IListResultFileset } from '../core/openapi';
 import { createRestoreOptionsForm } from './options/options.component';
 import { createEncryptionForm } from './restore-encryption/restore-encryption.component';
@@ -12,6 +14,7 @@ import { createRestoreSelectFilesForm } from './select-files/select-files.compon
 })
 export class RestoreFlowState {
   #router = inject(Router);
+  #dialog = inject(SparkleDialogService);
   #dupServer = inject(DuplicatiServerService);
 
   backupId = signal<string | null>(null);
@@ -78,10 +81,19 @@ export class RestoreFlowState {
   }
 
   exit() {
-    // TODOS
-    // - Are you sure dialog
-    this.#resetAllForms();
-    this.#router.navigate(['/']);
+    this.#dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: $localize`Confirm exit?`,
+        message: $localize`Are you sure you want to exit?`,
+        confirmText: $localize`Yes`,
+        cancelText: $localize`Cancel`,
+      },
+      closed: (res) => {
+        if (!res) return;
+        this.#resetAllForms();
+        this.#router.navigate(['/']);
+      }
+    });
   }
 
   getVersionOptions() {
