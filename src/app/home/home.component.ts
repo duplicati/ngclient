@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
   SparkleButtonComponent,
@@ -14,26 +14,7 @@ import { DuplicatiServerService } from '../core/openapi';
 import { BytesPipe } from '../core/pipes/byte.pipe';
 import { DurationFormatPipe } from '../core/pipes/duration.pipe';
 import { RelativeTimePipe } from '../core/pipes/relative-time.pipe';
-import { BackupsState, OrderBy } from '../core/states/backups.state';
-
-const ORDER_BY_MAP = [
-  {
-    value: 'id',
-    label: $localize`Create order`,
-  },
-  {
-    value: 'backend',
-    label: $localize`Destination type`,
-  },
-  {
-    value: 'lastrun',
-    label: $localize`Last run`,
-  },
-  {
-    value: 'name',
-    label: $localize`Name`,
-  },
-] as const;
+import { BackupsState, OrderBy, TimeType } from '../core/states/backups.state';
 
 @Component({
   selector: 'app-home',
@@ -60,13 +41,14 @@ export default class HomeComponent {
   #dupServer = inject(DuplicatiServerService);
 
   MISSING_BACKUP_NAME = $localize`Backup name missing`;
-  orderBy = computed(() => ORDER_BY_MAP.find((x) => x.value === this.#backupsState.orderBy())?.label);
+  sortOrderOptions = this.#backupsState.orderByOptions;
+  orderBy = this.#backupsState.orderBy;
   backups = this.#backupsState.backups;
   backupsLoading = this.#backupsState.backupsLoading;
   startingBackup = this.#backupsState.startingBackup;
   deletingBackup = this.#backupsState.deletingBackup;
 
-  timeType = signal<'relative' | 'actual'>('relative');
+  timeType = this.#backupsState.timeType;
 
   ngOnInit() {
     this.#backupsState.getBackups(true);
@@ -74,6 +56,10 @@ export default class HomeComponent {
 
   setOrderBy(orderBy: OrderBy) {
     this.#backupsState.setOrderBy(orderBy);
+  }
+
+  setTimeType(timeType: TimeType) {
+    this.#backupsState.setTimeType(timeType);
   }
 
   startBackup(id: string) {
