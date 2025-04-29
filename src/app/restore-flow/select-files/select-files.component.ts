@@ -10,7 +10,6 @@ import {
 } from '@sparkle-ui/core';
 import { finalize, Subject, takeUntil } from 'rxjs';
 import FileTreeComponent, { BackupSettings } from '../../core/components/file-tree/file-tree.component';
-import { StatusBarState } from '../../core/components/status-bar/status-bar.state';
 import { DuplicatiServerService, GetApiV1BackupByIdFilesData } from '../../core/openapi';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 import { RestoreFlowState } from '../restore-flow.state';
@@ -49,7 +48,6 @@ export default class SelectFilesComponent {
   #router = inject(Router);
   #route = inject(ActivatedRoute);
   #datePipe = inject(DatePipe);
-  #statusbarState = inject(StatusBarState);
 
   selectFilesForm = this.#restoreFlowState.selectFilesForm;
   selectFilesFormSignal = this.#restoreFlowState.selectFilesFormSignal;
@@ -65,7 +63,10 @@ export default class SelectFilesComponent {
   rootPath = signal<string | undefined>(undefined);
   loadingRootPath = signal(false);
   isRepairing = signal(false);
-  requestedRootPathLoadId = signal<string | null>(null);
+
+  // Prevent effects from hammering the API
+  requestedRootPathLoadId: string | null = null;
+  requestedRepairVersion: string | null = null;
 
   loadingEffect = effect(() => {
     const versionOptionsLoading = this.versionOptionsLoading();
@@ -100,17 +101,14 @@ export default class SelectFilesComponent {
 
     this.showFileTree.set(false);
 
-    if (this.requestedRootPathLoadId() !== id + '') {
-      this.requestedRootPathLoadId.set(id + '');
-      queueMicrotask(() => {
-        const settings = {
-          id: id + '',
-          time,
-        } as BackupSettings;
-        this.backupSettings.set(settings);
-        this.getRootPath(settings);
-      });
-    }
+    queueMicrotask(() => {
+      const settings = {
+        id: id + '',
+        time,
+      } as BackupSettings;
+      this.backupSettings.set(settings);
+      this.getRootPath(settings);
+    });
   });
 
   repairEffect = effect(() => {
@@ -124,7 +122,12 @@ export default class SelectFilesComponent {
       if (option === undefined) return;
 
       const backupId = this.backupId();
+      const versionId = `${backupId}+${option.Time}`;
 
+      if (this.requestedRepairVersion === versionId)
+          return;
+      
+      this.requestedRepairVersion = versionId;
       this.isRepairing.set(true);
       this.#dupServer
         .postApiV1BackupByIdRepairupdate({
@@ -134,6 +137,12 @@ export default class SelectFilesComponent {
             time: option.Time,
           },
         })
+        .pipe(
+          takeUntil(this.abortLoading$),
+          finalize(() => {
+            this.requestedRepairVersion = null;
+          })
+        )
         .subscribe((res) => {
           const taskId = res.ID!;
 
@@ -158,8 +167,10 @@ export default class SelectFilesComponent {
       folderContents: false,
     };
 
-    if (this.isRepairing()) return;
+    const requestId = backupSettings.id + '';
+    if (this.isRepairing() || this.requestedRootPathLoadId === requestId) return;
 
+    this.requestedRootPathLoadId = requestId;
     this.loadingRootPath.set(true);
     if (this.#sysinfo.hasV2ListOperations()) {
       this.#dupServer
@@ -177,6 +188,7 @@ export default class SelectFilesComponent {
           finalize(() => {
             this.showFileTree.set(true);
             this.loadingRootPath.set(false);
+            this.requestedRootPathLoadId = null;
           })
         )
         .subscribe({
