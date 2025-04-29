@@ -50,6 +50,8 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
         const body = (event.body as any);
         if (body?.Success === false) {
           throw {
+            status: 200,
+            message: body?.Error ?? 'Unknown error',
             error: {
               Error: body?.Error ?? 'Unknown error'
             },
@@ -60,7 +62,7 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
       return event;
     }),
     catchError((error) => {
-      const errorMsg = error.error.Error || `Error Code: ${error.status}, Message: ${error.message}`;
+      const errorMsg = error.error?.Error || `Error Code: ${error.status}, Message: ${error.message}`;
 
       // Suppress error handling for proxy detection requests
       if (!IS_PROXY_DETECT_REQUEST) {
