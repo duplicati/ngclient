@@ -87,7 +87,7 @@ export type DeleteBackupOutputDto = {
     ID?: (number) | null;
 };
 
-export type DuplicatiOperation = 'Backup' | 'Restore' | 'List' | 'Remove' | 'Repair' | 'RepairUpdate' | 'Verify' | 'Compact' | 'CreateReport' | 'ListRemote' | 'Delete' | 'Vacuum' | 'CustomRunner';
+export type DuplicatiOperation = 'Backup' | 'Restore' | 'List' | 'Remove' | 'Repair' | 'RepairUpdate' | 'Verify' | 'Compact' | 'CreateReport' | 'ListRemote' | 'Delete' | 'Vacuum' | 'CustomRunner' | 'ListFilesets' | 'ListFolderContents' | 'ListFileVersions' | 'SearchEntries';
 
 export type ExportArgsOnlyDto = {
     Backend?: (string) | null;
@@ -237,6 +237,9 @@ export type IRunnerData = {
         [key: string]: (string);
     } | null;
     readonly FilterStrings?: Array<(string)> | null;
+    readonly ExtraArguments?: Array<(string)> | null;
+    readonly PageSize?: number;
+    readonly PageOffset?: number;
     readonly TaskID?: number;
     readonly BackupID?: (string) | null;
     Operation?: DuplicatiOperation;
@@ -274,6 +277,75 @@ export type LicenseDto = {
     Url?: (string) | null;
     License?: (string) | null;
     Jsondata?: (string) | null;
+};
+
+export type ListFilesetsRequestDto = {
+    BackupId?: (string) | null;
+};
+
+export type ListFilesetsResponseDto = {
+    Success?: boolean;
+    Error?: (string) | null;
+    StatusCode?: (string) | null;
+    Data?: Array<ListFilesetsResponseItem> | null;
+    PageInfo?: PageInfo;
+};
+
+export type ListFilesetsResponseItem = {
+    Version?: number;
+    Time?: string;
+    IsFullBackup?: (boolean) | null;
+    FileCount?: (number) | null;
+    FileSizes?: (number) | null;
+};
+
+export type ListFileVersionsItemDto = {
+    Version?: number;
+    Time?: string;
+    Path?: (string) | null;
+    Size?: number;
+    IsDirectory?: boolean;
+    IsSymlink?: boolean;
+    LastModified?: string;
+};
+
+export type ListFileVersionsOutputDto = {
+    Success?: boolean;
+    Error?: (string) | null;
+    StatusCode?: (string) | null;
+    Data?: Array<ListFileVersionsItemDto> | null;
+    PageInfo?: PageInfo;
+};
+
+export type ListFileVersionsRequestDto = {
+    PageSize?: (number) | null;
+    Page?: (number) | null;
+    BackupId?: (string) | null;
+    Paths?: Array<(string)> | null;
+};
+
+export type ListFolderContentItemDto = {
+    Path?: (string) | null;
+    Size?: number;
+    IsDirectory?: boolean;
+    IsSymlink?: boolean;
+    LastModified?: string;
+};
+
+export type ListFolderContentRequestDto = {
+    PageSize?: (number) | null;
+    Page?: (number) | null;
+    BackupId?: (string) | null;
+    Paths?: Array<(string)> | null;
+    Time?: (string) | null;
+};
+
+export type ListFolderContentResponseDto = {
+    Success?: boolean;
+    Error?: (string) | null;
+    StatusCode?: (string) | null;
+    Data?: Array<ListFolderContentItemDto> | null;
+    PageInfo?: PageInfo;
 };
 
 export type LiveControlState = 'Running' | 'Paused';
@@ -319,6 +391,13 @@ export type NotificationDto = {
 };
 
 export type NotificationType = 'Information' | 'Warning' | 'Error';
+
+export type PageInfo = {
+    Page?: number;
+    PageSize?: number;
+    Total?: number;
+    Pages?: number;
+};
 
 export type RemoteControlStatusOutput = {
     CanEnable?: boolean;
@@ -369,6 +448,33 @@ export type ScheduleInputDto = {
     LastRun?: (string) | null;
     Rule?: (string) | null;
     AllowedDays?: Array<DayOfWeek> | null;
+};
+
+export type SearchEntriesItemDto = {
+    Version?: number;
+    Time?: string;
+    Path?: (string) | null;
+    Size?: number;
+    IsDirectory?: boolean;
+    IsSymlink?: boolean;
+    LastModified?: string;
+};
+
+export type SearchEntriesRequestDto = {
+    PageSize?: (number) | null;
+    Page?: (number) | null;
+    BackupId?: (string) | null;
+    Paths?: Array<(string)> | null;
+    Filters?: Array<(string)> | null;
+    Time?: (string) | null;
+};
+
+export type SearchEntriesResponseDto = {
+    Success?: boolean;
+    Error?: (string) | null;
+    StatusCode?: (string) | null;
+    Data?: Array<SearchEntriesItemDto> | null;
+    PageInfo?: PageInfo;
 };
 
 export type ServerStatusDto = {
@@ -469,6 +575,8 @@ export type SystemInfoDto = {
     SupportedLocales?: Array<LocaleDto> | null;
     BrowserLocaleSupported?: boolean;
     TimeZones?: Array<TimeZoneDto> | null;
+    APIExtensions?: Array<(string)> | null;
+    APIScopes?: Array<(string)> | null;
 };
 
 export type TaskStartedDto = {
@@ -991,6 +1099,30 @@ export type PostApiV1BackupByIdCopytotempData = {
 };
 
 export type PostApiV1BackupByIdCopytotempResponse = (CreateBackupDto);
+
+export type PostApiV2BackupListFilesetsData = {
+    requestBody: ListFilesetsRequestDto;
+};
+
+export type PostApiV2BackupListFilesetsResponse = (ListFilesetsResponseDto);
+
+export type PostApiV2BackupListFolderData = {
+    requestBody: ListFolderContentRequestDto;
+};
+
+export type PostApiV2BackupListFolderResponse = (ListFolderContentResponseDto);
+
+export type PostApiV2BackupListVersionsData = {
+    requestBody: ListFileVersionsRequestDto;
+};
+
+export type PostApiV2BackupListVersionsResponse = (ListFileVersionsOutputDto);
+
+export type PostApiV2BackupSearchData = {
+    requestBody: SearchEntriesRequestDto;
+};
+
+export type PostApiV2BackupSearchResponse = (SearchEntriesResponseDto);
 
 export type GetApiV1ProgressstateResponse = (IProgressEventData);
 
