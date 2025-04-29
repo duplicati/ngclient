@@ -53,28 +53,13 @@
       </app-toggle-card>
     </form>
 
-    <div class="remote-volume-wrap">
-      <app-size [customId]="'size'" [(ngModel)]="optionsFields.remoteVolumeSize">
-        <label for="size" i18n>Remote volume size</label>
-      </app-size>
-    </div>
-
     <p i18n>
       The backups will be split up into multiple files called volumes. Here you can set the maximum size of the
       individual volume files.
       <a href="#" class="spk-primary">Read more</a>
     </p>
 
-    <app-options-list
-      [(options)]="settings"
-      [hasFreeTextSettings]="true"
-      [hiddenOptions]="[
-        '--no-encryption',
-        '--exclude-files-attributes',
-        '--skip-files-larger-than',
-        'dblock-size',
-        'no-encryption',
-      ]" />
+    <app-options-list [(options)]="settings" [hasFreeTextSettings]="true" />
 
     <div class="form-actions">
       <button spk-button class="raised primary" [class.loader]="isSubmitting()" (click)="submit()" i18n>

@@ -9,14 +9,5 @@
 </div>
 
 @defer (when !isLoadingOptions()) {
-  <app-options-list
-    [(options)]="settings"
-    [hasFreeTextSettings]="true"
-    [hiddenOptions]="[
-      '--no-encryption',
-      '--exclude-files-attributes',
-      '--skip-files-larger-than',
-      'dblock-size',
-      'no-encryption',
-    ]" />
+  <app-options-list [(options)]="settings" [hasFreeTextSettings]="true" />
 }

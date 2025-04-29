@@ -25,3 +25,25 @@ form {
   gap: p2r(24);
   max-width: p2r(500);
 }
+
+.passwords {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(8);
+}
+
+.password-actions {
+  display: flex;
+  gap: p2r(8);
+  align-items: center;
+}
+
+.copy {
+  spk-icon.spk-success {
+    color: var(--success-500);
+  }
+}
+
+.hide {
+  display: none;
+}

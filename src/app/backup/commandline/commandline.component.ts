@@ -10,7 +10,6 @@ import {
   SparkleProgressBarComponent,
   SparkleSelectComponent,
 } from '@sparkle-ui/core';
-import { SizeComponent } from '../../core/components/size/size.component';
 import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { BackupDto, CommandlineService, DuplicatiServerService, GetBackupResultDto } from '../../core/openapi';
@@ -35,7 +34,6 @@ const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'] as const;
     SparkleSelectComponent,
     SparkleProgressBarComponent,
     SparkleIconComponent,
-    SizeComponent,
   ],
   templateUrl: './commandline.component.html',
   styleUrl: './commandline.component.scss',
@@ -117,7 +115,7 @@ export default class CommandlineComponent {
     this.isSubmitting.set(true);
     const baseCmd = this.baseCmdForm.value;
     const targetUrl = baseCmd.targetUrl ?? '';
-    const baseArgs = baseCmd.arguments?.split('\n') ?? [];
+    const baseArgs = baseCmd.arguments?.split('\n').filter((y) => y.length > 0) ?? [];
     const stdForm = this.standardFields.value;
     const filters = stdForm.filters ?? ([] as string[]);
 

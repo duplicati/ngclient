@@ -55,13 +55,12 @@ export function validateIf<T>(
       return null;
     }
 
-    let error: ValidationErrors | null = null;
+    let error: ValidationErrors = {};
 
     const conditionalFormCtrl = control.parent.get(conditionalFieldName);
 
     if (!conditionalFormCtrl) {
       console.warn('Conditional field not found');
-
       return null;
     }
 
@@ -73,14 +72,15 @@ export function validateIf<T>(
         : conditionalFormCtrl.value === conditionalValue
     ) {
       const validatorArr = Array.isArray(validators) ? validators : [validators];
+      for (const validator of validatorArr) {
+        const validationResult = validator(control);
+        const _currentErrors = error ? error : {};
 
-      error = validatorArr.find((validator) => validator(control) !== null) ?? null;
-    }
-
-    if (errorNamespace && error) {
-      const customError: ValidationErrors = {};
-      customError[errorNamespace] = error;
-      error = customError;
+        if (validationResult !== null) {
+          error = { ..._currentErrors, ...validationResult };
+          break;
+        }
+      }
     }
 
     return error;

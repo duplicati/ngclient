@@ -1,19 +1,24 @@
+import { JsonPipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
+  SparkleAlertComponent,
   SparkleButtonComponent,
   SparkleButtonGroupComponent,
   SparkleFormFieldComponent,
   SparkleIconComponent,
+  SparkleProgressBarComponent,
   SparkleToggleComponent,
+  SparkleTooltipComponent,
 } from '@sparkle-ui/core';
 import { finalize, switchMap } from 'rxjs';
 import { DuplicatiServerService } from '../../core/openapi';
+import { PasswordGeneratorService } from '../../core/services/password-generator.service';
 import { BackupsState } from '../../core/states/backups.state';
-import { validateWhen, watchField } from '../../core/validators/custom.validators';
+import { validateIf, watchField } from '../../core/validators/custom.validators';
 
 const fb = new FormBuilder();
 
@@ -27,12 +32,17 @@ const fb = new FormBuilder();
     SparkleIconComponent,
     SparkleFormFieldComponent,
     SparkleButtonComponent,
+    SparkleAlertComponent,
+    SparkleProgressBarComponent,
+    SparkleTooltipComponent,
+    JsonPipe,
   ],
   templateUrl: './export.component.html',
   styleUrl: './export.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ExportComponent {
+  #passwordGeneratorService = inject(PasswordGeneratorService);
   #dupServer = inject(DuplicatiServerService);
   #route = inject(ActivatedRoute);
   #router = inject(Router);
@@ -45,8 +55,10 @@ export default class ExportComponent {
   exportForm = fb.group({
     exportPasswords: fb.control<boolean>(true),
     encryption: fb.control<boolean>(false, [Validators.required, watchField()]),
-    password: fb.control<string>('', [validateWhen((t) => t?.value.encryption, [Validators.required])]),
-    repeatPassword: fb.control<string>('', [validateWhen((t) => t?.value.encryption, [Validators.required])]),
+    password: fb.control<string>('', [validateIf('encryption', true, [Validators.required, Validators.minLength(3)])]),
+    repeatPassword: fb.control<string>('', [
+      validateIf('encryption', true, [Validators.required, Validators.minLength(3)]),
+    ]),
   });
 
   exportFormSignal = toSignal(this.exportForm.valueChanges);
@@ -54,6 +66,22 @@ export default class ExportComponent {
   activeBackup = computed(() =>
     this.#backups.backups().find((x) => x.Backup?.ID === this.#route.snapshot.params['id'])
   );
+
+  showPassword = signal(false);
+  copiedPassword = signal(false);
+  showCopyPassword = signal(false);
+  calculatePasswordStrength = computed(() => {
+    const form = this.exportFormSignal();
+    const password = form?.password ?? '';
+
+    return this.#passwordGeneratorService.calculatePasswordStrength(password);
+  });
+
+  showPasswordEffect = effect(() => {
+    if (this.showPassword()) {
+      this.exportForm.updateValueAndValidity();
+    }
+  });
 
   submit() {
     this.isExporting.set(true);
@@ -70,10 +98,14 @@ export default class ExportComponent {
               return entries ? '?' + entries.map(([key, value]) => `${key}=${value}`).join('&') : '';
             };
 
+            const passphrase = this.exportFormSignal()?.password?.length
+              ? this.exportFormSignal()?.password
+              : undefined;
+
             return this.#httpClient.get(
               `/api/v1/backup/${this.#route.snapshot.params['id']}/export${objToQueryString({
-                exportPasswords: this.exportFormSignal()?.exportPasswords ?? undefined,
-                passphrase: this.exportFormSignal()?.password ?? undefined,
+                'export-passwords': this.exportFormSignal()?.exportPasswords ?? undefined,
+                passphrase: passphrase,
                 token: x.Token as string,
               })}`,
               {
@@ -89,7 +121,7 @@ export default class ExportComponent {
             const backupName = backup?.Backup?.Name ?? 'Backup';
             const fileExt = this.exportFormSignal()?.encryption ? 'aes' : 'json';
 
-            this.downloadFile(res, `${backupName}.${fileExt}`);
+            this.downloadFile(res, `${backupName}-duplicati-config.${fileExt}`);
             this.#router.navigate(['/']);
           },
           error: (err) => {},
@@ -118,5 +150,41 @@ export default class ExportComponent {
     a.download = filename;
     a.click();
     window.URL.revokeObjectURL(url);
+  }
+  async copyPassword() {
+    const pass = this.exportForm.controls.password.value;
+
+    await this.#copyToClipboard(pass ?? '');
+
+    this.copiedPassword.set(true);
+  }
+
+  async #copyToClipboard(text: string) {
+    try {
+      // Attempt to use the Clipboard API
+      await navigator.clipboard.writeText(text);
+    } catch (err) {
+      // Fallback to execCommand if Clipboard API fails
+      try {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+      } catch (err) {
+        console.error('Failed to copy text: ', err);
+      }
+    }
+  }
+
+  generatePassword() {
+    this.copiedPassword.set(false);
+
+    const newPass = this.#passwordGeneratorService.generate(16);
+    this.exportForm.controls.password.setValue(newPass);
+    this.exportForm.controls.repeatPassword.setValue(newPass);
+
+    this.showCopyPassword.set(true);
   }
 }
