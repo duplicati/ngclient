@@ -65,6 +65,7 @@ export const NONE_OPTION = {
     SparkleProgressBarComponent,
     SparkleAlertComponent,
     SparkleTooltipComponent,
+    SparkleAlertComponent,
   ],
   templateUrl: './general.component.html',
   styleUrl: './general.component.scss',

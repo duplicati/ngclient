@@ -1,6 +1,13 @@
 <form [formGroup]="generalForm" autocomplete="off" #formRef (submit)="next()">
   <h3 class="title-30" i18n>General backup settings</h3>
 
+  @if (!isNew() && generalFormSignal()?.encryption !== '') {
+    <spk-alert class="primary" i18n>
+      <spk-icon icon>lock</spk-icon>
+      Encrypted backup
+    </spk-alert>
+  }
+
   <spk-form-field>
     <label for="backupName" i18n>
       Backup name
