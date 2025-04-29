@@ -181,8 +181,8 @@ export default class SelectFilesComponent {
         )
         .subscribe({
           next: (res) => {
-            if (res.Error)
-              throw new Error(res.Error);
+            if (!res.Success)
+              throw new Error(res.Error ?? 'Unknown error');
 
             const paths = (res.Data ?? []).map((x) => x.Path);
             if (paths.length == 1)

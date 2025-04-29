@@ -587,8 +587,8 @@ export default class FileTreeComponent {
       )
       .pipe(
         map((res) => {
-          if (res.Error)
-            throw new Error(res.Error);
+          if (!res.Success)
+            throw new Error(res.Error ?? "Unknown error");
 
           return res.Data ?? [];
         }
