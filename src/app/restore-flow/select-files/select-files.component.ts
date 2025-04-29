@@ -168,7 +168,7 @@ export default class SelectFilesComponent {
             BackupId: backupSettings.id,
             Time: backupSettings.time,
             Paths: null,
-            PageSize: 10000,
+            PageSize: 0, // TODO: Add pagination support
             Page: 0
           }}
         )
@@ -183,8 +183,7 @@ export default class SelectFilesComponent {
           next: (res) => {
             if (res.Error)
               throw new Error(res.Error);
-            
-          // TODO: Handle folders larger than 10000
+
             const paths = (res.Data ?? []).map((x) => x.Path);
             if (paths.length == 1)
               this.rootPath.set(paths[0] ?? '/');

@@ -581,7 +581,7 @@ export default class FileTreeComponent {
           BackupId: backupSettings.id,
           Time: backupSettings.time,
           Paths: path ? [path] : null,
-          PageSize: 10000,
+          PageSize: 0, // TODO: Add pagination support
           Page: 0,
         }}
       )
@@ -589,7 +589,7 @@ export default class FileTreeComponent {
         map((res) => {
           if (res.Error)
             throw new Error(res.Error);
-          // TODO: Handle folders larger than 10000
+
           return res.Data ?? [];
         }
       ));
