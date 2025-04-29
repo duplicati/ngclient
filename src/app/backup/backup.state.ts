@@ -405,7 +405,6 @@ export class BackupState {
 
     var retentionValue: RetentionType = 'all';
     ignoredModules?.forEach((x) => {
-      console.log('x', x.Name);
       if (x.Name === 'dblock-size') {
         this.optionsFields.remoteVolumeSize.set(x.Value ?? '50MB');
       }

@@ -51,7 +51,7 @@ export default class HomeComponent {
   timeType = this.#backupsState.timeType;
 
   ngOnInit() {
-    this.#backupsState.getBackups(true);
+    this.#backupsState.getBackups();
   }
 
   setOrderBy(orderBy: OrderBy) {

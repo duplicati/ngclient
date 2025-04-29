@@ -72,6 +72,7 @@ export class StatusBarState {
   #serverState = inject(ServerStateService);
   #isFetching = signal(false);
   #statusData = signal<StatusWithContent | null>(null);
+  #lastBackupListId: number | null = null;
 
   statusData = this.#statusData.asReadonly();
 
@@ -93,10 +94,10 @@ export class StatusBarState {
 
   serverStateEffect = effect(() => {
     const newState = this.#serverState.serverState();
-
-    if (!newState?.ActiveTask) {
-      this.#backupState.getBackups(true);
-    }
+    const backupDataId = newState?.LastDataUpdateID ?? null;
+    const updated = backupDataId !== null && backupDataId !== this.#lastBackupListId && this.#lastBackupListId !== -1;    
+    this.#lastBackupListId = backupDataId ?? -1; //Set to -1 if this is the first update
+    this.#backupState.getBackups(updated);
   });
 
   isFetching = this.#isFetching.asReadonly();

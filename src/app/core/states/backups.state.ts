@@ -104,7 +104,7 @@ export type TimeType = 'actual' | 'relative';
 export class BackupsState {
   #ls = inject(LOCALSTORAGE);
   #dupServer = inject(DuplicatiServerService);
-  #timestamp: number | null = null;
+  #lastSortOrder: string | null = null;
   #draftBackups = signal<BackupDraftItem[]>([]);
   #backups = signal<BackupRes>([]);
   #backupsLoading = signal(false);
@@ -157,20 +157,16 @@ export class BackupsState {
   }
 
   getBackups(forceRefresh = false) {
-    const timestamp = this.#timestamp;
-    const now = Date.now();
-    const cacheTimeLimit = timestamp && now - timestamp < 15 * 60 * 1000;
-    const preventMultipleRequests = timestamp && now - timestamp < 100;
 
-    if (preventMultipleRequests || (!forceRefresh && cacheTimeLimit && this.#backups().length)) {
+    var sortOrder = this.#orderBy();
+    if (this.#lastSortOrder === sortOrder && !forceRefresh)
       return;
-    }
+    this.#lastSortOrder = sortOrder;
 
-    this.#timestamp = now;
     this.#backupsLoading.set(true);
     this.#dupServer
       .getApiV1Backups({
-        orderBy: this.#orderBy(),
+        orderBy: sortOrder,
       })
       .pipe(
         take(1),
