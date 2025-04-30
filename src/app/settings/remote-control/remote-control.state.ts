@@ -1,7 +1,9 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 
+import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServerService, RemoteControlStatusOutput } from '../../core/openapi';
 import { SysinfoState } from '../../core/states/sysinfo.state';
+import { SparkleDialogService } from '@sparkle-ui/core';
 
 type State =
   | 'connected'
@@ -19,6 +21,7 @@ type Timeout = ReturnType<typeof setTimeout>;
   providedIn: 'root',
 })
 export class RemoteControlState {
+  #dialog = inject(SparkleDialogService);
   #dupServer = inject(DuplicatiServerService);
   #sysinfo = inject(SysinfoState);
 
@@ -175,11 +178,20 @@ export class RemoteControlState {
   deleteRemoteControl() {
     const _self = this;
 
-    if (confirm('Are you sure you want to delete the remote control registration?')) {
-      _self.#dupServer.deleteApiV1RemotecontrolRegistration().subscribe({
-        next: (res) => _self.#mapRemoteControlStatus(res),
-        error: (err) => _self.#mapRemoteControlError(err),
-      });
-    }
+        this.#dialog.open(ConfirmDialogComponent, {
+          data: {
+            title: $localize`Confirm delete`,
+            message: $localize`Are you sure you want to delete the remote control registration?`,
+            confirmText: $localize`Delete registration`,
+            cancelText: $localize`Cancel`,
+          },
+          closed: (res) => {
+            if (!res) return;
+            _self.#dupServer.deleteApiV1RemotecontrolRegistration().subscribe({
+              next: (res) => _self.#mapRemoteControlStatus(res),
+              error: (err) => _self.#mapRemoteControlError(err),
+            });
+          }
+        });   
   }
 }

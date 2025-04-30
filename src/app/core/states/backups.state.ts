@@ -111,7 +111,9 @@ export class BackupsState {
   #startingBackup = signal(false);
   #deletingBackup = signal<string | null>(null);
 
-  #timeType = signal<TimeType>(this.#ls.getItemParsed<TimeType>(LOCALSTORAGE_BACKUP_LIST_SHOW_ACTUAL_TIMES, true) ?? 'relative');
+  #timeType = signal<TimeType>(
+    this.#ls.getItemParsed<TimeType>(LOCALSTORAGE_BACKUP_LIST_SHOW_ACTUAL_TIMES, true) ?? 'relative'
+  );
   #orderBy = signal(this.#ls.getItemParsed<OrderBy>(LOCALSTORAGE_BACKUP_LIST_ORDER_BY, true) ?? 'id');
 
   orderByOptions = signal(SORT_OPTIONS);

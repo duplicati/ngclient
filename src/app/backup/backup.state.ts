@@ -28,6 +28,8 @@ import { createGeneralForm, NONE_OPTION } from './general/general.component';
 import { RetentionType } from './options/options.component';
 import { Days, SCHEDULE_FIELD_DEFAULTS } from './schedule/schedule.component';
 import { createSourceDataForm } from './source-data/source-data.component';
+import { SparkleDialogService } from '@sparkle-ui/core';
+import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 
 const SMART_RETENTION = '1W:1D,4W:1W,12M:1M';
 
@@ -58,6 +60,7 @@ type DestinationDefault = {
 export class BackupState {
   #router = inject(Router);
   #sysinfo = inject(SysinfoState);
+  #dialog = inject(SparkleDialogService);  
   #dupServer = inject(DuplicatiServerService);
   #timespanLiteralService = inject(TimespanLiteralsService);
 
@@ -250,10 +253,19 @@ export class BackupState {
   }
 
   exit() {
-    // TODOS
-    // - Are you sure dialog
-    this.#resetAllForms();
-    this.#router.navigate(['/']);
+    this.#dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: $localize`Confirm exit?`,
+        message: $localize`Are you sure you want to exit?`,
+        confirmText: $localize`Yes`,
+        cancelText: $localize`Cancel`,
+      },
+      closed: (res) => {
+        if (!res) return;
+        this.#resetAllForms();
+        this.#router.navigate(['/']);
+      }
+    });    
   }
 
   updateFieldsFromTargetUrl(targetUrl: string) {
@@ -650,47 +662,6 @@ export class BackupState {
     };
   }
 
-  // removeOptionFromFormGroup(option: FormView) {
-  //   const optionName = option.name;
-
-  //   if (!optionName) return;
-
-  //   this.optionsForm.controls.advancedOptions.removeControl(optionName);
-  //   this.selectedOptions.update((y) => {
-  //     y = y.filter((x) => x.name !== optionName);
-
-  //     return y;
-  //   });
-  // }
-
-  // addOptionToFormGroup(option: FormView, defaultValueOverride?: string) {
-  //   const group = this.optionsForm.controls.advancedOptions;
-
-  //   this.createFormField(group, option, defaultValueOverride ?? option.defaultValue);
-  //   this.selectedOptions.update((y) => {
-  //     y.push(option);
-
-  //     return y;
-  //   });
-  // }
-
-  // addFreeTextOption(name: string, value: string, formViewOptions?: Partial<FormView>) {
-  //   const group = this.optionsForm.controls.advancedOptions;
-  //   const option: FormView = {
-  //     name,
-  //     type: 'String',
-  //     defaultValue: value,
-  //     ...formViewOptions,
-  //   };
-
-  //   this.createFormField(group, option, value);
-  //   this.selectedOptions.update((y) => {
-  //     y.push(option);
-
-  //     return y;
-  //   });
-  // }
-
   createFormField(group: FormGroup, element: FormView, defaultValue?: any) {
     if (
       element.type === 'String' ||
@@ -776,20 +747,27 @@ export class BackupState {
     }
 
     for (let index = 0; index < item.Options.length; index++) {
-      const element = item.Options[index];
+      const element = item.Options[index] as ICommandLineArgument;
 
       if (element.Deprecated) continue;
 
-      const asDynamic = dynamicFields.find((x) => x === element.Name || (x as CustomFormView).name === element.Name);
+      const asDynamic = dynamicFields.find(
+        (x) =>
+          x === element.Name ||
+          element.Aliases?.includes((x as CustomFormView).name) ||
+          (x as CustomFormView).name === element.Name
+      );
 
       if (asDynamic) {
+        const aliasIndex = element.Aliases?.indexOf((asDynamic as CustomFormView).name) ?? -1;
+        const name = element.Aliases && aliasIndex > -1 ? element.Aliases[aliasIndex] : (element.Name as string);
         const overwriting = asDynamic && typeof asDynamic !== 'string';
         const asDynamicDefaultValue = overwriting
           ? (asDynamic?.defaultValue ?? element.DefaultValue)
           : element.DefaultValue;
 
         const newField = {
-          name: element.Name as string,
+          name: name,
           type: element.Type as ArgumentType,
           shortDescription: element.ShortDescription ?? undefined,
           longDescription: element.LongDescription ?? undefined,
@@ -804,7 +782,7 @@ export class BackupState {
             }
           : newField;
 
-        const passedDefaultValue = defaults?.dynamic[element.Name as string];
+        const passedDefaultValue = defaults?.dynamic[name];
         const defaultValue = passedDefaultValue ?? asDynamicDefaultValue ?? element.DefaultValue;
 
         this.createFormField(dynamicGroup, patchedNewField, defaultValue);
