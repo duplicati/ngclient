@@ -1413,9 +1413,9 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         shortDescription: 'Path on Filejump',
         longDescription: 'Path on Filejump',
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
-      }
+      },
     },
-    dynamicFields: [ 
+    dynamicFields: [
       {
         type: 'Password',
         name: 'api-token',
@@ -1424,20 +1424,21 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
       // TODO: Support password based auth?
-      // 'auth-username', 
+      // 'auth-username',
       // 'auth-password'
     ],
     mapper: {
       to: (fields: any): string => {
         const { path, username, password, apitoken } = fields.custom;
-        const obj = (apitoken || '').trim() === ''
-          ? {
-              ['auth-username']: username,
-              ['auth-password']: password,
-            }
-          : {
-              ['api-token']: apitoken,
-            };
+        const obj =
+          (apitoken || '').trim() === ''
+            ? {
+                ['auth-username']: username,
+                ['auth-password']: password,
+              }
+            : {
+                ['api-token']: apitoken,
+              };
 
         const asMap = new Map([
           ...Object.entries(obj),
@@ -1463,7 +1464,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         };
       },
     },
-  },  
+  },
 
   // Validated against the old destination test url
   {
