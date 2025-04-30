@@ -2,9 +2,9 @@ import { inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { SparkleDialogService } from '@sparkle-ui/core';
-import { finalize, forkJoin, retry, take } from 'rxjs';
+import { catchError, finalize, forkJoin, Observable, retry, switchMap, take, throwError, timer } from 'rxjs';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
-import { DuplicatiServerService, GetBackupResultDto } from '../core/openapi';
+import { DuplicatiServerService, GetBackupResultDto, ListFilesetsResponseDto } from '../core/openapi';
 import { SysinfoState } from '../core/states/sysinfo.state';
 import { createRestoreOptionsForm } from './options/options.component';
 import { createEncryptionForm } from './restore-encryption/restore-encryption.component';
@@ -110,6 +110,26 @@ export class RestoreFlowState {
     this.versionOptions();
   }
 
+  private loadFilesetsWithRetryv2(id: string, retriesLeft: number = 2): Observable<ListFilesetsResponseDto> {
+    return this.#dupServer
+      .postApiV2BackupListFilesets({ requestBody: { BackupId: id } })
+      .pipe(
+        catchError(err => {
+          const isEncryptedError = err?.error?.body?.StatusCode === 'EncryptedStorageNoPassphrase';
+          const isNotFoundError = err?.error?.body?.StatusCode === 'FolderMissing';
+          const isEmptyFolderError = err?.error?.body?.StatusCode === 'EmptyRemoteFolder';
+
+          if (isEncryptedError || isNotFoundError || isEmptyFolderError || retriesLeft === 0) {
+            return throwError(() => err);
+          }
+
+          return timer(1000).pipe(
+            switchMap(() => this.loadFilesetsWithRetryv2(id, retriesLeft - 1))
+          );
+        })
+      );
+  }
+
   getBackup(id: string, setFirstToForm = false) {
     this.versionOptionsLoading.set(true);
 
@@ -118,13 +138,7 @@ export class RestoreFlowState {
         this.#dupServer.getApiV1BackupById({
           id,
         }),
-        this.#dupServer
-        .postApiV2BackupListFilesets({
-          requestBody: {
-            BackupId: id
-          }
-        })
-        .pipe(retry(3))
+        this.loadFilesetsWithRetryv2(id),
       ])
         .pipe(
           take(1),
@@ -145,7 +159,32 @@ export class RestoreFlowState {
             })));
             this.backup.set(backup);
           },
-        });      
+          error: (err) => {
+            const isEncryptedError = err?.error?.body?.StatusCode === 'EncryptedStorageNoPassphrase';
+            const isNotFoundError = err?.error?.body?.StatusCode === 'FolderMissing';
+            const isEmptyFolderError = err?.error?.body?.StatusCode === 'EmptyRemoteFolder';
+
+            let errorMessage = $localize`An error occurred while loading the backup filesets: ${err.message}`;
+            if (isEncryptedError)
+              errorMessage = $localize`The remote storage is encrypted. Please enter the passphrase to access the backup.`;
+            if (isNotFoundError) 
+              errorMessage = $localize`The backup storage folder was not found.`;
+            if (isEmptyFolderError)
+              errorMessage = $localize`The backup storage folder does not contain any filesets.`;
+
+            this.#dialog.open(ConfirmDialogComponent, {
+              data: {
+                title: $localize`Failed to load backup filesets`,
+                message: errorMessage,
+                confirmText: $localize`OK`,
+                cancelText: undefined,
+              },
+              closed: (_) => {
+                this.#router.navigate([isEncryptedError ? '/restore-from-files/encryption': '/restore-from-files/destination']);
+              }
+            });
+          }
+        });
     }
     else
     {
