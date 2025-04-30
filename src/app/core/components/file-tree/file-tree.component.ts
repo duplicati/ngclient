@@ -575,15 +575,33 @@ export default class FileTreeComponent {
 
   #getBackupFiles(path: string | null) {
     const backupSettings = this.backupSettings()!;
-    const params: GetApiV1BackupByIdFilesData = {
-      id: backupSettings.id + '',
-      prefixOnly: false,
-      folderContents: true,
-      time: backupSettings.time,
-      filter: path ? '@' + path : undefined,
-    };
+    if (this.#sysInfo.hasV2ListOperations()) {
+      return this.#dupServer.postApiV2BackupListFolder({
+        requestBody: {
+          BackupId: backupSettings.id,
+          Time: backupSettings.time,
+          Paths: path ? [path] : null,
+          PageSize: 0, // TODO: Add pagination support
+          Page: 0,
+        }}
+      )
+      .pipe(
+        map((res) => res.Data ?? [])
+      );
+    } else {
+      const params: GetApiV1BackupByIdFilesData = {
+        id: backupSettings.id + '',
+        prefixOnly: false,
+        folderContents: true,
+        time: backupSettings.time,
+        filter: path ? '@' + path : undefined,
+      };
 
-    return this.#dupServer.getApiV1BackupByIdFiles(params);
+      return this.#dupServer.getApiV1BackupByIdFiles(params)
+        .pipe(
+          map((res) => res['Files'] ?? [])
+        );
+    }
   }
 
   #getFilePath(path: string) {
@@ -694,7 +712,7 @@ export default class FileTreeComponent {
     (this.#getFilePath(newPath) as Observable<any>).pipe(finalize(() => this.isLoading.set(false))).subscribe({
       next: (x) => {
         let alignDataArray = this.isByBackupSettings()
-          ? x['Files'].map((y: { Path: string; Size: any }) => {
+          ? x.map((y: { Path: string; Size: number }) => {
               return {
                 text: y.Path.split('/')
                   .filter((part) => part !== '')
