@@ -87,6 +87,31 @@ export type DeleteBackupOutputDto = {
     ID?: (number) | null;
 };
 
+export type DestinationTestRequestDto = {
+    DestinationUrl?: (string) | null;
+    Options?: {
+        [key: string]: (string);
+    } | null;
+    AutoCreate?: boolean;
+};
+
+export type DestinationTestResponseDto = {
+    Success?: boolean;
+    Error?: (string) | null;
+    StatusCode?: (string) | null;
+    Data?: DestinationTestResult;
+};
+
+export type DestinationTestResult = {
+    FolderExists?: (boolean) | null;
+    FolderIsEmpty?: (boolean) | null;
+    FolderContainsBackupFiles?: (boolean) | null;
+    FolderContainsEncryptedBackupFiles?: (boolean) | null;
+    HostCertificate?: (string) | null;
+    ReportedHostKey?: (string) | null;
+    AcceptedHostKey?: (string) | null;
+};
+
 export type DuplicatiOperation = 'Backup' | 'Restore' | 'List' | 'Remove' | 'Repair' | 'RepairUpdate' | 'Verify' | 'Compact' | 'CreateReport' | 'ListRemote' | 'Delete' | 'Vacuum' | 'CustomRunner' | 'ListFilesets' | 'ListFolderContents' | 'ListFileVersions' | 'SearchEntries';
 
 export type ExportArgsOnlyDto = {
@@ -1123,6 +1148,12 @@ export type PostApiV2BackupSearchData = {
 };
 
 export type PostApiV2BackupSearchResponse = (SearchEntriesResponseDto);
+
+export type PostApiV2DestinationTestData = {
+    requestBody: DestinationTestRequestDto;
+};
+
+export type PostApiV2DestinationTestResponse = (DestinationTestResponseDto);
 
 export type GetApiV1ProgressstateResponse = (IProgressEventData);
 
