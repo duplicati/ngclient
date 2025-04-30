@@ -20,7 +20,7 @@
     "gen:tx": "ng extract-i18n --output-path src/locale --format xlf",
     "tx:push": "tx push -s",
     "tx:pull": "tx pull -a",
-    "tx:sync": "tx push -s && tx pull -a",
+    "tx:sync": "ng extract-i18n --output-path src/locale --format xlf && tx push -s && tx pull -a",
     "gen:openapi": "openapi-ts"
   },
   "dependencies": {
