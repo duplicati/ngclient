@@ -17,6 +17,10 @@
     "build:dev": "bun run gen:font && ng build --configuration development",
     "build:prod": "bun run gen:font & ng build --configuration production",
     "watch": "bun run watch:font & ng build --watch --configuration development",
+    "gen:tx": "ng extract-i18n --output-path src/locale --format xlf",
+    "tx:push": "tx push -s",
+    "tx:pull": "tx pull -a",
+    "tx:sync": "ng extract-i18n --output-path src/locale --format xlf && tx push -s && tx pull -a",
     "gen:openapi": "openapi-ts"
   },
   "dependencies": {
