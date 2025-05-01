@@ -71,6 +71,11 @@ export class SysinfoState {
     return apiExtensions.includes('v2:backup:list-filesets') && apiExtensions.includes('v2:backup:list-folder');
   });
 
+  hasV2TestOperations = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v2:destination:test');
+  });
+
   preload(returnObservable = false): Observable<SystemInfoDto> | void {
     const obs = (this.#dupServer.getApiV1Systeminfo() as Observable<SystemInfoDto>).pipe(
       tap((systemInfo) => {
