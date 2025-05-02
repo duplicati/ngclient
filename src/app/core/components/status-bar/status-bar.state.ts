@@ -132,7 +132,6 @@ export class StatusBarState {
   }
 
   #getProgressState() {
-    console.log('getProgressState');
     this.#isFetching.set(true);
     this.#progState
       .getApiV1Progressstate()

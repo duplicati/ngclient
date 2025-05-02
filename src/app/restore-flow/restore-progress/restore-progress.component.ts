@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import {
   SparkleCardComponent,
   SparkleIconComponent,
@@ -34,6 +34,7 @@ export default class RestoreProgressComponent {
 
   statusData = this.#statusBarState.statusData;
   backupId = this.#restoreFlowState.backupId;
+  isPolling = signal(true);
   taskId = computed(() => this.#statusBarState.statusData()?.TaskID?.toString() ?? undefined);
   lastRestoreStarted = computed(() => {
     const lastRestoreStarted =
@@ -42,6 +43,14 @@ export default class RestoreProgressComponent {
     if (!lastRestoreStarted) return null;
 
     return this.fixDate(lastRestoreStarted);
+  });
+
+  completedEffect = effect(() => {
+    const completed = this.statusData()?.task?.Status === 'Completed';
+
+    if (completed) {
+      this.isPolling.set(false);
+    }
   });
 
   notificationFilterPredicate = () => {

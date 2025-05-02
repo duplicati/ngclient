@@ -16,24 +16,23 @@ import { LogsLiveState } from './logs-live.state';
 export default class LogsLiveComponent {
   #logsLiveState = inject(LogsLiveState);
 
-  taskFilter = input<string | null>();
   whenFilter = input<number | null>();
   backupIdFilter = input<string | null>();
   asSimpleList = input<boolean>();
+  polling = input<boolean>();
 
   logLevel = this.#logsLiveState.logLevel;
   logLevelByLabel = this.#logsLiveState.logLevelByLabel;
   logs = this.#logsLiveState.logs;
   logsLoading = this.#logsLiveState.logsLoading;
 
-  openRowIndex = signal<number | null>(null);
+  pollingEffect = effect(() => {
+    const polling = this.polling() ?? false;
 
-  taskEffect = effect(() => {
-    const taskFilter = this.taskFilter() ?? null;
-
-    this.#logsLiveState.setTaskFilter(taskFilter);
-    this.#logsLiveState.logLevel.set(taskFilter ? 'Verbose' : 'Disabled');
+    this.#logsLiveState.isPolling.set(polling);
   });
+
+  openRowIndex = signal<number | null>(null);
 
   whenEffect = effect(() => {
     const whenFilter = this.whenFilter() ?? null;

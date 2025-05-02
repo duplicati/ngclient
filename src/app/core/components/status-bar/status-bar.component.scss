@@ -22,6 +22,12 @@
   flex-direction: column;
   gap: p2r(4);
   min-width: p2r(300);
+
+  .label {
+    display: flex;
+    align-items: center;
+    gap: p2r(4);
+  }
 }
 
 .current-backup-actions {

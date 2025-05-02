@@ -55,6 +55,7 @@
 
     <app-logs-live
       [asSimpleList]="true"
+      [polling]="isPolling()"
       [whenFilter]="lastRestoreStarted()?.getTime()"
       [backupIdFilter]="backupId()"></app-logs-live>
   </spk-card>

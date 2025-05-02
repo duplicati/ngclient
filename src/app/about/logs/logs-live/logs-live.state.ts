@@ -56,7 +56,6 @@ export class LogsLiveState {
   logLevel = signal('Disabled');
   logLevelByLabel = computed(() => LOG_LEVELS.find((level) => level.value === this.logLevel())?.label);
 
-  taskFilter = signal<string | null>(null);
   whenFilter = signal<number | null>(null);
   backupIdFilter = signal<string | null>(null);
   id = signal<number>(0);
@@ -70,12 +69,11 @@ export class LogsLiveState {
       );
     }
 
-    if (this.taskFilter() === undefined) return this.#logs();
-
-    return this.#logs().filter((x) => x.TaskID === this.taskFilter());
+    return this.#logs();
   });
   timerInterval: number | undefined;
   logsLoading = signal(false);
+  isPolling = signal(false);
   pagination = signal({
     offset: 0,
     pagesize: 100,
@@ -84,7 +82,7 @@ export class LogsLiveState {
   logLevelEffect = effect(() => {
     if (this.logLevel() === 'Disabled') {
       this.timerInterval = undefined;
-    } else {
+    } else if (this.isPolling()) {
       this.#logs.set([]);
       this.id.set(0);
       queueMicrotask(() => this.loadLogs());
@@ -92,6 +90,9 @@ export class LogsLiveState {
       this.timerInterval = setInterval(() => {
         this.loadLogs();
       }, 3000);
+    } else {
+      this.timerInterval && clearInterval(this.timerInterval);
+      this.timerInterval = undefined;
     }
   });
 
@@ -101,10 +102,6 @@ export class LogsLiveState {
 
   setBackupIdFilter(backupIdFilter: string | null) {
     this.backupIdFilter.set(backupIdFilter);
-  }
-
-  setTaskFilter(taskFilter: string | null) {
-    this.taskFilter.set(taskFilter);
   }
 
   loadLogs() {
