@@ -232,7 +232,7 @@ export class BackupState {
         .pipe(finalize(() => this.isSubmitting.set(false)))
         .subscribe({
           next: (res) => {
-            this.exit();
+            this.exit(false);
           },
           error: (err) => {},
         });
@@ -245,14 +245,20 @@ export class BackupState {
         .pipe(finalize(() => this.isSubmitting.set(false)))
         .subscribe({
           next: (res) => {
-            this.exit();
+            this.exit(false);
           },
           error: (err) => {},
         });
     }
   }
 
-  exit() {
+  exit(confirm: boolean) {
+    if (!confirm) {
+      this.#resetAllForms();
+      this.#router.navigate(['/']);
+      return;
+    }
+
     this.#dialog.open(ConfirmDialogComponent, {
       data: {
         title: $localize`Confirm exit?`,

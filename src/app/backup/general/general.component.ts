@@ -117,7 +117,7 @@ export default class GeneralComponent {
   }
 
   exit() {
-    this.#backupState.exit();
+    this.#backupState.exit(true);
   }
 
   async copyPassword() {
