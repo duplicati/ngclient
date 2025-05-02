@@ -238,8 +238,9 @@ export default class DestinationComponent {
 
         if (res.action === 'trust-cert')
           this.#backupState.addHttpOptionByName('accept-specified-ssl-hash', res.destinationIndex, res.certData);
-        if (res.action === 'approve-host-key')
-          this.#backupState.addHttpOptionByName('accept-specified-host-key', res.destinationIndex, res.reportedHostKey);
+        if (res.action === 'approve-host-key') {
+          this.#backupState.addAdvancedFormPairByName('ssh-fingerprint', res.destinationIndex, res.reportedHostKey);
+        }
         if (res.testAgain) this.testDestination(res.destinationIndex);
       },
     });
