@@ -64,7 +64,7 @@ export default class SelectFilesComponent {
 
   showFileTree = signal<boolean>(false);
   backupSettings = signal<BackupSettings | null>(null);
-  rootPath = signal<string | undefined>(undefined);
+  rootPaths = signal<string[]>([]);
   loadingRootPath = signal(false);
   isRepairing = signal(false);
 
@@ -124,9 +124,8 @@ export default class SelectFilesComponent {
       const backupId = this.backupId();
       const versionId = `${backupId}+${option.Time}`;
 
-      if (this.#requestedRepairVersion === versionId)
-          return;
-      
+      if (this.#requestedRepairVersion === versionId) return;
+
       this.#requestedRepairVersion = versionId;
       this.isRepairing.set(true);
       this.#dupServer
@@ -172,6 +171,7 @@ export default class SelectFilesComponent {
 
     this.#requestedRootPathLoadId = requestId;
     this.loadingRootPath.set(true);
+    console.log('this.#sysinfo.hasV2ListOperations()', this.#sysinfo.hasV2ListOperations());
     if (this.#sysinfo.hasV2ListOperations()) {
       this.#dupServer
         .postApiV2BackupListFolder({
@@ -180,9 +180,9 @@ export default class SelectFilesComponent {
             Time: backupSettings.time,
             Paths: null,
             PageSize: 0, // TODO: Add pagination support
-            Page: 0
-          }}
-        )
+            Page: 0,
+          },
+        })
         .pipe(
           takeUntil(this.abortLoading$),
           finalize(() => {
@@ -193,14 +193,14 @@ export default class SelectFilesComponent {
         )
         .subscribe({
           next: (res) => {
-            const paths = (res.Data ?? []).map((x) => x.Path);
-            if (paths.length == 1)
-              this.rootPath.set(paths[0] ?? '/');
-            else
-              this.rootPath.set(''); // Handle multiple roots by treating the root as empty
+            const paths = (res.Data ?? []).map((x) => x.Path ?? '');
+            if (paths.length > 0) {
+              this.rootPaths.set(paths);
+            } else {
+              this.rootPaths.set(['/']);
+            }
           },
         });
-
     } else {
       this.#dupServer
         .getApiV1BackupByIdFiles(params)
@@ -213,11 +213,13 @@ export default class SelectFilesComponent {
         )
         .subscribe({
           next: (res) => {
-            const paths = ((res as any)['Files'] as any[]).map((x) => x.Path);
-            if (paths.length == 1)
-              this.rootPath.set(paths[0] ?? '/');
-            else
-              this.rootPath.set(''); // Handle multiple roots by treating the root as empty
+            const paths = ((res as any)['Files'] as any[]).map((x) => x.Path ?? '');
+
+            if (paths.length > 0) {
+              this.rootPaths.set(paths);
+            } else {
+              this.rootPaths.set(['/']);
+            }
           },
         });
     }

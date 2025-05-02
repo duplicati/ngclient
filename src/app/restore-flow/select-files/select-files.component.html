@@ -19,8 +19,9 @@
     <!-- This is to reset the file tree on backupSettings change -->
     @if (showFileTree()) {
       @if (((isDraft() && !isRepairing()) || !isDraft()) && backupSettings()) {
+        <pre>{{ rootPaths() }}</pre>
         <app-file-tree
-          [rootPath]="rootPath()"
+          [rootPaths]="rootPaths()"
           [backupSettings]="backupSettings()"
           [multiSelect]="true"
           [showFiles]="true">
