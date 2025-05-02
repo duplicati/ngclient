@@ -2,6 +2,10 @@
 
 :host {
   display: block;
+
+  &.full-width section {
+    max-width: p2r(1000);
+  }
 }
 
 spk-stepper {

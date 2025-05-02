@@ -2,6 +2,13 @@
 
 :host {
   display: block;
+
+  &.simple-list {
+    spk-table {
+      --table-td-bg: var(--base-level-20);
+      height: 100%;
+    }
+  }
 }
 
 .live-view-disabled {

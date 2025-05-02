@@ -102,28 +102,37 @@ export class StatusBarState {
   isFetching = this.#isFetching.asReadonly();
   connectionStatus = this.#serverState.connectionStatus;
 
-  setConnectionMethod(method: 'websocket' | 'longpoll') {
-    this.#serverState.setConnectionMethod(method);
-  }
-
   pollingInterval: number | undefined;
   #serverStateEffect = effect(() => {
     const serverState = this.#serverState.serverState();
 
     if (serverState?.ActiveTask && this.pollingInterval === undefined) {
-      this.pollingInterval = setInterval(() => {
-        this.#getProgressState();
-      }, 1000);
+      this.startPollingProgress();
     } else if (!serverState?.ActiveTask) {
       this.stopPollingProgress();
     }
   });
 
+  setConnectionMethod(method: 'websocket' | 'longpoll') {
+    this.#serverState.setConnectionMethod(method);
+  }
+
+  startPollingProgress() {
+    this.pollingInterval = setInterval(() => {
+      this.#getProgressState();
+    }, 1000);
+  }
+
   stopPollingProgress() {
     clearInterval(this.pollingInterval);
   }
 
+  fetchProgressState() {
+    this.#getProgressState();
+  }
+
   #getProgressState() {
+    console.log('getProgressState');
     this.#isFetching.set(true);
     this.#progState
       .getApiV1Progressstate()
@@ -146,6 +155,8 @@ export class StatusBarState {
           if (taskId !== null && backupId !== null) {
             res.backup = this.#backupState.getBackupById(backupId);
           }
+
+          console.log('res', res);
 
           this.#statusData.set({
             ...res,

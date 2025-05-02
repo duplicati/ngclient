@@ -1,7 +1,11 @@
 @if (logLevel() === 'Disabled') {
   <div class="live-view-disabled" i18n>Live logs are disabled</div>
 } @else {
-  <spk-table [data]="logs()" [loading]="logsLoading()" [style.grid-template-columns]="'auto 1fr auto'">
+  <spk-table
+    [class.type-b]="asSimpleList()"
+    [data]="logs()"
+    [loading]="logsLoading()"
+    [style.grid-template-columns]="'auto 1fr auto'">
     <tr table-header>
       <th i18n>When</th>
       <th i18n>Message</th>

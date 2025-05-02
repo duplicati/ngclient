@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input, signal } from '@angular/core';
 import { SparkleIconComponent, SparkleListComponent, SparkleTableComponent } from '@sparkle-ui/core';
 import { LogsLiveState } from './logs-live.state';
 
@@ -9,9 +9,17 @@ import { LogsLiveState } from './logs-live.state';
   templateUrl: './logs-live.component.html',
   styleUrl: './logs-live.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[class.simple-list]': 'asSimpleList()',
+  },
 })
 export default class LogsLiveComponent {
   #logsLiveState = inject(LogsLiveState);
+
+  taskFilter = input<string | null>();
+  whenFilter = input<number | null>();
+  backupIdFilter = input<string | null>();
+  asSimpleList = input<boolean>();
 
   logLevel = this.#logsLiveState.logLevel;
   logLevelByLabel = this.#logsLiveState.logLevelByLabel;
@@ -19,6 +27,27 @@ export default class LogsLiveComponent {
   logsLoading = this.#logsLiveState.logsLoading;
 
   openRowIndex = signal<number | null>(null);
+
+  taskEffect = effect(() => {
+    const taskFilter = this.taskFilter() ?? null;
+
+    this.#logsLiveState.setTaskFilter(taskFilter);
+    this.#logsLiveState.logLevel.set(taskFilter ? 'Verbose' : 'Disabled');
+  });
+
+  whenEffect = effect(() => {
+    const whenFilter = this.whenFilter() ?? null;
+
+    this.#logsLiveState.setWhenFilter(whenFilter);
+    this.#logsLiveState.logLevel.set(whenFilter ? 'Verbose' : 'Disabled');
+  });
+
+  backupIdEffect = effect(() => {
+    const backupIdFilter = this.backupIdFilter() ?? null;
+
+    this.#logsLiveState.setBackupIdFilter(backupIdFilter);
+    this.#logsLiveState.logLevel.set(backupIdFilter ? 'Verbose' : 'Disabled');
+  });
 
   toggleRow(index: number) {
     this.openRowIndex.set(index === this.openRowIndex() ? null : index);

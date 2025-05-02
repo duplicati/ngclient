@@ -50,13 +50,30 @@ const LOG_LEVELS: LogLevel[] = [
 })
 export class LogsLiveState {
   #dupServer = inject(DuplicatiServerService);
+  #logs = signal<LogEntry[]>([]);
 
   LOG_LEVELS = LOG_LEVELS;
   logLevel = signal('Disabled');
   logLevelByLabel = computed(() => LOG_LEVELS.find((level) => level.value === this.logLevel())?.label);
 
+  taskFilter = signal<string | null>(null);
+  whenFilter = signal<number | null>(null);
+  backupIdFilter = signal<string | null>(null);
   id = signal<number>(0);
-  logs = signal<LogEntry[]>([]);
+  logs = computed(() => {
+    if (this.whenFilter() && this.backupIdFilter()) {
+      return this.#logs().filter(
+        (x) =>
+          x.BackupID === this.backupIdFilter() &&
+          new Date(x.When!).getTime() >= this.whenFilter()! &&
+          x.BackupID === this.backupIdFilter()
+      );
+    }
+
+    if (this.taskFilter() === undefined) return this.#logs();
+
+    return this.#logs().filter((x) => x.TaskID === this.taskFilter());
+  });
   timerInterval: number | undefined;
   logsLoading = signal(false);
   pagination = signal({
@@ -68,7 +85,7 @@ export class LogsLiveState {
     if (this.logLevel() === 'Disabled') {
       this.timerInterval = undefined;
     } else {
-      this.logs.set([]);
+      this.#logs.set([]);
       this.id.set(0);
       queueMicrotask(() => this.loadLogs());
       this.timerInterval && clearInterval(this.timerInterval);
@@ -77,6 +94,18 @@ export class LogsLiveState {
       }, 3000);
     }
   });
+
+  setWhenFilter(whenFilter: number | null) {
+    this.whenFilter.set(whenFilter);
+  }
+
+  setBackupIdFilter(backupIdFilter: string | null) {
+    this.backupIdFilter.set(backupIdFilter);
+  }
+
+  setTaskFilter(taskFilter: string | null) {
+    this.taskFilter.set(taskFilter);
+  }
 
   loadLogs() {
     this.logsLoading.set(true);
@@ -93,7 +122,7 @@ export class LogsLiveState {
           const reversedItems = res.reverse() as LogEntry[];
           const newId = this.#getHighestId(reversedItems);
           newId > 0 && this.id.set(newId);
-          this.logs.set([...reversedItems, ...this.logs()]);
+          this.#logs.set([...reversedItems, ...this.#logs()]);
         },
       });
   }

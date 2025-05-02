@@ -254,9 +254,6 @@ export class FilterComponent {
       const hasLeadingSlash = isShortCut || expression.startsWith(pathDelimiter);
       const hasTrailingSlash = expression.endsWith(pathDelimiter);
 
-      console.log('hasTrailingSlash', hasTrailingSlash);
-      console.log('hasLeadingSlash', hasLeadingSlash);
-
       if (hasTrailingSlash && hasLeadingSlash) {
         return `${dir}${value.expression}`;
       }

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, Signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   SparkleAlertComponent,
@@ -17,7 +17,7 @@ const NOTIFICATION_TYPE_MAP: Record<string, SparkleAlertType> = {
   Information: 'primary',
 };
 
-type ExtendedNotificationDto = NotificationDto & {
+export type ExtendedNotificationDto = NotificationDto & {
   DownloadLink?: string;
 };
 
@@ -36,8 +36,18 @@ export class NotificationsComponent {
   #dupServer = inject(DuplicatiServerService);
   #notificationState = inject(NotificationsState);
 
-  notifications = this.#notificationState.notifications as Signal<ExtendedNotificationDto[]>;
+  notificationFilterPredicate = input<{ predicate: (x: ExtendedNotificationDto) => boolean }>();
+
   serverState = this.#notificationState.serverState;
+  notifications = computed(() => {
+    const predicate = this.notificationFilterPredicate()?.predicate;
+
+    const notifications = (this.#notificationState.notifications as Signal<ExtendedNotificationDto[]>)();
+
+    if (typeof predicate !== 'function') return notifications;
+
+    return notifications.filter(predicate);
+  });
 
   deleteNotificationByIndex(index: number) {
     this.#notificationState.deleteNotification(index);

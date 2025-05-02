@@ -22,6 +22,10 @@ const routes: Routes = [
     path: 'options',
     loadComponent: () => import('./options/options.component'),
   },
+  {
+    path: 'progress',
+    loadComponent: () => import('./restore-progress/restore-progress.component'),
+  },
 ];
 
 export default routes;

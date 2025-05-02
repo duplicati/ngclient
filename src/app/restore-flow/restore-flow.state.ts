@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SparkleDialogService } from '@sparkle-ui/core';
 import { finalize, forkJoin, retry, take } from 'rxjs';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
@@ -14,6 +14,7 @@ import { createRestoreSelectFilesForm } from './select-files/select-files.compon
 })
 export class RestoreFlowState {
   #router = inject(Router);
+  #route = inject(ActivatedRoute);
   #dialog = inject(SparkleDialogService);
   #dupServer = inject(DuplicatiServerService);
 
@@ -31,6 +32,7 @@ export class RestoreFlowState {
   isSubmitting = signal(false);
   isDraft = signal(false);
   isFileRestore = signal(false);
+  isFullWidthPage = signal(false);
 
   init(id: 'string', isFileRestore = false, isDraft = false) {
     this.backupId.set(id);
@@ -43,7 +45,7 @@ export class RestoreFlowState {
     }
 
     if (!isFileRestore) {
-      this.getBackup(id, true);
+      this.getBackup(true);
     }
   }
 
@@ -73,7 +75,9 @@ export class RestoreFlowState {
       })
       .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
-        next: () => this.exit(),
+        next: () => {
+          this.#router.navigate(['./progress'], { relativeTo: this.#route });
+        },
         error: (err) => {
           console.error('restore error', err);
         },
@@ -92,7 +96,7 @@ export class RestoreFlowState {
         if (!res) return;
         this.#resetAllForms();
         this.#router.navigate(['/']);
-      }
+      },
     });
   }
 
@@ -100,7 +104,9 @@ export class RestoreFlowState {
     this.versionOptions();
   }
 
-  getBackup(id: string, setFirstToForm = false) {
+  getBackup(setFirstToForm = false) {
+    const id = this.backupId()!;
+
     this.versionOptionsLoading.set(true);
 
     forkJoin([

@@ -19,7 +19,7 @@
       Options
     </div>
   } @else if (isDraft()) {
-    <div step routerLinkActive="active" [routerLink]="['/restore-draft', backupId()]" i18n>
+    <div step routerLinkActive="active" [routerLink]="['/restore-draft', backupId(), 'select-files']" i18n>
       <spk-radio />
       Select files
     </div>
@@ -28,13 +28,20 @@
       Options
     </div>
   } @else {
-    <div step routerLinkActive="active" [routerLink]="['/restore', backupId()]" i18n>
+    <div step routerLinkActive="active" [routerLink]="['/restore', backupId(), 'select-files']" i18n>
       <spk-radio />
       Select files
     </div>
     <div step routerLinkActive="active" [routerLink]="['/restore', backupId(), 'options']" i18n>
       <spk-radio />
       Options
+    </div>
+  }
+
+  @if (isProgressPage()) {
+    <div step routerLinkActive="active" [routerLink]="['/restore', backupId(), 'progress']" i18n>
+      <spk-radio />
+      Progress
     </div>
   }
 </spk-stepper>

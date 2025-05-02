@@ -2,7 +2,9 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { SparkleDialogService } from '@sparkle-ui/core';
 import { finalize } from 'rxjs';
+import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import {
   ArgumentType,
   BackupAndScheduleInputDto,
@@ -28,8 +30,6 @@ import { createGeneralForm, NONE_OPTION } from './general/general.component';
 import { RetentionType } from './options/options.component';
 import { Days, SCHEDULE_FIELD_DEFAULTS } from './schedule/schedule.component';
 import { createSourceDataForm } from './source-data/source-data.component';
-import { SparkleDialogService } from '@sparkle-ui/core';
-import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 
 const SMART_RETENTION = '1W:1D,4W:1W,12M:1M';
 
@@ -60,7 +60,7 @@ type DestinationDefault = {
 export class BackupState {
   #router = inject(Router);
   #sysinfo = inject(SysinfoState);
-  #dialog = inject(SparkleDialogService);  
+  #dialog = inject(SparkleDialogService);
   #dupServer = inject(DuplicatiServerService);
   #timespanLiteralService = inject(TimespanLiteralsService);
 
@@ -264,8 +264,8 @@ export class BackupState {
         if (!res) return;
         this.#resetAllForms();
         this.#router.navigate(['/']);
-      }
-    });    
+      },
+    });
   }
 
   updateFieldsFromTargetUrl(targetUrl: string) {
@@ -417,7 +417,6 @@ export class BackupState {
 
     var retentionValue: RetentionType = 'all';
     ignoredModules?.forEach((x) => {
-      console.log('x', x.Name);
       if (x.Name === 'dblock-size') {
         this.optionsFields.remoteVolumeSize.set(x.Value ?? '50MB');
       }
