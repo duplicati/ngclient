@@ -10,8 +10,8 @@ import {
 } from '@sparkle-ui/core';
 import { finalize, Subject, takeUntil } from 'rxjs';
 import FileTreeComponent, { BackupSettings } from '../../core/components/file-tree/file-tree.component';
-import { StatusBarState } from '../../core/components/status-bar/status-bar.state';
 import { DuplicatiServerService, GetApiV1BackupByIdFilesData } from '../../core/openapi';
+import { SysinfoState } from '../../core/states/sysinfo.state';
 import { RestoreFlowState } from '../restore-flow.state';
 
 const fb = new FormBuilder();
@@ -44,10 +44,14 @@ export const createRestoreSelectFilesForm = () => {
 export default class SelectFilesComponent {
   #dupServer = inject(DuplicatiServerService);
   #restoreFlowState = inject(RestoreFlowState);
+  #sysinfo = inject(SysinfoState);
   #router = inject(Router);
   #route = inject(ActivatedRoute);
   #datePipe = inject(DatePipe);
-  #statusbarState = inject(StatusBarState);
+
+  // Prevent effects from hammering the API
+  #requestedRootPathLoadId: string | null = null;
+  #requestedRepairVersion: string | null = null;
 
   selectFilesForm = this.#restoreFlowState.selectFilesForm;
   selectFilesFormSignal = this.#restoreFlowState.selectFilesFormSignal;
@@ -118,7 +122,12 @@ export default class SelectFilesComponent {
       if (option === undefined) return;
 
       const backupId = this.backupId();
+      const versionId = `${backupId}+${option.Time}`;
 
+      if (this.#requestedRepairVersion === versionId)
+          return;
+      
+      this.#requestedRepairVersion = versionId;
       this.isRepairing.set(true);
       this.#dupServer
         .postApiV1BackupByIdRepairupdate({
@@ -128,6 +137,12 @@ export default class SelectFilesComponent {
             time: option.Time,
           },
         })
+        .pipe(
+          takeUntil(this.abortLoading$),
+          finalize(() => {
+            this.#requestedRepairVersion = null;
+          })
+        )
         .subscribe((res) => {
           const taskId = res.ID!;
 
@@ -152,24 +167,60 @@ export default class SelectFilesComponent {
       folderContents: false,
     };
 
-    if (this.isRepairing()) return;
+    const requestId = backupSettings.id + '';
+    if (this.isRepairing() || this.#requestedRootPathLoadId === requestId) return;
 
+    this.#requestedRootPathLoadId = requestId;
     this.loadingRootPath.set(true);
-    this.#dupServer
-      .getApiV1BackupByIdFiles(params)
-      .pipe(
-        takeUntil(this.abortLoading$),
-        finalize(() => {
-          this.showFileTree.set(true);
-          this.loadingRootPath.set(false);
-        })
-      )
-      .subscribe({
-        next: (res) => {
-          const path = (res as any)['Files'][0].Path;
-          this.rootPath.set(path);
-        },
-      });
+    if (this.#sysinfo.hasV2ListOperations()) {
+      this.#dupServer
+        .postApiV2BackupListFolder({
+          requestBody: {
+            BackupId: backupSettings.id,
+            Time: backupSettings.time,
+            Paths: null,
+            PageSize: 0, // TODO: Add pagination support
+            Page: 0
+          }}
+        )
+        .pipe(
+          takeUntil(this.abortLoading$),
+          finalize(() => {
+            this.showFileTree.set(true);
+            this.loadingRootPath.set(false);
+            this.#requestedRootPathLoadId = null;
+          })
+        )
+        .subscribe({
+          next: (res) => {
+            const paths = (res.Data ?? []).map((x) => x.Path);
+            if (paths.length == 1)
+              this.rootPath.set(paths[0] ?? '/');
+            else
+              this.rootPath.set(''); // Handle multiple roots by treating the root as empty
+          },
+        });
+
+    } else {
+      this.#dupServer
+        .getApiV1BackupByIdFiles(params)
+        .pipe(
+          takeUntil(this.abortLoading$),
+          finalize(() => {
+            this.showFileTree.set(true);
+            this.loadingRootPath.set(false);
+          })
+        )
+        .subscribe({
+          next: (res) => {
+            const paths = ((res as any)['Files'] as any[]).map((x) => x.Path);
+            if (paths.length == 1)
+              this.rootPath.set(paths[0] ?? '/');
+            else
+              this.rootPath.set(''); // Handle multiple roots by treating the root as empty
+          },
+        });
+    }
   }
 
   abortLoading$ = new Subject();

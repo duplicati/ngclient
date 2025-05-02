@@ -329,7 +329,11 @@
                   </spk-select>
 
                   <ng-template let-option #enumOptionTemplate>
-                    {{ option }}
+                    @if (item.formView.loadOptions) {
+                      {{ option?.key }} ({{ option?.value }})
+                    } @else {
+                      {{ option }}
+                    }
                   </ng-template>
                 }
               } @else if (item.formView.type === 'NonValidatedSelectableString') {

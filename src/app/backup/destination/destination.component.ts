@@ -30,7 +30,8 @@ import FileTreeComponent from '../../core/components/file-tree/file-tree.compone
 import { SizeComponent } from '../../core/components/size/size.component';
 import { TimespanComponent } from '../../core/components/timespan/timespan.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
-import { DuplicatiServerService, IDynamicModule } from '../../core/openapi';
+import { IDynamicModule } from '../../core/openapi';
+import { TestDestinationService } from '../../core/services/test-destination.service';
 import { BackupState } from '../backup.state';
 import { DESTINATION_CONFIG } from './destination.config';
 import { FormView, toTargetPath } from './destination.config-utilities';
@@ -96,9 +97,9 @@ export default class DestinationComponent {
   #router = inject(Router);
   #route = inject(ActivatedRoute);
   #httpClient = inject(HttpClient);
-  #dupServer = inject(DuplicatiServerService);
   #backupState = inject(BackupState);
   #dialog = inject(SparkleDialogService);
+  #testDestination = inject(TestDestinationService);
   injector = inject(Injector);
 
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
@@ -198,141 +199,50 @@ export default class DestinationComponent {
 
     if (!targetUrl) return;
 
-    this.#dupServer
-      .postApiV1RemoteoperationTest({
-        requestBody: {
-          path: targetUrl,
-        },
-      })
-      .subscribe({
-        next: () => {
-          this.successfulTest.set(true);
-
-          setTimeout(() => {
-            this.successfulTest.set(false);
-          }, 3000);
-        },
-        error: (err) => {
-          const errorMessage = err.error.error.Error;
-          this.successfulTest.set(false);
-
-          // TODO: This is duplicated in restore-destination.component.ts
-          if (errorMessage === 'missing-folder') {
-            this.#dialog.open(ConfirmDialogComponent, {
-              data: {
-                title: $localize`Create folder`,
-                message: $localize`The remote destination folder does not exist, do you want to create it?`,
-                confirmText: $localize`Create folder`,
-                cancelText: $localize`Cancel`,
-              },
-              closed: (res) => {
-                if (!res) return;
-
-                this.#dupServer
-                  .postApiV1RemoteoperationCreate({
-                    requestBody: {
-                      path: targetUrl,
-                    },
-                  })
-                  .subscribe({
-                    next: () => {
-                      this.#dialog.open(ConfirmDialogComponent, {
-                        data: {
-                          title: $localize`Folder created`,
-                          message: $localize`The remote destination folder was created successfully.`,
-                          confirmText: $localize`OK`,
-                          cancelText: null,
-                        },
-                        closed: () => {
-                          this.testDestination(destinationIndex);
-                        },
-                      });
-                    }
-                  });
-              },
-            });
-
-            return;
-          }
-
-          if (errorMessage.startsWith('incorrect-cert:')) {
-            const certData = errorMessage.split('incorrect-cert:')[1];
-
-            this.#dialog.open(ConfirmDialogComponent, {
-              maxWidth: '500px',
-              data: {
-                title: $localize`Trust the certificate`,
-                message: $localize`The server is using a certificate that is not trusted.
-          If this is a self-signed certificate, you can choose to trust this certificate.
-          The server reported the certificate hash: ${certData}`,
-                confirmText: $localize`Trust the certificate`,
-                cancelText: $localize`Cancel`,
-              },
-              closed: (res: boolean) => {
-                if (!res) return;
-
-                this.#backupState.addHttpOptionByName('accept-specified-ssl-hash', certData);
-              },
-            });
-
-            return;
-          }
-
-          if (errorMessage.startsWith('incorrect-host-key:')) {
-            const reportedhostkey = errorMessage.split('incorrect-host-key:"')[1].split('",')[0];
-            const suppliedhostkey = errorMessage.split('accepted-host-key:"')[1].split('",')[0];
-
-            if (!suppliedhostkey) {
+    this.#testDestination.testDestination(targetUrl, destinationIndex, true).subscribe({
+      next: (res) => {
+        if (res.action === 'success') {
+          if (this.#backupState.isNew()) {
+            if (res.containsBackup === true) {
               this.#dialog.open(ConfirmDialogComponent, {
-                maxWidth: '500px',
                 data: {
-                  title: $localize`Approve host key?`,
-                  message: $localize`No certificate was specified, please verify that the reported host key is correct: ${reportedhostkey}`,
-                  confirmText: $localize`Approve`,
-                  cancelText: $localize`Cancel`,
-                },
-                closed: (res) => {
-                  if (!res) return;
-
-                  this.#backupState.addAdvancedFormPairByName('ssh-fingerprint', destinationIndex, reportedhostkey);
+                  title: $localize`Folder contains backup`,
+                  message: $localize`The remote destination already contains a backup. You must use a different folder for each backup.`,
+                  confirmText: $localize`OK`,
+                  cancelText: undefined,
                 },
               });
-            } else {
-              // MITM dialog
+            } else if (res.anyFilesFound === true) {
               this.#dialog.open(ConfirmDialogComponent, {
-                maxWidth: '500px',
                 data: {
-                  title: $localize`The host key has changed`,
-                  message: $localize`The host key has changed, please check with the server administrator if this is correct,
-otherwise you could be the victim of a MAN-IN-THE-MIDDLE attack.
-Do you want to REPLACE your CURRENT host key ${suppliedhostkey}
-with the REPORTED host key: ${reportedhostkey}?`,
-                  confirmText: $localize`Approve`,
-                  cancelText: $localize`Cancel`,
-                },
-                closed: (res) => {
-                  if (!res) return;
-
-                  this.#backupState.addAdvancedFormPairByName('ssh-fingerprint', destinationIndex, reportedhostkey);
+                  title: $localize`Folder is not empty`,
+                  message: $localize`The remote destination is not empty. It is recommended to use an empty folder for the backup.`,
+                  confirmText: $localize`OK`,
+                  cancelText: undefined,
                 },
               });
             }
-
-            return;
           }
 
-          // General error
-          this.#dialog.open(ConfirmDialogComponent, {
-            maxWidth: '500px',
-            data: {
-              title: $localize`Test connection failed`,
-              message: errorMessage,
-              cancelText: $localize`OK`,
-            },
-            closed: (_) => {},
-          });
-        },
-      });
+          this.successfulTest.set(true);
+          setTimeout(() => {
+            this.successfulTest.set(false);
+          }, 3000);
+          return;
+        }
+
+        if (res.action === 'generic-error') {
+          this.successfulTest.set(false);
+          return;
+        }
+
+        if (res.action === 'trust-cert')
+          this.#backupState.addHttpOptionByName('accept-specified-ssl-hash', res.destinationIndex, res.certData);
+        if (res.action === 'approve-host-key')
+          this.#backupState.addHttpOptionByName('accept-specified-host-key', res.destinationIndex, res.reportedHostKey);
+        if (res.testAgain) this.testDestination(res.destinationIndex);
+      },
+    });
   }
 
   mapToTargetUrl(destinationGroup: DestinationFormGroup) {

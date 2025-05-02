@@ -2,12 +2,21 @@ import { inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SparkleDialogService } from '@sparkle-ui/core';
-import { finalize, forkJoin, retry, take } from 'rxjs';
+import { catchError, finalize, forkJoin, Observable, retry, switchMap, take, throwError, timer } from 'rxjs';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
-import { DuplicatiServerService, GetBackupResultDto, IListResultFileset } from '../core/openapi';
+import { DuplicatiServerService, GetBackupResultDto, ListFilesetsResponseDto } from '../core/openapi';
+import { SysinfoState } from '../core/states/sysinfo.state';
 import { createRestoreOptionsForm } from './options/options.component';
 import { createEncryptionForm } from './restore-encryption/restore-encryption.component';
 import { createRestoreSelectFilesForm } from './select-files/select-files.component';
+
+type ListResultFileset = {
+  readonly Version: number;
+  readonly IsFullBackup?: boolean | undefined;
+  readonly Time: string;
+  readonly FileCount?: number | undefined;
+  readonly FileSizes?: number | undefined;
+};
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +24,7 @@ import { createRestoreSelectFilesForm } from './select-files/select-files.compon
 export class RestoreFlowState {
   #router = inject(Router);
   #route = inject(ActivatedRoute);
+  #sysinfo = inject(SysinfoState);
   #dialog = inject(SparkleDialogService);
   #dupServer = inject(DuplicatiServerService);
 
@@ -28,7 +38,7 @@ export class RestoreFlowState {
   selectFilesFormSignal = toSignal(this.selectFilesForm.valueChanges);
   selectOptionSignal = toSignal(this.selectFilesForm.controls.selectedOption.valueChanges);
   versionOptionsLoading = signal(false);
-  versionOptions = signal<IListResultFileset[]>([]);
+  versionOptions = signal<ListResultFileset[]>([]);
   isSubmitting = signal(false);
   isDraft = signal(false);
   isFileRestore = signal(false);
@@ -104,31 +114,109 @@ export class RestoreFlowState {
     this.versionOptions();
   }
 
+  private loadFilesetsWithRetryv2(id: string, retriesLeft: number = 2): Observable<ListFilesetsResponseDto> {
+    return this.#dupServer.postApiV2BackupListFilesets({ requestBody: { BackupId: id } }).pipe(
+      catchError((err) => {
+        const isEncryptedError = err?.error?.body?.StatusCode === 'EncryptedStorageNoPassphrase';
+        const isNotFoundError = err?.error?.body?.StatusCode === 'FolderMissing';
+        const isEmptyFolderError = err?.error?.body?.StatusCode === 'EmptyRemoteFolder';
+
+        if (isEncryptedError || isNotFoundError || isEmptyFolderError || retriesLeft === 0) {
+          return throwError(() => err);
+        }
+
+        return timer(1000).pipe(switchMap(() => this.loadFilesetsWithRetryv2(id, retriesLeft - 1)));
+      })
+    );
+  }
+
   getBackup(setFirstToForm = false) {
     const id = this.backupId()!;
 
     this.versionOptionsLoading.set(true);
 
-    forkJoin([
-      this.#dupServer.getApiV1BackupById({
-        id,
-      }),
-      this.#dupServer
-        .getApiV1BackupByIdFilesets({
+    if (this.#sysinfo.hasV2ListOperations()) {
+      forkJoin([
+        this.#dupServer.getApiV1BackupById({
           id,
-        })
-        .pipe(retry(3)),
-    ])
-      .pipe(
-        take(1),
-        finalize(() => this.versionOptionsLoading.set(false))
-      )
-      .subscribe({
-        next: ([backup, filesets]) => {
-          this.versionOptions.set(filesets);
-          this.backup.set(backup);
-        },
-      });
+        }),
+        this.loadFilesetsWithRetryv2(id),
+      ])
+        .pipe(
+          take(1),
+          finalize(() => this.versionOptionsLoading.set(false))
+        )
+        .subscribe({
+          next: ([backup, filesets]) => {
+            if (filesets.Error) throw new Error(filesets.Error);
+
+            this.versionOptions.set(
+              (filesets.Data ?? []).map((x) => ({
+                Version: x.Version ?? -1,
+                IsFullBackup: x.IsFullBackup ?? undefined,
+                Time: x.Time ?? '<missing>',
+                FileCount: x.FileCount ?? undefined,
+                FileSizes: x.FileSizes ?? undefined,
+              }))
+            );
+            this.backup.set(backup);
+          },
+          error: (err) => {
+            const isEncryptedError = err?.error?.body?.StatusCode === 'EncryptedStorageNoPassphrase';
+            const isNotFoundError = err?.error?.body?.StatusCode === 'FolderMissing';
+            const isEmptyFolderError = err?.error?.body?.StatusCode === 'EmptyRemoteFolder';
+
+            let errorMessage = $localize`An error occurred while loading the backup filesets: ${err.message}`;
+            if (isEncryptedError)
+              errorMessage = $localize`The remote storage is encrypted. Please enter the passphrase to access the backup.`;
+            if (isNotFoundError) errorMessage = $localize`The backup storage folder was not found.`;
+            if (isEmptyFolderError) errorMessage = $localize`The backup storage folder does not contain any filesets.`;
+
+            this.#dialog.open(ConfirmDialogComponent, {
+              data: {
+                title: $localize`Failed to load backup filesets`,
+                message: errorMessage,
+                confirmText: $localize`OK`,
+                cancelText: undefined,
+              },
+              closed: (_) => {
+                this.#router.navigate([
+                  isEncryptedError ? '/restore-from-files/encryption' : '/restore-from-files/destination',
+                ]);
+              },
+            });
+          },
+        });
+    } else {
+      forkJoin([
+        this.#dupServer.getApiV1BackupById({
+          id,
+        }),
+        this.#dupServer
+          .getApiV1BackupByIdFilesets({
+            id,
+          })
+          .pipe(retry(3)),
+      ])
+        .pipe(
+          take(1),
+          finalize(() => this.versionOptionsLoading.set(false))
+        )
+        .subscribe({
+          next: ([backup, filesets]) => {
+            this.versionOptions.set(
+              filesets.map((x) => ({
+                Version: x.Version ?? -1,
+                IsFullBackup: (x.IsFullBackup ?? 1) == 1,
+                Time: x.Time ?? '<missing>',
+                FileCount: x.FileCount ?? undefined,
+                FileSizes: x.FileSizes ?? undefined,
+              }))
+            );
+            this.backup.set(backup);
+          },
+        });
+    }
   }
 
   #resetAllForms() {

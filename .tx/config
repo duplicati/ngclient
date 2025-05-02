@@ -1,0 +1,12 @@
+[main]
+host = https://app.transifex.com
+
+[o:duplicati:p:duplicati:r:ngclient]
+file_filter            = src/locale/messages.<lang>.xlf
+source_file            = src/locale/messages.xlf
+source_lang            = en
+type                   = XLIFF
+minimum_perc           = 0
+resource_name          = ngclient.xlf
+replace_edited_strings = false
+keep_translations      = false
