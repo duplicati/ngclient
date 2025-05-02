@@ -337,7 +337,7 @@ with the REPORTED host key: ${reportedhostkey}?`,
           observer.next({
             action: 'approve-host-key',
             targetUrl,
-            testAgain: false,
+            testAgain: true,
             reportedHostKey: reportedhostkey,
             destinationIndex,
           });

@@ -156,6 +156,20 @@ export class BackupState {
       .filter((x) => this.selectedOptions()?.findIndex((y) => y.name === x.name) === -1);
   });
 
+  addOrUpdateAdvancedFormPairByName(name: string, formArrayIndex: number, value: any) {
+    const item = this.selectedAdvancedFormPair().find((x) => x.name === name);
+    if (item) {
+      this.destinationForm.controls.destinations.controls
+        .at(formArrayIndex)
+        ?.controls.advanced.controls[item.name].setValue(value);
+    } else {
+      const item = this.notSelectedAdvancedFormPair().find((x) => x.name === name);
+      if (!item) return;
+
+      this.addAdvancedFormPair(item, formArrayIndex, value);
+    }
+  }
+
   addAdvancedFormPairByName(name: string, formArrayIndex: number, overrideDefaultValue?: any) {
     const item = this.notSelectedAdvancedFormPair().find((x) => x.name === name);
 
