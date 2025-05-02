@@ -47,7 +47,9 @@
   <spk-card class="notifications type-a">
     <h3 i18n>Notifications</h3>
 
-    <app-notifications [notificationFilterPredicate]="notificationFilterPredicate()" />
+    <div class="notification-list">
+      <app-notifications [notificationFilterPredicate]="notificationFilterPredicate()" />
+    </div>
   </spk-card>
 
   <spk-card class="logs type-a">

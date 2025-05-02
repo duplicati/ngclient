@@ -2,6 +2,7 @@
 
 :host {
   display: block;
+  padding: p2r(0 20);
 }
 
 section {
@@ -51,6 +52,11 @@ section {
       overflow: auto;
     }
   }
+}
+
+.notification-list {
+  max-height: p2r(240);
+  overflow: auto;
 }
 
 .complete-check {
