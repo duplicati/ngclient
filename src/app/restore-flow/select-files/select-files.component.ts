@@ -19,7 +19,6 @@ const fb = new FormBuilder();
 export const createRestoreSelectFilesForm = () => {
   return fb.group({
     filesToRestore: fb.control<string>(''),
-    selectedOption: fb.control<number | null>(null),
     passphrase: fb.control<string | null>(null),
   });
 };
@@ -55,7 +54,7 @@ export default class SelectFilesComponent {
 
   selectFilesForm = this.#restoreFlowState.selectFilesForm;
   selectFilesFormSignal = this.#restoreFlowState.selectFilesFormSignal;
-  selectOptionSignal = this.#restoreFlowState.selectOptionSignal;
+  selectOption = this.#restoreFlowState.selectOption;
   backupId = this.#restoreFlowState.backupId;
   versionOptionsLoading = this.#restoreFlowState.versionOptionsLoading;
   versionOptions = this.#restoreFlowState.versionOptions;
@@ -78,45 +77,36 @@ export default class SelectFilesComponent {
     if (versionOptions && versionOptions?.length > 0) {
       const firstOption = versionOptions[0].Version;
 
-      if (Number.isInteger(firstOption)) {
-        this.selectFilesForm.controls.selectedOption.setValue(firstOption!);
-      }
+      this.selectOption.set(firstOption.toString());
     }
   });
 
   backupSettingsEffect = effect(() => {
     const id = this.backupId();
     const isRepairing = this.isRepairing();
-    const newOption =
-      typeof this.selectOptionSignal() === 'string'
-        ? parseInt(this.selectOptionSignal() as any)
-        : this.selectOptionSignal();
+    const newOption = this.selectOption();
 
-    if (!(typeof newOption === 'number') || !id) return;
+    if (!newOption || !id) return;
 
-    const option = this.versionOptions()?.find((x) => x.Version === newOption);
+    const option = this.versionOptions()?.find((x) => x.Version === parseInt(newOption));
     const time = option?.Time ?? null;
 
     if (!time || isRepairing) return;
 
-    this.showFileTree.set(false);
+    const settings = {
+      id: id + '',
+      time,
+    } as BackupSettings;
 
-    queueMicrotask(() => {
-      const settings = {
-        id: id + '',
-        time,
-      } as BackupSettings;
-      this.backupSettings.set(settings);
-      this.getRootPath(settings);
-    });
+    this.backupSettings.set(settings);
+    this.getRootPath(settings);
   });
 
   repairEffect = effect(() => {
-    const isDraft = this.#restoreFlowState.isDraft();
-    const newSelectedOption = this.selectOptionSignal();
+    const newSelectedOption = this.selectOption();
     const versionOptions = this.versionOptions();
 
-    if (isDraft && newSelectedOption) {
+    if (newSelectedOption) {
       const option = versionOptions.find((x) => x.Version === parseInt(newSelectedOption as any));
 
       if (option === undefined) return;
@@ -171,7 +161,8 @@ export default class SelectFilesComponent {
 
     this.#requestedRootPathLoadId = requestId;
     this.loadingRootPath.set(true);
-    console.log('this.#sysinfo.hasV2ListOperations()', this.#sysinfo.hasV2ListOperations());
+    this.showFileTree.set(false);
+
     if (this.#sysinfo.hasV2ListOperations()) {
       this.#dupServer
         .postApiV2BackupListFolder({
@@ -207,6 +198,7 @@ export default class SelectFilesComponent {
         .pipe(
           takeUntil(this.abortLoading$),
           finalize(() => {
+            console.log('hi');
             this.showFileTree.set(true);
             this.loadingRootPath.set(false);
           })

@@ -117,7 +117,7 @@
               <div class="actions">
                 <button
                   spk-button
-                  [class.loader]="startingBackup()"
+                  [class.loader]="startingBackup() === backup.Backup?.ID"
                   (click)="startBackup($any(backup.Backup?.ID))"
                   i18n>
                   <spk-icon>play-circle</spk-icon>

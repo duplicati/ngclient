@@ -195,29 +195,28 @@ export default class FileTreeComponent {
       ];
     }
 
-    if (accepts) {
-      roots = roots.map((root) => {
-        root.accepted = true;
-        return root;
-      });
-    }
-
-    roots.forEach((root) => {
+    roots.map((root) => {
       const nodeMap = new Map<string, FileTreeNode>();
       const rootPath = root?.id!;
 
+      if (accepts) {
+        root.accepted = true;
+      }
+
       nodeMap.set(root.id!, root);
 
-      for (const node of nodes) {
-        const itemPath = (node.id as string).replace(rootPath ?? '', '');
+      const filteredNodes = rootPaths.length > 0 ? nodes.filter((x) => x.parentPath === root.id!) : nodes;
+
+      for (const node of filteredNodes) {
+        const itemPath = rootPaths.length > 0 ? (node.id as string).replace(rootPath ?? '', '') : node.id!;
         const pathDelimiter = isWindows ? '\\' : '/';
         const pathParts = itemPath.split(pathDelimiter).filter(Boolean);
 
-        let evaluatedPath = rootPath;
+        let evaluatedPath = '';
         let parentNode = root;
 
         for (const part of pathParts) {
-          evaluatedPath += '/' + part;
+          evaluatedPath += part + pathDelimiter;
 
           if (!nodeMap.has(evaluatedPath)) {
             const evalState =
@@ -230,7 +229,7 @@ export default class FileTreeComponent {
               isIndeterminate: this.isIndeterminate(currentPaths, node.id!),
               evalState,
               parentPath: evaluatedPath,
-              resolvedpath: node.id?.startsWith('%') ? node.resolvedpath + '/' : evaluatedPath,
+              resolvedpath: node.id?.startsWith('%') ? node.resolvedpath + pathDelimiter : evaluatedPath,
               hidden: node.hidden,
               text: node.text,
               cls: node.cls,
@@ -248,6 +247,8 @@ export default class FileTreeComponent {
           parentNode = nodeMap.get(evaluatedPath)!;
         }
       }
+
+      return root;
     });
 
     return roots;
@@ -749,10 +750,10 @@ export default class FileTreeComponent {
 
         this.treeNodes.update((y) => {
           const newArray = alignDataArray.map((z: any) => {
+            const isWindowsPath = z.id.includes('\\');
+            const pathDelimiter = isWindowsPath ? '\\' : '/';
             const cls =
-              (z.id.startsWith('%') && z.id.endsWith('%')) || z.id.endsWith('/') || z.id.endsWith('\\')
-                ? 'folder'
-                : 'file';
+              (z.id.startsWith('%') && z.id.endsWith('%')) || z.id.endsWith(pathDelimiter) ? 'folder' : 'file';
 
             return {
               ...z,

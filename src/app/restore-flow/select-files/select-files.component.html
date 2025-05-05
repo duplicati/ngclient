@@ -4,31 +4,33 @@
   @if (versionOptionsLoading()) {
     <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
   } @else {
-    <spk-select [options]="versionOptions()" [isClearable]="true" value="Version" (cleared)="abortLoading()">
-      <input type="text" i18n-placeholder placeholder="Select an option..." formControlName="selectedOption" />
+    <spk-select [options]="versionOptions()" [isClearable]="false" value="Version" (cleared)="abortLoading()">
+      <input
+        type="text"
+        i18n-placeholder
+        placeholder="Select an option..."
+        [(ngModel)]="selectOption"
+        [ngModelOptions]="{ standalone: true }" />
 
       <ng-template let-option>
         <div class="custom-option">{{ option.Version }}: {{ option.Time | date: 'medium' }}</div>
       </ng-template>
     </spk-select>
 
-    @if ((isDraft() && isRepairing()) || versionOptionsLoading() || loadingRootPath()) {
+    @if (isDraft() || isRepairing() || versionOptionsLoading() || loadingRootPath()) {
       <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
     }
 
-    <!-- This is to reset the file tree on backupSettings change -->
     @if (showFileTree()) {
-      @if (((isDraft() && !isRepairing()) || !isDraft()) && backupSettings()) {
-        <pre>{{ rootPaths() }}</pre>
-        <app-file-tree
-          [rootPaths]="rootPaths()"
-          [backupSettings]="backupSettings()"
-          [multiSelect]="true"
-          [showFiles]="true">
-          <label for="path" i18n>Path</label>
-          <input type="text" id="path" formControlName="filesToRestore" />
-        </app-file-tree>
-      }
+      <!-- <pre>{{ rootPaths() }}</pre> -->
+      <app-file-tree
+        [rootPaths]="rootPaths()"
+        [backupSettings]="backupSettings()"
+        [multiSelect]="true"
+        [showFiles]="true">
+        <label for="path" i18n>Path</label>
+        <input type="text" id="path" formControlName="filesToRestore" />
+      </app-file-tree>
     }
   }
 

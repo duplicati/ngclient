@@ -36,7 +36,7 @@ export class RestoreFlowState {
   encryptionForm = createEncryptionForm();
   optionsFormSignal = toSignal(this.optionsForm.valueChanges);
   selectFilesFormSignal = toSignal(this.selectFilesForm.valueChanges);
-  selectOptionSignal = toSignal(this.selectFilesForm.controls.selectedOption.valueChanges);
+  selectOption = signal<string | null>(null);
   versionOptionsLoading = signal(false);
   versionOptions = signal<ListResultFileset[]>([]);
   isSubmitting = signal(false);
@@ -68,7 +68,10 @@ export class RestoreFlowState {
     const id = this.backupId();
     const optionsValue = this.optionsForm.value;
     const selectFilesFormValue = this.selectFilesForm.value;
-    const selectedOption = this.versionOptions()?.find((x) => x.Version === selectFilesFormValue.selectedOption);
+    const _selectedOption = this.selectOption();
+    const selectedOption = this.versionOptions()?.find(
+      (x) => x.Version === (_selectedOption && parseInt(_selectedOption))
+    );
 
     this.#dupServer
       .postApiV1BackupByIdRestore({
