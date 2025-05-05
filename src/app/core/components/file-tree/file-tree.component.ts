@@ -99,7 +99,7 @@ export default class FileTreeComponent {
   selectFiles = input(false);
   accepts = input<string | null | undefined>(null);
   startingPath = input<string | null>(null);
-  rootPath = input<string | undefined>(undefined);
+  rootPaths = input<string[]>([]);
   backupSettings = input<BackupSettings | null>(null);
   pathRefreshTrigger = input(false);
   showHiddenNodes = input(false);
@@ -161,13 +161,15 @@ export default class FileTreeComponent {
     }
 
     const nodes = this.searchableTreeNodes();
-    const nodeMap = new Map<string, FileTreeNode>();
-    const rootPath = this.rootPath();
+    const rootPaths = this.rootPaths();
     const accepts = this.accepts();
     const isWindows = this.isWindows();
 
-    const root: FileTreeNode = rootPath
-      ? {
+    let roots: FileTreeNode[] = [];
+
+    if (rootPaths.length > 0) {
+      roots = rootPaths.map((rootPath) => {
+        return {
           id: rootPath,
           resolvedpath: rootPath,
           text: rootPath,
@@ -176,8 +178,11 @@ export default class FileTreeComponent {
           evalState: TreeEvalEnum.None,
           isIndeterminate: false,
           cls: 'folder',
-        }
-      : {
+        };
+      });
+    } else {
+      roots = [
+        {
           id: '/',
           resolvedpath: '/',
           text: 'Computer',
@@ -185,56 +190,68 @@ export default class FileTreeComponent {
           children: [],
           evalState: TreeEvalEnum.None,
           isIndeterminate: false,
-        };
-
-    if (accepts) {
-      root.accepted = true;
+          cls: 'folder',
+        },
+      ];
     }
 
-    nodeMap.set('/', root);
+    roots.map((root) => {
+      const nodeMap = new Map<string, FileTreeNode>();
+      const rootPath = root?.id!;
 
-    for (const node of nodes) {
-      const itemPath = (node.id as string).replace(rootPath ?? '', '');
-      const pathDelimiter = isWindows ? '\\' : '/';
-      const pathParts = itemPath.split(pathDelimiter).filter(Boolean);
+      if (accepts) {
+        root.accepted = true;
+      }
 
-      let evaluatedPath = '';
-      let parentNode = root;
+      nodeMap.set(root.id!, root);
 
-      for (const part of pathParts) {
-        evaluatedPath += '/' + part;
+      const filteredNodes = rootPaths.length > 0 ? nodes.filter((x) => x.parentPath === root.id!) : nodes;
 
-        if (!nodeMap.has(evaluatedPath)) {
-          const evalState =
-            node.hidden === true && showHiddenNodes
-              ? TreeEvalEnum.None
-              : this.#eval(currentPaths, node.id!, node.cls!, parentNode, isWindows);
+      for (const node of filteredNodes) {
+        const itemPath = rootPaths.length > 0 ? (node.id as string).replace(rootPath ?? '', '') : node.id!;
+        const pathDelimiter = isWindows ? '\\' : '/';
+        const pathParts = itemPath.split(pathDelimiter).filter(Boolean);
 
-          const newNode: FileTreeNode = {
-            id: node.id,
-            isIndeterminate: this.isIndeterminate(currentPaths, node.id!),
-            evalState,
-            parentPath: evaluatedPath,
-            resolvedpath: node.id?.startsWith('%') ? node.resolvedpath + '/' : evaluatedPath,
-            hidden: node.hidden,
-            text: node.text,
-            cls: node.cls,
-            children: [],
-          };
+        let evaluatedPath = '';
+        let parentNode = root;
 
-          if (accepts) {
-            newNode.accepted = this.matchAccepts(accepts, newNode);
+        for (const part of pathParts) {
+          evaluatedPath += part + pathDelimiter;
+
+          if (!nodeMap.has(evaluatedPath)) {
+            const evalState =
+              node.hidden === true && showHiddenNodes
+                ? TreeEvalEnum.None
+                : this.#eval(currentPaths, node.id!, node.cls!, parentNode, isWindows);
+
+            const newNode: FileTreeNode = {
+              id: node.id,
+              isIndeterminate: this.isIndeterminate(currentPaths, node.id!),
+              evalState,
+              parentPath: evaluatedPath,
+              resolvedpath: node.id?.startsWith('%') ? node.resolvedpath + pathDelimiter : evaluatedPath,
+              hidden: node.hidden,
+              text: node.text,
+              cls: node.cls,
+              children: [],
+            };
+
+            if (accepts) {
+              newNode.accepted = this.matchAccepts(accepts, newNode);
+            }
+
+            nodeMap.set(evaluatedPath, newNode);
+            parentNode.children.push(newNode);
           }
 
-          nodeMap.set(evaluatedPath, newNode);
-          parentNode.children.push(newNode);
+          parentNode = nodeMap.get(evaluatedPath)!;
         }
-
-        parentNode = nodeMap.get(evaluatedPath)!;
       }
-    }
 
-    return [root];
+      return root;
+    });
+
+    return roots;
   });
 
   #eval(
@@ -462,7 +479,12 @@ export default class FileTreeComponent {
       this.currentPath.set(startingPath);
       this.#fetchPathSegmentsRecursively(startingPath);
     } else {
-      this.#getPath(null, this.rootPath());
+      const roots = this.rootPaths();
+      if (roots && roots.length > 0) {
+        this.#getPath(null, roots[0]);
+      } else {
+        this.#getPath(null, '/');
+      }
     }
   }
 
@@ -576,18 +598,17 @@ export default class FileTreeComponent {
   #getBackupFiles(path: string | null) {
     const backupSettings = this.backupSettings()!;
     if (this.#sysInfo.hasV2ListOperations()) {
-      return this.#dupServer.postApiV2BackupListFolder({
-        requestBody: {
-          BackupId: backupSettings.id,
-          Time: backupSettings.time,
-          Paths: path ? [path] : null,
-          PageSize: 0, // TODO: Add pagination support
-          Page: 0,
-        }}
-      )
-      .pipe(
-        map((res) => res.Data ?? [])
-      );
+      return this.#dupServer
+        .postApiV2BackupListFolder({
+          requestBody: {
+            BackupId: backupSettings.id,
+            Time: backupSettings.time,
+            Paths: path ? [path] : null,
+            PageSize: 0, // TODO: Add pagination support
+            Page: 0,
+          },
+        })
+        .pipe(map((res) => res.Data ?? []));
     } else {
       const params: GetApiV1BackupByIdFilesData = {
         id: backupSettings.id + '',
@@ -597,10 +618,7 @@ export default class FileTreeComponent {
         filter: path ? '@' + path : undefined,
       };
 
-      return this.#dupServer.getApiV1BackupByIdFiles(params)
-        .pipe(
-          map((res) => res['Files'] ?? [])
-        );
+      return this.#dupServer.getApiV1BackupByIdFiles(params).pipe(map((res) => res['Files'] ?? []));
     }
   }
 
@@ -630,7 +648,8 @@ export default class FileTreeComponent {
       });
     });
 
-    let urlPieces: string[] = [this.rootPath() ?? '/'];
+    // let urlPieces: string[] = [this.rootPath() ?? '/'];
+    let urlPieces: string[] = ['/'];
 
     segmentArr.forEach((segments) => {
       segments.forEach((_, index) => {
@@ -713,12 +732,15 @@ export default class FileTreeComponent {
       next: (x) => {
         let alignDataArray = this.isByBackupSettings()
           ? x.map((y: { Path: string; Size: number }) => {
+              const isWindowsPath = y.Path.includes('\\');
+              const pathDelimiter = isWindowsPath ? '\\' : '/';
+
               return {
-                text: y.Path.split('/')
+                text: y.Path.split(pathDelimiter)
                   .filter((part) => part !== '')
                   .pop(),
                 id: y.Path,
-                cls: y.Path.endsWith('/') || y.Path.endsWith('\\') ? 'folder' : 'file',
+                cls: y.Path.endsWith(pathDelimiter) ? 'folder' : 'file',
                 leaf: node !== null,
                 resolvedpath: y.Path,
                 hidden: false,
@@ -728,10 +750,10 @@ export default class FileTreeComponent {
 
         this.treeNodes.update((y) => {
           const newArray = alignDataArray.map((z: any) => {
+            const isWindowsPath = z.id.includes('\\');
+            const pathDelimiter = isWindowsPath ? '\\' : '/';
             const cls =
-              (z.id.startsWith('%') && z.id.endsWith('%')) || z.id.endsWith('/') || z.id.endsWith('\\')
-                ? 'folder'
-                : 'file';
+              (z.id.startsWith('%') && z.id.endsWith('%')) || z.id.endsWith(pathDelimiter) ? 'folder' : 'file';
 
             return {
               ...z,

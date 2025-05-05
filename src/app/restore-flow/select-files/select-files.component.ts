@@ -19,7 +19,6 @@ const fb = new FormBuilder();
 export const createRestoreSelectFilesForm = () => {
   return fb.group({
     filesToRestore: fb.control<string>(''),
-    selectedOption: fb.control<number | null>(null),
     passphrase: fb.control<string | null>(null),
   });
 };
@@ -55,7 +54,7 @@ export default class SelectFilesComponent {
 
   selectFilesForm = this.#restoreFlowState.selectFilesForm;
   selectFilesFormSignal = this.#restoreFlowState.selectFilesFormSignal;
-  selectOptionSignal = this.#restoreFlowState.selectOptionSignal;
+  selectOption = this.#restoreFlowState.selectOption;
   backupId = this.#restoreFlowState.backupId;
   versionOptionsLoading = this.#restoreFlowState.versionOptionsLoading;
   versionOptions = this.#restoreFlowState.versionOptions;
@@ -64,7 +63,7 @@ export default class SelectFilesComponent {
 
   showFileTree = signal<boolean>(false);
   backupSettings = signal<BackupSettings | null>(null);
-  rootPath = signal<string | undefined>(undefined);
+  rootPaths = signal<string[]>([]);
   loadingRootPath = signal(false);
   isRepairing = signal(false);
 
@@ -78,45 +77,36 @@ export default class SelectFilesComponent {
     if (versionOptions && versionOptions?.length > 0) {
       const firstOption = versionOptions[0].Version;
 
-      if (Number.isInteger(firstOption)) {
-        this.selectFilesForm.controls.selectedOption.setValue(firstOption!);
-      }
+      this.selectOption.set(firstOption.toString());
     }
   });
 
   backupSettingsEffect = effect(() => {
     const id = this.backupId();
     const isRepairing = this.isRepairing();
-    const newOption =
-      typeof this.selectOptionSignal() === 'string'
-        ? parseInt(this.selectOptionSignal() as any)
-        : this.selectOptionSignal();
+    const newOption = this.selectOption();
 
-    if (!(typeof newOption === 'number') || !id) return;
+    if (!newOption || !id) return;
 
-    const option = this.versionOptions()?.find((x) => x.Version === newOption);
+    const option = this.versionOptions()?.find((x) => x.Version === parseInt(newOption));
     const time = option?.Time ?? null;
 
     if (!time || isRepairing) return;
 
-    this.showFileTree.set(false);
+    const settings = {
+      id: id + '',
+      time,
+    } as BackupSettings;
 
-    queueMicrotask(() => {
-      const settings = {
-        id: id + '',
-        time,
-      } as BackupSettings;
-      this.backupSettings.set(settings);
-      this.getRootPath(settings);
-    });
+    this.backupSettings.set(settings);
+    this.getRootPath(settings);
   });
 
   repairEffect = effect(() => {
-    const isDraft = this.#restoreFlowState.isDraft();
-    const newSelectedOption = this.selectOptionSignal();
+    const newSelectedOption = this.selectOption();
     const versionOptions = this.versionOptions();
 
-    if (isDraft && newSelectedOption) {
+    if (newSelectedOption) {
       const option = versionOptions.find((x) => x.Version === parseInt(newSelectedOption as any));
 
       if (option === undefined) return;
@@ -124,9 +114,8 @@ export default class SelectFilesComponent {
       const backupId = this.backupId();
       const versionId = `${backupId}+${option.Time}`;
 
-      if (this.#requestedRepairVersion === versionId)
-          return;
-      
+      if (this.#requestedRepairVersion === versionId) return;
+
       this.#requestedRepairVersion = versionId;
       this.isRepairing.set(true);
       this.#dupServer
@@ -172,6 +161,8 @@ export default class SelectFilesComponent {
 
     this.#requestedRootPathLoadId = requestId;
     this.loadingRootPath.set(true);
+    this.showFileTree.set(false);
+
     if (this.#sysinfo.hasV2ListOperations()) {
       this.#dupServer
         .postApiV2BackupListFolder({
@@ -180,9 +171,9 @@ export default class SelectFilesComponent {
             Time: backupSettings.time,
             Paths: null,
             PageSize: 0, // TODO: Add pagination support
-            Page: 0
-          }}
-        )
+            Page: 0,
+          },
+        })
         .pipe(
           takeUntil(this.abortLoading$),
           finalize(() => {
@@ -193,31 +184,34 @@ export default class SelectFilesComponent {
         )
         .subscribe({
           next: (res) => {
-            const paths = (res.Data ?? []).map((x) => x.Path);
-            if (paths.length == 1)
-              this.rootPath.set(paths[0] ?? '/');
-            else
-              this.rootPath.set(''); // Handle multiple roots by treating the root as empty
+            const paths = (res.Data ?? []).map((x) => x.Path ?? '');
+            if (paths.length > 0) {
+              this.rootPaths.set(paths);
+            } else {
+              this.rootPaths.set(['/']);
+            }
           },
         });
-
     } else {
       this.#dupServer
         .getApiV1BackupByIdFiles(params)
         .pipe(
           takeUntil(this.abortLoading$),
           finalize(() => {
+            console.log('hi');
             this.showFileTree.set(true);
             this.loadingRootPath.set(false);
           })
         )
         .subscribe({
           next: (res) => {
-            const paths = ((res as any)['Files'] as any[]).map((x) => x.Path);
-            if (paths.length == 1)
-              this.rootPath.set(paths[0] ?? '/');
-            else
-              this.rootPath.set(''); // Handle multiple roots by treating the root as empty
+            const paths = ((res as any)['Files'] as any[]).map((x) => x.Path ?? '');
+
+            if (paths.length > 0) {
+              this.rootPaths.set(paths);
+            } else {
+              this.rootPaths.set(['/']);
+            }
           },
         });
     }

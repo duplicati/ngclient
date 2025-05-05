@@ -108,7 +108,7 @@ export class BackupsState {
   #draftBackups = signal<BackupDraftItem[]>([]);
   #backups = signal<BackupRes>([]);
   #backupsLoading = signal(false);
-  #startingBackup = signal(false);
+  #startingBackup = signal<string | null>(null);
   #deletingBackup = signal<string | null>(null);
 
   #timeType = signal<TimeType>(
@@ -183,7 +183,7 @@ export class BackupsState {
   }
 
   startBackup(id: string) {
-    this.#startingBackup.set(true);
+    this.#startingBackup.set(id);
 
     this.#dupServer
       .postApiV1BackupByIdStart({
@@ -192,7 +192,7 @@ export class BackupsState {
       .pipe(
         take(1),
         tap(() => this.getBackups(true)),
-        finalize(() => this.#startingBackup.set(false))
+        finalize(() => this.#startingBackup.set(null))
       )
       .subscribe();
   }
