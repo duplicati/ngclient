@@ -19,8 +19,8 @@
     "watch": "bun run watch:font & ng build --watch --configuration development",
     "gen:tx": "ng extract-i18n --output-path src/locale --format xlf",
     "tx:push": "tx push -s",
-    "tx:pull": "tx pull -a --mode translated --minimum-perc 50",
-    "tx:sync": "ng extract-i18n --output-path src/locale --format xlf && tx push -s && tx pull -a",
+    "tx:pull": "tx pull -a --mode translated --minimum-perc 20",
+    "tx:sync": "ng extract-i18n --output-path src/locale --format xlf && tx push -s && tx pull -a --minimum-perc 20",
     "gen:openapi": "openapi-ts"
   },
   "dependencies": {
