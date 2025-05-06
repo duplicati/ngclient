@@ -282,6 +282,7 @@ export class BackupState {
       },
       closed: (res) => {
         if (!res) return;
+
         this.#resetAllForms();
         this.#router.navigate(['/']);
       },

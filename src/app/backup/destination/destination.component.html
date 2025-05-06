@@ -5,7 +5,13 @@
 
       <div class="actions">
         @if (destinationCount() > 0) {
-          <button spk-button type="button" class="small" [class.success]="successfulTest()" (click)="testDestination()">
+          <button
+            spk-button
+            type="button"
+            class="small"
+            [class.loader]="testLoading()"
+            [class.success]="successfulTest()"
+            (click)="testDestination()">
             @if (successfulTest()) {
               Connected
               <spk-icon>check</spk-icon>
@@ -282,7 +288,9 @@
                     formControlName="{{ item.formView.name }}" />
 
                   @if (item.oauthField === item.formView.name) {
-                    <span prefix class="link" (click)="oauthStartTokenCreation(item.destinationType)">AuthID</span>
+                    <span prefix class="link" (click)="oauthStartTokenCreation(item.destinationType, item)">
+                      AuthID
+                    </span>
                   } @else {
                     <spk-icon prefix>password</spk-icon>
                   }
