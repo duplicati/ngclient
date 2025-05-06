@@ -1248,20 +1248,6 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         longDescription: 'Path on server',
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
-      username: {
-        type: 'String',
-        name: 'username',
-        shortDescription: 'Username',
-        longDescription: 'Username',
-        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
-      },
-      password: {
-        type: 'Password',
-        name: 'password',
-        shortDescription: 'Password',
-        longDescription: 'Password',
-        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
-      },
     },
     dynamicFields: [
       {
