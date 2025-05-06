@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
   SparkleButtonComponent,
@@ -10,6 +10,7 @@ import {
   SparkleMenuComponent,
   SparkleProgressBarComponent,
 } from '@sparkle-ui/core';
+import { finalize } from 'rxjs';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { DuplicatiServerService } from '../core/openapi';
@@ -53,6 +54,9 @@ export default class HomeComponent {
 
   timeType = this.#backupsState.timeType;
 
+  loadingId = signal<string | null>(null);
+  successId = signal<string | null>(null);
+
   ngOnInit() {
     this.#backupsState.getBackups(true);
   }
@@ -70,6 +74,7 @@ export default class HomeComponent {
   }
 
   deleteBackup(id: string) {
+    this.loadingId.set(id);
     this.#dialog.open(ConfirmDialogComponent, {
       data: {
         title: $localize`Confirm delete`,
@@ -79,20 +84,50 @@ export default class HomeComponent {
       },
       closed: (res) => {
         if (!res) return;
-        this.#backupsState.deleteBackup(id)
-      }
-    });    
+        this.#backupsState.deleteBackup(id);
+      },
+    });
   }
 
   verifyFiles(id: string) {
-    this.#dupServer.postApiV1BackupByIdVerify({ id }).subscribe();
+    this.loadingId.set(id);
+    this.#dupServer
+      .postApiV1BackupByIdVerify({ id })
+      .pipe(finalize(() => this.loadingId.set(null)))
+      .subscribe({
+        next: () => {
+          this.successId.set(id);
+
+          setTimeout(() => this.successId.set(null), 2000);
+        },
+      });
   }
 
   compressBackup(id: string) {
-    this.#dupServer.postApiV1BackupByIdCompact({ id }).subscribe();
+    this.loadingId.set(id);
+    this.#dupServer
+      .postApiV1BackupByIdCompact({ id })
+      .pipe(finalize(() => this.loadingId.set(null)))
+      .subscribe({
+        next: () => {
+          this.successId.set(id);
+
+          setTimeout(() => this.successId.set(null), 2000);
+        },
+      });
   }
 
   createErrorReport(id: string) {
-    this.#dupServer.postApiV1BackupByIdCreatereport({ id }).subscribe();
+    this.loadingId.set(id);
+    this.#dupServer
+      .postApiV1BackupByIdCreatereport({ id })
+      .pipe(finalize(() => this.loadingId.set(null)))
+      .subscribe({
+        next: () => {
+          this.successId.set(id);
+
+          setTimeout(() => this.successId.set(null), 2000);
+        },
+      });
   }
 }

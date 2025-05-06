@@ -129,7 +129,17 @@
                 </button>
 
                 <spk-menu [right]="true">
-                  <button type="button" spk-button><spk-icon>dots-three-vertical</spk-icon></button>
+                  <button
+                    type="button"
+                    spk-button
+                    [class.loader]="loadingId() === backup.Backup?.ID"
+                    [class.success]="successId() === backup.Backup?.ID">
+                    @if (successId() === backup.Backup?.ID) {
+                      <spk-icon>check</spk-icon>
+                    } @else {
+                      <spk-icon>dots-three-vertical</spk-icon>
+                    }
+                  </button>
 
                   <ng-container menu>
                     <h3 title>Operations</h3>
