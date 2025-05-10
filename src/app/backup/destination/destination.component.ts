@@ -1,5 +1,4 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -70,6 +69,14 @@ export const createDestinationFormGroup = ({
 export type DestinationFormGroup = ReturnType<typeof createDestinationFormGroup>;
 export type DestinationFormGroupValue = ReturnType<typeof createDestinationFormGroup>['value'];
 
+type DefaultGroup = {
+  destinationType: string;
+  oauthField?: string;
+  index: number;
+  formGroupName: 'custom' | 'dynamic' | 'advanced';
+  formView: FormView;
+};
+
 @Component({
   selector: 'app-destination',
   imports: [
@@ -96,7 +103,6 @@ export type DestinationFormGroupValue = ReturnType<typeof createDestinationFormG
 export default class DestinationComponent {
   #router = inject(Router);
   #route = inject(ActivatedRoute);
-  #httpClient = inject(HttpClient);
   #backupState = inject(BackupState);
   #dialog = inject(SparkleDialogService);
   #testDestination = inject(TestDestinationService);
@@ -114,6 +120,7 @@ export default class DestinationComponent {
   destinationFormSignal = this.#backupState.destinationFormSignal;
   destinationCount = computed(() => this.destinationFormSignal()?.destinations?.length ?? 0);
   successfulTest = signal(false);
+  testLoading = signal(false);
   destinationTypeOptionsInFocus = signal(['file', 'ssh', 's3', 'gcs', 'googledrive', 'azure']);
   destinationTypeOptions = signal(
     DESTINATION_CONFIG.map((x) => ({
@@ -145,6 +152,13 @@ export default class DestinationComponent {
     const group = dest.controls?.[formGroupName];
 
     return group.controls[formControlName].value;
+  }
+
+  getFormControl(destinationIndex: number, formGroupName: 'custom' | 'dynamic' | 'advanced', formControlName: string) {
+    const dest = this.destinationForm.controls.destinations.controls?.[destinationIndex];
+    const group = dest.controls?.[formGroupName];
+
+    return group.controls[formControlName];
   }
 
   addDestinationFormGroup(key: IDynamicModule['Key']) {
@@ -199,50 +213,59 @@ export default class DestinationComponent {
 
     if (!targetUrl) return;
 
-    this.#testDestination.testDestination(targetUrl, destinationIndex, true).subscribe({
-      next: (res) => {
-        if (res.action === 'success') {
-          if (this.#backupState.isNew()) {
-            if (res.containsBackup === true) {
-              this.#dialog.open(ConfirmDialogComponent, {
-                data: {
-                  title: $localize`Folder contains backup`,
-                  message: $localize`The remote destination already contains a backup. You must use a different folder for each backup.`,
-                  confirmText: $localize`OK`,
-                  cancelText: undefined,
-                },
-              });
-            } else if (res.anyFilesFound === true) {
-              this.#dialog.open(ConfirmDialogComponent, {
-                data: {
-                  title: $localize`Folder is not empty`,
-                  message: $localize`The remote destination is not empty. It is recommended to use an empty folder for the backup.`,
-                  confirmText: $localize`OK`,
-                  cancelText: undefined,
-                },
-              });
+    this.testLoading.set(true);
+
+    this.#testDestination
+      .testDestination(targetUrl, destinationIndex, true)
+      .pipe(finalize(() => this.testLoading.set(false)))
+      .subscribe({
+        next: (res) => {
+          if (res.action === 'success') {
+            if (this.#backupState.isNew()) {
+              if (res.containsBackup === true) {
+                this.#dialog.open(ConfirmDialogComponent, {
+                  data: {
+                    title: $localize`Folder contains backup`,
+                    message: $localize`The remote destination already contains a backup. You must use a different folder for each backup.`,
+                    confirmText: $localize`OK`,
+                    cancelText: undefined,
+                  },
+                });
+              } else if (res.anyFilesFound === true) {
+                this.#dialog.open(ConfirmDialogComponent, {
+                  data: {
+                    title: $localize`Folder is not empty`,
+                    message: $localize`The remote destination is not empty. It is recommended to use an empty folder for the backup.`,
+                    confirmText: $localize`OK`,
+                    cancelText: undefined,
+                  },
+                });
+              }
             }
+
+            this.successfulTest.set(true);
+            setTimeout(() => {
+              this.successfulTest.set(false);
+            }, 3000);
+            return;
           }
 
-          this.successfulTest.set(true);
-          setTimeout(() => {
+          if (res.action === 'generic-error') {
             this.successfulTest.set(false);
-          }, 3000);
-          return;
-        }
+            return;
+          }
 
-        if (res.action === 'generic-error') {
-          this.successfulTest.set(false);
-          return;
-        }
-
-        if (res.action === 'trust-cert')
-          this.#backupState.addHttpOptionByName('accept-specified-ssl-hash', res.destinationIndex, res.certData);
+          if (res.action === 'trust-cert')
+            this.#backupState.addHttpOptionByName('accept-specified-ssl-hash', res.destinationIndex, res.certData);
           if (res.action === 'approve-host-key')
-            this.#backupState.addOrUpdateAdvancedFormPairByName('ssh-fingerprint', res.destinationIndex, res.reportedHostKey);
-        if (res.testAgain) this.testDestination(res.destinationIndex);
-      },
-    });
+            this.#backupState.addOrUpdateAdvancedFormPairByName(
+              'ssh-fingerprint',
+              res.destinationIndex,
+              res.reportedHostKey
+            );
+          if (res.testAgain) this.testDestination(res.destinationIndex);
+        },
+      });
   }
 
   mapToTargetUrl(destinationGroup: DestinationFormGroup) {
@@ -276,17 +299,16 @@ export default class DestinationComponent {
 
   keyCreation() {}
 
-  oauthStartTokenCreation(backendKey: string) {
-    // if (!servicelink.endsWith('/')) servicelink += '/';
+  oauthStartTokenCreation(backendKey: string, item: DefaultGroup) {
+    const control = this.getFormControl(item.index, item.formGroupName, item.formView.name);
 
     this.#oauthInProgress.set(true);
 
+    const oauthCreateToken = this.#oauthCreateToken();
     const w = 450;
     const h = 600;
-    const startlink = this.#oauthServiceLink() + '?type=' + backendKey + '&token=' + this.#oauthCreateToken();
+    const startlink = this.#oauthServiceLink() + '?type=' + backendKey + '&token=' + oauthCreateToken;
 
-    // const countDown = 100;
-    // const ft = oauthCreateToken;
     const left = screen.width / 2 - w / 2;
     const top = screen.height / 2 - h / 2;
     const wnd = window.open(
@@ -295,59 +317,22 @@ export default class DestinationComponent {
       'height=' + h + ',width=' + w + ',menubar=0,status=0,titlebar=0,toolbar=0,left=' + left + ',top=' + top
     );
 
-    wnd?.addEventListener('blur', (event) => {
-      console.log('event blur', event);
+    window.addEventListener('message', (event) => {
+      const hasAuthId = event.data.startsWith('authid:');
+      const authId = hasAuthId ? event.data.replace('authid:', '') : null;
+
+      console.log('event', event);
+      if (hasAuthId) {
+        // this.#oauthId.set(authId);
+        control.setValue(authId);
+        this.#oauthInProgress.set(false);
+
+        wnd?.close();
+      } else {
+        // TODO some error handling
+      }
     });
 
-    wnd?.addEventListener('beforeunload', (event) => {
-      console.log('event beforeunload', event);
-      this.#httpClient
-        .get(this.#oauthServiceLink() + 'fetch?callback=JSON_CALLBACK', {
-          params: { token: this.#oauthCreateToken() },
-        })
-        .pipe(finalize(() => this.#oauthInProgress.set(false)))
-        .subscribe({
-          next: (res: any) => {
-            console.log('res', res);
-
-            if (res?.authid) {
-              this.#oauthId.set(res.authid);
-
-              // wnd.close();
-            }
-          },
-        });
-    });
-
-    // var recheck = function () {
-    //   countDown--;
-    //   if (countDown > 0 && ft == oauthCreateToken) {
-    //     $http
-    //       .jsonp(servicelink + "fetch?callback=JSON_CALLBACK", {
-    //         params: { token: ft },
-    //       })
-    //       .then(
-    //         function (response) {
-    //           if (response.data.authid) {
-    //             const AuthID = response.data.authid;
-    //             const oauth_in_progress = false;
-    //             wnd.close();
-    //           } else {
-    //             setTimeout(recheck, 3000);
-    //           }
-    //         },
-    //         function (response) {
-    //           setTimeout(recheck, 3000);
-    //         }
-    //       );
-    //   } else {
-    //     const oauth_in_progress = false;
-    //     if (wnd != null) wnd.close();
-    //   }
-    // };
-
-    // setTimeout(recheck, 6000);
-
-    // return false;
+    return false;
   }
 }

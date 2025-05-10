@@ -26,3 +26,8 @@ spk-progress-bar {
   left: 0;
   right: 0;
 }
+
+.actions {
+  display: flex;
+  gap: p2r(8);
+}

@@ -5,5 +5,26 @@
 <section>
   <h3 i18n>General</h3>
 
+  <p i18n>Your running Duplicati with - {{ duplicatiVersion() }}</p>
+
+  <div class="actions">
+    @if (serverState()?.UpdaterState === 'Waiting') {
+      <button spk-button (click)="checkForUpdates()" [class.loader]="checkingForUpdates()">Check for updates</button>
+
+      @if (serverState()?.UpdateDownloadLink) {
+        <a class="primary raised" spk-button [href]="serverState()?.UpdateDownloadLink" target="_blank">
+          <spk-icon>download</spk-icon>
+          Download update
+        </a>
+      }
+    } @else if (serverState()?.UpdaterState === 'Checking') {
+      <button spk-button (click)="checkForUpdates()">Checking for updates …</button>
+    }
+
+    @if (serverState()?.UpdaterState === 'Downloading') {
+      <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
+    }
+  </div>
+
   <div>{{ generalInfo() }}</div>
 </section>

@@ -4,12 +4,12 @@
   display: flex;
   flex-direction: column;
   gap: 0;
-  padding: p2r(40);
 }
 
-.nav {
+.content {
   display: flex;
-  gap: p2r(8);
+  flex-direction: column;
+  padding: p2r(16 32);
 }
 
 section {

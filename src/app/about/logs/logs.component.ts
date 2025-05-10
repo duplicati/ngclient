@@ -34,6 +34,7 @@ export default class LogsComponent {
   }
 
   updateLogLevel(logLevel: string) {
+    this.#logsLiveState.isPolling.set(true);
     this.#logsLiveState.updateLogLevel(logLevel);
   }
 }
