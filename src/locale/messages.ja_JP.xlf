@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-  <file source-language="en" datatype="plaintext" original="ng2.template">
+<?xml version="1.0" ?><xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en" datatype="plaintext" original="ng2.template" target-language="ja-JP">
     <body>
       <trans-unit id="6439365426343089851" datatype="html">
         <source>General</source>
+        <target>全般</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/about.component.html</context>
           <context context-type="linenumber">2,3</context>
@@ -19,6 +19,7 @@
       </trans-unit>
       <trans-unit id="7136888919962092730" datatype="html">
         <source>Changelog</source>
+        <target>更新履歴</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/about.component.html</context>
           <context context-type="linenumber">3,4</context>
@@ -30,6 +31,7 @@
       </trans-unit>
       <trans-unit id="4637334248246674819" datatype="html">
         <source>Libraries</source>
+        <target>ライブラリー</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/about.component.html</context>
           <context context-type="linenumber">4,5</context>
@@ -41,6 +43,7 @@
       </trans-unit>
       <trans-unit id="3113844851981371723" datatype="html">
         <source>System info</source>
+        <target>システムの情報</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/about.component.html</context>
           <context context-type="linenumber">5,6</context>
@@ -113,6 +116,7 @@
       </trans-unit>
       <trans-unit id="5769292297914455214" datatype="html">
         <source>Disabled</source>
+        <target>無効</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/logs/logs-live/logs-live.state.ts</context>
           <context context-type="linenumber">12</context>
@@ -148,6 +152,7 @@
       </trans-unit>
       <trans-unit id="5037437391296624618" datatype="html">
         <source>Information</source>
+        <target>情報</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/logs/logs-live/logs-live.state.ts</context>
           <context context-type="linenumber">32</context>
@@ -169,6 +174,7 @@
       </trans-unit>
       <trans-unit id="1519954996184640001" datatype="html">
         <source>Error</source>
+        <target>エラー</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/logs/logs-live/logs-live.state.ts</context>
           <context context-type="linenumber">44</context>
@@ -191,6 +197,7 @@
       </trans-unit>
       <trans-unit id="2229445179824655238" datatype="html">
         <source>Backup ID</source>
+        <target>バックアップのID</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/logs/logs-stored/logs-stored.component.html</context>
           <context context-type="linenumber">4,5</context>
@@ -290,6 +297,7 @@
       </trans-unit>
       <trans-unit id="4491027740832706620" datatype="html">
         <source>Add a new backup</source>
+        <target>新しいバックアップを作成</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/add-backup/add-backup.component.html</context>
           <context context-type="linenumber">4,6</context>
@@ -412,6 +420,7 @@
       </trans-unit>
       <trans-unit id="2807800733729323332" datatype="html">
         <source>Yes</source>
+        <target>はい</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/backup.state.ts</context>
           <context context-type="linenumber">280</context>
@@ -423,6 +432,7 @@
       </trans-unit>
       <trans-unit id="2159130950882492111" datatype="html">
         <source>Cancel</source>
+        <target>キャンセル</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/backup.state.ts</context>
           <context context-type="linenumber">281</context>
@@ -507,7 +517,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="1025749787024452616" datatype="html">
-        <source><x id="START_BLOCK_IF" equiv-text="@if (status() === &apos;starting&apos;) {"/> Starting... <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_IF_1" equiv-text="@if (status() === &apos;started&apos;) {"/> Started! <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_IF_2" equiv-text="@if (status() === &apos;finished&apos;) {"/> Finished! <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_IF_3" equiv-text="@if (status() === &apos;aborted&apos;) {"/> Aborted! <x id="CLOSE_BLOCK_IF" equiv-text="}"/></source>
+        <source><x id="START_BLOCK_IF" equiv-text="@if (status() === 'starting') {"/> Starting... <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_IF_1" equiv-text="@if (status() === 'started') {"/> Started! <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_IF_2" equiv-text="@if (status() === 'finished') {"/> Finished! <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_IF_3" equiv-text="@if (status() === 'aborted') {"/> Aborted! <x id="CLOSE_BLOCK_IF" equiv-text="}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/commandline-result/commandline-result.component.html</context>
           <context context-type="linenumber">17,34</context>
@@ -515,6 +525,7 @@
       </trans-unit>
       <trans-unit id="1795589471045938719" datatype="html">
         <source>Command</source>
+        <target>コマンド</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/commandline/commandline.component.html</context>
           <context context-type="linenumber">16,17</context>
@@ -536,6 +547,7 @@
       </trans-unit>
       <trans-unit id="2980688108457243770" datatype="html">
         <source>Advanced options</source>
+        <target>高度な設定</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/commandline/commandline.component.html</context>
           <context context-type="linenumber">31</context>
@@ -558,6 +570,7 @@
       </trans-unit>
       <trans-unit id="4163272119298020373" datatype="html">
         <source>Filters</source>
+        <target>フィルター</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/commandline/commandline.component.html</context>
           <context context-type="linenumber">45</context>
@@ -597,6 +610,7 @@
       </trans-unit>
       <trans-unit id="3465942650835858981" datatype="html">
         <source>Maintenance</source>
+        <target>メンテナンス</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/database/database.component.html</context>
           <context context-type="linenumber">21,22</context>
@@ -695,11 +709,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="1245076565562757606" datatype="html">
-        <source> Advanced options <x id="START_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;spk-menu [searchable]=&quot;true&quot;&gt;"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button
-                spk-button
-                type=&quot;button&quot;
-                class=&quot;outlined small&quot;
-                [disabled]=&quot;notSelectedAdvancedFormPair().length === 0&quot;&gt;"/> Add advanced option <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>plus<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_BLOCK_FOR" equiv-text="@for (option of notSelectedAdvancedFormPair(); track $index) {"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button #option type=&quot;button&quot; (click)=&quot;addAdvancedFormPair(option, 0)&quot;&gt;"/> <x id="INTERPOLATION" equiv-text="{{ option.name }}"/> <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_FOR" equiv-text="}"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;/spk-menu&gt;"/></source>
+        <source> Advanced options <x id="START_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;spk-menu [searchable]=&quot;true&quot;&gt;"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button                 spk-button                 type=&quot;button&quot;                 class=&quot;outlined small&quot;                 [disabled]=&quot;notSelectedAdvancedFormPair().length === 0&quot;&gt;"/> Add advanced option <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>plus<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_BLOCK_FOR" equiv-text="@for (option of notSelectedAdvancedFormPair(); track $index) {"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button #option type=&quot;button&quot; (click)=&quot;addAdvancedFormPair(option, 0)&quot;&gt;"/> <x id="INTERPOLATION" equiv-text="{{ option.name }}"/> <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_FOR" equiv-text="}"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;/spk-menu&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
           <context context-type="linenumber">105,125</context>
@@ -710,11 +720,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="5677183873280018688" datatype="html">
-        <source> Http options <x id="START_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;spk-menu [searchable]=&quot;true&quot;&gt;"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button
-                spk-button
-                type=&quot;button&quot;
-                class=&quot;outlined small&quot;
-                [disabled]=&quot;notSelectedHttpOptions().length === 0&quot;&gt;"/> Add http option <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>plus<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_BLOCK_FOR" equiv-text="@for (option of notSelectedHttpOptions(); track $index) {"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button #option type=&quot;button&quot; (click)=&quot;addHttpOption(option, 0)&quot;&gt;"/> <x id="INTERPOLATION" equiv-text="{{ option.name }}"/> <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_FOR" equiv-text="}"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;/spk-menu&gt;"/></source>
+        <source> Http options <x id="START_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;spk-menu [searchable]=&quot;true&quot;&gt;"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button                 spk-button                 type=&quot;button&quot;                 class=&quot;outlined small&quot;                 [disabled]=&quot;notSelectedHttpOptions().length === 0&quot;&gt;"/> Add http option <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>plus<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_BLOCK_FOR" equiv-text="@for (option of notSelectedHttpOptions(); track $index) {"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button #option type=&quot;button&quot; (click)=&quot;addHttpOption(option, 0)&quot;&gt;"/> <x id="INTERPOLATION" equiv-text="{{ option.name }}"/> <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_FOR" equiv-text="}"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;/spk-menu&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
           <context context-type="linenumber">146,166</context>
@@ -823,6 +829,7 @@
       </trans-unit>
       <trans-unit id="8998179362936748717" datatype="html">
         <source>OK</source>
+        <target>OK</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.ts</context>
           <context context-type="linenumber">211</context>
@@ -926,6 +933,7 @@
       </trans-unit>
       <trans-unit id="1431416938026210429" datatype="html">
         <source>Password</source>
+        <target>パスワード</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/export/export.component.html</context>
           <context context-type="linenumber">71,72</context>
@@ -951,7 +959,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="7273207934922522958" datatype="html">
-        <source> Passwords must be at least <x id="INTERPOLATION" equiv-text="{{ exportForm.controls.password.errors?.[&apos;minlength&apos;].requiredLength }}"/> characters long </source>
+        <source> Passwords must be at least <x id="INTERPOLATION" equiv-text="{{ exportForm.controls.password.errors?.['minlength'].requiredLength }}"/> characters long </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/export/export.component.html</context>
           <context context-type="linenumber">78,80</context>
@@ -1037,6 +1045,7 @@
       </trans-unit>
       <trans-unit id="441775147584593226" datatype="html">
         <source>General backup settings</source>
+        <target>バックアップの設定</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/general/general.component.html</context>
           <context context-type="linenumber">2,4</context>
@@ -1079,6 +1088,7 @@
       </trans-unit>
       <trans-unit id="8255877266497322342" datatype="html">
         <source>Encryption</source>
+        <target>暗号化の方式</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/general/general.component.html</context>
           <context context-type="linenumber">31,32</context>
@@ -1111,13 +1121,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="7357294036326725134" datatype="html">
-        <source> Import backup configuration <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;outlined&quot; [routerLink]=&quot;[&apos;/&apos;]&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-left<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Back <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button
-        spk-button
-        type=&quot;submit&quot;
-        class=&quot;raised primary&quot;
-        (click)=&quot;submit()&quot;
-        [disabled]=&quot;isImporting()&quot;
-        [class.loader]=&quot;isImporting()&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>download-simple<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Import <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
+        <source> Import backup configuration <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;outlined&quot; [routerLink]=&quot;['/']&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-left<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Back <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button         spk-button         type=&quot;submit&quot;         class=&quot;raised primary&quot;         (click)=&quot;submit()&quot;         [disabled]=&quot;isImporting()&quot;         [class.loader]=&quot;isImporting()&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>download-simple<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Import <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/import/import.component.html</context>
           <context context-type="linenumber">3,23</context>
@@ -1125,6 +1129,7 @@
       </trans-unit>
       <trans-unit id="1755805413339441073" datatype="html">
         <source>Passphrase</source>
+        <target>パスフレーズ</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/import/import.component.html</context>
           <context context-type="linenumber">30,31</context>
@@ -1158,13 +1163,14 @@
       </trans-unit>
       <trans-unit id="8497528947328199741" datatype="html">
         <source>Time</source>
+        <target>時間</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
           <context context-type="linenumber">35,36</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5080389591312921919" datatype="html">
-        <source>Start: <x id="INTERPOLATION" equiv-text="{{ item.data?.BeginTime | date: &apos;medium&apos; }}"/></source>
+        <source>Start: <x id="INTERPOLATION" equiv-text="{{ item.data?.BeginTime | date: 'medium' }}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
           <context context-type="linenumber">39,40</context>
@@ -1179,7 +1185,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="8726674463503410455" datatype="html">
-        <source>End: <x id="INTERPOLATION" equiv-text="{{ item.data?.EndTime | date: &apos;medium&apos; }}"/></source>
+        <source>End: <x id="INTERPOLATION" equiv-text="{{ item.data?.EndTime | date: 'medium' }}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
           <context context-type="linenumber">40,41</context>
@@ -1301,27 +1307,21 @@
         </context-group>
       </trans-unit>
       <trans-unit id="2232867431219377641" datatype="html">
-        <source> Deleted files: <x id="INTERPOLATION" equiv-text="{{ item.data?.CompactResults?.DeletedFileCount }}"/> (<x id="INTERPOLATION_1" equiv-text="{{
-                    item.data?.CompactResults?.DeletedFileSize | bytes
-                  }}"/>) </source>
+        <source> Deleted files: <x id="INTERPOLATION" equiv-text="{{ item.data?.CompactResults?.DeletedFileCount }}"/> (<x id="INTERPOLATION_1" equiv-text="{{                     item.data?.CompactResults?.DeletedFileSize | bytes                   }}"/>) </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
           <context context-type="linenumber">102,105</context>
         </context-group>
       </trans-unit>
       <trans-unit id="474488815103574935" datatype="html">
-        <source> Downloaded files: <x id="INTERPOLATION" equiv-text="{{ item.data?.CompactResults?.DownloadedFileCount }}"/> (<x id="INTERPOLATION_1" equiv-text="{{
-                    item.data?.CompactResults?.DownloadedFileSize | bytes
-                  }}"/>) </source>
+        <source> Downloaded files: <x id="INTERPOLATION" equiv-text="{{ item.data?.CompactResults?.DownloadedFileCount }}"/> (<x id="INTERPOLATION_1" equiv-text="{{                     item.data?.CompactResults?.DownloadedFileSize | bytes                   }}"/>) </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
           <context context-type="linenumber">107,110</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1841165020557840645" datatype="html">
-        <source> Uploaded files: <x id="INTERPOLATION" equiv-text="{{ item.data?.CompactResults?.UploadedFileCount }}"/> (<x id="INTERPOLATION_1" equiv-text="{{
-                    item.data?.CompactResults?.UploadedFileSize | bytes
-                  }}"/>) </source>
+        <source> Uploaded files: <x id="INTERPOLATION" equiv-text="{{ item.data?.CompactResults?.UploadedFileCount }}"/> (<x id="INTERPOLATION_1" equiv-text="{{                     item.data?.CompactResults?.UploadedFileSize | bytes                   }}"/>) </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
           <context context-type="linenumber">112,115</context>
@@ -1357,6 +1357,7 @@
       </trans-unit>
       <trans-unit id="6520003959216971027" datatype="html">
         <source>Last successful backup:</source>
+        <target>最後に成功したバックアップ：</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/log.component.html</context>
           <context context-type="linenumber">21,22</context>
@@ -1410,6 +1411,7 @@
       </trans-unit>
       <trans-unit id="471538465380942039" datatype="html">
         <source>Source:</source>
+        <target>バックアップ元：</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/log.component.html</context>
           <context context-type="linenumber">33,34</context>
@@ -1431,7 +1433,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="4758656702002650001" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{ _backup.Backup?.Metadata?.[&apos;BackupListCount&apos;] }}"/> Version</source>
+        <source><x id="INTERPOLATION" equiv-text="{{ _backup.Backup?.Metadata?.['BackupListCount'] }}"/> Version</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/log.component.html</context>
           <context context-type="linenumber">52,53</context>
@@ -1482,6 +1484,7 @@
       </trans-unit>
       <trans-unit id="8432562579042371182" datatype="html">
         <source>Options</source>
+        <target>オプション</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/options/options.component.html</context>
           <context context-type="linenumber">2,4</context>
@@ -1510,6 +1513,7 @@
       </trans-unit>
       <trans-unit id="3200173535986954809" datatype="html">
         <source>Backup retention</source>
+        <target>バックアップの保持期間</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/options/options.component.html</context>
           <context context-type="linenumber">31,32</context>
@@ -1517,6 +1521,7 @@
       </trans-unit>
       <trans-unit id="3776830777548420252" datatype="html">
         <source>Nothing will be deleted. The backup size will grow with each change.</source>
+        <target>バックアップは削除されません。バックアップのサイズはその都度の変更に従って大きくなります。</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/options/options.component.html</context>
           <context context-type="linenumber">36,37</context>
@@ -1524,6 +1529,7 @@
       </trans-unit>
       <trans-unit id="3689631695541161772" datatype="html">
         <source>If at least one newer backup is found, all backups older than this date are deleted.</source>
+        <target>最低1つ以上のより新しいバックアップが存在する場合、この日付よりも古い全てのバックアップを削除します。</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/options/options.component.html</context>
           <context context-type="linenumber">38,39</context>
@@ -1538,6 +1544,7 @@
       </trans-unit>
       <trans-unit id="8773725608546407303" datatype="html">
         <source>Once there are more backups than the specified number, the oldest backups are deleted.</source>
+        <target>指定した数以上のバックアップが作成された場合、古いバックアップから削除されます。</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/options/options.component.html</context>
           <context context-type="linenumber">43,44</context>
@@ -1588,6 +1595,7 @@
       </trans-unit>
       <trans-unit id="4510773130259577012" datatype="html">
         <source>Keep all backups</source>
+        <target>全てのバックアップを保存</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/options/options.component.ts</context>
           <context context-type="linenumber">15</context>
@@ -1595,6 +1603,7 @@
       </trans-unit>
       <trans-unit id="1384560836372891469" datatype="html">
         <source>Delete backups that are older than</source>
+        <target>古いバックアップから削除</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/options/options.component.ts</context>
           <context context-type="linenumber">19</context>
@@ -1602,6 +1611,7 @@
       </trans-unit>
       <trans-unit id="6500067590143892883" datatype="html">
         <source>Keep a specific number of backups</source>
+        <target>指定した数のバックアップを保存</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/options/options.component.ts</context>
           <context context-type="linenumber">23</context>
@@ -1609,6 +1619,7 @@
       </trans-unit>
       <trans-unit id="6938176597345457364" datatype="html">
         <source>Smart backup retention</source>
+        <target>スマートなバックアップ保持期間</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/options/options.component.ts</context>
           <context context-type="linenumber">27</context>
@@ -1616,6 +1627,7 @@
       </trans-unit>
       <trans-unit id="7060817842742577303" datatype="html">
         <source>Custom backup retention</source>
+        <target>ユーザー定義のバックアップの保持期間</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/options/options.component.ts</context>
           <context context-type="linenumber">31</context>
@@ -1623,6 +1635,7 @@
       </trans-unit>
       <trans-unit id="5433782699501161466" datatype="html">
         <source>Schedule</source>
+        <target>スケジュール</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/schedule/schedule.component.html</context>
           <context context-type="linenumber">1,3</context>
@@ -1637,6 +1650,7 @@
       </trans-unit>
       <trans-unit id="8881518135181911268" datatype="html">
         <source>If a date was missed, the job will run as soon as possible.</source>
+        <target>予定の日時を逃してしまった場合、ジョブは即座に実行します。</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/schedule/schedule.component.html</context>
           <context context-type="linenumber">9,10</context>
@@ -1644,6 +1658,7 @@
       </trans-unit>
       <trans-unit id="2711956035454008868" datatype="html">
         <source>Next time</source>
+        <target>次回</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/schedule/schedule.component.html</context>
           <context context-type="linenumber">15,16</context>
@@ -1651,6 +1666,7 @@
       </trans-unit>
       <trans-unit id="7819349273171317543" datatype="html">
         <source>Run again every</source>
+        <target>実行タイミング</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/schedule/schedule.component.html</context>
           <context context-type="linenumber">39,40</context>
@@ -1658,6 +1674,7 @@
       </trans-unit>
       <trans-unit id="1529146527618369905" datatype="html">
         <source>Allowed days</source>
+        <target>実行を許可する日</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/schedule/schedule.component.html</context>
           <context context-type="linenumber">49</context>
@@ -1714,6 +1731,7 @@
       </trans-unit>
       <trans-unit id="8874012390997067175" datatype="html">
         <source>Seconds</source>
+        <target>秒</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/schedule/schedule.component.ts</context>
           <context context-type="linenumber">17</context>
@@ -1729,6 +1747,7 @@
       </trans-unit>
       <trans-unit id="5531237363767747080" datatype="html">
         <source>Minutes</source>
+        <target>分</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/schedule/schedule.component.ts</context>
           <context context-type="linenumber">21</context>
@@ -1744,6 +1763,7 @@
       </trans-unit>
       <trans-unit id="8070396816726827304" datatype="html">
         <source>Hours</source>
+        <target>時間</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/schedule/schedule.component.ts</context>
           <context context-type="linenumber">25</context>
@@ -1759,6 +1779,7 @@
       </trans-unit>
       <trans-unit id="840951359074313455" datatype="html">
         <source>Days</source>
+        <target>日</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/schedule/schedule.component.ts</context>
           <context context-type="linenumber">29</context>
@@ -1770,6 +1791,7 @@
       </trans-unit>
       <trans-unit id="8365450656480095075" datatype="html">
         <source>Weeks</source>
+        <target>週</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/schedule/schedule.component.ts</context>
           <context context-type="linenumber">33</context>
@@ -1781,6 +1803,7 @@
       </trans-unit>
       <trans-unit id="4845030128243887325" datatype="html">
         <source>Months</source>
+        <target>月</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/schedule/schedule.component.ts</context>
           <context context-type="linenumber">37</context>
@@ -1792,6 +1815,7 @@
       </trans-unit>
       <trans-unit id="953022389548488004" datatype="html">
         <source>Years</source>
+        <target>年</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/schedule/schedule.component.ts</context>
           <context context-type="linenumber">41</context>
@@ -1818,6 +1842,7 @@
       </trans-unit>
       <trans-unit id="224973670174608722" datatype="html">
         <source>Source Data</source>
+        <target>バックアップ元</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/source-data/source-data.component.html</context>
           <context context-type="linenumber">5,7</context>
@@ -1825,6 +1850,7 @@
       </trans-unit>
       <trans-unit id="3063621350011509567" datatype="html">
         <source>Folder path</source>
+        <target>フォルダーのパス</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/source-data/source-data.component.html</context>
           <context context-type="linenumber">8,9</context>
@@ -1832,6 +1858,7 @@
       </trans-unit>
       <trans-unit id="8911059720204770105" datatype="html">
         <source>Path</source>
+        <target>パス</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/source-data/source-data.component.html</context>
           <context context-type="linenumber">9</context>
@@ -1878,6 +1905,7 @@
       </trans-unit>
       <trans-unit id="910026778839409110" datatype="html">
         <source>Add filter</source>
+        <target>フィルターを追加</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/source-data/source-data.component.html</context>
           <context context-type="linenumber">81,83</context>
@@ -1885,6 +1913,7 @@
       </trans-unit>
       <trans-unit id="5668077948386857930" datatype="html">
         <source>Exclude</source>
+        <target>除外</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/source-data/source-data.component.html</context>
           <context context-type="linenumber">95</context>
@@ -1906,6 +1935,7 @@
       </trans-unit>
       <trans-unit id="4870633869236300156" datatype="html">
         <source>Hidden files</source>
+        <target>隠しファイル</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/source-data/source-data.component.html</context>
           <context context-type="linenumber">100</context>
@@ -1920,6 +1950,7 @@
       </trans-unit>
       <trans-unit id="7399702730809197610" datatype="html">
         <source>System files</source>
+        <target>システムファイル</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/source-data/source-data.component.html</context>
           <context context-type="linenumber">105</context>
@@ -1934,6 +1965,7 @@
       </trans-unit>
       <trans-unit id="7611381050409609850" datatype="html">
         <source>Temporary files</source>
+        <target>一時ファイル</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/source-data/source-data.component.html</context>
           <context context-type="linenumber">110</context>
@@ -1961,7 +1993,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="1272370515624537561" datatype="html">
-        <source> The connection to the server is lost, attempting again in <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>0:<x id="INTERPOLATION" equiv-text="{{ countdown() | number: &apos;2.0-0&apos; }}"/><x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/></source>
+        <source> The connection to the server is lost, attempting again in <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>0:<x id="INTERPOLATION" equiv-text="{{ countdown() | number: '2.0-0' }}"/><x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/disconnected-dialog/disconnected-dialog.component.ts</context>
           <context context-type="linenumber">14,17</context>
@@ -1982,7 +2014,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="140764604930103244" datatype="html">
-        <source> Show hidden <x id="INTERPOLATION" equiv-text="{{ showFiles() ? &apos;files&apos; : &apos;folders&apos; }}"/> </source>
+        <source> Show hidden <x id="INTERPOLATION" equiv-text="{{ showFiles() ? 'files' : 'folders' }}"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/file-tree/file-tree.component.html</context>
           <context context-type="linenumber">86,87</context>
@@ -2099,6 +2131,7 @@
       </trans-unit>
       <trans-unit id="585737897051631942" datatype="html">
         <source>Until resumed</source>
+        <target>再開するまで</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/pause-dialog/pause-dialog.component.ts</context>
           <context context-type="linenumber">16</context>
@@ -2106,13 +2139,14 @@
       </trans-unit>
       <trans-unit id="8863666082945976589" datatype="html">
         <source>No scheduled tasks</source>
+        <target>予定されているタスクはありません</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.component.html</context>
           <context context-type="linenumber">14,15</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4652155926610989305" datatype="html">
-        <source> Loading <x id="START_TAG_SPK_SPINNER" ctype="x-spk_spinner" equiv-text="&lt;spk-spinner [style.--spinner-size]=&quot;&apos;12px&apos;&quot; [style.--spinner-thickness]=&quot;&apos;2px&apos;&quot;&gt;"/><x id="CLOSE_TAG_SPK_SPINNER" ctype="x-spk_spinner" equiv-text="&lt;/spk-spinner&gt;"/></source>
+        <source> Loading <x id="START_TAG_SPK_SPINNER" ctype="x-spk_spinner" equiv-text="&lt;spk-spinner [style.--spinner-size]=&quot;'12px'&quot; [style.--spinner-thickness]=&quot;'2px'&quot;&gt;"/><x id="CLOSE_TAG_SPK_SPINNER" ctype="x-spk_spinner" equiv-text="&lt;/spk-spinner&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.component.html</context>
           <context context-type="linenumber">17,21</context>
@@ -2127,6 +2161,7 @@
       </trans-unit>
       <trans-unit id="1567982897123322443" datatype="html">
         <source>Starting backup …</source>
+        <target>バックアップを開始しています…</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">27</context>
@@ -2134,6 +2169,7 @@
       </trans-unit>
       <trans-unit id="8214337426799363575" datatype="html">
         <source>Verifying backend data …</source>
+        <target>バックエンドのデータを検証しています…</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">28</context>
@@ -2145,6 +2181,7 @@
       </trans-unit>
       <trans-unit id="4199427160533437744" datatype="html">
         <source>Verifying remote data …</source>
+        <target>リモートデータを検証しています…</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">29</context>
@@ -2156,6 +2193,7 @@
       </trans-unit>
       <trans-unit id="7906632680781914236" datatype="html">
         <source>Completing previous backup …</source>
+        <target>以前のバックアップを完了しています…</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">30</context>
@@ -2170,6 +2208,7 @@
       </trans-unit>
       <trans-unit id="5930924632252050612" datatype="html">
         <source>Completing backup …</source>
+        <target>バックアップを完了しています…</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">32</context>
@@ -2177,6 +2216,7 @@
       </trans-unit>
       <trans-unit id="469362342108564344" datatype="html">
         <source>Waiting for upload to finish …</source>
+        <target>アップロードの完了を待機しています…</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">33</context>
@@ -2184,6 +2224,7 @@
       </trans-unit>
       <trans-unit id="3957416203952666175" datatype="html">
         <source>Deleting unwanted files …</source>
+        <target>不要なファイルを削除しています…</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">34</context>
@@ -2191,6 +2232,7 @@
       </trans-unit>
       <trans-unit id="2914057788500102169" datatype="html">
         <source>Compacting remote data …</source>
+        <target>リモートデータを圧縮しています…</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">35</context>
@@ -2202,6 +2244,7 @@
       </trans-unit>
       <trans-unit id="8329877172200819621" datatype="html">
         <source>Uploading verification file …</source>
+        <target>検証用ファイルをアップロードしています…</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">36</context>
@@ -2209,6 +2252,7 @@
       </trans-unit>
       <trans-unit id="1689970167461012814" datatype="html">
         <source>Backup complete!</source>
+        <target>バックアップが完了しました！</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">38</context>
@@ -2216,6 +2260,7 @@
       </trans-unit>
       <trans-unit id="4929330102433599172" datatype="html">
         <source>Starting restore …</source>
+        <target>復元を開始しています…</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">39</context>
@@ -2223,6 +2268,7 @@
       </trans-unit>
       <trans-unit id="7136385501987317127" datatype="html">
         <source>Rebuilding local database …</source>
+        <target>ローカルデータベースを再構築しています…</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">40</context>
@@ -2230,6 +2276,7 @@
       </trans-unit>
       <trans-unit id="8395530981032383031" datatype="html">
         <source>Building list of files to restore …</source>
+        <target>復元するファイルの一覧を作成しています…</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">42</context>
@@ -2237,6 +2284,7 @@
       </trans-unit>
       <trans-unit id="2300553532172758168" datatype="html">
         <source>Creating target folders …</source>
+        <target>バックアップ先のフォルダーを作成しています…</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">43</context>
@@ -2244,6 +2292,7 @@
       </trans-unit>
       <trans-unit id="6085389350572437561" datatype="html">
         <source>Scanning existing files …</source>
+        <target>ファイルをスキャンしています…</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">44</context>
@@ -2251,6 +2300,7 @@
       </trans-unit>
       <trans-unit id="6692014841944258162" datatype="html">
         <source>Scanning for local blocks …</source>
+        <target>ローカルのブロックをスキャンしています…</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">45</context>
@@ -2258,6 +2308,7 @@
       </trans-unit>
       <trans-unit id="9213645030480705854" datatype="html">
         <source>Patching files with local blocks …</source>
+        <target>ファイルをローカルのブロックで修復しています…</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">46</context>
@@ -2265,6 +2316,7 @@
       </trans-unit>
       <trans-unit id="8209151205688415570" datatype="html">
         <source>Downloading files …</source>
+        <target>ファイルをダウンロードしています…</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">47</context>
@@ -2272,6 +2324,7 @@
       </trans-unit>
       <trans-unit id="5251292119969540580" datatype="html">
         <source>Verifying restored files …</source>
+        <target>復元したファイルを検証しています…</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">48</context>
@@ -2279,6 +2332,7 @@
       </trans-unit>
       <trans-unit id="2249706554320900919" datatype="html">
         <source>Restore complete!</source>
+        <target>復元しました！</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">49</context>
@@ -2286,6 +2340,7 @@
       </trans-unit>
       <trans-unit id="3051019516047055620" datatype="html">
         <source>Recreating database …</source>
+        <target>データベースを改めて作成しています…</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">50</context>
@@ -2293,6 +2348,7 @@
       </trans-unit>
       <trans-unit id="3901592998452125585" datatype="html">
         <source>Vacuuming database …</source>
+        <target>データベースのバキュームを行っています…</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">51</context>
@@ -2300,6 +2356,7 @@
       </trans-unit>
       <trans-unit id="2469623866016523077" datatype="html">
         <source>Repairing database …</source>
+        <target>データベースを修復しています…</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">52</context>
@@ -2307,6 +2364,7 @@
       </trans-unit>
       <trans-unit id="7676413581281241117" datatype="html">
         <source>Verifying files …</source>
+        <target>ファイルを検証しています…</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">53</context>
@@ -2314,6 +2372,7 @@
       </trans-unit>
       <trans-unit id="1792719478390206754" datatype="html">
         <source>Creating bug report …</source>
+        <target>バグレポートを作成しています…</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">54</context>
@@ -2321,6 +2380,7 @@
       </trans-unit>
       <trans-unit id="7817971754641920282" datatype="html">
         <source>Listing remote files …</source>
+        <target>リモートファイルの一覧を作成しています…</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">55</context>
@@ -2328,6 +2388,7 @@
       </trans-unit>
       <trans-unit id="4819792355580745069" datatype="html">
         <source>Deleting remote files …</source>
+        <target>リモートファイルを削除しています…</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">56</context>
@@ -2335,6 +2396,7 @@
       </trans-unit>
       <trans-unit id="7542251069711001275" datatype="html">
         <source>Listing remote files for purge …</source>
+        <target>削除するリモートファイルの一覧を作成しています…</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">57</context>
@@ -2342,6 +2404,7 @@
       </trans-unit>
       <trans-unit id="4384662616307771545" datatype="html">
         <source>Purging files …</source>
+        <target>ファイルを削除しています…</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">58</context>
@@ -2349,6 +2412,7 @@
       </trans-unit>
       <trans-unit id="7909426528923946904" datatype="html">
         <source>Purging files complete!</source>
+        <target>ファイルを削除しました！</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">60</context>
@@ -2356,6 +2420,7 @@
       </trans-unit>
       <trans-unit id="7318459243631185928" datatype="html">
         <source>Error!</source>
+        <target>エラー！</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">61</context>
@@ -2599,6 +2664,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="7410432243549869948" datatype="html">
         <source>Duration</source>
+        <target>経過</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/states/backups.state.ts</context>
           <context context-type="linenumber">59</context>
@@ -2759,7 +2825,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         </context-group>
       </trans-unit>
       <trans-unit id="6515649692948509562" datatype="html">
-        <source> <x id="INTERPOLATION" equiv-text="{{ backup.Backup?.Metadata?.[&apos;BackupListCount&apos;] }}"/> Version </source>
+        <source> <x id="INTERPOLATION" equiv-text="{{ backup.Backup?.Metadata?.['BackupListCount'] }}"/> Version </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
           <context context-type="linenumber">111,112</context>
@@ -2856,6 +2922,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="9021887951960049161" datatype="html">
         <source>Confirm delete</source>
+        <target>削除を確認</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.ts</context>
           <context context-type="linenumber">75</context>
@@ -2874,6 +2941,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="4489627619329080013" datatype="html">
         <source>Delete backup</source>
+        <target>バックアップを削除</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.ts</context>
           <context context-type="linenumber">77</context>
@@ -3037,6 +3105,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="2955903656284773523" datatype="html">
         <source>Repair</source>
+        <target>修復</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/notifications/notifications.component.html</context>
           <context context-type="linenumber">19,20</context>
@@ -3044,6 +3113,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="3099741642167775297" datatype="html">
         <source>Download</source>
+        <target>ダウンロード</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/notifications/notifications.component.html</context>
           <context context-type="linenumber">23,24</context>
@@ -3083,6 +3153,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="1536087519743707362" datatype="html">
         <source>Dismiss</source>
+        <target>表示しない</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/notifications/notifications.component.html</context>
           <context context-type="linenumber">63,64</context>
@@ -3090,6 +3161,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="3269824161944492761" datatype="html">
         <source>The backup is missing, has it been deleted?</source>
+        <target>バックアップがありません。削除された模様です</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/notifications/notifications.component.ts</context>
           <context context-type="linenumber">73</context>
@@ -3097,6 +3169,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="2976874496010813887" datatype="html">
         <source>The backup was temporary and does not exist anymore, so the log data is lost</source>
+        <target>バックアップは一時的で既に存在しないため、ログデータは削除されています</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/notifications/notifications.component.ts</context>
           <context context-type="linenumber">80</context>
@@ -3125,6 +3198,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="6490648157632610005" datatype="html">
         <source>Restore options</source>
+        <target>復元オプション</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/options/options.component.html</context>
           <context context-type="linenumber">2,4</context>
@@ -3153,6 +3227,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="2601306210394871786" datatype="html">
         <source>How do you want to handle existing files?</source>
+        <target>既存のファイルはどのように扱いますか？</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/options/options.component.html</context>
           <context context-type="linenumber">24</context>
@@ -3174,6 +3249,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="7314814725704332646" datatype="html">
         <source>Permissions</source>
+        <target>権限</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/options/options.component.html</context>
           <context context-type="linenumber">38</context>
@@ -3316,26 +3392,21 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="325172806395484991" datatype="html">
         <source>Select files</source>
+        <target>ファイルの選択</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/select-files/select-files.component.html</context>
           <context context-type="linenumber">2,4</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8738453414615918510" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-left<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> <x id="INTERPOLATION" equiv-text="{{ isFileRestore() ? &apos;Back&apos; : &apos;Exit&apos; }}"/> </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-left<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> <x id="INTERPOLATION" equiv-text="{{ isFileRestore() ? 'Back' : 'Exit' }}"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/select-files/select-files.component.html</context>
           <context context-type="linenumber">39,43</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8264839983147966663" datatype="html">
-        <source> Restore from config <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;outlined&quot; [routerLink]=&quot;[&apos;/&apos;]&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-left<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Back <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button
-        spk-button
-        type=&quot;submit&quot;
-        class=&quot;raised primary&quot;
-        (click)=&quot;submit()&quot;
-        [disabled]=&quot;isRestoring()&quot;
-        [class.loader]=&quot;isRestoring()&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>download-simple<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Restore <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
+        <source> Restore from config <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;outlined&quot; [routerLink]=&quot;['/']&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-left<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Back <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button         spk-button         type=&quot;submit&quot;         class=&quot;raised primary&quot;         (click)=&quot;submit()&quot;         [disabled]=&quot;isRestoring()&quot;         [class.loader]=&quot;isRestoring()&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>download-simple<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Restore <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore/restore-from-config/restore-from-config.component.html</context>
           <context context-type="linenumber">3,23</context>
@@ -3350,13 +3421,14 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="527691487030937649" datatype="html">
         <source>Where do you want to restore from?</source>
+        <target>どこから復元しますか？</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore/restore.component.html</context>
           <context context-type="linenumber">4,6</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2402347711190740688" datatype="html">
-        <source>Restore <x id="INTERPOLATION" equiv-text="{{ backup.Backup?.Name ?? &apos;Backup name missing&apos; }}"/></source>
+        <source>Restore <x id="INTERPOLATION" equiv-text="{{ backup.Backup?.Name ?? 'Backup name missing' }}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore/restore.component.html</context>
           <context context-type="linenumber">39,40</context>
@@ -3448,6 +3520,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="4930506384627295710" datatype="html">
         <source>Settings</source>
+        <target>設定</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/settings/settings.component.html</context>
           <context context-type="linenumber">6,7</context>
@@ -3490,6 +3563,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="649940786018804088" datatype="html">
         <source>Change server passphrase</source>
+        <target>サーバーのパスフレーズを変更</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/settings/settings.component.html</context>
           <context context-type="linenumber">49,50</context>
@@ -3529,6 +3603,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="4546151690452416671" datatype="html">
         <source>Allow remote access (requires restart)</source>
+        <target>リモートアクセスを許可（要再起動）</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/settings/settings.component.html</context>
           <context context-type="linenumber">137,138</context>
@@ -3571,6 +3646,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="918395176653023621" datatype="html">
         <source>Prevent tray icon automatic log-in</source>
+        <target>トレイアイコンの自動ログインを行わない</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/settings/settings.component.html</context>
           <context context-type="linenumber">176,177</context>
@@ -3589,6 +3665,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="2919975008248285707" datatype="html">
         <source>Update channel</source>
+        <target>アップデートチャンネル</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/settings/settings.component.html</context>
           <context context-type="linenumber">194,195</context>
@@ -3610,6 +3687,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="3905239345805877394" datatype="html">
         <source>Stable</source>
+        <target>安定版</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/settings/settings.component.html</context>
           <context context-type="linenumber">216</context>
@@ -3617,6 +3695,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="5175951092925375805" datatype="html">
         <source>Official releases</source>
+        <target>公式リリース版</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/settings/settings.component.html</context>
           <context context-type="linenumber">218,219</context>
@@ -3624,6 +3703,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="8289732336438690874" datatype="html">
         <source>Beta</source>
+        <target>ベータ版</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/settings/settings.component.html</context>
           <context context-type="linenumber">222</context>
@@ -3645,6 +3725,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="9121268781026454492" datatype="html">
         <source>Specific builds for developers only. Not for use with important data.</source>
+        <target>開発者用の特定のビルドです。重要なデータのパックアップには使用しないでください。</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/settings/settings.component.html</context>
           <context context-type="linenumber">235,236</context>
@@ -3652,6 +3733,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="401382195676192367" datatype="html">
         <source>Canary</source>
+        <target>実験的（カナリア）</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/settings/settings.component.html</context>
           <context context-type="linenumber">239</context>
@@ -3659,6 +3741,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="7438596179184557624" datatype="html">
         <source>Individual builds for developers only. Not for use with important data.</source>
+        <target>開発者用の個別のビルドです。重要なデータのバックアップには使用しないでください。</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/settings/settings.component.html</context>
           <context context-type="linenumber">241,242</context>
@@ -3666,6 +3749,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="5320543668849212821" datatype="html">
         <source>Pause after startup or hibernation</source>
+        <target>起動時またはハイバネート時に一時停止</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/settings/settings.component.html</context>
           <context context-type="linenumber">252,253</context>
@@ -3680,6 +3764,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="7350523198476594805" datatype="html">
         <source>Usage statistics</source>
+        <target>使用状況に関する統計</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/settings/settings.component.html</context>
           <context context-type="linenumber">283,284</context>
@@ -3701,6 +3786,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="4531976006614415538" datatype="html">
         <source>Usage statistics, warnings, errors, and crashes</source>
+        <target>使用状況に関する統計、警告、エラー、クラッシュ</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/settings/settings.component.ts</context>
           <context context-type="linenumber">82</context>
@@ -3708,6 +3794,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="4007307614127429452" datatype="html">
         <source>Warnings, errors and crashes</source>
+        <target>警告、エラー、クラッシュ</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/settings/settings.component.ts</context>
           <context context-type="linenumber">86</context>
@@ -3715,6 +3802,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="7003237362536687306" datatype="html">
         <source>Errors and crashes</source>
+        <target>エラーとクラッシュ</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/settings/settings.component.ts</context>
           <context context-type="linenumber">90</context>
@@ -3722,6 +3810,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="7931989065782446584" datatype="html">
         <source>Crashes only</source>
+        <target>クラッシュのみ</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/settings/settings.component.ts</context>
           <context context-type="linenumber">94</context>
@@ -3729,6 +3818,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="6546722977616384568" datatype="html">
         <source>None / disabled</source>
+        <target>なし / 無効</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/settings/settings.component.ts</context>
           <context context-type="linenumber">98</context>
