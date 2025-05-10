@@ -38,15 +38,90 @@
       "sourceRoot": "src",
       "prefix": "app",
       "i18n": {
-        "sourceLocale": "en",
+        "sourceLocale": {
+          "code": "en",
+          "baseHref": "en-US"
+        },
         "locales": {
+          "en-US": {
+            "translation": "src/locale/messages.en.xlf",
+            "baseHref": "en-US"
+          },
           "en-GB": {
-            "translation": "src/locale/messages.en-GB.xlf",
+            "translation": "src/locale/messages.en_GB.xlf",
             "baseHref": "en-GB"
           },
-          "fr-FR": {
-            "translation": "src/locale/messages.fr-FR.xlf",
-            "baseHref": "fr-FR"
+          "cs": {
+            "translation": "src/locale/messages.cs.xlf",
+            "baseHref": "cs"
+          },
+          "da": {
+            "translation": "src/locale/messages.da.xlf",
+            "baseHref": "da"
+          },
+          "de": {
+            "translation": "src/locale/messages.de.xlf",
+            "baseHref": "de"
+          },
+          "es": {
+            "translation": "src/locale/messages.es.xlf",
+            "baseHref": "es"
+          },
+          "fi": {
+            "translation": "src/locale/messages.fi.xlf",
+            "baseHref": "fi"
+          },
+          "fr": {
+            "translation": "src/locale/messages.fr.xlf",
+            "baseHref": "fr"
+          },
+          "hu": {
+            "translation": "src/locale/messages.hu.xlf",
+            "baseHref": "hu"
+          },
+          "it": {
+            "translation": "src/locale/messages.it.xlf",
+            "baseHref": "it"
+          },
+          "ja-JP": {
+            "translation": "src/locale/messages.ja_JP.xlf",
+            "baseHref": "ja-JP"
+          },
+          "nl-NL": {
+            "translation": "src/locale/messages.nl_NL.xlf",
+            "baseHref": "nl-NL"
+          },
+          "pl": {
+            "translation": "src/locale/messages.pl.xlf",
+            "baseHref": "pl"
+          },
+          "pt-BR": {
+            "translation": "src/locale/messages.pt_BR.xlf",
+            "baseHref": "pt-BR"
+          },
+          "pt": {
+            "translation": "src/locale/messages.pt.xlf",
+            "baseHref": "pt"
+          },
+          "ru": {
+            "translation": "src/locale/messages.ru.xlf",
+            "baseHref": "ru"
+          },
+          "sr-RS": {
+            "translation": "src/locale/messages.sr_RS.xlf",
+            "baseHref": "sr-RS"
+          },
+          "sv-SE": {
+            "translation": "src/locale/messages.sv_SE.xlf",
+            "baseHref": "sv-SE"
+          },
+          "zh-CN": {
+            "translation": "src/locale/messages.zh_CN.xlf",
+            "baseHref": "zh-CN"
+          },
+          "zh-TW": {
+            "translation": "src/locale/messages.zh_TW.xlf",
+            "baseHref": "zh-TW"
           }
         }
       },
@@ -63,17 +138,17 @@
             "assets": [
               "src/assets",
               {
-                "glob": "**/*.json",
+                "glob": "messages.{en_US,en_GB,cs,da,de,es,fi,fr,hu,it,ja_JP,nl_NL,pl,pt_BR,pt,ru,sr_RS,sv_SE,zh_CN,zh_TW}.json",
                 "input": "./src/locale",
                 "output": "./locale/"
               },
               {
-                "glob": "**/{da,en,en-gb,fr,de}.js",
+                "glob": "{en,en-gb,cs,da,de,es,fi,fr,hu,it,ja,nl,pl,pt,ru,sr,sv,zh-cn,zh-tw}.js",
                 "input": "./node_modules/dayjs/esm/locale",
                 "output": "./locale/dayjs/"
               },
               {
-                "glob": "**/{da,en,en-GB,fr,de}.mjs",
+                "glob": "**/{en-US,en-GB,cs,da,de,es,fi,fr,hu,it,ja,nl,pl,pt-BR,pt,ru,sr,sv,zh-Hans,zh-Hant}.mjs",
                 "input": "./node_modules/@angular/common/locales",
                 "output": "./locale/angular/"
               },

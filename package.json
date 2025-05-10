@@ -20,7 +20,7 @@
     "gen:tx": "ng extract-i18n --output-path src/locale --format xlf",
     "tx:push": "tx push -s",
     "tx:pull": "tx pull -a --mode translated --minimum-perc 20",
-    "tx:sync": "ng extract-i18n --output-path src/locale --format xlf && tx push -s && tx pull -a --minimum-perc 20",
+    "tx:sync": "ng extract-i18n --output-path src/locale --format xlf && tx push -s && tx pull -a --minimum-perc 20 && ng build --localize && npx tsx scripts/convert-xlf-to-json.ts",
     "gen:openapi": "openapi-ts"
   },
   "dependencies": {
@@ -45,6 +45,7 @@
     "@angular/compiler-cli": "^19.2.1",
     "@angular/localize": "^19.2.1",
     "@hey-api/openapi-ts": "^0.64.11",
+    "fast-xml-parser": "^5.2.2",
     "prettier": "^3.5.3",
     "typescript": "~5.8.0"
   }
