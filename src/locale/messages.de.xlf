@@ -6,7 +6,7 @@
         <target>Allgemein</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/about.component.html</context>
-          <context context-type="linenumber">2,3</context>
+          <context context-type="linenumber">5,6</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/general/general.component.html</context>
@@ -22,7 +22,7 @@
         <target>Änderungsprotokoll</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/about.component.html</context>
-          <context context-type="linenumber">3,4</context>
+          <context context-type="linenumber">6,7</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/changelog/changelog.component.html</context>
@@ -34,7 +34,7 @@
         <target>Bibliotheken</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/about.component.html</context>
-          <context context-type="linenumber">4,5</context>
+          <context context-type="linenumber">7,8</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/libraries/libraries.component.html</context>
@@ -46,7 +46,7 @@
         <target>System-Informationen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/about.component.html</context>
-          <context context-type="linenumber">5,6</context>
+          <context context-type="linenumber">8,9</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/system-info/system-info.component.html</context>
@@ -58,7 +58,7 @@
         <target>Logdateien</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/about.component.html</context>
-          <context context-type="linenumber">6,7</context>
+          <context context-type="linenumber">9,10</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-progress/restore-progress.component.html</context>
@@ -70,7 +70,14 @@
         <target>Absturz Logdateien</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/about.component.html</context>
-          <context context-type="linenumber">7,8</context>
+          <context context-type="linenumber">10,11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4244445580836799470" datatype="html">
+        <source>Your running Duplicati with - <x id="INTERPOLATION" equiv-text="{{ duplicatiVersion() }}"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/about/general/general.component.html</context>
+          <context context-type="linenumber">8,10</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1798705857149002871" datatype="html">
@@ -131,6 +138,7 @@
       </trans-unit>
       <trans-unit id="600672098114205618" datatype="html">
         <source>Verbose</source>
+        <target>Verbose-Level</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/logs/logs-live/logs-live.state.ts</context>
           <context context-type="linenumber">16</context>
@@ -490,7 +498,7 @@ Während des Imports können Parameter angepasst werden.</target>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.ts</context>
-          <context context-type="linenumber">78</context>
+          <context context-type="linenumber">83</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-flow.state.ts</context>
@@ -711,17 +719,17 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         </context-group>
       </trans-unit>
       <trans-unit id="882713164198283622" datatype="html">
-        <source> Backup destination <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_BLOCK_IF_1" equiv-text="@if (destinationCount() &gt; 0) {"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot; [class.success]=&quot;successfulTest()&quot; (click)=&quot;testDestination()&quot;&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (successfulTest()) {"/> Connected <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>check<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/> Test destination <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;spk-menu&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>dots-three-vertical<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_TAG_BUTTON_2" ctype="x-button_2" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;openTargetUrlDialog()&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>link<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Edit target URL <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;/spk-menu&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
+        <source> Backup destination <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_BLOCK_IF_1" equiv-text="@if (destinationCount() &gt; 0) {"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button             spk-button             type=&quot;button&quot;             class=&quot;small&quot;             [class.loader]=&quot;testLoading()&quot;             [class.success]=&quot;successfulTest()&quot;             (click)=&quot;testDestination()&quot;&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (successfulTest()) {"/> Connected <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>check<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/> Test destination <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;spk-menu&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>dots-three-vertical<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_TAG_BUTTON_2" ctype="x-button_2" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;openTargetUrlDialog()&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>link<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Edit target URL <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;/spk-menu&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">4,33</context>
+          <context context-type="linenumber">4,39</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7781904758933483308" datatype="html">
         <source> Want to select another destination? <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;spk-primary&quot;&gt;"/>Click here<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">35,39</context>
+          <context context-type="linenumber">41,45</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.html</context>
@@ -730,9 +738,10 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="4502276696997510312" datatype="html">
         <source>Other destinations</source>
+        <target>Andere Ziele</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">55,57</context>
+          <context context-type="linenumber">61,63</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.html</context>
@@ -743,7 +752,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <source> Advanced options <x id="START_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;spk-menu [searchable]=&quot;true&quot;&gt;"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button                 spk-button                 type=&quot;button&quot;                 class=&quot;outlined small&quot;                 [disabled]=&quot;notSelectedAdvancedFormPair().length === 0&quot;&gt;"/> Add advanced option <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>plus<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_BLOCK_FOR" equiv-text="@for (option of notSelectedAdvancedFormPair(); track $index) {"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button #option type=&quot;button&quot; (click)=&quot;addAdvancedFormPair(option, 0)&quot;&gt;"/> <x id="INTERPOLATION" equiv-text="{{ option.name }}"/> <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_FOR" equiv-text="}"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;/spk-menu&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">105,125</context>
+          <context context-type="linenumber">111,131</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.html</context>
@@ -754,7 +763,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <source> Http options <x id="START_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;spk-menu [searchable]=&quot;true&quot;&gt;"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button                 spk-button                 type=&quot;button&quot;                 class=&quot;outlined small&quot;                 [disabled]=&quot;notSelectedHttpOptions().length === 0&quot;&gt;"/> Add http option <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>plus<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_BLOCK_FOR" equiv-text="@for (option of notSelectedHttpOptions(); track $index) {"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button #option type=&quot;button&quot; (click)=&quot;addHttpOption(option, 0)&quot;&gt;"/> <x id="INTERPOLATION" equiv-text="{{ option.name }}"/> <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_FOR" equiv-text="}"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;/spk-menu&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">146,166</context>
+          <context context-type="linenumber">152,172</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.html</context>
@@ -765,7 +774,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-left<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Go back </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">501,505</context>
+          <context context-type="linenumber">509,513</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/options/options.component.html</context>
@@ -788,7 +797,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Continue </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">506,509</context>
+          <context context-type="linenumber">514,517</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/schedule/schedule.component.html</context>
@@ -816,7 +825,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Ziel URL bearbeiten</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">515,516</context>
+          <context context-type="linenumber">523,524</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.html</context>
@@ -825,9 +834,10 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="6147192655453310156" datatype="html">
         <source> Be careful, this will overwrite everything you have in your destination. </source>
+        <target>Vorsicht, dies wird alles im Ziel überschreiben.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">517,518</context>
+          <context context-type="linenumber">525,526</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.html</context>
@@ -838,7 +848,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <source> Override target URL <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>swap<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">531,534</context>
+          <context context-type="linenumber">539,542</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.html</context>
@@ -847,16 +857,17 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="1409527397857081529" datatype="html">
         <source>Folder contains backup</source>
+        <target>Der Ordner enthält eine Sicherung</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">209</context>
+          <context context-type="linenumber">228</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8037546150888700711" datatype="html">
         <source>The remote destination already contains a backup. You must use a different folder for each backup.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">210</context>
+          <context context-type="linenumber">229</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8998179362936748717" datatype="html">
@@ -864,11 +875,11 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>OK</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">211</context>
+          <context context-type="linenumber">230</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">220</context>
+          <context context-type="linenumber">239</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/services/test-destination.service.ts</context>
@@ -901,16 +912,17 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="6105401799842765682" datatype="html">
         <source>Folder is not empty</source>
+        <target>Der Ordner ist nicht leer</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">218</context>
+          <context context-type="linenumber">237</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3017607400660862943" datatype="html">
         <source>The remote destination is not empty. It is recommended to use an empty folder for the backup.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">219</context>
+          <context context-type="linenumber">238</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8197963425703827499" datatype="html">
@@ -921,7 +933,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
-          <context context-type="linenumber">143,145</context>
+          <context context-type="linenumber">153,155</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8665135189152588486" datatype="html">
@@ -1099,6 +1111,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="345637621607836708" datatype="html">
         <source> Backup name <x id="START_SUPERSCRIPT" ctype="x-sup" equiv-text="&lt;sup&gt;"/>*<x id="CLOSE_SUPERSCRIPT" ctype="x-sup" equiv-text="&lt;/sup&gt;"/></source>
+        <target> Sicherungsname <x id="START_SUPERSCRIPT" ctype="x-sup" equiv-text="&lt;sup&gt;"/>*<x id="CLOSE_SUPERSCRIPT" ctype="x-sup" equiv-text="&lt;/sup&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/general/general.component.html</context>
           <context context-type="linenumber">13,16</context>
@@ -1106,6 +1119,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="4634134636678422734" datatype="html">
         <source>Your backup name</source>
+        <target>Ihr Sicherungsname</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/general/general.component.html</context>
           <context context-type="linenumber">16</context>
@@ -1113,6 +1127,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="523124629538879131" datatype="html">
         <source>Backup description</source>
+        <target>Sicherungsbeschreibung</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/general/general.component.html</context>
           <context context-type="linenumber">20,21</context>
@@ -1120,6 +1135,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="2912179523165433563" datatype="html">
         <source>Your backup description</source>
+        <target>Ihre Sicherungsbeschreibung</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/general/general.component.html</context>
           <context context-type="linenumber">25,26</context>
@@ -1534,7 +1550,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.ts</context>
-          <context context-type="linenumber">46</context>
+          <context context-type="linenumber">47</context>
         </context-group>
       </trans-unit>
       <trans-unit id="449572842721474374" datatype="html">
@@ -2130,6 +2146,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="1664090471564748319" datatype="html">
         <source>No alerts yet</source>
+        <target>Noch keine Alarme</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/service-hub/service-hub.component.html</context>
           <context context-type="linenumber">71,72</context>
@@ -2137,6 +2154,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="1832697317629339234" datatype="html">
         <source>Pause settings</source>
+        <target>Einstellungen für Pause</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/pause-dialog/pause-dialog.component.html</context>
           <context context-type="linenumber">2,3</context>
@@ -2144,6 +2162,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="6946711711628061987" datatype="html">
         <source> Also pause transfers </source>
+        <target>Auch Übertragungen pausieren</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/pause-dialog/pause-dialog.component.html</context>
           <context context-type="linenumber">23,24</context>
@@ -2151,6 +2170,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="3453340265869731679" datatype="html">
         <source>If you pause transfers they could time out and cause retries or failures.</source>
+        <target>Wenn Übertragungen pausiert werden können sie Timeouts hervorrufen und dadurch Wiederholungen oder Fehler verursachen.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/pause-dialog/pause-dialog.component.html</context>
           <context context-type="linenumber">26</context>
@@ -2158,6 +2178,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="3340385711278554353" datatype="html">
         <source> Update settings </source>
+        <target>Update-Einstellungen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/pause-dialog/pause-dialog.component.html</context>
           <context context-type="linenumber">33,34</context>
@@ -2169,6 +2190,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="740809616489379418" datatype="html">
         <source>5 minuts</source>
+        <target>5 Minuten</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/pause-dialog/pause-dialog.component.ts</context>
           <context context-type="linenumber">8</context>
@@ -2176,6 +2198,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="8544723455755702597" datatype="html">
         <source>10 minuts</source>
+        <target>10 Minuten</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/pause-dialog/pause-dialog.component.ts</context>
           <context context-type="linenumber">9</context>
@@ -2183,6 +2206,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="9068600556919522898" datatype="html">
         <source>15 minuts</source>
+        <target>15 Minuten</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/pause-dialog/pause-dialog.component.ts</context>
           <context context-type="linenumber">10</context>
@@ -2190,6 +2214,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="1874399950504965134" datatype="html">
         <source>30 minuts</source>
+        <target>30 Minuten</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/pause-dialog/pause-dialog.component.ts</context>
           <context context-type="linenumber">11</context>
@@ -2197,6 +2222,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="5250062810079582285" datatype="html">
         <source>1 hour</source>
+        <target>1 Stunde</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/pause-dialog/pause-dialog.component.ts</context>
           <context context-type="linenumber">12</context>
@@ -2204,6 +2230,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="8610434528886080029" datatype="html">
         <source>4 hours</source>
+        <target>4 Stunden</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/pause-dialog/pause-dialog.component.ts</context>
           <context context-type="linenumber">13</context>
@@ -2211,6 +2238,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="6824242843303909516" datatype="html">
         <source>8 hours</source>
+        <target>8 Stunden</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/pause-dialog/pause-dialog.component.ts</context>
           <context context-type="linenumber">14</context>
@@ -2218,6 +2246,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="6833802623236445427" datatype="html">
         <source>24 hours</source>
+        <target>24 Stunden</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/pause-dialog/pause-dialog.component.ts</context>
           <context context-type="linenumber">15</context>
@@ -2241,6 +2270,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="4652155926610989305" datatype="html">
         <source> Loading <x id="START_TAG_SPK_SPINNER" ctype="x-spk_spinner" equiv-text="&lt;spk-spinner [style.--spinner-size]=&quot;'12px'&quot; [style.--spinner-thickness]=&quot;'2px'&quot;&gt;"/><x id="CLOSE_TAG_SPK_SPINNER" ctype="x-spk_spinner" equiv-text="&lt;/spk-spinner&gt;"/></source>
+        <target> Lade <x id="START_TAG_SPK_SPINNER" ctype="x-spk_spinner" equiv-text="&lt;spk-spinner [style.--spinner-size]=&quot;'12px'&quot; [style.--spinner-thickness]=&quot;'2px'&quot;&gt;"/><x id="CLOSE_TAG_SPK_SPINNER" ctype="x-spk_spinner" equiv-text="&lt;/spk-spinner&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.component.html</context>
           <context context-type="linenumber">17,21</context>
@@ -2248,6 +2278,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="4840737408713327304" datatype="html">
         <source><x id="START_BLOCK_IF" equiv-text="@if (isRunning()) {"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>pause<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Pause <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>play<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Start <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
+        <target><x id="START_BLOCK_IF" equiv-text="@if (isRunning()) {"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>pause<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Pause <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>play<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Start <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.component.html</context>
           <context context-type="linenumber">25,34</context>
@@ -2295,6 +2326,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="6632183211912513067" datatype="html">
         <source>Processing files to backup …</source>
+        <target>Bearbeite Dateien für die Sicherung ...</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.state.ts</context>
           <context context-type="linenumber">31</context>
@@ -2530,6 +2562,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="5572244523706932671" datatype="html">
         <source>Throttle network speed</source>
+        <target>Drossele Netzwerk-Geschwindigkeit</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/throttle-settings-dialog/throttle-settings-dialog.component.html</context>
           <context context-type="linenumber">2,3</context>
@@ -2537,6 +2570,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="5503119952397124224" datatype="html">
         <source> Max upload speed </source>
+        <target>Max. Uploadgeschwindigkeit</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/throttle-settings-dialog/throttle-settings-dialog.component.html</context>
           <context context-type="linenumber">13,14</context>
@@ -2544,6 +2578,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="6347583575919597580" datatype="html">
         <source> Max download speed </source>
+        <target>Max. Downloadgeschwindigkeit</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/throttle-settings-dialog/throttle-settings-dialog.component.html</context>
           <context context-type="linenumber">36,37</context>
@@ -2723,6 +2758,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="95267302253188974" datatype="html">
         <source>Last run time</source>
+        <target>Letzte Laufzeit</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/states/backups.state.ts</context>
           <context context-type="linenumber">35</context>
@@ -2730,6 +2766,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="7722497703101500024" datatype="html">
         <source>Next run time</source>
+        <target>Nächste Laufzeit</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/states/backups.state.ts</context>
           <context context-type="linenumber">39</context>
@@ -2949,7 +2986,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>clock-counter-clockwise<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Restore </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
-          <context context-type="linenumber">138,140</context>
+          <context context-type="linenumber">148,150</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/layout/layout.component.html</context>
@@ -2960,49 +2997,49 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>x-circle<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Delete </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
-          <context context-type="linenumber">151,153</context>
+          <context context-type="linenumber">161,163</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7738293589333220469" datatype="html">
         <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>database<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Database </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
-          <context context-type="linenumber">160,162</context>
+          <context context-type="linenumber">170,172</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1083010658432553302" datatype="html">
         <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>check-square-offset<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Verify files </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
-          <context context-type="linenumber">165,167</context>
+          <context context-type="linenumber">175,177</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6202866429550604106" datatype="html">
         <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>file-archive<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Compress now </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
-          <context context-type="linenumber">170,172</context>
+          <context context-type="linenumber">180,182</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6544486364372139849" datatype="html">
         <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>terminal-window<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Commandline </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
-          <context context-type="linenumber">175,177</context>
+          <context context-type="linenumber">185,187</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2503583316401039863" datatype="html">
         <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>notepad<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Log </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
-          <context context-type="linenumber">184,186</context>
+          <context context-type="linenumber">194,196</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3788466118167694746" datatype="html">
         <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>file-plus<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Create error report </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
-          <context context-type="linenumber">189,191</context>
+          <context context-type="linenumber">199,201</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3839108367953461894" datatype="html">
@@ -3010,7 +3047,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <target>Keine Sicherungen gefunden</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
-          <context context-type="linenumber">198</context>
+          <context context-type="linenumber">208</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore/restore.component.html</context>
@@ -3022,7 +3059,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <target>Lade Sicherungen...</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
-          <context context-type="linenumber">205,206</context>
+          <context context-type="linenumber">215,216</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore/restore.component.html</context>
@@ -3034,7 +3071,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <target>Löschen bestätigen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.ts</context>
-          <context context-type="linenumber">75</context>
+          <context context-type="linenumber">80</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/settings/remote-control/remote-control.state.ts</context>
@@ -3046,7 +3083,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <target>Möchten Sie diese Sicherung wirklich löschen?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.ts</context>
-          <context context-type="linenumber">76</context>
+          <context context-type="linenumber">81</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4489627619329080013" datatype="html">
@@ -3054,7 +3091,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <target>Sicherung löschen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.ts</context>
-          <context context-type="linenumber">77</context>
+          <context context-type="linenumber">82</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5569128980493130010" datatype="html">
@@ -3157,8 +3194,8 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
           <context context-type="linenumber">47,49</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="1610083273589494469" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>info<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> About duplicati </source>
+      <trans-unit id="4108226852041103967" datatype="html">
+        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>info<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> About Duplicati </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/layout/layout.component.html</context>
           <context context-type="linenumber">55,57</context>
@@ -3754,6 +3791,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
       </trans-unit>
       <trans-unit id="155020144989998859" datatype="html">
         <source> To prevent various DNS based attacks, Duplicati limits the allowed hostnames to the ones listed here. Direct IP access and localhost is always allowed. Multiple hostnames can be supplied with a semicolon separator. If any of the allowed hostnames is an asterisk (*), all hostnames are allowed and this feature is disabled. If the field is empty, only IP address and localhost access is allowed. </source>
+        <target>Um verschiedene DNS-basierte Angriffe zu verhindern, beschränkt Duplicati die erlaubten Hostnamen auf die hier aufgeführten. Direkter IP-Zugriff und localhost sind immer erlaubt. Mehrere Hostnamen können mit einem Semikolon-Trennzeichen versehen werden. Wenn einer der zulässigen Hostnamen ein Sternchen (*) ist, sind alle Hostnamen zulässig und diese Funktion ist deaktiviert. Is das Feld leer, sind nur IP-Adresse und lokaler Host-Zugriff zulässig.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/settings/settings.component.html</context>
           <context context-type="linenumber">156,159</context>

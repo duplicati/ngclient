@@ -6,7 +6,7 @@
         <target>Generale</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/about.component.html</context>
-          <context context-type="linenumber">2,3</context>
+          <context context-type="linenumber">5,6</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/general/general.component.html</context>
@@ -22,7 +22,7 @@
         <target>Registro delle modifiche</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/about.component.html</context>
-          <context context-type="linenumber">3,4</context>
+          <context context-type="linenumber">6,7</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/changelog/changelog.component.html</context>
@@ -34,7 +34,7 @@
         <target>Librerie</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/about.component.html</context>
-          <context context-type="linenumber">4,5</context>
+          <context context-type="linenumber">7,8</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/libraries/libraries.component.html</context>
@@ -46,7 +46,7 @@
         <target>Informazioni di sistema</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/about.component.html</context>
-          <context context-type="linenumber">5,6</context>
+          <context context-type="linenumber">8,9</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/system-info/system-info.component.html</context>
@@ -58,7 +58,7 @@
         <target>Registri</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/about.component.html</context>
-          <context context-type="linenumber">6,7</context>
+          <context context-type="linenumber">9,10</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-progress/restore-progress.component.html</context>
@@ -70,7 +70,14 @@
         <target>Registro arresti anomali</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/about.component.html</context>
-          <context context-type="linenumber">7,8</context>
+          <context context-type="linenumber">10,11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4244445580836799470" datatype="html">
+        <source>Your running Duplicati with - <x id="INTERPOLATION" equiv-text="{{ duplicatiVersion() }}"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/about/general/general.component.html</context>
+          <context context-type="linenumber">8,10</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1798705857149002871" datatype="html">
@@ -506,7 +513,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.ts</context>
-          <context context-type="linenumber">78</context>
+          <context context-type="linenumber">83</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-flow.state.ts</context>
@@ -738,11 +745,10 @@
         </context-group>
       </trans-unit>
       <trans-unit id="882713164198283622" datatype="html">
-        <source> Backup destination <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_BLOCK_IF_1" equiv-text="@if (destinationCount() &gt; 0) {"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot; [class.success]=&quot;successfulTest()&quot; (click)=&quot;testDestination()&quot;&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (successfulTest()) {"/> Connected <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>check<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/> Test destination <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;spk-menu&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>dots-three-vertical<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_TAG_BUTTON_2" ctype="x-button_2" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;openTargetUrlDialog()&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>link<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Edit target URL <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;/spk-menu&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
-        <target> Destinazione backup <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_BLOCK_IF_1" equiv-text="@if (destinationCount() &gt; 0) {"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot; [class.success]=&quot;successfulTest()&quot; (click)=&quot;testDestination()&quot;&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (successfulTest()) {"/> Collegato <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>verifica<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/> Test destinazione <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;spk-menu&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>dots-three-vertical<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_TAG_BUTTON_2" ctype="x-button_2" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;openTargetUrlDialog()&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>link<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Modifica URL di destinazione <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;/spk-menu&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></target>
+        <source> Backup destination <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_BLOCK_IF_1" equiv-text="@if (destinationCount() &gt; 0) {"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button             spk-button             type=&quot;button&quot;             class=&quot;small&quot;             [class.loader]=&quot;testLoading()&quot;             [class.success]=&quot;successfulTest()&quot;             (click)=&quot;testDestination()&quot;&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (successfulTest()) {"/> Connected <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>check<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/> Test destination <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;spk-menu&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>dots-three-vertical<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_TAG_BUTTON_2" ctype="x-button_2" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;openTargetUrlDialog()&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>link<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Edit target URL <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;/spk-menu&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">4,33</context>
+          <context context-type="linenumber">4,39</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7781904758933483308" datatype="html">
@@ -750,7 +756,7 @@
         <target> Vuoi selezionare un'altra destinazione? <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;spk-primary&quot;&gt;"/>Clicca qui<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">35,39</context>
+          <context context-type="linenumber">41,45</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.html</context>
@@ -762,7 +768,7 @@
         <target>Altre destinazioni</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">55,57</context>
+          <context context-type="linenumber">61,63</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.html</context>
@@ -774,7 +780,7 @@
         <target> Opzioni avanzate <x id="START_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;spk-menu [searchable]=&quot;true&quot;&gt;"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button                 spk-button                 type=&quot;button&quot;                 class=&quot;outlined small&quot;                 [disabled]=&quot;notSelectedAdvancedFormPair().length === 0&quot;&gt;"/> Aggiungi opzione avanzata <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>plus<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_BLOCK_FOR" equiv-text="@for (option of notSelectedAdvancedFormPair(); track $index) {"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button #option type=&quot;button&quot; (click)=&quot;addAdvancedFormPair(option, 0)&quot;&gt;"/> <x id="INTERPOLATION" equiv-text="{{ option.name }}"/> <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_FOR" equiv-text="}"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;/spk-menu&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">105,125</context>
+          <context context-type="linenumber">111,131</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.html</context>
@@ -786,7 +792,7 @@
         <target> Opzioni http <x id="START_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;spk-menu [searchable]=&quot;true&quot;&gt;"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button                 spk-button                 type=&quot;button&quot;                 class=&quot;outlined small&quot;                 [disabled]=&quot;notSelectedHttpOptions().length === 0&quot;&gt;"/> Aggiungi opzione http <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>plus<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_BLOCK_FOR" equiv-text="@for (option of notSelectedHttpOptions(); track $index) {"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button #option type=&quot;button&quot; (click)=&quot;addHttpOption(option, 0)&quot;&gt;"/> <x id="INTERPOLATION" equiv-text="{{ option.name }}"/> <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_FOR" equiv-text="}"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;/spk-menu&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">146,166</context>
+          <context context-type="linenumber">152,172</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.html</context>
@@ -798,7 +804,7 @@
         <target><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-left<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Torna indietro </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">501,505</context>
+          <context context-type="linenumber">509,513</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/options/options.component.html</context>
@@ -822,7 +828,7 @@
         <target><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Continua </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">506,509</context>
+          <context context-type="linenumber">514,517</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/schedule/schedule.component.html</context>
@@ -850,7 +856,7 @@
         <target>Modifica URL di destinazione</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">515,516</context>
+          <context context-type="linenumber">523,524</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.html</context>
@@ -862,7 +868,7 @@
         <target> Attenzione, questa operazione sovrascriverà tutto ciò che è presente nella destinazione. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">517,518</context>
+          <context context-type="linenumber">525,526</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.html</context>
@@ -874,7 +880,7 @@
         <target> Sovrascrivi l'URL di destinazione <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>swap<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">531,534</context>
+          <context context-type="linenumber">539,542</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.html</context>
@@ -883,16 +889,18 @@
       </trans-unit>
       <trans-unit id="1409527397857081529" datatype="html">
         <source>Folder contains backup</source>
+        <target>La cartella contiene backup</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">209</context>
+          <context context-type="linenumber">228</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8037546150888700711" datatype="html">
         <source>The remote destination already contains a backup. You must use a different folder for each backup.</source>
+        <target>La destinazione remota contiene già un backup. Devi utilizzare una cartella diversa per ogni backup.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">210</context>
+          <context context-type="linenumber">229</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8998179362936748717" datatype="html">
@@ -900,11 +908,11 @@
         <target>OK</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">211</context>
+          <context context-type="linenumber">230</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">220</context>
+          <context context-type="linenumber">239</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/services/test-destination.service.ts</context>
@@ -937,16 +945,18 @@
       </trans-unit>
       <trans-unit id="6105401799842765682" datatype="html">
         <source>Folder is not empty</source>
+        <target>La cartella non è vuota</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">218</context>
+          <context context-type="linenumber">237</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3017607400660862943" datatype="html">
         <source>The remote destination is not empty. It is recommended to use an empty folder for the backup.</source>
+        <target>La destinazione remota non è vuota. Si consiglia di usare una cartella vuota per il backup.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">219</context>
+          <context context-type="linenumber">238</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8197963425703827499" datatype="html">
@@ -958,7 +968,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
-          <context context-type="linenumber">143,145</context>
+          <context context-type="linenumber">153,155</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8665135189152588486" datatype="html">
@@ -1586,7 +1596,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.ts</context>
-          <context context-type="linenumber">46</context>
+          <context context-type="linenumber">47</context>
         </context-group>
       </trans-unit>
       <trans-unit id="449572842721474374" datatype="html">
@@ -2655,6 +2665,7 @@
       </trans-unit>
       <trans-unit id="6215915390003545324" datatype="html">
         <source>The remote destination folder does not exist.</source>
+        <target>La cartella di destinazione remota non esiste.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/services/test-destination.service.ts</context>
           <context context-type="linenumber">69</context>
@@ -2686,6 +2697,7 @@
       </trans-unit>
       <trans-unit id="2657043015926552641" datatype="html">
         <source>Unknown error</source>
+        <target>Errore sconosciuto</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/services/test-destination.service.ts</context>
           <context context-type="linenumber">155</context>
@@ -2701,6 +2713,7 @@
       </trans-unit>
       <trans-unit id="1335321848572277710" datatype="html">
         <source>Error creating folder</source>
+        <target>Errore creazione cartella</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/services/test-destination.service.ts</context>
           <context context-type="linenumber">201</context>
@@ -2708,6 +2721,7 @@
       </trans-unit>
       <trans-unit id="1721040755865732399" datatype="html">
         <source>The remote destination folder could not be created. <x id="PH" equiv-text="errorMessage"/></source>
+        <target>Non è stato possibile creare la cartella di destinazione remota. <x id="PH" equiv-text="errorMessage"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/services/test-destination.service.ts</context>
           <context context-type="linenumber">202</context>
@@ -2745,6 +2759,9 @@
         <source>The server is using a certificate that is not trusted.
   If this is a self-signed certificate, you can choose to trust this certificate.
   The server reported the certificate hash: <x id="PH" equiv-text="certData"/></source>
+        <target>Il server utilizza un certificato non attendibile.
+  Se è un certificato autofirmato, puoi scegliere di fidarti di questo certificato.
+  Il server ha riportato l'hash del certificato: <x id="PH" equiv-text="certData"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/services/test-destination.service.ts</context>
           <context context-type="linenumber">262,264</context>
@@ -3069,7 +3086,7 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
         <target><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>clock-counter-clockwise<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Ripristino </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
-          <context context-type="linenumber">138,140</context>
+          <context context-type="linenumber">148,150</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/layout/layout.component.html</context>
@@ -3081,7 +3098,7 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
         <target><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>x-circle<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Elimina </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
-          <context context-type="linenumber">151,153</context>
+          <context context-type="linenumber">161,163</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7738293589333220469" datatype="html">
@@ -3089,7 +3106,7 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
         <target><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>database<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Database </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
-          <context context-type="linenumber">160,162</context>
+          <context context-type="linenumber">170,172</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1083010658432553302" datatype="html">
@@ -3097,7 +3114,7 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
         <target><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>check-square-offset<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Verifica i file </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
-          <context context-type="linenumber">165,167</context>
+          <context context-type="linenumber">175,177</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6202866429550604106" datatype="html">
@@ -3105,7 +3122,7 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
         <target><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>file-archive<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Comprimi ora </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
-          <context context-type="linenumber">170,172</context>
+          <context context-type="linenumber">180,182</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6544486364372139849" datatype="html">
@@ -3113,7 +3130,7 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
         <target><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>terminal-window<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Linea di comando </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
-          <context context-type="linenumber">175,177</context>
+          <context context-type="linenumber">185,187</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2503583316401039863" datatype="html">
@@ -3121,7 +3138,7 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
         <target><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>notepad<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Registro </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
-          <context context-type="linenumber">184,186</context>
+          <context context-type="linenumber">194,196</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3788466118167694746" datatype="html">
@@ -3129,7 +3146,7 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
         <target><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>file-plus<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Creare rapporto errori </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
-          <context context-type="linenumber">189,191</context>
+          <context context-type="linenumber">199,201</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3839108367953461894" datatype="html">
@@ -3137,7 +3154,7 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
         <target>Nessun backup trovato</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
-          <context context-type="linenumber">198</context>
+          <context context-type="linenumber">208</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore/restore.component.html</context>
@@ -3149,7 +3166,7 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
         <target>Caricamento dei backup...</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
-          <context context-type="linenumber">205,206</context>
+          <context context-type="linenumber">215,216</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore/restore.component.html</context>
@@ -3161,7 +3178,7 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
         <target>Conferma eliminazione</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.ts</context>
-          <context context-type="linenumber">75</context>
+          <context context-type="linenumber">80</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/settings/remote-control/remote-control.state.ts</context>
@@ -3173,7 +3190,7 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
         <target>Sei sicuro di voler eliminare questo backup?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.ts</context>
-          <context context-type="linenumber">76</context>
+          <context context-type="linenumber">81</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4489627619329080013" datatype="html">
@@ -3181,7 +3198,7 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
         <target>Elimina backup</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.ts</context>
-          <context context-type="linenumber">77</context>
+          <context context-type="linenumber">82</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5569128980493130010" datatype="html">
@@ -3296,9 +3313,8 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
           <context context-type="linenumber">47,49</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="1610083273589494469" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>info<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> About duplicati </source>
-        <target><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>info<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Informazioni su duplicati </target>
+      <trans-unit id="4108226852041103967" datatype="html">
+        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>info<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> About Duplicati </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/layout/layout.component.html</context>
           <context context-type="linenumber">55,57</context>
@@ -3542,6 +3558,7 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
       </trans-unit>
       <trans-unit id="2661188638944317176" datatype="html">
         <source>Empty destination</source>
+        <target>Destinazione vuota</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
           <context context-type="linenumber">228</context>
@@ -3550,6 +3567,8 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
       <trans-unit id="7391554958048516833" datatype="html">
         <source>The remote destination does not contain any files. 
                   Check that the details are correct and that the destination is not empty.</source>
+        <target>La destinazione remota non contiene alcun file. 
+                  Verificare che i dati siano corretti e che la destinazione non sia vuota.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
           <context context-type="linenumber">229,230</context>
@@ -3589,6 +3608,7 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
       </trans-unit>
       <trans-unit id="5150996090396714370" datatype="html">
         <source><x id="START_TAG_SPK_RADIO" ctype="x-spk_radio" equiv-text="&lt;spk-radio /&gt;"/><x id="CLOSE_TAG_SPK_RADIO" ctype="x-spk_radio" equiv-text="&lt;spk-radio /&gt;"/> Progress </source>
+        <target><x id="START_TAG_SPK_RADIO" ctype="x-spk_radio" equiv-text="&lt;spk-radio /&gt;"/><x id="CLOSE_TAG_SPK_RADIO" ctype="x-spk_radio" equiv-text="&lt;spk-radio /&gt;"/> Avanzamento  </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-flow.component.html</context>
           <context context-type="linenumber">43,47</context>
@@ -3596,6 +3616,7 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
       </trans-unit>
       <trans-unit id="1814609768842652084" datatype="html">
         <source>An error occurred while loading the backup filesets: <x id="PH" equiv-text="err.message"/></source>
+        <target>Si è verificato un errore durante il caricamento dei gruppi di file del backup: <x id="PH" equiv-text="err.message"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-flow.state.ts</context>
           <context context-type="linenumber">172</context>
@@ -3603,6 +3624,7 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
       </trans-unit>
       <trans-unit id="4522995268741023396" datatype="html">
         <source>The remote storage is encrypted. Please enter the passphrase to access the backup.</source>
+        <target>L'archivio remoto è criptato. Inserisci la passphrase per accedere al backup.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-flow.state.ts</context>
           <context context-type="linenumber">174</context>
@@ -3610,6 +3632,7 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
       </trans-unit>
       <trans-unit id="7257147754379383116" datatype="html">
         <source>The backup storage folder was not found.</source>
+        <target>La cartella di archiviazione del backup non è stata trovata.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-flow.state.ts</context>
           <context context-type="linenumber">175</context>
@@ -3617,6 +3640,7 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
       </trans-unit>
       <trans-unit id="2028113755026135188" datatype="html">
         <source>The backup storage folder does not contain any filesets.</source>
+        <target>La cartella di archiviazione del backup non contiene nessun gruppo di file.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-flow.state.ts</context>
           <context context-type="linenumber">176</context>
@@ -3624,6 +3648,7 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
       </trans-unit>
       <trans-unit id="830496467820752652" datatype="html">
         <source>Failed to load backup filesets</source>
+        <target>Impossibile caricare i gruppi di file del backup</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-flow.state.ts</context>
           <context context-type="linenumber">180</context>
@@ -3631,6 +3656,7 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
       </trans-unit>
       <trans-unit id="4631557773034366011" datatype="html">
         <source>Restore completed</source>
+        <target>Ripristino completato</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-progress/restore-progress.component.html</context>
           <context context-type="linenumber">6</context>
@@ -3638,6 +3664,7 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
       </trans-unit>
       <trans-unit id="6451001551495258671" datatype="html">
         <source> Restore progress: <x id="INTERPOLATION" equiv-text="{{ statusData()?.statusText }}"/> <x id="START_TAG_SPK_SPINNER" ctype="x-spk_spinner" equiv-text="&lt;spk-spinner class=&quot;primary&quot; /&gt;"/><x id="CLOSE_TAG_SPK_SPINNER" ctype="x-spk_spinner" equiv-text="&lt;spk-spinner class=&quot;primary&quot; /&gt;"/></source>
+        <target> Ripristino avanzamento: <x id="INTERPOLATION" equiv-text="{{ statusData()?.statusText }}"/> <x id="START_TAG_SPK_SPINNER" ctype="x-spk_spinner" equiv-text="&lt;spk-spinner class=&quot;primary&quot; /&gt;"/><x id="CLOSE_TAG_SPK_SPINNER" ctype="x-spk_spinner" equiv-text="&lt;spk-spinner class=&quot;primary&quot; /&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-progress/restore-progress.component.html</context>
           <context context-type="linenumber">18,23</context>
@@ -3645,6 +3672,7 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
       </trans-unit>
       <trans-unit id="6004424636294098397" datatype="html">
         <source>Files processed:</source>
+        <target>File elaborati:</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-progress/restore-progress.component.html</context>
           <context context-type="linenumber">27,28</context>
@@ -3652,6 +3680,7 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
       </trans-unit>
       <trans-unit id="2659773090054838845" datatype="html">
         <source>Size processed:</source>
+        <target>Dimensione elaborata:</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-progress/restore-progress.component.html</context>
           <context context-type="linenumber">36,37</context>
@@ -3659,6 +3688,7 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
       </trans-unit>
       <trans-unit id="5851560788527570644" datatype="html">
         <source>Notifications</source>
+        <target>Notifiche</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-progress/restore-progress.component.html</context>
           <context context-type="linenumber">48,50</context>
