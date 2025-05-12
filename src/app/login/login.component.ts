@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
@@ -8,6 +8,7 @@ import {
   SparkleIconComponent,
 } from '@sparkle-ui/core';
 import { finalize } from 'rxjs';
+import LogoComponent from '../core/components/logo/logo.component';
 import { AppAuthState } from '../core/states/app-auth.state';
 
 const fb = new FormBuilder();
@@ -16,6 +17,7 @@ const fb = new FormBuilder();
   selector: 'app-login',
   imports: [
     ReactiveFormsModule,
+    LogoComponent,
     SparkleFormFieldComponent,
     SparkleIconComponent,
     SparkleButtonComponent,
@@ -35,6 +37,16 @@ export default class LoginComponent {
     user: fb.control<string>(''), // Used as a honeypot to prevent autofill
     pass: fb.control<string>('', Validators.required),
   });
+  passwordInput = viewChild<ElementRef<HTMLInputElement>>('passwordInput');
+  passwordEffect = effect(() => {
+    if (this.failedLogin()) {
+      queueMicrotask(() => this.passwordInput()?.nativeElement?.focus());
+    }
+  });
+
+  ngOnInit() {
+    queueMicrotask(() => this.passwordInput()?.nativeElement?.focus());
+  }
 
   submit() {
     const password = this.loginForm.value.pass;

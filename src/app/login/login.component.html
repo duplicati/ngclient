@@ -6,6 +6,10 @@
     </spk-alert>
   }
 
+  <div class="logo-login">
+    <app-logo></app-logo>
+  </div>
+
   <div class="login-row">
     <input type="text" hidden autocomplete="off" name="username" formControlName="user" />
 
@@ -22,6 +26,7 @@
       </label>
 
       <input
+        #passwordInput
         type="password"
         name="password"
         autocomplete="current-password"
