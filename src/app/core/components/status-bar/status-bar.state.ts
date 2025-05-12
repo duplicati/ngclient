@@ -4,7 +4,6 @@ import {
   DuplicatiServerService,
   GetApiV1ProgressstateResponse,
   GetApiV1TaskByTaskidResponse,
-  ProgressStateService,
   ServerStatusDto,
 } from '../../openapi';
 import { BytesPipe } from '../../pipes/byte.pipe';
@@ -66,7 +65,6 @@ const STATUS_STATES: Record<string, string> = {
 })
 export class StatusBarState {
   #bytesPipe = inject(BytesPipe);
-  #progState = inject(ProgressStateService);
   #dupServer = inject(DuplicatiServerService);
   #backupState = inject(BackupsState);
   #serverState = inject(ServerStateService);
@@ -133,7 +131,7 @@ export class StatusBarState {
 
   #getProgressState() {
     this.#isFetching.set(true);
-    this.#progState
+    this.#dupServer
       .getApiV1Progressstate()
       .pipe(
         switchMap((x) => {
@@ -154,8 +152,6 @@ export class StatusBarState {
           if (taskId !== null && backupId !== null) {
             res.backup = this.#backupState.getBackupById(backupId);
           }
-
-          console.log('res', res);
 
           this.#statusData.set({
             ...res,

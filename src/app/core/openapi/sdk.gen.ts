@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import type { Observable } from 'rxjs';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { GetApiV1CommandlineResponse, PostApiV1CommandlineData, PostApiV1CommandlineResponse, GetApiV1AcknowledgementsResponse, PostApiV1AuthRefreshResponse, PostApiV1AuthSigninData, PostApiV1AuthSigninResponse, PostApiV1AuthLoginData, PostApiV1AuthLoginResponse, PostApiV1AuthIssuesignintokenData, PostApiV1AuthIssuesignintokenResponse, PostApiV1AuthRefreshLogoutResponse, PostApiV1AuthIssuetokenByOperationData, PostApiV1AuthIssuetokenByOperationResponse, PostApiV1AuthIssueForeverTokenResponse, GetApiV1BackupdefaultsResponse, GetApiV1BackupsData, GetApiV1BackupsResponse, PostApiV1BackupsData, PostApiV1BackupsResponse, PostApiV1BackupsImportData, PostApiV1BackupsImportResponse, GetApiV1BugreportByReportidData, GetApiV1BugreportByReportidResponse, GetApiV1ChangelogData, GetApiV1ChangelogResponse, GetApiV1CommandlineByRunidData, GetApiV1CommandlineByRunidResponse, PostApiV1CommandlineByRunidAbortData, PostApiV1CommandlineByRunidAbortResponse, PostApiV1FilesystemData, PostApiV1FilesystemResponse, PostApiV1FilesystemValidateData, PostApiV1FilesystemValidateResponse, GetApiV1HypervResponse, GetApiV1HypervByKeyData, GetApiV1HypervByKeyResponse, GetApiV1LicensesResponse, GetApiV1LogdataPollData, GetApiV1LogdataPollResponse, GetApiV1LogdataLogData, GetApiV1LogdataLogResponse, GetApiV1LogdataCrashlogResponse, GetApiV1MssqlResponse, GetApiV1MssqlByKeyData, GetApiV1MssqlByKeyResponse, GetApiV1NotificationByIdData, GetApiV1NotificationByIdResponse, DeleteApiV1NotificationByIdData, DeleteApiV1NotificationByIdResponse, GetApiV1NotificationsResponse, GetApiV1RemotecontrolStatusResponse, PostApiV1RemotecontrolEnableResponse, PostApiV1RemotecontrolDisableResponse, DeleteApiV1RemotecontrolRegistrationResponse, PostApiV1RemotecontrolRegisterData, PostApiV1RemotecontrolRegisterResponse, DeleteApiV1RemotecontrolRegisterResponse, PostApiV1RemoteoperationDbpathData, PostApiV1RemoteoperationDbpathResponse, PostApiV1RemoteoperationTestData, PostApiV1RemoteoperationTestResponse, PostApiV1RemoteoperationCreateData, PostApiV1RemoteoperationCreateResponse, GetApiV1ServersettingsResponse, PatchApiV1ServersettingsData, PatchApiV1ServersettingsResponse, GetApiV1ServersettingByKeyData, GetApiV1ServersettingByKeyResponse, PutApiV1ServersettingByKeyData, PutApiV1ServersettingByKeyResponse, GetApiV1ServerstateData, GetApiV1ServerstateResponse, PostApiV1ServerstatePauseData, PostApiV1ServerstatePauseResponse, PostApiV1ServerstateResumeResponse, GetApiV1SysteminfoResponse, GetApiV1SysteminfoFiltergroupsResponse, GetApiV1TaskByTaskidData, GetApiV1TaskByTaskidResponse, PostApiV1TaskByTaskidStopData, PostApiV1TaskByTaskidStopResponse, PostApiV1TaskByTaskidAbortData, PostApiV1TaskByTaskidAbortResponse, GetApiV1UisettingsResponse, PostApiV1UisettingsData, PostApiV1UisettingsResponse, GetApiV1UisettingsBySchemeData, GetApiV1UisettingsBySchemeResponse, PatchApiV1UisettingsBySchemeData, PatchApiV1UisettingsBySchemeResponse, PostApiV1WebmoduleByModulekeyData, PostApiV1WebmoduleByModulekeyResponse, GetApiV1BackupByIdData, GetApiV1BackupByIdResponse, PutApiV1BackupByIdData, PutApiV1BackupByIdResponse, DeleteApiV1BackupByIdData, DeleteApiV1BackupByIdResponse, GetApiV1BackupByIdFilesData, GetApiV1BackupByIdFilesResponse, GetApiV1BackupByIdLogData, GetApiV1BackupByIdLogResponse, GetApiV1BackupByIdRemotelogData, GetApiV1BackupByIdRemotelogResponse, GetApiV1BackupByIdFilesetsData, GetApiV1BackupByIdFilesetsResponse, GetApiV1BackupByIdExportArgsonlyData, GetApiV1BackupByIdExportArgsonlyResponse, GetApiV1BackupByIdExportCmdlineData, GetApiV1BackupByIdExportCmdlineResponse, GetApiV1BackupByIdExportData, GetApiV1BackupByIdExportResponse, GetApiV1BackupByIdIsdbusedelsewhereData, GetApiV1BackupByIdIsdbusedelsewhereResponse, GetApiV1BackupByIdIsactiveData, GetApiV1BackupByIdIsactiveResponse, PostApiV1BackupByIdDeletedbData, PostApiV1BackupByIdDeletedbResponse, PostApiV1BackupByIdMovedbData, PostApiV1BackupByIdMovedbResponse, PostApiV1BackupByIdUpdatedbData, PostApiV1BackupByIdUpdatedbResponse, PostApiV1BackupByIdRestoreData, PostApiV1BackupByIdRestoreResponse, PostApiV1BackupByIdCreatereportData, PostApiV1BackupByIdCreatereportResponse, PostApiV1BackupByIdRepairData, PostApiV1BackupByIdRepairResponse, PostApiV1BackupByIdRepairupdateData, PostApiV1BackupByIdRepairupdateResponse, PostApiV1BackupByIdVacuumData, PostApiV1BackupByIdVacuumResponse, PostApiV1BackupByIdVerifyData, PostApiV1BackupByIdVerifyResponse, PostApiV1BackupByIdCompactData, PostApiV1BackupByIdCompactResponse, PostApiV1BackupByIdStartData, PostApiV1BackupByIdStartResponse, PostApiV1BackupByIdRunData, PostApiV1BackupByIdRunResponse, PostApiV1BackupByIdReportRemoteSizeData, PostApiV1BackupByIdReportRemoteSizeResponse, PostApiV1BackupByIdCopytotempData, PostApiV1BackupByIdCopytotempResponse, PostApiV2BackupListFilesetsData, PostApiV2BackupListFilesetsResponse, PostApiV2BackupListFolderData, PostApiV2BackupListFolderResponse, PostApiV2BackupListVersionsData, PostApiV2BackupListVersionsResponse, PostApiV2BackupSearchData, PostApiV2BackupSearchResponse, PostApiV2DestinationTestData, PostApiV2DestinationTestResponse, GetApiV1ProgressstateResponse, GetApiV1TasksResponse, PostApiV1UpdatesCheckResponse, GetApiV1WebmodulesResponse } from './types.gen';
+import type { GetApiV1CommandlineResponse, PostApiV1CommandlineData, PostApiV1CommandlineResponse, GetApiV1AcknowledgementsResponse, PostApiV1AuthRefreshResponse, PostApiV1AuthSigninData, PostApiV1AuthSigninResponse, PostApiV1AuthLoginData, PostApiV1AuthLoginResponse, PostApiV1AuthIssuesignintokenData, PostApiV1AuthIssuesignintokenResponse, PostApiV1AuthRefreshLogoutResponse, PostApiV1AuthIssuetokenByOperationData, PostApiV1AuthIssuetokenByOperationResponse, PostApiV1AuthIssueForeverTokenResponse, GetApiV1BackupdefaultsResponse, GetApiV1BackupsData, GetApiV1BackupsResponse, PostApiV1BackupsData, PostApiV1BackupsResponse, PostApiV1BackupsImportData, PostApiV1BackupsImportResponse, GetApiV1BugreportByReportidData, GetApiV1BugreportByReportidResponse, GetApiV1ChangelogData, GetApiV1ChangelogResponse, GetApiV1CommandlineByRunidData, GetApiV1CommandlineByRunidResponse, PostApiV1CommandlineByRunidAbortData, PostApiV1CommandlineByRunidAbortResponse, PostApiV1FilesystemData, PostApiV1FilesystemResponse, PostApiV1FilesystemValidateData, PostApiV1FilesystemValidateResponse, GetApiV1HypervResponse, GetApiV1HypervByKeyData, GetApiV1HypervByKeyResponse, GetApiV1LicensesResponse, GetApiV1LogdataPollData, GetApiV1LogdataPollResponse, GetApiV1LogdataLogData, GetApiV1LogdataLogResponse, GetApiV1LogdataCrashlogResponse, GetApiV1MssqlResponse, GetApiV1MssqlByKeyData, GetApiV1MssqlByKeyResponse, GetApiV1NotificationByIdData, GetApiV1NotificationByIdResponse, DeleteApiV1NotificationByIdData, DeleteApiV1NotificationByIdResponse, GetApiV1NotificationsResponse, GetApiV1ProgressstateResponse, GetApiV1RemotecontrolStatusResponse, PostApiV1RemoteoperationDbpathData, PostApiV1RemoteoperationDbpathResponse, PostApiV1RemoteoperationTestData, PostApiV1RemoteoperationTestResponse, PostApiV1RemoteoperationCreateData, PostApiV1RemoteoperationCreateResponse, GetApiV1ServersettingsResponse, PatchApiV1ServersettingsData, PatchApiV1ServersettingsResponse, GetApiV1ServersettingByKeyData, GetApiV1ServersettingByKeyResponse, PutApiV1ServersettingByKeyData, PutApiV1ServersettingByKeyResponse, GetApiV1ServerstateData, GetApiV1ServerstateResponse, PostApiV1ServerstatePauseData, PostApiV1ServerstatePauseResponse, PostApiV1ServerstateResumeResponse, GetApiV1SysteminfoResponse, GetApiV1SysteminfoFiltergroupsResponse, GetApiV1TasksResponse, GetApiV1TaskByTaskidData, GetApiV1TaskByTaskidResponse, PostApiV1TaskByTaskidStopData, PostApiV1TaskByTaskidStopResponse, PostApiV1TaskByTaskidAbortData, PostApiV1TaskByTaskidAbortResponse, GetApiV1UisettingsResponse, PostApiV1UisettingsData, PostApiV1UisettingsResponse, GetApiV1UisettingsBySchemeData, GetApiV1UisettingsBySchemeResponse, PatchApiV1UisettingsBySchemeData, PatchApiV1UisettingsBySchemeResponse, PostApiV1UpdatesCheckResponse, PostApiV1WebmoduleByModulekeyData, PostApiV1WebmoduleByModulekeyResponse, GetApiV1BackupByIdData, GetApiV1BackupByIdResponse, PutApiV1BackupByIdData, PutApiV1BackupByIdResponse, DeleteApiV1BackupByIdData, DeleteApiV1BackupByIdResponse, GetApiV1BackupByIdFilesData, GetApiV1BackupByIdFilesResponse, GetApiV1BackupByIdLogData, GetApiV1BackupByIdLogResponse, GetApiV1BackupByIdRemotelogData, GetApiV1BackupByIdRemotelogResponse, GetApiV1BackupByIdFilesetsData, GetApiV1BackupByIdFilesetsResponse, GetApiV1BackupByIdExportArgsonlyData, GetApiV1BackupByIdExportArgsonlyResponse, GetApiV1BackupByIdExportCmdlineData, GetApiV1BackupByIdExportCmdlineResponse, GetApiV1BackupByIdExportData, GetApiV1BackupByIdExportResponse, GetApiV1BackupByIdIsdbusedelsewhereData, GetApiV1BackupByIdIsdbusedelsewhereResponse, GetApiV1BackupByIdIsactiveData, GetApiV1BackupByIdIsactiveResponse, PostApiV1BackupByIdDeletedbData, PostApiV1BackupByIdDeletedbResponse, PostApiV1BackupByIdMovedbData, PostApiV1BackupByIdMovedbResponse, PostApiV1BackupByIdUpdatedbData, PostApiV1BackupByIdUpdatedbResponse, PostApiV1BackupByIdRestoreData, PostApiV1BackupByIdRestoreResponse, PostApiV1BackupByIdCreatereportData, PostApiV1BackupByIdCreatereportResponse, PostApiV1BackupByIdRepairData, PostApiV1BackupByIdRepairResponse, PostApiV1BackupByIdRepairupdateData, PostApiV1BackupByIdRepairupdateResponse, PostApiV1BackupByIdVacuumData, PostApiV1BackupByIdVacuumResponse, PostApiV1BackupByIdVerifyData, PostApiV1BackupByIdVerifyResponse, PostApiV1BackupByIdCompactData, PostApiV1BackupByIdCompactResponse, PostApiV1BackupByIdStartData, PostApiV1BackupByIdStartResponse, PostApiV1BackupByIdRunData, PostApiV1BackupByIdRunResponse, PostApiV1BackupByIdReportRemoteSizeData, PostApiV1BackupByIdReportRemoteSizeResponse, PostApiV1BackupByIdCopytotempData, PostApiV1BackupByIdCopytotempResponse, PostApiV1RemotecontrolEnableResponse, PostApiV1RemotecontrolDisableResponse, DeleteApiV1RemotecontrolRegistrationResponse, PostApiV1RemotecontrolRegisterData, PostApiV1RemotecontrolRegisterResponse, DeleteApiV1RemotecontrolRegisterResponse, PostApiV2BackupListFilesetsData, PostApiV2BackupListFilesetsResponse, PostApiV2BackupListFolderData, PostApiV2BackupListFolderResponse, PostApiV2BackupListVersionsData, PostApiV2BackupListVersionsResponse, PostApiV2BackupSearchData, PostApiV2BackupSearchResponse, PostApiV2DestinationTestData, PostApiV2DestinationTestResponse, GetApiV1WebmodulesResponse } from './types.gen';
 
 @Injectable({
     providedIn: 'root'
@@ -367,7 +367,6 @@ export class DuplicatiServerService {
      * @param data The data for the request.
      * @param data.level
      * @param data.id
-     * @param data.offset
      * @param data.pagesize
      * @returns LogEntry Success
      * @throws ApiError
@@ -379,7 +378,6 @@ export class DuplicatiServerService {
             query: {
                 level: data.level,
                 id: data.id,
-                offset: data.offset,
                 pagesize: data.pagesize
             }
         });
@@ -485,6 +483,17 @@ export class DuplicatiServerService {
     }
     
     /**
+     * @returns IProgressEventData Success
+     * @throws ApiError
+     */
+    public getApiV1Progressstate(): Observable<GetApiV1ProgressstateResponse> {
+        return __request(OpenAPI, this.http, {
+            method: 'GET',
+            url: '/api/v1/progressstate'
+        });
+    }
+    
+    /**
      * @returns RemoteControlStatusOutput Success
      * @throws ApiError
      */
@@ -492,65 +501,6 @@ export class DuplicatiServerService {
         return __request(OpenAPI, this.http, {
             method: 'GET',
             url: '/api/v1/remotecontrol/status'
-        });
-    }
-    
-    /**
-     * @returns RemoteControlStatusOutput Success
-     * @throws ApiError
-     */
-    public postApiV1RemotecontrolEnable(): Observable<PostApiV1RemotecontrolEnableResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/remotecontrol/enable'
-        });
-    }
-    
-    /**
-     * @returns RemoteControlStatusOutput Success
-     * @throws ApiError
-     */
-    public postApiV1RemotecontrolDisable(): Observable<PostApiV1RemotecontrolDisableResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/remotecontrol/disable'
-        });
-    }
-    
-    /**
-     * @returns RemoteControlStatusOutput Success
-     * @throws ApiError
-     */
-    public deleteApiV1RemotecontrolRegistration(): Observable<DeleteApiV1RemotecontrolRegistrationResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'DELETE',
-            url: '/api/v1/remotecontrol/registration'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @returns RemoteControlStatusOutput Success
-     * @throws ApiError
-     */
-    public postApiV1RemotecontrolRegister(data: PostApiV1RemotecontrolRegisterData): Observable<PostApiV1RemotecontrolRegisterResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/remotecontrol/register',
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @returns RemoteControlStatusOutput Success
-     * @throws ApiError
-     */
-    public deleteApiV1RemotecontrolRegister(): Observable<DeleteApiV1RemotecontrolRegisterResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'DELETE',
-            url: '/api/v1/remotecontrol/register'
         });
     }
     
@@ -736,6 +686,17 @@ export class DuplicatiServerService {
     }
     
     /**
+     * @returns IRunnerData Success
+     * @throws ApiError
+     */
+    public getApiV1Tasks(): Observable<GetApiV1TasksResponse> {
+        return __request(OpenAPI, this.http, {
+            method: 'GET',
+            url: '/api/v1/tasks'
+        });
+    }
+    
+    /**
      * @param data The data for the request.
      * @param data.taskid
      * @returns GetTaskStateDto Success
@@ -841,6 +802,17 @@ export class DuplicatiServerService {
             },
             body: data.requestBody,
             mediaType: 'application/json'
+        });
+    }
+    
+    /**
+     * @returns unknown Success
+     * @throws ApiError
+     */
+    public postApiV1UpdatesCheck(): Observable<PostApiV1UpdatesCheckResponse> {
+        return __request(OpenAPI, this.http, {
+            method: 'POST',
+            url: '/api/v1/updates/check'
         });
     }
     
@@ -1356,6 +1328,65 @@ export class DuplicatiServerService {
     }
     
     /**
+     * @returns RemoteControlStatusOutput Success
+     * @throws ApiError
+     */
+    public postApiV1RemotecontrolEnable(): Observable<PostApiV1RemotecontrolEnableResponse> {
+        return __request(OpenAPI, this.http, {
+            method: 'POST',
+            url: '/api/v1/remotecontrol/enable'
+        });
+    }
+    
+    /**
+     * @returns RemoteControlStatusOutput Success
+     * @throws ApiError
+     */
+    public postApiV1RemotecontrolDisable(): Observable<PostApiV1RemotecontrolDisableResponse> {
+        return __request(OpenAPI, this.http, {
+            method: 'POST',
+            url: '/api/v1/remotecontrol/disable'
+        });
+    }
+    
+    /**
+     * @returns RemoteControlStatusOutput Success
+     * @throws ApiError
+     */
+    public deleteApiV1RemotecontrolRegistration(): Observable<DeleteApiV1RemotecontrolRegistrationResponse> {
+        return __request(OpenAPI, this.http, {
+            method: 'DELETE',
+            url: '/api/v1/remotecontrol/registration'
+        });
+    }
+    
+    /**
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns RemoteControlStatusOutput Success
+     * @throws ApiError
+     */
+    public postApiV1RemotecontrolRegister(data: PostApiV1RemotecontrolRegisterData): Observable<PostApiV1RemotecontrolRegisterResponse> {
+        return __request(OpenAPI, this.http, {
+            method: 'POST',
+            url: '/api/v1/remotecontrol/register',
+            body: data.requestBody,
+            mediaType: 'application/json'
+        });
+    }
+    
+    /**
+     * @returns RemoteControlStatusOutput Success
+     * @throws ApiError
+     */
+    public deleteApiV1RemotecontrolRegister(): Observable<DeleteApiV1RemotecontrolRegisterResponse> {
+        return __request(OpenAPI, this.http, {
+            method: 'DELETE',
+            url: '/api/v1/remotecontrol/register'
+        });
+    }
+    
+    /**
      * @param data The data for the request.
      * @param data.requestBody
      * @returns ListFilesetsResponseDto Success
@@ -1427,63 +1458,6 @@ export class DuplicatiServerService {
             url: '/api/v2/destination/test',
             body: data.requestBody,
             mediaType: 'application/json'
-        });
-    }
-    
-}
-
-@Injectable({
-    providedIn: 'root'
-})
-export class ProgressStateService {
-    constructor(public readonly http: HttpClient) { }
-    
-    /**
-     * @returns IProgressEventData Success
-     * @throws ApiError
-     */
-    public getApiV1Progressstate(): Observable<GetApiV1ProgressstateResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/progressstate'
-        });
-    }
-    
-}
-
-@Injectable({
-    providedIn: 'root'
-})
-export class TasksService {
-    constructor(public readonly http: HttpClient) { }
-    
-    /**
-     * @returns IRunnerData Success
-     * @throws ApiError
-     */
-    public getApiV1Tasks(): Observable<GetApiV1TasksResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/tasks'
-        });
-    }
-    
-}
-
-@Injectable({
-    providedIn: 'root'
-})
-export class UpdatesService {
-    constructor(public readonly http: HttpClient) { }
-    
-    /**
-     * @returns unknown Success
-     * @throws ApiError
-     */
-    public postApiV1UpdatesCheck(): Observable<PostApiV1UpdatesCheckResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/updates/check'
         });
     }
     

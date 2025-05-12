@@ -1,21 +1,19 @@
-import { JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { SparkleButtonComponent, SparkleIconComponent, SparkleProgressBarComponent } from '@sparkle-ui/core';
 import { finalize, map } from 'rxjs';
-import { DuplicatiServerService, UpdatesService } from '../../core/openapi';
+import { DuplicatiServerService } from '../../core/openapi';
 import { ServerStateService } from '../../core/services/server-state.service';
 
 @Component({
   selector: 'app-general',
-  imports: [SparkleProgressBarComponent, SparkleButtonComponent, SparkleIconComponent, JsonPipe],
+  imports: [SparkleProgressBarComponent, SparkleButtonComponent, SparkleIconComponent],
   templateUrl: './general.component.html',
   styleUrl: './general.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class GeneralComponent {
   #dupServer = inject(DuplicatiServerService);
-  #updates = inject(UpdatesService);
   #serverState = inject(ServerStateService);
 
   isLoading = signal(true);
@@ -32,7 +30,7 @@ export default class GeneralComponent {
   checkForUpdates() {
     this.checkingForUpdates.set(true);
 
-    this.#updates
+    this.#dupServer
       .postApiV1UpdatesCheck()
       .pipe(finalize(() => this.checkingForUpdates.set(false)))
       .subscribe();
