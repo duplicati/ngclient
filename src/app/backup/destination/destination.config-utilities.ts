@@ -52,7 +52,7 @@ export type DestinationConfigEntry = {
 export type DestinationConfig = DestinationConfigEntry[];
 
 export function addPort(port: string | number | null | undefined) {
-  if (port === null || port === undefined) return '';
+  if (port === null || port === undefined || port === '') return '';
 
   return ':' + port.toString();
 }
