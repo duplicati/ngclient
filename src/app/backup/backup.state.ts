@@ -83,6 +83,7 @@ export class BackupState {
 
   isDraft = signal(false);
   backupId = signal<'new' | 'string' | null>(null);
+  backupName = computed(() => this.generalFormSignal()?.name ?? '');
   isSubmitting = signal(false);
   finishedLoading = signal(false);
   backupDefaults = signal<any>(null);

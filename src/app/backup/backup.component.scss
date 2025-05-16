@@ -10,6 +10,10 @@ header {
   padding: p2r(16 24);
   border-bottom: 1px solid var(--base-level-40);
 
+  p {
+    margin-bottom: p2r(8);
+  }
+
   spk-stepper {
     width: 100%;
   }

@@ -31,7 +31,9 @@ export default class BackupComponent {
   #dupServer = inject(DuplicatiServerService);
 
   isDraft = this.#backupState.isDraft;
+  isNew = this.#backupState.isNew;
   backupId = this.#backupState.backupId;
+  backupName = this.#backupState.backupName;
   finishedLoading = this.#backupState.finishedLoading;
 
   #routeParamsSignal = toSignal(this.#route.params);

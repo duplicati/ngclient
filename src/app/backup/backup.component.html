@@ -1,6 +1,9 @@
 <app-status-bar />
 
 <header>
+  @if (!isNew()) {
+    <p>Editing: {{ backupName() }}</p>
+  }
   <spk-stepper>
     <div
       step
