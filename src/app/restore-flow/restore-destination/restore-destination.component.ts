@@ -23,7 +23,7 @@ import {
   SparkleProgressBarComponent,
   SparkleSelectComponent,
   SparkleToggleComponent,
-  SparkleTooltipComponent
+  SparkleTooltipComponent,
 } from '@sparkle-ui/core';
 import { finalize } from 'rxjs';
 import { BackupState } from '../../backup/backup.state';
@@ -217,45 +217,46 @@ export default class RestoreDestinationComponent {
 
     if (!targetUrl) return;
 
-    this.#testDestination
-      .testDestination(targetUrl, destinationIndex, false)
-      .subscribe({
-        next: (res) => {
-          if (res.action === 'success') {
-            if (res.anyFilesFound === false) {
-              this.#dialog.open(ConfirmDialogComponent, {
-                data: {
-                  title: $localize`Empty destination`,
-                  message: $localize`The remote destination does not contain any files. 
+    this.#testDestination.testDestination(targetUrl, destinationIndex, false).subscribe({
+      next: (res) => {
+        if (res.action === 'success') {
+          if (res.anyFilesFound === false) {
+            this.#dialog.open(ConfirmDialogComponent, {
+              data: {
+                title: $localize`Empty destination`,
+                message: $localize`The remote destination does not contain any files. 
                   Check that the details are correct and that the destination is not empty.`,
-                  confirmText: $localize`OK`,
-                  cancelText: undefined,
-                }
-              });              
-            }
-
-            this.successfulTest.set(true);
-            setTimeout(() => {
-              this.successfulTest.set(false);
-            }, 3000);
-
-            return;
-          } 
-
-          if (res.action === 'generic-error') {
-            this.successfulTest.set(false);
-            return;
+                confirmText: $localize`OK`,
+                cancelText: undefined,
+              },
+            });
           }
-          
-          if (res.action === 'trust-cert') 
-            this.#backupState.addHttpOptionByName('accept-specified-ssl-hash', res.destinationIndex, res.certData);
-          if (res.action === 'approve-host-key')
-            this.#backupState.addOrUpdateAdvancedFormPairByName('ssh-fingerprint', res.destinationIndex, res.reportedHostKey);
-          
-          if (res.testAgain)
-            this.testDestination(res.destinationIndex);
+
+          this.successfulTest.set(true);
+          setTimeout(() => {
+            this.successfulTest.set(false);
+          }, 3000);
+
+          return;
         }
-      });
+
+        if (res.action === 'generic-error') {
+          this.successfulTest.set(false);
+          return;
+        }
+
+        if (res.action === 'trust-cert')
+          this.#backupState.addHttpOptionByName('accept-specified-ssl-hash', res.destinationIndex, res.certData);
+        if (res.action === 'approve-host-key')
+          this.#backupState.addOrUpdateAdvancedFormPairByName(
+            'ssh-fingerprint',
+            res.destinationIndex,
+            res.reportedHostKey
+          );
+
+        if (res.testAgain) this.testDestination(res.destinationIndex);
+      },
+    });
   }
 
   mapToTargetUrl(destinationGroup: DestinationFormGroup) {

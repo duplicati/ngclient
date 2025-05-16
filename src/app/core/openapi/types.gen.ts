@@ -1596,12 +1596,14 @@ export type PostApiV1BackupByIdCompactResponse = (TaskStartedDto);
 
 export type PostApiV1BackupByIdStartData = {
     id: string;
+    skipQueue?: boolean;
 };
 
 export type PostApiV1BackupByIdStartResponse = (TaskStartedDto);
 
 export type PostApiV1BackupByIdRunData = {
     id: string;
+    skipQueue?: boolean;
 };
 
 export type PostApiV1BackupByIdRunResponse = (TaskStartedDto);

@@ -198,7 +198,6 @@ export default class SelectFilesComponent {
         .pipe(
           takeUntil(this.abortLoading$),
           finalize(() => {
-            console.log('hi');
             this.showFileTree.set(true);
             this.loadingRootPath.set(false);
           })

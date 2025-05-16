@@ -1266,6 +1266,7 @@ export class DuplicatiServerService {
     /**
      * @param data The data for the request.
      * @param data.id
+     * @param data.skipQueue
      * @returns TaskStartedDto Success
      * @throws ApiError
      */
@@ -1275,6 +1276,9 @@ export class DuplicatiServerService {
             url: '/api/v1/backup/{id}/start',
             path: {
                 id: data.id
+            },
+            query: {
+                skipQueue: data.skipQueue
             }
         });
     }
@@ -1282,6 +1286,7 @@ export class DuplicatiServerService {
     /**
      * @param data The data for the request.
      * @param data.id
+     * @param data.skipQueue
      * @returns TaskStartedDto Success
      * @throws ApiError
      */
@@ -1291,6 +1296,9 @@ export class DuplicatiServerService {
             url: '/api/v1/backup/{id}/run',
             path: {
                 id: data.id
+            },
+            query: {
+                skipQueue: data.skipQueue
             }
         });
     }

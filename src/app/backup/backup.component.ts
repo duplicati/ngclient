@@ -56,8 +56,14 @@ export default class BackupComponent {
       .pipe(take(1))
       .subscribe({
         next: (res: any) => {
+          const backup = res.Backup;
+
+          backup.Settings = [
+            ...backup.Settings,
+            ...res.ApplicationOptions.map((x: any) => ({ Name: x.Name, Value: x.Value })),
+          ];
           this.#backupState.mapScheduleToForm(res.Schedule);
-          this.#backupState.mapOptionsToForms(res.Backup);
+          this.#backupState.mapOptionsToForms(backup);
           this.#backupState.backupDefaults.set(res);
           this.#backupState.finishedLoading.set(true);
         },

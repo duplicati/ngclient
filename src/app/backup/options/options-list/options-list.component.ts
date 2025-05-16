@@ -65,9 +65,12 @@ export class OptionsListComponent {
 
   selectedSettings = computed(() => {
     const hiddenNames = this.hiddenOptions();
-    const predefinedSettings = this.options()
+    const options = this.options();
+
+    const predefinedSettings = options
       .map((setting) => {
-        const option = this.allOptions().find((opt) => opt.name === setting.Name);
+        const option = this.allOptions().find((opt) => opt.name === setting.Name?.replace('--', ''));
+        // const option = this.allOptions().find((opt) => opt.name === setting.Name);
 
         if (option && !hiddenNames.includes(option.name)) {
           let _value: any = setting.Value ?? '';

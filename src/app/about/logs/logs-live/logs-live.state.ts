@@ -125,7 +125,6 @@ export class LogsLiveState {
   }
 
   updateLogLevel(logLevel: string) {
-    console.log('updateLogLevel', logLevel);
     this.logLevel.set(logLevel);
   }
 
