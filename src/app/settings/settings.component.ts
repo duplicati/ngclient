@@ -57,6 +57,10 @@ type UpdateChannel = '' | 'stable' | 'beta' | 'experimental' | 'canary';
 
 const TIME_OPTIONS = [
   {
+    value: 'none',
+    label: $localize`None`,
+  },
+  {
     value: 's',
     label: $localize`Seconds`,
   },
@@ -286,8 +290,8 @@ export default class SettingsComponent {
   usageStatisticsOptions = signal(USAGE_STATISTICS_OPTIONS);
 
   timeTypeOptions = signal(TIME_OPTIONS);
-  timeType = signal<TimeTypes>('s');
-  timeValue = debounceSignal<number | undefined>(undefined, 300);
+  timeType = signal<TimeTypes>('none');
+  timeValue = debounceSignal<number>(0, 300);
   timeRange = computed(() => {
     const timeType = this.timeType();
 
@@ -308,28 +312,31 @@ export default class SettingsComponent {
   }
 
   updateStartupDelay() {
-    const serverSettings = this.#serverSettingsService.serverSettings();
     const timeValue = this.timeValue();
     const timeType = this.timeType();
-    const startupDelay = `${timeValue}${timeType}`;
 
-    if (
-      typeof timeValue !== 'number' ||
-      startupDelay === '' ||
-      (serverSettings && serverSettings['startup-delay'] === startupDelay)
-    )
-      return;
+    let startupDelay = '';
+
+    if (timeType !== 'none' && timeValue !== 0) {
+      startupDelay = `${timeValue}${timeType}`;
+    }
 
     this.#dupServer
       .patchApiV1Serversettings({
         requestBody: {
-          'startup-delay': startupDelay === '0s' ? '' : startupDelay,
+          'startup-delay': startupDelay,
         },
       })
       .subscribe();
   }
 
   updateTimeType(newTimeType: string) {
+    const prevTimeType = this.timeType();
+
+    if (prevTimeType === 'none') {
+      this.timeValue.set(0);
+    }
+
     this.timeType.set(newTimeType);
   }
 
@@ -376,8 +383,8 @@ export default class SettingsComponent {
       serverSettings['usage-reporter-level'] === '' ? 'none' : serverSettings['usage-reporter-level']
     );
 
-    this.timeType.set(timeUnitOptions.includes(unit) ? unit : 's');
-    this.timeValue.set(parseInt(timeStr == '' ? '0' : timeStr));
+    this.timeType.set(startupDelay == '' ? 'none' : timeUnitOptions.includes(unit) ? unit : 'none');
+    this.timeValue.set(startupDelay == '' ? 0 : parseInt(timeStr));
   });
 
   setDarkMode() {

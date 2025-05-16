@@ -258,12 +258,13 @@
 
     <div class="right">
       <div class="field-row">
-        <spk-range-slider [unit]="timeType()" class="raised primary">
+        <spk-range-slider [unit]="timeType() === 'none' ? 's' : timeType()" class="raised primary">
           <input
             type="range"
             [min]="timeRange()[0]"
             [max]="timeRange()[1]"
-            [ngModel]="timeValue"
+            [disabled]="timeType() === 'none'"
+            [(ngModel)]="timeValue"
             [ngModelOptions]="{ standalone: true }" />
         </spk-range-slider>
 
