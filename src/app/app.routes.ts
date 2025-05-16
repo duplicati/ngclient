@@ -183,6 +183,10 @@ export const routes: Routes = [
                     loadComponent: () => import('./about/system-info/system-info.component'),
                   },
                   {
+                    path: 'server-settings',
+                    loadComponent: () => import('./about/server-settings/server-settings.component'),
+                  },
+                  {
                     path: 'logs',
                     loadChildren: () => import('./about/logs/logs.routes'),
                   },

@@ -4,7 +4,7 @@ import { SparkleIconComponent, SparkleListComponent } from '@sparkle-ui/core';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 
 @Component({
-  selector: 'app-system-info',
+  selector: 'app-server-settings',
   imports: [SparkleListComponent, SparkleIconComponent, NgTemplateOutlet],
   templateUrl: './system-info.component.html',
   styleUrl: './system-info.component.scss',
