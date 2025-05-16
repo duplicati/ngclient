@@ -29,11 +29,13 @@
         <spk-icon>wrench</spk-icon>
         Repair
       </button>
+
       <button spk-button i18n [class.loader]="isDeleting()" [disabled]="!isValidatedPath()" (click)="deleteDatabase()">
         <spk-icon>trash</spk-icon>
         Delete
       </button>
-      <button spk-button i18n [class.loader]="isRestoring()" (click)="restoreDatabase()">
+
+      <button spk-button i18n [class.loader]="isRestoring()" [disabled]="pathHasChanged()" (click)="restoreDatabase()">
         <spk-icon>clock-counter-clockwise</spk-icon>
         Restore (delete and repair)
       </button>
@@ -53,23 +55,19 @@
     </spk-form-field>
 
     <div class="actions placement">
-      <button spk-button i18n [disabled]="!(isValidatedPath() && pathHasChanged())" (click)="resetDatabasePath()">
+      <button spk-button i18n [disabled]="!pathHasChanged()" (click)="resetDatabasePath()">
         <spk-icon>backspace</spk-icon>
         Reset
       </button>
-      <button spk-button i18n [disabled]="!(isValidatedPath() && pathHasChanged())" (click)="saveDatabasePath()">
+      <button spk-button i18n [disabled]="!pathHasChanged()" (click)="saveDatabasePath()">
         <spk-icon>floppy-disk</spk-icon>
         Save
       </button>
-      <button
-        spk-button
-        i18n
-        [disabled]="!(isValidatedPath() && pathHasChanged())"
-        (click)="saveAndRepairDatabasePath()">
+      <button spk-button i18n [disabled]="!pathHasChanged()" (click)="saveAndRepairDatabasePath()">
         <spk-icon>wrench</spk-icon>
         Save & Repair
       </button>
-      <button spk-button i18n [disabled]="!(isValidatedPath() && pathHasChanged())" (click)="moveDatabasePath()">
+      <button spk-button i18n [disabled]="!pathHasChanged()" (click)="moveDatabasePath()">
         <spk-icon>flow-arrow</spk-icon>
         Move existing database
       </button>
