@@ -136,6 +136,12 @@ export default class DestinationComponent {
 
     return focused.map((x) => options.find((y) => y.key === x)!);
   });
+  selectedDestinationType = computed(() => {
+    const destinationFormSignal = this.destinationFormSignal();
+    const options = this.destinationTypeOptions();
+
+    return options.find((x) => destinationFormSignal?.destinations?.[0]?.destinationType === x.key);
+  });
   destinationTypeOptionsNotFocused = computed(() => {
     const focused = this.destinationTypeOptionsInFocus();
     const options = this.destinationTypeOptions();

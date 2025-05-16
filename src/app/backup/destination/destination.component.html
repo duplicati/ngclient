@@ -38,7 +38,10 @@
 
     @if (destinationCount() > 0) {
       <p (click)="removeDestinationFormGroup(destinationCount() - 1)" i18n>
-        Want to select another destination?
+        Current destination type
+        <strong>{{ selectedDestinationType()?.displayName }}.</strong>
+        <br />
+        Want to select another?
         <span class="spk-primary">Click here</span>
       </p>
     }
