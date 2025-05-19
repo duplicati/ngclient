@@ -15,6 +15,7 @@ import {
   SparkleTableComponent,
 } from '@sparkle-ui/core';
 import { finalize } from 'rxjs';
+import { DESTINATION_CONFIG } from '../backup/destination/destination.config';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { localStorageSignal } from '../core/functions/localstorage-signal';
@@ -84,6 +85,13 @@ export default class HomeComponent {
 
   startBackup(id: string) {
     this.#backupsState.startBackup(id);
+  }
+
+  getBackendType(targetUrl: string | null | undefined) {
+    if (!targetUrl) return '';
+    const backend = targetUrl.split('://')[0];
+
+    return DESTINATION_CONFIG.find((x) => x.key === backend)?.displayName ?? '';
   }
 
   deleteBackup(id: string) {

@@ -90,6 +90,7 @@
                   <h3>
                     {{ backup.Backup?.Name ?? MISSING_BACKUP_NAME }}
                     <spk-icon>database</spk-icon>
+                    {{ getBackendType(backup.Backup?.TargetURL) }}
                   </h3>
 
                   <p>
