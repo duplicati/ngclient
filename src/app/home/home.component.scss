@@ -98,6 +98,8 @@ spk-card {
 }
 
 .sortable {
+  user-select: none;
+
   spk-icon {
     margin-left: p2r(8);
     font-size: p2r(16);
