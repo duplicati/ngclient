@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import {
   SparkleButtonComponent,
   SparkleDialogService,
@@ -7,8 +7,6 @@ import {
   SparkleProgressBarComponent,
   SparkleSpinnerComponent,
 } from '@sparkle-ui/core';
-import { finalize } from 'rxjs';
-import { DuplicatiServerService } from '../../openapi';
 import { RelativeTimePipe } from '../../pipes/relative-time.pipe';
 import { RelayconfigState } from '../../states/relayconfig.state';
 import { PauseDialogComponent } from './pause-dialog/pause-dialog.component';
@@ -31,7 +29,6 @@ const date = new Date();
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class StatusBarComponent {
-  #dupServer = inject(DuplicatiServerService);
   #statusBarState = inject(StatusBarState);
   #dialog = inject(SparkleDialogService);
   #relayconfigState = inject(RelayconfigState);
@@ -40,8 +37,8 @@ export default class StatusBarComponent {
 
   statusData = this.#statusBarState.statusData;
   serverState = this.#statusBarState.serverState;
-  isRunning = computed(() => this.serverState()?.ProgramState === 'Running');
-  isResuming = signal<boolean>(false);
+  clientIsRunning = this.#statusBarState.clientIsRunning;
+  isResuming = this.#statusBarState.isResuming;
 
   nextBackup = computed(() => ({
     backup: (this.serverState()?.ProposedSchedule?.[0] as any)?.backup,
@@ -63,16 +60,12 @@ export default class StatusBarComponent {
   }
 
   pauseResume() {
-    if (this.isRunning()) {
+    if (this.clientIsRunning()) {
       this.openPauseDialog();
       return;
     }
 
-    this.isResuming.set(true);
-    this.#dupServer
-      .postApiV1ServerstateResume()
-      .pipe(finalize(() => this.isResuming.set(false)))
-      .subscribe();
+    this.#statusBarState.pauseResume().subscribe();
   }
 
   ngAfterViewInit() {

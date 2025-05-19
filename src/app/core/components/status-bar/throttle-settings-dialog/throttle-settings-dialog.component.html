@@ -5,13 +5,12 @@
 <div content>
   <div class="column">
     <div class="field-row">
+      <label>Max upload speed</label>
+
       <spk-checkbox
         [class.active]="maxUploadActive()"
         class="primary raised"
-        (click)="maxUploadActive.set(!maxUploadActive())"
-        i18n>
-        Max upload speed
-      </spk-checkbox>
+        (click)="maxUploadActive.set(!maxUploadActive())" />
 
       <spk-form-field>
         <input
@@ -28,13 +27,12 @@
     </div>
 
     <div class="field-row">
+      <label>Max download speed</label>
+
       <spk-checkbox
         [class.active]="maxDownloadActive()"
         class="primary raised"
-        (click)="maxDownloadActive.set(!maxDownloadActive())"
-        i18n>
-        Max download speed
-      </spk-checkbox>
+        (click)="maxDownloadActive.set(!maxDownloadActive())" />
 
       <spk-form-field>
         <input

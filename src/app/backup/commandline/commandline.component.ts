@@ -4,6 +4,7 @@ import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   SparkleButtonComponent,
+  SparkleDialogService,
   SparkleDividerComponent,
   SparkleFormFieldComponent,
   SparkleIconComponent,
@@ -11,6 +12,7 @@ import {
   SparkleSelectComponent,
 } from '@sparkle-ui/core';
 import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
+import { StatusBarState } from '../../core/components/status-bar/status-bar.state';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { BackupDto, CommandlineService, DuplicatiServerService, GetBackupResultDto } from '../../core/openapi';
 import { BackupState } from '../backup.state';
@@ -46,6 +48,8 @@ export default class CommandlineComponent {
   #router = inject(Router);
   #route = inject(ActivatedRoute);
   #commandline = inject(CommandlineService);
+  #statusBarState = inject(StatusBarState);
+  #dialog = inject(SparkleDialogService);
 
   #routeParamsSignal = toSignal(this.#route.params);
   commandOptions = toSignal(this.#commandline.getApiV1Commandline());
@@ -112,6 +116,10 @@ export default class CommandlineComponent {
   }
 
   submit() {
+    this.#statusBarState.resumeDialogCheck(() => this.#submit());
+  }
+
+  #submit() {
     this.isSubmitting.set(true);
     const baseCmd = this.baseCmdForm.value;
     const targetUrl = baseCmd.targetUrl ?? '';

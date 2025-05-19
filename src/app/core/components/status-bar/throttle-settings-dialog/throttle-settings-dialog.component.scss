@@ -15,8 +15,24 @@ h3 {
 }
 
 .field-row {
-  display: flex;
+  display: grid;
+  grid-template-areas:
+    'label label label'
+    'checkbox input select';
+  grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: p2r(8);
   width: 100%;
+
+  label {
+    grid-area: label;
+  }
+
+  spk-form-field {
+    grid-area: input;
+  }
+
+  spk-select {
+    grid-area: select;
+  }
 }

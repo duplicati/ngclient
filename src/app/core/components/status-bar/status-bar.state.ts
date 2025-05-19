@@ -1,4 +1,5 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
+import { SparkleDialogService } from '@sparkle-ui/core';
 import { finalize, map, of, switchMap } from 'rxjs';
 import {
   DuplicatiServerService,
@@ -9,6 +10,7 @@ import {
 import { BytesPipe } from '../../pipes/byte.pipe';
 import { ServerStateService } from '../../services/server-state.service';
 import { Backup, BackupsState } from '../../states/backups.state';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 type Task = GetApiV1TaskByTaskidResponse;
 
 export type Status = GetApiV1ProgressstateResponse & {
@@ -68,6 +70,7 @@ export class StatusBarState {
   #dupServer = inject(DuplicatiServerService);
   #backupState = inject(BackupsState);
   #serverState = inject(ServerStateService);
+  #dialog = inject(SparkleDialogService);
   #isFetching = signal(false);
   #statusData = signal<StatusWithContent | null>(null);
 
@@ -89,6 +92,7 @@ export class StatusBarState {
     return serverState;
   });
 
+  clientIsRunning = computed(() => this.serverState()?.ProgramState === 'Running');
   serverStateEffect = effect(() => {
     const newState = this.#serverState.serverState();
 
@@ -97,6 +101,7 @@ export class StatusBarState {
     }
   });
 
+  isResuming = signal<boolean>(false);
   isFetching = this.#isFetching.asReadonly();
   connectionStatus = this.#serverState.connectionStatus;
 
@@ -127,6 +132,37 @@ export class StatusBarState {
 
   fetchProgressState() {
     this.#getProgressState();
+  }
+
+  pauseResume() {
+    this.isResuming.set(true);
+
+    return this.#dupServer.postApiV1ServerstateResume().pipe(finalize(() => this.isResuming.set(false)));
+  }
+
+  resumeDialogCheck(cb: Function) {
+    if (!this.clientIsRunning()) {
+      this.#dialog.open(ConfirmDialogComponent, {
+        data: {
+          title: $localize`Server paused`,
+          message: $localize`Server is currently paused. Do you want to resume now?`,
+          confirmText: $localize`Resume`,
+          cancelText: $localize`No, I'll resume later`,
+        },
+        closed: (res) => {
+          if (!res) return;
+          this.pauseResume().subscribe({
+            next: () => {
+              cb();
+            },
+          });
+        },
+      });
+
+      return;
+    }
+
+    cb();
   }
 
   #getProgressState() {

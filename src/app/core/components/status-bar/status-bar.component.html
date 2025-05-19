@@ -22,7 +22,7 @@
 
   <div class="current-backup-actions">
     <button spk-button i18n [class.loader]="isResuming()" (click)="pauseResume()">
-      @if (isRunning()) {
+      @if (clientIsRunning()) {
         <spk-icon>pause</spk-icon>
         Pause
       } @else {
