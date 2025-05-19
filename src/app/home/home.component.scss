@@ -40,13 +40,17 @@ spk-card {
 .content {
   display: flex;
   flex-direction: column;
-  padding: 0 p2r(32);
   gap: p2r(16);
+
+  h2 {
+    padding: p2r(0 32);
+  }
 }
 
 .backups {
   display: flex;
   flex-direction: column;
+  padding: p2r(0 32);
   gap: p2r(8);
 }
 
@@ -91,4 +95,27 @@ spk-card {
 .actions {
   display: flex;
   gap: p2r(8);
+}
+
+.sortable {
+  spk-icon {
+    margin-left: p2r(8);
+    font-size: p2r(16);
+    justify-self: flex-end;
+    display: none;
+  }
+
+  &:not(.sort-asc):not(.sort-desc) spk-icon.filter {
+    display: block;
+  }
+
+  &.sort-asc spk-icon.asc {
+    display: block;
+    color: var(--base-level-70);
+  }
+
+  &.sort-desc spk-icon.desc {
+    display: block;
+    color: var(--base-level-70);
+  }
 }

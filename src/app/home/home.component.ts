@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
   SparkleButtonComponent,
+  SparkleButtonGroupComponent,
   SparkleCardComponent,
   SparkleChipComponent,
   SparkleDialogService,
@@ -9,10 +11,13 @@ import {
   SparkleIconComponent,
   SparkleMenuComponent,
   SparkleProgressBarComponent,
+  SparkleSortDirective,
+  SparkleTableComponent,
 } from '@sparkle-ui/core';
 import { finalize } from 'rxjs';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
+import { localStorageSignal } from '../core/functions/localstorage-signal';
 import { DuplicatiServerService } from '../core/openapi';
 import { BytesPipe } from '../core/pipes/byte.pipe';
 import { DurationFormatPipe } from '../core/pipes/duration.pipe';
@@ -23,6 +28,7 @@ import { BackupsState, OrderBy, TimeType } from '../core/states/backups.state';
   selector: 'app-home',
   imports: [
     RouterLink,
+    NgTemplateOutlet,
     StatusBarComponent,
     SparkleCardComponent,
     SparkleButtonComponent,
@@ -31,6 +37,9 @@ import { BackupsState, OrderBy, TimeType } from '../core/states/backups.state';
     SparkleDividerComponent,
     SparkleMenuComponent,
     SparkleProgressBarComponent,
+    SparkleButtonGroupComponent,
+    SparkleTableComponent,
+    SparkleSortDirective,
     DurationFormatPipe,
     BytesPipe,
     RelativeTimePipe,
@@ -54,8 +63,12 @@ export default class HomeComponent {
 
   timeType = this.#backupsState.timeType;
 
+  viewMode = localStorageSignal<'list' | 'details'>('list', 'viewMode');
+  sortByColumn = signal<OrderBy | null>('name');
   loadingId = signal<string | null>(null);
   successId = signal<string | null>(null);
+
+  sortEffect = effect(() => this.#backupsState.setOrderBy(this.sortByColumn() as OrderBy));
 
   ngOnInit() {
     this.#backupsState.getBackups(true);

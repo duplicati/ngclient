@@ -32,6 +32,17 @@
       <ng-container i18n>My backups</ng-container>
 
       <div class="actions">
+        <spk-button-group class="small">
+          <button type="button" [class.active]="viewMode() === 'list'" i18n (click)="viewMode.set('list')">
+            <spk-icon>rows</spk-icon>
+            List
+          </button>
+
+          <button type="button" [class.active]="viewMode() === 'details'" i18n (click)="viewMode.set('details')">
+            <spk-icon>list</spk-icon>
+            Details
+          </button>
+        </spk-button-group>
         <spk-menu>
           <button type="button" class="small" spk-button i18n>
             Time:
@@ -45,177 +56,267 @@
           </ng-container>
         </spk-menu>
 
-        <spk-menu>
-          <button type="button" class="small" spk-button i18n>
-            Order by:
-            <strong>{{ orderBy() }}</strong>
-            <spk-icon>arrows-down-up</spk-icon>
-          </button>
+        @if (viewMode() === 'list') {
+          <spk-menu>
+            <button type="button" class="small" spk-button i18n>
+              Order by:
+              <strong>{{ orderBy() }}</strong>
+              <spk-icon>arrows-down-up</spk-icon>
+            </button>
 
-          <ng-container menu>
-            @for (order of sortOrderOptions(); track $index) {
-              <button type="button" [class.active]="orderBy() === order.value" (click)="setOrderBy(order.value)" i18n>
-                {{ order.label }}
-              </button>
-            }
-          </ng-container>
-        </spk-menu>
+            <ng-container menu>
+              @for (order of sortOrderOptions(); track $index) {
+                <button
+                  type="button"
+                  [class.active]="orderBy() === order.value"
+                  (click)="sortByColumn.set(order.value)"
+                  i18n>
+                  {{ order.label }}
+                </button>
+              }
+            </ng-container>
+          </spk-menu>
+        }
       </div>
     </h2>
-    <div class="backups">
-      @defer (when !backupsLoading()) {
-        @if (backups().length) {
-          @for (backup of backups(); track $index) {
-            <div class="backup">
-              <div class="text">
-                <h3>
-                  {{ backup.Backup?.Name ?? MISSING_BACKUP_NAME }}
-                  <spk-icon>database</spk-icon>
-                </h3>
 
-                <p>
-                  <span i18n>Last successful backup:</span>
-                  {{ backup.Backup?.Metadata?.['LastBackupDate'] | relativeTime: timeType() === 'actual' }}
-                </p>
+    @defer (when !backupsLoading()) {
+      @if (viewMode() === 'list') {
+        <div class="backups">
+          @if (backups().length) {
+            @for (backup of backups(); track $index) {
+              <div class="backup">
+                <div class="text">
+                  <h3>
+                    {{ backup.Backup?.Name ?? MISSING_BACKUP_NAME }}
+                    <spk-icon>database</spk-icon>
+                  </h3>
 
-                <p>
-                  <span i18n>Duration:</span>
-                  @if (backup.Backup?.Metadata?.['LastBackupDuration']) {
-                    {{ backup.Backup?.Metadata?.['LastBackupDuration'] | durationFormat: timeType() === 'actual' }}
-                  } @else {
-                    <ng-container i18n>N/A</ng-container>
-                  }
-                </p>
+                  <p>
+                    <span i18n>Last successful backup:</span>
+                    {{ backup.Backup?.Metadata?.['LastBackupDate'] | relativeTime: timeType() === 'actual' }}
+                  </p>
 
-                <p>
-                  <span i18n>Source:</span>
-                  @if (backup.Backup?.Metadata?.['SourceFilesSize']) {
-                    {{ backup.Backup?.Metadata?.['SourceFilesSize'] | bytes }}
-                  } @else {
-                    <ng-container i18n>N/A</ng-container>
-                  }
-                </p>
-
-                <p>
-                  <span i18n>Destination:</span>
-                  @if (backup.Backup?.Metadata?.['TargetFilesSize']) {
-                    {{ backup.Backup?.Metadata?.['TargetFilesSize'] | bytes }}
-                  } @else {
-                    <ng-container i18n>N/A</ng-container>
-                  }
-                </p>
-              </div>
-
-              @if (backup.Backup?.Metadata?.['BackupListCount']) {
-                <spk-chip class="simple success" i18n>
-                  {{ backup.Backup?.Metadata?.['BackupListCount'] }} Version
-                </spk-chip>
-              } @else {
-                <spk-chip class="simple" i18n>No version yet</spk-chip>
-              }
-
-              <div class="actions">
-                <button
-                  spk-button
-                  [class.loader]="startingBackup() === backup.Backup?.ID"
-                  (click)="startBackup($any(backup.Backup?.ID))"
-                  i18n>
-                  <spk-icon>play-circle</spk-icon>
-                  Start
-                </button>
-
-                <button type="button" spk-button [routerLink]="['/backup', backup.Backup?.ID]">
-                  <spk-icon>pencil-simple</spk-icon>
-                </button>
-
-                <spk-menu [right]="true">
-                  <button
-                    type="button"
-                    spk-button
-                    [class.loader]="loadingId() === backup.Backup?.ID"
-                    [class.success]="successId() === backup.Backup?.ID">
-                    @if (successId() === backup.Backup?.ID) {
-                      <spk-icon>check</spk-icon>
+                  <p>
+                    <span i18n>Duration:</span>
+                    @if (backup.Backup?.Metadata?.['LastBackupDuration']) {
+                      {{ backup.Backup?.Metadata?.['LastBackupDuration'] | durationFormat: timeType() === 'actual' }}
                     } @else {
-                      <spk-icon>dots-three-vertical</spk-icon>
+                      <ng-container i18n>N/A</ng-container>
                     }
-                  </button>
+                  </p>
 
-                  <ng-container menu>
-                    <h3 title>Operations</h3>
+                  <p>
+                    <span i18n>Source:</span>
+                    @if (backup.Backup?.Metadata?.['SourceFilesSize']) {
+                      {{ backup.Backup?.Metadata?.['SourceFilesSize'] | bytes }}
+                    } @else {
+                      <ng-container i18n>N/A</ng-container>
+                    }
+                  </p>
 
-                    <button type="button" [routerLink]="['/restore', backup.Backup?.ID]" i18n>
-                      <spk-icon>clock-counter-clockwise</spk-icon>
-                      Restore
-                    </button>
+                  <p>
+                    <span i18n>Destination:</span>
+                    @if (backup.Backup?.Metadata?.['TargetFilesSize']) {
+                      {{ backup.Backup?.Metadata?.['TargetFilesSize'] | bytes }}
+                    } @else {
+                      <ng-container i18n>N/A</ng-container>
+                    }
+                  </p>
+                </div>
 
-                    <button type="button" [routerLink]="['/backup', backup.Backup?.ID, 'export']" i18n>
-                      <spk-icon>export</spk-icon>
-                      Export
-                    </button>
+                @if (backup.Backup?.Metadata?.['BackupListCount']) {
+                  <spk-chip class="simple success" i18n>
+                    {{ backup.Backup?.Metadata?.['BackupListCount'] }} Version
+                  </spk-chip>
+                } @else {
+                  <spk-chip class="simple" i18n>No version yet</spk-chip>
+                }
 
-                    <button
-                      [class.loader]="deletingBackup() === backup.Backup?.ID"
-                      (click)="deleteBackup(backup.Backup?.ID!)"
-                      i18n>
-                      <spk-icon>x-circle</spk-icon>
-                      Delete
-                    </button>
-
-                    <spk-divider />
-
-                    <h3 title>Advanced</h3>
-
-                    <button type="button" [routerLink]="['/backup', backup.Backup?.ID, 'database']" i18n>
-                      <spk-icon>database</spk-icon>
-                      Database
-                    </button>
-
-                    <button type="button" (click)="verifyFiles(backup.Backup?.ID!)" i18n>
-                      <spk-icon>check-square-offset</spk-icon>
-                      Verify files
-                    </button>
-
-                    <button type="button" (click)="compressBackup(backup.Backup?.ID!)" i18n>
-                      <spk-icon>file-archive</spk-icon>
-                      Compress now
-                    </button>
-
-                    <button type="button" [routerLink]="['/backup', backup.Backup?.ID, 'commandline']" i18n>
-                      <spk-icon>terminal-window</spk-icon>
-                      Commandline
-                    </button>
-
-                    <spk-divider />
-
-                    <h3 title>Reporting</h3>
-
-                    <button type="button" [routerLink]="['/backup', backup.Backup?.ID, 'log']" i18n>
-                      <spk-icon>notepad</spk-icon>
-                      Log
-                    </button>
-
-                    <button type="button" (click)="createErrorReport(backup.Backup?.ID!)" i18n>
-                      <spk-icon>file-plus</spk-icon>
-                      Create error report
-                    </button>
-                  </ng-container>
-                </spk-menu>
+                <div class="actions">
+                  <ng-container *ngTemplateOutlet="actions; context: { $implicit: backup }"></ng-container>
+                </div>
               </div>
-            </div>
+            }
+          } @else {
+            <ng-container i18n>No backups founds</ng-container>
           }
-        } @else {
-          <ng-container i18n>No backups founds</ng-container>
-        }
-      } @placeholder {
-        <div class="loading-list">
-          <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
-
-          <div class="text">
-            <h3 i18n>Loading backups...</h3>
-          </div>
         </div>
+      } @else if (viewMode() === 'details') {
+        <spk-table class="type-b" [data]="backups()" [loading]="backupsLoading()" [(sortByColumn)]="sortByColumn">
+          <tr table-header>
+            <th i18n spkSort="name">
+              Backup
+              <ng-container *ngTemplateOutlet="sortIcons" />
+            </th>
+            <th i18n spkSort="lastrun">
+              Last successful backup
+              <ng-container *ngTemplateOutlet="sortIcons" />
+            </th>
+            <th i18n spkSort="duration">
+              Duration
+              <ng-container *ngTemplateOutlet="sortIcons" />
+            </th>
+            <th i18n spkSort="sourcesize">
+              Source
+              <ng-container *ngTemplateOutlet="sortIcons" />
+            </th>
+            <th i18n spkSort="destinationsize">
+              Destination
+              <ng-container *ngTemplateOutlet="sortIcons" />
+            </th>
+            <th i18n>Version</th>
+            <th i18n>Actions</th>
+          </tr>
+
+          @for (backup of backups(); track $index) {
+            <tr>
+              <td>
+                {{ backup.Backup?.Name ?? MISSING_BACKUP_NAME }}
+              </td>
+              <td>
+                @if (backup.Backup?.Metadata?.['LastBackupDate']) {
+                  {{ backup.Backup?.Metadata?.['LastBackupDate'] | relativeTime: timeType() === 'actual' }}
+                } @else {
+                  <ng-container i18n>N/A</ng-container>
+                }
+              </td>
+              <td>
+                @if (backup.Backup?.Metadata?.['LastBackupDuration']) {
+                  {{ backup.Backup?.Metadata?.['LastBackupDuration'] | durationFormat: timeType() === 'actual' }}
+                } @else {
+                  <ng-container i18n>N/A</ng-container>
+                }
+              </td>
+              <td>
+                @if (backup.Backup?.Metadata?.['SourceFilesSize']) {
+                  {{ backup.Backup?.Metadata?.['SourceFilesSize'] | bytes }}
+                } @else {
+                  <ng-container i18n>N/A</ng-container>
+                }
+              </td>
+              <td>
+                @if (backup.Backup?.Metadata?.['TargetFilesSize']) {
+                  {{ backup.Backup?.Metadata?.['TargetFilesSize'] | bytes }}
+                } @else {
+                  <ng-container i18n>N/A</ng-container>
+                }
+              </td>
+              <td>
+                @if (backup.Backup?.Metadata?.['BackupListCount']) {
+                  {{ backup.Backup?.Metadata?.['BackupListCount'] }} Version
+                } @else {
+                  <ng-container i18n>No version yet</ng-container>
+                }
+              </td>
+
+              <td>
+                <ng-container *ngTemplateOutlet="actions; context: { $implicit: backup }"></ng-container>
+              </td>
+            </tr>
+          }
+        </spk-table>
       }
-    </div>
+    } @placeholder {
+      <div class="loading-list">
+        <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
+
+        <div class="text">
+          <h3 i18n>Loading backups...</h3>
+        </div>
+      </div>
+    }
   </div>
 </section>
+
+<ng-template #actions let-backup>
+  <button
+    spk-button
+    [class.loader]="startingBackup() === backup.Backup?.ID"
+    (click)="startBackup($any(backup.Backup?.ID))"
+    i18n>
+    <spk-icon>play-circle</spk-icon>
+    Start
+  </button>
+
+  <button type="button" spk-button [routerLink]="['/backup', backup.Backup?.ID]">
+    <spk-icon>pencil-simple</spk-icon>
+  </button>
+
+  <spk-menu [right]="true">
+    <button
+      type="button"
+      spk-button
+      [class.loader]="loadingId() === backup.Backup?.ID"
+      [class.success]="successId() === backup.Backup?.ID">
+      @if (successId() === backup.Backup?.ID) {
+        <spk-icon>check</spk-icon>
+      } @else {
+        <spk-icon>dots-three-vertical</spk-icon>
+      }
+    </button>
+
+    <ng-container menu>
+      <h3 title>Operations</h3>
+
+      <button type="button" [routerLink]="['/restore', backup.Backup?.ID]" i18n>
+        <spk-icon>clock-counter-clockwise</spk-icon>
+        Restore
+      </button>
+
+      <button type="button" [routerLink]="['/backup', backup.Backup?.ID, 'export']" i18n>
+        <spk-icon>export</spk-icon>
+        Export
+      </button>
+
+      <button [class.loader]="deletingBackup() === backup.Backup?.ID" (click)="deleteBackup(backup.Backup?.ID!)" i18n>
+        <spk-icon>x-circle</spk-icon>
+        Delete
+      </button>
+
+      <spk-divider />
+
+      <h3 title>Advanced</h3>
+
+      <button type="button" [routerLink]="['/backup', backup.Backup?.ID, 'database']" i18n>
+        <spk-icon>database</spk-icon>
+        Database
+      </button>
+
+      <button type="button" (click)="verifyFiles(backup.Backup?.ID!)" i18n>
+        <spk-icon>check-square-offset</spk-icon>
+        Verify files
+      </button>
+
+      <button type="button" (click)="compressBackup(backup.Backup?.ID!)" i18n>
+        <spk-icon>file-archive</spk-icon>
+        Compress now
+      </button>
+
+      <button type="button" [routerLink]="['/backup', backup.Backup?.ID, 'commandline']" i18n>
+        <spk-icon>terminal-window</spk-icon>
+        Commandline
+      </button>
+
+      <spk-divider />
+
+      <h3 title>Reporting</h3>
+
+      <button type="button" [routerLink]="['/backup', backup.Backup?.ID, 'log']" i18n>
+        <spk-icon>notepad</spk-icon>
+        Log
+      </button>
+
+      <button type="button" (click)="createErrorReport(backup.Backup?.ID!)" i18n>
+        <spk-icon>file-plus</spk-icon>
+        Create error report
+      </button>
+    </ng-container>
+  </spk-menu>
+</ng-template>
+
+<ng-template #sortIcons>
+  <spk-icon class="filter">funnel-simple</spk-icon>
+  <spk-icon class="asc">sort-ascending</spk-icon>
+  <spk-icon class="desc">sort-descending</spk-icon>
+</ng-template>
