@@ -21,7 +21,7 @@ spk-tabs {
   justify-content: space-between;
   padding: p2r(32);
   gap: p2r(16);
-  border: 1px solid var(--base-level-40);
+  border: 1px solid var(--base-4);
   border-radius: var(--shape-3);
   box-shadow: var(--shadow-1);
 
@@ -38,16 +38,16 @@ spk-tabs {
       gap: p2r(8);
 
       spk-icon {
-        color: var(--base-level-60);
+        color: var(--base-8);
       }
     }
 
     p {
       font: var(--paragraph-30);
-      color: var(--base-level-60);
+      color: var(--base-8);
 
       span {
-        color: var(--base-level-70);
+        color: var(--base-12);
       }
     }
   }

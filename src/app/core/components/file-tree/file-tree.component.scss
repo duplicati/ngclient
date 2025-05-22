@@ -68,11 +68,11 @@
   gap: p2r(8);
   padding: p2r(8 16);
   height: p2r(200);
-  border: 1px solid var(--base-level-40);
+  border: 1px solid var(--base-4);
   border-radius: var(--shape-3);
   overflow: auto;
   resize: vertical;
-  background: var(--base-level-10);
+  background: var(--base-1);
   position: relative;
 
   spk-progress-bar {
@@ -93,7 +93,7 @@
   }
 
   spk-list {
-    --list-active-bg: var(--base-level-30);
+    --list-active-bg: var(--base-3);
 
     gap: p2r(2);
     padding: 0;
@@ -107,11 +107,11 @@
 
       &.active {
         border-color: transparent;
-        --list-active-bg: var(--primary-level-20);
+        --list-active-bg: var(--primary-2);
       }
 
       &.indeterminate {
-        border-color: var(--primary-level-40);
+        border-color: var(--primary-4);
       }
 
       &.usually-hidden {
@@ -157,7 +157,7 @@
 }
 
 .browse-files-toggle {
-  color: var(--base-level-60R);
+  color: var(--base-9);
 }
 
 .hidden {

@@ -21,7 +21,7 @@ import {
   SparkleProgressBarComponent,
   SparkleSelectComponent,
   SparkleToggleComponent,
-  SparkleTooltipComponent,
+  SparkleTooltipDirective,
 } from '@sparkle-ui/core';
 import { finalize } from 'rxjs';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
@@ -86,10 +86,10 @@ type DefaultGroup = {
     SparkleMenuComponent,
     SparkleIconComponent,
     SparkleToggleComponent,
-    SparkleTooltipComponent,
     SparkleDialogComponent,
     SparkleAlertComponent,
     SparkleSelectComponent,
+    SparkleTooltipDirective,
     SparkleProgressBarComponent,
     TimespanComponent,
     ToggleCardComponent,

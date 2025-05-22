@@ -17,9 +17,9 @@ header {
   padding: p2r(32 0);
   position: sticky;
   top: 0;
-  background: var(--base-level-10);
+  background: var(--base-1);
   z-index: 1000;
-  border-bottom: 1px solid var(--base-level-40);
+  border-bottom: 1px solid var(--base-4);
 
   .title {
     display: flex;
@@ -33,7 +33,7 @@ section {
   grid-template-columns: 1fr 1fr;
   gap: p2r(16);
   padding: p2r(32 0);
-  border-top: 1px solid var(--base-level-40);
+  border-top: 1px solid var(--base-4);
 
   &:first-of-type {
     border-top: 0;
@@ -100,13 +100,13 @@ section {
   cursor: pointer;
 
   spk-radio {
-    color: var(--base-level-60);
+    color: var(--base-8);
     margin-bottom: p2r(4);
   }
 
   p {
     text-wrap: balance;
-    color: var(--base-level-60R);
+    color: var(--base-9);
   }
 }
 

@@ -60,8 +60,8 @@ body {
   code {
     padding: p2r(4 8);
     border-radius: var(--shape-2);
-    background-color: var(--base-level-60);
-    color: var(--base-level-10);
+    background-color: var(--base-8);
+    color: var(--base-1);
     display: inline-block;
     font-size: 85%;
   }
@@ -70,7 +70,7 @@ body {
     padding: 0;
     text-decoration: underline;
     background-color: transparent;
-    color: var(--base-level-70);
+    color: var(--base-12);
     font-size: 100%;
   }
 }

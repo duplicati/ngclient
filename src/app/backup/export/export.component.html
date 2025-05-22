@@ -8,21 +8,18 @@
         Back
       </button>
 
-      <spk-tooltip
-        message="Remember to copy the password"
-        class="primary"
+      <button
+        spk-button
+        class="raised primary"
+        (click)="submit()"
+        i18n
+        i18n-spkTooltip
+        spkTooltip="Remember to copy the password"
         [class.loading]="isExporting()"
-        [disabled]="!(showCopyPassword() && !copiedPassword())">
-        <button
-          spk-button
-          class="raised primary"
-          (click)="submit()"
-          i18n
-          [disabled]="exportForm.invalid || (showCopyPassword() && !copiedPassword())">
-          <spk-icon>export</spk-icon>
-          Export
-        </button>
-      </spk-tooltip>
+        [disabled]="exportForm.invalid || (showCopyPassword() && !copiedPassword())">
+        <spk-icon>export</spk-icon>
+        Export
+      </button>
     </div>
   </h3>
 

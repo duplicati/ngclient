@@ -14,12 +14,12 @@
     align-items: center;
     gap: p2r(8);
     padding: p2r(16);
-    border-bottom: 1px solid var(--base-level-40);
-    background-color: var(--base-level-10);
+    border-bottom: 1px solid var(--base-4);
+    background-color: var(--base-1);
     cursor: pointer;
 
     &:hover {
-      background-color: var(--base-level-20);
+      background-color: var(--base-2);
     }
 
     h3 {
@@ -29,7 +29,7 @@
 
     p {
       font: var(--paragraph-30);
-      color: var(--base-level-60);
+      color: var(--base-8);
     }
   }
 }
@@ -57,14 +57,14 @@ details {
     gap: p2r(8);
     padding: p2r(12);
     border-radius: var(--shape-2);
-    background-color: var(--base-level-20);
+    background-color: var(--base-2);
 
     &:focus {
       outline: none;
     }
 
     &:hover {
-      background-color: var(--base-level-30);
+      background-color: var(--base-3);
     }
 
     &::marker {
@@ -133,7 +133,7 @@ details {
     padding: p2r(16);
     display: block;
     border-radius: var(--shape-2);
-    background-color: var(--base-level-20);
+    background-color: var(--base-2);
   }
 }
 

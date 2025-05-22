@@ -6,7 +6,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--base-level-20);
+  background-color: var(--base-2);
 
   body.dark & {
     .card:before {
@@ -20,10 +20,10 @@
   width: 100%;
   position: relative;
   z-index: 100;
-  background-color: var(--base-level-10);
+  background-color: var(--base-1);
   border-radius: var(--shape-5);
   box-shadow: var(--box-shadow-40);
-  border: 1px solid var(--base-level-30);
+  border: 1px solid var(--base-3);
   overflow: hidden;
 
   &:before {
@@ -82,7 +82,7 @@ main {
 
   footer {
     font: var(--paragraph-40);
-    color: var(--base-level-60R);
+    color: var(--base-9);
     text-align: center;
     text-wrap: balance;
   }

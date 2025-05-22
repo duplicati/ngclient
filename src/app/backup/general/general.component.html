@@ -135,20 +135,17 @@
         <spk-icon>arrow-right</spk-icon>
       </button>
     } @else {
-      <spk-tooltip
-        message="Remember to copy the password"
-        class="primary"
-        [disabled]="!(showCopyPassword() && !copiedPassword())">
-        <button
-          spk-button
-          class="raised primary"
-          type="submit"
-          i18n
-          [disabled]="generalForm.invalid || (showCopyPassword() && !copiedPassword())">
-          Continue
-          <spk-icon>arrow-right</spk-icon>
-        </button>
-      </spk-tooltip>
+      <button
+        spk-button
+        class="raised primary"
+        type="submit"
+        i18n
+        i18n-spkTooltip
+        spkTooltip="Remember to copy the password"
+        [disabled]="generalForm.invalid || (showCopyPassword() && !copiedPassword())">
+        Continue
+        <spk-icon>arrow-right</spk-icon>
+      </button>
     }
   </div>
 </form>

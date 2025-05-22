@@ -8,7 +8,7 @@ import {
   SparkleSelectComponent,
   SparkleToggleCardComponent,
   SparkleToggleComponent,
-  SparkleTooltipComponent,
+  SparkleTooltipDirective,
 } from '@sparkle-ui/core';
 import FileTreeComponent from '../../../core/components/file-tree/file-tree.component';
 import { SizeComponent } from '../../../core/components/size/size.component';
@@ -42,7 +42,7 @@ type SizeSettingItem = {
     SparkleFormFieldComponent,
     SparkleButtonComponent,
     SparkleMenuComponent,
-    SparkleTooltipComponent,
+    SparkleTooltipDirective,
     SparkleIconComponent,
     SparkleSelectComponent,
     SparkleToggleComponent,

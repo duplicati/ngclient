@@ -23,7 +23,7 @@ import {
   SparkleProgressBarComponent,
   SparkleSelectComponent,
   SparkleToggleComponent,
-  SparkleTooltipComponent,
+  SparkleTooltipDirective,
 } from '@sparkle-ui/core';
 import { finalize } from 'rxjs';
 import { BackupState } from '../../backup/backup.state';
@@ -81,11 +81,11 @@ export type DestinationFormGroupValue = ReturnType<typeof createDestinationFormG
     SparkleMenuComponent,
     SparkleIconComponent,
     SparkleToggleComponent,
-    SparkleTooltipComponent,
     SparkleDialogComponent,
     SparkleAlertComponent,
     SparkleSelectComponent,
     SparkleProgressBarComponent,
+    SparkleTooltipDirective,
     TimespanComponent,
     SizeComponent,
     ToggleCardComponent,

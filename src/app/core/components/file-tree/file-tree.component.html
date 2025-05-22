@@ -44,15 +44,15 @@
                 @if (node.id !== '/') {
                   @if (node.children.length) {
                     <spk-icon class="small">caret-down</spk-icon>
-                    <spk-icon class="spk-primary">folder-open</spk-icon>
+                    <spk-icon class="primary">folder-open</spk-icon>
                   } @else if (node.cls === 'file') {
                     <spk-icon>file</spk-icon>
                   } @else {
                     <spk-icon class="small">caret-right</spk-icon>
-                    <spk-icon class="spk-primary">folder</spk-icon>
+                    <spk-icon class="primary">folder</spk-icon>
                   }
                 } @else {
-                  <spk-icon class="spk-primary">desktop-tower</spk-icon>
+                  <spk-icon class="primary">desktop-tower</spk-icon>
                 }
               </div>
 

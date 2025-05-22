@@ -65,9 +65,7 @@
           <label for="destination-{{ item.Name }}-{{ $index }}">
             {{ item.FormView.shortDescription }}
             @if (item.FormView.longDescription) {
-              <spk-tooltip class="primary" [message]="item.FormView.longDescription">
-                <spk-icon>question</spk-icon>
-              </spk-tooltip>
+              <spk-icon class="primary" [spkTooltip]="item.FormView.longDescription">question</spk-icon>
             }
           </label>
           <input
@@ -81,9 +79,7 @@
           <label for="destination-{{ item.Name }}-{{ $index }}">
             {{ item.FormView.shortDescription }}
             @if (item.FormView.longDescription) {
-              <spk-tooltip class="primary" [message]="item.FormView.longDescription">
-                <spk-icon>question</spk-icon>
-              </spk-tooltip>
+              <spk-icon class="primary" [spkTooltip]="item.FormView.longDescription">question</spk-icon>
             }
           </label>
           <input
@@ -99,9 +95,7 @@
           <label for="destination-{{ item.Name }}-{{ $index }}">
             {{ item.FormView.shortDescription }}
             @if (item.FormView.longDescription) {
-              <spk-tooltip class="primary" [message]="item.FormView.longDescription">
-                <spk-icon>question</spk-icon>
-              </spk-tooltip>
+              <spk-icon class="primary" [spkTooltip]="item.FormView.longDescription">question</spk-icon>
             }
           </label>
 
@@ -146,9 +140,7 @@
             {{ item.FormView.shortDescription }}
 
             @if (item.FormView.longDescription) {
-              <spk-tooltip class="primary" [message]="item.FormView.longDescription">
-                <spk-icon>question</spk-icon>
-              </spk-tooltip>
+              <spk-icon class="primary" [spkTooltip]="item.FormView.longDescription">question</spk-icon>
             }
           </label>
           <input
@@ -171,9 +163,7 @@
           <label for="destination-{{ item.Name }}-{{ $index }}">
             {{ item.FormView.shortDescription ?? item.FormView.name }}
             @if (item.FormView.longDescription) {
-              <spk-tooltip class="primary" [message]="item.FormView.longDescription">
-                <spk-icon>question</spk-icon>
-              </spk-tooltip>
+              <spk-icon class="primary" [spkTooltip]="item.FormView.longDescription">question</spk-icon>
             }
           </label>
         </app-size>
@@ -182,9 +172,7 @@
           <label for="destination-{{ item.Name }}-{{ $index }}">
             {{ item.FormView.shortDescription }}
             @if (item.FormView.longDescription) {
-              <spk-tooltip class="primary" [message]="item.FormView.longDescription">
-                <spk-icon>question</spk-icon>
-              </spk-tooltip>
+              <spk-icon class="primary" [spkTooltip]="item.FormView.longDescription">question</spk-icon>
             }
           </label>
           <input
@@ -199,9 +187,7 @@
           <label for="destination-{{ item.Name }}-{{ $index }}">
             {{ item.FormView.shortDescription }}
             @if (item.FormView.longDescription) {
-              <spk-tooltip class="primary" [message]="item.FormView.longDescription">
-                <spk-icon>question</spk-icon>
-              </spk-tooltip>
+              <spk-icon class="primary" [spkTooltip]="item.FormView.longDescription">question</spk-icon>
             }
           </label>
           <input
@@ -219,9 +205,7 @@
           <label for="destination-{{ item.Name }}-{{ $index }}">
             {{ item.FormView.shortDescription }}
             @if (item.FormView.longDescription) {
-              <spk-tooltip class="primary" [message]="item.FormView.longDescription">
-                <spk-icon>question</spk-icon>
-              </spk-tooltip>
+              <spk-icon class="primary" [spkTooltip]="item.FormView.longDescription">question</spk-icon>
             }
           </label>
           <input type="text" id="text" [ngModel]="item.Value()" (ngModelChange)="updateSettingValue(item, $event)" />
@@ -240,9 +224,7 @@
           <label for="destination-{{ item.Name }}-{{ $index }}">
             {{ item.FormView.shortDescription ?? item.FormView.name }}
             @if (item.FormView.longDescription) {
-              <spk-tooltip class="primary" [message]="item.FormView.longDescription">
-                <spk-icon>question</spk-icon>
-              </spk-tooltip>
+              <spk-icon class="primary" [spkTooltip]="item.FormView.longDescription">question</spk-icon>
             }
           </label>
         </app-timespan>

@@ -51,16 +51,16 @@
       Yes, update passphrase now
     </button>
   } @else {
-    <spk-tooltip i18n-message message="Password have to be filled and have to match" class="primary">
-      <button
-        spk-button
-        class="raised primary"
-        [class.loader]="isUpdating()"
-        [disabled]="true"
-        (click)="updatePassphrase()"
-        i18n>
-        Yes, update passphrase now
-      </button>
-    </spk-tooltip>
+    <button
+      spk-button
+      class="raised primary"
+      [class.loader]="isUpdating()"
+      [disabled]="true"
+      i18n-spkTooltip
+      spkTooltip="Password have to be filled and have to match"
+      (click)="updatePassphrase()"
+      i18n>
+      Yes, update passphrase now
+    </button>
   }
 </footer>

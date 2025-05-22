@@ -12,7 +12,7 @@
       </button>
     </header>
 
-    <spk-list class="base-level-20 primary">
+    <spk-list class="base-1 primary">
       <button action routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" i18n>
         <spk-icon>house</spk-icon>
         Home
@@ -36,7 +36,7 @@
 
     <div class="spacer"></div>
 
-    <spk-list class="base-level-20 primary">
+    <spk-list class="base-1l primary">
       @if (!relayIsEnabled()) {
         <button action (click)="changeDefaultClientTo('ngax')" i18n>
           <spk-icon>skip-back</spk-icon>

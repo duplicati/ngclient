@@ -11,7 +11,7 @@ import {
   SparkleRangeSliderComponent,
   SparkleSelectComponent,
   SparkleToggleComponent,
-  SparkleTooltipComponent,
+  SparkleTooltipDirective,
 } from '@sparkle-ui/core';
 import { catchError, finalize, of } from 'rxjs';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
@@ -118,7 +118,7 @@ type UsageStatisticsType = (typeof USAGE_STATISTICS_OPTIONS)[number];
     SparkleRangeSliderComponent,
     SparkleProgressBarComponent,
     SparkleToggleComponent,
-    SparkleTooltipComponent,
+    SparkleTooltipDirective,
     SparkleFormFieldComponent,
     SparkleIconComponent,
     SparkleDividerComponent,

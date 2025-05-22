@@ -11,7 +11,7 @@ import {
   SparkleIconComponent,
   SparkleProgressBarComponent,
   SparkleToggleComponent,
-  SparkleTooltipComponent,
+  SparkleTooltipDirective,
 } from '@sparkle-ui/core';
 import { finalize, switchMap } from 'rxjs';
 import { DuplicatiServerService } from '../../core/openapi';
@@ -33,7 +33,7 @@ const fb = new FormBuilder();
     SparkleButtonComponent,
     SparkleAlertComponent,
     SparkleProgressBarComponent,
-    SparkleTooltipComponent,
+    SparkleTooltipDirective,
   ],
   templateUrl: './export.component.html',
   styleUrl: './export.component.scss',

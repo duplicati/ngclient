@@ -4,7 +4,7 @@ import {
   SparkleAlertComponent,
   SparkleFormFieldComponent,
   SparkleIconComponent,
-  SparkleTooltipComponent,
+  SparkleTooltipDirective,
 } from '@sparkle-ui/core';
 import { finalize } from 'rxjs';
 import { DuplicatiServerService } from '../../core/openapi';
@@ -16,7 +16,7 @@ import { DuplicatiServerService } from '../../core/openapi';
     SparkleAlertComponent,
     SparkleFormFieldComponent,
     SparkleIconComponent,
-    SparkleTooltipComponent,
+    SparkleTooltipDirective,
   ],
   templateUrl: './change-passphrase-alert-dialog.component.html',
   styleUrl: './change-passphrase-alert-dialog.component.scss',
