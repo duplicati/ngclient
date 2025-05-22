@@ -43,8 +43,8 @@
             Details
           </button>
         </spk-button-group>
-        <spk-menu>
-          <button type="button" class="small" spk-button i18n>
+        <spk-menu class="table-overview">
+          <button type="button" class="small table-buttons" spk-button i18n>
             Time:
             <strong>{{ timeType() }}</strong>
             <spk-icon>clock</spk-icon>
@@ -57,8 +57,8 @@
         </spk-menu>
 
         @if (viewMode() === 'list') {
-          <spk-menu>
-            <button type="button" class="small" spk-button i18n>
+          <spk-menu class="table-overview">
+            <button type="button" class="small table-buttons" spk-button i18n>
               Order by:
               <strong>{{ orderBy() }}</strong>
               <spk-icon>arrows-down-up</spk-icon>
@@ -89,8 +89,10 @@
                 <div class="text">
                   <h3>
                     {{ backup.Backup?.Name ?? MISSING_BACKUP_NAME }}
-                    <spk-icon>database</spk-icon>
-                    {{ getBackendType(backup.Backup?.TargetURL) }}
+                    <spk-chip>
+                      <spk-icon>{{ getBackendIcon(backup.Backup?.TargetURL) }}</spk-icon>
+                      {{ getBackendType(backup.Backup?.TargetURL) }}
+                    </spk-chip>
                   </h3>
 
                   <p>
@@ -126,13 +128,10 @@
                   </p>
                 </div>
 
-                @if (backup.Backup?.Metadata?.['BackupListCount']) {
-                  <spk-chip class="simple success" i18n>
-                    {{ backup.Backup?.Metadata?.['BackupListCount'] }} Version
-                  </spk-chip>
-                } @else {
-                  <spk-chip class="simple" i18n>No version yet</spk-chip>
-                }
+                @let versions = getBackupVersionCount(backup);
+                <spk-chip class="simple success" i18n>
+                  {versions, plural, =0 {No version yet} =1 {1 Version} other {{{ versions }} Versions}}
+                </spk-chip>
 
                 <div class="actions">
                   <ng-container *ngTemplateOutlet="actions; context: { $implicit: backup }"></ng-container>
@@ -148,6 +147,10 @@
           <tr table-header>
             <th i18n spkSort="name">
               Backup
+              <ng-container *ngTemplateOutlet="sortIcons" />
+            </th>
+            <th i18n spkSort="type">
+              Type
               <ng-container *ngTemplateOutlet="sortIcons" />
             </th>
             <th i18n spkSort="lastrun">
@@ -174,6 +177,9 @@
             <tr>
               <td>
                 {{ backup.Backup?.Name ?? MISSING_BACKUP_NAME }}
+              </td>
+              <td>
+                {{ getBackendType(backup.Backup?.TargetURL) }}
               </td>
               <td>
                 @if (backup.Backup?.Metadata?.['LastBackupDate']) {
@@ -204,11 +210,10 @@
                 }
               </td>
               <td>
-                @if (backup.Backup?.Metadata?.['BackupListCount']) {
-                  {{ backup.Backup?.Metadata?.['BackupListCount'] }} Version
-                } @else {
-                  <ng-container i18n>No version yet</ng-container>
-                }
+                @let versions = getBackupVersionCount(backup);
+                <span i18n>
+                  {versions, plural, =0 {No version yet} =1 {1 Version} other {{{ versions }} Versions}}
+                </span>
               </td>
 
               <td>
@@ -237,7 +242,9 @@
     (click)="startBackup($any(backup.Backup?.ID))"
     i18n>
     <spk-icon>play-circle</spk-icon>
-    Start
+    @if (viewMode() === 'list') {
+      Start
+    }
   </button>
 
   <button type="button" spk-button [routerLink]="['/backup', backup.Backup?.ID]">
