@@ -15,16 +15,20 @@ import {
   SparkleTableComponent,
 } from '@sparkle-ui/core';
 import { finalize } from 'rxjs';
-import { DESTINATION_CONFIG } from '../backup/destination/destination.config';
+import { DESTINATION_CONFIG, S3_HOST_SUFFIX_MAP } from '../backup/destination/destination.config';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { StatusBarState } from '../core/components/status-bar/status-bar.state';
 import { localStorageSignal } from '../core/functions/localstorage-signal';
-import { DuplicatiServerService } from '../core/openapi';
+import { BackupAndScheduleOutputDto, DuplicatiServerService } from '../core/openapi';
 import { BytesPipe } from '../core/pipes/byte.pipe';
 import { DurationFormatPipe } from '../core/pipes/duration.pipe';
 import { RelativeTimePipe } from '../core/pipes/relative-time.pipe';
 import { BackupsState, OrderBy, TimeType } from '../core/states/backups.state';
+
+const DestinationOverrides: Record<string, { Display: string | null, Icon: string | null }> = {
+  'file': { Display: $localize`Local`, Icon: null },
+};
 
 @Component({
   selector: 'app-home',
@@ -67,6 +71,7 @@ export default class HomeComponent {
   timeType = this.#backupsState.timeType;
 
   viewMode = localStorageSignal<'list' | 'details'>('list', 'viewMode');
+  
   sortByColumn = signal<OrderBy | null>('name');
   loadingId = signal<string | null>(null);
   successId = signal<string | null>(null);
@@ -89,11 +94,44 @@ export default class HomeComponent {
     this.#statusBarState.resumeDialogCheck(() => this.#backupsState.startBackup(id));
   }
 
+  getBackendIcon(targetUrl: string | null | undefined) {
+    if (!targetUrl) return '';
+    const backend = targetUrl.split('://')[0];
+    const match = DESTINATION_CONFIG.find((x) => x.key === backend);
+    if (!match) return 'database';
+
+    const override = DestinationOverrides[match.key];
+    if (override?.Icon) return override.Icon;
+
+    return 'database'; 
+  }
+
   getBackendType(targetUrl: string | null | undefined) {
     if (!targetUrl) return '';
     const backend = targetUrl.split('://')[0];
+    const match = DESTINATION_CONFIG.find((x) => x.key === backend);
+    if (!match) return '';
 
-    return DESTINATION_CONFIG.find((x) => x.key === backend)?.displayName ?? '';
+    const override = DestinationOverrides[match.key];
+    if (override?.Display) return override.Display;
+
+    if (match.key === 's3') {
+      const fakeHttpUrl = 'http://null?' + targetUrl.split('?')[1]; // simulate query string
+      const url = new URL(fakeHttpUrl);
+      const serverName = url.searchParams.get('s3-server-name')?.toLowerCase() ?? '';
+
+      for (const [suffix, name] of Object.entries(S3_HOST_SUFFIX_MAP)) {
+        if (serverName.endsWith(suffix)) {
+          return name;
+        }
+      }
+    }
+
+    return match.displayName;
+  }
+
+  getBackupVersionCount(backup: BackupAndScheduleOutputDto | null): number {
+    return parseInt(backup?.Backup?.Metadata?.['BackupListCount'] ?? '', 10) || 0;
   }
 
   deleteBackup(id: string) {
