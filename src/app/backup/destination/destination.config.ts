@@ -827,63 +827,6 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     },
   },
   {
-    key: 'cloudfiles',
-    displayName: 'Rackspace CloudFiles',
-    description: 'Store backups in Rackspace CloudFiles.',
-    customFields: {
-      server: {
-        type: 'String',
-        name: 'server',
-        shortDescription: 'Server',
-        longDescription: 'Server',
-        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
-      },
-      port: {
-        type: 'Integer',
-        name: 'port',
-        shortDescription: 'Port',
-        longDescription: 'Port',
-        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
-      },
-      path: {
-        type: 'String',
-        name: 'path',
-        shortDescription: 'Path on server',
-        longDescription: 'Path on server',
-        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
-      },
-    },
-    dynamicFields: [
-      {
-        name: 'auth-username',
-        shortDescription: 'Username',
-      },
-      {
-        name: 'auth-password',
-        shortDescription: 'Password',
-      },
-    ],
-    mapper: {
-      to: (fields: any): string => {
-        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
-        const { port, server, path } = fields.custom;
-
-        return `${fields.destinationType}://${server + addPort(port) + addPath(path) + urlParams}`;
-      },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
-        return <ValueOfDestinationFormGroup>{
-          destinationType,
-          custom: {
-            server: urlObj.hostname,
-            port: urlObj.port,
-            path: urlObj.pathname,
-          },
-          ...fromSearchParams(destinationType, urlObj),
-        };
-      },
-    },
-  },
-  {
     key: 'rclone',
     displayName: 'Rclone',
     description: 'Store backups in Rclone.',
@@ -1112,44 +1055,6 @@ export const DESTINATION_CONFIG: DestinationConfig = [
           custom: {
             server: urlObj.hostname,
             port: urlObj.port,
-            path: urlObj.pathname,
-          },
-          ...fromSearchParams(destinationType, urlObj),
-        };
-      },
-    },
-  },
-
-  // Validated against the old destination test url
-  {
-    key: 'sia',
-    displayName: 'Sia Decentrilized Cloud',
-    description: 'Store backups in Sia Decentrilized Cloud.',
-    customFields: {
-      server: {
-        type: 'String',
-        name: 'server',
-        shortDescription: 'Server',
-        longDescription: 'Server',
-        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
-      },
-    },
-    dynamicFields: ['sia-targetpath', 'sia-password', 'sia-redundancy'],
-    mapper: {
-      to: (fields: any): string => {
-        const server = fields.custom.server;
-        const targetpath = fields.dynamic['sia-targetpath'];
-        const urlParams = toSearchParams([
-          ...Object.entries(fields.advanced),
-          ...Object.entries(fields.dynamic).filter(([key]) => key !== 'sia-targetpath'),
-        ]);
-
-        return `${fields.destinationType}://${server + addPath(targetpath) + urlParams}`;
-      },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
-        return <ValueOfDestinationFormGroup>{
-          destinationType,
-          custom: {
             path: urlObj.pathname,
           },
           ...fromSearchParams(destinationType, urlObj),
