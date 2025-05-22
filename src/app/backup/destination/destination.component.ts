@@ -21,10 +21,11 @@ import {
   SparkleProgressBarComponent,
   SparkleSelectComponent,
   SparkleToggleComponent,
-  SparkleTooltipDirective,
+  SparkleTooltipDirective
 } from '@sparkle-ui/core';
 import { finalize } from 'rxjs';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
+import { FileDropTextareaComponent } from '../../core/components/file-drop-textarea/file-drop-textarea.component';
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
 import { SizeComponent } from '../../core/components/size/size.component';
 import { TimespanComponent } from '../../core/components/timespan/timespan.component';
@@ -94,6 +95,7 @@ type DefaultGroup = {
     TimespanComponent,
     ToggleCardComponent,
     FileTreeComponent,
+    FileDropTextareaComponent, 
     SizeComponent,
   ],
   templateUrl: './destination.component.html',
