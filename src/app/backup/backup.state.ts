@@ -13,6 +13,7 @@ import {
   ICommandLineArgument,
   IDynamicModule,
   ScheduleDto,
+  SettingDto,
   SettingInputDto,
 } from '../core/openapi';
 import { TimespanLiteralsService } from '../core/services/timespan-literals.service';
@@ -86,7 +87,8 @@ export class BackupState {
   backupName = computed(() => this.generalFormSignal()?.name ?? '');
   isSubmitting = signal(false);
   finishedLoading = signal(false);
-  backupDefaults = signal<any>(null);
+  backupDefaults = signal<Record<string, string> | null>(null);
+  applicationOptions = signal<SettingDto[] | null>(null);
   isNew = computed(() => this.backupId() === 'new');
   osType = computed(() => this.#sysinfo.systemInfo()?.OSType);
 

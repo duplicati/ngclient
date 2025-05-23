@@ -14,6 +14,11 @@ export type DestinationFormGroup = FormGroup<{
   advanced: FormGroup<any>;
 }>;
 
+export type DoubleSlashConfig = {
+  type: 'warning' | 'error';
+  message: string;
+};
+
 export type FormView = {
   name: string;
   type: ArgumentType | 'FileTree' | 'FolderTree' | 'NonValidatedSelectableString' | 'Email' | 'FreeText';
@@ -23,6 +28,7 @@ export type FormView = {
   options?: ICommandLineArgument['ValidValues'];
   loadOptions?: (injector: Injector) => Signal<WebModuleOption[] | undefined>;
   defaultValue?: ICommandLineArgument['DefaultValue'];
+  doubleSlash?: DoubleSlashConfig;
   order?: number;
 };
 

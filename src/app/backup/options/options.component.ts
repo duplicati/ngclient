@@ -68,6 +68,7 @@ export default class OptionsComponent {
   isSubmitting = this.#backupState.isSubmitting;
   settings = this.#backupState.settings;
   optionsFields = this.#backupState.optionsFields;
+  applicationOptions = this.#backupState.applicationOptions;
 
   retentionOptions = signal(RETENTION_OPTIONS);
 

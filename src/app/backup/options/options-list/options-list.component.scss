@@ -35,16 +35,16 @@ spk-toggle {
   display: flex;
   gap: 0.25rem;
   flex-direction: column;
+}
 
-  label {
-    display: flex;
-    align-items: center;
-    gap: p2r(4);
-  }
+label {
+  display: flex;
+  align-items: center;
+  gap: p2r(4);
+}
 
-  spk-icon {
-    font-size: p2r(16);
-  }
+spk-icon {
+  font-size: p2r(16);
 }
 
 .form-row {
