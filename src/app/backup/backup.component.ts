@@ -4,7 +4,7 @@ import { ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet } from '@ang
 import { SparkleProgressBarComponent, SparkleRadioComponent, SparkleStepperComponent } from '@sparkle-ui/core';
 import { take } from 'rxjs';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
-import { DuplicatiServerService, GetBackupResultDto } from '../core/openapi';
+import { DuplicatiServerService, GetBackupResultDto, SettingDto } from '../core/openapi';
 import { BackupsState } from '../core/states/backups.state';
 import { BackupState } from './backup.state';
 
@@ -60,12 +60,10 @@ export default class BackupComponent {
         next: (res: any) => {
           const backup = res.Backup;
 
-          backup.Settings = [
-            ...backup.Settings,
-            ...res.ApplicationOptions.map((x: any) => ({ Name: x.Name, Value: x.Value })),
-          ];
+          backup.Settings = [...backup.Settings];
           this.#backupState.mapScheduleToForm(res.Schedule);
           this.#backupState.mapOptionsToForms(backup);
+          this.#backupState.applicationOptions.set(res.ApplicationOptions as SettingDto[]);
           this.#backupState.backupDefaults.set(res);
           this.#backupState.finishedLoading.set(true);
         },

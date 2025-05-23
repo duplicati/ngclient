@@ -65,6 +65,7 @@
 
   <app-options-list
     [(options)]="settings"
+    [applicationOptions]="applicationOptions()"
     [hiddenOptions]="[
       '--skip-files-larger-than',
       'dblock-size',

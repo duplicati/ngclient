@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input, model, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
@@ -13,7 +14,7 @@ import {
 import FileTreeComponent from '../../../core/components/file-tree/file-tree.component';
 import { SizeComponent } from '../../../core/components/size/size.component';
 import { TimespanComponent } from '../../../core/components/timespan/timespan.component';
-import { SettingInputDto } from '../../../core/openapi';
+import { SettingDto, SettingInputDto } from '../../../core/openapi';
 import { SysinfoState } from '../../../core/states/sysinfo.state';
 import { FormView } from '../../destination/destination.config-utilities';
 
@@ -48,6 +49,7 @@ type SizeSettingItem = {
     SparkleToggleComponent,
     SizeComponent,
     TimespanComponent,
+    NgTemplateOutlet,
   ],
   templateUrl: './options-list.component.html',
   styleUrl: './options-list.component.scss',
@@ -59,6 +61,7 @@ export class OptionsListComponent {
   options = model.required<SettingInputDto[]>();
   hiddenOptions = input<string[]>([]);
   hasFreeTextSettings = input(false);
+  applicationOptions = input<SettingDto[] | null | undefined>();
 
   allOptionsGrouped = this.#sysInfo.allOptionsGrouped;
   allOptions = this.#sysInfo.allOptions;
@@ -66,6 +69,12 @@ export class OptionsListComponent {
   selectedSettings = computed(() => {
     const hiddenNames = this.hiddenOptions();
     const options = this.options();
+
+    this.allOptions().forEach((option) => {
+      if (option.type === 'Enumeration') {
+        console.log('option', option.name);
+      }
+    });
 
     const predefinedSettings = options
       .map((setting) => {
@@ -128,6 +137,16 @@ export class OptionsListComponent {
       }))
       .filter((group) => group.options.length > 0);
   });
+
+  inAppOptions(optionName: string) {
+    const optionIndex = this.applicationOptions()?.findIndex((x) => x.Name?.replace('--', '') === optionName);
+
+    if (optionIndex === undefined) {
+      return false;
+    }
+
+    return optionIndex > -1;
+  }
 
   addFreeTextSetting() {
     if (!this.hasFreeTextSettings()) return;
