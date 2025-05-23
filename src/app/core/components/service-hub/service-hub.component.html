@@ -10,17 +10,23 @@
   }
 </button>
 
-@if (shownMessage()) {
+@let _shownMessage = shownMessage();
+@if (_shownMessage) {
   <div class="preview-alert-wrap">
-    <spk-alert [class]="shownMessage()?.type ?? 'error'">
-      <div sparkle-alert-title>{{ shownMessage()?.title }}</div>
+    @if (_shownMessage.type === 'notification') {
+      <!-- <pre>{{ _shownMessage | json }}</pre> -->
+      <app-notification [index]="0" [notification]="_shownMessage.content"></app-notification>
+    } @else {
+      <spk-alert [class]="_shownMessage.content.type || 'error'">
+        <div sparkle-alert-title>{{ _shownMessage.content.title }}</div>
 
-      @if (shownMessage()?.content) {
-        <div sparkle-alert-content>
-          {{ shownMessage()?.content }}
-        </div>
-      }
-    </spk-alert>
+        @if (_shownMessage.content.content) {
+          <div sparkle-alert-content>
+            {{ _shownMessage.content.content }}
+          </div>
+        }
+      </spk-alert>
+    }
   </div>
 }
 

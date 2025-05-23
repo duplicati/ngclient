@@ -1,3 +1,4 @@
+import { JsonPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -18,13 +19,23 @@ import {
   SparkleButtonComponent,
   SparkleIconComponent,
 } from '@sparkle-ui/core';
+import { NotificationComponent } from '../../../notifications/notification/notification.component';
 import { NotificationsComponent } from '../../../notifications/notifications.component';
 import { NotificationsState } from '../../../notifications/notifications.state';
+import { NotificationDto } from '../../openapi';
 
 const fb = new FormBuilder();
 
-type SparkleAlertItemCountDown = SparkleAlertItemInternal & {
+type SparkleAlertItemCountDown = {
+  content: SparkleAlertItemInternal;
   countDown: number;
+  type: 'alert';
+};
+
+type SparkleNotificationCountDown = {
+  content: NotificationDto;
+  countDown: number;
+  type: 'notification';
 };
 type Interval = ReturnType<typeof setInterval>;
 
@@ -37,6 +48,8 @@ type Interval = ReturnType<typeof setInterval>;
     SparkleButtonComponent,
     SparkleAlertComponent,
     NotificationsComponent,
+    NotificationComponent,
+    JsonPipe,
   ],
   templateUrl: './service-hub.component.html',
   styleUrl: './service-hub.component.scss',
@@ -53,7 +66,7 @@ export default class ServiceHubComponent {
   });
 
   notifications = this.#notificationsState.notifications;
-  shownMessage = signal<SparkleAlertItemCountDown | null>(null);
+  shownMessage = signal<SparkleNotificationCountDown | SparkleAlertItemCountDown | null>(null);
   shownMessageInterval: Interval | null = null;
   alertHistory = this.#sparkleAlertService.alertHistory;
   alertHistoryIsOpen = this.#sparkleAlertService.alertHistoryIsOpen;
@@ -63,15 +76,43 @@ export default class ServiceHubComponent {
   isAlertsOpen = model<boolean>(false);
   isNotificationsOpen = model<boolean>(false);
   previousHistoryCount = signal<number | null>(null);
+  previousNotificationsCount = signal<number | null>(null);
 
   constructor() {
     effect(() => {
       const history = this.alertHistory();
+      const notifications = this.notifications();
 
-      if (history.length && this.previousHistoryCount() !== history.length && !this.isAlertsOpen()) {
+      if (notifications.length && this.previousHistoryCount() !== history.length && !this.isNotificationsOpen()) {
         this.shownMessage.set({
-          ...history[0],
+          content: notifications[0] as NotificationDto,
           countDown: 3,
+          type: 'notification',
+        });
+
+        this.previousHistoryCount.set(history.length);
+
+        this.shownMessageInterval = setInterval(() => {
+          const message = this.shownMessage();
+
+          if (message?.countDown === 0) {
+            this.shownMessage.set(null);
+            this.shownMessageInterval = null;
+            return;
+          }
+
+          if (message !== null) {
+            (this.shownMessage as WritableSignal<SparkleNotificationCountDown>).update((x) => ({
+              ...x,
+              countDown: x.countDown - 1,
+            }));
+          }
+        }, 1000);
+      } else if (history.length && this.previousHistoryCount() !== history.length && !this.isAlertsOpen()) {
+        this.shownMessage.set({
+          content: history[0],
+          countDown: 3,
+          type: 'alert',
         });
 
         this.previousHistoryCount.set(history.length);
