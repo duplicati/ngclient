@@ -21,8 +21,8 @@ spk-table {
     overflow: hidden;
 
     code {
-      background-color: var(--grey-800);
-      color: var(--grey-100);
+      background: darken(var(--base-8), 70%);
+      color: #fff;
       padding: p2r(40 40 40 24);
       border-radius: var(--shape-3);
       overflow: auto;

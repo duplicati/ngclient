@@ -686,24 +686,6 @@ export class BackupState {
   }
 
   createFormField(group: FormGroup, element: FormView, defaultValue?: any) {
-    if (
-      element.type === 'String' ||
-      element.type === 'FileTree' ||
-      element.type === 'FolderTree' ||
-      element.type === 'Password' ||
-      element.type === 'Enumeration' ||
-      element.type === 'NonValidatedSelectableString' ||
-      element.type === 'Path'
-    ) {
-      group.addControl(element.name as string, fb.control(defaultValue));
-      return;
-    }
-
-    if (element.type === 'Size') {
-      group.addControl(element.name as string, fb.control(defaultValue));
-      return;
-    }
-
     if (element.type === 'Integer') {
       group.addControl(element.name as string, fb.control<number>(defaultValue ? parseInt(defaultValue) : 0));
       return;
@@ -726,6 +708,8 @@ export class BackupState {
       );
       return;
     }
+
+    group.addControl(element.name as string, fb.control(defaultValue));
   }
 
   addDestinationFormGroup(key: IDynamicModule['Key'], defaults?: DestinationDefault, createAdvancedFormFields = false) {

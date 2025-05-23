@@ -115,9 +115,15 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         type: 'FileTree',
         name: 'ssh-keyfile',
         accepts: '.key,',
-        shortDescription: 'This is a path to a private key file locally on the machine',
+        shortDescription: 'Private key path',
         longDescription: 'This is a path to a private key file locally on the machine',
       },
+      {
+        type: 'FreeText',
+        name: 'ssh-key',
+        shortDescription: 'SSH private key (PEM format)',
+        longDescription: 'Enter a PEM formatted SSH private key. OpenSSL, OpenSSH, and ssh.com formats are supported.',
+      }      
     ],
     mapper: {
       to: (fields: any): string => {

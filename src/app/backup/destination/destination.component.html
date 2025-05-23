@@ -410,6 +410,18 @@
                     }
                   </label>
                 </app-timespan>
+              } @else if (item.formView.type === 'FreeText') {
+                <app-file-drop-textarea
+                  [formControlName]="item.formView.name"
+                  [customId]="formFieldId"
+                  [placeholder]="item.formView.longDescription">
+                  <label>
+                    {{ item.formView.shortDescription ?? item.formView.name }}
+                    @if (item.formView.longDescription) {
+                      <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+                    }
+                  </label>
+                </app-file-drop-textarea>
               }
             </ng-container>
 
