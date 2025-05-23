@@ -266,6 +266,9 @@
                 <spk-form-field>
                   <label [for]="formFieldId">
                     {{ labelContent }}
+                    @if (item.formView.longDescription) {
+                      <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+                    }
                   </label>
                   <input
                     [type]="$any(item.formView).showPassword ? 'text' : 'password'"

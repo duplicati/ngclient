@@ -109,7 +109,21 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
-    dynamicFields: ['auth-username'],
+    dynamicFields: [{
+        type: 'String',
+        name: 'auth-username',
+        shortDescription: 'Username for authentication',
+        longDescription: 'Username for authentication with the server',
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+      {
+        type: 'Password',
+        name: 'auth-password',
+        shortDescription: 'Password for authentication',
+        longDescription: 'Password for authentication with the server. If a private key is used, this value is used as the password to decrypt the private key.',
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      }
+    ],
     advancedFields: [
       {
         type: 'FileTree',
