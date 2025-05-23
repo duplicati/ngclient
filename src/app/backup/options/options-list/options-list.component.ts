@@ -70,12 +70,6 @@ export class OptionsListComponent {
     const hiddenNames = this.hiddenOptions();
     const options = this.options();
 
-    this.allOptions().forEach((option) => {
-      if (option.type === 'Enumeration') {
-        console.log('option', option.name);
-      }
-    });
-
     const predefinedSettings = options
       .map((setting) => {
         const option = this.allOptions().find((opt) => opt.name === setting.Name?.replace('--', ''));
