@@ -5,6 +5,7 @@ import {
   addPath,
   addPort,
   DestinationConfig,
+  DoubleSlashConfig,
   fromSearchParams,
   toSearchParams,
   ValueOfDestinationFormGroup,
@@ -33,6 +34,11 @@ const fb = new FormBuilder();
 // NTH - add support for a server/port field type
 // NTH - Would be great to use the typing of the fields to validate the mapper if all fields are mapped
 
+const DEFAULT_DOUBLESLASH_CONFIG: DoubleSlashConfig = {
+  type: 'error',
+  message: $localize`Using double leading slashes is most likely wrong, and will result in objects being created with a leading slash in the name.`,
+};
+
 export const DESTINATION_CONFIG: DestinationConfig = [
   {
     key: 'file',
@@ -42,6 +48,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       path: {
         type: 'FolderTree',
         name: 'path',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: 'File path',
         longDescription: 'The path to store the backup',
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
@@ -95,6 +102,10 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         name: 'path',
         shortDescription: 'Folder path',
         longDescription: 'Folder path',
+        doubleSlash: {
+          type: 'warning',
+          message: $localize`Using double leading slashes makes the path absolute, pointing to the root of the filesystem.`,
+        },
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
@@ -143,6 +154,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       path: {
         type: 'Path',
         name: 'path',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: 'Folder path',
         longDescription: 'Folder path',
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
@@ -199,6 +211,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       path: {
         type: 'Path',
         name: 'path',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: 'Bucket name',
         longDescription: 'Bucket name',
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
@@ -243,6 +256,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       path: {
         type: 'Path',
         name: 'path',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: 'Folder path',
         longDescription: 'Folder path',
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
@@ -300,6 +314,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       path: {
         type: 'Path',
         name: 'path',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: 'Folder path',
         longDescription: 'Folder path',
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
@@ -335,6 +350,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       path: {
         type: 'String',
         name: 'path',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: 'Container name',
         longDescription: 'Container name',
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
@@ -377,6 +393,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       path: {
         type: 'String',
         name: 'path',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: 'Path on server',
         longDescription: 'Path on server',
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
@@ -423,6 +440,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       path: {
         type: 'String',
         name: 'path',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: 'Path on server',
         longDescription: 'Path on server',
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
@@ -480,6 +498,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       path: {
         type: 'String',
         name: 'path',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: 'Path on server',
         longDescription: 'Path on server',
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
@@ -524,6 +543,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       path: {
         type: 'String',
         name: 'path',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: 'Path on server',
         longDescription: 'Path on server',
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
@@ -557,6 +577,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       path: {
         type: 'String',
         name: 'path',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: 'Path on server',
         longDescription: 'Path on server',
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
@@ -590,6 +611,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       path: {
         type: 'String',
         name: 'path',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: 'Path on server',
         longDescription: 'Path on server',
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
@@ -623,6 +645,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       path: {
         type: 'String',
         name: 'path',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: 'Path on server',
         longDescription: 'Path on server',
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
@@ -662,6 +685,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       path: {
         type: 'String',
         name: 'path',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: 'Path in the bucket',
         longDescription: 'Path in the bucket',
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
@@ -711,6 +735,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       path: {
         type: 'String',
         name: 'path',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: 'Path in the bucket',
         longDescription: 'Path in the bucket',
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
@@ -753,6 +778,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       path: {
         type: 'String',
         name: 'path',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: 'Path on server',
         longDescription: 'Path on server',
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
@@ -802,6 +828,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       path: {
         type: 'String',
         name: 'path',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: 'Path on server',
         longDescription: 'Path on server',
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
@@ -848,6 +875,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       path: {
         type: 'String',
         name: 'path',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: 'Path on server',
         longDescription: 'Path on server',
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
@@ -1015,6 +1043,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       path: {
         type: 'String',
         name: 'path',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: 'Path on server',
         longDescription: 'Path on server',
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
@@ -1083,6 +1112,10 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         name: 'path',
         shortDescription: 'Path on server',
         longDescription: 'Path on server',
+        doubleSlash: {
+          type: 'warning',
+          message: $localize`Using double leading slashes makes the path absolute, pointing to the root of the filesystem.`,
+        },
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
@@ -1167,6 +1200,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       path: {
         type: 'String',
         name: 'path',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: 'Path on server',
         longDescription: 'Path on server',
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
@@ -1244,6 +1278,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       path: {
         type: 'String',
         name: 'path',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: 'Path on server',
         longDescription: 'Path on server',
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
@@ -1306,6 +1341,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       path: {
         type: 'String',
         name: 'path',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: 'Path on server',
         longDescription: 'Path on server',
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
@@ -1354,6 +1390,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       path: {
         type: 'String',
         name: 'path',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: 'Path on Filen',
         longDescription: 'Path on Filen',
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
@@ -1401,6 +1438,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       path: {
         type: 'String',
         name: 'path',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: 'Path on Filejump',
         longDescription: 'Path on Filejump',
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
@@ -1475,6 +1513,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       {
         name: 'storj-folder',
         shortDescription: 'Path on server',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
       },
     ],
     mapper: {
@@ -1520,6 +1559,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       {
         name: 'storj-folder',
         shortDescription: 'Path on server',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
       },
     ],
     mapper: {

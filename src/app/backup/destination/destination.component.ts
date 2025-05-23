@@ -160,6 +160,10 @@ export default class DestinationComponent {
     return group.controls[formControlName].value;
   }
 
+  hasDoubleLeadingSlashes(str: string) {
+    return str.startsWith('//');
+  }
+
   getFormControl(destinationIndex: number, formGroupName: 'custom' | 'dynamic' | 'advanced', formControlName: string) {
     const dest = this.destinationForm.controls.destinations.controls?.[destinationIndex];
     const group = dest.controls?.[formGroupName];
