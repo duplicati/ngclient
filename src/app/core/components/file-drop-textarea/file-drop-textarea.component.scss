@@ -1,0 +1,46 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
+:host {
+  display: grid;
+  grid-template-areas:
+    'label browsebtn'
+    'input input';
+  grid-template-columns: 8fr 1fr;
+  gap: p2r(8);
+  align-items: flex-end;
+
+  .browse-btn {
+    grid-area: browsebtn;
+  }
+
+  .label {
+    grid-area: label;
+    grid-column: 1 / -1;
+  }
+
+  .textarea-wrap {
+    grid-area: input;
+    width: 100%;
+    border: none;
+    font: var(--code-20);
+
+    textarea {
+      width: 100%;
+      color: var(--base-8);
+      background-color: var(--base-1);
+      border: 1px solid var(--base-4);
+      border-radius: var(--shape-3);
+      padding: p2r(8);
+      resize: vertical;
+      box-shadow: var(--box-shadow-10);
+
+      .dark {
+        background-color: var(--base-2);
+      }
+    }
+  }
+
+  .hidden {
+    display: none;
+  }
+}

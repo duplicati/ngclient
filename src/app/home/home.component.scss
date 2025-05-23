@@ -47,7 +47,7 @@ spk-card {
   }
 
   .table-buttons {
-    min-height:  40px;
+    min-height: 40px;
   }
 }
 
@@ -66,7 +66,7 @@ spk-card {
   gap: p2r(16);
   border: 1px solid var(--base-4);
   border-radius: var(--shape-3);
-  box-shadow: var(--shadow-1);
+  box-shadow: var(--box-shadow-10);
 
   .text {
     display: flex;
