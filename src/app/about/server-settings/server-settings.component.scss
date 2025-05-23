@@ -11,8 +11,8 @@ h3 {
 }
 
 code {
-  background-color: var(--grey-800);
-  color: var(--grey-100);
+  background: darken(var(--base-8), 70%);
+  color: #fff;
   padding: p2r(16 24);
   border-radius: var(--shape-3);
   overflow: auto;
