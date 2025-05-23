@@ -1,5 +1,9 @@
 <ng-content select="label" ngProjectAs="label" />
-<button spk-button type="button" class="small browse-btn" (click)="triggerBrowse()" i18n>...</button>
+<div class="browse-btn">
+  <button spk-button type="button" class="small outlined" (click)="triggerBrowse()" i18n>
+    <spk-icon>upload</spk-icon>
+  </button>
+</div>
 
 <div class="textarea-container textarea-wrap" (drop)="onFileDrop($event)" (dragover)="onDragOver($event)">
   <textarea [placeholder]="placeholder()" [(ngModel)]="content" [disabled]="readonly()" rows="10"></textarea>
