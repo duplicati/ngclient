@@ -7,6 +7,10 @@
   padding: p2r(16);
   min-height: p2r(62);
   border-bottom: 1px solid var(--base-4);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: var(--base-1);
 }
 
 .current-backup {
