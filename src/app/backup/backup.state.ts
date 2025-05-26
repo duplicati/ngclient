@@ -235,7 +235,7 @@ export class BackupState {
     });
   }
 
-  submit() {
+  submit(withoutExit = false) {
     this.isSubmitting.set(true);
 
     const backup = this.#mapFormsToBackup();
@@ -249,7 +249,7 @@ export class BackupState {
         .pipe(finalize(() => this.isSubmitting.set(false)))
         .subscribe({
           next: (res) => {
-            this.exit(false);
+            if (!withoutExit) this.exit(false);
           },
           error: (err) => {},
         });
@@ -262,7 +262,7 @@ export class BackupState {
         .pipe(finalize(() => this.isSubmitting.set(false)))
         .subscribe({
           next: (res) => {
-            this.exit(false);
+            if (!withoutExit) this.exit(false);
           },
           error: (err) => {},
         });

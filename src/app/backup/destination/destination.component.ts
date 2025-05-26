@@ -21,7 +21,7 @@ import {
   SparkleProgressBarComponent,
   SparkleSelectComponent,
   SparkleToggleComponent,
-  SparkleTooltipDirective
+  SparkleTooltipDirective,
 } from '@sparkle-ui/core';
 import { finalize } from 'rxjs';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
@@ -95,7 +95,7 @@ type DefaultGroup = {
     TimespanComponent,
     ToggleCardComponent,
     FileTreeComponent,
-    FileDropTextareaComponent, 
+    FileDropTextareaComponent,
     SizeComponent,
   ],
   templateUrl: './destination.component.html',
@@ -299,6 +299,10 @@ export default class DestinationComponent {
   }
 
   next() {
+    if (!this.#backupState.isNew()) {
+      this.#backupState.submit(true);
+    }
+
     this.#router.navigate(['source-data'], { relativeTo: this.#route.parent });
   }
 

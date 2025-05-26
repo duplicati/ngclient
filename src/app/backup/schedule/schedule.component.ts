@@ -90,6 +90,10 @@ export default class ScheduleComponent {
   }
 
   next() {
+    if (!this.#backupState.isNew()) {
+      this.#backupState.submit(true);
+    }
+
     this.#router.navigate(['options'], { relativeTo: this.#route.parent });
   }
 }

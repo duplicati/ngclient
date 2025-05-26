@@ -172,6 +172,9 @@ export default class GeneralComponent {
   }
 
   next() {
+    if (!this.#backupState.isNew()) {
+      this.#backupState.submit(true);
+    }
     this.#router.navigate(['destination'], { relativeTo: this.#route.parent });
   }
 }

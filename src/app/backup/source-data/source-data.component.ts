@@ -197,6 +197,10 @@ export default class SourceDataComponent {
   }
 
   next() {
+    if (!this.#backupState.isNew()) {
+      this.#backupState.submit(true);
+    }
+
     this.#router.navigate(['schedule'], { relativeTo: this.#route.parent });
   }
 }
