@@ -73,7 +73,7 @@ export default class AdvancedOptionsSettingsComponent {
     const settings = this.settings();
     const lastRecievedServerSettings = this.lastRecievedServerSettings();
     const currentSettingNames = settings.map((s) => s.Name!);
-    const lastSettingKeys = Object.keys(lastRecievedServerSettings);
+    const lastSettingKeys = Object.keys(lastRecievedServerSettings).filter((key) => key.startsWith('--'));
     const removedSettings = lastSettingKeys.filter((key) => !currentSettingNames.includes(key.replace('--', '')));
     const reduced = settings.reduce(
       (acc, curr) => {
