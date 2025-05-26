@@ -5,10 +5,10 @@ import { finalize } from 'rxjs';
 import { DuplicatiServerService } from '../../../openapi';
 
 const PAUSE_OPTIONS = [
-  { label: $localize`5 minuts`, value: '5m' },
-  { label: $localize`10 minuts`, value: '10m' },
-  { label: $localize`15 minuts`, value: '15m' },
-  { label: $localize`30 minuts`, value: '30m' },
+  { label: $localize`5 minutes`, value: '5m' },
+  { label: $localize`10 minutes`, value: '10m' },
+  { label: $localize`15 minutes`, value: '15m' },
+  { label: $localize`30 minutes`, value: '30m' },
   { label: $localize`1 hour`, value: '1h' },
   { label: $localize`4 hours`, value: '4h' },
   { label: $localize`8 hours`, value: '8h' },

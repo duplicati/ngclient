@@ -1,5 +1,6 @@
-<header header>
+<header>
   <h3 i18n>Throttle network speed</h3>
+  <p i18n>We will round bits to the nearest byte value.</p>
 </header>
 
 <div content>
@@ -47,11 +48,6 @@
         <input type="text" [(ngModel)]="maxDownloadUnit" />
       </spk-select>
     </div>
-
-    <p i18n>
-      Note that speeds are entered in bytes, and line speeds are typically reported in bits. Use a factor of 8 to
-      convert, such that an 8 mbit/s line is equivalent to 1 MByte/s.
-    </p>
   </div>
 </div>
 

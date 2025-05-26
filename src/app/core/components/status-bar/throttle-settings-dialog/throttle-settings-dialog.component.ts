@@ -1,10 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SparkleCheckboxComponent, SparkleFormFieldComponent, SparkleSelectComponent } from '@sparkle-ui/core';
 import { finalize } from 'rxjs';
 import { DuplicatiServerService } from '../../../openapi';
-
-const SIZE_OPTIONS = ['Byte/s', 'KByte/s', 'MByte/s', 'GByte/s', 'TByte/s', 'PByte/s'];
 
 const UNIT_MAP = {
   Byte: 'B',
@@ -15,12 +13,38 @@ const UNIT_MAP = {
   PByte: 'PB',
 };
 
-const REVERSE_UNIT_MAP = Object.entries(UNIT_MAP).reduce((obj, [key, value]) => {
-  obj[value] = key;
-  return obj;
-}, {} as any);
+const BPS_SIZE_OPTIONS = ['kbps', 'mbps', 'gbps'] as const;
+type BpsSizeOptions = (typeof BPS_SIZE_OPTIONS)[number];
 
-type SizeOptions = (typeof SIZE_OPTIONS)[number];
+const BYTE_TO_BITS = 8;
+const KILO_BYTES = 1024;
+const MEGA_BYTES = KILO_BYTES * 1024;
+const GIGA_BYTES = MEGA_BYTES * 1024;
+const TERA_BYTES = GIGA_BYTES * 1024;
+const PETA_BYTES = TERA_BYTES * 1024;
+
+const API_UNIT_TO_BYTES_FACTOR: { [key: string]: number } = {
+  B: 1,
+  KB: KILO_BYTES,
+  MB: MEGA_BYTES,
+  GB: GIGA_BYTES,
+  TB: TERA_BYTES,
+  PB: PETA_BYTES,
+};
+
+const KILO_BITS_PER_SEC = 1000;
+const MEGA_BITS_PER_SEC = KILO_BITS_PER_SEC * 1000;
+const GIGA_BITS_PER_SEC = MEGA_BITS_PER_SEC * 1000;
+
+const SUBMISSION_UNIT_THRESHOLDS = [
+  { threshold: PETA_BYTES, unitPrefix: 'PByte' as keyof typeof UNIT_MAP },
+  { threshold: TERA_BYTES, unitPrefix: 'TByte' as keyof typeof UNIT_MAP },
+  { threshold: GIGA_BYTES, unitPrefix: 'GByte' as keyof typeof UNIT_MAP },
+  { threshold: MEGA_BYTES, unitPrefix: 'MByte' as keyof typeof UNIT_MAP },
+  { threshold: KILO_BYTES, unitPrefix: 'KByte' as keyof typeof UNIT_MAP },
+  { threshold: 1, unitPrefix: 'Byte' as keyof typeof UNIT_MAP },
+];
+
 @Component({
   selector: 'app-throttle-settings-dialog',
   imports: [FormsModule, SparkleFormFieldComponent, SparkleCheckboxComponent, SparkleSelectComponent],
@@ -28,87 +52,206 @@ type SizeOptions = (typeof SIZE_OPTIONS)[number];
   styleUrl: './throttle-settings-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class ThrottleSettingsDialogComponent {
+export default class ThrottleSettingsDialogComponent implements OnInit {
   #dupServer = inject(DuplicatiServerService);
 
   closed = output<boolean>();
   isSubmitting = signal<boolean>(false);
-  sizeOptions = signal(SIZE_OPTIONS);
+  sizeOptions = signal<(typeof BPS_SIZE_OPTIONS)[number][]>([...BPS_SIZE_OPTIONS]);
 
   maxUploadActive = signal<boolean>(false);
   maxDownloadActive = signal<boolean>(false);
   maxUpload = signal<number>(0);
   maxDownload = signal<number>(0);
-  maxUploadUnit = signal<SizeOptions>('MByte/s');
-  maxDownloadUnit = signal<SizeOptions>('MByte/s');
+  maxUploadUnit = signal<BpsSizeOptions>('mbps');
+  maxDownloadUnit = signal<BpsSizeOptions>('mbps');
 
   ngOnInit() {
     this.init();
   }
 
+  convertToBitsPerSecondUnits(apiValue: number, apiUnitSuffix: string): { value: number; unit: BpsSizeOptions } {
+    const bytesPerSecond = apiValue * (API_UNIT_TO_BYTES_FACTOR[apiUnitSuffix.toUpperCase()] || MEGA_BYTES);
+    const bitsPerSecond = bytesPerSecond * BYTE_TO_BITS;
+
+    if (bitsPerSecond === 0) {
+      return { value: 0, unit: 'mbps' };
+    }
+    if (bitsPerSecond >= GIGA_BITS_PER_SEC) {
+      return { value: parseFloat((bitsPerSecond / GIGA_BITS_PER_SEC).toFixed(2)), unit: 'gbps' };
+    } else if (bitsPerSecond >= MEGA_BITS_PER_SEC) {
+      return { value: parseFloat((bitsPerSecond / MEGA_BITS_PER_SEC).toFixed(2)), unit: 'mbps' };
+    } else {
+      return { value: parseFloat((bitsPerSecond / KILO_BITS_PER_SEC).toFixed(2)), unit: 'kbps' };
+    }
+  }
+  convertFromBitsPerSecondUnits(
+    displayValue: number,
+    displayUnit: BpsSizeOptions
+  ): { valueForApi: number; unitPrefixForApi: keyof typeof UNIT_MAP } {
+    let bitsPerSecond = 0;
+
+    switch (displayUnit) {
+      case 'gbps':
+        bitsPerSecond = displayValue * GIGA_BITS_PER_SEC;
+        break;
+      case 'mbps':
+        bitsPerSecond = displayValue * MEGA_BITS_PER_SEC;
+        break;
+      case 'kbps':
+        bitsPerSecond = displayValue * KILO_BITS_PER_SEC;
+        break;
+    }
+
+    const bytesPerSecond = bitsPerSecond / BYTE_TO_BITS;
+
+    if (bytesPerSecond === 0) {
+      return { valueForApi: 0, unitPrefixForApi: 'Byte' };
+    }
+
+    for (const { threshold, unitPrefix } of SUBMISSION_UNIT_THRESHOLDS) {
+      if (bytesPerSecond >= threshold) {
+        return { valueForApi: Math.round(bytesPerSecond / threshold), unitPrefixForApi: unitPrefix };
+      }
+    }
+
+    return { valueForApi: Math.round(bytesPerSecond), unitPrefixForApi: 'Byte' };
+  }
+
   init() {
     this.#dupServer.getApiV1Serversettings().subscribe({
       next: (res) => {
-        const _uploadSpeedSplit = res?.['max-upload-speed']?.split(/(\d+)/);
-        const _downloadSpeedSplit = res?.['max-download-speed']?.split(/(\d+)/);
+        const rawUploadSpeedString = res?.['max-upload-speed'];
+        const rawDownloadSpeedString = res?.['max-download-speed'];
 
-        const _uploadSpeed = _uploadSpeedSplit[1] ?? '';
-        const _downloadSpeed = _downloadSpeedSplit[1] ?? '';
-        const uploadSpeedUnit = _uploadSpeedSplit[2] ?? 'MB';
-        const downloadSpeedUnit = _downloadSpeedSplit[2] ?? 'MB';
-        const uploadSpeed = _uploadSpeed === '' ? 10 : parseInt(_uploadSpeed);
-        const downloadSpeed = _downloadSpeed === '' ? 10 : parseInt(_downloadSpeed);
+        if (rawUploadSpeedString && rawUploadSpeedString !== '') {
+          this.maxUploadActive.set(true);
 
-        this.maxUploadUnit.set((REVERSE_UNIT_MAP[uploadSpeedUnit] + '/s') as SizeOptions);
-        this.maxDownloadUnit.set((REVERSE_UNIT_MAP[downloadSpeedUnit] + '/s') as SizeOptions);
+          // Regex to capture number and unit, e.g., "10MB" -> "10", "MB"
+          const match = rawUploadSpeedString.match(/^(\d+(?:\.\d+)?)([A-Za-z]+)$/);
 
-        this.maxUploadActive.set(_uploadSpeed !== '');
-        this.maxDownloadActive.set(_downloadSpeed !== '');
+          if (match) {
+            const apiUploadValue = parseFloat(match[1]);
+            const apiUploadUnitSuffix = match[2];
+            const converted = this.convertToBitsPerSecondUnits(apiUploadValue, apiUploadUnitSuffix);
+            this.maxUpload.set(converted.value);
+            this.maxUploadUnit.set(converted.unit);
+          } else {
+            console.warn('Unexpected max-upload-speed format from API:', rawUploadSpeedString);
+            this.resetUpload();
+          }
+        } else {
+          this.resetUpload();
+        }
 
-        this.maxUpload.set(uploadSpeed);
-        this.maxDownload.set(downloadSpeed);
+        if (rawDownloadSpeedString && rawDownloadSpeedString !== '') {
+          this.maxDownloadActive.set(true);
+
+          const match = rawDownloadSpeedString.match(/^(\d+(?:\.\d+)?)([A-Za-z]+)$/);
+
+          if (match) {
+            const apiDownloadValue = parseFloat(match[1]);
+            const apiDownloadUnitSuffix = match[2];
+            const converted = this.convertToBitsPerSecondUnits(apiDownloadValue, apiDownloadUnitSuffix);
+            this.maxDownload.set(converted.value);
+            this.maxDownloadUnit.set(converted.unit);
+          } else {
+            console.warn('Unexpected max-download-speed format from API:', rawDownloadSpeedString);
+            this.resetDownload();
+          }
+        } else {
+          this.resetDownload();
+        }
+      },
+      error: (err) => {
+        console.error('Failed to get server settings:', err);
+        // Initialize with defaults if API call fails
+        this.resetDownload();
+        this.resetUpload();
       },
     });
   }
 
+  resetDownload() {
+    this.maxDownloadActive.set(false);
+    this.maxDownload.set(0);
+    this.maxDownloadUnit.set('mbps');
+  }
+
+  resetUpload() {
+    this.maxUploadActive.set(false);
+    this.maxUpload.set(0);
+    this.maxUploadUnit.set('mbps');
+  }
+
+  // This will block decimal inputs (e.g., 1.5 mbps).
   blockDecimalKeys($event: KeyboardEvent) {
     if (['.', ','].includes($event.key)) return $event.preventDefault();
   }
 
   cleanupInputAfterPasting($event: ClipboardEvent) {
     $event.preventDefault();
-
     const clipboardData = $event.clipboardData?.getData('text/plain');
-
     if (!clipboardData) return;
-
     const cleanedData = clipboardData.replaceAll(/[\.,]/g, '');
-
     ($event.target as HTMLInputElement).value = cleanedData;
   }
 
   submit() {
     this.isSubmitting.set(true);
 
-    const uploadSpeed = this.maxUploadActive()
-      ? `${this.maxUpload()}${UNIT_MAP[this.maxUploadUnit().replace('/s', '') as keyof typeof UNIT_MAP]}`
-      : '';
+    let uploadSpeedPayload = '';
+    let downloadSpeedPayload = '';
 
-    const downloadSpeed = this.maxDownloadActive()
-      ? `${this.maxDownload()}${UNIT_MAP[this.maxDownloadUnit().replace('/s', '') as keyof typeof UNIT_MAP]}`
-      : '';
+    if (this.maxUploadActive()) {
+      const { valueForApi, unitPrefixForApi } = this.convertFromBitsPerSecondUnits(
+        this.maxUpload(),
+        this.maxUploadUnit()
+      );
+
+      const apiUnitSuffix = UNIT_MAP[unitPrefixForApi];
+
+      if (apiUnitSuffix) {
+        uploadSpeedPayload = `${valueForApi}${apiUnitSuffix}`;
+      } else {
+        console.error(
+          `Invalid unit prefix for API submission (upload): ${unitPrefixForApi}. Defaulting to empty string.`
+        );
+      }
+    }
+
+    if (this.maxDownloadActive()) {
+      const { valueForApi, unitPrefixForApi } = this.convertFromBitsPerSecondUnits(
+        this.maxDownload(),
+        this.maxDownloadUnit()
+      );
+
+      const apiUnitSuffix = UNIT_MAP[unitPrefixForApi];
+
+      if (apiUnitSuffix) {
+        downloadSpeedPayload = `${valueForApi}${apiUnitSuffix}`;
+      } else {
+        console.error(
+          `Invalid unit prefix for API submission (download): ${unitPrefixForApi}. Defaulting to empty string.`
+        );
+      }
+    }
 
     this.#dupServer
       .patchApiV1Serversettings({
         requestBody: {
-          'max-upload-speed': uploadSpeed,
-          'max-download-speed': downloadSpeed,
+          'max-upload-speed': uploadSpeedPayload,
+          'max-download-speed': downloadSpeedPayload,
         },
       })
       .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
-        next: (res) => {
+        next: () => {
           this.closed.emit(true);
+        },
+        error: (err) => {
+          console.error('Failed to submit throttle settings:', err);
+          // Optionally, inform the user via a notification service
         },
       });
   }
