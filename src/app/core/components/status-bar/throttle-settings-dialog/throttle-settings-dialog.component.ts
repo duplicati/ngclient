@@ -13,7 +13,7 @@ const UNIT_MAP = {
   PByte: 'PB',
 };
 
-const BPS_SIZE_OPTIONS = ['kbps', 'mbps', 'gbps'] as const;
+const BPS_SIZE_OPTIONS = ['mbps', 'gbps'] as const;
 type BpsSizeOptions = (typeof BPS_SIZE_OPTIONS)[number];
 
 const BYTE_TO_BITS = 8;
@@ -79,10 +79,8 @@ export default class ThrottleSettingsDialogComponent implements OnInit {
     }
     if (bitsPerSecond >= GIGA_BITS_PER_SEC) {
       return { value: parseFloat((bitsPerSecond / GIGA_BITS_PER_SEC).toFixed(2)), unit: 'gbps' };
-    } else if (bitsPerSecond >= MEGA_BITS_PER_SEC) {
-      return { value: parseFloat((bitsPerSecond / MEGA_BITS_PER_SEC).toFixed(2)), unit: 'mbps' };
     } else {
-      return { value: parseFloat((bitsPerSecond / KILO_BITS_PER_SEC).toFixed(2)), unit: 'kbps' };
+      return { value: parseFloat((bitsPerSecond / MEGA_BITS_PER_SEC).toFixed(2)), unit: 'mbps' };
     }
   }
   convertFromBitsPerSecondUnits(
@@ -97,9 +95,6 @@ export default class ThrottleSettingsDialogComponent implements OnInit {
         break;
       case 'mbps':
         bitsPerSecond = displayValue * MEGA_BITS_PER_SEC;
-        break;
-      case 'kbps':
-        bitsPerSecond = displayValue * KILO_BITS_PER_SEC;
         break;
     }
 
