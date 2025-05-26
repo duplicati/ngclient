@@ -73,7 +73,7 @@ section {
 .advanced-option {
   display: grid;
   gap: p2r(8);
-  grid-template-columns: 1fr 1fr 40px;
+  grid-template-columns: 1fr 1fr p2r(40);
   align-items: flex-end;
 }
 

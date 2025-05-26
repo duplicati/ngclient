@@ -1,0 +1,53 @@
+@let _backup = backup();
+@let noLocalDb = noLocalDbResource.value();
+
+<h3 i18n>Delete backup: {{ _backup?.Backup?.Name }}</h3>
+
+@if (noLocalDb) {
+  <section>
+    <h4 i18n>Delete local database</h4>
+    <p i18n>
+      Each backup has a local database associated with it, which stores information about the remote backup on the local
+      machine. When deleting a backup, you can also delete the local database without affecting the ability to restore
+      the remote files. If you are using the local database for backups from the commandline, you should keep the
+      database.
+    </p>
+
+    <spk-checkbox class="primary raised">
+      Delete local database
+      <input type="checkbox" [(ngModel)]="deleteLocalDb" />
+    </spk-checkbox>
+  </section>
+}
+
+<section>
+  <h4 i18n>Export configuration</h4>
+  <p i18n>If you want to use the backup later, you can export the configuration before deleting it.</p>
+  <button spk-button [routerLink]="['/backup', id(), 'export']">
+    Export configuration
+    <spk-icon>caret-right</spk-icon>
+  </button>
+</section>
+
+@if (noLocalDb) {
+  <section>
+    @let fileSize = _backup?.Backup?.Metadata?.['TargetFileSize'] ?? 0;
+
+    <h4 i18n>Delete remote files</h4>
+    <p i18n>
+      Delete
+      {fileCount(), plural, =1 {1 file} other {{{fileCount()}} files}}
+      ({{ fileSize | bytes: true : true }}) from the remote storage?
+    </p>
+
+    <spk-checkbox class="primary raised">
+      Delete remote files
+      <input type="checkbox" [(ngModel)]="deleteRemoteFiles" />
+    </spk-checkbox>
+  </section>
+}
+
+<div class="actions">
+  <button spk-button [routerLink]="['/']" i18n>Cancel</button>
+  <button spk-button class="raised error" [class.loader]="isDeleting()" (click)="deleteBackup()">Delete backup</button>
+</div>

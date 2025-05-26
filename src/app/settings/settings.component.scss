@@ -80,7 +80,7 @@ section {
   gap: p2r(8);
 
   img {
-    max-width: 240px;
+    max-width: p2r(240);
     border-radius: var(--shape-3);
     cursor: pointer;
 

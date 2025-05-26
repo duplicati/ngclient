@@ -24,7 +24,7 @@
   right: 0;
   display: flex;
   flex-direction: column;
-  min-width: 250px;
+  min-width: p2r(250);
 }
 
 .helpdesk-modal {
@@ -121,4 +121,12 @@
     align-items: center;
     justify-content: space-between;
   }
+}
+
+.no-alerts {
+  padding: p2r(16);
+  display: flex;
+  flex-direction: column;
+  gap: p2r(16);
+  text-align: center;
 }

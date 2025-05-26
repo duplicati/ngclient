@@ -16,7 +16,7 @@ div.backup-types {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: p2r(16);
-  max-width: 700px;
+  max-width: p2r(700);
 }
 
 spk-card {
@@ -27,7 +27,7 @@ spk-card {
   padding-bottom: p2r(48);
 
   img {
-    max-width: 300px;
+    max-width: p2r(300);
   }
 
   p {

@@ -43,8 +43,9 @@
             Details
           </button>
         </spk-button-group>
+
         <spk-menu class="table-overview">
-          <button type="button" class="small table-buttons" spk-button i18n>
+          <button type="button" class="small" spk-button i18n>
             Time:
             <strong>{{ timeType() }}</strong>
             <spk-icon>clock</spk-icon>
@@ -58,7 +59,7 @@
 
         @if (viewMode() === 'list') {
           <spk-menu class="table-overview">
-            <button type="button" class="small table-buttons" spk-button i18n>
+            <button type="button" class="small" spk-button i18n>
               Order by:
               <strong>{{ orderBy() }}</strong>
               <spk-icon>arrows-down-up</spk-icon>
@@ -277,7 +278,7 @@
         Export
       </button>
 
-      <button [class.loader]="deletingBackup() === backup.Backup?.ID" (click)="deleteBackup(backup.Backup?.ID!)" i18n>
+      <button type="button" [routerLink]="['/backup', backup.Backup?.ID, 'delete']" i18n>
         <spk-icon>x-circle</spk-icon>
         Delete
       </button>

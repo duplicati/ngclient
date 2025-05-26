@@ -126,6 +126,10 @@ export const routes: Routes = [
                 loadComponent: () => import('./backup/commandline-result/commandline-result.component'),
               },
               {
+                path: 'backup/:id/delete',
+                loadComponent: () => import('./backup/delete-backup/delete-backup.component'),
+              },
+              {
                 path: 'restore',
                 children: [
                   {

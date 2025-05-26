@@ -17,7 +17,8 @@ type UserAgentData = {
 export class BytesPipe implements PipeTransform {
   decimalPipe = inject(DecimalPipe);
 
-  transform(bytes: number | string | undefined | null, longForm: boolean = false): string {
+  transform(bytes: number | string | undefined | null, longForm: boolean = false, allowZero: boolean = false): string {
+    if (allowZero && bytes === 0) return longForm ? '0 Bytes' : '0B';
     if (!bytes || bytes === 0) return '';
 
     if (typeof bytes === 'string') {

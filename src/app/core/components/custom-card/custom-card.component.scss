@@ -16,7 +16,7 @@
 }
 
 .card {
-  max-width: 480px;
+  max-width: p2r(480);
   width: 100%;
   position: relative;
   z-index: 100;
@@ -29,8 +29,8 @@
   &:before {
     content: '';
     position: absolute;
-    height: 480px;
-    transform: translateY(-285px);
+    height: p2r(480);
+    transform: translateY(-#{p2r(285)});
     left: 0;
     right: 0;
     z-index: -2;
@@ -39,9 +39,9 @@
 
   img.noise {
     position: absolute;
-    height: 480px;
+    height: p2r(480);
     width: 100%;
-    transform: translateY(-285px);
+    transform: translateY(-#{p2r(285)});
     left: 0;
     right: 0;
     z-index: -1;
@@ -54,7 +54,7 @@ header {
   align-items: center;
   justify-content: center;
   padding: p2r(32 32 0);
-  gap: 12px;
+  gap: p2r(12);
   position: relative;
   z-index: 10;
 }
@@ -63,10 +63,10 @@ header {
   font: var(--title-30);
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: p2r(10);
 
   img {
-    height: 28px;
+    height: p2r(28);
     filter: drop-shadow(0 2px 3px rgb(0 0 0 / 0.3));
   }
 }

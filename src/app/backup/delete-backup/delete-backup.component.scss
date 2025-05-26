@@ -1,0 +1,36 @@
+@use '@sparkle-ui/core/styles/helpers' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  padding: p2r(40);
+  max-width: p2r(700);
+}
+
+section {
+  padding: p2r(32 0);
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+}
+
+h3 {
+  font: var(--title-30);
+  margin: 0;
+}
+
+h4 {
+  font: var(--paragraph-20);
+  margin-bottom: p2r(8);
+}
+
+p {
+  margin-bottom: p2r(16);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: p2r(8);
+  padding: p2r(32 0);
+}

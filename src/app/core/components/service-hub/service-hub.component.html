@@ -14,7 +14,6 @@
 @if (_shownMessage) {
   <div class="preview-alert-wrap">
     @if (_shownMessage.type === 'notification') {
-      <!-- <pre>{{ _shownMessage | json }}</pre> -->
       <app-notification [index]="0" [notification]="_shownMessage.content"></app-notification>
     } @else {
       <spk-alert [class]="_shownMessage.content.type || 'error'">
@@ -74,7 +73,7 @@
               }
             </spk-alert>
           } @empty {
-            <p i18n>No alerts yet</p>
+            <p i18n class="no-alerts">No alerts yet</p>
           }
         </div>
       </div>

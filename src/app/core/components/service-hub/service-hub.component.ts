@@ -1,4 +1,3 @@
-import { JsonPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -49,7 +48,6 @@ type Interval = ReturnType<typeof setInterval>;
     SparkleAlertComponent,
     NotificationsComponent,
     NotificationComponent,
-    JsonPipe,
   ],
   templateUrl: './service-hub.component.html',
   styleUrl: './service-hub.component.scss',

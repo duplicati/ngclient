@@ -45,10 +45,6 @@ spk-card {
   h2 {
     padding: p2r(0 32);
   }
-
-  .table-buttons {
-    min-height: 40px;
-  }
 }
 
 .backups {
@@ -98,6 +94,7 @@ spk-card {
 
 .actions {
   display: flex;
+  align-items: center;
   gap: p2r(8);
 }
 

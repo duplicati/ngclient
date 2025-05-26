@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { finalize, take, tap } from 'rxjs';
 import { randomUUID } from '../functions/crypto';
-import { DuplicatiServerService } from '../openapi';
+import { DeleteApiV1BackupByIdData, DuplicatiServerService } from '../openapi';
 import { LOCALSTORAGE } from '../services/localstorage.token';
 import { Subscribed } from '../types/subscribed';
 
@@ -197,19 +197,7 @@ export class BackupsState {
       .subscribe();
   }
 
-  deleteBackup(id: string) {
-    this.#deletingBackup.set(id);
-
-    this.#dupServer
-      .deleteApiV1BackupById({
-        id,
-      })
-      .pipe(
-        take(1),
-        finalize(() => this.#deletingBackup.set(null))
-      )
-      .subscribe({
-        next: () => this.getBackups(true),
-      });
+  deleteBackup(deleteConfig: DeleteApiV1BackupByIdData) {
+    return this.#dupServer.deleteApiV1BackupById(deleteConfig).pipe(take(1));
   }
 }

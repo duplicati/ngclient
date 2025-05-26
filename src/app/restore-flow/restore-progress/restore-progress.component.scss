@@ -61,8 +61,8 @@ section {
 
 .complete-check {
   position: relative;
-  width: 100px;
-  height: 100px;
+  width: p2r(100);
+  height: p2r(100);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -87,7 +87,7 @@ section {
 .border-circle {
   fill: none;
   stroke: var(--success-500);
-  stroke-width: 5px;
+  stroke-width: p2r(5);
   stroke-dasharray: 282.74;
   stroke-dashoffset: 282.74;
   animation: draw-border 1.2s linear forwards;

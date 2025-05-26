@@ -6,7 +6,6 @@ import {
   SparkleButtonGroupComponent,
   SparkleCardComponent,
   SparkleChipComponent,
-  SparkleDialogService,
   SparkleDividerComponent,
   SparkleIconComponent,
   SparkleMenuComponent,
@@ -16,7 +15,6 @@ import {
 } from '@sparkle-ui/core';
 import { finalize } from 'rxjs';
 import { DESTINATION_CONFIG, S3_HOST_SUFFIX_MAP } from '../backup/destination/destination.config';
-import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { StatusBarState } from '../core/components/status-bar/status-bar.state';
 import { localStorageSignal } from '../core/functions/localstorage-signal';
@@ -26,8 +24,8 @@ import { DurationFormatPipe } from '../core/pipes/duration.pipe';
 import { RelativeTimePipe } from '../core/pipes/relative-time.pipe';
 import { BackupsState, OrderBy, TimeType } from '../core/states/backups.state';
 
-const DestinationOverrides: Record<string, { Display: string | null, Icon: string | null }> = {
-  'file': { Display: $localize`Local`, Icon: null },
+const DestinationOverrides: Record<string, { Display: string | null; Icon: string | null }> = {
+  file: { Display: $localize`Local`, Icon: null },
 };
 
 @Component({
@@ -55,10 +53,9 @@ const DestinationOverrides: Record<string, { Display: string | null, Icon: strin
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class HomeComponent {
-  #backupsState = inject(BackupsState);
-  #dialog = inject(SparkleDialogService);
   #dupServer = inject(DuplicatiServerService);
   #statusBarState = inject(StatusBarState);
+  #backupsState = inject(BackupsState);
 
   MISSING_BACKUP_NAME = $localize`Backup name missing`;
   sortOrderOptions = this.#backupsState.orderByOptions;
@@ -71,7 +68,7 @@ export default class HomeComponent {
   timeType = this.#backupsState.timeType;
 
   viewMode = localStorageSignal<'list' | 'details'>('list', 'viewMode');
-  
+
   sortByColumn = signal<OrderBy | null>('name');
   loadingId = signal<string | null>(null);
   successId = signal<string | null>(null);
@@ -103,7 +100,7 @@ export default class HomeComponent {
     const override = DestinationOverrides[match.key];
     if (override?.Icon) return override.Icon;
 
-    return 'database'; 
+    return 'database';
   }
 
   getBackendType(targetUrl: string | null | undefined) {
@@ -132,22 +129,6 @@ export default class HomeComponent {
 
   getBackupVersionCount(backup: BackupAndScheduleOutputDto | null): number {
     return parseInt(backup?.Backup?.Metadata?.['BackupListCount'] ?? '', 10) || 0;
-  }
-
-  deleteBackup(id: string) {
-    this.loadingId.set(id);
-    this.#dialog.open(ConfirmDialogComponent, {
-      data: {
-        title: $localize`Confirm delete`,
-        message: $localize`Are you sure you want to delete this backup?`,
-        confirmText: $localize`Delete backup`,
-        cancelText: $localize`Cancel`,
-      },
-      closed: (res) => {
-        if (!res) return;
-        this.#backupsState.deleteBackup(id);
-      },
-    });
   }
 
   verifyFiles(id: string) {
