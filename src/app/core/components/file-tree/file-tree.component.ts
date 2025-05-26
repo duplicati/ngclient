@@ -639,13 +639,13 @@ export default class FileTreeComponent {
       .filter(Boolean);
 
     const segmentArr = pathArr.map((x) => {
-      return x.split(isWindows ? '\\' : '/').filter((y) => {
-        if (y.includes('.')) {
-          return false;
-        }
+      const split = x.split(isWindows ? '\\' : '/');
 
-        return y;
-      });
+      if (split.at(-1) !== '') {
+        split.pop();
+      }
+
+      return split;
     });
 
     // let urlPieces: string[] = [this.rootPath() ?? '/'];
