@@ -10,6 +10,7 @@ import {
 import { BytesPipe } from '../../pipes/byte.pipe';
 import { ServerStateService } from '../../services/server-state.service';
 import { Backup, BackupsState } from '../../states/backups.state';
+import { SysinfoState } from '../../states/sysinfo.state';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 type Task = GetApiV1TaskByTaskidResponse;
 
@@ -71,6 +72,7 @@ export class StatusBarState {
   #backupState = inject(BackupsState);
   #serverState = inject(ServerStateService);
   #dialog = inject(SparkleDialogService);
+  #sysinfo = inject(SysinfoState);
   #isFetching = signal(false);
   #statusData = signal<StatusWithContent | null>(null);
 
@@ -92,14 +94,11 @@ export class StatusBarState {
     return serverState;
   });
 
-  clientIsRunning = computed(() => this.serverState()?.ProgramState === 'Running');
-  serverStateEffect = effect(() => {
-    const newState = this.#serverState.serverState();
+  hasProgressOnWebsocket = computed(
+    () => this.#sysinfo.hasProgressSubscribeOption() && this.#serverState.getConnectionMethod() === 'websocket'
+  );
 
-    if (!newState?.ActiveTask) {
-      this.#backupState.getBackups(true);
-    }
-  });
+  clientIsRunning = computed(() => this.serverState()?.ProgramState === 'Running');
 
   isResuming = signal<boolean>(false);
   isFetching = this.#isFetching.asReadonly();
@@ -108,6 +107,12 @@ export class StatusBarState {
   pollingInterval: number | undefined;
   #serverStateEffect = effect(() => {
     const serverState = this.#serverState.serverState();
+    if (!serverState?.ActiveTask) this.#backupState.getBackups(true);
+
+    if (this.hasProgressOnWebsocket()) {
+      this.#serverState.subscribe('progress');
+      this.#serverState.subscribe('taskqueue');
+    }
 
     if (serverState?.ActiveTask && this.pollingInterval === undefined) {
       this.startPollingProgress();
@@ -116,14 +121,28 @@ export class StatusBarState {
     }
   });
 
+  #progressStateEffect = effect(() => {
+    const progressState = this.#serverState.progressState();
+    const taskqueue = this.#serverState.taskQueueState();
+    if (progressState) {
+      const task = taskqueue?.find((x) => x.ID === progressState.TaskID) ?? null;
+      this.#onProgressStateFetched({ ...progressState, task: task });
+    }
+  });
+
   setConnectionMethod(method: 'websocket' | 'longpoll') {
     this.#serverState.setConnectionMethod(method);
   }
 
   startPollingProgress() {
-    this.pollingInterval = setInterval(() => {
-      this.#getProgressState();
-    }, 1000);
+    // If the server pushes progress updates via WebSocket, we don't need to poll
+    if (this.hasProgressOnWebsocket()) {
+      this.#serverState.subscribe('progress');
+    } else {
+      this.pollingInterval = setInterval(() => {
+        this.#getProgressState();
+      }, 1000);
+    }
   }
 
   stopPollingProgress() {
@@ -182,20 +201,7 @@ export class StatusBarState {
       )
       .subscribe({
         next: (res: Status) => {
-          const taskId = res.TaskID ?? null;
-          const backupId = res.BackupID ?? null;
-
-          if (taskId !== null && backupId !== null) {
-            res.backup = this.#backupState.getBackupById(backupId);
-          }
-
-          this.#statusData.set({
-            ...res,
-            progress: this.#calculateProgress(res),
-            statusText: this.#constructStatusText(res),
-            actionText: res.backup?.Backup?.Name ?? $localize`Running task`,
-          });
-
+          this.#onProgressStateFetched(res);
           if (res.task?.Status === 'Completed') {
             this.stopPollingProgress();
           }
@@ -206,6 +212,22 @@ export class StatusBarState {
           }
         },
       });
+  }
+
+  #onProgressStateFetched(status: Status) {
+    const taskId = status.TaskID ?? null;
+    const backupId = status.BackupID ?? null;
+
+    if (taskId !== null && backupId !== null) {
+      status.backup = this.#backupState.getBackupById(backupId);
+    }
+
+    this.#statusData.set({
+      ...status,
+      progress: this.#calculateProgress(status),
+      statusText: this.#constructStatusText(status),
+      actionText: status.backup?.Backup?.Name ?? $localize`Running task`,
+    });
   }
 
   #calculateProgress(status: Status): number {
@@ -233,7 +255,7 @@ export class StatusBarState {
         pg = 0.95;
       } else if (status.Phase === 'Backup_VerificationUpload' || status.Phase === 'Backup_PostBackupVerify') {
         pg = 0.98;
-      } else if (status.Phase === 'Backup_Complete' || status.Phase === 'Backup_WaitForUpload') {
+      } else if (status.Phase === 'Backup_Complete') {
         pg = 1;
       } else if (status.OverallProgress! > 0) {
         pg = status.OverallProgress!;
@@ -241,6 +263,15 @@ export class StatusBarState {
     }
 
     return pg;
+  }
+
+  #constructSpeedText(status: Status): string {
+    const aggregateSpeed =
+      (status.ActiveTransfers ?? []).map((x) => x.BackendSpeed).reduce((acc, curr) => (acc ?? 0) + (curr ?? 0), 0) ??
+      -1;
+
+    const speed = aggregateSpeed <= 0 ? status.BackendSpeed : aggregateSpeed;
+    return (speed ?? -1) < 0 ? '' : ` at ${this.#bytesPipe.transform(speed)}/s`;
   }
 
   #constructStatusText(status: Status): string {
@@ -256,11 +287,16 @@ export class StatusBarState {
           const unaccountedbytes = status.CurrentFilecomplete ? 0 : status.CurrentFileoffset;
           const filesleft = status.TotalFileCount! - status.ProcessedFileCount!;
           const sizeleft = status.TotalFileSize! - status.ProcessedFileSize! - unaccountedbytes!;
-          const speedTxt = status.BackendSpeed! < 0 ? '' : ` at ${this.#bytesPipe.transform(status.BackendSpeed)}/s`;
           const restoringText = status.Phase === 'Restore_DownloadingRemoteFiles' ? 'Restoring: ' : '';
+          const speedTxt = this.#constructSpeedText(status);
 
-          text = `${restoringText}${filesleft} files (${this.#bytesPipe.transform(sizeleft)}) to go ${speedTxt}`;
+          if (status.Phase === 'Backup_ProcessingFiles' && filesleft === 0) text = `Completing upload ${speedTxt}`;
+          else if (status.BackendIsBlocking ?? false) text = `Waiting for transfers ${speedTxt}`;
+          else text = `${restoringText}${filesleft} files (${this.#bytesPipe.transform(sizeleft)}) to go ${speedTxt}`;
         }
+      } else if (status.Phase === 'Backup_WaitForUpload') {
+        const speedTxt = this.#constructSpeedText(status);
+        if (speedTxt !== '') text = `Waiting for upload to finish ${speedTxt}`;
       }
     }
     return text;
