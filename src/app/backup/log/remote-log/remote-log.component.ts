@@ -28,8 +28,6 @@ type RemoteLogEntryEvaluated = {
   data: Data;
 };
 
-const now = new Date();
-
 @Component({
   selector: 'app-remote-log',
   imports: [JsonPipe, SparkleProgressBarComponent, SparkleIconComponent, DatePipe],
@@ -47,6 +45,8 @@ export class RemoteLogComponent {
     offset: 0,
     pagesize: 100,
   });
+
+  copiedFromIndex = signal<number | null>(null);
 
   resource = rxResource({
     request: () => ({ id: this.backupId()!, ...this.pagination() }),
@@ -76,5 +76,16 @@ export class RemoteLogComponent {
     }
 
     this.openEntry.set(id);
+  }
+
+  copyToClipboard(data: any, index: number) {
+    const text = JSON.stringify(data, null, 2);
+    navigator.clipboard.writeText(text);
+
+    this.copiedFromIndex.set(index);
+
+    setTimeout(() => {
+      this.copiedFromIndex.set(null);
+    }, 3000);
   }
 }

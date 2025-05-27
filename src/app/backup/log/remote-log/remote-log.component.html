@@ -14,6 +14,20 @@
 
     @if (item.id === openEntry()) {
       <section class="log-content">
+        <button
+          spk-button
+          class="small"
+          [class.success]="copiedFromIndex() === $index"
+          (click)="copyToClipboard(item.data, $index)"
+          i18n>
+          @if (copiedFromIndex() === $index) {
+            <spk-icon>check</spk-icon>
+            Copied
+          } @else {
+            <spk-icon>copy</spk-icon>
+            Copy to clipboard
+          }
+        </button>
         <code>{{ item.data | json }}</code>
       </section>
     }

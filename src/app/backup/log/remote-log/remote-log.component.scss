@@ -51,6 +51,14 @@
   display: flex;
   flex-direction: column;
   padding: p2r(16);
+  position: relative;
+
+  button {
+    position: absolute;
+    top: p2r(32);
+    right: p2r(32);
+    background: transparent;
+  }
 }
 
 code {
