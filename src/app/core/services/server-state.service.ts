@@ -1,9 +1,8 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { ServerStatusLongPollService } from './server-status-longpoll.service';
-import { ServerStatusWebSocketService } from './server-status-websocket.service';
+import { ServerStatusWebSocketService, SubscriptionService } from './server-status-websocket.service';
 
 type ConnectionMethod = 'websocket' | 'longpoll';
-type ConnectionStatus = 'connected' | 'disconnected' | 'connecting';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +12,8 @@ export class ServerStateService {
   #longPollService = inject(ServerStatusLongPollService);
 
   #connectionMethod = signal<ConnectionMethod>('longpoll');
+  #isConnectionMethodSet = signal<boolean>(false);
+
   connectionStatus = computed(() => {
     const method = this.#connectionMethod();
 
@@ -23,11 +24,17 @@ export class ServerStateService {
     return this.#longPollService.connectionStatus();
   });
 
+  isConnectionMethodSet = this.#isConnectionMethodSet.asReadonly();
+
   serverState = computed(() =>
     this.#connectionMethod() === 'websocket' ? this.#wsService.serverState() : this.#longPollService.serverState()
   );
 
-  setConnectionMethod(method: ConnectionMethod) {
+  progressState = computed(() => this.#wsService.serverProgress());
+  taskQueueState = computed(() => this.#wsService.serverTaskQueue());
+  backupListState = computed(() => this.#wsService.backupListState());
+
+  setConnectionMethod(method: ConnectionMethod) {    
     if (method === 'websocket') {
       this.#wsService.reconnectIfNeeded();
       this.#longPollService.stop();
@@ -37,9 +44,18 @@ export class ServerStateService {
     }
 
     this.#connectionMethod.set(method);
+    this.#isConnectionMethodSet.set(true);
   }
 
   getConnectionMethod(): ConnectionMethod {
     return this.#connectionMethod();
+  }
+
+  subscribe(subscriptionId: SubscriptionService, data: any = null) {
+    this.#wsService.subscribe(subscriptionId, data);    
+  }
+
+  unsubscribe(subscriptionId: SubscriptionService) {
+    this.#wsService.unsubscribe(subscriptionId);
   }
 }

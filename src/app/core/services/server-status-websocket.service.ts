@@ -1,26 +1,88 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { SparkleDialogService } from '@sparkle-ui/core';
 import { DisconnectedDialogComponent } from '../components/disconnected-dialog/disconnected-dialog.component';
-import { ServerStatusDto } from '../openapi'; // Adjust import based on your OpenAPI generated types
+import { GetApiV1BackupsResponse, GetTaskStateDto, IProgressEventData, ServerStatusDto } from '../openapi';
 import { AppAuthState } from '../states/app-auth.state';
+import { SysinfoState } from '../states/sysinfo.state';
 
-type ConnectionStatus = 'connected' | 'disconnected' | 'connecting';
+type ConnectionStatus = 'connected' | 'disconnected' | 'connecting' | 'authenticating';
+
+export type SubscriptionService = 'backuplist' | 'serversettings' | 'progress' | 'taskqueue' | 'notification' | 'legacystatus';
+type RequestAction = 'sub' | 'unsub';
+type ResponseAction = 'reply';
+type ResponseType = SubscriptionService | ResponseAction;
+
+// WebSocketAuthRequest
+export type WebSocketAuthRequest = {
+  Version: number;
+  Token: string;
+};
+
+// WebSocketAuthReply
+export type WebSocketAuthReply = {
+  Version: number;
+  Message: string;
+  Success: boolean;
+};
+
+// WebSocketRequest without generic data
+type WebSocketRequest = {
+  Version: number;
+  Id: string;
+  Action: RequestAction;
+  Service?: SubscriptionService | null;
+};
+
+// Generic WebSocketRequest with payload
+type WebSocketRequestWithData = WebSocketRequest & {
+  Data: any;
+};
+
+// WebSocketReply structure
+type WebSocketReply = {
+  Version: number;
+  Id: string;
+  Service?: SubscriptionService | null;
+  Message: string;
+  Success: boolean;
+  Type: ResponseAction;
+  Data?: any | null;
+};
+
+// Generic WebsocketEventMessage
+type WebsocketEventMessage<T extends object> = {
+  Type: string;
+  ApiVersion: number;
+  Data: T;
+};
+
+const LOGGING_ENABLED = false;
 
 @Injectable({
   providedIn: 'root',
 })
 export class ServerStatusWebSocketService {
   #auth = inject(AppAuthState);
+  #sysinfo = inject(SysinfoState);
   dialog = inject(SparkleDialogService);
   #websocket: WebSocket | null = null;
 
   #connectionStatus = signal<ConnectionStatus>('disconnected');
   #serverState = signal<ServerStatusDto | null>(null);
+  #serverProgress = signal<IProgressEventData | null>(null);
+  #serverTaskQueue = signal<GetTaskStateDto[] | null>(null);
+  #backupListState = signal<GetApiV1BackupsResponse | null>(null);
   #disconnectedDialog: ReturnType<typeof this.dialog.open<DisconnectedDialogComponent>> | undefined = undefined;
+  #subscriptions = signal<Partial<{ [key in SubscriptionService]: any }>>({});
 
   shouldConnect = signal(true);
   connectionStatus = this.#connectionStatus.asReadonly();
   serverState = this.#serverState.asReadonly();
+  serverProgress = this.#serverProgress.asReadonly();
+  subscriptions = this.#subscriptions.asReadonly();
+  serverTaskQueue = this.#serverTaskQueue.asReadonly();
+  backupListState = this.#backupListState.asReadonly();
+  #reqidCounter = 0;
 
   start() {
     this.#connect();
@@ -44,32 +106,88 @@ export class ServerStatusWebSocketService {
     }
 
     const hostname = window.location.hostname;
-    const url = `${protocol}//${hostname}${port}/notifications?token=${token}`;
+    const url = this.#sysinfo.hasWebSocketAuth() 
+      ? `${protocol}//${hostname}${port}/notifications`
+      : `${protocol}//${hostname}${port}/notifications?token=${token}`;
 
     this.#connectionStatus.set('connecting');
 
     this.#websocket = new WebSocket(url);
 
     this.#websocket.onopen = () => {
-      console.log('WebSocket connection established');
-      this.#connectionStatus.set('connected');
+      if (LOGGING_ENABLED)
+        console.log('WebSocket connection established');
 
-      if (this.#disconnectedDialog) {
-        this.#disconnectedDialog.close();
+      if (this.#sysinfo.hasWebSocketAuth()) {
+        this.#connectionStatus.set('authenticating');
+        this.#websocket?.send(JSON.stringify({
+          Version: 1,
+          Token: token,
+        } as WebSocketAuthRequest));
+      } else {
+        this.#onconnectionEstablished();
       }
     };
 
     this.#websocket.onmessage = (event) => {
+      if (this.#connectionStatus() === 'authenticating') {
+        try {
+          const authReply = JSON.parse(event.data) as WebSocketAuthReply;
+          if (authReply.Success) {
+            if (LOGGING_ENABLED)
+              console.log('WebSocket authentication successful');
+            this.#onconnectionEstablished();
+          } else {
+            console.error('WebSocket authentication failed:', authReply.Message);
+            this.#connectionStatus.set('disconnected');
+          }
+          return;
+        }
+        catch (error) {
+          console.error('Error parsing WebSocket authentication reply', error);
+          this.#connectionStatus.set('disconnected');
+          return;
+        }
+      }
+
       try {
-        const status: ServerStatusDto = JSON.parse(event.data);
-        this.#serverState.set(status);
+        const respobj = JSON.parse(event.data);
+        const type = respobj?.Type as ResponseType | null;
+        
+        if (type === 'legacystatus' || type == null) {
+          if (LOGGING_ENABLED)
+            console.log('Received legacy status update:', respobj);
+          this.#serverState.set(respobj as ServerStatusDto);
+        } else if (type === 'reply') {
+          const reply = respobj as WebSocketReply;
+          if (!reply.Success) 
+            console.error('WebSocket reply error:', reply.Message);
+        } else if (type === 'progress') {
+          const evobj = respobj as WebsocketEventMessage<IProgressEventData>;
+          if (LOGGING_ENABLED)
+            console.log('Received progress update:', evobj.Data);
+          this.#serverProgress.set(evobj.Data);
+        } else if (type === 'taskqueue') {
+            const evobj = respobj as WebsocketEventMessage<GetTaskStateDto[]>;
+            if (LOGGING_ENABLED)
+              console.log('Received task update:', evobj.Data);
+            this.#serverTaskQueue.set(evobj.Data);
+        } else if (type === 'backuplist') {
+          const evobj = respobj as WebsocketEventMessage<GetApiV1BackupsResponse>;
+          if (LOGGING_ENABLED)
+            console.log('Received backup list update:', evobj.Data);
+          this.#backupListState.set(evobj.Data);
+        } else {
+          console.warn('Unknown WebSocket message type:', type);
+        }
       } catch (error) {
         console.error('Error parsing WebSocket message', error);
       }
     };
 
     this.#websocket.onclose = (event) => {
-      console.log('WebSocket connection closed', event);
+      if (LOGGING_ENABLED)
+        console.log('WebSocket connection closed', event);
       this.#connectionStatus.set('disconnected');
 
       // Attempt reconnection
@@ -93,6 +211,22 @@ export class ServerStatusWebSocketService {
     };
   }
 
+  #onconnectionEstablished() {
+    this.#connectionStatus.set('connected');
+
+    const pendingSubscriptions = this.#subscriptions();
+    if (Object.keys(pendingSubscriptions).length > 0) {
+      Object.entries(pendingSubscriptions).forEach(([subscriptionId, value]) => {
+        if (value != null) {
+          this.sendSubscribeRequest<object>(subscriptionId as SubscriptionService, value);
+        }
+      });
+    }
+    if (this.#disconnectedDialog) {
+      this.#disconnectedDialog.close();
+    }
+  }
+
   stop() {
     this.shouldConnect.set(false);
     this.#websocket?.close();
@@ -110,4 +244,48 @@ export class ServerStatusWebSocketService {
 
     this.reconnect();
   }
+
+  private sendSubscribeRequest<T>(subscriptionId: SubscriptionService, data: T | undefined | null) {    
+    this.#websocket?.send(
+      JSON.stringify({
+        Version: 1,
+        Id: `req-${++this.#reqidCounter}`,
+        Action: 'sub',
+        Service: subscriptionId,
+        Data: data || null,
+      } as WebSocketRequestWithData)
+    );
+  }
+
+  subscribe(subscriptionId: SubscriptionService, data: any = undefined) {
+    const currentSubscriptions = this.#subscriptions();
+    const current = currentSubscriptions[subscriptionId];
+
+    if (!current || JSON.stringify(current) !== JSON.stringify(data))
+    {
+      currentSubscriptions[subscriptionId] = data || true;
+      this.#subscriptions.set(currentSubscriptions);
+
+      if (this.#connectionStatus() == 'connected')
+        this.sendSubscribeRequest(subscriptionId, data);
+    }
+  }
+
+  unsubscribe(subscriptionId: SubscriptionService) {
+    const currentSubscriptions = this.#subscriptions();
+    if (currentSubscriptions[subscriptionId]) {
+      delete currentSubscriptions[subscriptionId];
+      this.#subscriptions.set(currentSubscriptions);
+
+      if (this.#connectionStatus() == 'connected')
+        this.#websocket?.send(
+          JSON.stringify({
+            Version: 1,
+            Id: `req-${++this.#reqidCounter}`,
+            Action: 'unsub',
+            Service: subscriptionId,
+          } as WebSocketRequest)
+        );
+    }
+  }  
 }

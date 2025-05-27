@@ -1,9 +1,11 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { finalize, take, tap } from 'rxjs';
 import { randomUUID } from '../functions/crypto';
 import { DeleteApiV1BackupByIdData, DuplicatiServerService } from '../openapi';
 import { LOCALSTORAGE } from '../services/localstorage.token';
+import { ServerStateService } from '../services/server-state.service';
 import { Subscribed } from '../types/subscribed';
+import { SysinfoState } from './sysinfo.state';
 
 export type BackupRes = Subscribed<ReturnType<DuplicatiServerService['getApiV1Backups']>>;
 export type Backup = BackupRes[0];
@@ -104,6 +106,8 @@ export type TimeType = 'actual' | 'relative';
 export class BackupsState {
   #ls = inject(LOCALSTORAGE);
   #dupServer = inject(DuplicatiServerService);
+  #sysinfo = inject(SysinfoState);
+  #serverState = inject(ServerStateService);
   #timestamp: number | null = null;
   #draftBackups = signal<BackupDraftItem[]>([]);
   #backups = signal<BackupRes>([]);
@@ -125,6 +129,13 @@ export class BackupsState {
   deletingBackup = this.#deletingBackup.asReadonly();
   draftBackups = this.#draftBackups.asReadonly();
 
+  #hasWebsocketBackupListUpdate = computed(() => this.#sysinfo.hasBackupListSubscribeOption() && this.#serverState.getConnectionMethod() === 'websocket');
+  #backupListUpdatedEffect = effect(() => {
+    const backupList = this.#serverState.backupListState();
+    if (backupList)
+      this.#backups.set(backupList);
+  });
+
   addDraftBackup(backup: BackupDraft) {
     const backupDraftId = randomUUID();
 
@@ -142,7 +153,14 @@ export class BackupsState {
   setOrderBy(orderBy: OrderBy) {
     this.#ls.setItemParsed(LOCALSTORAGE_BACKUP_LIST_ORDER_BY, orderBy, true);
     this.#orderBy.set(orderBy);
-    this.getBackups(true);
+    // Prevent fetching backups if the connection method is not yet set
+    if (!this.#serverState.isConnectionMethodSet())
+      return;
+
+    if (this.#hasWebsocketBackupListUpdate())
+      this.#serverState.subscribe('backuplist', orderBy);
+    else
+      this.getBackups(true);
   }
 
   setTimeType(timeType: TimeType) {
@@ -159,6 +177,16 @@ export class BackupsState {
   }
 
   getBackups(forceRefresh = false) {
+    // Prevent fetching backups if the connection method is not yet set
+    if (!this.#serverState.isConnectionMethodSet())
+      return;
+
+    // Subscribe to backup list updates via WebSocket if the server supports it
+    if (this.#hasWebsocketBackupListUpdate()) {
+      this.#serverState.subscribe('backuplist', this.#orderBy());
+      return;
+    }
+
     const timestamp = this.#timestamp;
     const now = Date.now();
     const cacheTimeLimit = timestamp && now - timestamp < 15 * 60 * 1000;

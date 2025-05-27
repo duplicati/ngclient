@@ -76,6 +76,27 @@ export class SysinfoState {
     return apiExtensions.includes('v2:destination:test');
   });
 
+  hasProgressSubscribeOption = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v1:subscribe:progress');
+  });
+
+  hasTaskSubscribeOption = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v1:subscribe:taskqueue');
+  });
+
+  hasBackupListSubscribeOption = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v1:subscribe:backuplist');
+  });
+
+  hasWebSocketAuth = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v1:websocket:authenticate');
+  });
+
+
   preload(returnObservable = false): Observable<SystemInfoDto> | void {
     const obs = (this.#dupServer.getApiV1Systeminfo() as Observable<SystemInfoDto>).pipe(
       tap((systemInfo) => {
