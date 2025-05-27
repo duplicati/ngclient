@@ -160,7 +160,11 @@
           {{ item }}
         </ng-template>
       } @else if (item.FormView.type === 'Size') {
-        <app-size [inputType]="item.Name" [(ngModel)]="item.Value" [customId]="formId">
+        <app-size
+          [inputType]="item.Name"
+          [ngModel]="item.Value()"
+          (ngModelChange)="updateSettingValue(item, $event)"
+          [customId]="formId">
           <label [for]="formId">
             <ng-container *ngTemplateOutlet="defaultLabel" />
           </label>
@@ -205,7 +209,11 @@
           {{ item }}
         </ng-template>
       } @else if (item.FormView.type === 'Timespan' || item.FormView.type === 'DateTime') {
-        <app-timespan [inputType]="item.Name" [(ngModel)]="item.Value" [customId]="formId">
+        <app-timespan
+          [inputType]="item.Name"
+          [ngModel]="item.Value()"
+          (ngModelChange)="updateSettingValue(item, $event)"
+          [customId]="formId">
           <label [for]="formId">
             <ng-container *ngTemplateOutlet="defaultLabel" />
           </label>

@@ -73,11 +73,9 @@ export class OptionsListComponent {
     const predefinedSettings = options
       .map((setting) => {
         const option = this.allOptions().find((opt) => opt.name === setting.Name?.replace('--', ''));
-        // const option = this.allOptions().find((opt) => opt.name === setting.Name);
+        let _value: any = setting.Value ?? '';
 
         if (option && !hiddenNames.includes(option.name)) {
-          let _value: any = setting.Value ?? '';
-
           if (option.type === 'Boolean') {
             _value = (_value && _value.toLowerCase() === 'true') || false;
           }
@@ -85,17 +83,16 @@ export class OptionsListComponent {
           if (option.type === 'Integer') {
             _value = parseInt(_value) || 0;
           }
-          const valueSignal = signal(_value);
 
           return {
             ...setting,
-            Value: valueSignal,
+            Value: signal(_value),
             FormView: option,
           } as SettingItem;
         } else if (this.hasFreeTextSettings()) {
           return {
             ...setting,
-            Value: signal(setting.Value),
+            Value: signal(_value),
             FormView: {
               name: setting.Name,
               type: 'FreeText',
