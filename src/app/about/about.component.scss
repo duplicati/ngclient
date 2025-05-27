@@ -9,7 +9,11 @@
 .content {
   display: flex;
   flex-direction: column;
-  padding: p2r(16 32);
+  padding: p2r(16 0);
+
+  spk-tabs {
+    margin: p2r(0 32);
+  }
 }
 
 section {

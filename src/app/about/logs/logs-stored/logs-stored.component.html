@@ -1,4 +1,6 @@
-<spk-table [(data)]="logs" [loading]="logsLoading()">
+@let _logs = logs();
+
+<spk-table class="type-b" [data]="_logs" [loading]="logsIsLoading()" [style.grid-template-columns]="'1fr 1fr 1fr auto'">
   <tr table-header>
     <th i18n>Timestamp</th>
     <th i18n>Backup ID</th>
@@ -6,7 +8,7 @@
     <th></th>
   </tr>
 
-  @for (row of logs(); track $index) {
+  @for (row of _logs; track $index) {
     <tr (click)="toggleRow($index)">
       <td>{{ row['Timestamp'] | date: 'MMM dd. hh:mm' }}</td>
       <td class="id">{{ row['BackupID'] >= 0 ? row['BackupID'] : '-' }}</td>
@@ -35,3 +37,13 @@
 
   <div table-no-rows i18n>No data available</div>
 </spk-table>
+
+<footer>
+  <button spk-button class="primary raised" i18n (click)="loadMore()" [disabled]="logsIsLoading() || noMoreItems()">
+    @if (noMoreItems()) {
+      No more items
+    } @else {
+      Load more
+    }
+  </button>
+</footer>
