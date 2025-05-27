@@ -27,9 +27,9 @@ header {
 .field-row {
   display: grid;
   grid-template-areas:
-    'label label label'
-    'checkbox input select';
-  grid-template-columns: auto 1fr auto;
+    'label label'
+    'input select';
+  grid-template-columns: 1fr auto;
   align-items: center;
   gap: p2r(8);
   width: 100%;

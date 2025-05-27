@@ -6,20 +6,14 @@
 <div content>
   <div class="column">
     <div class="field-row">
-      <label>Max upload speed</label>
-
-      <spk-checkbox
-        [class.active]="maxUploadActive()"
-        class="primary raised"
-        (click)="maxUploadActive.set(!maxUploadActive())" />
+      <label i18n>Max upload speed</label>
 
       <spk-form-field>
         <input
           type="number"
           (paste)="cleanupInputAfterPasting($event)"
           (keydown)="blockDecimalKeys($event)"
-          [(ngModel)]="maxUpload"
-          [disabled]="!maxUploadActive()" />
+          [(ngModel)]="maxUpload" />
       </spk-form-field>
 
       <spk-select [isClearable]="false" [options]="sizeOptions()">
@@ -28,20 +22,14 @@
     </div>
 
     <div class="field-row">
-      <label>Max download speed</label>
-
-      <spk-checkbox
-        [class.active]="maxDownloadActive()"
-        class="primary raised"
-        (click)="maxDownloadActive.set(!maxDownloadActive())" />
+      <label i18n>Max download speed</label>
 
       <spk-form-field>
         <input
           type="number"
           (paste)="cleanupInputAfterPasting($event)"
           (keydown)="blockDecimalKeys($event)"
-          [(ngModel)]="maxDownload"
-          [disabled]="!maxDownloadActive()" />
+          [(ngModel)]="maxDownload" />
       </spk-form-field>
 
       <spk-select [isClearable]="false" [options]="sizeOptions()">

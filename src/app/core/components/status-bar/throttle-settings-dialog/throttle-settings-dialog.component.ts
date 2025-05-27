@@ -56,11 +56,9 @@ export default class ThrottleSettingsDialogComponent implements OnInit {
   #dupServer = inject(DuplicatiServerService);
 
   closed = output<boolean>();
+
   isSubmitting = signal<boolean>(false);
   sizeOptions = signal<(typeof BPS_SIZE_OPTIONS)[number][]>([...BPS_SIZE_OPTIONS]);
-
-  maxUploadActive = signal<boolean>(false);
-  maxDownloadActive = signal<boolean>(false);
   maxUpload = signal<number>(0);
   maxDownload = signal<number>(0);
   maxUploadUnit = signal<BpsSizeOptions>('mbps');
@@ -120,8 +118,6 @@ export default class ThrottleSettingsDialogComponent implements OnInit {
         const rawDownloadSpeedString = res?.['max-download-speed'];
 
         if (rawUploadSpeedString && rawUploadSpeedString !== '') {
-          this.maxUploadActive.set(true);
-
           // Regex to capture number and unit, e.g., "10MB" -> "10", "MB"
           const match = rawUploadSpeedString.match(/^(\d+(?:\.\d+)?)([A-Za-z]+)$/);
 
@@ -140,8 +136,6 @@ export default class ThrottleSettingsDialogComponent implements OnInit {
         }
 
         if (rawDownloadSpeedString && rawDownloadSpeedString !== '') {
-          this.maxDownloadActive.set(true);
-
           const match = rawDownloadSpeedString.match(/^(\d+(?:\.\d+)?)([A-Za-z]+)$/);
 
           if (match) {
@@ -168,13 +162,11 @@ export default class ThrottleSettingsDialogComponent implements OnInit {
   }
 
   resetDownload() {
-    this.maxDownloadActive.set(false);
     this.maxDownload.set(0);
     this.maxDownloadUnit.set('mbps');
   }
 
   resetUpload() {
-    this.maxUploadActive.set(false);
     this.maxUpload.set(0);
     this.maxUploadUnit.set('mbps');
   }
@@ -198,11 +190,13 @@ export default class ThrottleSettingsDialogComponent implements OnInit {
     let uploadSpeedPayload = '';
     let downloadSpeedPayload = '';
 
-    if (this.maxUploadActive()) {
-      const { valueForApi, unitPrefixForApi } = this.convertFromBitsPerSecondUnits(
-        this.maxUpload(),
-        this.maxUploadUnit()
-      );
+    const maxUpload = this.maxUpload() ?? 0;
+    const maxUploadUnit = this.maxUploadUnit();
+    const maxDownload = this.maxDownload() ?? 0;
+    const maxDownloadUnit = this.maxDownloadUnit();
+
+    if (maxUpload > 0) {
+      const { valueForApi, unitPrefixForApi } = this.convertFromBitsPerSecondUnits(maxUpload, maxUploadUnit);
 
       const apiUnitSuffix = UNIT_MAP[unitPrefixForApi];
 
@@ -215,11 +209,8 @@ export default class ThrottleSettingsDialogComponent implements OnInit {
       }
     }
 
-    if (this.maxDownloadActive()) {
-      const { valueForApi, unitPrefixForApi } = this.convertFromBitsPerSecondUnits(
-        this.maxDownload(),
-        this.maxDownloadUnit()
-      );
+    if (maxDownload) {
+      const { valueForApi, unitPrefixForApi } = this.convertFromBitsPerSecondUnits(maxDownload, maxDownloadUnit);
 
       const apiUnitSuffix = UNIT_MAP[unitPrefixForApi];
 
