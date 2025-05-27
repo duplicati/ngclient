@@ -337,7 +337,6 @@ export default class DestinationComponent {
       const hasAuthId = event.data.startsWith('authid:');
       const authId = hasAuthId ? event.data.replace('authid:', '') : null;
 
-      console.log('event', event);
       if (hasAuthId) {
         // this.#oauthId.set(authId);
         control.setValue(authId);

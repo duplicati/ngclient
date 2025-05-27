@@ -46,8 +46,6 @@ export class ServerStatusLongPollService {
   }
 
   reconnectIfNeeded() {
-    console.log('reconnectIfNeeded');
-
     if (this.#awaitingPoll()) {
       return;
     }

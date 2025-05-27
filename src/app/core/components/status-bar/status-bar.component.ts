@@ -8,6 +8,7 @@ import {
   SparkleSpinnerComponent,
 } from '@sparkle-ui/core';
 import { RelativeTimePipe } from '../../pipes/relative-time.pipe';
+import { BackupsState } from '../../states/backups.state';
 import { RelayconfigState } from '../../states/relayconfig.state';
 import { PauseDialogComponent } from './pause-dialog/pause-dialog.component';
 import { StatusBarState } from './status-bar.state';
@@ -31,6 +32,7 @@ const date = new Date();
 export default class StatusBarComponent {
   #statusBarState = inject(StatusBarState);
   #dialog = inject(SparkleDialogService);
+  #backupsState = inject(BackupsState);
   #relayconfigState = inject(RelayconfigState);
 
   minsAgo = date.setMinutes(date.getMinutes() - 1);
@@ -40,10 +42,14 @@ export default class StatusBarComponent {
   clientIsRunning = this.#statusBarState.clientIsRunning;
   isResuming = this.#statusBarState.isResuming;
 
-  nextBackup = computed(() => ({
-    backup: (this.serverState()?.ProposedSchedule?.[0] as any)?.backup,
-    time: (this.serverState()?.ProposedSchedule?.[0] as any)?.Item2,
-  }));
+  nextBackup = computed(() => {
+    // Trigger if the backup list changes
+    const _ = this.#backupsState.backups();
+    return {
+      backup: (this.serverState()?.ProposedSchedule?.[0] as any)?.backup,
+      time: (this.serverState()?.ProposedSchedule?.[0] as any)?.Item2,
+    };
+  });
 
   openThrottleSettingsDialog() {
     this.#dialog.open(ThrottleSettingsDialogComponent, {
