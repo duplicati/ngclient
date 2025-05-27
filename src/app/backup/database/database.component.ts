@@ -87,7 +87,7 @@ export default class DatabaseComponent {
         take(1),
         finalize(() => this.isDeleting.set(false))
       )
-      .subscribe();
+      .subscribe(() => this.lastValidatedPath.set(''));
   }
 
   restoreDatabase() {

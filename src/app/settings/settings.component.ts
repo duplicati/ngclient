@@ -300,8 +300,12 @@ export default class SettingsComponent {
 
   timeValueEffect = effect(() => {
     const _ = this.timeValue();
+    // Prevent triggering a patch request when the component is initializing
+    const loaded = this.#serverSettingsService.serverSettings();
+    if (!loaded || (loaded['startup-delay'] === '' && this.timeType() === 'none'))
+        return;
 
-    this.updateStartupDelay();
+      this.updateStartupDelay();
   });
 
   updateLocale(newLocale: string) {
