@@ -617,7 +617,7 @@ export class BackupState {
         }
 
         return {
-          Name: y.Name,
+          Name: `--${y.Name}`,
           Value,
         };
       });
