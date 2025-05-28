@@ -309,7 +309,12 @@ export default class RestoreDestinationComponent {
       'height=' + h + ',width=' + w + ',menubar=0,status=0,titlebar=0,toolbar=0,left=' + left + ',top=' + top
     );
 
+    wnd?.addEventListener('blur', (event) => {
+      console.log('event blur', event);
+    });
+
     wnd?.addEventListener('beforeunload', (event) => {
+      console.log('event beforeunload', event);
       this.#httpClient
         .get(this.#oauthServiceLink() + 'fetch?callback=JSON_CALLBACK', {
           params: { token: this.#oauthCreateToken() },
@@ -317,6 +322,8 @@ export default class RestoreDestinationComponent {
         .pipe(finalize(() => this.#oauthInProgress.set(false)))
         .subscribe({
           next: (res: any) => {
+            console.log('res', res);
+
             if (res?.authid) {
               this.#oauthId.set(res.authid);
 

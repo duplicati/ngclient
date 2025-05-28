@@ -82,6 +82,8 @@ export class BackupState {
     backupRetentionCustom: signal(''),
   };
 
+  targetUrlModel = signal<string>('');
+
   isDraft = signal(false);
   backupId = signal<'new' | 'string' | null>(null);
   backupName = computed(() => this.generalFormSignal()?.name ?? '');
@@ -333,6 +335,7 @@ export class BackupState {
   }
 
   mapDestinationToForm(backup: BackupDto) {
+    this.targetUrlModel.set(backup.TargetURL ?? '');
     const targetUrlData = backup.TargetURL ? fromTargetPath(backup.TargetURL) : null;
 
     if (targetUrlData) {
@@ -712,7 +715,12 @@ export class BackupState {
     group.addControl(element.name as string, fb.control(defaultValue));
   }
 
+  setTargetUrl(targetUrl: string) {
+    this.targetUrlModel.set(targetUrl);
+  }
+
   addDestinationFormGroup(key: IDynamicModule['Key'], defaults?: DestinationDefault, createAdvancedFormFields = false) {
+    // this.setTargetUrl(`${key}://`);
     const destinationConfig = DESTINATION_CONFIG.find((x) => x.customKey === key || x.key === key);
     const _key = destinationConfig?.key;
     const item = this.destinationOptions().find((x) => x.Key === _key);

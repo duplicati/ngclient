@@ -35,6 +35,7 @@ import { TestDestinationService } from '../../core/services/test-destination.ser
 import { BackupState } from '../backup.state';
 import { DESTINATION_CONFIG } from './destination.config';
 import { FormView, toTargetPath } from './destination.config-utilities';
+import { SingleDestinationComponent } from './single-destination/single-destination.component';
 
 const fb = new FormBuilder();
 
@@ -81,6 +82,8 @@ type DefaultGroup = {
 @Component({
   selector: 'app-destination',
   imports: [
+    SingleDestinationComponent,
+
     ReactiveFormsModule,
     NgTemplateOutlet,
     SparkleFormFieldComponent,
@@ -111,6 +114,9 @@ export default class DestinationComponent {
   injector = inject(Injector);
 
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
+
+  targetUrlModel = this.#backupState.targetUrlModel;
+  toggleNewDestination = signal(true);
 
   destinationForm = this.#backupState.destinationForm;
   destinationFormPair = this.#backupState.destinationFormPair;
@@ -175,6 +181,7 @@ export default class DestinationComponent {
 
   addDestinationFormGroup(key: IDynamicModule['Key']) {
     this.#backupState.addDestinationFormGroup(key);
+    this.#backupState.setTargetUrl(`${key}://`);
   }
 
   addAdvancedFormPair(item: FormView, formArrayIndex: number) {
