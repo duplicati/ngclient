@@ -300,7 +300,6 @@ export default class DestinationComponent {
     this.#router.navigate(['source-data'], { relativeTo: this.#route.parent });
   }
 
-  #oauthServiceLink = signal('https://duplicati-oauth-handler.appspot.com/').asReadonly();
   #oauthCreateToken = signal(
     Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2)
   ).asReadonly();
@@ -311,13 +310,16 @@ export default class DestinationComponent {
 
   oauthStartTokenCreation(backendKey: string, item: DefaultGroup) {
     const control = this.getFormControl(item.index, item.formGroupName, item.formView.name);
+    const link = backendKey == 'pcloud' 
+      ? this.#backupState.oauthServiceLinkNew
+      : this.#backupState.oauthServiceLink;
 
     this.#oauthInProgress.set(true);
 
     const oauthCreateToken = this.#oauthCreateToken();
     const w = 450;
     const h = 600;
-    const startlink = this.#oauthServiceLink() + '?type=' + backendKey + '&token=' + oauthCreateToken;
+    const startlink = link + '?type=' + backendKey + '&token=' + oauthCreateToken;
 
     const left = screen.width / 2 - w / 2;
     const top = screen.height / 2 - h / 2;

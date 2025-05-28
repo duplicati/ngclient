@@ -82,6 +82,16 @@ export class BackupState {
     backupRetentionCustom: signal(''),
   };
 
+  oauthServiceLink = computed(() => {     
+    const defaultServiceLink = (this.#sysinfo.systemInfo() as any)?.DefaultOAuthURL;    
+    return defaultServiceLink ?? 'https://duplicati-oauth-handler.appspot.com/';
+  });
+
+  oauthServiceLinkNew = computed(() => {     
+    const defaultServiceLink = (this.#sysinfo.systemInfo() as any)?.DefaultOAuthURLv2;    
+    return defaultServiceLink ?? 'https://oauth-service.duplicati.com/';
+  });
+
   isDraft = signal(false);
   backupId = signal<'new' | 'string' | null>(null);
   backupName = computed(() => this.generalFormSignal()?.name ?? '');
