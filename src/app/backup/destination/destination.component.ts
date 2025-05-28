@@ -116,8 +116,6 @@ export default class DestinationComponent {
   destinationFormPair = this.#backupState.destinationFormPair;
   selectedAdvancedFormPair = this.#backupState.selectedAdvancedFormPair;
   notSelectedAdvancedFormPair = this.#backupState.notSelectedAdvancedFormPair;
-  selectedHttpOptions = this.#backupState.selectedHttpOptions;
-  notSelectedHttpOptions = this.#backupState.notSelectedHttpOptions;
   destinationOptions = this.#backupState.destinationOptions;
   destinationFormSignal = this.#backupState.destinationFormSignal;
   destinationCount = computed(() => this.destinationFormSignal()?.destinations?.length ?? 0);
@@ -183,10 +181,6 @@ export default class DestinationComponent {
 
   removeFormView(item: FormView, formArrayIndex: number) {
     this.#backupState.removeAdvancedFormPair(item, formArrayIndex);
-  }
-
-  addHttpOption(item: FormView, formArrayIndex: number) {
-    this.#backupState.addHttpOption(item, formArrayIndex);
   }
 
   targetUrl = computed(() => {
@@ -268,7 +262,7 @@ export default class DestinationComponent {
           }
 
           if (res.action === 'trust-cert')
-            this.#backupState.addHttpOptionByName('accept-specified-ssl-hash', res.destinationIndex, res.certData);
+            this.#backupState.addOrUpdateAdvancedFormPairByName('accept-specified-ssl-hash', res.destinationIndex, res.certData);
           if (res.action === 'approve-host-key')
             this.#backupState.addOrUpdateAdvancedFormPairByName(
               'ssh-fingerprint',
