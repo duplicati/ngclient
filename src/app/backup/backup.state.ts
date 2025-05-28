@@ -83,12 +83,12 @@ export class BackupState {
   };
 
   oauthServiceLink = computed(() => {     
-    const defaultServiceLink = (this.#sysinfo.systemInfo() as any)?.DefaultOAuthURL;    
+    const defaultServiceLink = this.#sysinfo.systemInfo()?.DefaultOAuthURL;    
     return defaultServiceLink ?? 'https://duplicati-oauth-handler.appspot.com/';
   });
 
   oauthServiceLinkNew = computed(() => {     
-    const defaultServiceLink = (this.#sysinfo.systemInfo() as any)?.DefaultOAuthURLv2;    
+    const defaultServiceLink = this.#sysinfo.systemInfo()?.DefaultOAuthURLv2;    
     return defaultServiceLink ?? 'https://oauth-service.duplicati.com/';
   });
 
