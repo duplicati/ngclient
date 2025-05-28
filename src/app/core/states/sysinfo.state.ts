@@ -139,7 +139,9 @@ export class SysinfoState {
       type: x.Type as ArgumentType,
       shortDescription: x.ShortDescription ?? undefined,
       longDescription: x.LongDescription ?? undefined,
+      deprecatedDescription: (x.Deprecated ?? false) ? x.DeprecationMessage ?? undefined : undefined,
       options: x.ValidValues,
+      defaultValue: x.DefaultValue
     } as FormView;
   }
 }

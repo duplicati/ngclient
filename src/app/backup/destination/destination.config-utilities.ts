@@ -25,6 +25,7 @@ export type FormView = {
   accepts?: string;
   shortDescription?: string;
   longDescription?: string;
+  deprecatedDescription?: string;
   options?: ICommandLineArgument['ValidValues'];
   loadOptions?: (injector: Injector) => Signal<WebModuleOption[] | undefined>;
   defaultValue?: ICommandLineArgument['DefaultValue'];
