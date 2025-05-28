@@ -10,6 +10,7 @@ import {
 import { RelativeTimePipe } from '../../pipes/relative-time.pipe';
 import { BackupsState } from '../../states/backups.state';
 import { RelayconfigState } from '../../states/relayconfig.state';
+import { SysinfoState } from '../../states/sysinfo.state';
 import { PauseDialogComponent } from './pause-dialog/pause-dialog.component';
 import { StatusBarState } from './status-bar.state';
 import ThrottleSettingsDialogComponent from './throttle-settings-dialog/throttle-settings-dialog.component';
@@ -34,6 +35,7 @@ export default class StatusBarComponent {
   #dialog = inject(SparkleDialogService);
   #backupsState = inject(BackupsState);
   #relayconfigState = inject(RelayconfigState);
+  #sysinfo = inject(SysinfoState);
 
   minsAgo = date.setMinutes(date.getMinutes() - 1);
 
@@ -75,7 +77,8 @@ export default class StatusBarComponent {
   }
 
   ngAfterViewInit() {
-    const defaultConnectionMethod = this.#relayconfigState.relayIsEnabled() ? 'longpoll' : 'websocket';
+    const defaultConnectionMethod = 
+      this.#relayconfigState.relayIsEnabled() || !this.#sysinfo.hasWebSocket() ? 'longpoll' : 'websocket';
     this.#statusBarState.setConnectionMethod(defaultConnectionMethod);
   }
 }

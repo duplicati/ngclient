@@ -66,6 +66,12 @@ export class SysinfoState {
     }, [] as FormView[]);
   });
 
+  hasWebSocket = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v1:websocket');
+  });
+
+
   hasV2ListOperations = computed(() => {
     const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
     return apiExtensions.includes('v2:backup:list-filesets') && apiExtensions.includes('v2:backup:list-folder');
