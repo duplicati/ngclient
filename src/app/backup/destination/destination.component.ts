@@ -116,8 +116,6 @@ export default class DestinationComponent {
   destinationFormPair = this.#backupState.destinationFormPair;
   selectedAdvancedFormPair = this.#backupState.selectedAdvancedFormPair;
   notSelectedAdvancedFormPair = this.#backupState.notSelectedAdvancedFormPair;
-  selectedHttpOptions = this.#backupState.selectedHttpOptions;
-  notSelectedHttpOptions = this.#backupState.notSelectedHttpOptions;
   destinationOptions = this.#backupState.destinationOptions;
   destinationFormSignal = this.#backupState.destinationFormSignal;
   destinationCount = computed(() => this.destinationFormSignal()?.destinations?.length ?? 0);
@@ -183,10 +181,6 @@ export default class DestinationComponent {
 
   removeFormView(item: FormView, formArrayIndex: number) {
     this.#backupState.removeAdvancedFormPair(item, formArrayIndex);
-  }
-
-  addHttpOption(item: FormView, formArrayIndex: number) {
-    this.#backupState.addHttpOption(item, formArrayIndex);
   }
 
   targetUrl = computed(() => {
@@ -268,7 +262,7 @@ export default class DestinationComponent {
           }
 
           if (res.action === 'trust-cert')
-            this.#backupState.addHttpOptionByName('accept-specified-ssl-hash', res.destinationIndex, res.certData);
+            this.#backupState.addOrUpdateAdvancedFormPairByName('accept-specified-ssl-hash', res.destinationIndex, res.certData);
           if (res.action === 'approve-host-key')
             this.#backupState.addOrUpdateAdvancedFormPairByName(
               'ssh-fingerprint',
@@ -306,7 +300,6 @@ export default class DestinationComponent {
     this.#router.navigate(['source-data'], { relativeTo: this.#route.parent });
   }
 
-  #oauthServiceLink = signal('https://duplicati-oauth-handler.appspot.com/').asReadonly();
   #oauthCreateToken = signal(
     Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2)
   ).asReadonly();
@@ -317,13 +310,16 @@ export default class DestinationComponent {
 
   oauthStartTokenCreation(backendKey: string, item: DefaultGroup) {
     const control = this.getFormControl(item.index, item.formGroupName, item.formView.name);
+    const link = backendKey == 'pcloud' 
+      ? this.#backupState.oauthServiceLinkNew
+      : this.#backupState.oauthServiceLink;
 
     this.#oauthInProgress.set(true);
 
     const oauthCreateToken = this.#oauthCreateToken();
     const w = 450;
     const h = 600;
-    const startlink = this.#oauthServiceLink() + '?type=' + backendKey + '&token=' + oauthCreateToken;
+    const startlink = link + '?type=' + backendKey + '&token=' + oauthCreateToken;
 
     const left = screen.width / 2 - w / 2;
     const top = screen.height / 2 - h / 2;

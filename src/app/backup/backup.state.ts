@@ -82,6 +82,16 @@ export class BackupState {
     backupRetentionCustom: signal(''),
   };
 
+  oauthServiceLink = computed(() => {     
+    const defaultServiceLink = this.#sysinfo.systemInfo()?.DefaultOAuthURL;    
+    return defaultServiceLink ?? 'https://duplicati-oauth-handler.appspot.com/';
+  });
+
+  oauthServiceLinkNew = computed(() => {     
+    const defaultServiceLink = this.#sysinfo.systemInfo()?.DefaultOAuthURLv2;    
+    return defaultServiceLink ?? 'https://oauth-service.duplicati.com/';
+  });
+
   isDraft = signal(false);
   backupId = signal<'new' | 'string' | null>(null);
   backupName = computed(() => this.generalFormSignal()?.name ?? '');
@@ -110,30 +120,12 @@ export class BackupState {
     );
   });
 
-  selectedHttpOptions = signal<FormView[]>([]);
-  notSelectedHttpOptions = computed<FormView[]>(() => {
-    const httpOptions = this.httpOptions();
-    const selectedHttpOptions = this.selectedHttpOptions() ?? [];
-
-    return httpOptions.filter(
-      (formPair) => selectedHttpOptions.findIndex((pair) => pair.name === formPair.name) === -1
-    );
-  });
-
   sourceDataFormSignal = toSignal(this.sourceDataForm.valueChanges);
   destinationFormSignal = toSignal(this.destinationForm.valueChanges);
   generalFormSignal = toSignal(this.generalForm.valueChanges);
   encryptionFieldSignal = toSignal(this.generalForm.controls.encryption.valueChanges);
 
   destinationOptions = computed(() => this.#sysinfo.backendModules() ?? []);
-
-  httpOptions = computed(
-    () =>
-      this.#sysinfo
-        .systemInfo()
-        ?.GenericModules?.find((x) => x.Key === 'http-options')
-        ?.Options?.map(this.#mapCommandLineArgumentsToFormViews) ?? []
-  );
 
   advancedOptions = computed(() => {
     return this.#sysinfo.systemInfo()?.Options?.map(this.#mapCommandLineArgumentsToFormViews) ?? [];
@@ -181,14 +173,6 @@ export class BackupState {
     this.addAdvancedFormPair(item, formArrayIndex, overrideDefaultValue);
   }
 
-  addHttpOptionByName(name: string, formArrayIndex: number, overrideDefaultValue?: any) {
-    const item = this.notSelectedHttpOptions().find((x) => x.name === name);
-
-    if (!item) return;
-
-    this.addHttpOption(item, formArrayIndex, overrideDefaultValue);
-  }
-
   addAdvancedFormPair(item: FormView, formArrayIndex: number, overrideDefaultValue?: any) {
     const group = this.destinationForm.controls.destinations.controls.at(formArrayIndex)?.controls.advanced!;
     const defaultValue = overrideDefaultValue ?? item.defaultValue;
@@ -196,15 +180,6 @@ export class BackupState {
     this.createFormField(group, item, defaultValue);
 
     this.selectedAdvancedFormPair.set([...this.selectedAdvancedFormPair(), item]);
-  }
-
-  addHttpOption(item: FormView, formArrayIndex: number, overrideDefaultValue?: any) {
-    const group = this.destinationForm.controls.destinations.controls.at(formArrayIndex)?.controls.advanced!;
-    const defaultValue = overrideDefaultValue ?? item.defaultValue;
-
-    this.createFormField(group, item, defaultValue);
-
-    this.selectedHttpOptions.set([...this.selectedHttpOptions(), item]);
   }
 
   removeAdvancedFormPair(item: FormView, formArrayIndex: number) {
@@ -217,22 +192,7 @@ export class BackupState {
 
         return y;
       });
-    } else {
-      this.selectedHttpOptions.update((y) => {
-        y = y.filter((x) => x.name !== item.name);
-
-        return y;
-      });
     }
-  }
-
-  removeHttpOption(item: FormView, formArrayIndex: number) {
-    this.destinationForm.controls.destinations.controls.at(formArrayIndex)?.controls.advanced.removeControl(item.name);
-    this.selectedHttpOptions.update((y) => {
-      y = y.filter((x) => x.name !== item.name);
-
-      return y;
-    });
   }
 
   submit(withoutExit = false) {
@@ -308,7 +268,6 @@ export class BackupState {
       advanced: [],
     });
     this.selectedAdvancedFormPair.set([]);
-    this.selectedHttpOptions.set([]);
     this.destinationForm.controls.destinations.clear();
     this.destinationForm.reset();
   }
@@ -658,7 +617,7 @@ export class BackupState {
         }
 
         return {
-          Name: y.Name,
+          Name: `--${y.Name}`,
           Value,
         };
       });
@@ -716,7 +675,6 @@ export class BackupState {
     const destinationConfig = DESTINATION_CONFIG.find((x) => x.customKey === key || x.key === key);
     const _key = destinationConfig?.key;
     const item = this.destinationOptions().find((x) => x.Key === _key);
-    const httpOptions = this.httpOptions();
 
     if (!item || !item.Options) return;
 
@@ -839,21 +797,6 @@ export class BackupState {
         this.destinationFormPair.update((y) => {
           y.advanced.push(patchedNewField);
 
-          return y;
-        });
-      }
-    }
-
-    for (let index = 0; index < httpOptions.length; index++) {
-      const element = httpOptions[index];
-
-      const passedDefaultValue = defaults?.advanced[element.name as string];
-      const defaultValue = passedDefaultValue ?? element.defaultValue;
-
-      if (createAdvancedFormFields && passedDefaultValue) {
-        this.createFormField(advancedGroup, element, defaultValue);
-        this.selectedHttpOptions.update((y) => {
-          y.push(element);
           return y;
         });
       }

@@ -571,6 +571,8 @@ export type SystemInfoDto = {
     TimeZones?: Array<TimeZoneDto> | null;
     APIExtensions?: Array<(string)> | null;
     APIScopes?: Array<(string)> | null;
+    DefaultOAuthURL?: (string) | null;
+    DefaultOAuthURLv2?: (string) | null;
 };
 
 export type TaskStartedDto = {
