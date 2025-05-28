@@ -23,6 +23,7 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   const isRefreshRequest = req.url === '/api/v1/auth/refresh';
   const isProgressStateRequest = req.url === '/api/v1/progressstate';
   const isConnectionTestRequest = req.url === '/api/v1/remoteoperation/test';
+  const isValidateFsTestRequest = req.url === '/api/v1/filesystem/validate';
   const isV2Request = req.url.startsWith('/api/v2/');
   const token = auth.token();
 
@@ -68,8 +69,8 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
       if (!IS_PROXY_DETECT_REQUEST) {
         if (isProgressStateRequest && error.status === 404) {
           // Suppress 404 errors for progressstate requests, API needs to change
-        } else if (isConnectionTestRequest) {
-          // Suppress errors for connection test requests, API needs to change
+        } else if (isConnectionTestRequest || isValidateFsTestRequest) {
+          // Suppress errors for test requests, API needs to change
         } else {
           sparkleAlertService.error(errorMsg);
         }
