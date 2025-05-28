@@ -57,7 +57,15 @@ export class SysinfoState {
         };
       }) ?? [];
 
-    return [defaultOptions, ...generic, ...compression];
+      const encryption =
+        this.systemInfo()?.EncryptionModules?.map((x) => {
+          return {
+            displayName: x.DisplayName ?? x.Key,
+            options: x.Options?.map(this.#mapCommandLineArgumentsToFormViews) ?? [],
+          };
+        }) ?? [];
+
+    return [defaultOptions, ...generic, ...compression, ...encryption];
   });
 
   allOptions = computed(() => {
