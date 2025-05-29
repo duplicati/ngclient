@@ -73,7 +73,7 @@ export class ServerStatusWebSocketService {
   #serverTaskQueue = signal<GetTaskStateDto[] | null>(null);
   #backupListState = signal<GetApiV1BackupsResponse | null>(null);
   #disconnectedDialog: ReturnType<typeof this.dialog.open<DisconnectedDialogComponent>> | undefined = undefined;
-  #subscriptions = signal<Partial<{ [key in SubscriptionService]: any }>>({});
+  #subscriptions = signal<Partial<{ [key in SubscriptionService]: any }>>({ 'legacystatus': true });
 
   shouldConnect = signal(true);
   connectionStatus = this.#connectionStatus.asReadonly();

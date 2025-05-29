@@ -2,9 +2,8 @@ import { ChangeDetectionStrategy, Component, effect, ElementRef, inject, signal,
 import { ReactiveFormsModule } from '@angular/forms';
 import { SparkleAlertComponent, SparkleButtonComponent, SparkleIconComponent } from '@sparkle-ui/core';
 import { finalize } from 'rxjs';
-import { BackupState } from '../../backup/backup.state';
 import { OptionsListComponent } from '../../backup/options/options-list/options-list.component';
-import { DuplicatiServerService } from '../../core/openapi';
+import { DuplicatiServerService, SettingDto } from '../../core/openapi';
 import { ServerSettingsService } from '../server-settings.service';
 
 const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
@@ -20,16 +19,14 @@ const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
   ],
   templateUrl: './advanced-options-settings.component.html',
   styleUrl: './advanced-options-settings.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [BackupState],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export default class AdvancedOptionsSettingsComponent {
-  #backupState = inject(BackupState);
   #serverSettingsService = inject(ServerSettingsService);
   #dupServer = inject(DuplicatiServerService);
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
 
-  settings = this.#backupState.settings;
+  settings = signal<SettingDto[]>([]);
   isSubmitting = signal(false);
   isLoadingOptions = signal(true);
   saved = signal(false);

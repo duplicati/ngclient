@@ -21,6 +21,20 @@
   </div>
 
   <div class="current-backup-actions">
+    @if (runningTask()) {
+      @if (isStopping()) {
+        <button spk-button i18n (click)="abort()">
+          <spk-icon>skull</spk-icon>
+          Abort
+        </button>
+      } @else {
+        <button spk-button i18n (click)="stop()">
+          <spk-icon>stop</spk-icon>
+          Stop
+        </button>
+      }
+    }
+
     <button spk-button i18n [class.loader]="isResuming()" (click)="pauseResume()">
       @if (clientIsRunning()) {
         <spk-icon>pause</spk-icon>

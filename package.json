@@ -1,6 +1,6 @@
 {
   "name": "@duplicati/ngclient",
-  "version": "0.0.128",
+  "version": "0.0.131",
   "license": "MIT",
   "contributors": [
     "sp90",
@@ -24,14 +24,14 @@
     "gen:openapi": "openapi-ts"
   },
   "dependencies": {
-    "@angular/animations": "^19.2.1",
-    "@angular/common": "^19.2.1",
-    "@angular/compiler": "^19.2.1",
-    "@angular/core": "^19.2.1",
-    "@angular/forms": "^19.2.1",
-    "@angular/platform-browser": "^19.2.1",
-    "@angular/platform-browser-dynamic": "^19.2.1",
-    "@angular/router": "^19.2.1",
+    "@angular/animations": "^20.0.0",
+    "@angular/common": "^20.0.0",
+    "@angular/compiler": "^20.0.0",
+    "@angular/core": "^20.0.0",
+    "@angular/forms": "^20.0.0",
+    "@angular/platform-browser": "^20.0.0",
+    "@angular/platform-browser-dynamic": "^20.0.0",
+    "@angular/router": "^20.0.0",
     "@sparkle-ui/core": "^0.11.20",
     "dayjs": "^1.11.13",
     "marked": "^15.0.7",
@@ -40,10 +40,10 @@
     "tslib": "^2.8.1"
   },
   "devDependencies": {
-    "@angular/build": "^19.2.1",
-    "@angular/cli": "^19.2.1",
-    "@angular/compiler-cli": "^19.2.1",
-    "@angular/localize": "^19.2.1",
+    "@angular/build": "^20.0.0",
+    "@angular/cli": "^20.0.0",
+    "@angular/compiler-cli": "^20.0.0",
+    "@angular/localize": "^20.0.0",
     "@hey-api/openapi-ts": "^0.64.11",
     "fast-xml-parser": "^5.2.2",
     "prettier": "^3.5.3",

@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import {
   SparkleButtonComponent,
   SparkleDialogService,
@@ -7,9 +7,12 @@ import {
   SparkleProgressBarComponent,
   SparkleSpinnerComponent,
 } from '@sparkle-ui/core';
+import { DuplicatiServerService } from '../../openapi';
 import { RelativeTimePipe } from '../../pipes/relative-time.pipe';
+import { ServerStateService } from '../../services/server-state.service';
 import { BackupsState } from '../../states/backups.state';
 import { RelayconfigState } from '../../states/relayconfig.state';
+import { SysinfoState } from '../../states/sysinfo.state';
 import { PauseDialogComponent } from './pause-dialog/pause-dialog.component';
 import { StatusBarState } from './status-bar.state';
 import ThrottleSettingsDialogComponent from './throttle-settings-dialog/throttle-settings-dialog.component';
@@ -30,10 +33,13 @@ const date = new Date();
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class StatusBarComponent {
+  #dupServer = inject(DuplicatiServerService);
   #statusBarState = inject(StatusBarState);
   #dialog = inject(SparkleDialogService);
   #backupsState = inject(BackupsState);
   #relayconfigState = inject(RelayconfigState);
+  #sysinfo = inject(SysinfoState);
+  #serverState  = inject(ServerStateService);
 
   minsAgo = date.setMinutes(date.getMinutes() - 1);
 
@@ -41,6 +47,10 @@ export default class StatusBarComponent {
   serverState = this.#statusBarState.serverState;
   clientIsRunning = this.#statusBarState.clientIsRunning;
   isResuming = this.#statusBarState.isResuming;
+  runningTask = computed(() => this.#serverState.serverState()?.ActiveTask?.Item1);
+  isStopping = computed(() => this.runningTask() == this.#taskStopRequested());
+  #taskStopRequested = signal(-1);
+  pgState = computed(() => this.#serverState.serverState());
 
   nextBackup = computed(() => {
     // Trigger if the backup list changes
@@ -74,8 +84,22 @@ export default class StatusBarComponent {
     this.#statusBarState.pauseResume().subscribe();
   }
 
+  stop() {
+    const taskId = this.runningTask();
+    if (!taskId) return;
+    this.#taskStopRequested.set(taskId);
+    this.#dupServer.postApiV1TaskByTaskidStop({ taskid: taskId }).subscribe();
+  }
+
+  abort() {
+    const taskId = this.runningTask();
+    if (!taskId) return;
+    this.#dupServer.postApiV1TaskByTaskidAbort({ taskid: taskId }).subscribe();
+  }
+
   ngAfterViewInit() {
-    const defaultConnectionMethod = this.#relayconfigState.relayIsEnabled() ? 'longpoll' : 'websocket';
+    const defaultConnectionMethod = 
+      this.#relayconfigState.relayIsEnabled() || !this.#sysinfo.hasWebSocket() ? 'longpoll' : 'websocket';
     this.#statusBarState.setConnectionMethod(defaultConnectionMethod);
   }
 }

@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { SparkleDialogService } from '@sparkle-ui/core';
 import { Observable, Subscriber } from 'rxjs';
 import { ConfirmDialogComponent } from '../components/confirm-dialog/confirm-dialog.component';
-import { DuplicatiServerService, PostApiV2DestinationTestResponse } from '../openapi';
+import { DestinationTestResponseDto, DuplicatiServerService, PostApiV2DestinationTestResponse } from '../openapi';
 import { SysinfoState } from '../states/sysinfo.state';
 
 export type TestDestinationResult = {
@@ -26,10 +26,8 @@ export class TestDestinationService {
   #sysinfo = inject(SysinfoState);
 
   testDestination(targetUrl: string, destinationIndex: number, askToCreate: boolean) {
-    if (this.#sysinfo.hasV2TestOperations())
-      return this.testDestinationv2(targetUrl, destinationIndex, askToCreate);
-    else
-      return this.testDestinationv1(targetUrl, destinationIndex, askToCreate);
+    if (this.#sysinfo.hasV2TestOperations()) return this.testDestinationv2(targetUrl, destinationIndex, askToCreate);
+    else return this.testDestinationv1(targetUrl, destinationIndex, askToCreate);
   }
 
   private testDestinationv2(targetUrl: string, destinationIndex: number, askToCreate: boolean) {
@@ -45,16 +43,7 @@ export class TestDestinationService {
         .subscribe({
           next: (res) => {
             if (res.Success) {
-              observer.next({
-                action: 'success',
-                targetUrl,
-                testAgain: false,
-                destinationIndex,
-                anyFilesFound: !res.Data?.FolderIsEmpty,
-                containsBackup: res.Data?.FolderContainsBackupFiles ?? undefined,
-                containsEncryptedBackupFiles: res.Data?.FolderContainsEncryptedBackupFiles ?? undefined,
-              });
-              observer.complete();
+              this.emitSuccessV2(observer, targetUrl, destinationIndex, res);
               return;
             }
 
@@ -63,10 +52,14 @@ export class TestDestinationService {
           error: (err) => {
             const res = err?.error?.body as PostApiV2DestinationTestResponse;
             if (res?.Data?.FolderExists === false || res?.StatusCode === 'missing-folder') {
-              if (askToCreate) 
-                this.handleMissingFolder(observer, targetUrl, destinationIndex);
+              if (askToCreate) this.handleMissingFolder(observer, targetUrl, destinationIndex);
               else
-                this.handleGenericError(observer, targetUrl, destinationIndex, $localize`The remote destination folder does not exist.`);
+                this.handleGenericError(
+                  observer,
+                  targetUrl,
+                  destinationIndex,
+                  $localize`The remote destination folder does not exist.`
+                );
               return;
             }
 
@@ -146,7 +139,8 @@ export class TestDestinationService {
             .subscribe({
               next: (res) => {
                 if (res.Success) {
-                  this.handleFolderCreated(observer, targetUrl, destinationIndex);
+                  this.emitSuccessV2(observer, targetUrl, destinationIndex, res);
+                  return;
                 } else {
                   this.handleFolderCreateFailure(
                     observer,
@@ -213,6 +207,24 @@ export class TestDestinationService {
         observer.complete();
       },
     });
+  }
+
+  private emitSuccessV2(
+    observer: Subscriber<TestDestinationResult>,
+    targetUrl: string,
+    destinationIndex: number,
+    res: DestinationTestResponseDto
+  ) {
+    observer.next({
+      action: 'success',
+      targetUrl,
+      testAgain: false,
+      destinationIndex,
+      anyFilesFound: !res.Data?.FolderIsEmpty,
+      containsBackup: res.Data?.FolderContainsBackupFiles ?? undefined,
+      containsEncryptedBackupFiles: res.Data?.FolderContainsEncryptedBackupFiles ?? undefined,
+    });
+    observer.complete();
   }
 
   private handleFolderCreated(
@@ -372,13 +384,22 @@ with the REPORTED host key: ${reportedhostkey}?`,
     });
   }
 
-  private handleDestinationErrorv1(errorMessage: string, targetUrl: string, destinationIndex: number, askToCreate: boolean) {
+  private handleDestinationErrorv1(
+    errorMessage: string,
+    targetUrl: string,
+    destinationIndex: number,
+    askToCreate: boolean
+  ) {
     return new Observable<TestDestinationResult>((observer) => {
       if (errorMessage === 'missing-folder') {
-        if (askToCreate)
-          this.handleMissingFolder(observer, targetUrl, destinationIndex);
+        if (askToCreate) this.handleMissingFolder(observer, targetUrl, destinationIndex);
         else
-          this.handleGenericError(observer, targetUrl, destinationIndex, $localize`The remote destination folder does not exist.`);
+          this.handleGenericError(
+            observer,
+            targetUrl,
+            destinationIndex,
+            $localize`The remote destination folder does not exist.`
+          );
         return;
       }
 

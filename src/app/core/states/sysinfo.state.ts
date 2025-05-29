@@ -57,7 +57,15 @@ export class SysinfoState {
         };
       }) ?? [];
 
-    return [defaultOptions, ...generic, ...compression];
+      const encryption =
+        this.systemInfo()?.EncryptionModules?.map((x) => {
+          return {
+            displayName: x.DisplayName ?? x.Key,
+            options: x.Options?.map(this.#mapCommandLineArgumentsToFormViews) ?? [],
+          };
+        }) ?? [];
+
+    return [defaultOptions, ...generic, ...compression, ...encryption];
   });
 
   allOptions = computed(() => {
@@ -65,6 +73,12 @@ export class SysinfoState {
       return [...acc, ...curr.options];
     }, [] as FormView[]);
   });
+
+  hasWebSocket = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v1:websocket');
+  });
+
 
   hasV2ListOperations = computed(() => {
     const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
@@ -133,7 +147,9 @@ export class SysinfoState {
       type: x.Type as ArgumentType,
       shortDescription: x.ShortDescription ?? undefined,
       longDescription: x.LongDescription ?? undefined,
+      deprecatedDescription: (x.Deprecated ?? false) ? x.DeprecationMessage ?? undefined : undefined,
       options: x.ValidValues,
+      defaultValue: x.DefaultValue
     } as FormView;
   }
 }

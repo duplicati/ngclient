@@ -61,8 +61,8 @@ export class GeneralLogComponent {
   });
 
   resource = rxResource({
-    request: () => ({ id: this.backupId()!, ...this.pagination() }),
-    loader: ({ request: params }) =>
+    params: () => ({ id: this.backupId()!, ...this.pagination() }),
+    stream: ({ params }) =>
       this.#dupServer.getApiV1BackupByIdLog({ id: params.id, pagesize: 100 }).pipe(
         map((x) => {
           return (x as LogEntry[]).map((y) => {

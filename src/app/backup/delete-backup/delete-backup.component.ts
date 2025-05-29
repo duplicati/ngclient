@@ -30,8 +30,8 @@ export default class DeleteBackupComponent {
   id = input.required<string>();
   backup = computed(() => this.#backupsState.getBackupById(this.id()));
   noLocalDbResource = rxResource({
-    request: () => ({ dbPath: this.backup()?.Backup?.DBPath }),
-    loader: ({ request: params }) =>
+    params: () => ({ dbPath: this.backup()?.Backup?.DBPath }),
+    stream: ({ params }) =>
       this.#dupServer.postApiV1FilesystemValidate({ requestBody: { path: params.dbPath } }).pipe(
         map(() => true),
         catchError(() => of(false))

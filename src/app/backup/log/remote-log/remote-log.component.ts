@@ -49,8 +49,8 @@ export class RemoteLogComponent {
   copiedFromIndex = signal<number | null>(null);
 
   resource = rxResource({
-    request: () => ({ id: this.backupId()!, ...this.pagination() }),
-    loader: ({ request: params }) =>
+    params: () => ({ id: this.backupId()!, ...this.pagination() }),
+    stream: ({ params }) =>
       this.#dupServer.getApiV1BackupByIdRemotelog({ id: params.id, pagesize: 100 }).pipe(
         map((x) => {
           return (x as RemoteLogEntry[]).map((y, i) => {
