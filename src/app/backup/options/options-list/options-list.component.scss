@@ -59,3 +59,7 @@ spk-icon {
   gap: p2r(8);
   justify-content: flex-end;
 }
+
+.deprecated {
+  text-decoration: line-through;
+}

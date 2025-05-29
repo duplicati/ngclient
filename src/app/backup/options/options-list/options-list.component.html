@@ -21,7 +21,13 @@
             <h3 title>{{ group.displayName }}</h3>
 
             @for (option of group.options; track $index) {
-              <button #option type="button" (click)="addSetting(option)">{{ option.name }}</button>
+              <button
+                #option
+                type="button"
+                [class.deprecated]="option.deprecatedDescription"
+                (click)="addSetting(option)">
+                {{ option.name }}
+              </button>
             }
           }
         </ng-container>
@@ -46,9 +52,11 @@
           warning-octagon
         </spk-icon>
       }
-      {{ item.FormView.shortDescription }}
+      <span [class.deprecated]="item.FormView.deprecatedDescription">{{ item.FormView.shortDescription }}</span>
 
-      @if (item.FormView.longDescription) {
+      @if (item.FormView.deprecatedDescription) {
+        <spk-icon class="warning" [spkTooltip]="item.FormView.deprecatedDescription">archive</spk-icon>
+      } @else if (item.FormView.longDescription) {
         <spk-icon class="primary" [spkTooltip]="item.FormView.longDescription">question</spk-icon>
       }
     </ng-template>

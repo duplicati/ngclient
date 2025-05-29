@@ -59,7 +59,7 @@ export class ServerStatusLongPollService {
     this.#dupServer
       .getApiV1Serverstate({
         lastEventId: this.#lastEventId(),
-        longpoll: this.#lastEventId() > 0,
+        longpoll: this.#lastEventId() >= 0,
         duration: this.duration,
       })
       .pipe(takeUntil(this.#destroy$))
@@ -101,7 +101,7 @@ export class ServerStatusLongPollService {
   #processServerState(response: ServerStatusDto) {
     this.#connectionStatus.set('connected');
     this.#serverState.set(response);
-    this.#lastEventId.set(response.LastEventID || -1);
+    this.#lastEventId.set(response.LastEventID ?? -1);
     this.#failedConnectionAttempts.set(0);
   }
 

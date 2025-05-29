@@ -1,5 +1,4 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -25,7 +24,6 @@ import {
   SparkleToggleComponent,
   SparkleTooltipDirective,
 } from '@sparkle-ui/core';
-import { finalize } from 'rxjs';
 import { BackupState } from '../../backup/backup.state';
 import { DESTINATION_CONFIG } from '../../backup/destination/destination.config';
 import { FormView, toTargetPath } from '../../backup/destination/destination.config-utilities';
@@ -99,7 +97,6 @@ export type DestinationFormGroupValue = ReturnType<typeof createDestinationFormG
 export default class RestoreDestinationComponent {
   #router = inject(Router);
   #route = inject(ActivatedRoute);
-  #httpClient = inject(HttpClient);
   #backupState = inject(BackupState);
   #dialog = inject(SparkleDialogService);
   #testDestination = inject(TestDestinationService);
@@ -112,8 +109,6 @@ export default class RestoreDestinationComponent {
   destinationFormPair = this.#backupState.destinationFormPair;
   selectedAdvancedFormPair = this.#backupState.selectedAdvancedFormPair;
   notSelectedAdvancedFormPair = this.#backupState.notSelectedAdvancedFormPair;
-  selectedHttpOptions = this.#backupState.selectedHttpOptions;
-  notSelectedHttpOptions = this.#backupState.notSelectedHttpOptions;
   destinationOptions = this.#backupState.destinationOptions;
   destinationFormSignal = this.#backupState.destinationFormSignal;
   destinationCount = computed(() => this.destinationFormSignal()?.destinations?.length ?? 0);
@@ -184,10 +179,6 @@ export default class RestoreDestinationComponent {
     this.#backupState.removeAdvancedFormPair(item, formArrayIndex);
   }
 
-  addHttpOption(item: FormView, formArrayIndex: number) {
-    this.#backupState.addHttpOption(item, formArrayIndex);
-  }
-
   targetUrlCtrl = new FormControl();
   targetUrlInitial = signal<string | null>(null);
   targetUrlDialogOpen = signal(false);
@@ -246,7 +237,7 @@ export default class RestoreDestinationComponent {
         }
 
         if (res.action === 'trust-cert')
-          this.#backupState.addHttpOptionByName('accept-specified-ssl-hash', res.destinationIndex, res.certData);
+          this.#backupState.addOrUpdateAdvancedFormPairByName('accept-specified-ssl-hash', res.destinationIndex, res.certData);
         if (res.action === 'approve-host-key')
           this.#backupState.addOrUpdateAdvancedFormPairByName(
             'ssh-fingerprint',
@@ -281,7 +272,6 @@ export default class RestoreDestinationComponent {
     this.#router.navigate(['encryption'], { relativeTo: this.#route.parent });
   }
 
-  #oauthServiceLink = signal('https://duplicati-oauth-handler.appspot.com/').asReadonly();
   #oauthCreateToken = signal(
     Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2)
   ).asReadonly();
@@ -291,13 +281,15 @@ export default class RestoreDestinationComponent {
   keyCreation() {}
 
   oauthStartTokenCreation(backendKey: string) {
-    // if (!servicelink.endsWith('/')) servicelink += '/';
+    const link = backendKey == 'pcloud' 
+      ? this.#backupState.oauthServiceLinkNew
+      : this.#backupState.oauthServiceLink;
 
     this.#oauthInProgress.set(true);
 
     const w = 450;
     const h = 600;
-    const startlink = this.#oauthServiceLink() + '?type=' + backendKey + '&token=' + this.#oauthCreateToken();
+    const startlink = link + '?type=' + backendKey + '&token=' + this.#oauthCreateToken();
 
     // const countDown = 100;
     // const ft = oauthCreateToken;
@@ -309,52 +301,20 @@ export default class RestoreDestinationComponent {
       'height=' + h + ',width=' + w + ',menubar=0,status=0,titlebar=0,toolbar=0,left=' + left + ',top=' + top
     );
 
-    wnd?.addEventListener('beforeunload', (event) => {
-      this.#httpClient
-        .get(this.#oauthServiceLink() + 'fetch?callback=JSON_CALLBACK', {
-          params: { token: this.#oauthCreateToken() },
-        })
-        .pipe(finalize(() => this.#oauthInProgress.set(false)))
-        .subscribe({
-          next: (res: any) => {
-            if (res?.authid) {
-              this.#oauthId.set(res.authid);
+    window.addEventListener('message', (event) => {
+      const hasAuthId = event.data.startsWith('authid:');
+      const authId = hasAuthId ? event.data.replace('authid:', '') : null;
 
-              // wnd.close();
-            }
-          },
-        });
+      if (hasAuthId) {
+        this.#oauthId.set(authId);
+        this.#oauthInProgress.set(false);
+
+        wnd?.close();
+      } else {
+        // TODO some error handling
+      }
     });
-
-    // var recheck = function () {
-    //   countDown--;
-    //   if (countDown > 0 && ft == oauthCreateToken) {
-    //     $http
-    //       .jsonp(servicelink + "fetch?callback=JSON_CALLBACK", {
-    //         params: { token: ft },
-    //       })
-    //       .then(
-    //         function (response) {
-    //           if (response.data.authid) {
-    //             const AuthID = response.data.authid;
-    //             const oauth_in_progress = false;
-    //             wnd.close();
-    //           } else {
-    //             setTimeout(recheck, 3000);
-    //           }
-    //         },
-    //         function (response) {
-    //           setTimeout(recheck, 3000);
-    //         }
-    //       );
-    //   } else {
-    //     const oauth_in_progress = false;
-    //     if (wnd != null) wnd.close();
-    //   }
-    // };
-
-    // setTimeout(recheck, 6000);
-
-    // return false;
+    
+    return false;
   }
 }

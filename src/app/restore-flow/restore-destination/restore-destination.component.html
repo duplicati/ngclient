@@ -141,48 +141,6 @@
           }
         </app-toggle-card>
 
-        <app-toggle-card [disallowToggle]="true">
-          <ng-container title i18n>
-            Http options
-
-            <spk-menu [searchable]="true">
-              <button
-                spk-button
-                type="button"
-                class="outlined small"
-                [disabled]="notSelectedHttpOptions().length === 0">
-                Add http option
-                <spk-icon>plus</spk-icon>
-              </button>
-
-              <ng-container menu>
-                @for (option of notSelectedHttpOptions(); track $index) {
-                  <button #option type="button" (click)="addHttpOption(option, 0)">
-                    {{ option.name }}
-                  </button>
-                }
-              </ng-container>
-            </spk-menu>
-          </ng-container>
-
-          @for (field of selectedHttpOptions(); track $index) {
-            <ng-container
-              *ngTemplateOutlet="
-                fieldTemplate;
-                context: {
-                  $implicit: {
-                    index: $index,
-                    formView: field,
-                    formGroupName: 'advanced',
-                    asHttpOptions: true,
-                    destinationType: destinationFormSignal()?.destinations?.[0]?.destinationType,
-                    oauthField: destinationFormPair().oauthField,
-                  },
-                }
-              "></ng-container>
-          }
-        </app-toggle-card>
-
         <ng-template #fieldTemplate let-item>
           <div class="field-row" [class.single-field]="item.formGroupName !== 'advanced'">
             <ng-container [formGroupName]="item.formGroupName">
