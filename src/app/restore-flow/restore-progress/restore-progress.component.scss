@@ -66,7 +66,7 @@ section {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: var(--success-500);
+  color: var(--success-8);
 
   spk-icon {
     font-size: p2r(40);
@@ -86,7 +86,7 @@ section {
 
 .border-circle {
   fill: none;
-  stroke: var(--success-500);
+  stroke: var(--success-8);
   stroke-width: p2r(5);
   stroke-dasharray: 282.74;
   stroke-dashoffset: 282.74;

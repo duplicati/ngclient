@@ -148,14 +148,14 @@ details {
   display: block;
   width: p2r(16);
   height: p2r(16);
-  background-color: var(--success-500);
+  background-color: var(--success-8);
   border-radius: 50%;
 
   &.error {
-    background-color: var(--error-500);
+    background-color: var(--error-8);
   }
 
   &.warn {
-    background-color: var(--warn-500);
+    background-color: var(--warn-8);
   }
 }
