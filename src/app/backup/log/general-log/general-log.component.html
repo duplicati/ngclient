@@ -3,11 +3,17 @@
 }
 
 @for (item of resource.value(); track $index) {
+  @let errorCount = item.data?.ErrorsActualLength || 0;
+  @let warningCount = item.data?.WarningsActualLength || 0;
+  @let result = item.data?.ParsedResult || 'Unknown';
+
   <article class="log-entry">
     <header (click)="toggleOpenEntry(item.id!)">
-      @if (item.data?.ErrorsActualLength && item.data?.ErrorsActualLength! > 0) {
+      @if (result == 'Fatal') {
         <div class="status error"></div>
-      } @else if (item.data?.WarningsActualLength && item.data?.WarningsActualLength! > 0) {
+      } @else if (result == 'Error') {
+        <div class="status error"></div>
+      } @else if (result == 'Warning') {
         <div class="status warn"></div>
       } @else {
         <div class="status"></div>
@@ -16,8 +22,18 @@
       <p>
         {{ item.data?.MainOperation }}
 
-        @if (item.data?.WarningsActualLength && item.data?.WarningsActualLength! > 0) {
-          ({{ item.data?.WarningsActualLength }} warnings)
+        @if (errorCount > 0 || warningCount > 0) {
+          (
+          <span i18n>
+            {errorCount, plural, =0 {} =1 {1 error} other {{{ errorCount }} errors}}
+          </span>
+          @if (errorCount > 0 && warningCount > 0) {
+            ,
+          }
+          <span i18n>
+            {warningCount, plural, =0 {} =1 {1 warning} other {{{ warningCount }} warnings}}
+          </span>
+          )
         }
       </p>
 
@@ -48,10 +64,14 @@
           </ng-container>
 
           <ng-container content>
-            <p i18n>Evaluated: {{ item.data?.ExaminedFiles }} ({{ item.data?.SizeOfExaminedFiles | bytes }})</p>
-            <p i18n>Opened: {{ item.data?.OpenedFiles }} ({{ item.data?.SizeOfOpenedFiles | bytes }})</p>
-            <p i18n>Added: {{ item.data?.AddedFiles }} ({{ item.data?.SizeOfAddedFiles | bytes }})</p>
-            <p i18n>Modified: {{ item.data?.ModifiedFiles }} ({{ item.data?.SizeOfModifiedFiles | bytes }})</p>
+            <p i18n>
+              Evaluated: {{ item.data?.ExaminedFiles }} ({{ item.data?.SizeOfExaminedFiles | bytes: true : true }})
+            </p>
+            <p i18n>Opened: {{ item.data?.OpenedFiles }} ({{ item.data?.SizeOfOpenedFiles | bytes: true : true }})</p>
+            <p i18n>Added: {{ item.data?.AddedFiles }} ({{ item.data?.SizeOfAddedFiles | bytes: true : true }})</p>
+            <p i18n>
+              Modified: {{ item.data?.ModifiedFiles }} ({{ item.data?.SizeOfModifiedFiles | bytes: true : true }})
+            </p>
             <p i18n>Deleted: {{ item.data?.DeletedFiles }}</p>
             <p i18n>Too large: {{ item.data?.TooLargeFiles }}</p>
             <p i18n>Files with error: {{ item.data?.FilesWithError }}</p>
@@ -61,7 +81,7 @@
         <div class="extra-info">
           <spk-divider />
 
-          @if (item.data?.MainOperation === 'Backup') {
+          @if (item.data?.TestResults) {
             <details name="details">
               <summary i18n>
                 <spk-icon>circle-half-tilt</spk-icon>
@@ -84,9 +104,9 @@
             </details>
 
             <details name="details">
-              <summary>
+              <summary i18n>
                 <spk-icon>file-archive</spk-icon>
-                Compression phase
+                Compact phase
 
                 <div class="actions">
                   <spk-icon class="toggle-indicator">caret-down</spk-icon>
@@ -100,17 +120,17 @@
                 <spk-divider />
                 <p i18n>
                   Deleted files: {{ item.data?.CompactResults?.DeletedFileCount }} ({{
-                    item.data?.CompactResults?.DeletedFileSize | bytes
+                    item.data?.CompactResults?.DeletedFileSize | bytes: true : true
                   }})
                 </p>
                 <p i18n>
                   Downloaded files: {{ item.data?.CompactResults?.DownloadedFileCount }} ({{
-                    item.data?.CompactResults?.DownloadedFileSize | bytes
+                    item.data?.CompactResults?.DownloadedFileSize | bytes: true : true
                   }})
                 </p>
                 <p i18n>
                   Uploaded files: {{ item.data?.CompactResults?.UploadedFileCount }} ({{
-                    item.data?.CompactResults?.UploadedFileSize | bytes
+                    item.data?.CompactResults?.UploadedFileSize | bytes: true : true
                   }})
                 </p>
                 <spk-divider />
