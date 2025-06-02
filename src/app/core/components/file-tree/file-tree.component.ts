@@ -633,7 +633,7 @@ export default class FileTreeComponent {
       .filter((x) => x.startsWith('-'))
       .map((x) => x.slice(1, -1));
 
-    const pathArr = path
+    let pathArr = path
       .split('\0')
       .filter((x) => !x.startsWith('-'))
       .filter(Boolean);
@@ -715,7 +715,11 @@ export default class FileTreeComponent {
 
             this.#findActiveNodeAndScrollTo();
 
-            return arrayUniqueByKey as TreeNode[];
+            if (this.hideShortcuts()) {
+              return arrayUniqueByKey.filter((x: TreeNode) => !x.id!.startsWith('%')) as TreeNode[];
+            } else {
+              return arrayUniqueByKey as TreeNode[];
+            }
           });
         },
       });
