@@ -1,10 +1,9 @@
 @let _destinationType = destinationType();
+@let config = destinationFormConfig();
 
-@if (_destinationType) {
-  @let config = destinationFormConfig();
+@if (_destinationType && config) {
   @let form = destinationForm();
 
-  <pre>{{ config.custom | json }}</pre>
   @for (formView of config.custom; track $index) {
     <ng-container
       *ngTemplateOutlet="
@@ -37,13 +36,12 @@
       "></ng-container>
   }
 
-  <spk-toggle-card [disallowToggle]="true">
+  <spk-toggle-card [disallowToggle]="true" class="advanced-options">
     <ng-container title i18n>
       Advanced options
 
       @let _nonSelectedAdvancedFormViews = nonSelectedAdvancedFormViews();
 
-      <!-- <pre>{{ _nonSelectedAdvancedFormViews | json }}</pre> -->
       <spk-menu [searchable]="true">
         <button spk-button type="button" class="outlined small" [disabled]="_nonSelectedAdvancedFormViews.length === 0">
           Add advanced option
@@ -355,50 +353,4 @@
       }
     </div>
   </ng-template>
-
-  <pre>{{ destinationForm() | json }}</pre>
-  <pre>{{ destinationFormConfig() | json }}</pre>
 }
-<!-- 
-  
-
-  <spk-toggle-card [disallowToggle]="true">
-    <ng-container title i18n>
-      Http options
-
-      <spk-menu [searchable]="true">
-        <button spk-button type="button" class="outlined small" [disabled]="notSelectedHttpOptions().length === 0">
-          Add http option
-          <spk-icon>plus</spk-icon>
-        </button>
-
-        <ng-container menu>
-          @for (option of notSelectedHttpOptions(); track $index) {
-            <button #option type="button" (click)="addHttpOption(option, 0)">
-              {{ option.name }}
-            </button>
-          }
-        </ng-container>
-      </spk-menu>
-    </ng-container>
-
-    @for (field of selectedHttpOptions(); track $index) {
-      <ng-container
-        *ngTemplateOutlet="
-          fieldTemplate;
-          context: {
-            $implicit: {
-              index: $index,
-              formView: field,
-              formGroupName: 'advanced',
-              asHttpOptions: true,
-              destinationType: destinationFormSignal()?.destinations?.[0]?.destinationType,
-              oauthField: destinationFormPair().oauthField,
-            },
-          }
-        "></ng-container>
-    }
-  </spk-toggle-card>
-
-  
-</form> -->

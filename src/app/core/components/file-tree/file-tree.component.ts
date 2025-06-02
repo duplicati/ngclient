@@ -648,20 +648,16 @@ export default class FileTreeComponent {
       return split;
     });
 
-    // let urlPieces: string[] = [this.rootPath() ?? '/'];
     let urlPieces: string[] = ['/'];
 
     segmentArr.forEach((segments) => {
       segments.forEach((_, index) => {
         const urlCombined = segments.slice(0, index + 1).join(isWindows ? '\\' : '/');
-        let urlPiece = urlCombined;
 
-        if (urlPiece.indexOf(':') === -1 && !urlPiece.startsWith('%')) {
-          urlPiece = '/' + urlCombined;
-        }
+        if (urlCombined === '') return;
 
-        if (!urlPieces.includes(urlPiece)) {
-          urlPieces.push(urlPiece);
+        if (!urlPieces.includes(urlCombined)) {
+          urlPieces.push(urlCombined);
         }
       });
     });

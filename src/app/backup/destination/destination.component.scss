@@ -37,68 +37,15 @@ header {
   }
 }
 
-pre {
-  white-space: pre-wrap;
-}
-
-.field-row {
-  display: grid;
-  align-items: flex-end;
-  grid-template-columns: 1fr p2r(40);
-  gap: p2r(8);
-
-  &.single-field {
-    display: block;
-  }
-}
-
 form {
   display: flex;
   flex-direction: column;
   gap: p2r(24);
-  padding-bottom: p2r(24);
 }
 
 .form-actions {
   display: flex;
   justify-content: space-between;
-}
-
-.form-column {
-  display: flex;
-  flex-direction: column;
-
-  label {
-    display: flex;
-    align-items: center;
-    gap: p2r(4);
-  }
-
-  spk-icon {
-    font-size: p2r(16);
-  }
-}
-
-label {
-  display: flex;
-  align-items: center;
-  gap: p2r(4);
-
-  spk-icon {
-    font-size: p2r(16);
-  }
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: p2r(8);
-  align-items: flex-end;
-}
-
-.clickable {
-  cursor: pointer;
-  color: var(--primary-500);
 }
 
 .most-common-destinations {
@@ -122,18 +69,4 @@ label {
       margin: 0;
     }
   }
-}
-
-[prefix].link {
-  cursor: pointer;
-  text-decoration: underline;
-  color: var(--primary-500);
-}
-
-textarea ~ grammarly-extension {
-  display: none;
-}
-
-spk-select {
-  --miw: p2r(120);
 }

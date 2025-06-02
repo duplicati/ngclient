@@ -1,4 +1,4 @@
-import { JsonPipe, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, Injector, model, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -21,6 +21,13 @@ import { BackupState } from '../../backup.state';
 import { DESTINATION_CONFIG } from '../destination.config';
 import { CustomFormView, FormView, fromTargetPath, toTargetPath } from '../destination.config-utilities';
 
+type DestinationConfig = {
+  destinationType: string;
+  oauthField: string | null;
+  custom: FormView[];
+  dynamic: FormView[];
+  advanced: FormView[];
+};
 @Component({
   selector: 'app-single-destination',
   imports: [
@@ -42,8 +49,6 @@ import { CustomFormView, FormView, fromTargetPath, toTargetPath } from '../desti
     SparkleTooltipDirective,
     SparkleToggleComponent,
     SparkleProgressBarComponent,
-
-    JsonPipe,
   ],
   templateUrl: './single-destination.component.html',
   styleUrl: './single-destination.component.scss',
@@ -52,18 +57,19 @@ import { CustomFormView, FormView, fromTargetPath, toTargetPath } from '../desti
 export class SingleDestinationComponent {
   #backupState = inject(BackupState);
   injector = inject(Injector);
-  targetUrl = model.required<string>();
+  targetUrl = model.required<string | null>();
 
-  // targetUrlData = computed(() => {
-  //   console.log('targetUrl', this.targetUrl());
-  //   const newTargetUrlData = fromTargetPath(this.targetUrl());
-  //   return newTargetUrlData;
-  // });
-
+  #destType: string | null = null;
   destinationType = computed(() => {
     const targetUrl = this.targetUrl();
 
-    return targetUrl.split('://')[0];
+    if (!targetUrl) return null;
+
+    const destType = targetUrl.split('://')[0];
+
+    this.#destType = destType;
+
+    return destType;
   });
 
   destinationForm = signal({
@@ -73,23 +79,13 @@ export class SingleDestinationComponent {
   });
 
   advancedFormFieldNames = computed(() => Object.keys(this.destinationForm().advanced));
-
-  destinationFormConfig = signal<{
-    destinationType: string | null;
-    oauthField: string | null;
-    custom: FormView[];
-    dynamic: FormView[];
-    advanced: FormView[];
-  }>({
-    destinationType: null,
-    oauthField: null,
-    custom: [] as FormView[],
-    dynamic: [] as FormView[],
-    advanced: [] as FormView[],
-  });
+  destinationFormConfig = signal<DestinationConfig | null>(null);
 
   nonSelectedAdvancedFormViews = computed(() => {
     const config = this.destinationFormConfig();
+
+    if (!config) return [];
+
     const advancedFormFieldNames = this.advancedFormFieldNames();
 
     return config.advanced.filter(
@@ -99,16 +95,12 @@ export class SingleDestinationComponent {
 
   destinationTypeEffect = effect(() => {
     const key = this.destinationType();
-    const targetUrl = this.targetUrl();
-    const targetUrlData = fromTargetPath(targetUrl);
-
-    console.log('targetUrlData', targetUrlData);
 
     const destinationConfig = DESTINATION_CONFIG.find((x) => x.customKey === key || x.key === key);
     const _key = destinationConfig?.key;
     const item = this.#backupState.destinationOptions().find((x) => x.Key === _key);
 
-    if (!item || !item.Options) return;
+    if (!item || !item.Options || !key) return;
 
     const oauthField = destinationConfig && destinationConfig.oauthField ? destinationConfig.oauthField : null;
     const customFields = destinationConfig && destinationConfig.customFields ? destinationConfig.customFields : {};
@@ -119,29 +111,19 @@ export class SingleDestinationComponent {
       destinationConfig && destinationConfig.ignoredAdvancedFields ? destinationConfig.ignoredAdvancedFields : [];
 
     const destinationFormConfig = {
-      destinationType: key ?? null,
+      destinationType: key,
       oauthField,
       custom: [] as FormView[],
       dynamic: [] as FormView[],
       advanced: [] as FormView[],
-    };
+    } as DestinationConfig;
 
     if (customFields) {
       Object.entries(customFields).forEach(([key, value], index) => {
-        const passedValue = targetUrlData?.custom?.[key];
-        const inputValue = passedValue ?? value.defaultValue;
-
-        this.destinationForm.update((y) => {
-          y.custom[key] = inputValue;
-          return y;
-        });
-
         destinationFormConfig.custom.push({ order: 900 + index, ...value });
       });
     }
 
-    // TODO - figure out why dynamic fields are getting overwritten from advanced fields only when the path are valid
-    // I think it's because we can bring advanced fields to the dynamic fields but we should only if its in the config
     for (let index = 0; index < item.Options.length; index++) {
       const element = item.Options[index] as ICommandLineArgument;
 
@@ -176,14 +158,6 @@ export class SingleDestinationComponent {
             }
           : newField;
 
-        const passedValue = targetUrlData?.dynamic?.[name];
-        const inputValue = passedValue ?? asDynamicDefaultValue ?? element.DefaultValue;
-
-        this.destinationForm.update((y) => {
-          y.dynamic[name] = inputValue;
-          return y;
-        });
-
         destinationFormConfig.dynamic.push(patchedNewField);
       } else {
         const name = element.Name as string;
@@ -210,15 +184,6 @@ export class SingleDestinationComponent {
             }
           : newField;
 
-        const passedValue = targetUrlData?.advanced?.[name] ?? null;
-
-        if (passedValue) {
-          this.destinationForm.update((y) => {
-            y.dynamic[name] = passedValue;
-            return y;
-          });
-        }
-
         destinationFormConfig.advanced.push(patchedNewField);
       }
     }
@@ -230,12 +195,39 @@ export class SingleDestinationComponent {
     this.destinationFormConfig.set(destinationFormConfig);
   });
 
-  destinationFormEffect = effect(() => {
-    const key = this.destinationType();
-    const form = this.destinationForm();
+  targetUrlEffect = effect(() => {
     const config = this.destinationFormConfig();
 
-    if (!form || !config || !key) return;
+    if (!config) return;
+
+    const targetUrl = this.targetUrl();
+
+    if (!targetUrl) return;
+
+    const targetUrlData = fromTargetPath(targetUrl);
+
+    if (!targetUrlData) return;
+
+    const formValues = {
+      custom: targetUrlData.custom,
+      dynamic: targetUrlData.dynamic,
+      advanced: targetUrlData.advanced,
+    };
+
+    this.destinationForm.update((y) => {
+      y.custom = { ...y.custom, ...formValues.custom };
+      y.dynamic = { ...y.dynamic, ...formValues.dynamic };
+      y.advanced = { ...y.advanced, ...formValues.advanced };
+
+      return y;
+    });
+  });
+
+  destinationFormEffect = effect(() => {
+    const key = this.#destType;
+    const form = this.destinationForm();
+
+    if (!form || !key) return;
 
     const newTargetUrl = toTargetPath({
       destinationType: key,
@@ -260,7 +252,7 @@ export class SingleDestinationComponent {
 
   getFormView(fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string) {
     const form = this.destinationFormConfig();
-    const formView = form[fieldGroup].find((y) => y.name === fieldName);
+    const formView = form?.[fieldGroup].find((y) => y.name === fieldName);
 
     if (!formView) return null;
 
@@ -278,7 +270,11 @@ export class SingleDestinationComponent {
   addAdvancedOption(formView: FormView) {
     const form = this.destinationForm();
 
-    form.advanced[formView.name] = formView.defaultValue;
+    if (formView.type === 'Boolean') {
+      form.advanced[formView.name] = formView.defaultValue === 'true' ? true : false;
+    } else {
+      form.advanced[formView.name] = formView.defaultValue;
+    }
 
     this.destinationForm.set({ ...form });
   }
