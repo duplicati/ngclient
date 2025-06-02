@@ -270,11 +270,7 @@ export class SingleDestinationComponent {
   addAdvancedOption(formView: FormView) {
     const form = this.destinationForm();
 
-    if (formView.type === 'Boolean') {
-      form.advanced[formView.name] = formView.defaultValue === 'true' ? true : false;
-    } else {
-      form.advanced[formView.name] = formView.defaultValue;
-    }
+    form.advanced[formView.name] = formView.defaultValue;
 
     this.destinationForm.set({ ...form });
   }

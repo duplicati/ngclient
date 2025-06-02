@@ -4,6 +4,8 @@
 @if (_destinationType && config) {
   @let form = destinationForm();
 
+  <!-- <pre>{{ targetUrl() }}</pre> -->
+
   @for (formView of config.custom; track $index) {
     <ng-container
       *ngTemplateOutlet="
@@ -283,18 +285,16 @@
           <spk-icon prefix>numpad</spk-icon>
         </spk-form-field>
       } @else if (item.formView.type === 'Boolean') {
-        <spk-toggle class="primary raised">
+        <spk-toggle
+          class="primary raised"
+          [class.active]="formInput === 'true'"
+          (click)="updateFieldValue(item.fieldGroup, item.formView.name, formInput === 'true' ? 'false' : 'true')">
           <label [for]="formFieldId">
             {{ labelContent }}
             @if (item.formView.longDescription) {
               <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
             }
           </label>
-          <input
-            type="checkbox"
-            [id]="formFieldId"
-            [ngModel]="formInput"
-            (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
         </spk-toggle>
       } @else if (item.formView.type === 'Flags') {
         <spk-select
