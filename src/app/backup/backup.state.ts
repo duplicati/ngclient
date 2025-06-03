@@ -326,8 +326,8 @@ export class BackupState {
       : [];
 
     const pathFilters = sourceDataFormValue.path?.split('\0') ?? [];
-
     const settings = this.mapFormsToSettings();
+
     const excludes = Object.entries(sourceDataFormValue.excludes ?? {})
       .filter(([key, val]) => val && key !== 'filesLargerThan')
       .map(([key]) => key);
@@ -466,7 +466,7 @@ export class BackupState {
         }
 
         return {
-          Name: `--${y.Name}`,
+          Name: y.Name,
           Value,
         };
       });
