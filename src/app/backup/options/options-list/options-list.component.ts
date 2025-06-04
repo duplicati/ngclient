@@ -73,6 +73,7 @@ export class OptionsListComponent {
     const predefinedSettings = options
       .map((setting) => {
         const option = this.allOptions().find((opt) => opt.name === setting.Name?.replace('--', ''));
+
         let _value: any = setting.Value ?? '';
 
         if (option && !hiddenNames.includes(option.name)) {
@@ -110,7 +111,7 @@ export class OptionsListComponent {
   });
 
   nonSelectedOptionsGrouped = computed(() => {
-    const selectedNames = this.options().map((s) => s.Name);
+    const selectedNames = this.options().map((s) => s.Name?.replace('--', ''));
     const hiddenNames = this.hiddenOptions();
 
     return this.allOptionsGrouped()
@@ -168,7 +169,7 @@ export class OptionsListComponent {
         value = parseInt(value) || 0;
       }
 
-      const newSettings = [...settings, { Name: option.name, Value: value }];
+      const newSettings = [...settings, { Name: '--' + option.name, Value: value }];
 
       return newSettings;
     });

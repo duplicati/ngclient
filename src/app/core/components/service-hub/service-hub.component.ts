@@ -81,6 +81,11 @@ export default class ServiceHubComponent {
       const history = this.alertHistory();
       const notifications = this.notifications();
 
+      if (notifications.length === 0) {
+        this.shownMessage.set(null);
+        return;
+      }
+
       if (notifications.length && this.previousHistoryCount() !== history.length && !this.isNotificationsOpen()) {
         this.shownMessage.set({
           content: notifications[0] as NotificationDto,

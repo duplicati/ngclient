@@ -8,7 +8,7 @@
 ### Deps
 
 - SparkleUI - https://sparkle-ui.dev/
-- Angular 19 - https://angular.dev
+- Angular 20 - https://angular.dev
 - Dayjs - https://day.js.org/en/
 - Phosphor Icons - https://phosphoricons.com/
 

@@ -1,4 +1,3 @@
-import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -9,7 +8,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   SparkleAlertComponent,
@@ -18,23 +17,15 @@ import {
   SparkleFormFieldComponent,
   SparkleIconComponent,
   SparkleMenuComponent,
-  SparkleProgressBarComponent,
-  SparkleSelectComponent,
-  SparkleToggleComponent,
-  SparkleTooltipDirective,
 } from '@sparkle-ui/core';
 import { finalize } from 'rxjs';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
-import { FileDropTextareaComponent } from '../../core/components/file-drop-textarea/file-drop-textarea.component';
-import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
-import { SizeComponent } from '../../core/components/size/size.component';
-import { TimespanComponent } from '../../core/components/timespan/timespan.component';
-import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { IDynamicModule } from '../../core/openapi';
 import { TestDestinationService } from '../../core/services/test-destination.service';
 import { BackupState } from '../backup.state';
 import { DESTINATION_CONFIG } from './destination.config';
-import { FormView, toTargetPath } from './destination.config-utilities';
+import { FormView } from './destination.config-utilities';
+import { SingleDestinationComponent } from './single-destination/single-destination.component';
 
 const fb = new FormBuilder();
 
@@ -81,22 +72,14 @@ type DefaultGroup = {
 @Component({
   selector: 'app-destination',
   imports: [
-    ReactiveFormsModule,
-    NgTemplateOutlet,
+    SingleDestinationComponent,
+
+    FormsModule,
     SparkleFormFieldComponent,
     SparkleMenuComponent,
     SparkleIconComponent,
-    SparkleToggleComponent,
     SparkleDialogComponent,
     SparkleAlertComponent,
-    SparkleSelectComponent,
-    SparkleTooltipDirective,
-    SparkleProgressBarComponent,
-    TimespanComponent,
-    ToggleCardComponent,
-    FileTreeComponent,
-    FileDropTextareaComponent,
-    SizeComponent,
   ],
   templateUrl: './destination.component.html',
   styleUrl: './destination.component.scss',
@@ -112,13 +95,12 @@ export default class DestinationComponent {
 
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
 
-  destinationForm = this.#backupState.destinationForm;
-  destinationFormPair = this.#backupState.destinationFormPair;
-  selectedAdvancedFormPair = this.#backupState.selectedAdvancedFormPair;
-  notSelectedAdvancedFormPair = this.#backupState.notSelectedAdvancedFormPair;
-  destinationOptions = this.#backupState.destinationOptions;
-  destinationFormSignal = this.#backupState.destinationFormSignal;
-  destinationCount = computed(() => this.destinationFormSignal()?.destinations?.length ?? 0);
+  targetUrlModel = this.#backupState.targetUrlModel;
+  targetUrlCtrl = signal<string | null>(null);
+  targetUrlInitial = signal<string | null>(null);
+  targetUrlDialogOpen = signal(false);
+  toggleNewDestination = signal(true);
+
   successfulTest = signal(false);
   testLoading = signal(false);
   destinationTypeOptionsInFocus = signal(['file', 'ssh', 's3', 'gcs', 'googledrive', 'azure']);
@@ -137,10 +119,14 @@ export default class DestinationComponent {
     return focused.map((x) => options.find((y) => y.key === x)!);
   });
   selectedDestinationType = computed(() => {
-    const destinationFormSignal = this.destinationFormSignal();
+    const targetUrl = this.#backupState.targetUrlModel();
+
+    if (!targetUrl) return null;
+
+    const destinationType = targetUrl.split('://')[0];
     const options = this.destinationTypeOptions();
 
-    return options.find((x) => destinationFormSignal?.destinations?.[0]?.destinationType === x.key);
+    return options.find((x) => destinationType === x.key);
   });
   destinationTypeOptionsNotFocused = computed(() => {
     const focused = this.destinationTypeOptionsInFocus();
@@ -149,55 +135,9 @@ export default class DestinationComponent {
     return options.filter((x) => !focused.includes(x.key)!);
   });
 
-  getFormFieldValue(
-    destinationIndex: number,
-    formGroupName: 'custom' | 'dynamic' | 'advanced',
-    formControlName: string
-  ) {
-    const dest = this.destinationForm.controls.destinations.controls?.[destinationIndex];
-    const group = dest.controls?.[formGroupName];
-
-    return group.controls[formControlName].value;
-  }
-
-  hasDoubleLeadingSlashes(str: string) {
-    return str.startsWith('//');
-  }
-
-  getFormControl(destinationIndex: number, formGroupName: 'custom' | 'dynamic' | 'advanced', formControlName: string) {
-    const dest = this.destinationForm.controls.destinations.controls?.[destinationIndex];
-    const group = dest.controls?.[formGroupName];
-
-    return group.controls[formControlName];
-  }
-
-  addDestinationFormGroup(key: IDynamicModule['Key']) {
-    this.#backupState.addDestinationFormGroup(key);
-  }
-
-  addAdvancedFormPair(item: FormView, formArrayIndex: number) {
-    this.#backupState.addAdvancedFormPair(item, formArrayIndex);
-  }
-
-  removeFormView(item: FormView, formArrayIndex: number) {
-    this.#backupState.removeAdvancedFormPair(item, formArrayIndex);
-  }
-
-  targetUrl = computed(() => {
-    const targetUrls = this.#backupState.getCurrentTargetUrl();
-    const targetUrl = targetUrls[0];
-
-    return targetUrl;
-  });
-
-  targetUrlCtrl = new FormControl();
-  targetUrlInitial = signal<string | null>(null);
-  targetUrlDialogOpen = signal(false);
-
   openTargetUrlDialog() {
-    const targetUrls = this.#backupState.getCurrentTargetUrl();
-    const targetUrl = targetUrls[0];
-    this.targetUrlCtrl.setValue(targetUrl);
+    const targetUrl = this.#backupState.targetUrlModel();
+    this.targetUrlCtrl.set(targetUrl);
     this.targetUrlInitial.set(targetUrl);
     this.targetUrlDialogOpen.set(true);
   }
@@ -205,17 +145,16 @@ export default class DestinationComponent {
   closeTargetUrlDialog(submit = false) {
     this.targetUrlDialogOpen.set(false);
 
-    const targetUrl = this.targetUrlCtrl.value;
+    const targetUrl = this.targetUrlCtrl();
     const initialTargetUrl = this.targetUrlInitial();
 
-    if (!submit || targetUrl === initialTargetUrl) return;
+    if (!submit || targetUrl === initialTargetUrl || !targetUrl) return;
 
-    this.#backupState.updateFieldsFromTargetUrl(this.targetUrlCtrl.value);
+    this.#backupState.setTargetUrl(targetUrl);
   }
 
   testDestination(destinationIndex = 0) {
-    const targetUrls = this.#backupState.getCurrentTargetUrl();
-    const targetUrl = targetUrls[destinationIndex];
+    const targetUrl = this.#backupState.targetUrlModel();
 
     if (!targetUrl) return;
 
@@ -261,31 +200,30 @@ export default class DestinationComponent {
             return;
           }
 
-          if (res.action === 'trust-cert')
-            this.#backupState.addOrUpdateAdvancedFormPairByName('accept-specified-ssl-hash', res.destinationIndex, res.certData);
-          if (res.action === 'approve-host-key')
-            this.#backupState.addOrUpdateAdvancedFormPairByName(
-              'ssh-fingerprint',
-              res.destinationIndex,
-              res.reportedHostKey
+          const targetUrlHasParams = targetUrl.includes('?');
+          if (res.action === 'trust-cert') {
+            this.#backupState.setTargetUrl(
+              targetUrl + `${targetUrlHasParams ? '&' : '?'}accept-specified-ssl-hash=${res.certData}`
             );
+          }
+
+          if (res.action === 'approve-host-key') {
+            this.#backupState.setTargetUrl(
+              targetUrl + `${targetUrlHasParams ? '&' : '?'}ssh-fingerprint=${res.reportedHostKey}`
+            );
+          }
+
           if (res.testAgain) this.testDestination(res.destinationIndex);
         },
       });
   }
 
-  mapToTargetUrl(destinationGroup: DestinationFormGroup) {
-    return toTargetPath(destinationGroup.value);
+  setDestination(key: IDynamicModule['Key']) {
+    this.#backupState.setTargetUrl(`${key}://`);
   }
 
-  removeDestinationFormGroup(index: number) {
-    this.destinationForm.controls.destinations.removeAt(index);
-  }
-
-  displayFn(key: IDynamicModule['Key']) {
-    const item = this.destinationOptions().find((x) => x.Key === key);
-
-    return item ? `${item.DisplayName}` : '';
+  removeDestination() {
+    this.#backupState.setTargetUrl(null);
   }
 
   goBack() {
@@ -298,52 +236,5 @@ export default class DestinationComponent {
     }
 
     this.#router.navigate(['source-data'], { relativeTo: this.#route.parent });
-  }
-
-  #oauthCreateToken = signal(
-    Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2)
-  ).asReadonly();
-  #oauthInProgress = signal(false);
-  #oauthId = signal(null);
-
-  keyCreation() {}
-
-  oauthStartTokenCreation(backendKey: string, item: DefaultGroup) {
-    const control = this.getFormControl(item.index, item.formGroupName, item.formView.name);
-    const link = backendKey == 'pcloud' 
-      ? this.#backupState.oauthServiceLinkNew
-      : this.#backupState.oauthServiceLink;
-
-    this.#oauthInProgress.set(true);
-
-    const oauthCreateToken = this.#oauthCreateToken();
-    const w = 450;
-    const h = 600;
-    const startlink = link + '?type=' + backendKey + '&token=' + oauthCreateToken;
-
-    const left = screen.width / 2 - w / 2;
-    const top = screen.height / 2 - h / 2;
-    const wnd = window.open(
-      startlink,
-      '_blank',
-      'height=' + h + ',width=' + w + ',menubar=0,status=0,titlebar=0,toolbar=0,left=' + left + ',top=' + top
-    );
-
-    window.addEventListener('message', (event) => {
-      const hasAuthId = event.data.startsWith('authid:');
-      const authId = hasAuthId ? event.data.replace('authid:', '') : null;
-
-      if (hasAuthId) {
-        // this.#oauthId.set(authId);
-        control.setValue(authId);
-        this.#oauthInProgress.set(false);
-
-        wnd?.close();
-      } else {
-        // TODO some error handling
-      }
-    });
-
-    return false;
   }
 }

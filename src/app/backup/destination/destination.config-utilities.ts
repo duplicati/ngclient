@@ -121,6 +121,8 @@ export function fromTargetPath(targetPath: string) {
   const path = targetPath.split('://')[1];
   const fakeProtocolPrefixed = 'http://' + path;
 
+  if (!path) return null;
+
   // Only local files allow the shortcut file paths like file://%MUSIC%/music.mp3 to music folder
   if (path.startsWith('%') && destinationType === 'file') {
     return DESTINATION_CONFIG.find((x) => x.customKey === destinationType || x.key === destinationType)?.mapper.from(
@@ -133,13 +135,25 @@ export function fromTargetPath(targetPath: string) {
   try {
     const urlObj = new URL(fakeProtocolPrefixed);
 
+    if (urlObj.host === 'undefined') return null;
+
+    const pathWithoutParams = path.split('?')[0].split('/')[0];
+    const hostAsNumber = !isNaN(Number(urlObj.host.replaceAll('.', '')));
+    const pathSplit = pathWithoutParams.split('.');
+    const hostAsIpAddress =
+      pathSplit.length === 4 &&
+      pathSplit.every((x) => x.length && x.length <= 3 && !isNaN(Number(x)) && parseInt(x) <= 255);
+
+    if (hostAsNumber && !hostAsIpAddress) return null;
+
     return DESTINATION_CONFIG.find((x) => x.customKey === destinationType || x.key === destinationType)?.mapper.from(
       destinationType,
       urlObj,
       targetPath
     );
   } catch (error) {
-    console.error('Error while parsing target path', error);
+    // console.error('Error while parsing target path', error);
+    return null;
   }
 
   if (!canParse) {

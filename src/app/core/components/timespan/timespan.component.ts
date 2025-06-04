@@ -74,7 +74,7 @@ export class TimespanComponent implements ControlValueAccessor {
 
   isShortTime = computed(() => {
     const inputType = this.inputType();
-    return inputType && SHORT_FIELD_TYPES.includes(inputType);
+    return inputType && SHORT_FIELD_TYPES.includes(inputType.replace('--', ''));
   });
 
   timeOptions = computed(() => {

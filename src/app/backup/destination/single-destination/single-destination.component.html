@@ -1,0 +1,356 @@
+@let _destinationType = destinationType();
+@let config = destinationFormConfig();
+
+@if (_destinationType && config) {
+  @let form = destinationForm();
+
+  <!-- <pre>{{ targetUrl() }}</pre> -->
+
+  @for (formView of config.custom; track $index) {
+    <ng-container
+      *ngTemplateOutlet="
+        fieldTemplate;
+        context: {
+          $implicit: {
+            index: $index,
+            fieldGroup: 'custom',
+            formView,
+            destinationType: _destinationType,
+            oauthField: config.oauthField,
+          },
+        }
+      "></ng-container>
+  }
+
+  @for (formView of config.dynamic; track $index) {
+    <ng-container
+      *ngTemplateOutlet="
+        fieldTemplate;
+        context: {
+          $implicit: {
+            index: $index,
+            fieldGroup: 'dynamic',
+            formView: formView,
+            destinationType: _destinationType,
+            oauthField: config.oauthField,
+          },
+        }
+      "></ng-container>
+  }
+
+  <spk-toggle-card [disallowToggle]="true" class="advanced-options">
+    <ng-container title i18n>
+      Advanced options
+
+      @let _nonSelectedAdvancedFormViews = nonSelectedAdvancedFormViews();
+
+      <spk-menu [searchable]="true">
+        <button spk-button type="button" class="outlined small" [disabled]="_nonSelectedAdvancedFormViews.length === 0">
+          Add advanced option
+          <spk-icon>plus</spk-icon>
+        </button>
+
+        <ng-container menu>
+          @for (formView of _nonSelectedAdvancedFormViews; track $index) {
+            <button #option type="button" (click)="addAdvancedOption(formView)">
+              {{ formView.name }}
+            </button>
+          }
+        </ng-container>
+      </spk-menu>
+    </ng-container>
+
+    @for (optionName of advancedFormFieldNames(); track $index) {
+      @let formView = getFormView('advanced', optionName) ?? getDefaultFormView(optionName);
+
+      <ng-container
+        *ngTemplateOutlet="
+          fieldTemplate;
+          context: {
+            $implicit: {
+              index: $index,
+              formView: formView,
+              fieldGroup: 'advanced',
+              destinationType: _destinationType,
+              oauthField: config.oauthField,
+            },
+          }
+        "></ng-container>
+    }
+  </spk-toggle-card>
+
+  <ng-template #fieldTemplate let-item>
+    <div class="field-row" [class.single-field]="item.fieldGroup !== 'advanced'">
+      @let labelContent = item.formView.shortDescription ?? item.formView.name;
+      @let formInput = getFieldGroup(form, item.fieldGroup)[item.formView.name];
+      @let fieldValue = getFieldValue(item.fieldGroup, item.formView.name);
+      @let formFieldId =
+        'destination-' + item.fieldGroup + '-' + item.index + '-' + (item.asHttpOptions ? 'http' : 'other');
+
+      @if (item.formView.type === 'FileTree') {
+        <app-file-tree
+          [startingPath]="fieldValue"
+          [accepts]="item.formView.accepts"
+          [showFiles]="true"
+          [hideShortcuts]="true"
+          [showHiddenNodes]="true"
+          [selectFiles]="true">
+          <label [for]="formFieldId">
+            {{ labelContent }}
+            @if (item.formView.longDescription) {
+              <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+            }
+          </label>
+          <input
+            type="text"
+            [id]="formFieldId"
+            [ngModel]="formInput"
+            (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
+        </app-file-tree>
+      } @else if (item.formView.type === 'FolderTree') {
+        <app-file-tree [hideShortcuts]="true" [startingPath]="fieldValue">
+          <label [for]="formFieldId">
+            {{ labelContent }}
+            @if (item.formView.longDescription) {
+              <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+            }
+          </label>
+          <input
+            type="text"
+            [id]="formFieldId"
+            [ngModel]="formInput"
+            (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
+        </app-file-tree>
+      } @else if (item.formView.type === 'String' || item.formView.type === 'Path' || item.formView.type === 'Email') {
+        <spk-form-field>
+          <label [for]="formFieldId">
+            {{ labelContent }}
+            @if (item.formView.longDescription) {
+              <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+            }
+          </label>
+
+          <input
+            [type]="item.formView.type === 'Email' ? 'email' : 'text'"
+            [id]="formFieldId"
+            [ngModel]="formInput"
+            (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
+
+          @let inputValue = fieldValue;
+          @let hasLeadingSlashes = hasDoubleLeadingSlashes(inputValue ?? '');
+          @let leadingSlashesMessage = hasLeadingSlashes && item.formView.doubleSlash?.message;
+          @let slashType = item.formView.doubleSlash?.type;
+
+          @if (item.formView.type === 'Path') {
+            <spk-icon
+              prefix
+              [class.error]="leadingSlashesMessage && slashType === 'error'"
+              [class.warn]="leadingSlashesMessage && slashType === 'warning'"
+              [spkTooltip]="leadingSlashesMessage">
+              link
+            </spk-icon>
+          } @else if (item.formView.type === 'Email') {
+            <spk-icon prefix>envelope</spk-icon>
+          } @else {
+            <spk-icon prefix>textbox</spk-icon>
+          }
+        </spk-form-field>
+      } @else if (item.formView.type === 'Password') {
+        <spk-form-field>
+          <label [for]="formFieldId">
+            {{ labelContent }}
+            @if (item.formView.longDescription) {
+              <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+            }
+          </label>
+          <input
+            [type]="$any(item.formView).showPassword ? 'text' : 'password'"
+            autocomplete="off"
+            [id]="formFieldId"
+            [ngModel]="formInput"
+            (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
+
+          @if (item.oauthField === item.formView.name) {
+            <span
+              prefix
+              class="link"
+              (click)="oauthStartTokenCreation(item.destinationType, item.fieldGroup, item.formView.name)">
+              AuthID
+            </span>
+          } @else {
+            <spk-icon prefix>password</spk-icon>
+          }
+          @if ($any(item.formView).showPassword) {
+            <spk-icon
+              class="clickable"
+              suffix
+              (click)="$any(item.formView).showPassword = !$any(item.formView).showPassword">
+              eye
+            </spk-icon>
+          } @else {
+            <spk-icon
+              class="clickable"
+              suffix
+              (click)="$any(item.formView).showPassword = !$any(item.formView).showPassword">
+              eye-slash
+            </spk-icon>
+          }
+        </spk-form-field>
+      } @else if (item.formView.type === 'Enumeration') {
+        @let options = item.formView.loadOptions ? item.formView.loadOptions(injector)() : item.formView.options;
+
+        @if (options) {
+          <spk-select [options]="options" [isClearable]="false" [optionTemplate]="enumOptionTemplate">
+            <label [for]="formFieldId">
+              {{ labelContent }}
+
+              @if (item.formView.longDescription) {
+                <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+              }
+            </label>
+            <input
+              type="text"
+              [id]="formFieldId"
+              [ngModel]="formInput"
+              (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
+          </spk-select>
+
+          <ng-template let-option #enumOptionTemplate>
+            @if (item.formView.loadOptions) {
+              {{ option?.key }} ({{ option?.value }})
+            } @else {
+              {{ option }}
+            }
+          </ng-template>
+        }
+      } @else if (item.formView.type === 'NonValidatedSelectableString') {
+        @let options = item.formView.loadOptions ? item.formView.loadOptions(injector)() : item.formView.options;
+
+        @if (options) {
+          <spk-select
+            [options]="options"
+            [asFreeText]="true"
+            [inlineSearch]="true"
+            [optionTemplate]="optionTemplate"
+            label="key"
+            value="value">
+            <label [for]="formFieldId">
+              {{ labelContent }}
+
+              @if (item.formView.longDescription) {
+                <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+              }
+            </label>
+
+            <input
+              type="text"
+              [id]="formFieldId"
+              [ngModel]="formInput"
+              (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
+          </spk-select>
+
+          <ng-template let-option #optionTemplate>
+            {{ option.key }} {{ option.value ? '(' + option.value + ')' : '' }}
+          </ng-template>
+        } @else {
+          <spk-progress-bar class="indeterminate primary" />
+        }
+      } @else if (item.formView.type === 'Size') {
+        <app-size
+          [inputType]="item.Name"
+          [ngModel]="formInput"
+          (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)"
+          [customId]="formFieldId">
+          <label [for]="formFieldId">
+            {{ labelContent }}
+
+            @if (item.formView.longDescription) {
+              <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+            }
+          </label>
+        </app-size>
+      } @else if (item.formView.type === 'Integer') {
+        <spk-form-field>
+          <label [for]="formFieldId">
+            {{ labelContent }}
+            @if (item.formView.longDescription) {
+              <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+            }
+          </label>
+          <input
+            type="number"
+            [id]="formFieldId"
+            [ngModel]="formInput"
+            (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
+          <spk-icon prefix>numpad</spk-icon>
+        </spk-form-field>
+      } @else if (item.formView.type === 'Boolean') {
+        <spk-toggle
+          class="primary raised"
+          [class.active]="formInput === 'true'"
+          (click)="updateFieldValue(item.fieldGroup, item.formView.name, formInput === 'true' ? 'false' : 'true')">
+          <label [for]="formFieldId">
+            {{ labelContent }}
+            @if (item.formView.longDescription) {
+              <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+            }
+          </label>
+        </spk-toggle>
+      } @else if (item.formView.type === 'Flags') {
+        <spk-select
+          [options]="item.formView.options"
+          [selectMultiple]="true"
+          class="primary raised"
+          [optionTemplate]="optionTemplate">
+          <label for="destination-{{ item.fieldGroup }}-{{ item.index }}">
+            {{ labelContent }}
+            @if (item.formView.longDescription) {
+              <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+            }
+          </label>
+          <input
+            type="text"
+            id="text"
+            [ngModel]="formInput"
+            (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
+        </spk-select>
+
+        <ng-template let-option #optionTemplate>
+          {{ option }}
+        </ng-template>
+      } @else if (item.formView.type === 'Timespan' || item.formView.type === 'DateTime') {
+        <app-timespan
+          [inputType]="item.formView.name"
+          [ngModel]="formInput"
+          (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)"
+          [customId]="formFieldId">
+          <label [for]="formFieldId">
+            {{ labelContent }}
+            @if (item.formView.longDescription) {
+              <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+            }
+          </label>
+        </app-timespan>
+      } @else if (item.formView.type === 'FreeText') {
+        <app-file-drop-textarea
+          [ngModel]="formInput"
+          (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)"
+          [customId]="formFieldId"
+          [placeholder]="item.formView.longDescription">
+          <label>
+            {{ item.formView.shortDescription ?? item.formView.name }}
+            @if (item.formView.longDescription) {
+              <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+            }
+          </label>
+        </app-file-drop-textarea>
+      }
+
+      @if (item.fieldGroup === 'advanced') {
+        <button spk-button class="outlined" type="button" (click)="removeAdvancedOption(item.formView.name)">
+          <spk-icon>x-circle</spk-icon>
+        </button>
+      }
+    </div>
+  </ng-template>
+}

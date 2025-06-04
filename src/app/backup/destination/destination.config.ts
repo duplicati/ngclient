@@ -70,7 +70,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path,
+            path: path.split('?')[0],
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -109,35 +109,15 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
-    dynamicFields: [{
-        type: 'String',
-        name: 'auth-username',
-        shortDescription: 'Username for authentication',
-        longDescription: 'Username for authentication with the server',
-        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
-      },
-      {
-        type: 'Password',
-        name: 'auth-password',
-        shortDescription: 'Password for authentication',
-        longDescription: 'Password for authentication with the server. If a private key is used, this value is used as the password to decrypt the private key.',
-        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
-      }
-    ],
+    dynamicFields: ['auth-username'],
     advancedFields: [
       {
         type: 'FileTree',
         name: 'ssh-keyfile',
         accepts: '.key,',
-        shortDescription: 'Private key path',
+        shortDescription: 'This is a path to a private key file locally on the machine',
         longDescription: 'This is a path to a private key file locally on the machine',
       },
-      {
-        type: 'FreeText',
-        name: 'ssh-key',
-        shortDescription: 'SSH private key (PEM format)',
-        longDescription: 'Enter a PEM formatted SSH private key. OpenSSL, OpenSSH, and ssh.com formats are supported.',
-      }      
     ],
     mapper: {
       to: (fields: any): string => {

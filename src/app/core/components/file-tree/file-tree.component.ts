@@ -633,7 +633,7 @@ export default class FileTreeComponent {
       .filter((x) => x.startsWith('-'))
       .map((x) => x.slice(1, -1));
 
-    const pathArr = path
+    let pathArr = path
       .split('\0')
       .filter((x) => !x.startsWith('-'))
       .filter(Boolean);
@@ -648,20 +648,16 @@ export default class FileTreeComponent {
       return split;
     });
 
-    // let urlPieces: string[] = [this.rootPath() ?? '/'];
     let urlPieces: string[] = ['/'];
 
     segmentArr.forEach((segments) => {
       segments.forEach((_, index) => {
         const urlCombined = segments.slice(0, index + 1).join(isWindows ? '\\' : '/');
-        let urlPiece = urlCombined;
 
-        if (urlPiece.indexOf(':') === -1 && !urlPiece.startsWith('%')) {
-          urlPiece = '/' + urlCombined;
-        }
+        if (urlCombined === '') return;
 
-        if (!urlPieces.includes(urlPiece)) {
-          urlPieces.push(urlPiece);
+        if (!urlPieces.includes(urlCombined)) {
+          urlPieces.push(urlCombined);
         }
       });
     });
@@ -719,7 +715,11 @@ export default class FileTreeComponent {
 
             this.#findActiveNodeAndScrollTo();
 
-            return arrayUniqueByKey as TreeNode[];
+            if (this.hideShortcuts()) {
+              return arrayUniqueByKey.filter((x: TreeNode) => !x.id!.startsWith('%')) as TreeNode[];
+            } else {
+              return arrayUniqueByKey as TreeNode[];
+            }
           });
         },
       });
