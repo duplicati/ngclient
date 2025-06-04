@@ -17,9 +17,14 @@ import FileTreeComponent from '../../../core/components/file-tree/file-tree.comp
 import { SizeComponent } from '../../../core/components/size/size.component';
 import { TimespanComponent } from '../../../core/components/timespan/timespan.component';
 import { ArgumentType, ICommandLineArgument } from '../../../core/openapi';
-import { BackupState } from '../../backup.state';
-import { DESTINATION_CONFIG } from '../destination.config';
-import { CustomFormView, FormView, fromTargetPath, toTargetPath } from '../destination.config-utilities';
+import { DestinationConfigState } from '../../../core/states/destinationconfig.state';
+import {
+  CustomFormView,
+  FormView,
+  fromTargetPath,
+  getConfigurationByKey,
+  toTargetPath,
+} from '../destination.config-utilities';
 
 type DestinationConfig = {
   destinationType: string;
@@ -55,7 +60,7 @@ type DestinationConfig = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SingleDestinationComponent {
-  #backupState = inject(BackupState);
+  #destinationState = inject(DestinationConfigState);
   injector = inject(Injector);
   targetUrl = model.required<string | null>();
 
@@ -94,11 +99,16 @@ export class SingleDestinationComponent {
   });
 
   destinationTypeEffect = effect(() => {
-    const key = this.destinationType();
+    const key = this.destinationType() ?? '';
 
-    const destinationConfig = DESTINATION_CONFIG.find((x) => x.customKey === key || x.key === key);
+    const destinationConfig = getConfigurationByKey(key);
     const _key = destinationConfig?.key;
-    const item = this.#backupState.destinationOptions().find((x) => x.Key === _key);
+    const item = this.#destinationState.backendModules().find((x) => x.Key === _key) ?? {
+      Key: key,
+      DisplayName: key,
+      Description: getConfigurationByKey(key).description,
+      Options: [],
+    };
 
     if (!item || !item.Options || !key) return;
 
@@ -259,14 +269,14 @@ export class SingleDestinationComponent {
     return formView;
   }
 
-    getDefaultFormView(optionName: string) {
-      return {
-        name: optionName,
-        type: 'String',
-        shortDescription: optionName,
-        longDescription: $localize`This is an undocumented option.`,
-      };
-    }
+  getDefaultFormView(optionName: string) {
+    return {
+      name: optionName,
+      type: 'String',
+      shortDescription: optionName,
+      longDescription: $localize`This is an undocumented option.`,
+    };
+  }
 
   getFieldGroup(form: any, fieldGroup: string) {
     return form[fieldGroup];
