@@ -22,8 +22,8 @@ import { finalize } from 'rxjs';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { IDynamicModule } from '../../core/openapi';
 import { TestDestinationService } from '../../core/services/test-destination.service';
+import { DestinationConfigState } from '../../core/states/destinationconfig.state';
 import { BackupState } from '../backup.state';
-import { DESTINATION_CONFIG } from './destination.config';
 import { FormView } from './destination.config-utilities';
 import { SingleDestinationComponent } from './single-destination/single-destination.component';
 
@@ -89,6 +89,7 @@ export default class DestinationComponent {
   #router = inject(Router);
   #route = inject(ActivatedRoute);
   #backupState = inject(BackupState);
+  #destinationState = inject(DestinationConfigState);
   #dialog = inject(SparkleDialogService);
   #testDestination = inject(TestDestinationService);
   injector = inject(Injector);
@@ -104,14 +105,8 @@ export default class DestinationComponent {
   successfulTest = signal(false);
   testLoading = signal(false);
   destinationTypeOptionsInFocus = signal(['file', 'ssh', 's3', 'gcs', 'googledrive', 'azure']);
-  destinationTypeOptions = signal(
-    DESTINATION_CONFIG.map((x) => ({
-      key: x.customKey ?? x.key,
-      customKey: x.customKey ?? null,
-      displayName: x.displayName,
-      description: x.description,
-    }))
-  );
+  destinationTypeOptions = this.#destinationState.destinationTypeOptions;
+
   destinationTypeOptionsFocused = computed(() => {
     const focused = this.destinationTypeOptionsInFocus();
     const options = this.destinationTypeOptions();
