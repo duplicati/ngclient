@@ -259,6 +259,15 @@ export class SingleDestinationComponent {
     return formView;
   }
 
+    getDefaultFormView(optionName: string) {
+      return {
+        name: optionName,
+        type: 'String',
+        shortDescription: optionName,
+        longDescription: $localize`This is an undocumented option.`,
+      };
+    }
+
   getFieldGroup(form: any, fieldGroup: string) {
     return form[fieldGroup];
   }

@@ -61,7 +61,7 @@
     </ng-container>
 
     @for (optionName of advancedFormFieldNames(); track $index) {
-      @let formView = getFormView('advanced', optionName);
+      @let formView = getFormView('advanced', optionName) ?? getDefaultFormView(optionName);
 
       <ng-container
         *ngTemplateOutlet="
