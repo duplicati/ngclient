@@ -17,6 +17,7 @@
             formView,
             destinationType: _destinationType,
             oauthField: config.oauthField,
+            oauthV2Field: config.oauthV2Field,
           },
         }
       "></ng-container>
@@ -33,6 +34,7 @@
             formView: formView,
             destinationType: _destinationType,
             oauthField: config.oauthField,
+            oauthV2Field: config.oauthV2Field,
           },
         }
       "></ng-container>
@@ -73,6 +75,7 @@
               fieldGroup: 'advanced',
               destinationType: _destinationType,
               oauthField: config.oauthField,
+              oauthV2Field: config.oauthV2Field,
             },
           }
         "></ng-container>
@@ -170,11 +173,18 @@
             [ngModel]="formInput"
             (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
 
-          @if (item.oauthField === item.formView.name) {
+          @if (item.oauthField === item.formView.name || item.oauthV2Field === item.formView.name) {
             <span
               prefix
               class="link"
-              (click)="oauthStartTokenCreation(item.destinationType, item.fieldGroup, item.formView.name)">
+              (click)="
+                oauthStartTokenCreation(
+                  item.destinationType,
+                  item.fieldGroup,
+                  item.formView.name,
+                  item.oauthV2Field === item.formView.name
+                )
+              ">
               AuthID
             </span>
           } @else {

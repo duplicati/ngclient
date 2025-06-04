@@ -48,6 +48,7 @@ export type DestinationConfigEntry = {
   description: string;
   customKey?: string;
   oauthField?: string;
+  oauthV2Field?: string;
   customFields?: {
     [key: string]: CustomFormView;
   };

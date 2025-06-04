@@ -17,6 +17,7 @@ import FileTreeComponent from '../../../core/components/file-tree/file-tree.comp
 import { SizeComponent } from '../../../core/components/size/size.component';
 import { TimespanComponent } from '../../../core/components/timespan/timespan.component';
 import { ArgumentType, ICommandLineArgument } from '../../../core/openapi';
+import { SysinfoState } from '../../../core/states/sysinfo.state';
 import { BackupState } from '../../backup.state';
 import { DESTINATION_CONFIG } from '../destination.config';
 import { CustomFormView, FormView, fromTargetPath, toTargetPath } from '../destination.config-utilities';
@@ -24,6 +25,7 @@ import { CustomFormView, FormView, fromTargetPath, toTargetPath } from '../desti
 type DestinationConfig = {
   destinationType: string;
   oauthField: string | null;
+  oauthV2Field?: string | null;
   custom: FormView[];
   dynamic: FormView[];
   advanced: FormView[];
@@ -56,6 +58,7 @@ type DestinationConfig = {
 })
 export class SingleDestinationComponent {
   #backupState = inject(BackupState);
+  #sysinfo = inject(SysinfoState);
   injector = inject(Injector);
   targetUrl = model.required<string | null>();
 
@@ -103,6 +106,7 @@ export class SingleDestinationComponent {
     if (!item || !item.Options || !key) return;
 
     const oauthField = destinationConfig && destinationConfig.oauthField ? destinationConfig.oauthField : null;
+    const oauthV2Field = destinationConfig && destinationConfig.oauthV2Field ? destinationConfig.oauthV2Field : null;
     const customFields = destinationConfig && destinationConfig.customFields ? destinationConfig.customFields : {};
     const dynamicFields = destinationConfig && destinationConfig.dynamicFields ? destinationConfig.dynamicFields : [];
     const advancedFields =
@@ -113,6 +117,7 @@ export class SingleDestinationComponent {
     const destinationFormConfig = {
       destinationType: key,
       oauthField,
+      oauthV2Field,
       custom: [] as FormView[],
       dynamic: [] as FormView[],
       advanced: [] as FormView[],
@@ -300,20 +305,20 @@ export class SingleDestinationComponent {
     this.destinationForm.set({ ...form });
   }
 
-  #oauthServiceLink = signal('https://duplicati-oauth-handler.appspot.com/').asReadonly();
-  #oauthCreateToken = signal(
-    Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2)
-  ).asReadonly();
   #oauthInProgress = signal(false);
 
-  oauthStartTokenCreation(backendKey: string, fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string) {
+  oauthStartTokenCreation(backendKey: string, fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string, usev2: boolean) {
     this.#oauthInProgress.set(true);
 
-    const oauthCreateToken = this.#oauthCreateToken();
+    // TODO: If the backup/restore has advanced options that overrides the OAuth URL, use that instead.
+    // This is also applicable for a potential OAuth URL in the global settings.
+    const oauthUrl = usev2 
+      ? this.#sysinfo.defaultOAuthUrlV2()
+      : this.#sysinfo.defaultOAuthUrl();
+    const startlink = `${oauthUrl}?type=${backendKey}`;
+    
     const w = 450;
     const h = 600;
-    const startlink = this.#oauthServiceLink() + '?type=' + backendKey + '&token=' + oauthCreateToken;
-
     const left = screen.width / 2 - w / 2;
     const top = screen.height / 2 - h / 2;
     const wnd = window.open(
