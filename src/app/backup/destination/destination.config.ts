@@ -290,7 +290,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'pcloud',
     displayName: 'pCloud',
     description: 'Store backups in pCloud.',
-    oauthField: 'authid',
+    oauthV2Field: 'authid',
     customFields: {
       server: {
         type: 'Enumeration',

@@ -110,6 +110,21 @@ export class SysinfoState {
     return apiExtensions.includes('v1:websocket:authenticate');
   });
 
+  defaultOAuthUrl = computed(() => {
+    const url = this.systemInfo()?.DefaultOAuthURL ?? 'https://duplicati-oauth-handler.appspot.com/';
+    if (url.endsWith('/refresh'))
+      return url.slice(0, -'/refresh'.length);    
+    
+    return url;
+  });
+  defaultOAuthUrlV2 = computed(() => {
+    const url = this.systemInfo()?.DefaultOAuthURLv2 ?? 'https://oauth-service.duplicati.com/'
+    if (url.endsWith('/refresh'))
+      return url.slice(0, -'/refresh'.length);    
+    
+    return url;
+  });
+
 
   preload(returnObservable = false): Observable<SystemInfoDto> | void {
     const obs = (this.#dupServer.getApiV1Systeminfo() as Observable<SystemInfoDto>).pipe(
