@@ -12,9 +12,9 @@
       <button spk-button (click)="checkForUpdates()" [class.loader]="checkingForUpdates()">Check for updates</button>
 
       @if (serverState()?.UpdateDownloadLink) {
-        <a class="primary raised" spk-button [href]="serverState()?.UpdateDownloadLink" target="_blank">
+        <a class="primary raised" spk-button [href]="serverState()?.UpdateDownloadLink" target="_blank" i18n>
           <spk-icon>download</spk-icon>
-          Download update
+          Download update - {{ serverState()?.UpdatedVersion }}
         </a>
       }
     } @else if (serverState()?.UpdaterState === 'Checking') {

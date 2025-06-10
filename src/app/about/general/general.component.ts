@@ -4,6 +4,7 @@ import { SparkleButtonComponent, SparkleIconComponent, SparkleProgressBarCompone
 import { finalize, map } from 'rxjs';
 import { DuplicatiServerService } from '../../core/openapi';
 import { ServerStateService } from '../../core/services/server-state.service';
+import { SysinfoState } from '../../core/states/sysinfo.state';
 
 @Component({
   selector: 'app-general',
@@ -15,11 +16,12 @@ import { ServerStateService } from '../../core/services/server-state.service';
 export default class GeneralComponent {
   #dupServer = inject(DuplicatiServerService);
   #serverState = inject(ServerStateService);
+  #sysinfo = inject(SysinfoState);
 
   isLoading = signal(true);
   checkingForUpdates = signal(false);
   serverState = this.#serverState.serverState;
-  duplicatiVersion = computed(() => this.#serverState.serverState()?.UpdatedVersion);
+  duplicatiVersion = computed(() => this.#sysinfo.systemInfo()?.ServerVersionName ?? 'Unknown');
   generalInfo = toSignal(
     this.#dupServer.getApiV1Acknowledgements().pipe(
       map((x) => x.Acknowledgements), // ? this.#sanitizer.bypassSecurityTrustHtml(x.Acknowledgements) : '')),
