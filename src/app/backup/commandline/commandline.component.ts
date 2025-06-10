@@ -135,7 +135,7 @@ export default class CommandlineComponent {
       `--dbpath=${stdForm.dbpath}`,
       `--backup-id=${stdForm['backup-id']}`,
       ...filters.filter((x) => x).map((x) => (x!.startsWith('-') ? `--exclude=${x?.slice(1)}` : `--include=${x}`)),
-      ...this.#backupState.mapFormsToSettings(['backup-id', 'backup-name', 'dbpath']).map((x: any) => x.Name),
+      ...this.#backupState.mapFormsToSettings(['backup-id', 'backup-name', 'dbpath']).map((x: any) => `${x.Name}=${x.Value}`),      
       '--disable-module=console-password-input',
     ];
 
