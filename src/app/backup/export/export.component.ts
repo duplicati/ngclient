@@ -60,7 +60,7 @@ export default class ExportComponent {
   });
 
   exportFormSignal = toSignal(this.exportForm.valueChanges);
-  encryptionFieldSignal = computed(() => this.exportFormSignal()?.encryption ?? false);
+  encryptionFieldSignal = computed(() => (this.exportFormSignal()?.encryption ?? false) && this.exportType() === 'file');
   activeBackup = computed(() =>
     this.#backups.backups().find((x) => x.Backup?.ID === this.#route.snapshot.params['id'])
   );
@@ -79,6 +79,11 @@ export default class ExportComponent {
     if (this.showPassword()) {
       this.exportForm.updateValueAndValidity();
     }
+  });
+
+  disablePasswordForCommandLine = effect(() => {
+    if (this.exportType() === 'cmd')
+      this.exportForm.controls.encryption.setValue(false);    
   });
 
   submit() {
