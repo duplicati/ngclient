@@ -66,13 +66,15 @@
   <app-options-list
     [(options)]="settings"
     [applicationOptions]="applicationOptions()"
+    [hasFreeTextSettings]="true"
     [hiddenOptions]="[
       '--skip-files-larger-than',
       'dblock-size',
       'encryption-module',
       'no-encryption',
-      'compression-module',
       '--no-encryption',
+      'compression-module',
+      '--compression-module',
       '--exclude-files-attributes',
       'keep-time',
       'keep-versions',

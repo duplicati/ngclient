@@ -44,7 +44,7 @@ export default class AdvancedOptionsSettingsComponent {
     const serverSettingEntries = Object.entries(serverSettings);
     serverSettingEntries.forEach(([key, value], index) => {
       if (key.startsWith('--')) {
-        const name = key.replace('--', '');
+        const name = key.substring(2);
 
         this.settings.update((x) => {
           if (x.some((option) => option.Name === name)) return x;

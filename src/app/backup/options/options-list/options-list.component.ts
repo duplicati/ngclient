@@ -169,7 +169,7 @@ export class OptionsListComponent {
         value = parseInt(value) || 0;
       }
 
-      const newSettings = [...settings, { Name: '--' + option.name, Value: value }];
+      const newSettings = [...settings, { Name: option.name, Value: value }];
 
       return newSettings;
     });
