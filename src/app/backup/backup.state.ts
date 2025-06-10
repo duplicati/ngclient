@@ -381,6 +381,8 @@ export class BackupState {
       'keep-versions',
       'retention-policy',
       'dblock-size',
+      'compression-module',
+      '--compression-module',
     ];
 
     let encryption = [
@@ -455,7 +457,7 @@ export class BackupState {
         }
 
         return {
-          Name: y.Name,
+          Name: y.Name?.startsWith('--') ? y.Name : `--${y.Name}`,
           Value,
         };
       });
