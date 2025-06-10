@@ -3,7 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { ArgumentType, ICommandLineArgument } from '../../core/openapi';
 import { WebModuleOption } from '../../core/services/webmodules.service';
 import { DestinationFormGroupValue } from './destination.component';
-import { DESTINATION_CONFIG } from './destination.config';
+import { DESTINATION_CONFIG, DESTINATION_CONFIG_DEFAULT } from './destination.config';
 
 export type ValueOfDestinationFormGroup = DestinationFormGroup['value'];
 export type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] };
@@ -71,10 +71,21 @@ export function addPath(path: string | null | undefined) {
   return path.startsWith('/') ? path : '/' + path;
 }
 
+export function getConfigurationByKey(key: string): DestinationConfigEntry {
+  const config = DESTINATION_CONFIG.find((x) => x.key === key || x.customKey === key);
+  return (
+    config ?? {
+      key: key,
+      displayName: key,
+      ...DESTINATION_CONFIG_DEFAULT,
+    }
+  );
+}
+
 export function fromSearchParams(destinationType: string, urlObj: URL) {
   const advanced: { [key: string]: any } = {};
   const dynamic: { [key: string]: any } = {};
-  const config = DESTINATION_CONFIG.find((x) => x.key === destinationType);
+  const config = getConfigurationByKey(destinationType);
 
   urlObj.searchParams.forEach((value, key) => {
     const isDynamic = config?.dynamicFields?.some((x) => x === key || (<any>x)?.name === key);
@@ -104,15 +115,8 @@ export function toSearchParams(arr: [string, string | number | unknown][], witho
 }
 
 export function toTargetPath(fields: DestinationFormGroupValue): string {
-  const destinationType = fields.destinationType;
-  const destinationConfig = DESTINATION_CONFIG.find(
-    (x) => x.customKey === destinationType || x.key === destinationType
-  );
-
-  if (!destinationConfig) {
-    throw new Error('Invalid destination type');
-  }
-
+  const destinationType = fields.destinationType ?? '';
+  const destinationConfig = getConfigurationByKey(destinationType);
   return destinationConfig?.mapper.to(fields) ?? '';
 }
 
@@ -126,7 +130,7 @@ export function fromTargetPath(targetPath: string) {
 
   // Only local files allow the shortcut file paths like file://%MUSIC%/music.mp3 to music folder
   if (path.startsWith('%') && destinationType === 'file') {
-    return DESTINATION_CONFIG.find((x) => x.customKey === destinationType || x.key === destinationType)?.mapper.from(
+    return getConfigurationByKey(destinationType).mapper.from(
       destinationType,
       new URL('http://localhost'),
       targetPath
@@ -147,7 +151,7 @@ export function fromTargetPath(targetPath: string) {
 
     if (hostAsNumber && !hostAsIpAddress) return null;
 
-    return DESTINATION_CONFIG.find((x) => x.customKey === destinationType || x.key === destinationType)?.mapper.from(
+    return getConfigurationByKey(destinationType).mapper.from(
       destinationType,
       urlObj,
       targetPath
@@ -156,10 +160,4 @@ export function fromTargetPath(targetPath: string) {
     // console.error('Error while parsing target path', error);
     return null;
   }
-
-  if (!canParse) {
-    throw new Error('Invalid target path');
-  }
-
-  return null;
 }
