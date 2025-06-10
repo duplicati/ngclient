@@ -75,15 +75,15 @@ export const DESTINATION_CONFIG_DEFAULT = {
 export const DESTINATION_CONFIG: DestinationConfig = [
   {
     key: 'file',
-    displayName: 'File system',
-    description: 'Store backups on your local file system.',
+    displayName: $localize`File system`,
+    description: $localize`Store backups on your local file system.`,
     customFields: {
       path: {
         type: 'FolderTree',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
-        shortDescription: 'File path',
-        longDescription: 'The path to store the backup',
+        shortDescription: $localize`File path`,
+        longDescription: $localize`The path to store the backup`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
@@ -112,29 +112,29 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   },
   {
     key: 'ssh',
-    displayName: 'SSH',
-    description: 'Store backups in SSH.',
+    displayName: $localize`SSH`,
+    description: $localize`Store backups in SSH.`,
     customFields: {
       server: {
         type: 'String', // Custom server/port field
         name: 'server',
-        shortDescription: 'Server',
-        longDescription: 'The server to connect to',
+        shortDescription: $localize`Server`,
+        longDescription: $localize`The server to connect to`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
       port: {
         type: 'Integer',
         name: 'port',
-        shortDescription: 'Port',
-        longDescription: 'The port to connect to',
+        shortDescription: $localize`Port`,
+        longDescription: $localize`The port to connect to`,
         formElement: (defaultValue?: string) =>
           fb.control<string>(defaultValue ?? '', [Validators.required, Validators.max(65535)]),
       },
       path: {
         type: 'Path',
         name: 'path',
-        shortDescription: 'Folder path',
-        longDescription: 'Folder path',
+        shortDescription: $localize`Folder path`,
+        longDescription: $localize`Folder path`,
         doubleSlash: {
           type: 'warning',
           message: $localize`Using double leading slashes makes the path absolute, pointing to the root of the filesystem.`,
@@ -148,8 +148,8 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         type: 'FileTree',
         name: 'ssh-keyfile',
         accepts: '.key,',
-        shortDescription: 'This is a path to a private key file locally on the machine',
-        longDescription: 'This is a path to a private key file locally on the machine',
+        shortDescription: $localize`This is a path to a private key file locally on the machine`,
+        longDescription: $localize`This is a path to a private key file locally on the machine`,
       },
     ],
     mapper: {
@@ -174,29 +174,29 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   },
   {
     key: 's3',
-    displayName: 'S3 Compatible',
-    description: 'Store backups in any S3 compatible bucket.',
+    displayName: $localize`S3 Compatible`,
+    description: $localize`Store backups in any S3 compatible bucket.`,
     customFields: {
       bucket: {
         type: 'String',
         name: 'bucket',
-        shortDescription: 'Bucket name',
-        longDescription: 'Bucket name',
+        shortDescription: $localize`Bucket name`,
+        longDescription: $localize`Bucket name`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
       path: {
         type: 'Path',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
-        shortDescription: 'Folder path',
-        longDescription: 'Folder path',
+        shortDescription: $localize`Folder path`,
+        longDescription: $localize`Folder path`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
     dynamicFields: [
       {
         name: 's3-server-name',
-        shortDescription: 'Server',
+        shortDescription: $localize`Server`,
         type: 'NonValidatedSelectableString', // Convert to string before submitting
         loadOptions: (injector) => injector.get(WebModulesService).s3Providers,
       },
@@ -237,16 +237,16 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   },
   {
     key: 'gcs',
-    displayName: 'Google Cloud Storage',
-    description: 'Store backups in Google Cloud Storage.',
+    displayName: $localize`Google Cloud Storage`,
+    description: $localize`Store backups in Google Cloud Storage.`,
     oauthField: 'authid',
     customFields: {
       path: {
         type: 'Path',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
-        shortDescription: 'Bucket name',
-        longDescription: 'Bucket name',
+        shortDescription: $localize`Bucket name`,
+        longDescription: $localize`Bucket name`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
@@ -282,16 +282,16 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   },
   {
     key: 'googledrive',
-    displayName: 'Google Drive',
-    description: 'Store backups in Google Drive.',
+    displayName: $localize`Google Drive`,
+    description: $localize`Store backups in Google Drive.`,
     oauthField: 'authid',
     customFields: {
       path: {
         type: 'Path',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
-        shortDescription: 'Folder path',
-        longDescription: 'Folder path',
+        shortDescription: $localize`Folder path`,
+        longDescription: $localize`Folder path`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
@@ -321,8 +321,8 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   },
   {
     key: 'pcloud',
-    displayName: 'pCloud',
-    description: 'Store backups in pCloud.',
+    displayName: $localize`pCloud`,
+    description: $localize`Store backups in pCloud.`,
     oauthField: 'authid',
     customFields: {
       server: {
@@ -340,16 +340,16 @@ export const DESTINATION_CONFIG: DestinationConfig = [
             },
           ]);
         },
-        shortDescription: 'Server',
-        longDescription: 'Server',
+        shortDescription: $localize`Server`,
+        longDescription: $localize`Server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
       path: {
         type: 'Path',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
-        shortDescription: 'Folder path',
-        longDescription: 'Folder path',
+        shortDescription: $localize`Folder path`,
+        longDescription: $localize`Folder path`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
@@ -377,26 +377,26 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   },
   {
     key: 'azure',
-    displayName: 'Azure Blob Storage',
-    description: 'Store backups in Azure Blob Storage.',
+    displayName: $localize`Azure Blob Storage`,
+    description: $localize`Store backups in Azure Blob Storage.`,
     customFields: {
       path: {
         type: 'String',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
-        shortDescription: 'Container name',
-        longDescription: 'Container name',
+        shortDescription: $localize`Container name`,
+        longDescription: $localize`Container name`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
     dynamicFields: [
       {
         name: 'auth-username',
-        shortDescription: 'Account name',
+        shortDescription: $localize`Account name`,
       },
       {
         name: 'auth-password',
-        shortDescription: 'Access key',
+        shortDescription: $localize`Access key`,
       },
     ],
     mapper: {
@@ -419,16 +419,16 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   },
   {
     key: 'onedrivev2',
-    displayName: 'OneDrive',
-    description: 'Store backups in OneDrive.',
+    displayName: $localize`OneDrive`,
+    description: $localize`Store backups in OneDrive.`,
     oauthField: 'authid',
     customFields: {
       path: {
         type: 'String',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
-        shortDescription: 'Path on server',
-        longDescription: 'Path on server',
+        shortDescription: $localize`Path on server`,
+        longDescription: $localize`Path on server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
@@ -453,40 +453,40 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   },
   {
     key: 'od4b',
-    displayName: 'OneDrive Business',
-    description: 'Store backups in OneDrive Business.',
+    displayName: $localize`OneDrive Business`,
+    description: $localize`Store backups in OneDrive Business.`,
     customFields: {
       server: {
         type: 'String',
         name: 'server',
-        shortDescription: 'Server',
-        longDescription: 'Server',
+        shortDescription: $localize`Server`,
+        longDescription: $localize`Server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
       port: {
         type: 'Integer',
         name: 'port',
-        shortDescription: 'Port',
-        longDescription: 'Port',
+        shortDescription: $localize`Port`,
+        longDescription: $localize`Port`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
       path: {
         type: 'String',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
-        shortDescription: 'Path on server',
-        longDescription: 'Path on server',
+        shortDescription: $localize`Path on server`,
+        longDescription: $localize`Path on server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
     dynamicFields: [
       {
         name: 'auth-username',
-        shortDescription: 'Account name',
+        shortDescription: $localize`Account name`,
       },
       {
         name: 'auth-password',
-        shortDescription: 'Access key',
+        shortDescription: $localize`Access key`,
       },
     ],
     mapper: {
@@ -511,40 +511,40 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   },
   {
     key: 'mssp',
-    displayName: 'Microsoft SharePoint',
-    description: 'Store backups in Microsoft SharePoint.',
+    displayName: $localize`Microsoft SharePoint`,
+    description: $localize`Store backups in Microsoft SharePoint.`,
     customFields: {
       server: {
         type: 'String',
         name: 'server',
-        shortDescription: 'Server',
-        longDescription: 'Server',
+        shortDescription: $localize`Server`,
+        longDescription: $localize`Server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
       port: {
         type: 'Integer',
         name: 'port',
-        shortDescription: 'Port',
-        longDescription: 'Port',
+        shortDescription: $localize`Port`,
+        longDescription: $localize`Port`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
       path: {
         type: 'String',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
-        shortDescription: 'Path on server',
-        longDescription: 'Path on server',
+        shortDescription: $localize`Path on server`,
+        longDescription: $localize`Path on server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
     dynamicFields: [
       {
         name: 'auth-username',
-        shortDescription: 'Account name',
+        shortDescription: $localize`Account name`,
       },
       {
         name: 'auth-password',
-        shortDescription: 'Access key',
+        shortDescription: $localize`Access key`,
       },
     ],
     mapper: {
@@ -569,16 +569,16 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   },
   {
     key: 'sharepoint',
-    displayName: 'Microsoft SharePoint v2',
-    description: 'Store backups in Microsoft SharePoint.',
+    displayName: $localize`Microsoft SharePoint v2`,
+    description: $localize`Store backups in Microsoft SharePoint.`,
     oauthField: 'authid',
     customFields: {
       path: {
         type: 'String',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
-        shortDescription: 'Path on server',
-        longDescription: 'Path on server',
+        shortDescription: $localize`Path on server`,
+        longDescription: $localize`Path on server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
@@ -603,16 +603,16 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   },
   {
     key: 'dropbox',
-    displayName: 'Dropbox',
-    description: 'Store backups in Dropbox.',
+    displayName: $localize`Dropbox`,
+    description: $localize`Store backups in Dropbox.`,
     oauthField: 'authid',
     customFields: {
       path: {
         type: 'String',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
-        shortDescription: 'Path on server',
-        longDescription: 'Path on server',
+        shortDescription: $localize`Path on server`,
+        longDescription: $localize`Path on server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
@@ -637,16 +637,16 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   },
   {
     key: 'box',
-    displayName: 'Box.com',
-    description: 'Store backups in Box.com.',
+    displayName: $localize`Box.com`,
+    description: $localize`Store backups in Box.com.`,
     oauthField: 'authid',
     customFields: {
       path: {
         type: 'String',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
-        shortDescription: 'Path on server',
-        longDescription: 'Path on server',
+        shortDescription: $localize`Path on server`,
+        longDescription: $localize`Path on server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
@@ -671,16 +671,16 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   },
   {
     key: 'jottacloud',
-    displayName: 'Jottacloud',
-    description: 'Store backups in Jottacloud.',
+    displayName: $localize`Jottacloud`,
+    description: $localize`Store backups in Jottacloud.`,
     oauthField: 'authid',
     customFields: {
       path: {
         type: 'String',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
-        shortDescription: 'Path on server',
-        longDescription: 'Path on server',
+        shortDescription: $localize`Path on server`,
+        longDescription: $localize`Path on server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
@@ -705,33 +705,33 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   },
   {
     key: 'b2',
-    displayName: 'B2 Cloud Storage',
-    description: 'Store backups in B2 Cloud Storage.',
+    displayName: $localize`B2 Cloud Storage`,
+    description: $localize`Store backups in B2 Cloud Storage.`,
     customFields: {
       bucket: {
         type: 'String',
         name: 'bucket',
-        shortDescription: 'Bucket name',
-        longDescription: 'Bucket name',
+        shortDescription: $localize`Bucket name`,
+        longDescription: $localize`Bucket name`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
       path: {
         type: 'String',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
-        shortDescription: 'Path in the bucket',
-        longDescription: 'Path in the bucket',
+        shortDescription: $localize`Path in the bucket`,
+        longDescription: $localize`Path in the bucket`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
     dynamicFields: [
       {
         name: 'auth-username',
-        shortDescription: 'Application ID',
+        shortDescription: $localize`Application ID`,
       },
       {
         name: 'auth-password',
-        shortDescription: 'Application Key',
+        shortDescription: $localize`Application Key`,
       },
     ],
     mapper: {
@@ -755,33 +755,33 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   },
   {
     key: 'e2',
-    displayName: 'IDrive e2',
-    description: 'Store backups in IDrive e2.',
+    displayName: $localize`IDrive e2`,
+    description: $localize`Store backups in IDrive e2.`,
     customFields: {
       bucket: {
         type: 'String',
         name: 'bucket',
-        shortDescription: 'Bucket name',
-        longDescription: 'Bucket name',
+        shortDescription: $localize`Bucket name`,
+        longDescription: $localize`Bucket name`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
       path: {
         type: 'String',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
-        shortDescription: 'Path in the bucket',
-        longDescription: 'Path in the bucket',
+        shortDescription: $localize`Path in the bucket`,
+        longDescription: $localize`Path in the bucket`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
     dynamicFields: [
       {
         name: 'auth-username',
-        shortDescription: 'Access ID',
+        shortDescription: $localize`Access ID`,
       },
       {
         name: 'auth-password',
-        shortDescription: 'Access Secret',
+        shortDescription: $localize`Access Secret`,
       },
     ],
     mapper: {
@@ -805,26 +805,26 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   },
   {
     key: 'mega',
-    displayName: 'Mega.nz',
-    description: 'Store backups in Mega.nz.',
+    displayName: $localize`Mega.nz`,
+    description: $localize`Store backups in Mega.nz.`,
     customFields: {
       path: {
         type: 'String',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
-        shortDescription: 'Path on server',
-        longDescription: 'Path on server',
+        shortDescription: $localize`Path on server`,
+        longDescription: $localize`Path on server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
     dynamicFields: [
       {
         name: 'auth-username',
-        shortDescription: 'Username',
+        shortDescription: $localize`Username`,
       },
       {
         name: 'auth-password',
-        shortDescription: 'Password',
+        shortDescription: $localize`Password`,
       },
     ],
     mapper: {
@@ -847,23 +847,23 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   },
   {
     key: 'msgroup',
-    displayName: 'Microsoft Office 365 Group',
-    description: 'Store backups in Microsoft Office 365 Group.',
+    displayName: $localize`Microsoft Office 365 Group`,
+    description: $localize`Store backups in Microsoft Office 365 Group.`,
     oauthField: 'authid',
     customFields: {
       groupEmail: {
         type: 'Email',
         name: 'groupEmail',
-        shortDescription: 'Group email',
-        longDescription: 'Group email',
+        shortDescription: $localize`Group email`,
+        longDescription: $localize`Group email`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? '', [Validators.email]),
       },
       path: {
         type: 'String',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
-        shortDescription: 'Path on server',
-        longDescription: 'Path on server',
+        shortDescription: $localize`Path on server`,
+        longDescription: $localize`Path on server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
@@ -888,40 +888,40 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   },
   {
     key: 'cloudfiles',
-    displayName: 'Rackspace CloudFiles',
-    description: 'Store backups in Rackspace CloudFiles.',
+    displayName: $localize`Rackspace CloudFiles`,
+    description: $localize`Store backups in Rackspace CloudFiles.`,
     customFields: {
       server: {
         type: 'String',
         name: 'server',
-        shortDescription: 'Server',
-        longDescription: 'Server',
+        shortDescription: $localize`Server`,
+        longDescription: $localize`Server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
       port: {
         type: 'Integer',
         name: 'port',
-        shortDescription: 'Port',
-        longDescription: 'Port',
+        shortDescription: $localize`Port`,
+        longDescription: $localize`Port`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
       path: {
         type: 'String',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
-        shortDescription: 'Path on server',
-        longDescription: 'Path on server',
+        shortDescription: $localize`Path on server`,
+        longDescription: $localize`Path on server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
     dynamicFields: [
       {
         name: 'auth-username',
-        shortDescription: 'Username',
+        shortDescription: $localize`Username`,
       },
       {
         name: 'auth-password',
-        shortDescription: 'Password',
+        shortDescription: $localize`Password`,
       },
     ],
     mapper: {
@@ -946,22 +946,22 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   },
   {
     key: 'rclone',
-    displayName: 'Rclone',
-    description: 'Store backups in Rclone.',
+    displayName: $localize`Rclone`,
+    description: $localize`Store backups in Rclone.`,
     dynamicFields: [
       {
         name: 'rclone-local-repository',
-        shortDescription: 'Local repository',
+        shortDescription: $localize`Local repository`,
         defaultValue: '',
       },
       {
         name: 'rclone-remote-repository',
-        shortDescription: 'Remote repository',
+        shortDescription: $localize`Remote repository`,
         defaultValue: '',
       },
       {
         name: 'rclone-remote-path',
-        shortDescription: 'Path on remote repository',
+        shortDescription: $localize`Path on remote repository`,
         defaultValue: '',
       },
     ],
@@ -996,41 +996,41 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   // Validated against the old destination test url
   {
     key: 'openstack',
-    displayName: 'OpenStack Object Storage',
-    description: 'Store backups in OpenStack Object Storage.',
+    displayName: $localize`OpenStack Object Storage`,
+    description: $localize`Store backups in OpenStack Object Storage.`,
     customFields: {
       bucket: {
         type: 'String',
         name: 'bucket',
-        shortDescription: 'Bucket',
-        longDescription: 'Bucket',
+        shortDescription: $localize`Bucket`,
+        longDescription: $localize`Bucket`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
     dynamicFields: [
       {
         name: 'openstack-authuri',
-        shortDescription: 'Auth URI',
+        shortDescription: $localize`Auth URI`,
         type: 'Enumeration',
         loadOptions: (injector) => injector.get(WebModulesService).openstackProviders,
       },
       {
         name: 'openstack-version',
-        shortDescription: 'Version',
+        shortDescription: $localize`Version`,
         type: 'Enumeration',
         loadOptions: (injector) => injector.get(WebModulesService).openstackVersions,
       },
       {
         name: 'openstack-domain-name',
-        shortDescription: 'Domain name',
+        shortDescription: $localize`Domain name`,
       },
       {
         name: 'openstack-tenant-name',
-        shortDescription: 'Tenant name',
+        shortDescription: $localize`Tenant name`,
       },
       {
         name: 'openstack-region',
-        shortDescription: 'Region',
+        shortDescription: $localize`Region`,
       },
     ],
     mapper: {
@@ -1056,44 +1056,44 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   // Validated against the old destination test url
   {
     key: 'webdav',
-    displayName: 'WebDAV',
-    description: 'Store backups in WebDAV.',
+    displayName: $localize`WebDAV`,
+    description: $localize`Store backups in WebDAV.`,
     customFields: {
       server: {
         type: 'String',
         name: 'server',
-        shortDescription: 'Server',
-        longDescription: 'Server',
+        shortDescription: $localize`Server`,
+        longDescription: $localize`Server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
       port: {
         type: 'Integer',
         name: 'port',
-        shortDescription: 'Port',
-        longDescription: 'Port',
+        shortDescription: $localize`Port`,
+        longDescription: $localize`Port`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
       path: {
         type: 'String',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
-        shortDescription: 'Path on server',
-        longDescription: 'Path on server',
+        shortDescription: $localize`Path on server`,
+        longDescription: $localize`Path on server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
     dynamicFields: [
       {
         name: 'use-ssl',
-        shortDescription: 'Use SSL',
+        shortDescription: $localize`Use SSL`,
       },
       {
         name: 'auth-username',
-        shortDescription: 'Username',
+        shortDescription: $localize`Username`,
       },
       {
         name: 'auth-password',
-        shortDescription: 'Password',
+        shortDescription: $localize`Password`,
       },
     ],
     mapper: {
@@ -1123,28 +1123,28 @@ export const DESTINATION_CONFIG: DestinationConfig = [
 
   {
     key: 'aftp',
-    displayName: 'FTP',
-    description: 'Store backups in FTP.',
+    displayName: $localize`FTP`,
+    description: $localize`Store backups in FTP.`,
     customFields: {
       server: {
         type: 'String',
         name: 'server',
-        shortDescription: 'Server',
-        longDescription: 'Server',
+        shortDescription: $localize`Server`,
+        longDescription: $localize`Server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
       port: {
         type: 'Integer',
         name: 'port',
-        shortDescription: 'Port',
-        longDescription: 'Port',
+        shortDescription: $localize`Port`,
+        longDescription: $localize`Port`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
       path: {
         type: 'String',
         name: 'path',
-        shortDescription: 'Path on server',
-        longDescription: 'Path on server',
+        shortDescription: $localize`Path on server`,
+        longDescription: $localize`Path on server`,
         doubleSlash: {
           type: 'warning',
           message: $localize`Using double leading slashes makes the path absolute, pointing to the root of the filesystem.`,
@@ -1155,11 +1155,11 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     dynamicFields: [
       {
         name: 'auth-username',
-        shortDescription: 'Username',
+        shortDescription: $localize`Username`,
       },
       {
         name: 'auth-password',
-        shortDescription: 'Password',
+        shortDescription: $localize`Password`,
       },
     ],
     mapper: {
@@ -1189,14 +1189,14 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   // Validated against the old destination test url
   {
     key: 'sia',
-    displayName: 'Sia Decentrilized Cloud',
-    description: 'Store backups in Sia Decentrilized Cloud.',
+    displayName: $localize`Sia Decentrilized Cloud`,
+    description: $localize`Store backups in Sia Decentrilized Cloud.`,
     customFields: {
       server: {
         type: 'String',
         name: 'server',
-        shortDescription: 'Server',
-        longDescription: 'Server',
+        shortDescription: $localize`Server`,
+        longDescription: $localize`Server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
@@ -1227,42 +1227,42 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   // Validated against the old destination test url
   {
     key: 'cos',
-    displayName: 'Tencent COS',
-    description: 'Store backups in Tencent COS.',
+    displayName: $localize`Tencent COS`,
+    description: $localize`Store backups in Tencent COS.`,
     customFields: {
       path: {
         type: 'String',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
-        shortDescription: 'Path on server',
-        longDescription: 'Path on server',
+        shortDescription: $localize`Path on server`,
+        longDescription: $localize`Path on server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
     dynamicFields: [
       {
         name: 'cos-bucket',
-        shortDescription: 'Bucket',
+        shortDescription: $localize`Bucket`,
         order: 1,
       },
       {
         name: 'cos-region',
-        shortDescription: 'Region',
+        shortDescription: $localize`Region`,
         order: 2,
       },
       {
         name: 'cos-app-id',
-        shortDescription: 'COS App Id',
+        shortDescription: $localize`COS App Id`,
         order: 3,
       },
       {
         name: 'cos-secret-id',
-        shortDescription: 'COS Secret Id',
+        shortDescription: $localize`COS Secret Id`,
         order: 4,
       },
       {
         name: 'cos-secret-key',
-        shortDescription: 'COS Secret Key',
+        shortDescription: $localize`COS Secret Key`,
         order: 5,
       },
     ],
@@ -1291,36 +1291,36 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   // Validated against the old destination test url
   {
     key: 'tahoe',
-    displayName: 'Tahoe LAFS',
-    description: 'Store backups in Tahoe LAFS.',
+    displayName: $localize`Tahoe LAFS`,
+    description: $localize`Store backups in Tahoe LAFS.`,
     customFields: {
       server: {
         type: 'String',
         name: 'server',
-        shortDescription: 'Server',
-        longDescription: 'Server',
+        shortDescription: $localize`Server`,
+        longDescription: $localize`Server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
       port: {
         type: 'Integer',
         name: 'port',
-        shortDescription: 'Port',
-        longDescription: 'Port',
+        shortDescription: $localize`Port`,
+        longDescription: $localize`Port`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
       path: {
         type: 'String',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
-        shortDescription: 'Path on server',
-        longDescription: 'Path on server',
+        shortDescription: $localize`Path on server`,
+        longDescription: $localize`Path on server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
     dynamicFields: [
       {
         name: 'use-ssl',
-        shortDescription: 'Use SSL',
+        shortDescription: $localize`Use SSL`,
       },
     ],
     mapper: {
@@ -1354,29 +1354,29 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   },
   {
     key: 'cifs',
-    displayName: 'CIFS',
-    description: 'Store backups in CIFS.',
+    displayName: $localize`CIFS`,
+    description: $localize`Store backups in CIFS.`,
     customFields: {
       server: {
         type: 'String',
         name: 'server',
-        shortDescription: 'Server',
-        longDescription: 'Server',
+        shortDescription: $localize`Server`,
+        longDescription: $localize`Server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
       share: {
         type: 'String',
         name: 'share',
-        shortDescription: 'Share Name',
-        longDescription: 'Share Name',
+        shortDescription: $localize`Share Name`,
+        longDescription: $localize`Share Name`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
       path: {
         type: 'String',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
-        shortDescription: 'Path on server',
-        longDescription: 'Path on server',
+        shortDescription: $localize`Path on server`,
+        longDescription: $localize`Path on server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
@@ -1417,15 +1417,15 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   },
   {
     key: 'filen',
-    displayName: 'Filen.io',
-    description: 'Store backups in Filen.io.',
+    displayName: $localize`Filen.io`,
+    description: $localize`Store backups in Filen.io.`,
     customFields: {
       path: {
         type: 'String',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
-        shortDescription: 'Path on Filen',
-        longDescription: 'Path on Filen',
+        shortDescription: $localize`Path on Filen`,
+        longDescription: $localize`Path on Filen`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
@@ -1465,15 +1465,15 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   },
   {
     key: 'filejump',
-    displayName: 'Filejump',
-    description: 'Store backups in Filejump.',
+    displayName: $localize`Filejump`,
+    description: $localize`Store backups in Filejump.`,
     customFields: {
       path: {
         type: 'String',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
-        shortDescription: 'Path on Filejump',
-        longDescription: 'Path on Filejump',
+        shortDescription: $localize`Path on Filejump`,
+        longDescription: $localize`Path on Filejump`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
@@ -1481,8 +1481,8 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       {
         type: 'Password',
         name: 'api-token',
-        shortDescription: 'API Token',
-        longDescription: 'Filejump API Token',
+        shortDescription: $localize`API Token`,
+        longDescription: $localize`Filejump API Token`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
       // TODO: Support password based auth?
@@ -1532,20 +1532,20 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   {
     key: 'storj',
     customKey: 'storjAccessGrant',
-    displayName: 'Storj Access Grant',
-    description: 'Store backups in Storj Access Grant.',
+    displayName: $localize`Storj Access Grant`,
+    description: $localize`Store backups in Storj Access Grant.`,
     dynamicFields: [
       {
         name: 'storj-shared-access',
-        shortDescription: 'Access Grant',
+        shortDescription: $localize`Access Grant`,
       },
       {
         name: 'storj-bucket',
-        shortDescription: 'Bucket',
+        shortDescription: $localize`Bucket`,
       },
       {
         name: 'storj-folder',
-        shortDescription: 'Path on server',
+        shortDescription: $localize`Path on server`,
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
       },
     ],
@@ -1568,30 +1568,30 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   {
     key: 'storj',
     customKey: 'storjApiKey',
-    displayName: 'Storj API Key',
-    description: 'Store backups in Storj API Key.',
+    displayName: $localize`Storj API Key`,
+    description: $localize`Store backups in Storj API Key.`,
     dynamicFields: [
       {
         name: 'storj-satellite',
-        shortDescription: 'Satellite',
+        shortDescription: $localize`Satellite`,
         type: 'Enumeration',
         loadOptions: (injector) => injector.get(WebModulesService).storjSatellites,
       },
       {
         name: 'storj-api-key',
-        shortDescription: 'API Key',
+        shortDescription: $localize`API Key`,
       },
       {
         name: 'storj-secret',
-        shortDescription: 'Secret',
+        shortDescription: $localize`Secret`,
       },
       {
         name: 'storj-bucket',
-        shortDescription: 'Bucket',
+        shortDescription: $localize`Bucket`,
       },
       {
         name: 'storj-folder',
-        shortDescription: 'Path on server',
+        shortDescription: $localize`Path on server`,
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
       },
     ],
