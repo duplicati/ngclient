@@ -323,7 +323,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'pcloud',
     displayName: $localize`pCloud`,
     description: $localize`Store backups in pCloud.`,
-    oauthV2Field: 'authid',
+    oauthField: 'authid',    
     customFields: {
       server: {
         type: 'Enumeration',
@@ -353,7 +353,11 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
-    dynamicFields: ['authid'],
+    dynamicFields: [{
+      name: 'authid',
+      type: 'Password',
+      oauthVersion: 2,
+    }],
     mapper: {
       to: (fields: any): string => {
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);

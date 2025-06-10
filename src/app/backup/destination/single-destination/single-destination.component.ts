@@ -26,7 +26,6 @@ import { CustomFormView, FormView, fromTargetPath, getConfigurationByKey, toTarg
 type DestinationConfig = {
   destinationType: string;
   oauthField: string | null;
-  oauthV2Field?: string | null;
   custom: FormView[];
   dynamic: FormView[];
   advanced: FormView[];
@@ -115,7 +114,6 @@ export class SingleDestinationComponent {
     if (!item || !item.Options || !key) return;
 
     const oauthField = destinationConfig && destinationConfig.oauthField ? destinationConfig.oauthField : null;
-    const oauthV2Field = destinationConfig && destinationConfig.oauthV2Field ? destinationConfig.oauthV2Field : null;
     const customFields = destinationConfig && destinationConfig.customFields ? destinationConfig.customFields : {};
     const dynamicFields = destinationConfig && destinationConfig.dynamicFields ? destinationConfig.dynamicFields : [];
     const advancedFields =
@@ -126,7 +124,6 @@ export class SingleDestinationComponent {
     const destinationFormConfig = {
       destinationType: key,
       oauthField,
-      oauthV2Field,
       custom: [] as FormView[],
       dynamic: [] as FormView[],
       advanced: [] as FormView[],
@@ -316,10 +313,10 @@ export class SingleDestinationComponent {
 
   #oauthInProgress = signal(false);
 
-  oauthStartTokenCreation(backendKey: string, fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string, usev2: boolean) {
+  oauthStartTokenCreation(backendKey: string, fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string, usev2?: boolean | null) {
     this.#oauthInProgress.set(true);
 
-    let oauthUrl = usev2 
+    let oauthUrl = (usev2 ?? false)
       ? this.#sysinfo.defaultOAuthUrlV2()
       : this.#sysinfo.defaultOAuthUrl();
 
