@@ -18,6 +18,7 @@ import { SizeComponent } from '../../../core/components/size/size.component';
 import { TimespanComponent } from '../../../core/components/timespan/timespan.component';
 import { ArgumentType, ICommandLineArgument } from '../../../core/openapi';
 import { SysinfoState } from '../../../core/states/sysinfo.state';
+import { ServerSettingsService } from '../../../settings/server-settings.service';
 import { BackupState } from '../../backup.state';
 import { DESTINATION_CONFIG } from '../destination.config';
 import { CustomFormView, FormView, fromTargetPath, toTargetPath } from '../destination.config-utilities';
@@ -59,6 +60,7 @@ type DestinationConfig = {
 export class SingleDestinationComponent {
   #backupState = inject(BackupState);
   #sysinfo = inject(SysinfoState);
+  #serverSettings = inject(ServerSettingsService);
   injector = inject(Injector);
   targetUrl = model.required<string | null>();
 
@@ -310,11 +312,20 @@ export class SingleDestinationComponent {
   oauthStartTokenCreation(backendKey: string, fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string, usev2: boolean) {
     this.#oauthInProgress.set(true);
 
-    // TODO: If the backup/restore has advanced options that overrides the OAuth URL, use that instead.
-    // This is also applicable for a potential OAuth URL in the global settings.
-    const oauthUrl = usev2 
+    let oauthUrl = usev2 
       ? this.#sysinfo.defaultOAuthUrlV2()
       : this.#sysinfo.defaultOAuthUrl();
+
+    const serverOverride = this.#serverSettings.serverSettings()?.['--oauth-url'];
+    if (serverOverride && serverOverride.length > 0)
+      oauthUrl = serverOverride;
+
+    // TODO: We should also check if the current backup advanced options have an override
+
+    const formOverride = this.destinationForm().advanced["oauth-url"];
+    if (formOverride && formOverride.length > 0)
+      oauthUrl = formOverride;
+    
     const startlink = `${oauthUrl}?type=${backendKey}`;
     
     const w = 450;
