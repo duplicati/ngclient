@@ -24,7 +24,6 @@ import { IDynamicModule } from '../../core/openapi';
 import { TestDestinationService } from '../../core/services/test-destination.service';
 import { DestinationConfigState } from '../../core/states/destinationconfig.state';
 import { BackupState } from '../backup.state';
-import { FormView } from './destination.config-utilities';
 import { SingleDestinationComponent } from './single-destination/single-destination.component';
 
 const fb = new FormBuilder();
@@ -60,14 +59,6 @@ export const createDestinationFormGroup = ({
 
 export type DestinationFormGroup = ReturnType<typeof createDestinationFormGroup>;
 export type DestinationFormGroupValue = ReturnType<typeof createDestinationFormGroup>['value'];
-
-type DefaultGroup = {
-  destinationType: string;
-  oauthField?: string;
-  index: number;
-  formGroupName: 'custom' | 'dynamic' | 'advanced';
-  formView: FormView;
-};
 
 @Component({
   selector: 'app-destination',

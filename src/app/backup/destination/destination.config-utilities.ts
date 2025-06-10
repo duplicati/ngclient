@@ -19,6 +19,8 @@ export type DoubleSlashConfig = {
   message: string;
 };
 
+export type OAuthVersion = 1 | 2;
+
 export type FormView = {
   name: string;
   type: ArgumentType | 'FileTree' | 'FolderTree' | 'NonValidatedSelectableString' | 'Email' | 'FreeText';
@@ -30,6 +32,7 @@ export type FormView = {
   loadOptions?: (injector: Injector) => Signal<WebModuleOption[] | undefined>;
   defaultValue?: ICommandLineArgument['DefaultValue'];
   doubleSlash?: DoubleSlashConfig;
+  oauthVersion?: OAuthVersion;
   order?: number;
 };
 

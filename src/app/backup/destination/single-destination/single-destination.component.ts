@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, Injector, model, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, Injector, input, model, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   SparkleButtonComponent,
@@ -18,13 +18,10 @@ import { SizeComponent } from '../../../core/components/size/size.component';
 import { TimespanComponent } from '../../../core/components/timespan/timespan.component';
 import { ArgumentType, ICommandLineArgument } from '../../../core/openapi';
 import { DestinationConfigState } from '../../../core/states/destinationconfig.state';
-import {
-  CustomFormView,
-  FormView,
-  fromTargetPath,
-  getConfigurationByKey,
-  toTargetPath,
-} from '../destination.config-utilities';
+import { SysinfoState } from '../../../core/states/sysinfo.state';
+import { ServerSettingsService } from '../../../settings/server-settings.service';
+import { BackupState } from '../../backup.state';
+import { CustomFormView, FormView, fromTargetPath, getConfigurationByKey, toTargetPath } from '../destination.config-utilities';
 
 type DestinationConfig = {
   destinationType: string;
@@ -60,9 +57,13 @@ type DestinationConfig = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SingleDestinationComponent {
+  #backupState = inject(BackupState);
+  #sysinfo = inject(SysinfoState);
+  #serverSettings = inject(ServerSettingsService);
   #destinationState = inject(DestinationConfigState);
   injector = inject(Injector);
   targetUrl = model.required<string | null>();
+  useBackupState = input(false);
 
   #destType: string | null = null;
   destinationType = computed(() => {
@@ -310,20 +311,33 @@ export class SingleDestinationComponent {
     this.destinationForm.set({ ...form });
   }
 
-  #oauthServiceLink = signal('https://duplicati-oauth-handler.appspot.com/').asReadonly();
-  #oauthCreateToken = signal(
-    Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2)
-  ).asReadonly();
   #oauthInProgress = signal(false);
 
-  oauthStartTokenCreation(backendKey: string, fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string) {
+  oauthStartTokenCreation(backendKey: string, fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string, usev2?: number | null) {
     this.#oauthInProgress.set(true);
 
-    const oauthCreateToken = this.#oauthCreateToken();
+    let oauthUrl = (usev2 ?? 1) == 2
+      ? this.#sysinfo.defaultOAuthUrlV2()
+      : this.#sysinfo.defaultOAuthUrl();
+
+    const serverOverride = this.#serverSettings.serverSettings()?.['--oauth-url'];
+    if (serverOverride && serverOverride.length > 0)
+      oauthUrl = serverOverride;
+
+    if (this.useBackupState()) {
+      const backupServerOverride = this.#backupState.mapFormsToSettings().find((x) => x.Name === '--oauth-url')?.Value;
+      if (backupServerOverride && backupServerOverride.length > 0)
+        oauthUrl = backupServerOverride;      
+    }
+
+    const formOverride = this.destinationForm().advanced["oauth-url"];
+    if (formOverride && formOverride.length > 0)
+      oauthUrl = formOverride;
+    
+    const startlink = `${oauthUrl}?type=${backendKey}`;
+    
     const w = 450;
     const h = 600;
-    const startlink = this.#oauthServiceLink() + '?type=' + backendKey + '&token=' + oauthCreateToken;
-
     const left = screen.width / 2 - w / 2;
     const top = screen.height / 2 - h / 2;
     const wnd = window.open(

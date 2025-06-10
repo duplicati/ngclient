@@ -73,7 +73,7 @@
   }
 
   @if (hasDestination) {
-    <app-single-destination [(targetUrl)]="targetUrlModel" />
+    <app-single-destination [(targetUrl)]="targetUrlModel" [useBackupState]="true" />
   }
 
   <div class="form-actions">
