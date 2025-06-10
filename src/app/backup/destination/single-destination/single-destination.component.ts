@@ -313,10 +313,10 @@ export class SingleDestinationComponent {
 
   #oauthInProgress = signal(false);
 
-  oauthStartTokenCreation(backendKey: string, fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string, usev2?: boolean | null) {
+  oauthStartTokenCreation(backendKey: string, fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string, usev2?: number | null) {
     this.#oauthInProgress.set(true);
 
-    let oauthUrl = (usev2 ?? false)
+    let oauthUrl = (usev2 ?? 1) == 2
       ? this.#sysinfo.defaultOAuthUrlV2()
       : this.#sysinfo.defaultOAuthUrl();
 
