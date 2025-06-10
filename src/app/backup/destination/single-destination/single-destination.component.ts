@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, Injector, model, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, Injector, input, model, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   SparkleButtonComponent,
@@ -63,6 +63,7 @@ export class SingleDestinationComponent {
   #serverSettings = inject(ServerSettingsService);
   injector = inject(Injector);
   targetUrl = model.required<string | null>();
+  useBackupState = input(false);
 
   #destType: string | null = null;
   destinationType = computed(() => {
@@ -320,7 +321,11 @@ export class SingleDestinationComponent {
     if (serverOverride && serverOverride.length > 0)
       oauthUrl = serverOverride;
 
-    // TODO: We should also check if the current backup advanced options have an override
+    if (this.useBackupState()) {
+      const backupServerOverride = this.#backupState.mapFormsToSettings().find((x) => x.Name === '--oauth-url')?.Value;
+      if (backupServerOverride && backupServerOverride.length > 0)
+        oauthUrl = backupServerOverride;      
+    }
 
     const formOverride = this.destinationForm().advanced["oauth-url"];
     if (formOverride && formOverride.length > 0)
