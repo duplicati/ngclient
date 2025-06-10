@@ -1,5 +1,6 @@
 import { signal } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { ArgumentType } from '../../core/openapi';
 import { WebModulesService } from '../../core/services/webmodules.service';
 import {
   addPath,
@@ -10,7 +11,6 @@ import {
   toSearchParams,
   ValueOfDestinationFormGroup
 } from './destination.config-utilities';
-import { ArgumentType } from '../../core/openapi';
 
 const fb = new FormBuilder();
 
@@ -55,7 +55,7 @@ export const DESTINATION_CONFIG_DEFAULT = {
     to: (fields: ValueOfDestinationFormGroup): string => {
       const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
-      return `${fields.destinationType}://${fields.custom.path}${urlParams}`;
+      return `${fields.destinationType}://${fields.custom.path ?? ''}${urlParams}`;
     },
     from: (destinationType: string, urlObj: URL, plainPath: string) => {
       const hasLeadingSlash = plainPath.startsWith(`${destinationType}:///`);
@@ -91,7 +91,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       to: (fields: ValueOfDestinationFormGroup): string => {
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
-        return `${fields.destinationType}://${fields.custom.path}${urlParams}`;
+        return `${fields.destinationType}://${fields.custom.path ?? ''}${urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         const hasLeadingSlash = plainPath.startsWith('file:///');
@@ -267,7 +267,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       to: (fields: any): string => {
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
-        return `${fields.destinationType}://${fields.custom.path}${urlParams}`;
+        return `${fields.destinationType}://${fields.custom.path ?? ''}${urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -303,7 +303,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     ],
     mapper: {
       to: (fields: any): string => {
-        const path = fields.custom.path;
+        const path = fields.custom.path ?? '';
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
         return `${fields.destinationType}://${path}${urlParams}`;
@@ -401,7 +401,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     ],
     mapper: {
       to: (fields: any) => {
-        const path = fields.custom.path;
+        const path = fields.custom.path ?? '';
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
         return `${fields.destinationType}://${path}${urlParams}`;
@@ -435,7 +435,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     dynamicFields: ['authid'],
     mapper: {
       to: (fields: any) => {
-        const path = fields.custom.path;
+        const path = fields.custom.path ?? '';
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
         return `${fields.destinationType}://${path}${urlParams}`;
@@ -585,7 +585,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     dynamicFields: ['site-id', 'authid'],
     mapper: {
       to: (fields: any) => {
-        const path = fields.custom.path;
+        const path = fields.custom.path ?? '';
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
         return `${fields.destinationType}://${path}${urlParams}`;
@@ -619,7 +619,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     dynamicFields: ['authid'],
     mapper: {
       to: (fields: any) => {
-        const path = fields.custom.path;
+        const path = fields.custom.path ?? '';
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
         return `${fields.destinationType}://${path}${urlParams}`;
@@ -653,7 +653,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     dynamicFields: ['authid'],
     mapper: {
       to: (fields: any) => {
-        const path = fields.custom.path;
+        const path = fields.custom.path ?? '';
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
         return `${fields.destinationType}://${path}${urlParams}`;
@@ -687,7 +687,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     dynamicFields: ['authid'],
     mapper: {
       to: (fields: any) => {
-        const path = fields.custom.path;
+        const path = fields.custom.path ?? '';
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
         return `${fields.destinationType}://${path}${urlParams}`;
@@ -829,7 +829,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     ],
     mapper: {
       to: (fields: any) => {
-        const path = fields.custom.path;
+        const path = fields.custom.path ?? '';
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
         return `${fields.destinationType}://${path}${urlParams}`;
@@ -870,7 +870,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     dynamicFields: ['authid'],
     mapper: {
       to: (fields: any) => {
-        const path = fields.custom.path;
+        const path = fields.custom.path ?? '';
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
         return `${fields.destinationType}://${path}${urlParams}`;
@@ -1268,7 +1268,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     ],
     mapper: {
       to: (fields: any): string => {
-        const path = fields.custom.path;
+        const path = fields.custom.path ?? '';
         const urlParams = toSearchParams([
           ...Object.entries(fields.advanced),
           ...Object.entries(fields.dynamic).filter(([key]) => key !== 'cos-targetpath'),
