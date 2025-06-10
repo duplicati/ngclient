@@ -12,7 +12,7 @@
     <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
   } @else {
     <form [formGroup]="baseCmdForm">
-      <spk-select [options]="commandOptions() ?? []" [inlineSearch]="true" placeholder="Select a command...">
+      <spk-select [options]="commandOptions() ?? ['backup']" [inlineSearch]="true" placeholder="Select a command...">
         <label for="command" i18n>Command</label>
         <input type="text" id="command" formControlName="command" />
       </spk-select>
