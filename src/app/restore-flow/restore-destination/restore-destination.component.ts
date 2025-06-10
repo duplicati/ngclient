@@ -21,11 +21,11 @@ import {
 } from '@sparkle-ui/core';
 import { finalize } from 'rxjs';
 import { BackupState } from '../../backup/backup.state';
-import { DESTINATION_CONFIG } from '../../backup/destination/destination.config';
 import { SingleDestinationComponent } from '../../backup/destination/single-destination/single-destination.component';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { IDynamicModule } from '../../core/openapi';
 import { TestDestinationService } from '../../core/services/test-destination.service';
+import { DestinationConfigState } from '../../core/states/destinationconfig.state';
 import { RestoreFlowState } from '../restore-flow.state';
 
 @Component({
@@ -53,6 +53,7 @@ export default class RestoreDestinationComponent {
   #testDestination = inject(TestDestinationService);
   injector = inject(Injector);
   #restoreFlowState = inject(RestoreFlowState);
+  #destinationState = inject(DestinationConfigState);
 
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
 
@@ -72,14 +73,7 @@ export default class RestoreDestinationComponent {
   successfulTest = signal(false);
   testLoading = signal(false);
   destinationTypeOptionsInFocus = signal(['file', 'ssh', 's3', 'gcs', 'googledrive', 'azure']);
-  destinationTypeOptions = signal(
-    DESTINATION_CONFIG.map((x) => ({
-      key: x.customKey ?? x.key,
-      customKey: x.customKey ?? null,
-      displayName: x.displayName,
-      description: x.description,
-    }))
-  );
+  destinationTypeOptions = this.#destinationState.destinationTypeOptions;
   destinationTypeOptionsFocused = computed(() => {
     const focused = this.destinationTypeOptionsInFocus();
     const options = this.destinationTypeOptions();

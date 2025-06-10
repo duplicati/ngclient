@@ -8,8 +8,9 @@ import {
   DoubleSlashConfig,
   fromSearchParams,
   toSearchParams,
-  ValueOfDestinationFormGroup,
+  ValueOfDestinationFormGroup
 } from './destination.config-utilities';
+import { ArgumentType } from '../../core/openapi';
 
 const fb = new FormBuilder();
 
@@ -37,6 +38,38 @@ const fb = new FormBuilder();
 const DEFAULT_DOUBLESLASH_CONFIG: DoubleSlashConfig = {
   type: 'error',
   message: $localize`Using double leading slashes is most likely wrong, and will result in objects being created with a leading slash in the name.`,
+};
+
+export const DESTINATION_CONFIG_DEFAULT = {
+  description: $localize`Unknown destination type`,
+  customFields: {
+    path: {
+      type: 'String' as ArgumentType,
+      name: 'path',
+      doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
+      shortDescription: $localize`Path`,
+      formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+    },
+  },
+  mapper: {
+    to: (fields: ValueOfDestinationFormGroup): string => {
+      const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
+
+      return `${fields.destinationType}://${fields.custom.path}${urlParams}`;
+    },
+    from: (destinationType: string, urlObj: URL, plainPath: string) => {
+      const hasLeadingSlash = plainPath.startsWith(`${destinationType}:///`);
+      const path = hasLeadingSlash ? plainPath.split(`${destinationType}:///`)[1] : plainPath.split(`${destinationType}://`)[1];
+
+      return <ValueOfDestinationFormGroup>{
+        destinationType,
+        custom: {
+          path: path.split('?')[0],
+        },
+        ...fromSearchParams(destinationType, urlObj),
+      };
+    },
+  },
 };
 
 export const DESTINATION_CONFIG: DestinationConfig = [

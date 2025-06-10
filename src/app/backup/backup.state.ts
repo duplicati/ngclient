@@ -77,8 +77,6 @@ export class BackupState {
   generalFormSignal = toSignal(this.generalForm.valueChanges);
   encryptionFieldSignal = toSignal(this.generalForm.controls.encryption.valueChanges);
 
-  destinationOptions = computed(() => this.#sysinfo.backendModules() ?? []);
-
   advancedOptions = computed(() => {
     return this.#sysinfo.systemInfo()?.Options?.map(this.#mapCommandLineArgumentsToFormViews) ?? [];
   });

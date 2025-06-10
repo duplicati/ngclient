@@ -14,7 +14,8 @@ import {
   SparkleTableComponent,
 } from '@sparkle-ui/core';
 import { finalize } from 'rxjs';
-import { DESTINATION_CONFIG, S3_HOST_SUFFIX_MAP } from '../backup/destination/destination.config';
+import { S3_HOST_SUFFIX_MAP } from '../backup/destination/destination.config';
+import { getConfigurationByKey } from '../backup/destination/destination.config-utilities';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { StatusBarState } from '../core/components/status-bar/status-bar.state';
 import { localStorageSignal } from '../core/functions/localstorage-signal';
@@ -94,19 +95,15 @@ export default class HomeComponent {
   getBackendIcon(targetUrl: string | null | undefined) {
     if (!targetUrl) return '';
     const backend = targetUrl.split('://')[0];
-    const match = DESTINATION_CONFIG.find((x) => x.key === backend);
-    if (!match) return 'database';
-
+    const match = getConfigurationByKey(backend);
     const override = DestinationOverrides[match.key];
-    if (override?.Icon) return override.Icon;
-
-    return 'database';
+    return override?.Icon ?? 'database';
   }
 
   getBackendType(targetUrl: string | null | undefined) {
     if (!targetUrl) return '';
     const backend = targetUrl.split('://')[0];
-    const match = DESTINATION_CONFIG.find((x) => x.key === backend);
+    const match = getConfigurationByKey(backend);
     if (!match) return '';
 
     const override = DestinationOverrides[match.key];
