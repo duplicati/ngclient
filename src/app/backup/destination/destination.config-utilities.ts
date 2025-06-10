@@ -34,6 +34,7 @@ export type FormView = {
   doubleSlash?: DoubleSlashConfig;
   oauthVersion?: OAuthVersion;
   order?: number;
+  isMandatory?: boolean
 };
 
 export type CustomFormView = FormView & {
