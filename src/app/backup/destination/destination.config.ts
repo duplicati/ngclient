@@ -582,7 +582,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
-    dynamicFields: ['authid'],
+    dynamicFields: ['site-id', 'authid'],
     mapper: {
       to: (fields: any) => {
         const path = fields.custom.path;
