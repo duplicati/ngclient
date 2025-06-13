@@ -22,19 +22,7 @@
       <p>
         {{ item.data?.MainOperation }}
 
-        @if (errorCount > 0 || warningCount > 0) {
-          (
-          <span i18n>
-            {errorCount, plural, =0 {} =1 {1 error} other {{{ errorCount }} errors}}
-          </span>
-          @if (errorCount > 0 && warningCount > 0) {
-            ,
-          }
-          <span i18n>
-            {warningCount, plural, =0 {} =1 {1 warning} other {{{ warningCount }} warnings}}
-          </span>
-          )
-        }
+        {{ getLocalizedSummary(item) }}
       </p>
 
       <div class="spacer"></div>
