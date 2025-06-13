@@ -10,11 +10,14 @@ export const DayJsProvider: Provider = {
   provide: DAYJS,
   useFactory: () => {
     const locale = localStorage.getItem('v1:duplicati:locale') ?? 'en-US';
-    const simpleLocale = locale.split('-')[0];
+    const simpleLocale =
+      DAYJS_LOCALES[locale] ??
+      DAYJS_LOCALES[locale.split('-')[0]] ??
+      DAYJS_LOCALES['en-US'];
 
     dayjs.extend(relativeTime);
     dayjs.extend(duration);
-    dayjs.locale(DAYJS_LOCALES[simpleLocale]);
+    dayjs.locale(simpleLocale);
 
     return dayjs;
   },
