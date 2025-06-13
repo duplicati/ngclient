@@ -39,5 +39,6 @@ export const DAYJS_LOCALES = {
   'sr-RS': locale_sr,
   'sv-SE': locale_sv,
   'zh-CN': locale_zh_cn,
+  'zh-Hans:': locale_zh_cn, 
   'zh-TW': locale_zh_tw,
 } as { [key: string]: ILocale };

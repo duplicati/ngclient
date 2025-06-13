@@ -119,6 +119,10 @@
             "translation": "src/locale/messages.zh_CN.xlf",
             "baseHref": "zh-CN"
           },
+          "zh-Hans": {
+            "translation": "src/locale/messages.zh_Hans.xlf",
+            "baseHref": "zh-Hans"
+          },
           "zh-TW": {
             "translation": "src/locale/messages.zh_TW.xlf",
             "baseHref": "zh-TW"

@@ -26,6 +26,7 @@ export const LANGUAGES = [
   { value: 'sr-RS', label: 'Serbian (sr-RS)' },
   { value: 'sv-SE', label: 'Swedish (sv-SE)' },
   { value: 'zh-CN', label: 'Chinese (zh-CN)' },
+  { value: 'zh-Hans', label: 'Chinese (Simplified, zh-Hans)' },
   { value: 'zh-TW', label: 'Chinese (zh-TW)' },
 ];
 
