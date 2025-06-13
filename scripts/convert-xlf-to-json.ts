@@ -1,29 +1,67 @@
-import { XMLParser } from 'fast-xml-parser';
-import fs from 'fs';
-import path from 'path';
+import * as fs from 'fs';
+import * as path from 'path';
+import { parseStringPromise } from 'xml2js';
 
-const localeDir = 'src/locale';
-const files = fs.readdirSync(localeDir).filter(f => f.endsWith('.xlf'));
+function extractTextFromTarget(target: any): string {
+    if (!target || !Array.isArray(target.$$)) return '';
 
-const parser = new XMLParser({
-  ignoreAttributes: false,
-  attributeNamePrefix: '',
-});
+    return target.$$.map((node: any) => {
+        if (node['#name'] === 'x') {
+            const id = node.$?.id;
+            return id ? `{$${id}}` : '';
+        }
+        if (node['#name'] === 'g') {
+            const id = node.$?.id;
+            const inner = extractTextFromTarget(node);
+            return `{$${id}}${inner}{$CLOSE_${id}}`;
+        }
+        if ('_' in node) {
+            return node._;
+        }
+        return '';
+    }).join('').trim();
+}
 
-files.forEach(file => {
-  const content = fs.readFileSync(path.join(localeDir, file), 'utf-8');
-  const parsed = parser.parse(content);
+async function convertFile(inputPath: string, outputPath: string) {
+  const xml = fs.readFileSync(inputPath, 'utf8');
+  const parsed = await parseStringPromise(xml, {
+      preserveChildrenOrder: true,
+      explicitChildren: true,
+      charsAsChildren: true
+  });
 
-  const units = parsed['xliff']['file']['body']['trans-unit'];
-  const translations: Record<string, string> = {};
+  const result: Record<string, string> = {};
+  const units = parsed.xliff.file[0].body[0]['trans-unit'];
 
-  for (const unit of Array.isArray(units) ? units : [units]) {
-    if (unit.id && unit.target) {
-      translations[unit.id] = typeof unit.target === 'string' ? unit.target : unit.target['#text'];
-    }
+  for (const unit of units) {
+      const id = unit.$.id;
+      const target = unit.target?.[0];
+
+      const content = extractTextFromTarget(target);
+
+      if (!content || content.trim() === '') {
+          // Skip untranslated strings
+          continue;
+      }
+
+      result[id] = content;
   }
 
-  const outFile = path.join(localeDir, file.replace(/\.xlf$/, '.json'));
-  fs.writeFileSync(outFile, JSON.stringify({ translations }, null, 2));
-  console.log(`✅ Wrote ${outFile}`);
+  fs.writeFileSync(outputPath, JSON.stringify({ translations: result }, null, 2), 'utf8');
+  console.log(`✔️ Converted ${path.basename(inputPath)} → ${path.basename(outputPath)}`);
+}
+
+async function run() {
+    const folder = path.resolve('src/locale');
+    const files = fs.readdirSync(folder).filter(f => f.endsWith('.xlf'));
+
+    for (const file of files) {
+        const inputPath = path.join(folder, file);
+        const outputPath = path.join(folder, file.replace(/\.xlf$/, '.json'));
+        await convertFile(inputPath, outputPath);
+    }
+}
+
+run().catch(err => {
+    console.error('❌ Conversion error:', err);
 });
