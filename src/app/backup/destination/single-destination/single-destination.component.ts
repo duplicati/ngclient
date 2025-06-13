@@ -283,8 +283,8 @@ export class SingleDestinationComponent {
     return form[fieldGroup];
   }
 
-  hasDoubleLeadingSlashes(str: string) {
-    return str.startsWith('//');
+  hasDoubleLeadingSlashes(str?: string | null) {
+    return str?.startsWith('//') ?? false;
   }
 
   addAdvancedOption(formView: FormView) {
