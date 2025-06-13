@@ -152,11 +152,6 @@
                 "output": "./locale/dayjs/"
               },
               {
-                "glob": "**/{en-US,en-GB,cs,da,de,es,fi,fr,hu,it,ja,nl,pl,pt-BR,pt,ru,sr,sv,zh-Hans,zh-Hant}.mjs",
-                "input": "./node_modules/@angular/common/locales",
-                "output": "./locale/angular/"
-              },
-              {
                 "glob": "**/*",
                 "input": "./node_modules/@sparkle-ui/core/assets",
                 "output": "./sparkle-ui-assets/"
