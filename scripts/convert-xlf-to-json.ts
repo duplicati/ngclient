@@ -3,23 +3,28 @@ import * as path from 'path';
 import { parseStringPromise } from 'xml2js';
 
 function extractTextFromTarget(target: any): string {
-    if (!target || !Array.isArray(target.$$)) return '';
+  if (!target || !Array.isArray(target.$$)) return '';
 
-    return target.$$.map((node: any) => {
-        if (node['#name'] === 'x') {
-            const id = node.$?.id;
-            return id ? `{$${id}}` : '';
-        }
-        if (node['#name'] === 'g') {
-            const id = node.$?.id;
-            const inner = extractTextFromTarget(node);
-            return `{$${id}}${inner}{$CLOSE_${id}}`;
-        }
-        if ('_' in node) {
-            return node._;
-        }
-        return '';
-    }).join('').trim();
+  // Detect if message is a plural block
+  const fullText = target.$$.map((n: any) => n._ || '').join('');
+  const isPlural = /^\{[\w\d_]+,\s*plural,/.test(fullText);
+
+  return target.$$.map((node: any) => {
+      if (node['#name'] === 'x') {
+          const id = node.$?.id;
+          if (!id) return '';
+          return isPlural ? `{{${id}}}` : `{$${id}}`;
+      }
+      if (node['#name'] === 'g') {
+          const id = node.$?.id;
+          const inner = extractTextFromTarget(node);
+          return `{$${id}}${inner}{$CLOSE_${id}}`;
+      }
+      if ('_' in node) {
+          return node._;
+      }
+      return '';
+  }).join('').trim();
 }
 
 async function convertFile(inputPath: string, outputPath: string) {
