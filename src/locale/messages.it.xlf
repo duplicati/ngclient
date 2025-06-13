@@ -89,6 +89,13 @@
           <context context-type="linenumber">8,10</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="742060281986941452" datatype="html">
+        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>download<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Download update - <x id="INTERPOLATION" equiv-text="{{ serverState()?.UpdatedVersion }}"/> </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/about/general/general.component.html</context>
+          <context context-type="linenumber">16,19</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="1798705857149002871" datatype="html">
         <source> Details <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-square-in<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/></source>
         <target>Dettagli <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-square-in<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/></target>
@@ -243,6 +250,7 @@
       </trans-unit>
       <trans-unit id="4704706951108884898" datatype="html">
         <source><x id="START_BLOCK_IF" equiv-text="@if (noMoreItems()) {"/> No more items <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/> Load more <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
+        <target><x id="START_BLOCK_IF" equiv-text="@if (noMoreItems()) {"/> Nessun altro elemento <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/> Caricane di più <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/logs/logs-stored/logs-stored.component.html</context>
           <context context-type="linenumber">43,49</context>
@@ -392,9 +400,8 @@
           <context context-type="linenumber">21,22</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="5745043405588551353" datatype="html">
-        <source>Import backup configuration from a file. During import you can adjust the setings.</source>
-        <target>Importa la configurazione di backup da un file. Durante l'importazione è possibile adeguare le impostazioni.</target>
+      <trans-unit id="8045695670533357195" datatype="html">
+        <source>Import backup configuration from a file. During import, you can adjust the settings.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/add-backup/add-backup.component.html</context>
           <context context-type="linenumber">22,23</context>
@@ -469,7 +476,7 @@
         <target>Confermi l'uscita?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/backup.state.ts</context>
-          <context context-type="linenumber">241</context>
+          <context context-type="linenumber">138</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-flow.state.ts</context>
@@ -481,7 +488,7 @@
         <target>Sei sicuro di voler uscire?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/backup.state.ts</context>
-          <context context-type="linenumber">242</context>
+          <context context-type="linenumber">139</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-flow.state.ts</context>
@@ -493,7 +500,7 @@
         <target>Si</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/backup.state.ts</context>
-          <context context-type="linenumber">243</context>
+          <context context-type="linenumber">140</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-flow.state.ts</context>
@@ -505,7 +512,7 @@
         <target>Annulla</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/backup.state.ts</context>
-          <context context-type="linenumber">244</context>
+          <context context-type="linenumber">141</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/delete-backup/delete-backup.component.html</context>
@@ -774,6 +781,7 @@
       </trans-unit>
       <trans-unit id="8559052935367429367" datatype="html">
         <source>Delete backup: <x id="INTERPOLATION" equiv-text="{{ _backup?.Backup?.Name }}"/></source>
+        <target>Elimina il backup: <x id="INTERPOLATION" equiv-text="{{ _backup?.Backup?.Name }}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/delete-backup/delete-backup.component.html</context>
           <context context-type="linenumber">4,6</context>
@@ -789,6 +797,7 @@
       </trans-unit>
       <trans-unit id="1960459054815438023" datatype="html">
         <source> Each backup has a local database associated with it, which stores information about the remote backup on the local machine. When deleting a backup, you can also delete the local database without affecting the ability to restore the remote files. If you are using the local database for backups from the commandline, you should keep the database. </source>
+        <target> A ogni backup è associato un database locale, che memorizza le informazioni del backup remoto sul computer locale. Quando si elimina un backup, è possibile eliminare anche il database locale senza compromettere la possibilità di ripristinare i file remoti. Se utilizzi il database locale per i backup da riga di comando, dovresti mantenere il database. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/delete-backup/delete-backup.component.html</context>
           <context context-type="linenumber">10,13</context>
@@ -812,6 +821,7 @@
       </trans-unit>
       <trans-unit id="8770181154281540962" datatype="html">
         <source>Delete remote files</source>
+        <target>Elimina file remoti</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/delete-backup/delete-backup.component.html</context>
           <context context-type="linenumber">36,37</context>
@@ -819,6 +829,7 @@
       </trans-unit>
       <trans-unit id="1622563533269836843" datatype="html">
         <source> Delete <x id="ICU" equiv-text="{fileCount(), plural, =1 {1 file} other {{{fileCount()}} files}}" xid="2159106180826349718"/> (<x id="INTERPOLATION_1" equiv-text="{{ fileSize | bytes: true : true }}"/>) from the remote storage? </source>
+        <target> Elimina <x id="ICU" equiv-text="{fileCount(), plural, =1 {1 file} other {{{fileCount()}} files}}" xid="2159106180826349718"/> (<x id="INTERPOLATION_1" equiv-text="{{ fileSize | bytes: true : true }}"/>) dall'archivio remoto? </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/delete-backup/delete-backup.component.html</context>
           <context context-type="linenumber">38,43</context>
@@ -826,6 +837,7 @@
       </trans-unit>
       <trans-unit id="8407137440564843816" datatype="html">
         <source>{VAR_PLURAL, plural, =1 {1 file} other {<x id="INTERPOLATION"/> files}}</source>
+        <target>{VAR_PLURAL, plural, =1 {1 file} other {<x id="INTERPOLATION"/> file}}</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/delete-backup/delete-backup.component.html</context>
           <context context-type="linenumber">39,40</context>
@@ -860,11 +872,14 @@
         </context-group>
       </trans-unit>
       <trans-unit id="882713164198283622" datatype="html">
-        <source> Backup destination <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_BLOCK_IF_1" equiv-text="@if (destinationCount() &gt; 0) {"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button             spk-button             type=&quot;button&quot;             class=&quot;small&quot;             [class.loader]=&quot;testLoading()&quot;             [class.success]=&quot;successfulTest()&quot;             (click)=&quot;testDestination()&quot;&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (successfulTest()) {"/> Connected <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>check<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/> Test destination <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;spk-menu&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>dots-three-vertical<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_TAG_BUTTON_2" ctype="x-button_2" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;openTargetUrlDialog()&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>link<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Edit target URL <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;/spk-menu&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
-        <target> Posizione backup <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_BLOCK_IF_1" equiv-text="@if (destinationCount() &gt; 0) {"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button             spk-button             type=&quot;button&quot;             class=&quot;small&quot;             [class.loader]=&quot;testLoading()&quot;             [class.success]=&quot;successfulTest()&quot;             (click)=&quot;testDestination()&quot;&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (successfulTest()) {"/> Connesso <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>verifica<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/> Test destinazione <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;spk-menu&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>dots-three-vertical<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_TAG_BUTTON_2" ctype="x-button_2" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;openTargetUrlDialog()&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>link<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Modifica URL destinazione <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;/spk-menu&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></target>
+        <source> Backup destination <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_BLOCK_IF_1" equiv-text="@if (hasDestination) {"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button             spk-button             type=&quot;button&quot;             class=&quot;small&quot;             [class.loader]=&quot;testLoading()&quot;             [class.success]=&quot;successfulTest()&quot;             (click)=&quot;testDestination()&quot;&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (successfulTest()) {"/> Connected <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>check<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/> Test destination <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;spk-menu&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>dots-three-vertical<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_TAG_BUTTON_2" ctype="x-button_2" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;openTargetUrlDialog()&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>link<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Edit target URL <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;/spk-menu&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">4,39</context>
+          <context context-type="linenumber">6,41</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.html</context>
+          <context context-type="linenumber">6,41</context>
         </context-group>
       </trans-unit>
       <trans-unit id="297083673179540834" datatype="html">
@@ -872,7 +887,11 @@
         <target> Tipo di destinazione attuale <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/><x id="INTERPOLATION" equiv-text="{{ selectedDestinationType()?.displayName }}"/>.<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/><x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> Vuoi selezionarne un altra? <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;spk-primary&quot;&gt;"/>Clicca qui<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">41,48</context>
+          <context context-type="linenumber">43,50</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.html</context>
+          <context context-type="linenumber">43,50</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4502276696997510312" datatype="html">
@@ -880,23 +899,11 @@
         <target>Altre destinazioni</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">64,66</context>
+          <context context-type="linenumber">63,65</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">55,57</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1245076565562757606" datatype="html">
-        <source> Advanced options <x id="START_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;spk-menu [searchable]=&quot;true&quot;&gt;"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button                 spk-button                 type=&quot;button&quot;                 class=&quot;outlined small&quot;                 [disabled]=&quot;notSelectedAdvancedFormPair().length === 0&quot;&gt;"/> Add advanced option <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>plus<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_BLOCK_FOR" equiv-text="@for (option of notSelectedAdvancedFormPair(); track $index) {"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button #option type=&quot;button&quot; (click)=&quot;addAdvancedFormPair(option, 0)&quot;&gt;"/> <x id="INTERPOLATION" equiv-text="{{ option.name }}"/> <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_FOR" equiv-text="}"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;/spk-menu&gt;"/></source>
-        <target> Opzioni avanzate <x id="START_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;spk-menu [searchable]=&quot;true&quot;&gt;"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button                 spk-button                 type=&quot;button&quot;                 class=&quot;outlined small&quot;                 [disabled]=&quot;notSelectedAdvancedFormPair().length === 0&quot;&gt;"/> Aggiungi opzione avanzata <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>plus<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_BLOCK_FOR" equiv-text="@for (option of notSelectedAdvancedFormPair(); track $index) {"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button #option type=&quot;button&quot; (click)=&quot;addAdvancedFormPair(option, 0)&quot;&gt;"/> <x id="INTERPOLATION" equiv-text="{{ option.name }}"/> <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_FOR" equiv-text="}"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;/spk-menu&gt;"/></target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">114,134</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">105,125</context>
+          <context context-type="linenumber">63,65</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6897142954122660647" datatype="html">
@@ -904,7 +911,7 @@
         <target><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-left<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Torna indietro </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">402,406</context>
+          <context context-type="linenumber">81,85</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/options/options.component.html</context>
@@ -922,13 +929,17 @@
           <context context-type="sourcefile">src/app/restore-flow/options/options.component.html</context>
           <context context-type="linenumber">48,52</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.html</context>
+          <context context-type="linenumber">81,85</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="1985492856544078017" datatype="html">
         <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Continue </source>
         <target><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Continua </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">407,410</context>
+          <context context-type="linenumber">86,89</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/schedule/schedule.component.html</context>
@@ -940,7 +951,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">440,443</context>
+          <context context-type="linenumber">86,89</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-encryption/restore-encryption.component.html</context>
@@ -956,11 +967,11 @@
         <target>Modifica URL di destinazione</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">416,417</context>
+          <context context-type="linenumber">95,96</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">449,450</context>
+          <context context-type="linenumber">95,96</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6147192655453310156" datatype="html">
@@ -968,11 +979,11 @@
         <target> Attenzione, questa operazione sovrascriverà tutto ciò che è presente nella destinazione. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">418,419</context>
+          <context context-type="linenumber">97,98</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">451,452</context>
+          <context context-type="linenumber">97,98</context>
         </context-group>
       </trans-unit>
       <trans-unit id="738940470889774841" datatype="html">
@@ -980,11 +991,11 @@
         <target> Sovrascrivi l'URL di destinazione <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>swap<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">432,435</context>
+          <context context-type="linenumber">111,114</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">465,468</context>
+          <context context-type="linenumber">111,114</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1409527397857081529" datatype="html">
@@ -992,7 +1003,11 @@
         <target>La cartella contiene backup</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">234</context>
+          <context context-type="linenumber">159</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
+          <context context-type="linenumber">135</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8037546150888700711" datatype="html">
@@ -1000,7 +1015,11 @@
         <target>La destinazione remota contiene già un backup. Devi utilizzare una cartella diversa per ogni backup.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">235</context>
+          <context context-type="linenumber">160</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
+          <context context-type="linenumber">136</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8998179362936748717" datatype="html">
@@ -1008,11 +1027,11 @@
         <target>OK</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">236</context>
+          <context context-type="linenumber">161</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">245</context>
+          <context context-type="linenumber">170</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/services/test-destination.service.ts</context>
@@ -1036,7 +1055,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">220</context>
+          <context context-type="linenumber">137</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
+          <context context-type="linenumber">146</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-flow.state.ts</context>
@@ -1048,7 +1071,11 @@
         <target>La cartella non è vuota</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">243</context>
+          <context context-type="linenumber">168</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
+          <context context-type="linenumber">144</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3017607400660862943" datatype="html">
@@ -1056,29 +1083,1244 @@
         <target>La destinazione remota non è vuota. Si consiglia di usare una cartella vuota per il backup.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">244</context>
+          <context context-type="linenumber">169</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
+          <context context-type="linenumber">145</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4384042087739114621" datatype="html">
         <source>Using double leading slashes is most likely wrong, and will result in objects being created with a leading slash in the name.</source>
+        <target>L'uso di doppi slash iniziali è molto probabilmente errato e porterà alla creazione di oggetti con uno slash iniziale nel nome.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">39</context>
+          <context context-type="linenumber">40</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="1062471995153417189" datatype="html">
-        <source>Using double leading slashes makes the path absolute, pointing to the root of the filesystem.</source>
+      <trans-unit id="432524756311798008" datatype="html">
+        <source>Unknown destination type</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">107</context>
+          <context context-type="linenumber">44</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8911059720204770105" datatype="html">
+        <source>Path</source>
+        <target>Percorso</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">50</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/source-data/source-data.component.html</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/restore-flow/select-files/select-files.component.html</context>
+          <context context-type="linenumber">31,32</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6839763278934169817" datatype="html">
+        <source>File system</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">78</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2196800415524042283" datatype="html">
+        <source>Store backups on your local file system.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">79</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6569880249807429105" datatype="html">
+        <source>File path</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">85</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2464317893854091654" datatype="html">
+        <source>The path to store the backup</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">86</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8749327426206013798" datatype="html">
+        <source>SSH</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">115</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5420325914311403064" datatype="html">
+        <source>Store backups in SSH.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">116</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2188854519574316630" datatype="html">
+        <source>Server</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">121</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">199</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">343</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">344</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">466</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">467</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">524</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">525</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">901</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">902</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1069</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1070</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1136</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
           <context context-type="linenumber">1137</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1202</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1203</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1304</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1305</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1367</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1368</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2698719400644288116" datatype="html">
+        <source>The server to connect to</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">122</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6117946241126833991" datatype="html">
+        <source>Port</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">128</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">473</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">474</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">531</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">532</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">908</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">909</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1076</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1077</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1143</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1144</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1311</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1312</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="765777744179252038" datatype="html">
+        <source>The port to connect to</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">129</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3063621350011509567" datatype="html">
+        <source>Folder path</source>
+        <target>Percorso cartella</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">136</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">137</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">191</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">192</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">293</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">294</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">351</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">352</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/source-data/source-data.component.html</context>
+          <context context-type="linenumber">8,9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1062471995153417189" datatype="html">
+        <source>Using double leading slashes makes the path absolute, pointing to the root of the filesystem.</source>
+        <target>L'uso di doppi slash iniziali rende il percorso assoluto, puntando alla radice del filesystem.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">140</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1154</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6287501959303066769" datatype="html">
+        <source>This is a path to a private key file locally on the machine</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">151</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">152</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5826944082599109984" datatype="html">
+        <source>S3 Compatible</source>
+        <target>Compatibile S3</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">177</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6409998219542811653" datatype="html">
+        <source>Store backups in any S3 compatible bucket.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">178</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6225017594735493582" datatype="html">
+        <source>Bucket name</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">183</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">184</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">248</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">249</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">718</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">719</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">768</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">769</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2974956065423158526" datatype="html">
+        <source>Google Cloud Storage</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">240</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2685289648610623245" datatype="html">
+        <source>Store backups in Google Cloud Storage.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">241</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1592625207589774627" datatype="html">
+        <source>Google Drive</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">285</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="672439927759604285" datatype="html">
+        <source>Store backups in Google Drive.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">286</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2824778775727635891" datatype="html">
+        <source>pCloud</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">324</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6067224471499272941" datatype="html">
+        <source>Store backups in pCloud.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">325</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2571561222043199870" datatype="html">
+        <source>Azure Blob Storage</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">384</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2373982793777599122" datatype="html">
+        <source>Store backups in Azure Blob Storage.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">385</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6135071031116720136" datatype="html">
+        <source>Container name</source>
+        <target>Nome contenitore</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">391</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">392</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8192419514129699261" datatype="html">
+        <source>Account name</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">399</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">489</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">547</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1956226327175747295" datatype="html">
+        <source>Access key</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">403</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">493</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">551</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4776297842943067423" datatype="html">
+        <source>OneDrive</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">426</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4000469533344318986" datatype="html">
+        <source>Store backups in OneDrive.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">427</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5208346970841973547" datatype="html">
+        <source>Path on server</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">434</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">435</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">481</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">482</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">539</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">540</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">584</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">585</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">618</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">619</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">652</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">653</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">686</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">687</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">819</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">820</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">869</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">870</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">916</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">917</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1084</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1085</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1150</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1151</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1241</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1242</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1319</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1320</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1382</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1383</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1552</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1598</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="763792998446030240" datatype="html">
+        <source>OneDrive Business</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">460</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5203119002517875277" datatype="html">
+        <source>Store backups in OneDrive Business.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">461</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8305208554017693899" datatype="html">
+        <source>Microsoft SharePoint</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">518</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6243043133204186678" datatype="html">
+        <source>Store backups in Microsoft SharePoint.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">519</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">577</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3650610066444563362" datatype="html">
+        <source>Microsoft SharePoint v2</source>
+        <target>Microsoft SharePoint v2</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">576</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="730703184011067892" datatype="html">
+        <source>Dropbox</source>
+        <target>Dropbox</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">610</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4598054074055792393" datatype="html">
+        <source>Store backups in Dropbox.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">611</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1828758656215814459" datatype="html">
+        <source>Box.com</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">644</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3845443824080997838" datatype="html">
+        <source>Store backups in Box.com.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">645</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4182355748133624753" datatype="html">
+        <source>Jottacloud</source>
+        <target>Jottacloud</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">678</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="157333137085730907" datatype="html">
+        <source>Store backups in Jottacloud.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">679</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2391709980016316191" datatype="html">
+        <source>B2 Cloud Storage</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">712</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1560119022164856777" datatype="html">
+        <source>Store backups in B2 Cloud Storage.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">713</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6376261217871722243" datatype="html">
+        <source>Path in the bucket</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">726</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">727</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">776</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">777</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2385634023146528014" datatype="html">
+        <source>Application ID</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">734</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4850391806785872653" datatype="html">
+        <source>Application Key</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">738</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6620903652878498037" datatype="html">
+        <source>IDrive e2</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">762</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5817791938505061739" datatype="html">
+        <source>Store backups in IDrive e2.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">763</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4055246236738746947" datatype="html">
+        <source>Access ID</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">784</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8206437921423261892" datatype="html">
+        <source>Access Secret</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">788</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3690832063756455175" datatype="html">
+        <source>Mega.nz</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">812</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7456819223000178588" datatype="html">
+        <source>Store backups in Mega.nz.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">813</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5248717555542428023" datatype="html">
+        <source>Username</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">827</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">924</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1096</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1162</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1431416938026210429" datatype="html">
+        <source>Password</source>
+        <target>Password</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">831</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">928</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1100</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1166</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/export/export.component.html</context>
+          <context context-type="linenumber">68,69</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/general/general.component.html</context>
+          <context context-type="linenumber">59,60</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/restore-flow/restore-encryption/restore-encryption.component.html</context>
+          <context context-type="linenumber">3,4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="598839942059191430" datatype="html">
+        <source>Microsoft Office 365 Group</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">854</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7763987319419032945" datatype="html">
+        <source>Store backups in Microsoft Office 365 Group.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">855</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1618818512996162696" datatype="html">
+        <source>Group email</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">861</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">862</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5118817596420170522" datatype="html">
+        <source>Rackspace CloudFiles</source>
+        <target>Rackspace CloudFiles</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">895</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1891100445393831017" datatype="html">
+        <source>Store backups in Rackspace CloudFiles.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">896</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1879517876731100451" datatype="html">
+        <source>Rclone</source>
+        <target>Rclone</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">953</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6511418996017048042" datatype="html">
+        <source>Store backups in Rclone.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">954</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4206380462628164369" datatype="html">
+        <source>Local repository</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">958</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="9125368577826703997" datatype="html">
+        <source>Remote repository</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">963</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2153379598793229223" datatype="html">
+        <source>Path on remote repository</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">968</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1640334719601029575" datatype="html">
+        <source>OpenStack Object Storage</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1003</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5365065159713730999" datatype="html">
+        <source>Store backups in OpenStack Object Storage.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1004</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8720332287407681000" datatype="html">
+        <source>Bucket</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1009</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1010</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1249</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1548</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1594</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="715869236704033904" datatype="html">
+        <source>Auth URI</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1017</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2724055831234181057" datatype="html">
+        <source>Version</source>
+        <target>Versione</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1023</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/home/home.component.html</context>
+          <context context-type="linenumber">173,174</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4242845413151034495" datatype="html">
+        <source>Domain name</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1029</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5934961163128207428" datatype="html">
+        <source>Tenant name</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1033</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2702200797962830082" datatype="html">
+        <source>Region</source>
+        <target>Regione</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1037</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1254</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8893412912393613367" datatype="html">
+        <source>WebDAV</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1063</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4161869179420419180" datatype="html">
+        <source>Store backups in WebDAV.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1064</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5266103021965994312" datatype="html">
+        <source>Use SSL</source>
+        <target>Usa SSL</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1092</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1327</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4535111608023460568" datatype="html">
+        <source>FTP</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1130</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2761209516328971502" datatype="html">
+        <source>Store backups in FTP.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1131</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2148217343719147606" datatype="html">
+        <source>Sia Decentrilized Cloud</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1196</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6971306072134434435" datatype="html">
+        <source>Store backups in Sia Decentrilized Cloud.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1197</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7087256114435682275" datatype="html">
+        <source>Tencent COS</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1234</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7121157188144306851" datatype="html">
+        <source>Store backups in Tencent COS.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1235</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="328109290615470663" datatype="html">
+        <source>COS App Id</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1259</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5210567302572235333" datatype="html">
+        <source>COS Secret Id</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1264</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8319916360691242924" datatype="html">
+        <source>COS Secret Key</source>
+        <target>Chiave segreta COS</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1269</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3973868637264779754" datatype="html">
+        <source>Tahoe LAFS</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1298</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="863931951136375296" datatype="html">
+        <source>Store backups in Tahoe LAFS.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1299</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6479800160169142188" datatype="html">
+        <source>CIFS</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1361</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7734626379287363859" datatype="html">
+        <source>Store backups in CIFS.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1362</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5098290215983190635" datatype="html">
+        <source>Share Name</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1374</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1375</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="732218849333506427" datatype="html">
+        <source>Filen.io</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1424</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4267087859628904259" datatype="html">
+        <source>Store backups in Filen.io.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1425</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8554734047079490713" datatype="html">
+        <source>Path on Filen</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1431</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1432</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2792782099373246525" datatype="html">
+        <source>Filejump</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1472</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8754096557728124922" datatype="html">
+        <source>Store backups in Filejump.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1473</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1317354077788346238" datatype="html">
+        <source>Path on Filejump</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1479</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1480</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5297710070167842134" datatype="html">
+        <source>API Token</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1488</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6015867774087473210" datatype="html">
+        <source>Filejump API Token</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1489</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7767043792653794161" datatype="html">
+        <source>Storj Access Grant</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1539</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7990311587063681599" datatype="html">
+        <source>Store backups in Storj Access Grant.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1540</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5694580546178076526" datatype="html">
+        <source>Access Grant</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1544</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7732296756511089144" datatype="html">
+        <source>Storj API Key</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1575</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="520993283570669753" datatype="html">
+        <source>Store backups in Storj API Key.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1576</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8050244774979733855" datatype="html">
+        <source>Satellite</source>
+        <target>Satellitare</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1580</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8517109745758603034" datatype="html">
+        <source>API Key</source>
+        <target>Chiave API</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1586</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7896650584449704588" datatype="html">
+        <source>Secret</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1590</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1245076565562757606" datatype="html">
+        <source> Advanced options <x id="START_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;spk-menu [searchable]=&quot;true&quot;&gt;"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;outlined small&quot; [disabled]=&quot;_nonSelectedAdvancedFormViews.length === 0&quot;&gt;"/> Add advanced option <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>plus<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_BLOCK_FOR" equiv-text="@for (formView of _nonSelectedAdvancedFormViews; track $index) {"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button #option type=&quot;button&quot; (click)=&quot;addAdvancedOption(formView)&quot;&gt;"/> <x id="INTERPOLATION" equiv-text="{{ formView.name }}"/> <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_FOR" equiv-text="}"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;/spk-menu&gt;"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/single-destination/single-destination.component.html</context>
+          <context context-type="linenumber">43,63</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6556337020063139824" datatype="html">
+        <source>This is an undocumented option.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/single-destination/single-destination.component.ts</context>
+          <context context-type="linenumber">278</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="3801215978313579965" datatype="html">
         <source>Remember to copy the password</source>
+        <target>Ricordati di copiare la password</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/export/export.component.html</context>
           <context context-type="linenumber">17,18</context>
@@ -1142,22 +2384,6 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/general/general.component.html</context>
           <context context-type="linenumber">49,53</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1431416938026210429" datatype="html">
-        <source>Password</source>
-        <target>Password</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/backup/export/export.component.html</context>
-          <context context-type="linenumber">68,69</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/backup/general/general.component.html</context>
-          <context context-type="linenumber">59,60</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/restore-flow/restore-encryption/restore-encryption.component.html</context>
-          <context context-type="linenumber">3,4</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1442062990315866883" datatype="html">
@@ -1252,9 +2478,8 @@
           <context context-type="linenumber">106,113</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="6039718285704874546" datatype="html">
-        <source> Tip: Be sure to save your password. If you loose it you will lose access to your backups. </source>
-        <target> Suggerimento: Assicurarsi di salvare la password. Se la perdi, perderai l'accesso ai backup. </target>
+      <trans-unit id="3254810088313246565" datatype="html">
+        <source> Tip: Be sure to save your password. If you lose it, you will lose access to your backups. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/export/export.component.html</context>
           <context context-type="linenumber">144,145</context>
@@ -1331,10 +2556,6 @@
           <context context-type="sourcefile">src/app/backup/general/general.component.html</context>
           <context context-type="linenumber">128,132</context>
         </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">435,439</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="6672428652644452214" datatype="html">
         <source> Continue <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/></source>
@@ -1392,12 +2613,45 @@
           <context context-type="linenumber">41,42</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="8856905278208146821" datatype="html">
+        <source> <x id="ICU" equiv-text="{errorCount, plural, =0 {} =1 {1 error} other {{{ errorCount }} errors}}" xid="8177766704718505917"/> </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
+          <context context-type="linenumber">28,30</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
+          <context context-type="linenumber">34,36</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/home/home.component.html</context>
+          <context context-type="linenumber">134,136</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/home/home.component.html</context>
+          <context context-type="linenumber">216,218</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8503442700564510491" datatype="html">
+        <source>{VAR_PLURAL, plural, =0 {} =1 {1 error} other {<x id="INTERPOLATION"/> errors}}</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
+          <context context-type="linenumber">28,29</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2224695623919097029" datatype="html">
+        <source>{VAR_PLURAL, plural, =0 {} =1 {1 warning} other {<x id="INTERPOLATION"/> warnings}}</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
+          <context context-type="linenumber">34,35</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="8497528947328199741" datatype="html">
         <source>Time</source>
         <target>Tempo</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">35,36</context>
+          <context context-type="linenumber">51,52</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5080389591312921919" datatype="html">
@@ -1405,15 +2659,15 @@
         <target>Avvio: <x id="INTERPOLATION" equiv-text="{{ item.data?.BeginTime | date: 'medium' }}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">39,40</context>
+          <context context-type="linenumber">55,56</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">76,77</context>
+          <context context-type="linenumber">96,97</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">97,98</context>
+          <context context-type="linenumber">117,118</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8726674463503410455" datatype="html">
@@ -1421,15 +2675,15 @@
         <target>Fine: <x id="INTERPOLATION" equiv-text="{{ item.data?.EndTime | date: 'medium' }}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">40,41</context>
+          <context context-type="linenumber">56,57</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">77,78</context>
+          <context context-type="linenumber">97,98</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">98,99</context>
+          <context context-type="linenumber">118,119</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5226613065122074953" datatype="html">
@@ -1437,15 +2691,15 @@
         <target>Durata: <x id="INTERPOLATION" equiv-text="{{ item.data?.Duration | durationFormat }}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">41,42</context>
+          <context context-type="linenumber">57,58</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">78,79</context>
+          <context context-type="linenumber">98,99</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">99,100</context>
+          <context context-type="linenumber">119,120</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2432093903373755152" datatype="html">
@@ -1453,39 +2707,35 @@
         <target>Sorgente file</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">47,48</context>
+          <context context-type="linenumber">63,64</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="4727937930509767982" datatype="html">
-        <source>Evaluated: <x id="INTERPOLATION" equiv-text="{{ item.data?.ExaminedFiles }}"/> (<x id="INTERPOLATION_1" equiv-text="{{ item.data?.SizeOfExaminedFiles | bytes }}"/>)</source>
-        <target>Valutato: <x id="INTERPOLATION" equiv-text="{{ item.data?.ExaminedFiles }}"/> (<x id="INTERPOLATION_1" equiv-text="{{ item.data?.SizeOfExaminedFiles | bytes }}"/>)</target>
+      <trans-unit id="1998123414911928906" datatype="html">
+        <source> Evaluated: <x id="INTERPOLATION" equiv-text="{{ item.data?.ExaminedFiles }}"/> (<x id="INTERPOLATION_1" equiv-text="{{ item.data?.SizeOfExaminedFiles | bytes: true : true }}"/>) </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">51,52</context>
+          <context context-type="linenumber">68,70</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4331888453294826602" datatype="html">
-        <source>Opened: <x id="INTERPOLATION" equiv-text="{{ item.data?.OpenedFiles }}"/> (<x id="INTERPOLATION_1" equiv-text="{{ item.data?.SizeOfOpenedFiles | bytes }}"/>)</source>
-        <target>Aperto: <x id="INTERPOLATION" equiv-text="{{ item.data?.OpenedFiles }}"/> (<x id="INTERPOLATION_1" equiv-text="{{ item.data?.SizeOfOpenedFiles | bytes }}"/>)</target>
+        <source>Opened: <x id="INTERPOLATION" equiv-text="{{ item.data?.OpenedFiles }}"/> (<x id="INTERPOLATION_1" equiv-text="{{ item.data?.SizeOfOpenedFiles | bytes: true : true }}"/>)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">52,53</context>
+          <context context-type="linenumber">70,71</context>
         </context-group>
       </trans-unit>
       <trans-unit id="992770839043662205" datatype="html">
-        <source>Added: <x id="INTERPOLATION" equiv-text="{{ item.data?.AddedFiles }}"/> (<x id="INTERPOLATION_1" equiv-text="{{ item.data?.SizeOfAddedFiles | bytes }}"/>)</source>
-        <target>Aggiunto: <x id="INTERPOLATION" equiv-text="{{ item.data?.AddedFiles }}"/> (<x id="INTERPOLATION_1" equiv-text="{{ item.data?.SizeOfAddedFiles | bytes }}"/>)</target>
+        <source>Added: <x id="INTERPOLATION" equiv-text="{{ item.data?.AddedFiles }}"/> (<x id="INTERPOLATION_1" equiv-text="{{ item.data?.SizeOfAddedFiles | bytes: true : true }}"/>)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">53,54</context>
+          <context context-type="linenumber">71,72</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="1330512101617097574" datatype="html">
-        <source>Modified: <x id="INTERPOLATION" equiv-text="{{ item.data?.ModifiedFiles }}"/> (<x id="INTERPOLATION_1" equiv-text="{{ item.data?.SizeOfModifiedFiles | bytes }}"/>)</source>
-        <target>Modificato: <x id="INTERPOLATION" equiv-text="{{ item.data?.ModifiedFiles }}"/> (<x id="INTERPOLATION_1" equiv-text="{{ item.data?.SizeOfModifiedFiles | bytes }}"/>)</target>
+      <trans-unit id="317209386186463161" datatype="html">
+        <source> Modified: <x id="INTERPOLATION" equiv-text="{{ item.data?.ModifiedFiles }}"/> (<x id="INTERPOLATION_1" equiv-text="{{ item.data?.SizeOfModifiedFiles | bytes: true : true }}"/>) </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">54,55</context>
+          <context context-type="linenumber">73,75</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1327949676974490739" datatype="html">
@@ -1493,7 +2743,7 @@
         <target>Eliminato: <x id="INTERPOLATION" equiv-text="{{ item.data?.DeletedFiles }}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">55,56</context>
+          <context context-type="linenumber">75,76</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1005679486924257725" datatype="html">
@@ -1501,7 +2751,7 @@
         <target>Troppo grande: <x id="INTERPOLATION" equiv-text="{{ item.data?.TooLargeFiles }}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">56,57</context>
+          <context context-type="linenumber">76,77</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2657274932153994431" datatype="html">
@@ -1509,7 +2759,7 @@
         <target>File con errore: <x id="INTERPOLATION" equiv-text="{{ item.data?.FilesWithError }}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">57,58</context>
+          <context context-type="linenumber">77,78</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6949240435527620156" datatype="html">
@@ -1517,7 +2767,7 @@
         <target><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>circle-half-tilt<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Fase di test <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_TAG_SPK_ICON_1" ctype="x-spk_icon_1" equiv-text="&lt;spk-icon class=&quot;toggle-indicator&quot;&gt;"/>caret-down<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">67,73</context>
+          <context context-type="linenumber">87,93</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1115809378877865647" datatype="html">
@@ -1525,7 +2775,7 @@
         <target>Verifiche: <x id="INTERPOLATION" equiv-text="{{ item.data?.TestResults?.VerificationsActualLength }}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">79,80</context>
+          <context context-type="linenumber">99,100</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8902028498998824593" datatype="html">
@@ -1533,11 +2783,11 @@
         <target>Avvisi: <x id="INTERPOLATION" equiv-text="{{ item.data?.TestResults?.WarningsActualLength }}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">81,82</context>
+          <context context-type="linenumber">101,102</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">117,118</context>
+          <context context-type="linenumber">137,138</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3547732848568990919" datatype="html">
@@ -1545,35 +2795,39 @@
         <target>Errori: <x id="INTERPOLATION" equiv-text="{{ item.data?.TestResults?.ErrorsActualLength }}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">82,83</context>
+          <context context-type="linenumber">102,103</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">118,119</context>
+          <context context-type="linenumber">138,139</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1207175779142818708" datatype="html">
+        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>file-archive<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Compact phase <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_TAG_SPK_ICON_1" ctype="x-spk_icon_1" equiv-text="&lt;spk-icon class=&quot;toggle-indicator&quot;&gt;"/>caret-down<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
+          <context context-type="linenumber">108,114</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2232867431219377641" datatype="html">
-        <source> Deleted files: <x id="INTERPOLATION" equiv-text="{{ item.data?.CompactResults?.DeletedFileCount }}"/> (<x id="INTERPOLATION_1" equiv-text="{{                     item.data?.CompactResults?.DeletedFileSize | bytes                   }}"/>) </source>
-        <target> File eliminati: <x id="INTERPOLATION" equiv-text="{{ item.data?.CompactResults?.DeletedFileCount }}"/> (<x id="INTERPOLATION_1" equiv-text="{{                     item.data?.CompactResults?.DeletedFileSize | bytes                   }}"/>) </target>
+        <source> Deleted files: <x id="INTERPOLATION" equiv-text="{{ item.data?.CompactResults?.DeletedFileCount }}"/> (<x id="INTERPOLATION_1" equiv-text="{{                     item.data?.CompactResults?.DeletedFileSize | bytes: true : true                   }}"/>) </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">102,105</context>
+          <context context-type="linenumber">122,125</context>
         </context-group>
       </trans-unit>
       <trans-unit id="474488815103574935" datatype="html">
-        <source> Downloaded files: <x id="INTERPOLATION" equiv-text="{{ item.data?.CompactResults?.DownloadedFileCount }}"/> (<x id="INTERPOLATION_1" equiv-text="{{                     item.data?.CompactResults?.DownloadedFileSize | bytes                   }}"/>) </source>
-        <target> File scaricati: <x id="INTERPOLATION" equiv-text="{{ item.data?.CompactResults?.DownloadedFileCount }}"/> (<x id="INTERPOLATION_1" equiv-text="{{                     item.data?.CompactResults?.DownloadedFileSize | bytes                   }}"/>) </target>
+        <source> Downloaded files: <x id="INTERPOLATION" equiv-text="{{ item.data?.CompactResults?.DownloadedFileCount }}"/> (<x id="INTERPOLATION_1" equiv-text="{{                     item.data?.CompactResults?.DownloadedFileSize | bytes: true : true                   }}"/>) </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">107,110</context>
+          <context context-type="linenumber">127,130</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1841165020557840645" datatype="html">
-        <source> Uploaded files: <x id="INTERPOLATION" equiv-text="{{ item.data?.CompactResults?.UploadedFileCount }}"/> (<x id="INTERPOLATION_1" equiv-text="{{                     item.data?.CompactResults?.UploadedFileSize | bytes                   }}"/>) </source>
-        <target> File caricati: <x id="INTERPOLATION" equiv-text="{{ item.data?.CompactResults?.UploadedFileCount }}"/> (<x id="INTERPOLATION_1" equiv-text="{{                     item.data?.CompactResults?.UploadedFileSize | bytes                   }}"/>) </target>
+        <source> Uploaded files: <x id="INTERPOLATION" equiv-text="{{ item.data?.CompactResults?.UploadedFileCount }}"/> (<x id="INTERPOLATION_1" equiv-text="{{                     item.data?.CompactResults?.UploadedFileSize | bytes: true : true                   }}"/>) </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">112,115</context>
+          <context context-type="linenumber">132,135</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3027321058767165559" datatype="html">
@@ -1581,7 +2835,7 @@
         <target><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>warning-circle<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Verifiche <x id="INTERPOLATION" equiv-text="{{ $any(item.data).VerificationsActualLength }}"/> <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_TAG_SPK_ICON_1" ctype="x-spk_icon_1" equiv-text="&lt;spk-icon class=&quot;toggle-indicator&quot;&gt;"/>caret-down<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">126,132</context>
+          <context context-type="linenumber">146,152</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6838500787561325322" datatype="html">
@@ -1589,7 +2843,7 @@
         <target><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>warning-circle<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Avvisi <x id="INTERPOLATION" equiv-text="{{ item.data?.WarningsActualLength }}"/> <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_TAG_SPK_ICON_1" ctype="x-spk_icon_1" equiv-text="&lt;spk-icon class=&quot;toggle-indicator&quot;&gt;"/>caret-down<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">144,150</context>
+          <context context-type="linenumber">164,170</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4914376870636868464" datatype="html">
@@ -1597,7 +2851,7 @@
         <target><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>warning<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Errori <x id="INTERPOLATION" equiv-text="{{ item.data?.ErrorsActualLength }}"/> <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_TAG_SPK_ICON_1" ctype="x-spk_icon_1" equiv-text="&lt;spk-icon class=&quot;toggle-indicator&quot;&gt;"/>caret-down<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">161,167</context>
+          <context context-type="linenumber">181,187</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3225458864616615214" datatype="html">
@@ -1605,7 +2859,7 @@
         <target><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>notepad<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Registro completo <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_TAG_SPK_ICON_1" ctype="x-spk_icon_1" equiv-text="&lt;spk-icon class=&quot;toggle-indicator&quot;&gt;"/>caret-down<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
-          <context context-type="linenumber">183,189</context>
+          <context context-type="linenumber">203,209</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6520003959216971027" datatype="html">
@@ -1737,11 +2991,12 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.ts</context>
-          <context context-type="linenumber">60</context>
+          <context context-type="linenumber">61</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4220403089455275702" datatype="html">
         <source><x id="START_BLOCK_IF" equiv-text="@if (copiedFromIndex() === $index) {"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>check<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Copied <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>copy<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Copy to clipboard <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
+        <target><x id="START_BLOCK_IF" equiv-text="@if (copiedFromIndex() === $index) {"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>check<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Copiato <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>copy<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Copia negli appunti <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/remote-log/remote-log.component.html</context>
           <context context-type="linenumber">23,31</context>
@@ -1765,6 +3020,7 @@
       </trans-unit>
       <trans-unit id="4141282812307802268" datatype="html">
         <source>By adding this option it will override the matching global option</source>
+        <target>Aggiungendo questa opzione sovrascriverà l'opzione globale corrispondente</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/options/options-list/options-list.component.html</context>
           <context context-type="linenumber">51,52</context>
@@ -2154,26 +3410,6 @@
           <context context-type="linenumber">5,7</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="3063621350011509567" datatype="html">
-        <source>Folder path</source>
-        <target>Percorso cartella</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/backup/source-data/source-data.component.html</context>
-          <context context-type="linenumber">8,9</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="8911059720204770105" datatype="html">
-        <source>Path</source>
-        <target>Percorso</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/backup/source-data/source-data.component.html</context>
-          <context context-type="linenumber">9</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/restore-flow/select-files/select-files.component.html</context>
-          <context context-type="linenumber">31,32</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="3361600127930482405" datatype="html">
         <source>Paths</source>
         <target>Percorsi</target>
@@ -2320,6 +3556,7 @@
       </trans-unit>
       <trans-unit id="8877761497641789855" datatype="html">
         <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>upload<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/></source>
+        <target><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>caricamento<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/file-drop-textarea/file-drop-textarea.component.html</context>
           <context context-type="linenumber">4,8</context>
@@ -2327,6 +3564,7 @@
       </trans-unit>
       <trans-unit id="5873713339410499323" datatype="html">
         <source> Browse path </source>
+        <target> Sfoglia percorso </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/file-tree/file-tree.component.html</context>
           <context context-type="linenumber">8,9</context>
@@ -2410,6 +3648,7 @@
       </trans-unit>
       <trans-unit id="1487672983218679675" datatype="html">
         <source>5 minutes</source>
+        <target>5 minuti</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/pause-dialog/pause-dialog.component.ts</context>
           <context context-type="linenumber">8</context>
@@ -2417,6 +3656,7 @@
       </trans-unit>
       <trans-unit id="603584938775296395" datatype="html">
         <source>10 minutes</source>
+        <target>10 minuti</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/pause-dialog/pause-dialog.component.ts</context>
           <context context-type="linenumber">9</context>
@@ -2424,6 +3664,7 @@
       </trans-unit>
       <trans-unit id="6648333117195452824" datatype="html">
         <source>15 minutes</source>
+        <target>15 minuti</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/pause-dialog/pause-dialog.component.ts</context>
           <context context-type="linenumber">10</context>
@@ -2431,6 +3672,7 @@
       </trans-unit>
       <trans-unit id="3024744231536209225" datatype="html">
         <source>30 minutes</source>
+        <target>30 minuti</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/pause-dialog/pause-dialog.component.ts</context>
           <context context-type="linenumber">11</context>
@@ -2494,6 +3736,7 @@
       </trans-unit>
       <trans-unit id="8233224133812179244" datatype="html">
         <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>skull<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Abort </source>
+        <target><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>skull<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Interruzione </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.component.html</context>
           <context context-type="linenumber">27,29</context>
@@ -2501,6 +3744,7 @@
       </trans-unit>
       <trans-unit id="4402828945099740984" datatype="html">
         <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>stop<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Stop </source>
+        <target><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>stop<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Ferma </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.component.html</context>
           <context context-type="linenumber">32,34</context>
@@ -2832,6 +4076,7 @@
       </trans-unit>
       <trans-unit id="1465484089620959730" datatype="html">
         <source>We will round bits to the nearest byte value.</source>
+        <target>Arrotonderemo i bit al valore di byte più vicino.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/throttle-settings-dialog/throttle-settings-dialog.component.html</context>
           <context context-type="linenumber">3,4</context>
@@ -2839,6 +4084,7 @@
       </trans-unit>
       <trans-unit id="7357944272216693384" datatype="html">
         <source>Max upload speed</source>
+        <target>Velocità massima per caricare</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/throttle-settings-dialog/throttle-settings-dialog.component.html</context>
           <context context-type="linenumber">9,11</context>
@@ -3282,19 +4528,9 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
           <context context-type="linenumber">105,106</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="8856905278208146821" datatype="html">
-        <source> <x id="ICU" equiv-text="{versions, plural, =0 {No version yet} =1 {1 Version} other {{{ versions }} Versions}}" xid="6502601490918455200"/> </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/home/home.component.html</context>
-          <context context-type="linenumber">134,136</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/home/home.component.html</context>
-          <context context-type="linenumber">216,218</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="4301968594246501194" datatype="html">
         <source>{VAR_PLURAL, plural, =0 {No version yet} =1 {1 Version} other {<x id="INTERPOLATION"/> Versions}}</source>
+        <target>{VAR_PLURAL, plural, =0 {Ancora nessuna versione} =1 {1 Versione} other {<x id="INTERPOLATION"/> Versioni}}</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
           <context context-type="linenumber">134,135</context>
@@ -3326,6 +4562,7 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
       </trans-unit>
       <trans-unit id="8239510835983979014" datatype="html">
         <source> Type <x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/></source>
+        <target> Tipo <x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
           <context context-type="linenumber">154,157</context>
@@ -3363,14 +4600,6 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
           <context context-type="linenumber">170,173</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="2724055831234181057" datatype="html">
-        <source>Version</source>
-        <target>Versione</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/home/home.component.html</context>
-          <context context-type="linenumber">173,174</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="3193976279273491157" datatype="html">
         <source>Actions</source>
         <target>Azioni</target>
@@ -3393,6 +4622,7 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
       </trans-unit>
       <trans-unit id="4210377108810462983" datatype="html">
         <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>play-circle<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (viewMode() === 'list') {"/> Start <x id="CLOSE_BLOCK_IF" equiv-text="}"/></source>
+        <target><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>play-circle<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (viewMode() === 'list') {"/> Avvio <x id="CLOSE_BLOCK_IF" equiv-text="}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
           <context context-type="linenumber">245,251</context>
@@ -3468,9 +4698,10 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
       </trans-unit>
       <trans-unit id="2906587845957718064" datatype="html">
         <source>Local</source>
+        <target>Locale</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.ts</context>
-          <context context-type="linenumber">28</context>
+          <context context-type="linenumber">29</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5569128980493130010" datatype="html">
@@ -3571,6 +4802,7 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
       </trans-unit>
       <trans-unit id="7505628785704584115" datatype="html">
         <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>skip-back<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Use old UI </source>
+        <target><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>skip-back<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Usa la vecchia interfaccia utente </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/layout/layout.component.html</context>
           <context context-type="linenumber">42,44</context>
@@ -3642,6 +4874,7 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
       </trans-unit>
       <trans-unit id="510226563600599366" datatype="html">
         <source> If the backup file was not downloaded automatically, <x id="START_LINK" ctype="x-a" equiv-text="&lt;a [href]=&quot;_notification.DownloadLink&quot; target=&quot;_blank&quot;&gt;"/>right click and choose &quot;Save as …&quot;<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a&gt;"/></source>
+        <target> Se il file di backup non è stato scaricato automaticamente, <x id="START_LINK" ctype="x-a" equiv-text="&lt;a [href]=&quot;_notification.DownloadLink&quot; target=&quot;_blank&quot;&gt;"/>clicca con il tasto destro e scegli &amp;quot;Salva come …&amp;quot;<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/notifications/notification/notification.component.html</context>
           <context context-type="linenumber">13,16</context>
@@ -3749,6 +4982,7 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
       </trans-unit>
       <trans-unit id="5629717729555851787" datatype="html">
         <source>No more notifications</source>
+        <target>Nessuna altra notifica</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/notifications/notifications.component.html</context>
           <context context-type="linenumber">5,6</context>
@@ -3824,40 +5058,6 @@ con la chiave host RIPORTATA: <x id="PH_1" equiv-text="reportedhostkey"/>?</targ
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/options/options.component.html</context>
           <context context-type="linenumber">41,43</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="4406380851327625702" datatype="html">
-        <source> Backup placement <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_BLOCK_IF_1" equiv-text="@if (destinationCount() &gt; 0) {"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot; [class.success]=&quot;successfulTest()&quot; (click)=&quot;testDestination()&quot;&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (successfulTest()) {"/> Connected <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>check<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/> Test destination <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;spk-menu&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>dots-three-vertical<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_TAG_BUTTON_2" ctype="x-button_2" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;openTargetUrlDialog()&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>link<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Edit target URL <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;/spk-menu&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
-        <target> Posizione backup <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_BLOCK_IF_1" equiv-text="@if (destinationCount() &gt; 0) {"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot; [class.success]=&quot;successfulTest()&quot; (click)=&quot;testDestination()&quot;&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (successfulTest()) {"/> Connesso <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>verifica<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/> Test destinazione <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;spk-menu&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>dots-three-vertical<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_TAG_BUTTON_2" ctype="x-button_2" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;openTargetUrlDialog()&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>link<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Modifica URL destinazione <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;/spk-menu&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">4,33</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="7781904758933483308" datatype="html">
-        <source> Want to select another destination? <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;spk-primary&quot;&gt;"/>Click here<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
-        <target> Vuoi selezionare un'altra destinazione? <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;spk-primary&quot;&gt;"/>Clicca qui<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">35,39</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="2661188638944317176" datatype="html">
-        <source>Empty destination</source>
-        <target>Destinazione vuota</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">217</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="7391554958048516833" datatype="html">
-        <source>The remote destination does not contain any files. 
-                  Check that the details are correct and that the destination is not empty.</source>
-        <target>La destinazione remota non contiene alcun file. 
-                  Verificare che i dati siano corretti e che la destinazione non sia vuota.</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">218,219</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7272784983659933714" datatype="html">
