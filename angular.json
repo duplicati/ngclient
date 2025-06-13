@@ -120,7 +120,7 @@
             "baseHref": "zh-CN"
           },
           "zh-Hans": {
-            "translation": "src/locale/messages.zh_Hans.xlf",
+            "translation": "src/locale/messages.zh-Hans.xlf",
             "baseHref": "zh-Hans"
           },
           "zh-TW": {
@@ -142,7 +142,7 @@
             "assets": [
               "src/assets",
               {
-                "glob": "messages.{en_US,en_GB,cs,da,de,es,fi,fr,hu,it,ja_JP,nl_NL,pl,pt_BR,pt,ru,sr_RS,sv_SE,zh_CN,zh_TW}.json",
+                "glob": "messages.{en_US,en_GB,cs,da,de,es,fi,fr,hu,it,ja_JP,nl_NL,pl,pt_BR,pt,ru,sr_RS,sv_SE,zh_CN,zh_TW,zh-Hans}.json",
                 "input": "./src/locale",
                 "output": "./locale/"
               },
