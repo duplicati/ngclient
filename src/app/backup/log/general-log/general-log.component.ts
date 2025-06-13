@@ -51,6 +51,8 @@ type LogEntryEvaluated = {
 })
 export class GeneralLogComponent {
   #dupServer = inject(DuplicatiServerService);
+  #sizePipe = new BytesPipe();
+  #durationPipe = new DurationFormatPipe();
 
   backupId = input.required<string>();
 
@@ -78,6 +80,38 @@ export class GeneralLogComponent {
         })
       ),
   });
+
+  getLocalizedSummary(item: Partial<LogEntryEvaluated>): string {
+    const errorCount = item.data?.ErrorsActualLength ?? 0;
+    const warningCount = item.data?.WarningsActualLength ?? 0;
+
+    const summary = [];
+
+    if (item.data?.MainOperation == 'Backup') {
+      if (item.data?.Duration) {
+        let durationString = this.#durationPipe.transform(item.data?.Duration, true) as string;
+        if (durationString.startsWith('0h '))
+          durationString = durationString.slice(3); 
+        if (durationString.startsWith('0m '))
+          durationString = durationString.slice(3);
+
+        summary.push($localize`took ${durationString}`);
+      }
+      if (item.data?.BackendStatistics?.BytesUploaded)
+        summary.push($localize`uploaded ${this.#sizePipe.transform(item.data?.BackendStatistics?.BytesUploaded)}`);
+      if (item.data?.BackendStatistics?.KnownFileSize)
+        summary.push($localize`backup size ${this.#sizePipe.transform(item.data?.BackendStatistics?.KnownFileSize)}`);
+    }
+
+    if (errorCount !== 0) summary.push($localize`:@@errorCount:${errorCount} error${errorCount === 1 ? '' : 's'}`);
+
+    if (warningCount !== 0)
+      summary.push($localize`:@@warningCount:${warningCount} warning${warningCount === 1 ? '' : 's'}`);
+
+    if (summary.length === 0) return '';
+
+    return `(${summary.join(', ')})`;
+  }
 
   toggleOpenEntry(id: number) {
     if (this.openEntry() === id) {
