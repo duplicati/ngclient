@@ -145,7 +145,7 @@ export function getLocale(): Locales {
 
   // Angular mjs locales are different from the standard locales
   const mjsLocale = ANGULAR_MJS_LOCALE_MAP[mappedLocale] ?? mappedLocale;
-  import(/* @vite-ignore */ `/locale/angular/${mjsLocale}.mjs`).then((m) =>
+  import(/* @vite-ignore */ `locale/angular/${mjsLocale}.mjs`).then((m) =>
     registerLocaleData(m.default)
   );
 
@@ -153,7 +153,7 @@ export function getLocale(): Locales {
   var mappedFileLocale = mappedLocale.replace(/-/g, '_');
   const tempLocale = locale === 'en' ? '' : '.' + mappedFileLocale;
 
-  fetch(`/locale/messages${tempLocale}.json`)
+  fetch(`locale/messages${tempLocale}.json`)
     .then((r) => r.json())
     .then((json) => {
       loadTranslations(json.translations);
