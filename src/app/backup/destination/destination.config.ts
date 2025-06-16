@@ -85,6 +85,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         shortDescription: $localize`File path`,
         longDescription: $localize`The path to store the backup`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+        isMandatory: true,
       },
     },
     mapper: {
@@ -113,7 +114,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   {
     key: 'ssh',
     displayName: $localize`SSH`,
-    description: $localize`Store backups in SSH.`,
+    description: $localize`Store backups with SSH.`,
     customFields: {
       server: {
         type: 'String', // Custom server/port field
@@ -121,6 +122,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         shortDescription: $localize`Server`,
         longDescription: $localize`The server to connect to`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+        isMandatory: true,
       },
       port: {
         type: 'Integer',
@@ -142,7 +144,10 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
-    dynamicFields: ['auth-username'],
+    dynamicFields: [ { 
+      name: 'auth-username',
+      isMandatory: true,
+    }],
     advancedFields: [
       {
         type: 'FileTree',
@@ -151,6 +156,12 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         shortDescription: $localize`This is a path to a private key file locally on the machine`,
         longDescription: $localize`This is a path to a private key file locally on the machine`,
       },
+      {
+        type: 'FreeText',
+        name: 'ssh-key',
+        shortDescription: $localize`SSH private key`,
+        longDescription: $localize`An SSH private key. Supported formats are OpenSSL, OpenSSH, PuTTY, and PEM.`,
+      }
     ],
     mapper: {
       to: (fields: any): string => {
@@ -183,6 +194,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         shortDescription: $localize`Bucket name`,
         longDescription: $localize`Bucket name`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+        isMandatory: true,
       },
       path: {
         type: 'Path',
@@ -199,10 +211,17 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         shortDescription: $localize`Server`,
         type: 'NonValidatedSelectableString', // Convert to string before submitting
         loadOptions: (injector) => injector.get(WebModulesService).s3Providers,
+        isMandatory: true,
       },
       'use-ssl',
-      'auth-username',
-      'auth-password',
+      { 
+        name: 'auth-username', 
+        isMandatory: true 
+      },
+      { 
+        name: 'auth-password',
+        isMandatory: true
+      }
     ],
     advancedFields: [
       {
@@ -261,7 +280,10 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         type: 'NonValidatedSelectableString', // Convert to string before submitting
         loadOptions: (injector) => injector.get(WebModulesService).gcsStorageClasses,
       },
-      'authid',
+      { 
+        name: 'authid',
+        isMandatory: true
+      }
     ],
     mapper: {
       to: (fields: any): string => {
@@ -299,6 +321,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       {
         name: 'authid',
         type: 'Password',
+        isMandatory: true,
       },
     ],
     mapper: {
@@ -343,6 +366,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         shortDescription: $localize`Server`,
         longDescription: $localize`Server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+        isMandatory: true,
       },
       path: {
         type: 'Path',
@@ -357,6 +381,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       name: 'authid',
       type: 'Password',
       oauthVersion: 2,
+      isMandatory: true,
     }],
     mapper: {
       to: (fields: any): string => {
@@ -397,10 +422,12 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       {
         name: 'auth-username',
         shortDescription: $localize`Account name`,
+        isMandatory: true,
       },
       {
         name: 'auth-password',
         shortDescription: $localize`Access key`,
+        isMandatory: true,
       },
     ],
     mapper: {
@@ -436,7 +463,10 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
-    dynamicFields: ['authid'],
+    dynamicFields: [{
+      name:'authid',
+      isMandatory: true,
+    }],
     mapper: {
       to: (fields: any) => {
         const path = fields.custom.path ?? '';
@@ -466,6 +496,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         shortDescription: $localize`Server`,
         longDescription: $localize`Server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+        isMandatory: true,
       },
       port: {
         type: 'Integer',
@@ -487,10 +518,12 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       {
         name: 'auth-username',
         shortDescription: $localize`Account name`,
+        isMandatory: true,
       },
       {
         name: 'auth-password',
         shortDescription: $localize`Access key`,
+        isMandatory: true,
       },
     ],
     mapper: {
@@ -524,6 +557,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         shortDescription: $localize`Server`,
         longDescription: $localize`Server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+        isMandatory: true,
       },
       port: {
         type: 'Integer',
@@ -538,17 +572,19 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: $localize`Path on server`,
         longDescription: $localize`Path on server`,
-        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),        
       },
     },
     dynamicFields: [
       {
         name: 'auth-username',
         shortDescription: $localize`Account name`,
+        isMandatory: true,
       },
       {
         name: 'auth-password',
         shortDescription: $localize`Access key`,
+        isMandatory: true,
       },
     ],
     mapper: {
@@ -586,7 +622,13 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
-    dynamicFields: ['site-id', 'authid'],
+    dynamicFields: [{
+      name: 'site-id',
+      isMandatory: true,
+    }, { 
+      name: 'authid',
+      isMandatory: true,
+    }],
     mapper: {
       to: (fields: any) => {
         const path = fields.custom.path ?? '';
@@ -620,7 +662,10 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
-    dynamicFields: ['authid'],
+    dynamicFields: [{
+      name: 'authid',
+      isMandatory: true,
+    }],
     mapper: {
       to: (fields: any) => {
         const path = fields.custom.path ?? '';
@@ -654,7 +699,10 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
-    dynamicFields: ['authid'],
+    dynamicFields: [{
+      name: 'authid',
+      isMandatory: true,
+    }],
     mapper: {
       to: (fields: any) => {
         const path = fields.custom.path ?? '';
@@ -688,7 +736,10 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
-    dynamicFields: ['authid'],
+    dynamicFields: [{
+      name: 'authid',
+      isMandatory: true,
+    }],
     mapper: {
       to: (fields: any) => {
         const path = fields.custom.path ?? '';
@@ -718,6 +769,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         shortDescription: $localize`Bucket name`,
         longDescription: $localize`Bucket name`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+        isMandatory: true,
       },
       path: {
         type: 'String',
@@ -732,10 +784,12 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       {
         name: 'auth-username',
         shortDescription: $localize`Application ID`,
+        isMandatory: true,
       },
       {
         name: 'auth-password',
         shortDescription: $localize`Application Key`,
+        isMandatory: true,
       },
     ],
     mapper: {
@@ -768,6 +822,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         shortDescription: $localize`Bucket name`,
         longDescription: $localize`Bucket name`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+        isMandatory: true,
       },
       path: {
         type: 'String',
@@ -782,10 +837,12 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       {
         name: 'auth-username',
         shortDescription: $localize`Access ID`,
+        isMandatory: true,
       },
       {
         name: 'auth-password',
         shortDescription: $localize`Access Secret`,
+        isMandatory: true,
       },
     ],
     mapper: {
@@ -825,10 +882,12 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       {
         name: 'auth-username',
         shortDescription: $localize`Username`,
+        isMandatory: true,
       },
       {
         name: 'auth-password',
         shortDescription: $localize`Password`,
+        isMandatory: true,
       },
     ],
     mapper: {
@@ -861,6 +920,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         shortDescription: $localize`Group email`,
         longDescription: $localize`Group email`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? '', [Validators.email]),
+        isMandatory: true,
       },
       path: {
         type: 'String',
@@ -871,7 +931,10 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
-    dynamicFields: ['authid'],
+    dynamicFields: [{
+      name: 'authid',
+      isMandatory: true,
+    }],
     mapper: {
       to: (fields: any) => {
         const path = fields.custom.path ?? '';
@@ -901,6 +964,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         shortDescription: $localize`Server`,
         longDescription: $localize`Server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+        isMandatory: true,
       },
       port: {
         type: 'Integer',
@@ -922,10 +986,12 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       {
         name: 'auth-username',
         shortDescription: $localize`Username`,
+        isMandatory: true,
       },
       {
         name: 'auth-password',
         shortDescription: $localize`Password`,
+        isMandatory: true,
       },
     ],
     mapper: {
@@ -1009,6 +1075,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         shortDescription: $localize`Bucket`,
         longDescription: $localize`Bucket`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+        isMandatory: true,
       },
     },
     dynamicFields: [
@@ -1017,6 +1084,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         shortDescription: $localize`Auth URI`,
         type: 'Enumeration',
         loadOptions: (injector) => injector.get(WebModulesService).openstackProviders,
+        isMandatory: true,
       },
       {
         name: 'openstack-version',
@@ -1069,6 +1137,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         shortDescription: $localize`Server`,
         longDescription: $localize`Server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+        isMandatory: true,
       },
       port: {
         type: 'Integer',
@@ -1094,10 +1163,12 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       {
         name: 'auth-username',
         shortDescription: $localize`Username`,
+        isMandatory: true,
       },
       {
         name: 'auth-password',
         shortDescription: $localize`Password`,
+        isMandatory: true,
       },
     ],
     mapper: {
@@ -1136,6 +1207,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         shortDescription: $localize`Server`,
         longDescription: $localize`Server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+        isMandatory: true,
       },
       port: {
         type: 'Integer',
@@ -1160,10 +1232,12 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       {
         name: 'auth-username',
         shortDescription: $localize`Username`,
+        isMandatory: true,
       },
       {
         name: 'auth-password',
         shortDescription: $localize`Password`,
+        isMandatory: true,
       },
     ],
     mapper: {
@@ -1202,6 +1276,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         shortDescription: $localize`Server`,
         longDescription: $localize`Server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+        isMandatory: true,
       },
     },
     dynamicFields: ['sia-targetpath', 'sia-password', 'sia-redundancy'],
@@ -1248,6 +1323,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         name: 'cos-bucket',
         shortDescription: $localize`Bucket`,
         order: 1,
+        isMandatory: true,
       },
       {
         name: 'cos-region',
@@ -1258,16 +1334,19 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         name: 'cos-app-id',
         shortDescription: $localize`COS App Id`,
         order: 3,
+        isMandatory: true,
       },
       {
         name: 'cos-secret-id',
         shortDescription: $localize`COS Secret Id`,
         order: 4,
+        isMandatory: true,
       },
       {
         name: 'cos-secret-key',
         shortDescription: $localize`COS Secret Key`,
         order: 5,
+        isMandatory: true,
       },
     ],
     mapper: {
@@ -1304,6 +1383,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         shortDescription: $localize`Server`,
         longDescription: $localize`Server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+        isMandatory: true,
       },
       port: {
         type: 'Integer',
@@ -1367,6 +1447,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         shortDescription: $localize`Server`,
         longDescription: $localize`Server`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+        isMandatory: true,
       },
       share: {
         type: 'String',
@@ -1374,6 +1455,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         shortDescription: $localize`Share Name`,
         longDescription: $localize`Share Name`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+        isMandatory: true,
       },
       path: {
         type: 'String',
@@ -1384,7 +1466,16 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
-    dynamicFields: ['transport', 'auth-username', 'auth-password', 'auth-domain'],
+    dynamicFields: [
+      'transport', 
+      { 
+        name: 'auth-username',
+        isMandatory: true,
+      }, {
+        name: 'auth-password',
+        isMandatory: true,
+      }, 
+      'auth-domain'],
     mapper: {
       to: (fields: any): string => {
         const { share, server, path, username, password } = fields.custom;
@@ -1433,7 +1524,13 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
-    dynamicFields: ['auth-username', 'auth-password'],
+    dynamicFields: [{
+      name: 'auth-username',
+      isMandatory: true,
+    }, {
+      name: 'auth-password',
+      isMandatory: true,
+    }],
     mapper: {
       to: (fields: any): string => {
         const { path, username, password } = fields.custom;
@@ -1488,6 +1585,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         shortDescription: $localize`API Token`,
         longDescription: $localize`Filejump API Token`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+        isMandatory: true,
       },
       // TODO: Support password based auth?
       // 'auth-username',
@@ -1542,10 +1640,12 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       {
         name: 'storj-shared-access',
         shortDescription: $localize`Access Grant`,
+        isMandatory: true,
       },
       {
         name: 'storj-bucket',
         shortDescription: $localize`Bucket`,
+        isMandatory: true,
       },
       {
         name: 'storj-folder',
@@ -1580,18 +1680,22 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         shortDescription: $localize`Satellite`,
         type: 'Enumeration',
         loadOptions: (injector) => injector.get(WebModulesService).storjSatellites,
+        isMandatory: true,
       },
       {
         name: 'storj-api-key',
         shortDescription: $localize`API Key`,
+        isMandatory: true,
       },
       {
         name: 'storj-secret',
         shortDescription: $localize`Secret`,
+        isMandatory: true,
       },
       {
         name: 'storj-bucket',
         shortDescription: $localize`Bucket`,
+        isMandatory: true,
       },
       {
         name: 'storj-folder',
