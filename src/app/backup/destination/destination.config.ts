@@ -1210,6 +1210,74 @@ export const DESTINATION_CONFIG: DestinationConfig = [
 
   {
     key: 'aftp',
+    displayName: $localize`Alternative FTP`,
+    description: $localize`Store backups in FTP.`,
+    customFields: {
+      server: {
+        type: 'String',
+        name: 'server',
+        shortDescription: $localize`Server`,
+        longDescription: $localize`Server`,
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+        isMandatory: true,
+      },
+      port: {
+        type: 'Integer',
+        name: 'port',
+        shortDescription: $localize`Port`,
+        longDescription: $localize`Port`,
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+      path: {
+        type: 'String',
+        name: 'path',
+        shortDescription: $localize`Path on server`,
+        longDescription: $localize`Path on server`,
+        doubleSlash: {
+          type: 'warning',
+          message: $localize`Using double leading slashes makes the path absolute, pointing to the root of the filesystem.`,
+        },
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+    },
+    dynamicFields: [
+      {
+        name: 'auth-username',
+        shortDescription: $localize`Username`,
+        isMandatory: true,
+      },
+      {
+        name: 'auth-password',
+        shortDescription: $localize`Password`,
+        isMandatory: true,
+      },
+    ],
+    mapper: {
+      to: (fields: any): string => {
+        const { port, server, path } = fields.custom;
+        const urlParams = toSearchParams([
+          ...Object.entries(fields.advanced),
+          ...Object.entries(fields.dynamic).filter(([key]) => key !== 'use-ssl'),
+        ]);
+
+        return `${fields.destinationType}://${addServer(server) + addPort(port) + addPath(path) + urlParams}`;
+      },
+      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        return <ValueOfDestinationFormGroup>{
+          destinationType,
+          custom: {
+            server: urlObj.hostname,
+            port: urlObj.port,
+            path: urlObj.pathname,
+          },
+          ...fromSearchParams(destinationType, urlObj),
+        };
+      },
+    },
+  },
+
+  {
+    key: 'ftp',
     displayName: $localize`FTP`,
     description: $localize`Store backups in FTP.`,
     customFields: {
