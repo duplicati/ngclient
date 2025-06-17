@@ -31,7 +31,7 @@
 
 @if (noLocalDb) {
   <section>
-    @let fileSize = _backup?.Backup?.Metadata?.['TargetFileSize'] ?? 0;
+    @let fileSize = _backup?.Backup?.Metadata?.['TargetFilesSize'] ?? 0;
 
     <h4 i18n>Delete remote files</h4>
     <p i18n>

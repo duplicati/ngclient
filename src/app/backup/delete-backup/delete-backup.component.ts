@@ -37,7 +37,7 @@ export default class DeleteBackupComponent {
         catchError(() => of(false))
       ),
   });
-  fileCount = computed(() => parseInt(this.backup()?.Backup?.Metadata?.['TargetFileCount'] ?? '0', 10));
+  fileCount = computed(() => parseInt(this.backup()?.Backup?.Metadata?.['TargetFilesCount'] ?? '0', 10));
 
   deleteLocalDb = signal(false);
   deleteRemoteFiles = signal(false);
