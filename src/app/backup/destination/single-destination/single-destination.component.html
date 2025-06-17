@@ -128,18 +128,19 @@
       } @else if (item.formView.type === 'String' || item.formView.type === 'Path' || item.formView.type === 'Email') {
         <spk-form-field>
           <label [for]="formFieldId">
+            {{ labelContent }}
+            @if (item.formView.longDescription) {
+              <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+            }
             @if (isFieldEmpty && item.formView.type === 'Path') {
               <spk-icon
                 class="warn"
                 [spkTooltip]="'An empty path means storing data in the root folder, which is not recommended'">
                 warning
               </spk-icon>
-            } @else if (item.formView.isMandatory && isFieldEmpty) {
-              <spk-icon class="error" [spkTooltip]="'This field is mandatory'">asterisk</spk-icon>
             }
-            {{ labelContent }}
-            @if (item.formView.longDescription) {
-              <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+            @if (item.formView.isMandatory && isFieldEmpty) {
+              <spk-icon class="error" [spkTooltip]="'This field is mandatory'">asterisk</spk-icon>
             }
           </label>
 
@@ -171,12 +172,12 @@
       } @else if (item.formView.type === 'Password') {
         <spk-form-field>
           <label [for]="formFieldId">
-            @if (item.formView.isMandatory && isFieldEmpty) {
-              <spk-icon class="error" [spkTooltip]="'This field is mandatory'">asterisk</spk-icon>
-            }
             {{ labelContent }}
             @if (item.formView.longDescription) {
               <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+            }
+            @if (item.formView.isMandatory && isFieldEmpty) {
+              <spk-icon class="error" [spkTooltip]="'This field is mandatory'">asterisk</spk-icon>
             }
           </label>
           <input
@@ -225,12 +226,12 @@
         @if (options) {
           <spk-select [options]="options" [isClearable]="false" [optionTemplate]="enumOptionTemplate">
             <label [for]="formFieldId">
-              @if (item.formView.isMandatory && isFieldEmpty) {
-                <spk-icon class="error" [spkTooltip]="'This field is mandatory'">asterisk</spk-icon>
-              }
               {{ labelContent }}
               @if (item.formView.longDescription) {
                 <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+              }
+              @if (item.formView.isMandatory && isFieldEmpty) {
+                <spk-icon class="suffix" class="error" [spkTooltip]="'This field is mandatory'">asterisk</spk-icon>
               }
             </label>
             <input
@@ -260,12 +261,12 @@
             label="key"
             value="value">
             <label [for]="formFieldId">
-              @if (item.formView.isMandatory && isFieldEmpty) {
-                <spk-icon class="error" [spkTooltip]="'This field is mandatory'">asterisk</spk-icon>
-              }
               {{ labelContent }}
               @if (item.formView.longDescription) {
                 <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+              }
+              @if (item.formView.isMandatory && isFieldEmpty) {
+                <spk-icon class="error" [spkTooltip]="'This field is mandatory'">asterisk</spk-icon>
               }
             </label>
 
@@ -289,24 +290,24 @@
           (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)"
           [customId]="formFieldId">
           <label [for]="formFieldId">
-            @if (item.formView.isMandatory && isFieldEmpty) {
-              <spk-icon class="error" [spkTooltip]="'This field is mandatory'">asterisk</spk-icon>
-            }
             {{ labelContent }}
             @if (item.formView.longDescription) {
               <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+            }
+            @if (item.formView.isMandatory && isFieldEmpty) {
+              <spk-icon class="error" [spkTooltip]="'This field is mandatory'">asterisk</spk-icon>
             }
           </label>
         </app-size>
       } @else if (item.formView.type === 'Integer') {
         <spk-form-field>
           <label [for]="formFieldId">
-            @if (item.formView.isMandatory && isFieldEmpty) {
-              <spk-icon class="error" [spkTooltip]="'This field is mandatory'">asterisk</spk-icon>
-            }
             {{ labelContent }}
             @if (item.formView.longDescription) {
               <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+            }
+            @if (item.formView.isMandatory && isFieldEmpty) {
+              <spk-icon class="error" [spkTooltip]="'This field is mandatory'">asterisk</spk-icon>
             }
           </label>
           <input
@@ -339,6 +340,9 @@
             @if (item.formView.longDescription) {
               <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
             }
+            @if (item.formView.isMandatory && isFieldEmpty) {
+              <spk-icon class="error" [spkTooltip]="'This field is mandatory'">asterisk</spk-icon>
+            }
           </label>
           <input
             type="text"
@@ -357,12 +361,12 @@
           (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)"
           [customId]="formFieldId">
           <label [for]="formFieldId">
-            @if (item.formView.isMandatory && isFieldEmpty) {
-              <spk-icon class="error" [spkTooltip]="'This field is mandatory'">asterisk</spk-icon>
-            }
             {{ labelContent }}
             @if (item.formView.longDescription) {
               <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+            }
+            @if (item.formView.isMandatory && isFieldEmpty) {
+              <spk-icon class="error" [spkTooltip]="'This field is mandatory'">asterisk</spk-icon>
             }
           </label>
         </app-timespan>
@@ -373,12 +377,12 @@
           [customId]="formFieldId"
           [placeholder]="item.formView.longDescription">
           <label>
-            @if (item.formView.isMandatory && isFieldEmpty) {
-              <spk-icon class="error" [spkTooltip]="'This field is mandatory'">asterisk</spk-icon>
-            }
             {{ item.formView.shortDescription ?? item.formView.name }}
             @if (item.formView.longDescription) {
               <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+            }
+            @if (item.formView.isMandatory && isFieldEmpty) {
+              <spk-icon class="error" [spkTooltip]="'This field is mandatory'">asterisk</spk-icon>
             }
           </label>
         </app-file-drop-textarea>
