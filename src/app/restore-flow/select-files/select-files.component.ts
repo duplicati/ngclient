@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -60,14 +60,15 @@ export default class SelectFilesComponent {
   backupId = this.#restoreFlowState.backupId;
   versionOptionsLoading = this.#restoreFlowState.versionOptionsLoading;
   versionOptions = this.#restoreFlowState.versionOptions;
-  isDraft = this.#restoreFlowState.isDraft;
   isFileRestore = this.#restoreFlowState.isFileRestore;
 
+  needsDatabaseRepair = computed(() => this.#restoreFlowState.backup()?.Backup?.IsTemporary ?? true);
   showFileTree = signal<boolean>(false);
   backupSettings = signal<BackupSettings | null>(null);
   rootPaths = signal<string[]>([]);
   loadingRootPath = signal(false);
   isRepairing = signal(false);
+  loadedVersions = signal<{[key: string]: boolean }>({});
 
   loadingEffect = effect(() => {
     const versionOptionsLoading = this.versionOptionsLoading();
@@ -85,15 +86,20 @@ export default class SelectFilesComponent {
 
   backupSettingsEffect = effect(() => {
     const id = this.backupId();
-    const isRepairing = this.isRepairing();
     const newOption = this.selectOption();
+    const isRepairing = this.isRepairing();
+    const loadedVersions = this.loadedVersions();
 
     if (!newOption || !id) return;
 
     const option = this.versionOptions()?.find((x) => x.Version === parseInt(newOption));
     const time = option?.Time ?? null;
 
-    if (!time || isRepairing) return;
+    if (!time) return;
+    const versionId = `${id}+${time}`;
+    const isVersionLoaded = loadedVersions[versionId];
+
+    if (this.needsDatabaseRepair() && (!isVersionLoaded || isRepairing)) return;      
 
     const settings = {
       id: id + '',
@@ -105,6 +111,8 @@ export default class SelectFilesComponent {
   });
 
   repairEffect = effect(() => {
+    if (!this.needsDatabaseRepair()) return;
+
     const newSelectedOption = this.selectOption();
     const versionOptions = this.versionOptions();
 
@@ -143,6 +151,10 @@ export default class SelectFilesComponent {
               if (r2.Status === 'Completed') {
                 clearInterval(timerId);
                 this.isRepairing.set(false);
+                this.loadedVersions.update((x) => {
+                  x[versionId] = true;
+                  return x;
+                });                
               }
             });
           }, 1000);
