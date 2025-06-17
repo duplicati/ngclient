@@ -49,4 +49,9 @@ label {
   &.single-field {
     display: block;
   }
+  
+  spk-icon.tooltip.error,
+  spk-form-field .error {
+    position: relative;
+  }
 }
