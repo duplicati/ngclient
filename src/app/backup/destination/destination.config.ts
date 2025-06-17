@@ -1717,6 +1717,54 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
     },
   },
+
+  // Validated against the old destination test url
+  {
+    key: 'aliyunoss',
+    displayName: $localize`Aliyun OSS`,
+    description: $localize`Store backups in Aliyun OSS`,
+    customFields: {
+      bucket: {
+        type: 'String',
+        name: 'oss-bucket-name',
+        shortDescription: $localize`Bucket name`,
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+        isMandatory: true,
+      },
+      path: {
+        type: 'Path',
+        name: 'path',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
+        shortDescription: $localize`Path in bucket`,
+        longDescription: $localize`Path in bucket`,
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+    },
+    dynamicFields: [
+      'oss-endpoint',
+      'oss-access-key-id',
+      'oss-access-key-secret',
+    ],    
+    mapper: {
+      to: (fields: any): string => {
+        const  path  = fields.custom.path;
+        const bucket = fields.custom['oss-bucket-name'];
+        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
+
+        return `${fields.destinationType}://${bucket + addPath(path) + urlParams}`;
+      },
+      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        return <ValueOfDestinationFormGroup>{
+          destinationType,
+          custom: {
+            path: urlObj.pathname,
+            bucket: urlObj.hostname,
+          },
+          ...fromSearchParams(destinationType, urlObj),
+        };
+      },
+    },
+  },
 ];
 
 export const S3_HOST_SUFFIX_MAP: Record<string, string> = {
