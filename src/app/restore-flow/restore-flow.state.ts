@@ -150,6 +150,25 @@ export class RestoreFlowState {
         .subscribe({
           next: ([backup, filesets]) => {
             if (filesets.Error) throw new Error(filesets.Error);
+            const isTemporary = backup.Backup?.IsTemporary ?? true;
+            if (!isTemporary && backup?.Backup?.DBPathExists === false) {
+              this.#dialog.open(ConfirmDialogComponent, {
+                data: {
+                  title: $localize`Missing Local Database`,
+                  message: $localize`The local database for this backup is missing. Please repair or recreate the local database before restoring.`,
+                  confirmText: $localize`OK`,
+                  cancelText: undefined,
+                },
+                closed: (_) => {
+                  this.#router.navigate([
+                    '/backup', id, 'database'
+                  ]);
+                },
+              });
+              
+              return;
+            }
+              throw new Error($localize`The Backup does not have a local database. Please repair/recreate the local database before restoring.`);
 
             this.versionOptions.set(
               (filesets.Data ?? []).map((x) => ({
