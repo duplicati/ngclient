@@ -185,10 +185,6 @@ export default class RestoreDestinationComponent {
   }
 
   next() {
-    if (!this.#backupState.isNew()) {
-      this.#backupState.submit(true);
-    }
-
     this.#router.navigate(['encryption'], { relativeTo: this.#route.parent });
   }
 }
