@@ -36,6 +36,7 @@ export type BackupDto = {
     Tags?: Array<(string)> | null;
     TargetURL?: (string) | null;
     DBPath?: (string) | null;
+    DBPathExists?: boolean;
     Sources?: Array<(string)> | null;
     Settings?: Array<SettingDto> | null;
     Filters?: Array<FilterDto> | null;
@@ -274,6 +275,7 @@ export type LicenseDto = {
 
 export type ListFilesetsRequestDto = {
     BackupId?: (string) | null;
+    ForceRemoteListing?: (boolean) | null;
 };
 
 export type ListFilesetsResponseDto = {
