@@ -22,7 +22,7 @@
       </ng-template>
     </spk-select>
 
-    @if (isDraft() || isRepairing() || versionOptionsLoading() || loadingRootPath()) {
+    @if (isRepairing() || versionOptionsLoading() || loadingRootPath()) {
       <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
     }
 
