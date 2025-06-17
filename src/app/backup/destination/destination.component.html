@@ -60,10 +60,10 @@
     </div>
 
     <spk-menu [searchable]="true">
-      <button spk-button type="button" class="outlined" i18n>Other destinations</button>
+      <button spk-button type="button" class="outlined" i18n>All destinations</button>
 
       <ng-container menu>
-        @for (destination of destinationTypeOptionsNotFocused(); track $index) {
+        @for (destination of destinationTypeOptions(); track $index) {
           <button #option type="button" (click)="setDestination(destination.key)">
             {{ destination.displayName }}
           </button>

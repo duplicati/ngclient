@@ -90,12 +90,6 @@ export default class RestoreDestinationComponent {
 
     return options.find((x) => destinationType === x.key);
   });
-  destinationTypeOptionsNotFocused = computed(() => {
-    const focused = this.destinationTypeOptionsInFocus();
-    const options = this.destinationTypeOptions();
-
-    return options.filter((x) => !focused.includes(x.key)!);
-  });
 
   openTargetUrlDialog() {
     const targetUrl = this.#backupState.targetUrlModel();
