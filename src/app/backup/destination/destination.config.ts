@@ -204,17 +204,23 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         shortDescription: $localize`Folder path`,
         longDescription: $localize`Folder path`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
-      },
+      }
     },
     dynamicFields: [
       {
-        name: 's3-server-name',
+        name: 's3-server-name',        
+        order: 1,
         shortDescription: $localize`Server`,
+        longDescription: $localize`The hostname of the S3 compatible server to connect to`,
         type: 'NonValidatedSelectableString', // Convert to string before submitting
-        loadOptions: (injector) => injector.get(WebModulesService).s3Providers,
+        loadOptions: (injector) => injector.get(WebModulesService).getS3AllProviders(),
         isMandatory: true,
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
-      'use-ssl',
+      {
+        name: 'use-ssl',
+        order: 2,
+      },
       { 
         name: 'auth-username', 
         isMandatory: true 
@@ -244,7 +250,12 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       {
         name: 's3-storage-class',
         type: 'NonValidatedSelectableString', // Convert to string before submitting
-        loadOptions: (injector) => injector.get(WebModulesService).s3StorageClasses,
+        loadOptions: (injector) => injector.get(WebModulesService).getS3StorageClasses()
+      },
+      {
+        name: 's3-location-constraint',
+        type: 'NonValidatedSelectableString', // Convert to string before submitting
+        loadOptions: (injector) => injector.get(WebModulesService).getS3Regions(),
       },
     ],
     mapper: {
@@ -285,12 +296,12 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       {
         name: 'gcs-location',
         type: 'NonValidatedSelectableString', // Convert to string before submitting
-        loadOptions: (injector) => injector.get(WebModulesService).gcsLocations,
+        loadOptions: (injector) => injector.get(WebModulesService).getGcsLocations(),
       },
       {
         name: 'gcs-storage-class',
         type: 'NonValidatedSelectableString', // Convert to string before submitting
-        loadOptions: (injector) => injector.get(WebModulesService).gcsStorageClasses,
+        loadOptions: (injector) => injector.get(WebModulesService).getGcsStorageClasses(),
       },
       { 
         name: 'authid',
@@ -1095,14 +1106,14 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         name: 'openstack-authuri',
         shortDescription: $localize`Auth URI`,
         type: 'Enumeration',
-        loadOptions: (injector) => injector.get(WebModulesService).openstackProviders,
+        loadOptions: (injector) => injector.get(WebModulesService).getOpenstackProviders(),
         isMandatory: true,
       },
       {
         name: 'openstack-version',
         shortDescription: $localize`Version`,
         type: 'Enumeration',
-        loadOptions: (injector) => injector.get(WebModulesService).openstackVersions,
+        loadOptions: (injector) => injector.get(WebModulesService).getOpenstackVersions(),
       },
       {
         name: 'openstack-domain-name',
@@ -1759,7 +1770,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         name: 'storj-satellite',
         shortDescription: $localize`Satellite`,
         type: 'Enumeration',
-        loadOptions: (injector) => injector.get(WebModulesService).storjSatellites,
+        loadOptions: (injector) => injector.get(WebModulesService).getStorjSatellites(),
         isMandatory: true,
       },
       {

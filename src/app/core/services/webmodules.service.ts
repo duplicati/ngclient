@@ -1,26 +1,10 @@
-// '/webmodule/s3-getconfig', {'s3-config': 'Providers'}
-// '/webmodule/s3-getconfig', {'s3-config': 'Regions'}
-// '/webmodule/s3-getconfig', {'s3-config': 'StorageClasses'}
-
-// '/webmodule/s3-iamconfig'
-// 's3-operation': 'CreateIAMUser'
-// 's3-operation': 'GetPolicyDoc'
-
-// '/webmodule/storj-getconfig', {'storj-config': 'Satellites'}
-// '/webmodule/storj-getconfig', {'storj-config': 'AuthenticationMethods'}
-
-// '/webmodule/openstack-getconfig', {'openstack-config': 'Providers'}
-// '/webmodule/openstack-getconfig', {'openstack-config': 'Versions'}
-
-// '/webmodule/gcs-getconfig', {'gcs-config': 'Locations'}
-// '/webmodule/gcs-getconfig', {'gcs-config': 'StorageClasses'}
-
-import { inject, Injectable } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { computed, inject, Injectable } from '@angular/core';
 import { map } from 'rxjs';
+import { LazySignal } from '../functions/lazy-signal';
 import { DuplicatiServerService, WebModuleOutputDto } from '../openapi';
 
 export type WebModuleOption = { key: string; value: any };
+
 
 @Injectable({
   providedIn: 'root',
@@ -28,21 +12,53 @@ export type WebModuleOption = { key: string; value: any };
 export class WebModulesService {
   #dupServer = inject(DuplicatiServerService);
 
-  s3Providers = toSignal(this.getS3Config('Providers'));
-  s3Regions = toSignal(this.getS3Config('Regions'));
-  s3RegionHosts = toSignal(this.getS3Config('RegionHosts'));
-  s3StorageClasses = toSignal(this.getS3Config('StorageClasses'));
+  #s3Providers = new LazySignal(() => this.getS3Config('Providers'));
+  #s3Regions = new LazySignal(() => this.getS3Config('Regions'));
+  #s3RegionHosts = new LazySignal(() => this.getS3Config('RegionHosts'));
+  #s3StorageClasses = new LazySignal(() => this.getS3Config('StorageClasses'));
+  #s3AllProviders = computed(() => {
+    const providers = this.#s3Providers.value()();
+    const regionHosts = this.#s3RegionHosts.value()();
 
-  storjSatellites = toSignal(this.getStorjConfig('Satellites'));
-  storjAuthenticationMethods = toSignal(this.getStorjConfig('AuthenticationMethods'));
+    const merged = [
+      ...(providers ?? []),
+      ...(regionHosts?.map(x => ({ key: `Amazon ${x.key}`, value: x.value })) ?? []),
+    ];
+    
+    return Array.from(
+      new Map(merged.map(item => [item.value, item])).values()
+    );
+  });
 
-  openstackProviders = toSignal(this.getOpenstackConfig('Providers'));
-  openstackVersions = toSignal(this.getOpenstackConfig('Versions'));
 
-  gcsLocations = toSignal(this.getGcsConfig('Locations'));
-  gcsStorageClasses = toSignal(this.getGcsConfig('StorageClasses'));
+  #storjSatellites = new LazySignal(() => this.getStorjConfig('Satellites'));
+  #storjAuthenticationMethods = new LazySignal(() => this.getStorjConfig('AuthenticationMethods'));
+  
+  #openstackProviders = new LazySignal(() => this.getOpenstackConfig('Providers'));
+  #openstackVersions = new LazySignal(() => this.getOpenstackConfig('Versions'));
+  
+  #gcsLocations = new LazySignal(() => this.getGcsConfig('Locations'));
+  #gcsStorageClasses = new LazySignal(() => this.getGcsConfig('StorageClasses'));
 
-  getS3Config(config: 'Providers' | 'Regions' | 'RegionHosts' | 'StorageClasses') {
+  
+  getS3AllProviders() {
+    this.#s3Providers.load();
+    this.#s3RegionHosts.load();
+    return this.#s3AllProviders;
+  }
+
+  getS3Providers() {return this.#s3Providers.load(); }
+  getS3Regions() {return this.#s3Regions.load(); }
+  getS3RegionHosts() {return this.#s3RegionHosts.load(); }
+  getS3StorageClasses() {return this.#s3StorageClasses.load(); }
+  getStorjSatellites() {return this.#storjSatellites.load(); }
+  getStorjAuthenticationMethods() {return this.#storjAuthenticationMethods.load(); }
+  getOpenstackProviders() {return this.#openstackProviders.load(); }
+  getOpenstackVersions() {return this.#openstackVersions.load(); }
+  getGcsLocations() {return this.#gcsLocations.load(); }
+  getGcsStorageClasses() {return this.#gcsStorageClasses.load(); }
+
+  private getS3Config(config: 'Providers' | 'Regions' | 'RegionHosts' | 'StorageClasses') {
     return this.#dupServer
       .postApiV1WebmoduleByModulekey({
         modulekey: 's3-getconfig',
@@ -74,7 +90,7 @@ export class WebModulesService {
     });
   }
 
-  getStorjConfig(config: 'Satellites' | 'AuthenticationMethods') {
+  private getStorjConfig(config: 'Satellites' | 'AuthenticationMethods') {
     return this.#dupServer
       .postApiV1WebmoduleByModulekey({
         modulekey: 'storj-getconfig',
@@ -85,7 +101,7 @@ export class WebModulesService {
       .pipe(map((x) => this.#defaultMapResultObjToArray(x)));
   }
 
-  getOpenstackConfig(config: 'Providers' | 'Versions') {
+  private getOpenstackConfig(config: 'Providers' | 'Versions') {
     return this.#dupServer
       .postApiV1WebmoduleByModulekey({
         modulekey: 'openstack-getconfig',
@@ -96,7 +112,7 @@ export class WebModulesService {
       .pipe(map((x) => this.#defaultMapResultObjToArray(x)));
   }
 
-  getGcsConfig(config: 'Locations' | 'StorageClasses') {
+  private getGcsConfig(config: 'Locations' | 'StorageClasses') {
     return this.#dupServer
       .postApiV1WebmoduleByModulekey({
         modulekey: 'gcs-getconfig',

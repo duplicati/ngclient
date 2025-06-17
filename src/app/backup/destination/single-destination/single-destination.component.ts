@@ -311,6 +311,18 @@ export class SingleDestinationComponent {
     this.destinationForm.set({ ...form });
   }
 
+  mapOptions(item: FormView) : { key: string, value: string | null | undefined }[] | null | undefined {
+    const loadOptions = item.loadOptions;
+    if (loadOptions)
+      return loadOptions(this.injector)();
+    
+    const options = item.options;
+    if (options) 
+      return options.map((x) => ({ key: x, value: x }));
+
+    return null;
+  }
+
   #oauthInProgress = signal(false);
 
   oauthStartTokenCreation(backendKey: string, fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string, usev2?: number | null) {
