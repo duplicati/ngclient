@@ -5,6 +5,7 @@ import { WebModulesService } from '../../core/services/webmodules.service';
 import {
   addPath,
   addPort,
+  addServer,
   DestinationConfig,
   DoubleSlashConfig,
   fromSearchParams,
@@ -55,7 +56,7 @@ export const DESTINATION_CONFIG_DEFAULT = {
     to: (fields: ValueOfDestinationFormGroup): string => {
       const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
-      return `${fields.destinationType}://${fields.custom.path ?? ''}${urlParams}`;
+      return `${fields.destinationType}://${addServer(fields.custom.path) ?? ''}${urlParams}`;
     },
     from: (destinationType: string, urlObj: URL, plainPath: string) => {
       const hasLeadingSlash = plainPath.startsWith(`${destinationType}:///`);
@@ -92,7 +93,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       to: (fields: ValueOfDestinationFormGroup): string => {
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
-        return `${fields.destinationType}://${fields.custom.path ?? ''}${urlParams}`;
+        return `${fields.destinationType}://${addServer(fields.custom.path) ?? ''}${urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         const hasLeadingSlash = plainPath.startsWith('file:///');
@@ -168,7 +169,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
         const { port, server, path } = fields.custom;
 
-        return `${fields.destinationType}://${server + addPort(port) + addPath(path) + urlParams}`;
+        return `${fields.destinationType}://${addServer(server) + addPort(port) + addPath(path) + urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -240,7 +241,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const { bucket, path } = fields.custom;
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
-        return `${fields.destinationType}://${bucket + addPath(path) + urlParams}`;
+        return `${fields.destinationType}://${addServer(bucket) + addPath(path) + urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -289,7 +290,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       to: (fields: any): string => {
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
-        return `${fields.destinationType}://${fields.custom.path ?? ''}${urlParams}`;
+        return `${fields.destinationType}://${addServer(fields.custom.path)}${urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -329,7 +330,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const path = fields.custom.path ?? '';
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
-        return `${fields.destinationType}://${path}${urlParams}`;
+        return `${fields.destinationType}://${addServer(path)}${urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -388,7 +389,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
         const { server, path } = fields.custom;
 
-        return `${fields.destinationType}://${server + addPath(path) + urlParams}`;
+        return `${fields.destinationType}://${addServer(server) + addPath(path) + urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         const pathWithoutPrefixSlash = urlObj.pathname.replace(/^\//, '');
@@ -435,7 +436,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const path = fields.custom.path ?? '';
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
-        return `${fields.destinationType}://${path}${urlParams}`;
+        return `${fields.destinationType}://${addServer(path)}${urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -472,7 +473,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const path = fields.custom.path ?? '';
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
-        return `${fields.destinationType}://${path}${urlParams}`;
+        return `${fields.destinationType}://${addServer(path)}${urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -531,7 +532,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
         const { port, server, path } = fields.custom;
 
-        return `${fields.destinationType}://${server + addPort(port) + addPath(path) + urlParams}`;
+        return `${fields.destinationType}://${addServer(server) + addPort(port) + addPath(path) + urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -592,7 +593,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
         const { port, server, path } = fields.custom;
 
-        return `${fields.destinationType}://${server + addPort(port) + addPath(path) + urlParams}`;
+        return `${fields.destinationType}://${addServer(server) + addPort(port) + addPath(path) + urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -634,7 +635,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const path = fields.custom.path ?? '';
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
-        return `${fields.destinationType}://${path}${urlParams}`;
+        return `${fields.destinationType}://${addServer(path)}${urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -671,7 +672,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const path = fields.custom.path ?? '';
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
-        return `${fields.destinationType}://${path}${urlParams}`;
+        return `${fields.destinationType}://${addServer(path)}${urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -708,7 +709,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const path = fields.custom.path ?? '';
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
-        return `${fields.destinationType}://${path}${urlParams}`;
+        return `${fields.destinationType}://${addServer(path)}${urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -745,7 +746,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const path = fields.custom.path ?? '';
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
-        return `${fields.destinationType}://${path}${urlParams}`;
+        return `${fields.destinationType}://${addServer(path)}${urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -797,7 +798,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const { bucket, path } = fields.custom;
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
-        return `${fields.destinationType}://${bucket + addPath(path) + urlParams}`;
+        return `${fields.destinationType}://${addServer(bucket) + addPath(path) + urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -850,7 +851,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const { bucket, path } = fields.custom;
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
-        return `${fields.destinationType}://${bucket + addPath(path) + urlParams}`;
+        return `${fields.destinationType}://${addServer(bucket) + addPath(path) + urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -895,7 +896,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const path = fields.custom.path ?? '';
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
-        return `${fields.destinationType}://${path}${urlParams}`;
+        return `${fields.destinationType}://${addServer(path)}${urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -940,7 +941,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const path = fields.custom.path ?? '';
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
-        return `${fields.destinationType}://${path}${urlParams}`;
+        return `${fields.destinationType}://${addServer(path)}${urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -999,7 +1000,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
         const { port, server, path } = fields.custom;
 
-        return `${fields.destinationType}://${server + addPort(port) + addPath(path) + urlParams}`;
+        return `${fields.destinationType}://${addServer(server) + addPort(port) + addPath(path) + urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -1045,7 +1046,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
 
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...rest]);
 
-        return `${fields.destinationType}://${rcloneRemoteRepository}/${rcloneRemotePath + urlParams}`;
+        return `${fields.destinationType}://${addServer(rcloneRemoteRepository)}/${addServer(rcloneRemotePath) + urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         const { advanced, dynamic } = fromSearchParams(destinationType, urlObj);
@@ -1110,7 +1111,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
         const { bucket } = fields.custom;
 
-        return `${fields.destinationType}://${bucket + urlParams}`;
+        return `${fields.destinationType}://${addServer(bucket) + urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -1180,7 +1181,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
           ...Object.entries(fields.dynamic).filter(([key]) => key !== 'use-ssl'),
         ]);
 
-        return `${fields.destinationType}${useSsl ? 's' : ''}://${server + addPort(port) + addPath(path) + urlParams}`;
+        return `${fields.destinationType}${useSsl ? 's' : ''}://${addServer(server) + addPort(port) + addPath(path) + urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -1248,7 +1249,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
           ...Object.entries(fields.dynamic).filter(([key]) => key !== 'use-ssl'),
         ]);
 
-        return `${fields.destinationType}://${server + addPort(port) + addPath(path) + urlParams}`;
+        return `${fields.destinationType}://${addServer(server) + addPort(port) + addPath(path) + urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -1289,7 +1290,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
           ...Object.entries(fields.dynamic).filter(([key]) => key !== 'sia-targetpath'),
         ]);
 
-        return `${fields.destinationType}://${server + addPath(targetpath) + urlParams}`;
+        return `${fields.destinationType}://${addServer(server) + addPath(targetpath) + urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -1357,7 +1358,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
           ...Object.entries(fields.dynamic).filter(([key]) => key !== 'cos-targetpath'),
         ]);
 
-        return `${fields.destinationType}://${path + urlParams}`;
+        return `${fields.destinationType}://${addServer(path) + urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -1421,7 +1422,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
           ...Object.entries(obj),
         ]);
 
-        return `${fields.destinationType}${useSsl ? 's' : ''}://${server + addPort(port) + addPath(path) + urlParams}`;
+        return `${fields.destinationType}${useSsl ? 's' : ''}://${addServer(server) + addPort(port) + addPath(path) + urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -1492,7 +1493,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
 
         const urlParams = toSearchParams(Array.from(asMap));
 
-        return `${fields.destinationType}://${server + addPath(share) + addPath(path) + urlParams}`;
+        return `${fields.destinationType}://${addServer(server) + addPath(share) + addPath(path) + urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         const share = urlObj.pathname.split('/')[1];
@@ -1547,7 +1548,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
 
         const urlParams = toSearchParams(Array.from(asMap));
 
-        return `${fields.destinationType}://${path + urlParams}`;
+        return `${fields.destinationType}://${addServer(path) + urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         let path = urlObj.hostname ?? '';
@@ -1612,7 +1613,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
 
         const urlParams = toSearchParams(Array.from(asMap));
 
-        return `${fields.destinationType}://${path + urlParams}`;
+        return `${fields.destinationType}://${addServer(path) + urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         let path = urlObj.hostname ?? '';
@@ -1751,7 +1752,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const bucket = fields.custom['oss-bucket-name'];
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
 
-        return `${fields.destinationType}://${bucket + addPath(path) + urlParams}`;
+        return `${fields.destinationType}://${addServer(bucket) + addPath(path) + urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{

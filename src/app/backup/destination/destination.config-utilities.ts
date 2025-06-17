@@ -62,6 +62,11 @@ export type DestinationConfigEntry = {
 };
 export type DestinationConfig = DestinationConfigEntry[];
 
+export function addServer(server: string | null | undefined) {
+  if (server === null || server === undefined || server === '') return '';
+  return server.endsWith('/') ? server.substring(0, server.length - 1) : server;
+}
+
 export function addPort(port: string | number | null | undefined) {
   if (port === null || port === undefined || port === '') return '';
 
