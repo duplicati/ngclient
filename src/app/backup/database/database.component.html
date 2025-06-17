@@ -57,7 +57,9 @@
 
     <spk-form-field [class]="isValidatedPath() ? 'success' : 'error'">
       <input type="text" [(ngModel)]="backupFilePath" />
-      @if (isValidatedPath()) {
+      @if (isWaitingForValidation()) {
+        <spk-icon class="primary" prefix>spinner</spk-icon>
+      } @else if (isValidatedPath()) {
         <spk-icon prefix>check</spk-icon>
       } @else {
         <spk-icon prefix [spkTooltip]="'File not found'">warning</spk-icon>
@@ -69,15 +71,23 @@
         <spk-icon>backspace</spk-icon>
         Reset
       </button>
-      <button spk-button i18n [disabled]="!pathHasChanged()" (click)="saveDatabasePath()">
+      <button spk-button i18n [disabled]="!pathHasChanged() || isWaitingForValidation()" (click)="saveDatabasePath()">
         <spk-icon>floppy-disk</spk-icon>
         Save
       </button>
-      <button spk-button i18n [disabled]="!pathHasChanged()" (click)="saveAndRepairDatabasePath()">
+      <button
+        spk-button
+        i18n
+        [disabled]="!pathHasChanged() || isWaitingForValidation()"
+        (click)="saveAndRepairDatabasePath()">
         <spk-icon>wrench</spk-icon>
         Save & Repair
       </button>
-      <button spk-button i18n [disabled]="!pathHasChanged() || !isValidatedPath()" (click)="moveDatabasePath()">
+      <button
+        spk-button
+        i18n
+        [disabled]="!pathHasChanged() || isValidatedPath() || isWaitingForValidation()"
+        (click)="moveDatabasePath()">
         <spk-icon>flow-arrow</spk-icon>
         Move existing database
       </button>

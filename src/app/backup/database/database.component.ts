@@ -2,8 +2,9 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, Signal, s
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { SparkleButtonComponent, SparkleFormFieldComponent, SparkleIconComponent, SparkleTooltipDirective } from '@sparkle-ui/core';
-import { debounceTime, distinctUntilChanged, finalize, map, switchMap, take, tap } from 'rxjs';
+import { SparkleButtonComponent, SparkleDialogService, SparkleFormFieldComponent, SparkleIconComponent, SparkleTooltipDirective } from '@sparkle-ui/core';
+import { debounceTime, distinctUntilChanged, finalize, map, switchMap, take } from 'rxjs';
+import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
 import { DuplicatiServerService } from '../../core/openapi';
 import { BackupsState } from '../../core/states/backups.state';
@@ -39,6 +40,7 @@ export default class DatabaseComponent {
   #route = inject(ActivatedRoute);
   #backups = inject(BackupsState);
   #dupServer = inject(DuplicatiServerService);
+  #dialog = inject(SparkleDialogService);
   #firstDBPath = signal('');
 
   backupId = toSignal<string>(this.#route.params.pipe(map((x) => x['id'])));
@@ -51,17 +53,22 @@ export default class DatabaseComponent {
   lastValidatedPath = signal<string>('');
   isValidatedPath = computed(() => this.lastValidatedPath() === this.backupFilePath());
   pathHasChanged = computed(() => this.backupFilePath() !== this.#firstDBPath());
-
+  isValidatingPath = signal(false);
   #debouncedBackupFilePath = debouncedSignal(this.backupFilePath, 500);
+  isWaitingForValidation = computed(() => this.#debouncedBackupFilePath() != this.backupFilePath() || this.isValidatingPath());
 
   backupFilePathEffect = effect(() => {
     const backupFilePath = this.#debouncedBackupFilePath();
 
     if (backupFilePath === '') return;
 
-    this.#dupServer.postApiV1FilesystemValidate({ requestBody: { path: backupFilePath } }).subscribe({
-      next: () => this.lastValidatedPath.set(backupFilePath),
-    });
+    this.isValidatingPath.set(true);
+    this.#dupServer.postApiV1FilesystemValidate({ requestBody: { path: backupFilePath } })
+      .pipe(
+        take(1),
+        finalize(() => this.isValidatingPath.set(false))
+      )
+      .subscribe(() => this.lastValidatedPath.set(backupFilePath));
   });
 
   isRestoring = signal(false);
@@ -73,7 +80,6 @@ export default class DatabaseComponent {
 
   activeBackupEffect = effect(() => {    
     const activeBackup = this.activeBackup();
-    console.log('Active Backup:', activeBackup);
 
     if (!activeBackup) return;
 
@@ -93,34 +99,69 @@ export default class DatabaseComponent {
       .subscribe();
   }
 
-  deleteDatabase() {
-    this.isDeleting.set(true);
-    this.#dupServer
-      .postApiV1BackupByIdDeletedb({ id: this.backupId()! })
-      .pipe(
-        take(1),
-        finalize(() => this.isDeleting.set(false))
-      )
-      .subscribe(() => this.lastValidatedPath.set(''));
+  deleteDatabase(callback: (() => void) | null = null) {
+    this.#dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: $localize`Confirm delete?`,
+        message: $localize`Do you really want to delete the database for ${this.activeBackup()?.Backup?.Name}?`,
+        confirmText: $localize`Delete database`,
+        cancelText: $localize`Cancel`,
+      },
+      closed: (res) => {
+        if (!res) return;
+        this.isDeleting.set(true);
+        this.#dupServer
+          .postApiV1BackupByIdDeletedb({ id: this.backupId()! })
+          .pipe(
+            take(1),
+            finalize(() => this.isDeleting.set(false))
+          )
+          .subscribe(() => { 
+            this.lastValidatedPath.set('');
+            callback?.();
+          });
+      },
+    });
   }
 
   restoreDatabase() {
-    this.isRestoring.set(true);
-    this.#dupServer
-      .postApiV1BackupByIdDeletedb({ id: this.backupId()! })
-      .pipe(
-        take(1),
-        switchMap(() => this.#dupServer.postApiV1BackupByIdRepair({ id: this.backupId()! })),
-        finalize(() => this.isRestoring.set(false))
-      )
-      .subscribe();
+    this.deleteDatabase(() => {
+      this.isRestoring.set(true);
+      this.#dupServer
+        .postApiV1BackupByIdDeletedb({ id: this.backupId()! })
+        .pipe(
+          take(1),
+          switchMap(() => this.#dupServer.postApiV1BackupByIdRepair({ id: this.backupId()! })),
+          finalize(() => this.isRestoring.set(false))
+        )
+        .subscribe();
+    });
   }
 
   resetDatabasePath() {
     this.backupFilePath.set(this.#firstDBPath());
   }
 
-  saveDatabasePath() {
+  saveDatabasePath(callback: (() => void) | null = null) {
+    if (this.isValidatedPath()) {
+      this.#dialog.open(ConfirmDialogComponent, {
+        data: {
+          title: $localize`Confirm reassign?`,
+          message: $localize`The target database path already exists and may belong to another backup. Are you sure you want to assign this backup to an existing database?`,
+          confirmText: $localize`Assign existing database`,
+          cancelText: $localize`Cancel`,
+        },
+        closed: (res) => {
+          if (!res) return;
+          this.doSaveDatabasePath(callback);
+        }
+      });  
+    } else {
+      this.doSaveDatabasePath(callback);
+    }
+  }
+
+  private doSaveDatabasePath(callback: (() => void) | null = null){
     this.isSavingDbPath.set(true);
     const currentPath = this.backupFilePath();
     this.#dupServer
@@ -131,27 +172,22 @@ export default class DatabaseComponent {
         },
       })
       .pipe(finalize(() => this.isSavingDbPath.set(false)))
-      .subscribe(() => this.#firstDBPath.set(currentPath));
+      .subscribe(() => {
+        this.#firstDBPath.set(currentPath);
+        callback?.();
+      });
   }
 
   saveAndRepairDatabasePath() {
-    this.isSavingAndRepairing.set(true);
-    const currentPath = this.backupFilePath();
-
-    this.#dupServer
-      .postApiV1BackupByIdUpdatedb({
-        id: this.backupId()!,
-        requestBody: {
-          path: currentPath,
-        },
-      })
-      .pipe(
-        tap(() => this.#firstDBPath.set(currentPath)),
-        switchMap(() => {
-          return this.#dupServer.postApiV1BackupByIdRepair({ id: this.backupId()! });
-        }),
-        finalize(() => this.isSavingAndRepairing.set(false))
-      ).subscribe();
+    this.saveDatabasePath(() => {
+      this.isSavingAndRepairing.set(true);
+      return this.#dupServer.postApiV1BackupByIdRepair({ id: this.backupId()! })
+        .pipe(
+          take(1),
+          finalize(() => this.isSavingAndRepairing.set(false))
+        )
+        .subscribe();
+    });
   }
 
   moveDatabasePath() {
