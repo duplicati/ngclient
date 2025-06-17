@@ -261,7 +261,7 @@ export class ServerStatusWebSocketService {
     const currentSubscriptions = this.#subscriptions();
     const current = currentSubscriptions[subscriptionId];
 
-    if (!current || JSON.stringify(current) !== JSON.stringify(data))
+    if (!current || JSON.stringify(current) !== JSON.stringify(data || true))
     {
       currentSubscriptions[subscriptionId] = data || true;
       this.#subscriptions.set(currentSubscriptions);
