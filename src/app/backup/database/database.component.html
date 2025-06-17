@@ -25,12 +25,22 @@
     </p>
 
     <div class="actions maintenance">
-      <button spk-button i18n [class.loader]="isRepairing()" [disabled]="!isValidatedPath()" (click)="repairDatabase()">
+      <button
+        spk-button
+        i18n
+        [class.loader]="isRepairing()"
+        [disabled]="!isValidatedPath() || pathHasChanged()"
+        (click)="repairDatabase()">
         <spk-icon>wrench</spk-icon>
         Repair
       </button>
 
-      <button spk-button i18n [class.loader]="isDeleting()" [disabled]="!isValidatedPath()" (click)="deleteDatabase()">
+      <button
+        spk-button
+        i18n
+        [class.loader]="isDeleting()"
+        [disabled]="!isValidatedPath() || pathHasChanged()"
+        (click)="deleteDatabase()">
         <spk-icon>trash</spk-icon>
         Delete
       </button>
@@ -50,7 +60,7 @@
       @if (isValidatedPath()) {
         <spk-icon prefix>check</spk-icon>
       } @else {
-        <spk-icon prefix>warning</spk-icon>
+        <spk-icon prefix [spkTooltip]="'File not found'">warning</spk-icon>
       }
     </spk-form-field>
 
@@ -67,7 +77,7 @@
         <spk-icon>wrench</spk-icon>
         Save & Repair
       </button>
-      <button spk-button i18n [disabled]="!pathHasChanged()" (click)="moveDatabasePath()">
+      <button spk-button i18n [disabled]="!pathHasChanged() || !isValidatedPath()" (click)="moveDatabasePath()">
         <spk-icon>flow-arrow</spk-icon>
         Move existing database
       </button>
