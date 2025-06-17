@@ -11,6 +11,7 @@ import {
 import { finalize, Subject, takeUntil } from 'rxjs';
 import FileTreeComponent, { BackupSettings } from '../../core/components/file-tree/file-tree.component';
 import { DuplicatiServerService, GetApiV1BackupByIdFilesData } from '../../core/openapi';
+import { BytesPipe } from '../../core/pipes/byte.pipe';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 import { RestoreFlowState } from '../restore-flow.state';
 
@@ -29,6 +30,7 @@ export const createRestoreSelectFilesForm = () => {
     FormsModule,
     ReactiveFormsModule,
     DatePipe,
+    BytesPipe,
     FileTreeComponent,
     SparkleButtonComponent,
     SparkleIconComponent,

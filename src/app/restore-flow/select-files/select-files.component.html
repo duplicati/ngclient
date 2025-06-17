@@ -13,7 +13,12 @@
         [ngModelOptions]="{ standalone: true }" />
 
       <ng-template let-option>
-        <div class="custom-option">{{ option.Version }}: {{ option.Time | date: 'medium' }}</div>
+        <div class="custom-option">
+          {{ option.Version }}: {{ option.Time | date: 'medium' }}
+          @if (option.FileSizes) {
+            ({{ option.FileSizes | bytes }})
+          }
+        </div>
       </ng-template>
     </spk-select>
 
