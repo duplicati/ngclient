@@ -98,7 +98,7 @@
 
                   <p>
                     <span i18n>Last successful backup:</span>
-                    {{ backup.Backup?.Metadata?.['LastBackupDate'] | relativeTime: timeType() === 'actual' }}
+                    {{ backup.Backup?.Metadata?.['LastBackupFinished'] | relativeTime: timeType() === 'actual' }}
                   </p>
 
                   <p>
