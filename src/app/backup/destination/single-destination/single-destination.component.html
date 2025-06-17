@@ -101,6 +101,9 @@
             @if (item.formView.longDescription) {
               <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
             }
+            @if (item.formView.isMandatory && isFieldEmpty) {
+              <spk-icon class="error" [spkTooltip]="'This field is mandatory'">asterisk</spk-icon>
+            }
           </label>
           <input
             type="text"
@@ -111,12 +114,12 @@
       } @else if (item.formView.type === 'FolderTree') {
         <app-file-tree [hideShortcuts]="true" [startingPath]="fieldValue">
           <label [for]="formFieldId">
-            @if (item.formView.isMandatory && isFieldEmpty) {
-              <spk-icon class="error" [spkTooltip]="'This field is mandatory'">asterisk</spk-icon>
-            }
             {{ labelContent }}
             @if (item.formView.longDescription) {
               <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+            }
+            @if (item.formView.isMandatory && isFieldEmpty) {
+              <spk-icon class="error" [spkTooltip]="'This field is mandatory'">asterisk</spk-icon>
             }
           </label>
           <input
