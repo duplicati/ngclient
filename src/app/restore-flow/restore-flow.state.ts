@@ -40,15 +40,13 @@ export class RestoreFlowState {
   versionOptionsLoading = signal(false);
   versionOptions = signal<ListResultFileset[]>([]);
   isSubmitting = signal(false);
-  isDraft = signal(false);
   isFileRestore = signal(false);
   isFullWidthPage = signal(false);
 
-  init(id: 'string', isFileRestore = false, isDraft = false) {
+  init(id: 'string', isFileRestore = false) {
     this.backupId.set(id);
 
     this.isFileRestore.set(isFileRestore);
-    this.isDraft.set(isDraft);
 
     if (isFileRestore) {
       this.#router.navigate(['/restore-from-files/destination']);

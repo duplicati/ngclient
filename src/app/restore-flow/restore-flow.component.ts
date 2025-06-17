@@ -34,19 +34,17 @@ export default class RestoreFlowComponent {
   #childRouteUrlSignal = toSignal(this.#route.children[0].url);
 
   backupId = this.#restoreFlowState.backupId;
-  isDraft = this.#restoreFlowState.isDraft;
   isFileRestore = this.#restoreFlowState.isFileRestore;
   isProgressPage = signal(false);
 
   paramsChanged = effect(() => {
     const childRouteUrl = this.#childRouteUrlSignal();
     const backupId = this.#routeParamsSignal()?.['id'];
-    const isDraft = !!this.#routeUrlSignal()?.find((x) => x.path === 'restore-draft');
     const isFileRestore = !!this.#routeUrlSignal()?.find((x) => x.path === 'restore-from-files');
     const isProgressPage = !!childRouteUrl?.find((x) => x.path === 'progress');
 
     this.isProgressPage.set(isProgressPage);
-    this.#restoreFlowState.init(backupId, isFileRestore, isFileRestore || isDraft);
+    this.#restoreFlowState.init(backupId, isFileRestore);
   });
 
   ngOnInit() {
