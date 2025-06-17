@@ -3,8 +3,6 @@
 }
 
 @for (item of resource.value(); track $index) {
-  @let errorCount = item.data?.ErrorsActualLength || 0;
-  @let warningCount = item.data?.WarningsActualLength || 0;
   @let result = item.data?.ParsedResult || 'Unknown';
 
   <article class="log-entry">
