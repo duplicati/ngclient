@@ -228,7 +228,18 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       {
         name: 's3-client',
         type: 'Enumeration', // Convert to string before submitting
-        options: ['aws', 'minio'],
+        loadOptions: () => {
+          return signal([
+            {
+              key: 'AWS Library',
+              value: 'aws',
+            },
+            {
+              key: 'MinIO Library',
+              value: 'minio',
+            },
+          ]);
+        },     
       },
       {
         name: 's3-storage-class',

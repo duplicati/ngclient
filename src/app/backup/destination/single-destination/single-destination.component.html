@@ -227,7 +227,12 @@
         @let options = item.formView.loadOptions ? item.formView.loadOptions(injector)() : item.formView.options;
 
         @if (options) {
-          <spk-select [options]="options" [isClearable]="false" [optionTemplate]="enumOptionTemplate">
+          <spk-select
+            [options]="options"
+            [isClearable]="false"
+            [optionTemplate]="enumOptionTemplate"
+            label="key"
+            value="value">
             <label [for]="formFieldId">
               {{ labelContent }}
               @if (item.formView.longDescription) {
@@ -244,13 +249,7 @@
               (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
           </spk-select>
 
-          <ng-template let-option #enumOptionTemplate>
-            @if (item.formView.loadOptions) {
-              {{ option?.key }} ({{ option?.value }})
-            } @else {
-              {{ option }}
-            }
-          </ng-template>
+          <ng-template let-option #enumOptionTemplate>{{ option?.key }} ({{ option?.value }})</ng-template>
         }
       } @else if (item.formView.type === 'NonValidatedSelectableString') {
         @let options = item.formView.loadOptions ? item.formView.loadOptions(injector)() : item.formView.options;
