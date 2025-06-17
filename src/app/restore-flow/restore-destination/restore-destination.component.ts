@@ -122,27 +122,25 @@ export default class RestoreDestinationComponent {
       .subscribe({
         next: (res) => {
           if (res.action === 'success') {
-            if (this.#backupState.isNew()) {
-              if (res.containsBackup === true) {
-                this.#dialog.open(ConfirmDialogComponent, {
-                  data: {
-                    title: $localize`Folder contains backup`,
-                    message: $localize`The remote destination already contains a backup. You must use a different folder for each backup.`,
-                    confirmText: $localize`OK`,
-                    cancelText: undefined,
-                  },
-                });
-              } else if (res.anyFilesFound === true) {
-                this.#dialog.open(ConfirmDialogComponent, {
-                  data: {
-                    title: $localize`Folder is not empty`,
-                    message: $localize`The remote destination is not empty. It is recommended to use an empty folder for the backup.`,
-                    confirmText: $localize`OK`,
-                    cancelText: undefined,
-                  },
-                });
-              }
-            }
+            if (res.containsBackup === false) {
+              this.#dialog.open(ConfirmDialogComponent, {
+                data: {
+                  title: $localize`Folder contains no backup`,
+                  message: $localize`The remote destination does not contain any backups. Please check if the destination details are correct.`,
+                confirmText: $localize`OK`,
+                  cancelText: undefined,
+                },
+              });
+            } else if (res.anyFilesFound === false) {
+              this.#dialog.open(ConfirmDialogComponent, {
+                data: {
+                  title: $localize`Folder is empty`,
+                  message: $localize`The remote destination is empty. Please check if the destination details are correct.`,
+                  confirmText: $localize`OK`,
+                  cancelText: undefined,
+                },
+              });
+            }            
 
             this.successfulTest.set(true);
             setTimeout(() => {
