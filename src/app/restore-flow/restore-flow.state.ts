@@ -168,7 +168,6 @@ export class RestoreFlowState {
               
               return;
             }
-              throw new Error($localize`The Backup does not have a local database. Please repair/recreate the local database before restoring.`);
 
             this.versionOptions.set(
               (filesets.Data ?? []).map((x) => ({
