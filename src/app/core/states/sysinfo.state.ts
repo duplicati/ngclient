@@ -100,6 +100,11 @@ export class SysinfoState {
     return apiExtensions.includes('v1:subscribe:taskqueue');
   });
 
+  hasTaskCompletedOption = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v1:subscribe:taskcompleted');
+  });
+
   hasBackupListSubscribeOption = computed(() => {
     const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
     return apiExtensions.includes('v1:subscribe:backuplist');
