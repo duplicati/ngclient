@@ -84,6 +84,7 @@ export default class ImportComponent {
 
   submit() {
     this.isImporting.set(true);
+    const isDirectImport = this.importForm.value.direct ?? false;
 
     this.#dupServer
       .postApiV1BackupsImport({
@@ -92,6 +93,11 @@ export default class ImportComponent {
       .pipe(finalize(() => this.isImporting.set(false)))
       .subscribe({
         next: (res) => {
+          if (isDirectImport) {
+            this.#sparkleAlertService.success('Backup imported successfully.');
+            this.#router.navigate(['/']);
+            return;
+          }
           const draftId = this.#backupsState.addDraftBackup(res.data as BackupDraft);
 
           this.#router.navigate(['/backup-draft', draftId]);
