@@ -1,5 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { SparkleDialogService } from '@sparkle-ui/core';
+import { Observable, Subscriber } from 'rxjs';
 import { DisconnectedDialogComponent } from '../components/disconnected-dialog/disconnected-dialog.component';
 import { GetApiV1BackupsResponse, GetTaskStateDto, IProgressEventData, ServerStatusDto } from '../openapi';
 import { AppAuthState } from '../states/app-auth.state';
@@ -7,7 +8,7 @@ import { SysinfoState } from '../states/sysinfo.state';
 
 type ConnectionStatus = 'connected' | 'disconnected' | 'connecting' | 'authenticating';
 
-export type SubscriptionService = 'backuplist' | 'serversettings' | 'progress' | 'taskqueue' | 'notification' | 'legacystatus';
+export type SubscriptionService = 'backuplist' | 'serversettings' | 'progress' | 'taskqueue' | 'taskcompleted' | 'notification' | 'legacystatus';
 type RequestAction = 'sub' | 'unsub';
 type ResponseAction = 'reply';
 type ResponseType = SubscriptionService | ResponseAction;
@@ -82,6 +83,10 @@ export class ServerStatusWebSocketService {
   subscriptions = this.#subscriptions.asReadonly();
   serverTaskQueue = this.#serverTaskQueue.asReadonly();
   backupListState = this.#backupListState.asReadonly();
+  #taskCompletedSubscriber: Subscriber<GetTaskStateDto> | null = null
+  taskCompleted = new Observable<GetTaskStateDto>((subscriber) => {
+    this.#taskCompletedSubscriber = subscriber;
+  });
   #reqidCounter = 0;
 
   start() {
@@ -172,6 +177,11 @@ export class ServerStatusWebSocketService {
             if (LOGGING_ENABLED)
               console.log('Received task update:', evobj.Data);
             this.#serverTaskQueue.set(evobj.Data);
+        } else if (type === 'taskcompleted') {
+            const evobj = respobj as WebsocketEventMessage<GetTaskStateDto>;
+            if (LOGGING_ENABLED)
+              console.log('Received task completed:', evobj.Data);
+            this.#taskCompletedSubscriber?.next(evobj.Data);
         } else if (type === 'backuplist') {
           const evobj = respobj as WebsocketEventMessage<GetApiV1BackupsResponse>;
           if (LOGGING_ENABLED)
