@@ -79,6 +79,7 @@ export default class BackupComponent {
         this.#backupState.mapDestinationToForm(res.Backup);
         this.#backupState.mapSourceDataToForm(res.Backup);
         this.#backupState.mapOptionsToForms(res.Backup);
+        this.#backupState.storeMetadata(res.Backup, isDraft);
       }
 
       this.#backupState.finishedLoading.set(true);

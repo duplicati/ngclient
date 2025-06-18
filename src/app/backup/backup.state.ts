@@ -51,6 +51,7 @@ export class BackupState {
   };
 
   targetUrlModel = signal<string | null>(null);
+  backupMetadata = signal<Record<string, string> | null>(null);
 
   isDraft = signal(false);
   backupId = signal<'new' | 'string' | null>(null);
@@ -97,6 +98,9 @@ export class BackupState {
 
     const backup = this.#mapFormsToBackup();
     const backupId = this.backupId();
+
+    if (this.isDraft() && backup.Backup)
+      backup.Backup.Metadata = this.backupMetadata();
 
     if (backupId === 'new' || !backupId || this.isDraft()) {
       this.#dupServer
@@ -282,6 +286,10 @@ export class BackupState {
     });
 
     this.optionsFields.backupRetention.set(retentionValue);
+  }
+
+  storeMetadata(backup: BackupDto, isDraft: boolean) {
+    this.backupMetadata.set(isDraft ? backup.Metadata ?? null : null);
   }
 
   getScheduleFormValue() {
