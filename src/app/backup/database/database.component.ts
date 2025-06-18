@@ -44,10 +44,7 @@ export default class DatabaseComponent {
   #firstDBPath = signal('');
 
   backupId = toSignal<string>(this.#route.params.pipe(map((x) => x['id'])));
-  activeBackup = computed(() => {
-    const activeBackup = this.#backups.backups().find((x) => x.Backup?.ID === this.backupId());
-    return activeBackup;
-  });
+  activeBackup = computed(() => this.#backups.backups().find((x) => x.Backup?.ID === this.backupId()));
 
   backupFilePath = signal<string>('');
   lastValidatedPath = signal<string>('');
@@ -61,6 +58,7 @@ export default class DatabaseComponent {
 
   backupFilePathEffect = effect(() => {
     const backupFilePath = this.#debouncedBackupFilePath();
+    const _ = this.activeBackup(); // Also trigger if the backup changes
 
     if (backupFilePath === '') return;
 
