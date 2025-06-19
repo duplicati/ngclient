@@ -3,14 +3,16 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ArgumentType } from '../../core/openapi';
 import { WebModulesService } from '../../core/services/webmodules.service';
 import {
-  addPath,
-  addPort,
-  addServer,
+  buildUrl,
+  buildUrlFromFields,
+  concatPaths,
   DestinationConfig,
   DoubleSlashConfig,
   fromSearchParams,
+  getSimplePath,
+  removeLeadingSlash,
   toSearchParams,
-  ValueOfDestinationFormGroup
+  ValueOfDestinationFormGroup,
 } from './destination.config-utilities';
 
 const fb = new FormBuilder();
@@ -38,7 +40,7 @@ const fb = new FormBuilder();
 
 const DEFAULT_DOUBLESLASH_CONFIG: DoubleSlashConfig = {
   type: 'error',
-  message: $localize`Using double leading slashes is most likely wrong, and will result in objects being created with a leading slash in the name.`,
+  message: $localize`Using a leading slash is most likely wrong, and will result in objects being created with a leading slash in the name.`,
 };
 
 export const DESTINATION_CONFIG_DEFAULT = {
@@ -54,13 +56,13 @@ export const DESTINATION_CONFIG_DEFAULT = {
   },
   mapper: {
     to: (fields: ValueOfDestinationFormGroup): string => {
-      const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
-
-      return `${fields.destinationType}://${addServer(fields.custom.path) ?? ''}${urlParams}`;
+      return buildUrlFromFields(fields, null, null, fields.custom.path);
     },
     from: (destinationType: string, urlObj: URL, plainPath: string) => {
       const hasLeadingSlash = plainPath.startsWith(`${destinationType}:///`);
-      const path = hasLeadingSlash ? plainPath.split(`${destinationType}:///`)[1] : plainPath.split(`${destinationType}://`)[1];
+      const path = hasLeadingSlash
+        ? plainPath.split(`${destinationType}:///`)[1]
+        : plainPath.split(`${destinationType}://`)[1];
 
       return <ValueOfDestinationFormGroup>{
         destinationType,
@@ -91,16 +93,13 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     },
     mapper: {
       to: (fields: ValueOfDestinationFormGroup): string => {
-        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
-
-        return `${fields.destinationType}://${addServer(fields.custom.path) ?? ''}${urlParams}`;
+        return buildUrlFromFields(fields, null, null, fields.custom.path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         const hasLeadingSlash = plainPath.startsWith('file:///');
         const _tempPath = hasLeadingSlash ? plainPath.split('file:///')[1] : plainPath.split('file://')[1];
-        const isShortcut = _tempPath.startsWith('%');
         const isWindows = _tempPath.slice(1).startsWith(':\\');
-        const path = isWindows || isShortcut ? _tempPath : '/' + _tempPath;
+        const path = isWindows ? _tempPath : '/' + _tempPath;
 
         return <ValueOfDestinationFormGroup>{
           destinationType,
@@ -118,7 +117,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups with SSH.`,
     customFields: {
       server: {
-        type: 'String', // Custom server/port field
+        type: 'Hostname',
         name: 'server',
         shortDescription: $localize`Server`,
         longDescription: $localize`The server to connect to`,
@@ -140,15 +139,17 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         longDescription: $localize`Folder path`,
         doubleSlash: {
           type: 'warning',
-          message: $localize`Using double leading slashes makes the path absolute, pointing to the root of the filesystem.`,
+          message: $localize`Using a leading slash makes the path absolute, pointing to the root of the filesystem.`,
         },
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
-    dynamicFields: [ { 
-      name: 'auth-username',
-      isMandatory: true,
-    }],
+    dynamicFields: [
+      {
+        name: 'auth-username',
+        isMandatory: true,
+      },
+    ],
     advancedFields: [
       {
         type: 'FileTree',
@@ -162,14 +163,12 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         name: 'ssh-key',
         shortDescription: $localize`SSH private key`,
         longDescription: $localize`An SSH private key. Supported formats are OpenSSL, OpenSSH, PuTTY, and PEM.`,
-      }
+      },
     ],
     mapper: {
-      to: (fields: any): string => {
-        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
-        const { port, server, path } = fields.custom;
-
-        return `${fields.destinationType}://${addServer(server) + addPort(port) + addPath(path) + urlParams}`;
+      to: (fields: ValueOfDestinationFormGroup): string => {
+        const { server, port, path } = fields.custom;
+        return buildUrlFromFields(fields, server, port, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -177,7 +176,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
           custom: {
             server: urlObj.hostname,
             port: urlObj.port,
-            path: urlObj.pathname,
+            path: removeLeadingSlash(urlObj.pathname),
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -190,7 +189,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in any S3 compatible bucket.`,
     customFields: {
       bucket: {
-        type: 'String',
+        type: 'Bucketname',
         name: 'bucket',
         shortDescription: $localize`Bucket name`,
         longDescription: $localize`Bucket name`,
@@ -204,11 +203,11 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         shortDescription: $localize`Folder path`,
         longDescription: $localize`Folder path`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
-      }
+      },
     },
     dynamicFields: [
       {
-        name: 's3-server-name',        
+        name: 's3-server-name',
         order: 1,
         shortDescription: $localize`Server`,
         longDescription: $localize`The hostname of the S3 compatible server to connect to`,
@@ -221,14 +220,14 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         name: 'use-ssl',
         order: 2,
       },
-      { 
-        name: 'auth-username', 
-        isMandatory: true 
+      {
+        name: 'auth-username',
+        isMandatory: true,
       },
-      { 
+      {
         name: 'auth-password',
-        isMandatory: true
-      }
+        isMandatory: true,
+      },
     ],
     advancedFields: [
       {
@@ -245,12 +244,12 @@ export const DESTINATION_CONFIG: DestinationConfig = [
               value: 'minio',
             },
           ]);
-        },     
+        },
       },
       {
         name: 's3-storage-class',
         type: 'NonValidatedSelectableString', // Convert to string before submitting
-        loadOptions: (injector) => injector.get(WebModulesService).getS3StorageClasses()
+        loadOptions: (injector) => injector.get(WebModulesService).getS3StorageClasses(),
       },
       {
         name: 's3-location-constraint',
@@ -259,17 +258,15 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
     ],
     mapper: {
-      to: (fields: any): string => {
+      to: (fields: ValueOfDestinationFormGroup): string => {
         const { bucket, path } = fields.custom;
-        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
-
-        return `${fields.destinationType}://${addServer(bucket) + addPath(path) + urlParams}`;
+        return buildUrlFromFields(fields, bucket, null, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path: urlObj.pathname,
+            path: removeLeadingSlash(urlObj.pathname),
             bucket: urlObj.hostname,
           },
           ...fromSearchParams(destinationType, urlObj),
@@ -284,15 +281,22 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     oauthField: 'authid',
     customFields: {
       path: {
-        type: 'Path',
+        type: 'Bucketname',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: $localize`Bucket name`,
         longDescription: $localize`Bucket name`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+        isMandatory: true,
       },
     },
     dynamicFields: [
+      {
+        name: 'authid',
+        isMandatory: true,
+      },
+    ],
+    advancedFields: [
       {
         name: 'gcs-location',
         type: 'NonValidatedSelectableString', // Convert to string before submitting
@@ -303,22 +307,16 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         type: 'NonValidatedSelectableString', // Convert to string before submitting
         loadOptions: (injector) => injector.get(WebModulesService).getGcsStorageClasses(),
       },
-      { 
-        name: 'authid',
-        isMandatory: true
-      }
     ],
     mapper: {
-      to: (fields: any): string => {
-        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
-
-        return `${fields.destinationType}://${addServer(fields.custom.path)}${urlParams}`;
+      to: (fields: ValueOfDestinationFormGroup): string => {
+        return buildUrlFromFields(fields, null, null, fields.custom.path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path: urlObj.hostname + urlObj.pathname,
+            path: getSimplePath(urlObj),
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -348,17 +346,14 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
     ],
     mapper: {
-      to: (fields: any): string => {
-        const path = fields.custom.path ?? '';
-        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
-
-        return `${fields.destinationType}://${addServer(path)}${urlParams}`;
+      to: (fields: ValueOfDestinationFormGroup): string => {
+        return buildUrlFromFields(fields, null, null, fields.custom.path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path: urlObj.hostname + urlObj.pathname,
+            path: getSimplePath(urlObj),
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -369,7 +364,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'pcloud',
     displayName: $localize`pCloud`,
     description: $localize`Store backups in pCloud.`,
-    oauthField: 'authid',    
+    oauthField: 'authid',
     customFields: {
       server: {
         type: 'Enumeration',
@@ -400,18 +395,18 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
-    dynamicFields: [{
-      name: 'authid',
-      type: 'Password',
-      oauthVersion: 2,
-      isMandatory: true,
-    }],
+    dynamicFields: [
+      {
+        name: 'authid',
+        type: 'Password',
+        oauthVersion: 2,
+        isMandatory: true,
+      },
+    ],
     mapper: {
-      to: (fields: any): string => {
-        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
+      to: (fields: ValueOfDestinationFormGroup): string => {
         const { server, path } = fields.custom;
-
-        return `${fields.destinationType}://${addServer(server) + addPath(path) + urlParams}`;
+        return buildUrlFromFields(fields, server, null, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         const pathWithoutPrefixSlash = urlObj.pathname.replace(/^\//, '');
@@ -433,7 +428,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in Azure Blob Storage.`,
     customFields: {
       path: {
-        type: 'String',
+        type: 'Path',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: $localize`Container name`,
@@ -454,17 +449,14 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
     ],
     mapper: {
-      to: (fields: any) => {
-        const path = fields.custom.path ?? '';
-        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
-
-        return `${fields.destinationType}://${addServer(path)}${urlParams}`;
+      to: (fields: ValueOfDestinationFormGroup) => {
+        return buildUrlFromFields(fields, null, null, fields.custom.path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path: urlObj.hostname + urlObj.pathname,
+            path: getSimplePath(urlObj),
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -478,7 +470,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     oauthField: 'authid',
     customFields: {
       path: {
-        type: 'String',
+        type: 'Path',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: $localize`Path on server`,
@@ -486,22 +478,21 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
-    dynamicFields: [{
-      name:'authid',
-      isMandatory: true,
-    }],
+    dynamicFields: [
+      {
+        name: 'authid',
+        isMandatory: true,
+      },
+    ],
     mapper: {
-      to: (fields: any) => {
-        const path = fields.custom.path ?? '';
-        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
-
-        return `${fields.destinationType}://${addServer(path)}${urlParams}`;
+      to: (fields: ValueOfDestinationFormGroup) => {
+        return buildUrlFromFields(fields, null, null, fields.custom.path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path: urlObj.hostname + urlObj.pathname,
+            path: getSimplePath(urlObj),
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -514,7 +505,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in OneDrive Business.`,
     customFields: {
       server: {
-        type: 'String',
+        type: 'Hostname',
         name: 'server',
         shortDescription: $localize`Server`,
         longDescription: $localize`Server`,
@@ -529,7 +520,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
       path: {
-        type: 'String',
+        type: 'Path',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: $localize`Path on server`,
@@ -550,11 +541,9 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
     ],
     mapper: {
-      to: (fields: any): string => {
-        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
+      to: (fields: ValueOfDestinationFormGroup): string => {
         const { port, server, path } = fields.custom;
-
-        return `${fields.destinationType}://${addServer(server) + addPort(port) + addPath(path) + urlParams}`;
+        return buildUrlFromFields(fields, server, port, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -562,7 +551,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
           custom: {
             server: urlObj.hostname,
             port: urlObj.port,
-            path: urlObj.pathname,
+            path: removeLeadingSlash(urlObj.pathname),
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -575,7 +564,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in Microsoft SharePoint.`,
     customFields: {
       server: {
-        type: 'String',
+        type: 'Hostname',
         name: 'server',
         shortDescription: $localize`Server`,
         longDescription: $localize`Server`,
@@ -595,7 +584,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: $localize`Path on server`,
         longDescription: $localize`Path on server`,
-        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),        
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
     dynamicFields: [
@@ -611,11 +600,9 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
     ],
     mapper: {
-      to: (fields: any): string => {
-        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
+      to: (fields: ValueOfDestinationFormGroup): string => {
         const { port, server, path } = fields.custom;
-
-        return `${fields.destinationType}://${addServer(server) + addPort(port) + addPath(path) + urlParams}`;
+        return buildUrlFromFields(fields, server, port, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -623,7 +610,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
           custom: {
             server: urlObj.hostname,
             port: urlObj.port,
-            path: urlObj.pathname,
+            path: removeLeadingSlash(urlObj.pathname),
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -637,7 +624,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     oauthField: 'authid',
     customFields: {
       path: {
-        type: 'String',
+        type: 'Path',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: $localize`Path on server`,
@@ -645,25 +632,25 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
-    dynamicFields: [{
-      name: 'site-id',
-      isMandatory: true,
-    }, { 
-      name: 'authid',
-      isMandatory: true,
-    }],
+    dynamicFields: [
+      {
+        name: 'site-id',
+        isMandatory: true,
+      },
+      {
+        name: 'authid',
+        isMandatory: true,
+      },
+    ],
     mapper: {
-      to: (fields: any) => {
-        const path = fields.custom.path ?? '';
-        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
-
-        return `${fields.destinationType}://${addServer(path)}${urlParams}`;
+      to: (fields: ValueOfDestinationFormGroup) => {
+        return buildUrlFromFields(fields, null, null, fields.custom.path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path: urlObj.hostname + urlObj.pathname,
+            path: getSimplePath(urlObj),
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -677,7 +664,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     oauthField: 'authid',
     customFields: {
       path: {
-        type: 'String',
+        type: 'Path',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: $localize`Path on server`,
@@ -685,22 +672,21 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
-    dynamicFields: [{
-      name: 'authid',
-      isMandatory: true,
-    }],
+    dynamicFields: [
+      {
+        name: 'authid',
+        isMandatory: true,
+      },
+    ],
     mapper: {
-      to: (fields: any) => {
-        const path = fields.custom.path ?? '';
-        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
-
-        return `${fields.destinationType}://${addServer(path)}${urlParams}`;
+      to: (fields: ValueOfDestinationFormGroup) => {
+        return buildUrlFromFields(fields, null, null, fields.custom.path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path: urlObj.hostname + urlObj.pathname,
+            path: getSimplePath(urlObj),
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -714,7 +700,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     oauthField: 'authid',
     customFields: {
       path: {
-        type: 'String',
+        type: 'Path',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: $localize`Path on server`,
@@ -722,22 +708,21 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
-    dynamicFields: [{
-      name: 'authid',
-      isMandatory: true,
-    }],
+    dynamicFields: [
+      {
+        name: 'authid',
+        isMandatory: true,
+      },
+    ],
     mapper: {
-      to: (fields: any) => {
-        const path = fields.custom.path ?? '';
-        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
-
-        return `${fields.destinationType}://${addServer(path)}${urlParams}`;
+      to: (fields: ValueOfDestinationFormGroup) => {
+        return buildUrlFromFields(fields, null, null, fields.custom.path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path: urlObj.hostname + urlObj.pathname,
+            path: getSimplePath(urlObj),
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -751,7 +736,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     oauthField: 'authid',
     customFields: {
       path: {
-        type: 'String',
+        type: 'Path',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: $localize`Path on server`,
@@ -759,22 +744,21 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
-    dynamicFields: [{
-      name: 'authid',
-      isMandatory: true,
-    }],
+    dynamicFields: [
+      {
+        name: 'authid',
+        isMandatory: true,
+      },
+    ],
     mapper: {
-      to: (fields: any) => {
-        const path = fields.custom.path ?? '';
-        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
-
-        return `${fields.destinationType}://${addServer(path)}${urlParams}`;
+      to: (fields: ValueOfDestinationFormGroup) => {
+        return buildUrlFromFields(fields, null, null, fields.custom.path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path: urlObj.hostname + urlObj.pathname,
+            path: getSimplePath(urlObj),
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -787,7 +771,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in B2 Cloud Storage.`,
     customFields: {
       bucket: {
-        type: 'String',
+        type: 'Bucketname',
         name: 'bucket',
         shortDescription: $localize`Bucket name`,
         longDescription: $localize`Bucket name`,
@@ -795,7 +779,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         isMandatory: true,
       },
       path: {
-        type: 'String',
+        type: 'Path',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: $localize`Path in the bucket`,
@@ -816,11 +800,9 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
     ],
     mapper: {
-      to: (fields: any) => {
+      to: (fields: ValueOfDestinationFormGroup) => {
         const { bucket, path } = fields.custom;
-        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
-
-        return `${fields.destinationType}://${addServer(bucket) + addPath(path) + urlParams}`;
+        return buildUrlFromFields(fields, bucket, null, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -840,7 +822,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in IDrive e2.`,
     customFields: {
       bucket: {
-        type: 'String',
+        type: 'Bucketname',
         name: 'bucket',
         shortDescription: $localize`Bucket name`,
         longDescription: $localize`Bucket name`,
@@ -869,18 +851,16 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
     ],
     mapper: {
-      to: (fields: any) => {
+      to: (fields: ValueOfDestinationFormGroup) => {
         const { bucket, path } = fields.custom;
-        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
-
-        return `${fields.destinationType}://${addServer(bucket) + addPath(path) + urlParams}`;
+        return buildUrlFromFields(fields, bucket, null, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
             bucket: urlObj.hostname,
-            path: urlObj.pathname,
+            path: removeLeadingSlash(urlObj.pathname),
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -893,7 +873,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in Mega.nz.`,
     customFields: {
       path: {
-        type: 'String',
+        type: 'Path',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: $localize`Path on server`,
@@ -914,17 +894,15 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
     ],
     mapper: {
-      to: (fields: any) => {
-        const path = fields.custom.path ?? '';
-        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
-
-        return `${fields.destinationType}://${addServer(path)}${urlParams}`;
+      to: (fields: ValueOfDestinationFormGroup) => {
+        const path = fields.custom.path;
+        return buildUrlFromFields(fields, null, null, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path: urlObj.hostname + urlObj.pathname,
+            path: getSimplePath(urlObj),
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -946,7 +924,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         isMandatory: true,
       },
       path: {
-        type: 'String',
+        type: 'Path',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: $localize`Path on server`,
@@ -954,22 +932,21 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
-    dynamicFields: [{
-      name: 'authid',
-      isMandatory: true,
-    }],
+    dynamicFields: [
+      {
+        name: 'authid',
+        isMandatory: true,
+      },
+    ],
     mapper: {
-      to: (fields: any) => {
-        const path = fields.custom.path ?? '';
-        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
-
-        return `${fields.destinationType}://${addServer(path)}${urlParams}`;
+      to: (fields: ValueOfDestinationFormGroup) => {
+        return buildUrlFromFields(fields, null, null, fields.custom.path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path: urlObj.hostname + urlObj.pathname,
+            path: getSimplePath(urlObj),
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -982,7 +959,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in Rackspace CloudFiles.`,
     customFields: {
       server: {
-        type: 'String',
+        type: 'Hostname',
         name: 'server',
         shortDescription: $localize`Server`,
         longDescription: $localize`Server`,
@@ -997,7 +974,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
       path: {
-        type: 'String',
+        type: 'Path',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: $localize`Path on server`,
@@ -1018,11 +995,9 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
     ],
     mapper: {
-      to: (fields: any): string => {
-        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
+      to: (fields: ValueOfDestinationFormGroup): string => {
         const { port, server, path } = fields.custom;
-
-        return `${fields.destinationType}://${addServer(server) + addPort(port) + addPath(path) + urlParams}`;
+        return buildUrlFromFields(fields, server, port, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -1030,7 +1005,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
           custom: {
             server: urlObj.hostname,
             port: urlObj.port,
-            path: urlObj.pathname,
+            path: removeLeadingSlash(urlObj.pathname),
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -1054,21 +1029,23 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
       {
         name: 'rclone-remote-path',
+        type: 'Path',
         shortDescription: $localize`Path on remote repository`,
         defaultValue: '',
       },
     ],
     mapper: {
-      to: (fields: any): string => {
+      to: (fields: ValueOfDestinationFormGroup): string => {
         const rcloneRemoteRepository = fields.dynamic['rclone-remote-repository'];
         const rcloneRemotePath = fields.dynamic['rclone-remote-path'];
         const rest = Object.entries(fields.dynamic).filter(
           ([key]) => !['rclone-remote-repository', 'rclone-remote-path'].includes(key)
         );
 
-        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...rest]);
-
-        return `${fields.destinationType}://${addServer(rcloneRemoteRepository)}/${addServer(rcloneRemotePath) + urlParams}`;
+        return buildUrl(fields.destinationType ?? 'rclone', rcloneRemoteRepository, null, rcloneRemotePath, [
+          ...Object.entries(fields.advanced),
+          ...rest,
+        ]);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         const { advanced, dynamic } = fromSearchParams(destinationType, urlObj);
@@ -1093,7 +1070,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in OpenStack Object Storage.`,
     customFields: {
       bucket: {
-        type: 'String',
+        type: 'Bucketname',
         name: 'bucket',
         shortDescription: $localize`Bucket`,
         longDescription: $localize`Bucket`,
@@ -1117,6 +1094,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
       {
         name: 'openstack-domain-name',
+        type: 'Hostname',
         shortDescription: $localize`Domain name`,
       },
       {
@@ -1129,17 +1107,15 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
     ],
     mapper: {
-      to: (fields: any): string => {
-        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
+      to: (fields: ValueOfDestinationFormGroup): string => {
         const { bucket } = fields.custom;
-
-        return `${fields.destinationType}://${addServer(bucket) + urlParams}`;
+        return buildUrlFromFields(fields, bucket, null, null);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path: urlObj.pathname,
+            path: removeLeadingSlash(urlObj.pathname),
             bucket: urlObj.hostname,
           },
           ...fromSearchParams(destinationType, urlObj),
@@ -1155,7 +1131,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in WebDAV.`,
     customFields: {
       server: {
-        type: 'String',
+        type: 'Hostname',
         name: 'server',
         shortDescription: $localize`Server`,
         longDescription: $localize`Server`,
@@ -1170,7 +1146,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
       path: {
-        type: 'String',
+        type: 'Path',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: $localize`Path on server`,
@@ -1195,15 +1171,9 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
     ],
     mapper: {
-      to: (fields: any): string => {
-        const { port, server, path } = fields.custom;
-        const useSsl = fields.dynamic['use-ssl'];
-        const urlParams = toSearchParams([
-          ...Object.entries(fields.advanced),
-          ...Object.entries(fields.dynamic).filter(([key]) => key !== 'use-ssl'),
-        ]);
-
-        return `${fields.destinationType}${useSsl ? 's' : ''}://${addServer(server) + addPort(port) + addPath(path) + urlParams}`;
+      to: (fields: ValueOfDestinationFormGroup): string => {
+        const { server, port, path } = fields.custom;
+        return buildUrlFromFields(fields, server, port, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -1211,7 +1181,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
           custom: {
             server: urlObj.hostname,
             port: urlObj.port,
-            path: urlObj.pathname,
+            path: removeLeadingSlash(urlObj.pathname),
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -1225,7 +1195,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in FTP.`,
     customFields: {
       server: {
-        type: 'String',
+        type: 'Hostname',
         name: 'server',
         shortDescription: $localize`Server`,
         longDescription: $localize`Server`,
@@ -1240,13 +1210,13 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
       path: {
-        type: 'String',
+        type: 'Path',
         name: 'path',
         shortDescription: $localize`Path on server`,
         longDescription: $localize`Path on server`,
         doubleSlash: {
           type: 'warning',
-          message: $localize`Using double leading slashes makes the path absolute, pointing to the root of the filesystem.`,
+          message: $localize`Using a leading slash makes the path absolute, pointing to the root of the filesystem.`,
         },
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
@@ -1264,14 +1234,9 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
     ],
     mapper: {
-      to: (fields: any): string => {
-        const { port, server, path } = fields.custom;
-        const urlParams = toSearchParams([
-          ...Object.entries(fields.advanced),
-          ...Object.entries(fields.dynamic).filter(([key]) => key !== 'use-ssl'),
-        ]);
-
-        return `${fields.destinationType}://${addServer(server) + addPort(port) + addPath(path) + urlParams}`;
+      to: (fields: ValueOfDestinationFormGroup): string => {
+        const { server, port, path } = fields.custom;
+        return buildUrlFromFields(fields, server, port, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -1279,7 +1244,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
           custom: {
             server: urlObj.hostname,
             port: urlObj.port,
-            path: urlObj.pathname,
+            path: removeLeadingSlash(urlObj.pathname),
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -1293,7 +1258,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in FTP.`,
     customFields: {
       server: {
-        type: 'String',
+        type: 'Hostname',
         name: 'server',
         shortDescription: $localize`Server`,
         longDescription: $localize`Server`,
@@ -1308,13 +1273,13 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
       path: {
-        type: 'String',
+        type: 'Path',
         name: 'path',
         shortDescription: $localize`Path on server`,
         longDescription: $localize`Path on server`,
         doubleSlash: {
           type: 'warning',
-          message: $localize`Using double leading slashes makes the path absolute, pointing to the root of the filesystem.`,
+          message: $localize`Using a leading slash makes the path absolute, pointing to the root of the filesystem.`,
         },
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
@@ -1332,14 +1297,9 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
     ],
     mapper: {
-      to: (fields: any): string => {
+      to: (fields: ValueOfDestinationFormGroup): string => {
         const { port, server, path } = fields.custom;
-        const urlParams = toSearchParams([
-          ...Object.entries(fields.advanced),
-          ...Object.entries(fields.dynamic).filter(([key]) => key !== 'use-ssl'),
-        ]);
-
-        return `${fields.destinationType}://${addServer(server) + addPort(port) + addPath(path) + urlParams}`;
+        return buildUrlFromFields(fields, server, port, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -1347,7 +1307,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
           custom: {
             server: urlObj.hostname,
             port: urlObj.port,
-            path: urlObj.pathname,
+            path: removeLeadingSlash(urlObj.pathname),
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -1362,7 +1322,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in Sia Decentrilized Cloud.`,
     customFields: {
       server: {
-        type: 'String',
+        type: 'Hostname',
         name: 'server',
         shortDescription: $localize`Server`,
         longDescription: $localize`Server`,
@@ -1372,21 +1332,21 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     },
     dynamicFields: ['sia-targetpath', 'sia-password', 'sia-redundancy'],
     mapper: {
-      to: (fields: any): string => {
+      to: (fields: ValueOfDestinationFormGroup): string => {
         const server = fields.custom.server;
         const targetpath = fields.dynamic['sia-targetpath'];
-        const urlParams = toSearchParams([
+        const urlParams = [
           ...Object.entries(fields.advanced),
           ...Object.entries(fields.dynamic).filter(([key]) => key !== 'sia-targetpath'),
-        ]);
+        ];
 
-        return `${fields.destinationType}://${addServer(server) + addPath(targetpath) + urlParams}`;
+        return buildUrl(fields.destinationType ?? 'sia', server, null, targetpath, urlParams);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path: urlObj.pathname,
+            path: removeLeadingSlash(urlObj.pathname),
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -1401,7 +1361,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in Tencent COS.`,
     customFields: {
       path: {
-        type: 'String',
+        type: 'Path',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: $localize`Path on server`,
@@ -1412,6 +1372,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     dynamicFields: [
       {
         name: 'cos-bucket',
+        type: 'Bucketname',
         shortDescription: $localize`Bucket`,
         order: 1,
         isMandatory: true,
@@ -1441,20 +1402,14 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
     ],
     mapper: {
-      to: (fields: any): string => {
-        const path = fields.custom.path ?? '';
-        const urlParams = toSearchParams([
-          ...Object.entries(fields.advanced),
-          ...Object.entries(fields.dynamic).filter(([key]) => key !== 'cos-targetpath'),
-        ]);
-
-        return `${fields.destinationType}://${addServer(path) + urlParams}`;
+      to: (fields: ValueOfDestinationFormGroup): string => {
+        return buildUrlFromFields(fields, null, null, fields.custom.path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path: urlObj.pathname,
+            path: removeLeadingSlash(urlObj.pathname),
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -1469,7 +1424,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in Tahoe LAFS.`,
     customFields: {
       server: {
-        type: 'String',
+        type: 'Hostname',
         name: 'server',
         shortDescription: $localize`Server`,
         longDescription: $localize`Server`,
@@ -1484,7 +1439,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
       path: {
-        type: 'String',
+        type: 'Path',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: $localize`Path on server`,
@@ -1499,20 +1454,9 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
     ],
     mapper: {
-      to: (fields: any): string => {
-        const { port, server, path, username, password } = fields.custom;
-        const obj = {
-          ['auth-username']: username,
-          ['auth-password']: password,
-        };
-        const useSsl = fields.dynamic['use-ssl'];
-        const urlParams = toSearchParams([
-          ...Object.entries(fields.advanced),
-          ...Object.entries(fields.dynamic).filter(([key]) => key !== 'use-ssl'),
-          ...Object.entries(obj),
-        ]);
-
-        return `${fields.destinationType}${useSsl ? 's' : ''}://${addServer(server) + addPort(port) + addPath(path) + urlParams}`;
+      to: (fields: ValueOfDestinationFormGroup): string => {
+        const { server, port, path } = fields.custom;
+        return buildUrlFromFields(fields, server, port, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
@@ -1520,7 +1464,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
           custom: {
             server: urlObj.hostname,
             port: urlObj.port,
-            path: urlObj.pathname,
+            path: removeLeadingSlash(urlObj.pathname),
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -1533,7 +1477,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in CIFS.`,
     customFields: {
       server: {
-        type: 'String',
+        type: 'Hostname',
         name: 'server',
         shortDescription: $localize`Server`,
         longDescription: $localize`Server`,
@@ -1541,7 +1485,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         isMandatory: true,
       },
       share: {
-        type: 'String',
+        type: 'Hostname',
         name: 'share',
         shortDescription: $localize`Share Name`,
         longDescription: $localize`Share Name`,
@@ -1549,7 +1493,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         isMandatory: true,
       },
       path: {
-        type: 'String',
+        type: 'Path',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: $localize`Path on server`,
@@ -1558,32 +1502,21 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
     },
     dynamicFields: [
-      'transport', 
-      { 
+      'transport',
+      {
         name: 'auth-username',
         isMandatory: true,
-      }, {
+      },
+      {
         name: 'auth-password',
         isMandatory: true,
-      }, 
-      'auth-domain'],
+      },
+      'auth-domain',
+    ],
     mapper: {
-      to: (fields: any): string => {
-        const { share, server, path, username, password } = fields.custom;
-        const obj = {
-          ['auth-username']: username,
-          ['auth-password']: password,
-        };
-
-        const asMap = new Map([
-          ...Object.entries(obj),
-          ...Object.entries(fields.advanced),
-          ...Object.entries(fields.dynamic),
-        ]);
-
-        const urlParams = toSearchParams(Array.from(asMap));
-
-        return `${fields.destinationType}://${addServer(server) + addPath(share) + addPath(path) + urlParams}`;
+      to: (fields: ValueOfDestinationFormGroup): string => {
+        const { share, server, path } = fields.custom;
+        return buildUrlFromFields(fields, server, null, concatPaths(share, path));
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         const share = urlObj.pathname.split('/')[1];
@@ -1607,7 +1540,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in Filen.io.`,
     customFields: {
       path: {
-        type: 'String',
+        type: 'Path',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: $localize`Path on Filen`,
@@ -1615,40 +1548,25 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
-    dynamicFields: [{
-      name: 'auth-username',
-      isMandatory: true,
-    }, {
-      name: 'auth-password',
-      isMandatory: true,
-    }],
+    dynamicFields: [
+      {
+        name: 'auth-username',
+        isMandatory: true,
+      },
+      {
+        name: 'auth-password',
+        isMandatory: true,
+      },
+    ],
     mapper: {
-      to: (fields: any): string => {
-        const { path, username, password } = fields.custom;
-        const obj = {
-          ['auth-username']: username,
-          ['auth-password']: password,
-        };
-
-        const asMap = new Map([
-          ...Object.entries(obj),
-          ...Object.entries(fields.advanced),
-          ...Object.entries(fields.dynamic),
-        ]);
-
-        const urlParams = toSearchParams(Array.from(asMap));
-
-        return `${fields.destinationType}://${addServer(path) + urlParams}`;
+      to: (fields: ValueOfDestinationFormGroup): string => {
+        return buildUrlFromFields(fields, null, null, fields.custom.path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
-        let path = urlObj.hostname ?? '';
-        if (urlObj.pathname && path !== '' && urlObj.pathname[0] != '/') path += '/';
-        path += urlObj.pathname;
-
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path,
+            path: getSimplePath(urlObj)
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -1661,7 +1579,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in Filejump.`,
     customFields: {
       path: {
-        type: 'String',
+        type: 'Path',
         name: 'path',
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
         shortDescription: $localize`Path on Filejump`,
@@ -1683,37 +1601,17 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       // 'auth-password'
     ],
     mapper: {
-      to: (fields: any): string => {
-        const { path, username, password, apitoken } = fields.custom;
-        const obj =
-          (apitoken || '').trim() === ''
-            ? {
-                ['auth-username']: username,
-                ['auth-password']: password,
-              }
-            : {
-                ['api-token']: apitoken,
-              };
-
-        const asMap = new Map([
-          ...Object.entries(obj),
-          ...Object.entries(fields.advanced),
-          ...Object.entries(fields.dynamic),
-        ]);
-
-        const urlParams = toSearchParams(Array.from(asMap));
-
-        return `${fields.destinationType}://${addServer(path) + urlParams}`;
+      to: (fields: ValueOfDestinationFormGroup): string => {
+        const { path } = fields.custom;
+        console.log(path);
+        return buildUrlFromFields(fields, null, null, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
-        let path = urlObj.hostname ?? '';
-        if (urlObj.pathname && path !== '' && urlObj.pathname[0] != '/') path += '/';
-        path += urlObj.pathname;
-
+        console.log(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path,
+            path: getSimplePath(urlObj)
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -1735,25 +1633,40 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
       {
         name: 'storj-bucket',
+        type: 'Bucketname',
         shortDescription: $localize`Bucket`,
         isMandatory: true,
       },
       {
         name: 'storj-folder',
+        type: 'Path',
         shortDescription: $localize`Path on server`,
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
       },
+      {
+        name: 'storj-satellite',
+        shortDescription: $localize`Satellite`,
+        type: 'Enumeration',
+        loadOptions: (injector) => injector.get(WebModulesService).getStorjSatellites(),
+        isMandatory: true,
+      },
     ],
     mapper: {
-      to: (fields: any): string => {
-        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)], true);
-
-        return `storj://storj.io/config?storj-auth-method=Access%20grant&storj-satellite=us1.storj.io%3A7777&storj-api-key&storj-secret&${urlParams}`;
+      to: (fields: ValueOfDestinationFormGroup): string => {
+        const obj = { 'storj-auth-method': 'Acccess grant' };
+        const urlParams = toSearchParams([
+          ...Object.entries(fields.advanced),
+          ...Object.entries(fields.dynamic),
+          ...Object.entries(obj),
+        ]);
+        return `storj://storj.io/config${urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        const fields = fromSearchParams(destinationType, urlObj);
+        delete fields.advanced['storj-auth-method'];
         return <ValueOfDestinationFormGroup>{
           destinationType,
-          ...fromSearchParams(destinationType, urlObj),
+          ...fields
         };
       },
     },
@@ -1785,25 +1698,34 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
       {
         name: 'storj-bucket',
+        type: 'Bucketname',
         shortDescription: $localize`Bucket`,
         isMandatory: true,
       },
       {
         name: 'storj-folder',
+        type: 'Path',
         shortDescription: $localize`Path on server`,
         doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
       },
     ],
     mapper: {
-      to: (fields: any): string => {
-        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)], true);
+      to: (fields: ValueOfDestinationFormGroup): string => {
+        const obj = { 'storj-auth-method': 'API key' };
+        const urlParams = toSearchParams([
+          ...Object.entries(fields.advanced),
+          ...Object.entries(fields.dynamic),
+          ...Object.entries(obj),
+        ]);
 
-        return `storj://storj.io/config?storj-auth-method=API%20key&${urlParams}`;
+        return `storj://storj.io/config${urlParams}`;
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        const fields = fromSearchParams(destinationType, urlObj);
+        delete fields.advanced['storj-auth-method'];
         return <ValueOfDestinationFormGroup>{
           destinationType,
-          ...fromSearchParams(destinationType, urlObj),
+          ...fields
         };
       },
     },
@@ -1816,7 +1738,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in Aliyun OSS`,
     customFields: {
       bucket: {
-        type: 'String',
+        type: 'Bucketname',
         name: 'oss-bucket-name',
         shortDescription: $localize`Bucket name`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
@@ -1832,23 +1754,30 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
     },
     dynamicFields: [
-      'oss-endpoint',
-      'oss-access-key-id',
-      'oss-access-key-secret',
-    ],    
+      {
+        name: 'oss-endpoint', 
+        isMandatory: true
+      },
+      {
+        name: 'oss-access-key-id', 
+        isMandatory: true
+      },
+      {
+        name: 'oss-access-key-secret',
+        isMandatory: true
+      },
+    ],
     mapper: {
-      to: (fields: any): string => {
-        const  path  = fields.custom.path;
+      to: (fields: ValueOfDestinationFormGroup): string => {
+        const path = fields.custom.path;
         const bucket = fields.custom['oss-bucket-name'];
-        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
-
-        return `${fields.destinationType}://${addServer(bucket) + addPath(path) + urlParams}`;
+        return buildUrlFromFields(fields, bucket, null, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path: urlObj.pathname,
+            path: removeLeadingSlash(urlObj.pathname),
             bucket: urlObj.hostname,
           },
           ...fromSearchParams(destinationType, urlObj),
