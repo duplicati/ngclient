@@ -115,6 +115,10 @@ export default class DestinationComponent {
     return options.find((x) => destinationType === x.key);
   });
 
+  copyTargetUrl() {
+    navigator.clipboard.writeText(this.#backupState.targetUrlModel() ?? '');
+  }
+
   openTargetUrlDialog() {
     const targetUrl = this.#backupState.targetUrlModel();
     this.targetUrlCtrl.set(targetUrl);
