@@ -55,7 +55,7 @@
       <span [class.deprecated]="item.FormView.deprecatedDescription">{{ item.FormView.shortDescription }}</span>
 
       @if (item.FormView.deprecatedDescription) {
-        <spk-icon class="warning" [spkTooltip]="item.FormView.deprecatedDescription">archive</spk-icon>
+        <spk-icon class="warn" [spkTooltip]="item.FormView.deprecatedDescription">archive</spk-icon>
       } @else if (item.FormView.longDescription) {
         <spk-icon class="primary" [spkTooltip]="item.FormView.longDescription">question</spk-icon>
       }
