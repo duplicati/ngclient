@@ -15,6 +15,7 @@ export type TestDestinationResult = {
   anyFilesFound?: boolean;
   containsBackup?: boolean;
   containsEncryptedBackupFiles?: boolean;
+  errorMessage?: string;
 };
 
 @Injectable({
@@ -25,12 +26,17 @@ export class TestDestinationService {
   #dialog = inject(SparkleDialogService);
   #sysinfo = inject(SysinfoState);
 
-  testDestination(targetUrl: string, destinationIndex: number, askToCreate: boolean) {
-    if (this.#sysinfo.hasV2TestOperations()) return this.testDestinationv2(targetUrl, destinationIndex, askToCreate);
-    else return this.testDestinationv1(targetUrl, destinationIndex, askToCreate);
+  testDestination(targetUrl: string, destinationIndex: number, askToCreate: boolean, suppressErrorDialogs: boolean) {
+    if (this.#sysinfo.hasV2TestOperations()) return this.testDestinationv2(targetUrl, destinationIndex, askToCreate, suppressErrorDialogs);
+    else return this.testDestinationv1(targetUrl, destinationIndex, askToCreate, suppressErrorDialogs);
   }
 
-  private testDestinationv2(targetUrl: string, destinationIndex: number, askToCreate: boolean) {
+  private testDestinationv2(
+    targetUrl: string,
+    destinationIndex: number,
+    askToCreate: boolean,
+    suppressErrorDialogs: boolean
+  ) {
     return new Observable<TestDestinationResult>((observer) => {
       this.#dupServer
         .postApiV2DestinationTest({
@@ -47,7 +53,13 @@ export class TestDestinationService {
               return;
             }
 
-            this.handleGenericError(observer, targetUrl, destinationIndex, res.Error ?? 'Unknown error');
+            this.handleGenericError(
+              observer,
+              targetUrl,
+              destinationIndex,
+              res.Error ?? 'Unknown error',
+              suppressErrorDialogs
+            );
           },
           error: (err) => {
             const res = err?.error?.body as PostApiV2DestinationTestResponse;
@@ -58,7 +70,8 @@ export class TestDestinationService {
                   observer,
                   targetUrl,
                   destinationIndex,
-                  $localize`The remote destination folder does not exist.`
+                  $localize`The remote destination folder does not exist.`,
+                  suppressErrorDialogs
                 );
               return;
             }
@@ -79,13 +92,13 @@ export class TestDestinationService {
               return;
             }
 
-            this.handleGenericError(observer, targetUrl, destinationIndex, err?.message ?? 'Unknown error');
+            this.handleGenericError(observer, targetUrl, destinationIndex, err?.message ?? 'Unknown error', suppressErrorDialogs);
           },
         });
     });
   }
 
-  private testDestinationv1(targetUrl: string, destinationIndex: number, askToCreate: boolean) {
+  private testDestinationv1(targetUrl: string, destinationIndex: number, askToCreate: boolean, suppressErrorDialogs: boolean) {
     return new Observable<TestDestinationResult>((observer) => {
       this.#dupServer
         .postApiV1RemoteoperationTest({
@@ -104,7 +117,7 @@ export class TestDestinationService {
             observer.complete();
           },
           error: (err) => {
-            this.handleDestinationErrorv1(err.message, targetUrl, destinationIndex, askToCreate).subscribe((res) => {
+            this.handleDestinationErrorv1(err.message, targetUrl, destinationIndex, askToCreate, suppressErrorDialogs).subscribe((res) => {
               observer.next(res);
             });
           },
@@ -363,8 +376,25 @@ with the REPORTED host key: ${reportedhostkey}?`,
     observer: Subscriber<TestDestinationResult>,
     targetUrl: string,
     destinationIndex: number,
-    errorMessage: string
+    errorMessage: string,
+    suppressErrorDialogs: boolean
   ) {
+    function sendError() {
+      observer.next({
+        action: 'generic-error',
+        targetUrl,
+        testAgain: false,
+        destinationIndex,
+        errorMessage,
+      });
+      observer.complete();
+    }
+
+    if (suppressErrorDialogs) {
+      sendError();
+      return;
+    }
+
     this.#dialog.open(ConfirmDialogComponent, {
       maxWidth: '500px',
       data: {
@@ -372,15 +402,7 @@ with the REPORTED host key: ${reportedhostkey}?`,
         message: errorMessage,
         cancelText: $localize`OK`,
       },
-      closed: (_) => {
-        observer.next({
-          action: 'generic-error',
-          targetUrl,
-          testAgain: false,
-          destinationIndex,
-        });
-        observer.complete();
-      },
+      closed: (_) => sendError(),
     });
   }
 
@@ -388,7 +410,8 @@ with the REPORTED host key: ${reportedhostkey}?`,
     errorMessage: string,
     targetUrl: string,
     destinationIndex: number,
-    askToCreate: boolean
+    askToCreate: boolean,
+    suppressErrorDialogs: boolean
   ) {
     return new Observable<TestDestinationResult>((observer) => {
       if (errorMessage === 'missing-folder') {
@@ -398,7 +421,8 @@ with the REPORTED host key: ${reportedhostkey}?`,
             observer,
             targetUrl,
             destinationIndex,
-            $localize`The remote destination folder does not exist.`
+            $localize`The remote destination folder does not exist.`,
+            suppressErrorDialogs
           );
         return;
       }
@@ -416,7 +440,7 @@ with the REPORTED host key: ${reportedhostkey}?`,
         return;
       }
 
-      this.handleGenericError(observer, targetUrl, destinationIndex, errorMessage);
+      this.handleGenericError(observer, targetUrl, destinationIndex, errorMessage, suppressErrorDialogs);
     });
   }
 }

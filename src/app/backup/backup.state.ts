@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { SparkleDialogService } from '@sparkle-ui/core';
@@ -23,6 +23,8 @@ import { Days, SCHEDULE_FIELD_DEFAULTS } from './schedule/schedule.component';
 import { createSourceDataForm } from './source-data/source-data.component';
 
 const SMART_RETENTION = '1W:1D,4W:1W,12M:1M';
+
+export type TestState = '' | 'testing' | 'success' | 'warning' | 'error';
 
 @Injectable({
   providedIn: 'root',
@@ -72,6 +74,29 @@ export class BackupState {
     return this.#sysinfo.systemInfo()?.Options?.map(this.#mapCommandLineArgumentsToFormViews) ?? [];
   });
 
+  #testSignal = signal<TestState>('');
+  #testErrorMessage = signal<string | null>(null);
+  #lastTargetUrl: string | null = null;
+
+  testSignal = this.#testSignal.asReadonly();
+  testErrorMessage = this.#testErrorMessage.asReadonly();
+
+  #clearTestSignalEffect = effect(() => {
+    const newUrl = this.targetUrlModel();
+    const testSignalValue = this.#testSignal();
+    const lastTargetUrl = this.#lastTargetUrl;
+    this.#lastTargetUrl = newUrl;
+
+    if (testSignalValue === 'testing' || lastTargetUrl === null || lastTargetUrl === newUrl) return;
+    this.#testSignal.set('');
+    this.#testErrorMessage.set(null);
+  });
+
+  setTestState(state: TestState, errorMessage?: string | null) {
+    this.#testSignal.set(state);
+    this.#testErrorMessage.set(errorMessage ?? null);
+  }
+
   #mapCommandLineArgumentsToFormViews(x: ICommandLineArgument) {
     return {
       name: x.Name as string,
@@ -90,7 +115,7 @@ export class BackupState {
     return this.advancedOptions()
       .sort((a, b) => (a?.name && b?.name ? a?.name.localeCompare(b?.name) : 0))
       .filter((x) => this.selectedOptions()?.findIndex((y) => y.name === x.name) === -1);
-  });
+  });  
 
   submit(withoutExit = false) {
     this.isSubmitting.set(true);
