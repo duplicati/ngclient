@@ -209,7 +209,7 @@ export default class FileTreeComponent {
 
       nodeMap.set(root.id!, root);
 
-      const filteredNodes = rootPaths.length > 0 ? nodes.filter((x) => x.parentPath === root.id!) : nodes;
+      const filteredNodes = rootPaths.length > 0 ? nodes.filter((x) => x.parentPath.startsWith(root.id!)) : nodes;
 
       for (const node of filteredNodes) {
         const itemPath = rootPaths.length > 0 ? (node.id as string).replace(rootPath ?? '', '') : node.id!;
