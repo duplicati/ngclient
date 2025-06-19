@@ -71,7 +71,7 @@ export default class RestoreEncryptionComponent {
 
   back() {
     if (this.#restoreFlowState.isFileRestore()) {
-      this.#router.navigate(['encryption'], { relativeTo: this.#route.parent });
+      this.#router.navigate(['destination'], { relativeTo: this.#route.parent });
     } else {
       this.#restoreFlowState.exit();
     }
