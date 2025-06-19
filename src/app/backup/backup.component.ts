@@ -61,6 +61,9 @@ export default class BackupComponent {
           const backup = res.Backup;
 
           backup.Settings = [...backup.Settings];
+          this.#backupState.mapGeneralToForm(backup);
+          this.#backupState.mapDestinationToForm(backup);
+          this.#backupState.mapSourceDataToForm(backup);
           this.#backupState.mapScheduleToForm(res.Schedule);
           this.#backupState.mapOptionsToForms(backup);
           this.#backupState.applicationOptions.set(res.ApplicationOptions as SettingDto[]);

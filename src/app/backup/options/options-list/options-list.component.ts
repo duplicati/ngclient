@@ -76,7 +76,10 @@ export class OptionsListComponent {
 
         let _value: any = setting.Value ?? '';
 
-        if (option && !hiddenNames.includes(option.name)) {
+        if (option && hiddenNames.includes(option.name))
+          return null;
+
+        if (option) {
           if (option.type === 'Boolean') {
             _value = (_value && _value.toLowerCase() === 'true') || false;
           }

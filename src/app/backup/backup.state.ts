@@ -173,14 +173,25 @@ export class BackupState {
   }
 
   mapGeneralToForm(backup: BackupDto) {
+    const name = backup.Name ?? '';
+    const description = backup.Description ?? '';    
     const encryptionModule = backup.Settings?.find((x) => x.Name === 'encryption-module');
     const passphrase = backup.Settings?.find((x) => x.Name === 'passphrase')?.Value ?? '';
     const encryption = encryptionModule?.Value && encryptionModule.Value.length ? encryptionModule.Value : '';
+    const compressionModule = backup.Settings?.find((x) => x.Name === 'compression-module')?.Value ?? '';
 
     const baseUpdate: Partial<typeof this.generalForm.value> = {
       name: backup.Name ?? '',
       description: backup.Description ?? '',
     };
+
+    if (name && name !== '') {
+      baseUpdate.name = name;
+    }
+
+    if (description && description !== '') {
+      baseUpdate.description = description;
+    }
 
     if (encryption && encryption !== '') {
       baseUpdate.encryption = encryption;
@@ -190,6 +201,10 @@ export class BackupState {
       baseUpdate.password = passphrase;
       baseUpdate.repeatPassword = passphrase;
     }
+    
+    if (compressionModule && compressionModule !== '') {
+      baseUpdate.compression = compressionModule;
+    } 
 
     this.generalForm.patchValue(baseUpdate);
   }
@@ -382,7 +397,6 @@ export class BackupState {
       'retention-policy',
       'dblock-size',
       'compression-module',
-      '--compression-module',
     ];
 
     let encryption = [
@@ -404,6 +418,14 @@ export class BackupState {
         },
       ];
     }
+
+    let compression = [{
+      Name: 'compression-module',
+      Value: generalFormValue.compression,
+    }];
+
+    if (generalFormValue.compression === '')
+      compression = [];
 
     const optionFields = [
       {
@@ -462,7 +484,7 @@ export class BackupState {
         };
       });
 
-    return [...encryption, ...optionFields, ...settings];
+    return [...encryption, ...compression, ...optionFields, ...settings];
   }
 
   #evaluateTimeString(t: string | undefined) {

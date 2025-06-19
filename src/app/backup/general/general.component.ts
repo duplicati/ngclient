@@ -34,6 +34,7 @@ export const createGeneralForm = (
     encryption: '',
     password: '',
     repeatPassword: '',
+    compression: '',
   }
 ) => {
   return fb.group({
@@ -46,6 +47,7 @@ export const createGeneralForm = (
     repeatPassword: fb.control<string>(defaults.repeatPassword, [
       validateWhen((t) => t?.value.encryption !== '', [Validators.required]),
     ]),
+    compression: fb.control<string>(defaults.compression)
   });
 };
 
