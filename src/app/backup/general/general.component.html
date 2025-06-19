@@ -42,7 +42,7 @@
       </ng-template>
     </spk-select>
 
-    @if (encryptionFieldSignal() !== '') {
+    @if (encryptionFieldSignal() !== noneOptionKey) {
       <div class="passwords">
         <spk-form-field>
           <label for="password" i18n>
@@ -129,7 +129,7 @@
       Exit
     </button>
 
-    @if (encryptionFieldSignal() === '' || !isNew()) {
+    @if (encryptionFieldSignal() === noneOptionKey || !isNew()) {
       <button spk-button class="raised primary" type="submit" [disabled]="nameAndDescriptionValid() === false" i18n>
         Continue
         <spk-icon>arrow-right</spk-icon>
