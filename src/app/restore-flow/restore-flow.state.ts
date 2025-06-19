@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { effect, inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SparkleDialogService } from '@sparkle-ui/core';
@@ -18,6 +18,7 @@ type ListResultFileset = {
   readonly FileSizes?: number | undefined;
 };
 
+export type TestState = '' | 'testing' | 'success' | 'warning' | 'error';
 @Injectable({
   providedIn: 'root',
 })
@@ -43,6 +44,24 @@ export class RestoreFlowState {
   isFileRestore = signal(false);
   isFullWidthPage = signal(false);
 
+  #testSignal = signal<TestState>('');
+  #testErrorMessage = signal<string | null>(null);
+  #lastTargetUrl: string | null = null;
+
+  testSignal = this.#testSignal.asReadonly();
+  testErrorMessage = this.#testErrorMessage.asReadonly();
+
+  #clearTestSignalEffect = effect(() => {
+    const newUrl = this.destinationTargetUrl();
+    const testSignalValue = this.#testSignal();
+    const lastTargetUrl = this.#lastTargetUrl;
+    this.#lastTargetUrl = newUrl;
+
+    if (testSignalValue === 'testing' || lastTargetUrl === null || lastTargetUrl === newUrl) return;
+    this.#testSignal.set('');
+    this.#testErrorMessage.set(null);
+  });  
+
   init(id: 'string', isFileRestore = false) {
     this.backupId.set(id);
 
@@ -55,6 +74,11 @@ export class RestoreFlowState {
     if (!isFileRestore) {
       this.getBackup(true);
     }
+  }
+
+  setTestState(state: TestState, errorMessage?: string | null) {
+    this.#testSignal.set(state);
+    this.#testErrorMessage.set(errorMessage ?? null);
   }
 
   updateTargetUrl(targetUrl: string | null) {

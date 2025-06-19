@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  effect,
   ElementRef,
   inject,
   Injector,
@@ -19,7 +18,6 @@ import {
   SparkleIconComponent,
   SparkleMenuComponent,
 } from '@sparkle-ui/core';
-import { finalize } from 'rxjs';
 import { BackupState } from '../../backup/backup.state';
 import { SingleDestinationComponent } from '../../backup/destination/single-destination/single-destination.component';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
@@ -48,7 +46,6 @@ import { RestoreFlowState } from '../restore-flow.state';
 export default class RestoreDestinationComponent {
   #router = inject(Router);
   #route = inject(ActivatedRoute);
-  #backupState = inject(BackupState);
   #dialog = inject(SparkleDialogService);
   #testDestination = inject(TestDestinationService);
   injector = inject(Injector);
@@ -57,21 +54,15 @@ export default class RestoreDestinationComponent {
 
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
 
-  targetUrlModel = this.#backupState.targetUrlModel;
+  targetUrlModel = this.#restoreFlowState.destinationTargetUrl;
   targetUrlCtrl = signal<string | null>(null);
   targetUrlInitial = signal<string | null>(null);
   targetUrlDialogOpen = signal(false);
   toggleNewDestination = signal(true);
 
-  // Might be able to remove this and just use the RestoreFlowState targetUrl instead
-  targetUrlEffect = effect(() => {
-    const targetUrl = this.#backupState.targetUrlModel();
+  testSignal = this.#restoreFlowState.testSignal;
+  testErrorMessage = this.#restoreFlowState.testErrorMessage;
 
-    this.#restoreFlowState.updateTargetUrl(targetUrl ?? null);
-  });
-
-  successfulTest = signal(false);
-  testLoading = signal(false);
   destinationTypeOptionsInFocus = signal(['file', 'ssh', 's3', 'gcs', 'googledrive', 'azure']);
   destinationTypeOptions = this.#destinationState.destinationTypeOptions;
   destinationTypeOptionsFocused = computed(() => {
@@ -81,7 +72,7 @@ export default class RestoreDestinationComponent {
     return focused.map((x) => options.find((y) => y.key === x)!);
   });
   selectedDestinationType = computed(() => {
-    const targetUrl = this.#backupState.targetUrlModel();
+    const targetUrl = this.#restoreFlowState.destinationTargetUrl();
 
     if (!targetUrl) return null;
 
@@ -92,7 +83,7 @@ export default class RestoreDestinationComponent {
   });
 
   openTargetUrlDialog() {
-    const targetUrl = this.#backupState.targetUrlModel();
+    const targetUrl = this.#restoreFlowState.destinationTargetUrl();
     this.targetUrlCtrl.set(targetUrl);
     this.targetUrlInitial.set(targetUrl);
     this.targetUrlDialogOpen.set(true);
@@ -106,32 +97,40 @@ export default class RestoreDestinationComponent {
 
     if (!submit || targetUrl === initialTargetUrl || !targetUrl) return;
 
-    this.#backupState.setTargetUrl(targetUrl);
+    this.#restoreFlowState.updateTargetUrl(targetUrl);
   }
 
-  testDestination(destinationIndex = 0) {
-    const targetUrl = this.#backupState.targetUrlModel();
+  testDestination(destinationIndex: number, suppressDialogs: boolean, callback?: () => void) {
+    const targetUrl = this.#restoreFlowState.destinationTargetUrl();
 
     if (!targetUrl) return;
 
-    this.testLoading.set(true);
-
-    this.#testDestination
-      .testDestination(targetUrl, destinationIndex, true)
-      .pipe(finalize(() => this.testLoading.set(false)))
-      .subscribe({
-        next: (res) => {
-          if (res.action === 'success') {
-            if (res.containsBackup === false) {
+    this.#restoreFlowState.setTestState('testing');
+    this.#testDestination.testDestination(targetUrl, destinationIndex, true, suppressDialogs).subscribe({
+      next: (res) => {
+        if (res.action === 'success') {
+          this.#restoreFlowState.setTestState('success');
+          if (res.containsBackup === false) {
+            this.#restoreFlowState.setTestState(
+              'warning',
+              $localize`The remote destination does not contain any backups. Please check if the destination details are correct.`
+            );
+            if (!suppressDialogs) {
               this.#dialog.open(ConfirmDialogComponent, {
                 data: {
                   title: $localize`Folder contains no backup`,
                   message: $localize`The remote destination does not contain any backups. Please check if the destination details are correct.`,
-                confirmText: $localize`OK`,
+                  confirmText: $localize`OK`,
                   cancelText: undefined,
                 },
               });
-            } else if (res.anyFilesFound === false) {
+            }
+          } else if (res.anyFilesFound === false) {
+            this.#restoreFlowState.setTestState(
+              'warning',
+              $localize`The remote destination is empty. Please check if the destination details are correct.`
+            );
+            if (!suppressDialogs) {
               this.#dialog.open(ConfirmDialogComponent, {
                 data: {
                   title: $localize`Folder is empty`,
@@ -140,44 +139,48 @@ export default class RestoreDestinationComponent {
                   cancelText: undefined,
                 },
               });
-            }            
-
-            this.successfulTest.set(true);
-            setTimeout(() => {
-              this.successfulTest.set(false);
-            }, 3000);
-            return;
+            }
           }
 
-          if (res.action === 'generic-error') {
-            this.successfulTest.set(false);
-            return;
-          }
+          callback?.();
+          return;
+        }
 
-          const targetUrlHasParams = targetUrl.includes('?');
-          if (res.action === 'trust-cert') {
-            this.#backupState.setTargetUrl(
-              targetUrl + `${targetUrlHasParams ? '&' : '?'}accept-specified-ssl-hash=${res.certData}`
-            );
-          }
+        this.#restoreFlowState.setTestState(
+          'error',
+          res.errorMessage ?? $localize`An error occurred while testing the destination.`
+        );
 
-          if (res.action === 'approve-host-key') {
-            this.#backupState.setTargetUrl(
-              targetUrl + `${targetUrlHasParams ? '&' : '?'}ssh-fingerprint=${res.reportedHostKey}`
-            );
-          }
+        if (res.action === 'generic-error') {
+          callback?.();
+          return;
+        }
 
-          if (res.testAgain) this.testDestination(res.destinationIndex);
-        },
-      });
+        const targetUrlHasParams = targetUrl.includes('?');
+        if (res.action === 'trust-cert') {
+          this.#restoreFlowState.updateTargetUrl(
+            targetUrl + `${targetUrlHasParams ? '&' : '?'}accept-specified-ssl-hash=${res.certData}`
+          );
+        }
+
+        if (res.action === 'approve-host-key') {
+          this.#restoreFlowState.updateTargetUrl(
+            targetUrl + `${targetUrlHasParams ? '&' : '?'}ssh-fingerprint=${res.reportedHostKey}`
+          );
+        }
+
+        if (res.testAgain) this.testDestination(res.destinationIndex, suppressDialogs);
+        else callback?.();
+      },
+    });
   }
 
   setDestination(key: IDynamicModule['Key']) {
-    this.#backupState.setTargetUrl(`${key}://`);
+    this.#restoreFlowState.updateTargetUrl(`${key}://`);
   }
 
   removeDestination() {
-    this.#backupState.setTargetUrl(null);
+    this.#restoreFlowState.updateTargetUrl(null);
   }
 
   goBack() {
@@ -185,6 +188,58 @@ export default class RestoreDestinationComponent {
   }
 
   next() {
+    const testSignalValue = this.testSignal();
+    if (testSignalValue === '') {
+      this.#dialog.open(ConfirmDialogComponent, {
+        data: {
+          title: $localize`Test destination`,
+          message: $localize`You have not tested the destination yet. Do you want to test it now?`,
+          confirmText: $localize`Test now`,
+          cancelText: $localize`Skip test and continue`,
+        },
+        closed: (res) => {
+          if (res) {
+            this.testDestination(0, false, () => {
+              if (this.testSignal() === 'success') {
+                this.#navigateToNext();
+              } else {
+                this.#dialog.open(ConfirmDialogComponent, {
+                  data: {
+                    title: $localize`Test did not succeed`,
+                    message: this.testErrorMessage() ?? $localize`Failed to test the destination.`,
+                    confirmText: $localize`OK`,
+                    cancelText: undefined,
+                  },
+                });
+              }
+            });
+          } else {
+            this.#navigateToNext();
+          }
+        },
+      });
+      return;
+    }
+
+    if (testSignalValue !== 'success') {
+      this.#dialog.open(ConfirmDialogComponent, {
+        data: {
+          title: $localize`Test destination`,
+          message: $localize`The destination has not been tested successfully. Are you sure you want to continue?`,
+          confirmText: $localize`Yes, continue`,
+          cancelText: $localize`Cancel`,
+        },
+        closed: (res) => {
+          if (res) this.#navigateToNext();
+        },
+      });
+      return;
+    }
+
+    this.#navigateToNext();
+  }
+
+  #navigateToNext() {
     this.#router.navigate(['encryption'], { relativeTo: this.#route.parent });
   }
 }

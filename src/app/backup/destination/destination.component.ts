@@ -18,7 +18,6 @@ import {
   SparkleIconComponent,
   SparkleMenuComponent,
 } from '@sparkle-ui/core';
-import { finalize } from 'rxjs';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { IDynamicModule } from '../../core/openapi';
 import { TestDestinationService } from '../../core/services/test-destination.service';
@@ -93,10 +92,11 @@ export default class DestinationComponent {
   targetUrlDialogOpen = signal(false);
   toggleNewDestination = signal(true);
 
-  successfulTest = signal(false);
-  testLoading = signal(false);
   destinationTypeOptionsInFocus = signal(['file', 'ssh', 's3', 'gcs', 'googledrive', 'azure']);
   destinationTypeOptions = this.#destinationState.destinationTypeOptions;
+
+  testSignal = this.#backupState.testSignal;
+  testErrorMessage = this.#backupState.testErrorMessage;
 
   destinationTypeOptionsFocused = computed(() => {
     const focused = this.destinationTypeOptionsInFocus();
@@ -104,6 +104,7 @@ export default class DestinationComponent {
 
     return focused.map((x) => options.find((y) => y.key === x)!);
   });
+
   selectedDestinationType = computed(() => {
     const targetUrl = this.#backupState.targetUrlModel();
 
@@ -133,21 +134,25 @@ export default class DestinationComponent {
     this.#backupState.setTargetUrl(targetUrl);
   }
 
-  testDestination(destinationIndex = 0) {
+  testDestination(destinationIndex: number, suppressErrorDialogs: boolean, callback?: () => void) {
     const targetUrl = this.#backupState.targetUrlModel();
 
     if (!targetUrl) return;
 
-    this.testLoading.set(true);
+    this.#backupState.setTestState('testing');
 
-    this.#testDestination
-      .testDestination(targetUrl, destinationIndex, true)
-      .pipe(finalize(() => this.testLoading.set(false)))
-      .subscribe({
-        next: (res) => {
-          if (res.action === 'success') {
-            if (this.#backupState.isNew()) {
-              if (res.containsBackup === true) {
+    this.#testDestination.testDestination(targetUrl, destinationIndex, true, true).subscribe({
+      next: (res) => {
+        if (res.action === 'success') {
+          this.#backupState.setTestState('success');
+
+          if (this.#backupState.isNew()) {
+            if (res.containsBackup === true) {
+              this.#backupState.setTestState(
+                'warning',
+                $localize`The remote destination already contains a backup. Please use a different folder for each backup.`
+              );
+              if (!suppressErrorDialogs) {
                 this.#dialog.open(ConfirmDialogComponent, {
                   data: {
                     title: $localize`Folder contains backup`,
@@ -156,7 +161,10 @@ export default class DestinationComponent {
                     cancelText: undefined,
                   },
                 });
-              } else if (res.anyFilesFound === true) {
+              }
+            } else if (res.anyFilesFound === true) {
+              this.#backupState.setTestState('warning', $localize`The remote destination contains unknown files.`);
+              if (!suppressErrorDialogs) {
                 this.#dialog.open(ConfirmDialogComponent, {
                   data: {
                     title: $localize`Folder is not empty`,
@@ -167,35 +175,39 @@ export default class DestinationComponent {
                 });
               }
             }
-
-            this.successfulTest.set(true);
-            setTimeout(() => {
-              this.successfulTest.set(false);
-            }, 3000);
-            return;
           }
 
-          if (res.action === 'generic-error') {
-            this.successfulTest.set(false);
-            return;
-          }
+          callback?.();
+          return;
+        }
 
-          const targetUrlHasParams = targetUrl.includes('?');
-          if (res.action === 'trust-cert') {
-            this.#backupState.setTargetUrl(
-              targetUrl + `${targetUrlHasParams ? '&' : '?'}accept-specified-ssl-hash=${res.certData}`
-            );
-          }
+        this.#backupState.setTestState(
+          'error',
+          res.errorMessage ?? $localize`An error occurred while testing the destination.`
+        );
 
-          if (res.action === 'approve-host-key') {
-            this.#backupState.setTargetUrl(
-              targetUrl + `${targetUrlHasParams ? '&' : '?'}ssh-fingerprint=${res.reportedHostKey}`
-            );
-          }
+        if (res.action === 'generic-error') {
+          callback?.();
+          return;
+        }
 
-          if (res.testAgain) this.testDestination(res.destinationIndex);
-        },
-      });
+        const targetUrlHasParams = targetUrl.includes('?');
+        if (res.action === 'trust-cert') {
+          this.#backupState.setTargetUrl(
+            targetUrl + `${targetUrlHasParams ? '&' : '?'}accept-specified-ssl-hash=${res.certData}`
+          );
+        }
+
+        if (res.action === 'approve-host-key') {
+          this.#backupState.setTargetUrl(
+            targetUrl + `${targetUrlHasParams ? '&' : '?'}ssh-fingerprint=${res.reportedHostKey}`
+          );
+        }
+
+        if (res.testAgain) this.testDestination(res.destinationIndex, suppressErrorDialogs);
+        else callback?.();
+      },
+    });
   }
 
   setDestination(key: IDynamicModule['Key']) {
@@ -211,6 +223,66 @@ export default class DestinationComponent {
   }
 
   next() {
+    const isNew = this.#backupState.isNew();
+    const testSignalValue = this.testSignal();
+
+    if (!isNew) {
+      this.#navigateToNext();
+      return;
+    }
+
+    if (testSignalValue === '') {
+      this.#dialog.open(ConfirmDialogComponent, {
+        data: {
+          title: $localize`Test destination`,
+          message: $localize`You have not tested the destination yet. Do you want to test it now?`,
+          confirmText: $localize`Test now`,
+          cancelText: $localize`Skip test and continue`,
+        },
+        closed: (res) => {
+          if (res) {
+            this.testDestination(0, false, () => {
+              if (this.testSignal() === 'success') {
+                this.#navigateToNext();
+              } else {
+                this.#dialog.open(ConfirmDialogComponent, {
+                  data: {
+                    title: $localize`Test did not succeed`,
+                    message: this.testErrorMessage() ?? $localize`Failed to test the destination.`,
+                    confirmText: $localize`OK`,
+                    cancelText: undefined,
+                  },
+                });
+              }
+            });
+          } else {
+            this.#navigateToNext();
+          }
+        },
+      });
+      return;
+    }
+
+    if (testSignalValue !== 'success') {
+      this.#dialog.open(ConfirmDialogComponent, {
+        data: {
+          title: $localize`Test destination`,
+          message: $localize`The destination has not been tested successfully. Are you sure you want to continue?`,
+          confirmText: $localize`Yes, continue`,
+          cancelText: $localize`Cancel`,
+        },
+        closed: (res) => {
+          if (res) this.#navigateToNext();
+        },
+      });
+
+      return;
+    }
+
+    this.#navigateToNext();
+  }
+
+  #navigateToNext() {
     if (!this.#backupState.isNew()) {
       this.#backupState.submit(true);
     }
