@@ -1,41 +1,36 @@
 <app-status-bar />
 
-<spk-stepper>
-  @if (isFileRestore()) {
-    <div step routerLinkActive="active" [routerLink]="['/restore-from-files/destination']" i18n>
-      <spk-radio />
-      Destination
-    </div>
-    <div step routerLinkActive="active" [routerLink]="['/restore-from-files/encryption']" i18n>
-      <spk-radio />
-      Encryption
-    </div>
-    <div step routerLinkActive="active" [routerLink]="['/restore-from-files/select-files']" i18n>
-      <spk-radio />
-      Select files
-    </div>
-    <div step routerLinkActive="active" [routerLink]="['/restore-from-files/options']" i18n>
-      <spk-radio />
-      Options
-    </div>
-  } @else {
-    <div step routerLinkActive="active" [routerLink]="['/restore', backupId(), 'select-files']" i18n>
-      <spk-radio />
-      Select files
-    </div>
-    <div step routerLinkActive="active" [routerLink]="['/restore', backupId(), 'options']" i18n>
-      <spk-radio />
-      Options
-    </div>
-  }
-
-  @if (isProgressPage()) {
-    <div step routerLinkActive="active" [routerLink]="['/restore', backupId(), 'progress']" i18n>
-      <spk-radio />
-      Progress
-    </div>
-  }
-</spk-stepper>
+@if (!isProgressPage()) {
+  <spk-stepper>
+    @if (isFileRestore()) {
+      <div step routerLinkActive="active" [routerLink]="['/restore-from-files/destination']" i18n>
+        <spk-radio />
+        Destination
+      </div>
+      <div step routerLinkActive="active" [routerLink]="['/restore-from-files/encryption']" i18n>
+        <spk-radio />
+        Encryption
+      </div>
+      <div step routerLinkActive="active" [routerLink]="['/restore-from-files/select-files']" i18n>
+        <spk-radio />
+        Select files
+      </div>
+      <div step routerLinkActive="active" [routerLink]="['/restore-from-files/options']" i18n>
+        <spk-radio />
+        Options
+      </div>
+    } @else {
+      <div step routerLinkActive="active" [routerLink]="['/restore', backupId(), 'select-files']" i18n>
+        <spk-radio />
+        Select files
+      </div>
+      <div step routerLinkActive="active" [routerLink]="['/restore', backupId(), 'options']" i18n>
+        <spk-radio />
+        Options
+      </div>
+    }
+  </spk-stepper>
+}
 
 <section>
   <router-outlet />

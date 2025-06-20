@@ -36,7 +36,7 @@
           <img src="assets/images/folder.png" alt="" width="48px" />
 
           <div class="text">
-            <h3 i18n>Restore {{ backup.Backup?.Name ?? 'Backup name missing' }}</h3>
+            <h3 i18n>{{ backup.Backup?.Name ?? 'Backup name missing' }}</h3>
             <p>
               {{ backup.Backup?.Metadata?.['SourceSizeString'] ?? '-' }} /
               {{ backup.Backup?.Metadata?.['BackupListCount'] ?? '-' }}

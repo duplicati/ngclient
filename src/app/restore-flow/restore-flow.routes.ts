@@ -23,7 +23,7 @@ const routes: Routes = [
     loadComponent: () => import('./options/options.component'),
   },
   {
-    path: 'progress',
+    path: ':taskid/progress',
     loadComponent: () => import('./restore-progress/restore-progress.component'),
   },
 ];

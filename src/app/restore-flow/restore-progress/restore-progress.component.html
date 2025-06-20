@@ -1,16 +1,24 @@
 <!-- <button (click)="showComplete.set(!showComplete())" i18n>Toggle complete</button> -->
 <section>
-  @if (statusData()?.task?.Status === 'Completed') {
+  @if (restoreResult() != '') {
     <!-- @if (showComplete()) { -->
     <spk-card class="progress type-a">
       <ng-container title i18n>Restore completed</ng-container>
-      <div class="complete-check">
-        <svg class="border-svg">
-          <circle class="border-circle" cx="50" cy="50" r="45" />
-        </svg>
-
-        <spk-icon>check-bold</spk-icon>
-      </div>
+      @if (restoreResult() == 'success') {
+        <div class="complete-success">
+          <svg class="border-svg">
+            <circle class="border-circle" cx="50" cy="50" r="45" />
+          </svg>
+          <spk-icon class="success" i18n>check-bold</spk-icon>
+        </div>
+      } @else {
+        <div class="complete-failure">
+          <svg class="border-svg">
+            <circle class="border-circle" cx="50" cy="50" r="45" />
+          </svg>
+          <spk-icon class="error" i18n>warning-octagon</spk-icon>
+        </div>
+      }
     </spk-card>
   } @else {
     <spk-card class="progress type-a">
@@ -57,7 +65,7 @@
 
     <app-logs-live
       [asSimpleList]="true"
-      [polling]="isPolling()"
+      [polling]="restoreResult() == ''"
       [whenFilter]="lastRestoreStarted()?.getTime()"
       [backupIdFilter]="backupId()"></app-logs-live>
   </spk-card>

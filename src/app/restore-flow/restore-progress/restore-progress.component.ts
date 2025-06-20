@@ -1,5 +1,6 @@
 import { DecimalPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import {
   SparkleCardComponent,
   SparkleIconComponent,
@@ -8,7 +9,9 @@ import {
 } from '@sparkle-ui/core';
 import LogsLiveComponent from '../../about/logs/logs-live/logs-live.component';
 import { StatusBarState } from '../../core/components/status-bar/status-bar.state';
+import { DuplicatiServerService, GetTaskStateDto } from '../../core/openapi';
 import { BytesPipe } from '../../core/pipes/byte.pipe';
+import { ServerStateService } from '../../core/services/server-state.service';
 import { ExtendedNotificationDto, NotificationsComponent } from '../../notifications/notifications.component';
 import { RestoreFlowState } from '../restore-flow.state';
 
@@ -28,29 +31,28 @@ import { RestoreFlowState } from '../restore-flow.state';
   styleUrl: './restore-progress.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class RestoreProgressComponent {
+export default class RestoreProgressComponent implements OnInit {
+  #dupServer = inject(DuplicatiServerService);
+  #serverState = inject(ServerStateService);
   #statusBarState = inject(StatusBarState);
   #restoreFlowState = inject(RestoreFlowState);
+  #route = inject(ActivatedRoute);
 
   statusData = this.#statusBarState.statusData;
   backupId = this.#restoreFlowState.backupId;
-  isPolling = signal(true);
-  taskId = computed(() => this.#statusBarState.statusData()?.TaskID?.toString() ?? undefined);
+  restoreResult = signal<'' | 'success' | 'error'>('');
+  #taskStarted: Date | null = null;
   lastRestoreStarted = computed(() => {
+    if (this.#taskStarted) return this.#taskStarted;
+
     const lastRestoreStarted =
       this.#statusBarState.statusData()?.backup?.Backup?.Metadata?.['LastRestoreStarted'] ?? null;
 
     if (!lastRestoreStarted) return null;
 
-    return this.fixDate(lastRestoreStarted);
-  });
-
-  completedEffect = effect(() => {
-    const completed = this.statusData()?.task?.Status === 'Completed';
-
-    if (completed) {
-      this.isPolling.set(false);
-    }
+    const lastRestoreStartedDate = this.fixDate(lastRestoreStarted);
+    this.#taskStarted = lastRestoreStartedDate;
+    return lastRestoreStartedDate;
   });
 
   notificationFilterPredicate = () => {
@@ -69,8 +71,36 @@ export default class RestoreProgressComponent {
   };
 
   ngOnInit() {
-    this.#statusBarState.fetchProgressState();
-    this.#statusBarState.startPollingProgress();
+    const taskid = this.#route.snapshot.params['taskid']?.toString() ?? '';
+    this.#dupServer.getApiV1TaskByTaskid({ taskid }).subscribe({
+      next: (res) => {
+        if (res.TaskStarted)
+          this.#taskStarted = new Date(res.TaskStarted);
+        if (!res.TaskFinished && res.ID) {
+            this.#waitForTaskToComplete(res.ID);
+            return;
+        }
+        this.#setTaskResult(res);
+      },
+      error: (err) => {
+        console.error('Error fetching task:', err);
+        this.restoreResult.set('error');
+        alert('Failed to fetch task details. Please try again later.');        
+      },
+    })      
+  }
+
+  #waitForTaskToComplete(taskId: number) {
+    this.#serverState.waitForTaskToComplete(taskId)
+    .subscribe((res) => {
+      this.#setTaskResult(res);
+    });
+  }
+
+  #setTaskResult(task: GetTaskStateDto) {
+    if (task.TaskFinished != null) {
+      this.restoreResult.set(task.Status === 'Completed' && task.ErrorMessage == null ? 'success' : 'error');
+    }
   }
 
   fixDate(date: string) {
