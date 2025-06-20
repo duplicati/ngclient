@@ -174,13 +174,15 @@ export default class FileTreeComponent {
 
     if (rootPaths.length > 0) {
       roots = rootPaths.map((rootPath) => {
+        const evalState = this.#eval(currentPaths, rootPath, 'folder', null);        
+
         return {
           id: rootPath,
           resolvedpath: rootPath,
           text: rootPath,
           parentPath: '',
           children: [],
-          evalState: TreeEvalEnum.None,
+          evalState: evalState,
           isIndeterminate: false,
           cls: 'folder',
         };
@@ -190,7 +192,7 @@ export default class FileTreeComponent {
         {
           id: ROOTPATH,
           resolvedpath: ROOTPATH,
-          text: 'Computer',
+          text: $localize`Computer`,
           parentPath: '',
           children: [],
           evalState: TreeEvalEnum.None,
