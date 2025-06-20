@@ -200,9 +200,9 @@ export class StatusBarState {
         finalize(() => this.#isFetching.set(false))
       )
       .subscribe({
-        next: (res: Status) => {
+        next: (res) => {
           this.#onProgressStateFetched(res);
-          if (res.task?.Status === 'Completed') {
+          if (this.serverState()?.ActiveTask == null) {
             this.stopPollingProgress();
           }
         },
