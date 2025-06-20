@@ -75,13 +75,13 @@ export class RestoreFlowState {
       .postApiV1BackupByIdRestore({
         id: id ?? '',
         requestBody: {
-          paths: selectFilesFormValue.filesToRestore?.split('\0').map((x) => `${x}*`) ?? [],
+          paths: selectFilesFormValue.filesToRestore?.split('\0').map((x) =>  x.endsWith('/') || x.endsWith('\\') ? `${x}*` : x) ?? [],
           passphrase: selectFilesFormValue.passphrase ?? null,
           time: selectedOption?.Time,
           restore_path: optionsValue.restoreFromPath,
           overwrite: optionsValue.handleExisting === 'overwrite',
           permissions: optionsValue.permissions,
-          skip_metadata: true,
+          skip_metadata: !optionsValue.includeMetadata,
         },
       })
       .pipe(finalize(() => this.isSubmitting.set(false)))
