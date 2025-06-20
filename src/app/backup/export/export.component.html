@@ -16,7 +16,11 @@
         i18n-spkTooltip
         spkTooltip="Remember to copy the password"
         [class.loading]="isExporting()"
-        [disabled]="exportForm.invalid || (showCopyPassword() && !copiedPassword())">
+        [disabled]="
+          exportForm.invalid ||
+          (showCopyPassword() && !copiedPassword()) ||
+          (encryptionFieldSignal() && exportForm.value.repeatPassword !== exportForm.value.password)
+        ">
         <spk-icon>export</spk-icon>
         Export
       </button>
@@ -141,7 +145,7 @@
 
       @if (exportForm.value.password && exportForm.value.password === exportForm.value.repeatPassword) {
         <spk-alert class="primary" i18n>
-          Tip: Be sure to save your password. If you lose it, you will lose access to your backups.
+          Tip: Be sure to save your password. If you lose it, you will not be able to import the configuration.
         </spk-alert>
       }
     </div>
