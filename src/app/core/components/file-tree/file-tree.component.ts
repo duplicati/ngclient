@@ -307,9 +307,8 @@ export default class FileTreeComponent {
       const x = pathPart.slice(1);
       const dir = pathPart.startsWith('-') ? 'exclude' : 'include';
       const pathDelimiter = this.pathDelimiter();
-      const pathToTest = isWindows ? x.slice(2) : x;
 
-      if (pathToTest.startsWith(pathDelimiter) && x.endsWith(pathDelimiter)) {
+      if (x.endsWith(pathDelimiter)) {
         // Works - Folder
         if (nodeType !== 'folder') continue;
         const res = nodeId === x;
