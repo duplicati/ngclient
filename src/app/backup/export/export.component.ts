@@ -60,7 +60,9 @@ export default class ExportComponent {
   });
 
   exportFormSignal = toSignal(this.exportForm.valueChanges);
-  encryptionFieldSignal = computed(() => (this.exportFormSignal()?.encryption ?? false) && this.exportType() === 'file');
+  encryptionFieldSignal = computed(
+    () => (this.exportFormSignal()?.encryption ?? false) && this.exportType() === 'file'
+  );
   activeBackup = computed(() =>
     this.#backups.backups().find((x) => x.Backup?.ID === this.#route.snapshot.params['id'])
   );
@@ -82,8 +84,7 @@ export default class ExportComponent {
   });
 
   disablePasswordForCommandLine = effect(() => {
-    if (this.exportType() === 'cmd')
-      this.exportForm.controls.encryption.setValue(false);    
+    if (this.exportType() === 'cmd') this.exportForm.controls.encryption.setValue(false);
   });
 
   submit() {
@@ -98,7 +99,13 @@ export default class ExportComponent {
           switchMap((x) => {
             const objToQueryString = (obj: any) => {
               const entries = Object.entries(obj);
-              return entries ? '?' + entries.map(([key, value]) => `${key}=${value}`).join('&') : '';
+              return entries
+                ? '?' +
+                    entries
+                      .filter(([_, value]) => value !== null && value !== undefined)
+                      .map(([key, value]) => `${key}=${value}`)
+                      .join('&')
+                : '';
             };
 
             const passphrase = this.exportFormSignal()?.password?.length
