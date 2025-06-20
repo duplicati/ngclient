@@ -103,7 +103,7 @@ export default class ExportComponent {
                 ? '?' +
                     entries
                       .filter(([_, value]) => value !== null && value !== undefined)
-                      .map(([key, value]) => `${key}=${value}`)
+                      .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value as any)}`)
                       .join('&')
                 : '';
             };
