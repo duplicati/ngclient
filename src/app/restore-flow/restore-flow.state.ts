@@ -81,7 +81,7 @@ export class RestoreFlowState {
           restore_path: optionsValue.restoreFromPath,
           overwrite: optionsValue.handleExisting === 'overwrite',
           permissions: optionsValue.permissions,
-          skip_metadata: true,
+          skip_metadata: !optionsValue.includeMetadata,
         },
       })
       .pipe(finalize(() => this.isSubmitting.set(false)))

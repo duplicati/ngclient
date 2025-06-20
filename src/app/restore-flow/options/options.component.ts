@@ -19,6 +19,7 @@ export const createRestoreOptionsForm = () => {
     restoreFromPath: fb.control<string>(''),
     handleExisting: fb.control<'overwrite' | 'saveTimestamp'>('overwrite'),
     permissions: fb.control<boolean>(false),
+    includeMetadata: fb.control<boolean>(true),
   });
 };
 
