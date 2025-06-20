@@ -103,6 +103,7 @@ export default class FileTreeComponent {
   accepts = input<string | null | undefined>(null);
   startingPath = input<string | null>(null);
   rootPaths = input<string[]>([]);
+  initialNodes = input<TreeNodeDto[]>([]);
   backupSettings = input<BackupSettings | null>(null);
   pathRefreshTrigger = input(false);
   showHiddenNodes = input(false);
@@ -226,7 +227,7 @@ export default class FileTreeComponent {
             const evalState =
               node.hidden === true && showHiddenNodes
                 ? TreeEvalEnum.None
-                : this.#eval(currentPaths, node.id!, node.cls!, parentNode, isWindows);
+                : this.#eval(currentPaths, node.id!, node.cls!, parentNode);
 
             const newNode: FileTreeNode = {
               id: node.id,
@@ -269,10 +270,9 @@ export default class FileTreeComponent {
     currentPaths: string[],
     nodeId: string,
     nodeType: string,
-    parentNode: FileTreeNode,
-    isWindows: boolean
+    parentNode: FileTreeNode | null
   ): TreeEvalEnum {
-    if (parentNode.evalState === TreeEvalEnum.Excluded) return TreeEvalEnum.ExcludedByParent;
+    if (parentNode && parentNode.evalState === TreeEvalEnum.Excluded) return TreeEvalEnum.ExcludedByParent;
 
     let result = TreeEvalEnum.None;
 
@@ -499,13 +499,45 @@ export default class FileTreeComponent {
       this.#fetchPathSegmentsRecursively(startingPath);
     } else {
       const roots = this.rootPaths();
+      const initial = this.initialNodes();
       if (roots && roots.length > 0) {
+        if (initial && initial.length > 0) {
+          this.treeNodes.set(initial.map((x) => {
+            const node: TreeNode = {
+              id: x.id,
+              leaf: x.leaf,
+              cls: x.cls,
+              text: x.text,
+              iconCls: x.iconCls,
+              fileSize: x.fileSize,
+              resolvedpath: x.resolvedpath,
+              parentPath: this.getParentPath(x.id ?? ''),
+            };
+            return node;
+          }));
+          console.log('initial nodes set', this.treeNodes());
+        }
         this.#getPath(null, roots[0]);
       } else {
         this.#getPath(null, ROOTPATH);
       }
     }
   }
+
+  getParentPath(path: string) {
+    const sep = this.pathDelimiter();
+    const parts = path.split(sep);
+    if (parts.length <= 1) {
+        return ROOTPATH;
+    }
+
+    parts.pop();
+    if (parts.length !== 0)
+      parts.pop(); 
+
+    const parent = parts.join(sep);
+    return parent + sep;
+}  
 
   toggleSelectedNode($event: Event, node: FileTreeNode) {
     if (node.id === ROOTPATH) return;
