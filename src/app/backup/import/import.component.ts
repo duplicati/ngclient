@@ -55,6 +55,7 @@ export default class ImportComponent {
     if (file) {
       const reader = new FileReader();
 
+      // Rely on minetype (really extension)
       this.isSecureFile.set(file.type !== 'application/json');
 
       reader.onload = this.#handleReaderLoaded.bind(this);
@@ -65,10 +66,41 @@ export default class ImportComponent {
   #handleReaderLoaded(readerEvt: ProgressEvent<FileReader>) {
     const arrayBuffer = readerEvt.target?.result as ArrayBuffer;
 
+    // Check on the actual content of the ArrayBuffer
+    this.isSecureFile.set(this.#checkArrayBufferType(arrayBuffer) !== 'json');
+
     this.importForm.patchValue({
       config: this.#arrayBufferToBase64(arrayBuffer),
     });
   }
+
+  #checkArrayBufferType(buffer: ArrayBuffer): 'json' | 'aes' | 'unknown' {
+    const bytes = new Uint8Array(buffer);
+  
+    // Check if it starts with "AES" and the 5th byte is 0
+    if (
+      bytes.length >= 5 &&
+      bytes[0] === 0x41 && // 'A'
+      bytes[1] === 0x45 && // 'E'
+      bytes[2] === 0x53 && // 'S'
+      bytes[4] === 0x00
+    ) {
+      return 'aes';
+    }
+  
+    // Attempt to decode as text and parse as JSON
+    try {
+      const text = new TextDecoder().decode(buffer);
+      const json = JSON.parse(text);
+      if (typeof json === 'object' && json !== null) {
+        return 'json';
+      }
+    } catch {
+      // Not JSON
+    }
+  
+    return 'unknown';
+  }  
 
   #arrayBufferToBase64(buffer: ArrayBuffer): string {
     const bytes = new Uint8Array(buffer);
