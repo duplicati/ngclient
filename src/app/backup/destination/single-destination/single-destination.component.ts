@@ -283,8 +283,8 @@ export class SingleDestinationComponent {
     return form[fieldGroup];
   }
 
-  hasDoubleLeadingSlashes(str?: string | null) {
-    return str?.startsWith('//') ?? false;
+  hasLeadingSlash(str?: string | null) {
+    return str?.startsWith('/') ?? false;
   }
 
   addAdvancedOption(formView: FormView) {
@@ -293,6 +293,61 @@ export class SingleDestinationComponent {
     form.advanced[formView.name] = formView.defaultValue;
 
     this.destinationForm.set({ ...form });
+  }
+
+  isValidBucketname(name: string): boolean {
+    if (!name) return false;
+  
+    const length = name.length;
+  
+    // Length between 3 and 63 characters
+    if (length < 3 || length > 63) return false;
+  
+    // Must be lowercase letters, numbers, dots, or hyphens
+    if (!/^[a-z0-9.-]+$/.test(name)) return false;
+  
+    // Must start and end with a letter or number
+    if (!/^[a-z0-9]/.test(name) || !/[a-z0-9]$/.test(name)) return false;
+  
+    // Cannot be formatted like an IP address
+    if (/^\d{1,3}(\.\d{1,3}){3}$/.test(name)) return false;
+  
+    // Cannot contain adjacent periods or dashes next to periods
+    if (/(\.\.)|(\.-)|(-\.)/.test(name)) return false;
+  
+    return true;
+  }
+
+  isValidHostname(hostname: string): boolean {
+    if (!hostname || hostname.length > 253) return false;
+  
+    const labels = hostname.split('.');
+  
+    for (const label of labels) {
+      // Each label must be 1–63 characters
+      if (!label || label.length > 63) return false;
+  
+      // Must start and end with alphanumeric characters
+      if (!/^[a-zA-Z0-9]([-a-zA-Z0-9]*[a-zA-Z0-9])?$/.test(label)) {
+        return false;
+      }
+    }
+  
+    return true;
+  }
+
+  onKeyDown(fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string, type: FormView['type'], event: KeyboardEvent) {
+    if (type === 'Hostname' || type === 'Bucketname') {
+      const controlKeys = [
+        'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight',
+        'Tab', 'Home', 'End'
+      ];
+      if (controlKeys.includes(event.key)) return;
+      if (event.key == '/' || event.key == '\\' || event.key == ':') {
+        event.preventDefault();
+        return;
+      }
+    }
   }
 
   updateFieldValue(fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string, newValue: any) {
