@@ -42,7 +42,7 @@ export default class ImportComponent {
   importForm = fb.group({
     config: fb.control<string>(''),
     cmdline: fb.control<boolean>(false),
-    importMetadata: fb.control<boolean>(false),
+    import_metadata: fb.control<boolean>(false),
     direct: fb.control<boolean>(false),
     passphrase: fb.control<string>(''),
   });
