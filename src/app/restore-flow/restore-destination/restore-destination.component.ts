@@ -83,7 +83,7 @@ export default class RestoreDestinationComponent {
   });
 
   copyTargetUrl() {
-    navigator.clipboard.writeText(this.#backupState.targetUrlModel() ?? '');
+    navigator.clipboard.writeText(this.#restoreFlowState.destinationTargetUrl() ?? '');
   }
   
   openTargetUrlDialog() {
