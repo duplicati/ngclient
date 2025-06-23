@@ -406,7 +406,7 @@ export class BackupState {
       },
     ];
 
-    if (generalFormValue.encryption !== '') {
+    if (generalFormValue.encryption !== '' && generalFormValue.encryption !== NONE_OPTION.Key) {
       encryption = [
         {
           Name: 'encryption-module',

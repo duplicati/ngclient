@@ -19,7 +19,6 @@ import {
   SparkleSelectComponent,
   SparkleTooltipDirective,
 } from '@sparkle-ui/core';
-import { IDynamicModule } from '../../core/openapi';
 import { PasswordGeneratorService } from '../../core/services/password-generator.service';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 import { validateWhen, watchField } from '../../core/validators/custom.validators';
@@ -52,7 +51,7 @@ export const createGeneralForm = (
 };
 
 export const NONE_OPTION = {
-  Key: '',
+  Key: '-',
   DisplayName: 'None',
 };
 
@@ -90,11 +89,12 @@ export default class GeneralComponent {
   showPassword = signal(false);
   copiedPassword = signal(false);
   showCopyPassword = signal(false);
+  noneOptionKey = NONE_OPTION.Key;
 
   encryptionEffect = effect(() => {
     const encryptionField = this.encryptionFieldSignal();
 
-    if (encryptionField === '') {
+    if (encryptionField === NONE_OPTION.Key) {
       this.copiedPassword.set(false);
       this.showCopyPassword.set(false);
     }
@@ -147,20 +147,6 @@ export default class GeneralComponent {
         console.error('Failed to copy text: ', err);
       }
     }
-  }
-
-  displayFn() {
-    const encryptionOptions = this.#sysinfo.systemInfo()?.EncryptionModules ?? [];
-
-    return (val: IDynamicModule['Key']) => {
-      const item = [NONE_OPTION, ...encryptionOptions].find((x) => x.Key === val);
-
-      if (!item) {
-        return '';
-      }
-
-      return `${item.DisplayName}`;
-    };
   }
 
   generatePassword() {
