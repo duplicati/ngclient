@@ -57,13 +57,13 @@ export class SysinfoState {
         };
       }) ?? [];
 
-      const encryption =
-        this.systemInfo()?.EncryptionModules?.map((x) => {
-          return {
-            displayName: x.DisplayName ?? x.Key,
-            options: x.Options?.map(this.#mapCommandLineArgumentsToFormViews) ?? [],
-          };
-        }) ?? [];
+    const encryption =
+      this.systemInfo()?.EncryptionModules?.map((x) => {
+        return {
+          displayName: x.DisplayName ?? x.Key,
+          options: x.Options?.map(this.#mapCommandLineArgumentsToFormViews) ?? [],
+        };
+      }) ?? [];
 
     return [defaultOptions, ...generic, ...compression, ...encryption];
   });
@@ -78,7 +78,6 @@ export class SysinfoState {
     const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
     return apiExtensions.includes('v1:websocket');
   });
-
 
   hasV2ListOperations = computed(() => {
     const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
@@ -117,19 +116,16 @@ export class SysinfoState {
 
   defaultOAuthUrl = computed(() => {
     const url = this.systemInfo()?.DefaultOAuthURL ?? 'https://duplicati-oauth-handler.appspot.com/';
-    if (url.endsWith('/refresh'))
-      return url.slice(0, -'/refresh'.length);    
-    
+    if (url.endsWith('/refresh')) return url.slice(0, -'/refresh'.length);
+
     return url;
   });
   defaultOAuthUrlV2 = computed(() => {
-    const url = this.systemInfo()?.DefaultOAuthURLv2 ?? 'https://oauth-service.duplicati.com/'
-    if (url.endsWith('/refresh'))
-      return url.slice(0, -'/refresh'.length);    
-    
+    const url = this.systemInfo()?.DefaultOAuthURLv2 ?? 'https://oauth-service.duplicati.com/';
+    if (url.endsWith('/refresh')) return url.slice(0, -'/refresh'.length);
+
     return url;
   });
-
 
   preload(returnObservable = false): Observable<SystemInfoDto> | void {
     const obs = (this.#dupServer.getApiV1Systeminfo() as Observable<SystemInfoDto>).pipe(
@@ -167,9 +163,9 @@ export class SysinfoState {
       type: x.Type as ArgumentType,
       shortDescription: x.ShortDescription ?? undefined,
       longDescription: x.LongDescription ?? undefined,
-      deprecatedDescription: (x.Deprecated ?? false) ? x.DeprecationMessage ?? undefined : undefined,
+      deprecatedDescription: (x.Deprecated ?? false) ? (x.DeprecationMessage ?? undefined) : undefined,
       options: x.ValidValues,
-      defaultValue: x.DefaultValue
+      defaultValue: x.DefaultValue,
     } as FormView;
   }
 }
