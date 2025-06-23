@@ -11,15 +11,10 @@
             spk-button
             type="button"
             class="small"
-            [class.loader]="testLoading()"
-            [class.success]="successfulTest()"
-            (click)="testDestination()">
-            @if (successfulTest()) {
-              Connected
-              <spk-icon>check</spk-icon>
-            } @else {
-              Test destination
-            }
+            [class.loader]="testSignal() == 'testing'"
+            [disabled]="testSignal() == 'testing'"
+            (click)="testDestination(0, true)">
+            Test destination
           </button>
         }
 
@@ -43,6 +38,28 @@
         </spk-menu>
       </div>
     </h3>
+
+    @if (testSignal() == 'testing') {
+      <spk-alert i18n>
+        <spk-icon icon>spinner</spk-icon>
+        Testing connection...
+      </spk-alert>
+    } @else if (testSignal() == 'success') {
+      <spk-alert class="success" i18n>
+        <spk-icon icon>check</spk-icon>
+        Connection tested successfully.
+      </spk-alert>
+    } @else if (testSignal() == 'warning') {
+      <spk-alert class="warn" i18n>
+        <spk-icon icon>warning</spk-icon>
+        {{ testErrorMessage() }}
+      </spk-alert>
+    } @else if (testSignal() == 'error') {
+      <spk-alert class="error" i18n>
+        <spk-icon icon>warning</spk-icon>
+        {{ testErrorMessage() }}
+      </spk-alert>
+    }
 
     @if (hasDestination) {
       <p (click)="removeDestination()" i18n>
@@ -88,8 +105,17 @@
       Go back
     </button>
 
-    <button spk-button class="raised primary" type="submit" i18n>
-      <spk-icon>arrow-right</spk-icon>
+    <button
+      spk-button
+      class="raised primary"
+      type="submit"
+      [disabled]="testSignal() == 'testing' || !hasDestination"
+      i18n>
+      @if (testSignal() == 'testing') {
+        <spk-icon class="loader">spinner</spk-icon>
+      } @else {
+        <spk-icon>arrow-right</spk-icon>
+      }
       Continue
     </button>
   </div>
@@ -99,9 +125,7 @@
   <spk-dialog [(isOpen)]="targetUrlDialogOpen" [options]="{ maxWidth: '700px', width: '100%' }">
     <header header>
       <h2 i18n>Edit target URL</h2>
-      <spk-alert class="warning" i18n>
-        Be careful, this will overwrite everything you have in your destination.
-      </spk-alert>
+      <spk-alert class="warn" i18n>Be careful, this will overwrite everything you have in your destination.</spk-alert>
     </header>
 
     <div content>
