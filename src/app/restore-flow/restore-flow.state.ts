@@ -110,8 +110,8 @@ export class RestoreFlowState {
       })
       .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
-        next: () => {
-          this.#router.navigate(['./progress'], { relativeTo: this.#route });
+        next: (res) => {
+          this.#router.navigate([`./${res.ID}`, 'progress'], { relativeTo: this.#route });
         },
         error: (err) => {
           console.error('restore error', err);

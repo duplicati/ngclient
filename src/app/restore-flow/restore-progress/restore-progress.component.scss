@@ -3,6 +3,7 @@
 :host {
   display: block;
   padding: p2r(0 20);
+  margin-top: 32px;
 }
 
 section {
@@ -59,7 +60,7 @@ section {
   overflow: auto;
 }
 
-.complete-check {
+.complete-success {
   position: relative;
   width: p2r(100);
   height: p2r(100);
@@ -74,6 +75,33 @@ section {
     animation: reveal-icon 200ms linear forwards;
     animation-delay: 1s;
   }
+
+  .border-circle {
+    fill: none;
+    stroke: var(--success-8);
+  }
+}
+
+.complete-failure {
+  position: relative;
+  width: p2r(100);
+  height: p2r(100);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--error-8);
+
+  spk-icon {
+    font-size: p2r(40);
+    opacity: 0;
+    animation: reveal-icon 200ms linear forwards;
+    animation-delay: 1s;
+  }
+
+  .border-circle {
+    fill: none;
+    stroke: var(--error-8);
+  }
 }
 
 .border-svg {
@@ -86,7 +114,6 @@ section {
 
 .border-circle {
   fill: none;
-  stroke: var(--success-8);
   stroke-width: p2r(5);
   stroke-dasharray: 282.74;
   stroke-dashoffset: 282.74;
