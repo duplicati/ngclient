@@ -168,7 +168,7 @@ export default class FileTreeComponent {
     const nodes = this.searchableTreeNodes();
     const rootPaths = this.rootPaths();
     const accepts = this.accepts();
-    const isWindows = this.isWindows();
+    const pathDelimiter = this.pathDelimiter();
 
     let roots: FileTreeNode[] = [];
 
@@ -184,7 +184,7 @@ export default class FileTreeComponent {
           children: [],
           evalState: evalState,
           isIndeterminate: false,
-          cls: 'folder',
+          cls: this.#isFolder(rootPath, pathDelimiter) ? 'folder' : 'file'
         };
       });
     } else {
@@ -216,7 +216,6 @@ export default class FileTreeComponent {
 
       for (const node of filteredNodes) {
         const itemPath = rootPaths.length > 0 ? (node.id as string).replace(rootPath ?? '', '') : node.id!;
-        const pathDelimiter = this.pathDelimiter();
         const pathParts = itemPath.split(pathDelimiter).filter(Boolean);
 
         let evaluatedPath = '';
