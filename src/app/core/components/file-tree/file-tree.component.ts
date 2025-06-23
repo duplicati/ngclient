@@ -70,6 +70,9 @@ export type BackupSettings = {
   time: string;
 };
 
+// The virtual root path for the file tree, also used for Windows as the root path.
+const ROOTPATH = '/';
+
 @Component({
   selector: 'app-file-tree',
   imports: [
@@ -100,6 +103,7 @@ export default class FileTreeComponent {
   accepts = input<string | null | undefined>(null);
   startingPath = input<string | null>(null);
   rootPaths = input<string[]>([]);
+  initialNodes = input<TreeNodeDto[]>([]);
   backupSettings = input<BackupSettings | null>(null);
   pathRefreshTrigger = input(false);
   showHiddenNodes = input(false);
@@ -117,6 +121,7 @@ export default class FileTreeComponent {
   treeSearchQuery = signal<string>('');
   treeNodes = signal<TreeNode[]>([]);
   isWindows = computed(() => this.#sysInfo.systemInfo()?.OSType === 'Windows');
+  pathDelimiter = computed(() => (this.isWindows() ? '\\' : '/'));
 
   filterGroups = this.#sysInfo.filterGroups();
   isByBackupSettings = computed(() => {
@@ -140,7 +145,7 @@ export default class FileTreeComponent {
     const showHiddenNodes = this.showHiddenNodes();
     const _currentPaths = this.currentPath()
       .split('\0')
-      .filter((x) => x !== '' && x !== '/');
+      .filter((x) => x !== '' && x !== ROOTPATH);
 
     let currentPaths = structuredClone(_currentPaths);
 
@@ -169,13 +174,15 @@ export default class FileTreeComponent {
 
     if (rootPaths.length > 0) {
       roots = rootPaths.map((rootPath) => {
+        const evalState = this.#eval(currentPaths, rootPath, 'folder', null);
+
         return {
           id: rootPath,
           resolvedpath: rootPath,
           text: rootPath,
           parentPath: '',
           children: [],
-          evalState: TreeEvalEnum.None,
+          evalState: evalState,
           isIndeterminate: false,
           cls: 'folder',
         };
@@ -183,9 +190,9 @@ export default class FileTreeComponent {
     } else {
       roots = [
         {
-          id: '/',
-          resolvedpath: '/',
-          text: 'Computer',
+          id: ROOTPATH,
+          resolvedpath: ROOTPATH,
+          text: $localize`Computer`,
           parentPath: '',
           children: [],
           evalState: TreeEvalEnum.None,
@@ -209,7 +216,7 @@ export default class FileTreeComponent {
 
       for (const node of filteredNodes) {
         const itemPath = rootPaths.length > 0 ? (node.id as string).replace(rootPath ?? '', '') : node.id!;
-        const pathDelimiter = isWindows ? '\\' : '/';
+        const pathDelimiter = this.pathDelimiter();
         const pathParts = itemPath.split(pathDelimiter).filter(Boolean);
 
         let evaluatedPath = '';
@@ -222,14 +229,14 @@ export default class FileTreeComponent {
             const evalState =
               node.hidden === true && showHiddenNodes
                 ? TreeEvalEnum.None
-                : this.#eval(currentPaths, node.id!, node.cls!, parentNode, isWindows);
+                : this.#eval(currentPaths, node.id!, node.cls!, parentNode);
 
             const newNode: FileTreeNode = {
               id: node.id,
               isIndeterminate: this.isIndeterminate(currentPaths, node.id!),
               evalState,
               parentPath: evaluatedPath,
-              resolvedpath: node.id?.startsWith('%') ? node.resolvedpath + pathDelimiter : evaluatedPath,
+              resolvedpath: node.cls == 'folder' ? this.#appendDirSep(node.resolvedpath) : evaluatedPath,
               hidden: node.hidden,
               text: node.text,
               cls: node.cls,
@@ -254,24 +261,33 @@ export default class FileTreeComponent {
     return roots;
   });
 
-  #eval(
-    currentPaths: string[],
-    nodeId: string,
-    nodeType: string,
-    parentNode: FileTreeNode,
-    isWindows: boolean
-  ): TreeEvalEnum {
-    if (parentNode.evalState === TreeEvalEnum.Excluded) return TreeEvalEnum.ExcludedByParent;
+  #appendDirSep(path?: string | null) {
+    const pathDelimiter = this.pathDelimiter();
+    if (!path) return ROOTPATH;
+    if (path.endsWith(pathDelimiter) || path === ROOTPATH) return path;
+    return path + pathDelimiter;
+  }
+
+  #eval(currentPaths: string[], nodeId: string, nodeType: string, parentNode: FileTreeNode | null): TreeEvalEnum {
+    if (parentNode && parentNode.evalState === TreeEvalEnum.Excluded) return TreeEvalEnum.ExcludedByParent;
 
     let result = TreeEvalEnum.None;
 
+    const pathDelimiter = this.pathDelimiter();
     const pathsWithoutDir = currentPaths.filter((x) => !x.startsWith('-') && !x.startsWith('+'));
     const pathsWithDir = currentPaths.filter((x) => x.startsWith('-') || x.startsWith('+'));
+    const isMultiSelect = this.multiSelect();
 
     if (pathsWithoutDir.length === 0) return result;
 
     for (let index = 0; index < pathsWithoutDir.length; index++) {
       const x = pathsWithoutDir[index];
+      if (nodeId === x) {
+        result = TreeEvalEnum.Included;
+        break;
+      }
+
+      if (!isMultiSelect || !this.#isFolder(x, pathDelimiter)) continue;
 
       const res = nodeId?.startsWith(x);
 
@@ -286,17 +302,15 @@ export default class FileTreeComponent {
     for (let i = 0; i < pathsWithDir.length; i++) {
       const pathPart = pathsWithDir[i];
       const x = pathPart.slice(1);
-      const dir = pathPart.startsWith('-') ? 'exclude' : 'include';
-      const pathDelimiter = isWindows ? '\\' : '/';
-      const pathToTest = isWindows ? x.slice(2) : x;
+      const dir = pathPart.startsWith('-') ? TreeEvalEnum.Excluded : TreeEvalEnum.Included;
 
-      if (pathToTest.startsWith(pathDelimiter) && x.endsWith(pathDelimiter)) {
+      if (this.#isFolder(x, pathDelimiter)) {
         // Works - Folder
         if (nodeType !== 'folder') continue;
         const res = nodeId === x;
 
         if (res) {
-          result = dir === 'include' ? TreeEvalEnum.Included : TreeEvalEnum.Excluded;
+          result = dir;
 
           break;
         }
@@ -312,7 +326,7 @@ export default class FileTreeComponent {
         const res = nodeId?.includes(trimmedX + pathDelimiter);
 
         if (res) {
-          result = dir === 'include' ? TreeEvalEnum.Included : TreeEvalEnum.Excluded;
+          result = dir;
           break;
         }
       }
@@ -326,7 +340,7 @@ export default class FileTreeComponent {
         const res = regex.test(nodeId!);
 
         if (res) {
-          result = dir === 'include' ? TreeEvalEnum.Included : TreeEvalEnum.Excluded;
+          result = dir;
           break;
         }
       }
@@ -339,7 +353,7 @@ export default class FileTreeComponent {
         const res = regex.test(nodeId!);
 
         if (res) {
-          result = dir === 'include' ? TreeEvalEnum.Included : TreeEvalEnum.Excluded;
+          result = dir;
           break;
         }
       }
@@ -352,7 +366,7 @@ export default class FileTreeComponent {
         const res = this.#globMatch(nodeId!, x, true);
 
         if (res) {
-          result = dir === 'include' ? TreeEvalEnum.Included : TreeEvalEnum.Excluded;
+          result = dir;
           break;
         }
       }
@@ -362,14 +376,14 @@ export default class FileTreeComponent {
 
       // Matching file or folder
       if (x === nodeId) {
-        result = dir === 'include' ? TreeEvalEnum.Included : TreeEvalEnum.Excluded;
+        result = dir;
         break;
       }
 
       const res = this.#globMatch(nodeId!, x, true);
 
       if (res) {
-        result = dir === 'include' ? TreeEvalEnum.Included : TreeEvalEnum.Excluded;
+        result = dir;
         break;
       }
     }
@@ -397,7 +411,9 @@ export default class FileTreeComponent {
   }
 
   isIndeterminate(currentPaths: string[], nodeId: string) {
-    return currentPaths.some((x) => x.startsWith(nodeId));
+    return currentPaths
+      .filter((x) => !x.startsWith('-') && this.#isFolder(x, this.pathDelimiter()))
+      .some((x) => x.startsWith(nodeId));
   }
 
   #globMatch(str: string, pattern: string, evaluateFullPath = false): boolean {
@@ -424,7 +440,7 @@ export default class FileTreeComponent {
 
   matchAccepts(accepts: string, node: FileTreeNode) {
     if (!accepts) return true;
-    if (node.cls === 'folder' || node.id === '/') return true;
+    if (node.cls === 'folder' || node.id === ROOTPATH) return true;
 
     const extensions = accepts.split(',');
 
@@ -480,16 +496,48 @@ export default class FileTreeComponent {
       this.#fetchPathSegmentsRecursively(startingPath);
     } else {
       const roots = this.rootPaths();
+      const initial = this.initialNodes();
       if (roots && roots.length > 0) {
+        if (initial && initial.length > 0) {
+          this.treeNodes.set(
+            initial.map((x) => {
+              const node: TreeNode = {
+                id: x.id,
+                leaf: x.leaf,
+                cls: x.cls,
+                text: x.text,
+                iconCls: x.iconCls,
+                fileSize: x.fileSize,
+                resolvedpath: x.resolvedpath,
+                parentPath: this.getParentPath(x.id ?? ''),
+              };
+              return node;
+            })
+          );
+        }
         this.#getPath(null, roots[0]);
       } else {
-        this.#getPath(null, '/');
+        this.#getPath(null, ROOTPATH);
       }
     }
   }
 
+  getParentPath(path: string) {
+    const sep = this.pathDelimiter();
+    const parts = path.split(sep);
+    if (parts.length <= 1) {
+      return ROOTPATH;
+    }
+
+    parts.pop();
+    if (parts.length !== 0) parts.pop();
+
+    const parent = parts.join(sep);
+    return parent + sep;
+  }
+
   toggleSelectedNode($event: Event, node: FileTreeNode) {
-    if (node.id === '/') return;
+    if (node.id === ROOTPATH) return;
 
     $event.stopPropagation();
 
@@ -506,20 +554,25 @@ export default class FileTreeComponent {
 
     const currentPaths = this.currentPath()
       .split('\0')
-      .filter((x) => x !== '' && x !== '/');
+      .filter((x) => x !== '' && x !== ROOTPATH);
 
-    const pathToTest = this.isChildOfSelected(node) ? `-${node.id}` : node.id!;
+    const isChildOfSelected = this.isChildOfSelected(node);
+    const pathToTest = isChildOfSelected ? `-${node.id}` : node.id!;
+    const isFolder = this.#isFolder(node.id!, this.pathDelimiter());
 
     if (this.multiSelect()) {
       if (currentPaths.includes(node.id!)) {
         // is selected
-        this.currentPath.set(currentPaths.filter((x) => x !== node.id).join('\0'));
-      } else if (currentPaths.some((x) => x.startsWith(pathToTest))) {
-        // is child of selected
+        this.currentPath.set(
+          currentPaths.filter((x) => x !== node.id && !(isFolder && x.startsWith(pathToTest))).join('\0')
+        );
+      } else if (currentPaths.some((x) => x == pathToTest)) {
+        // is already selected
         this.currentPath.set(currentPaths.filter((x) => x !== pathToTest).join('\0'));
       } else {
-        // is not selected
-        this.currentPath.set([...currentPaths, pathToTest].join('\0'));
+        // is not selected, remove subpaths, keep excludes
+        const filteredPaths = isFolder ? currentPaths.filter((x) => !x.startsWith(node.id!)) : currentPaths;
+        this.currentPath.set([...filteredPaths, pathToTest].join('\0'));
       }
     } else {
       if (currentPaths.includes(node.id!)) {
@@ -533,7 +586,7 @@ export default class FileTreeComponent {
   isChildOfSelected(node: FileTreeNode) {
     const currentPaths = this.currentPath()
       .split('\0')
-      .filter((x) => x !== '' && x !== '/');
+      .filter((x) => x !== '' && x !== ROOTPATH && this.#isFolder(x, this.pathDelimiter()));
 
     return currentPaths.some((x) => node.id?.startsWith(x) || `-${node.id}`.startsWith(x));
   }
@@ -627,7 +680,7 @@ export default class FileTreeComponent {
   }
 
   #fetchPathSegmentsRecursively(path: string) {
-    const isWindows = this.isWindows();
+    const pathDelimiter = this.pathDelimiter();
     const deselectedPaths = path
       .split('\0')
       .filter((x) => x.startsWith('-'))
@@ -639,7 +692,7 @@ export default class FileTreeComponent {
       .filter(Boolean);
 
     const segmentArr = pathArr.map((x) => {
-      const split = x.split(isWindows ? '\\' : '/');
+      const split = x.split(pathDelimiter);
 
       if (split.at(-1) !== '') {
         split.pop();
@@ -648,11 +701,11 @@ export default class FileTreeComponent {
       return split;
     });
 
-    let urlPieces: string[] = ['/'];
+    let urlPieces: string[] = [ROOTPATH];
 
     segmentArr.forEach((segments) => {
       segments.forEach((_, index) => {
-        const urlCombined = segments.slice(0, index + 1).join(isWindows ? '\\' : '/');
+        const urlCombined = segments.slice(0, index + 1).join(pathDelimiter);
 
         if (urlCombined === '') return;
 
@@ -690,10 +743,10 @@ export default class FileTreeComponent {
             const allNewNodes = results.flatMap((x) => {
               return (x.value as any).map((z: any) => {
                 const path = z.id;
-                const resolvedPath = z.id.startsWith('%') && z.id.endsWith('%') ? z.resolvedpath + '/' : z.id;
-                const parentPath = path && path.split('/').filter(Boolean).slice(0, -1).join('/');
-                const _pathWithoutTrailingSlash = path && path.split('/').filter(Boolean).join('/');
-                const pathWithoutTrailingSlash = '/' + _pathWithoutTrailingSlash;
+                const resolvedPath = z.id.startsWith('%') && z.id.endsWith('%') ? z.resolvedpath + pathDelimiter : z.id;
+                const parentPath = path && path.split(pathDelimiter).filter(Boolean).slice(0, -1).join(pathDelimiter);
+                const _pathWithoutTrailingSlash = path && path.split(pathDelimiter).filter(Boolean).join(pathDelimiter);
+                const pathWithoutTrailingSlash = pathDelimiter + _pathWithoutTrailingSlash;
                 const found =
                   pathArr.findIndex((x) => {
                     return this.multiSelect() ? pathWithoutTrailingSlash.startsWith(x) : pathWithoutTrailingSlash === x;
@@ -704,8 +757,8 @@ export default class FileTreeComponent {
 
                 return {
                   ...z,
-                  cls: resolvedPath.endsWith('/') || resolvedPath.endsWith('\\') ? 'folder' : 'file',
-                  parentPath: parentPath.startsWith('%') ? parentPath : '/' + parentPath,
+                  cls: this.#isFolder(resolvedPath, pathDelimiter) || resolvedPath == ROOTPATH ? 'folder' : 'file',
+                  parentPath: parentPath.startsWith('%') ? parentPath : pathDelimiter + parentPath,
                   isSelected: (found && !isDeselected) || pathExistInArray,
                 };
               });
@@ -725,22 +778,24 @@ export default class FileTreeComponent {
       });
   }
 
-  #getPath(node: FileTreeNode | null = null, newPath = '/') {
+  #isFolder(path: string, pathDelimiter: string): boolean {
+    return (path.startsWith('%') && path.endsWith('%')) || path.endsWith(pathDelimiter);
+  }
+
+  #getPath(node: FileTreeNode | null = null, newPath = ROOTPATH) {
+    const pathDelimiter = this.pathDelimiter();
     this.isLoading.set(true);
 
     (this.#getFilePath(newPath) as Observable<any>).pipe(finalize(() => this.isLoading.set(false))).subscribe({
       next: (x) => {
         let alignDataArray = this.isByBackupSettings()
           ? x.map((y: { Path: string; Size: number }) => {
-              const isWindowsPath = y.Path.includes('\\');
-              const pathDelimiter = isWindowsPath ? '\\' : '/';
-
               return {
                 text: y.Path.split(pathDelimiter)
                   .filter((part) => part !== '')
                   .pop(),
                 id: y.Path,
-                cls: y.Path.endsWith(pathDelimiter) ? 'folder' : 'file',
+                cls: this.#isFolder(y.Path, pathDelimiter) ? 'folder' : 'file',
                 leaf: node !== null,
                 resolvedpath: y.Path,
                 hidden: false,
@@ -750,10 +805,7 @@ export default class FileTreeComponent {
 
         this.treeNodes.update((y) => {
           const newArray = alignDataArray.map((z: any) => {
-            const isWindowsPath = z.id.includes('\\');
-            const pathDelimiter = isWindowsPath ? '\\' : '/';
-            const cls =
-              (z.id.startsWith('%') && z.id.endsWith('%')) || z.id.endsWith(pathDelimiter) ? 'folder' : 'file';
+            const cls = this.#isFolder(z.id, pathDelimiter) ? 'folder' : 'file';
 
             return {
               ...z,

@@ -23,7 +23,7 @@ export type OAuthVersion = 1 | 2;
 
 export type FormView = {
   name: string;
-  type: ArgumentType | 'FileTree' | 'FolderTree' | 'NonValidatedSelectableString' | 'Email' | 'FreeText';
+  type: ArgumentType | 'FileTree' | 'FolderTree' | 'NonValidatedSelectableString' | 'Email' | 'FreeText' | 'Hostname' | 'Bucketname';
   accepts?: string;
   shortDescription?: string;
   longDescription?: string;
@@ -62,6 +62,56 @@ export type DestinationConfigEntry = {
 };
 export type DestinationConfig = DestinationConfigEntry[];
 
+export function buildUrlFromFields(fields: ValueOfDestinationFormGroup, server: string | null | undefined, port: string | number | null | undefined, path: string | null | undefined, ) {
+  return buildUrl(
+    fields.destinationType ?? 'file',
+    server,
+    port,
+    path,
+    [...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]
+  );
+}
+
+export function buildUrl(protocol: string, server: string | null | undefined, port: string | number | null | undefined, path: string | null | undefined, args: [string, string | number | unknown][]) {
+  const urlParams = toSearchParams(args);
+  const serverPart = addServer(server);
+  const serverAndPortPart = serverPart == '' ? '' : serverPart + addPort(port);
+  const pathPart = path ?? '';
+
+  const serverAndPath = concatPaths(serverAndPortPart, pathPart);
+  return `${protocol}://${serverAndPath}${urlParams}`;
+}
+
+export function removeLeadingSlash(path: string | null | undefined) {
+  if (path === null || path === undefined || path === '') return '';
+  return path.startsWith('/') ? path.substring(1) : path;
+}
+
+export function concatPaths(...paths: (string | null | undefined)[]) {
+  if (paths.length === 0) return '';
+  if (paths.length === 1) return paths[0] ?? '';
+
+  let result = '';
+  for (const path of paths) {
+    if (path === null || path === undefined || path === '') continue;
+    result += result.endsWith('/') || result == '' ? path : '/' + path;
+  }
+  return result;
+}
+
+export function getSimplePath(url: URL | string | null | undefined) {
+  if (url === null || url === undefined || url === '') return '';
+  if (typeof url === 'string') {
+    try {
+      url = new URL(url);
+    } catch (e) {
+      return '';
+    }
+  }
+  return (url.hostname ?? '') + (url.pathname == '/' ? '' : url.pathname ?? '');
+}
+  
+
 export function addServer(server: string | null | undefined) {
   if (server === null || server === undefined || server === '') return '';
   return server.endsWith('/') ? server.substring(0, server.length - 1) : server;
@@ -71,12 +121,6 @@ export function addPort(port: string | number | null | undefined) {
   if (port === null || port === undefined || port === '') return '';
 
   return ':' + port.toString();
-}
-
-export function addPath(path: string | null | undefined) {
-  if (path === null || path === undefined) return '';
-
-  return path.startsWith('/') ? path : '/' + path;
 }
 
 export function getConfigurationByKey(key: string): DestinationConfigEntry {

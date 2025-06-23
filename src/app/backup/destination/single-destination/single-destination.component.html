@@ -84,7 +84,7 @@
       @let labelContent = item.formView.shortDescription ?? item.formView.name;
       @let formInput = getFieldGroup(form, item.fieldGroup)[item.formView.name];
       @let fieldValue = getFieldValue(item.fieldGroup, item.formView.name);
-      @let isFieldEmpty = (fieldValue ?? '').trim() === '';
+      @let isFieldEmpty = (fieldValue ?? '').toString().trim() === '';
       @let formFieldId =
         'destination-' + item.fieldGroup + '-' + item.index + '-' + (item.asHttpOptions ? 'http' : 'other');
 
@@ -128,7 +128,13 @@
             [ngModel]="formInput"
             (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
         </app-file-tree>
-      } @else if (item.formView.type === 'String' || item.formView.type === 'Path' || item.formView.type === 'Email') {
+      } @else if (
+        item.formView.type === 'String' ||
+        item.formView.type === 'Path' ||
+        item.formView.type === 'Email' ||
+        item.formView.type === 'Hostname' ||
+        item.formView.type === 'Bucketname'
+      ) {
         <spk-form-field>
           <label [for]="formFieldId">
             {{ labelContent }}
@@ -138,9 +144,17 @@
             @if (isFieldEmpty && item.formView.type === 'Path') {
               <spk-icon
                 class="warn"
-                [spkTooltip]="'An empty path means storing data in the root folder, which is not recommended'">
+                [spkTooltip]="
+                  'An empty path means storing data in the initial or root folder, which is not recommended'
+                ">
                 warning
               </spk-icon>
+            }
+            @if (item.formView.type == 'Hostname' && !isFieldEmpty && !isValidHostname(fieldValue)) {
+              <spk-icon class="error" [spkTooltip]="'Hostname is invalid'">x-circle</spk-icon>
+            }
+            @if (item.formView.type == 'Bucketname' && !isFieldEmpty && !isValidBucketname(fieldValue)) {
+              <spk-icon class="warn" [spkTooltip]="'Bucket name is invalid'">warning</spk-icon>
             }
             @if (item.formView.isMandatory && isFieldEmpty) {
               <spk-icon class="error" [spkTooltip]="'This field is mandatory'">asterisk</spk-icon>
@@ -151,10 +165,11 @@
             [type]="item.formView.type === 'Email' ? 'email' : 'text'"
             [id]="formFieldId"
             [ngModel]="formInput"
+            (keydown)="onKeyDown(item.fieldGroup, item.formView.name, item.formView.type, $event)"
             (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
 
           @let inputValue = fieldValue;
-          @let hasLeadingSlashes = hasDoubleLeadingSlashes(inputValue ?? '');
+          @let hasLeadingSlashes = hasLeadingSlash(inputValue ?? '');
           @let leadingSlashesMessage = hasLeadingSlashes && item.formView.doubleSlash?.message;
           @let slashType = item.formView.doubleSlash?.type;
 
@@ -168,6 +183,10 @@
             </spk-icon>
           } @else if (item.formView.type === 'Email') {
             <spk-icon prefix>envelope</spk-icon>
+          } @else if (item.formView.type === 'Hostname') {
+            <spk-icon prefix>hard-drives</spk-icon>
+          } @else if (item.formView.type === 'Bucketname') {
+            <spk-icon prefix>jar</spk-icon>
           } @else {
             <spk-icon prefix>textbox</spk-icon>
           }

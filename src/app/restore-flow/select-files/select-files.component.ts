@@ -10,7 +10,7 @@ import {
 } from '@sparkle-ui/core';
 import { finalize, Subject, take, takeUntil } from 'rxjs';
 import FileTreeComponent, { BackupSettings } from '../../core/components/file-tree/file-tree.component';
-import { DuplicatiServerService, GetApiV1BackupByIdFilesData } from '../../core/openapi';
+import { DuplicatiServerService, GetApiV1BackupByIdFilesData, TreeNodeDto } from '../../core/openapi';
 import { BytesPipe } from '../../core/pipes/byte.pipe';
 import { ServerStateService } from '../../core/services/server-state.service';
 import { SysinfoState } from '../../core/states/sysinfo.state';
@@ -70,6 +70,7 @@ export default class SelectFilesComponent {
   showFileTree = signal<boolean>(false);
   backupSettings = signal<BackupSettings | null>(null);
   rootPaths = signal<string[]>([]);
+  initialNodes = signal<TreeNodeDto[]>([]);
   loadingRootPath = signal(false);
   isRepairing = computed(() => this.#activeRepairIds().length > 0);
   loadedVersions = signal<{ [key: string]: boolean }>({});
@@ -205,9 +206,30 @@ export default class SelectFilesComponent {
         .subscribe({
           next: (res) => {
             const paths = (res.Data ?? []).map((x) => x.Path ?? '');
-            if (paths.length > 0) {
-              this.rootPaths.set(paths);
+            if (paths.length > 0) {     
+
+              // The roots may include more than absolute root paths, so we need to split them
+              // into roots and descendants to avoid showing too many root nodes in the tree.
+              const { roots, descendants } = this.splitRootsAndDescendants(paths);
+              this.initialNodes.set(descendants.map((path) => {
+                const label = path.replace(/[\\/]+$/, '') // strip trailing slash
+                  .split(/[\\/]/)
+                  .filter(Boolean)
+                  .pop() || path;
+
+                const node: TreeNodeDto = {
+                  id: path,
+                  leaf: false,
+                  cls: 'folder',
+                  text: label,
+                  iconCls: 'folder',
+                  fileSize: -1
+                };
+                return node;
+              }));                       
+              this.rootPaths.set(roots);
             } else {
+              this.initialNodes.set([]);
               this.rootPaths.set(['/']);
             }
           },
@@ -227,14 +249,38 @@ export default class SelectFilesComponent {
             const paths = ((res as any)['Files'] as any[]).map((x) => x.Path ?? '');
 
             if (paths.length > 0) {
+              this.initialNodes.set([]);
               this.rootPaths.set(paths);
             } else {
+              this.initialNodes.set([]);
               this.rootPaths.set(['/']);
             }
           },
         });
     }
   }
+
+  splitRootsAndDescendants(paths: string[]): { roots: string[], descendants: string[] } {
+    const normalized = paths.map(p => p.replace(/[/\\]+$/, '\\').toLowerCase());
+  
+    const roots: string[] = [];
+    const descendants: string[] = [];
+  
+    for (let i = 0; i < normalized.length; i++) {
+      const current = normalized[i];
+      const isDescendant = normalized.some((other, j) =>
+        i !== j && current.startsWith(other) && current !== other
+      );
+  
+      if (isDescendant) {
+        descendants.push(paths[i]); // preserve original case
+      } else {
+        roots.push(paths[i]);
+      }
+    }
+  
+    return { roots, descendants };
+  }    
 
   abortLoading$ = new Subject();
   abortLoading() {
