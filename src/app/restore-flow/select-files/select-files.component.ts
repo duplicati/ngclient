@@ -8,10 +8,11 @@ import {
   SparkleProgressBarComponent,
   SparkleSelectComponent,
 } from '@sparkle-ui/core';
-import { finalize, Subject, takeUntil } from 'rxjs';
+import { finalize, Subject, take, takeUntil } from 'rxjs';
 import FileTreeComponent, { BackupSettings } from '../../core/components/file-tree/file-tree.component';
 import { DuplicatiServerService, GetApiV1BackupByIdFilesData } from '../../core/openapi';
 import { BytesPipe } from '../../core/pipes/byte.pipe';
+import { ServerStateService } from '../../core/services/server-state.service';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 import { RestoreFlowState } from '../restore-flow.state';
 
@@ -45,6 +46,7 @@ export const createRestoreSelectFilesForm = () => {
 export default class SelectFilesComponent {
   #dupServer = inject(DuplicatiServerService);
   #restoreFlowState = inject(RestoreFlowState);
+  #serverState = inject(ServerStateService);
   #sysinfo = inject(SysinfoState);
   #router = inject(Router);
   #route = inject(ActivatedRoute);
@@ -53,6 +55,8 @@ export default class SelectFilesComponent {
   // Prevent effects from hammering the API
   #requestedRootPathLoadId: string | null = null;
   #requestedRepairVersion: string | null = null;
+
+  #activeRepairIds = signal<string[]>([]);
 
   selectFilesForm = this.#restoreFlowState.selectFilesForm;
   selectFilesFormSignal = this.#restoreFlowState.selectFilesFormSignal;
@@ -67,8 +71,8 @@ export default class SelectFilesComponent {
   backupSettings = signal<BackupSettings | null>(null);
   rootPaths = signal<string[]>([]);
   loadingRootPath = signal(false);
-  isRepairing = signal(false);
-  loadedVersions = signal<{[key: string]: boolean }>({});
+  isRepairing = computed(() => this.#activeRepairIds().length > 0);
+  loadedVersions = signal<{ [key: string]: boolean }>({});
 
   loadingEffect = effect(() => {
     const versionOptionsLoading = this.versionOptionsLoading();
@@ -99,7 +103,7 @@ export default class SelectFilesComponent {
     const versionId = `${id}+${time}`;
     const isVersionLoaded = loadedVersions[versionId];
 
-    if (this.needsDatabaseRepair() && (!isVersionLoaded || isRepairing)) return;      
+    if (this.needsDatabaseRepair() && (!isVersionLoaded || isRepairing)) return;
 
     const settings = {
       id: id + '',
@@ -127,7 +131,11 @@ export default class SelectFilesComponent {
       if (this.#requestedRepairVersion === versionId) return;
 
       this.#requestedRepairVersion = versionId;
-      this.isRepairing.set(true);
+      if (this.#activeRepairIds().includes(versionId)) return;
+      this.#activeRepairIds.update((ids) => {
+        return [...ids, versionId];
+      });
+
       this.#dupServer
         .postApiV1BackupByIdRepairupdate({
           id: backupId!,
@@ -144,20 +152,18 @@ export default class SelectFilesComponent {
         )
         .subscribe((res) => {
           const taskId = res.ID!;
-
-          // Maybe listen for status bar instead of polling since it knows when the task is done
-          var timerId = window.setInterval(() => {
-            this.#dupServer.getApiV1TaskByTaskid({ taskid: taskId }).subscribe((r2) => {
-              if (r2.Status === 'Completed') {
-                clearInterval(timerId);
-                this.isRepairing.set(false);
-                this.loadedVersions.update((x) => {
-                  x[versionId] = true;
-                  return x;
-                });                
-              }
+          this.#serverState
+            .waitForTaskToComplete(taskId)
+            .pipe(take(1))
+            .subscribe(() => {
+              this.#activeRepairIds.update((ids) => {
+                return ids.filter((x) => x !== versionId);
+              });
+              this.loadedVersions.update((x) => {
+                x[versionId] = true;
+                return x;
+              });
             });
-          }, 1000);
         });
     }
   });
