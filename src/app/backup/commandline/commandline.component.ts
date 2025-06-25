@@ -91,6 +91,7 @@ export default class CommandlineComponent {
           this.#backupState.mapScheduleToForm(res.Schedule ?? null);
 
           if (res.Backup) {
+            this.#backupState.mapGeneralToForm(res.Backup);
             this.mapStandardFieldsToForm(res.Backup);
             this.mapBaseCmdToForm(res.Backup);
             this.#backupState.mapOptionsToForms(res.Backup);
@@ -135,7 +136,9 @@ export default class CommandlineComponent {
       `--dbpath=${stdForm.dbpath}`,
       `--backup-id=${stdForm['backup-id']}`,
       ...filters.filter((x) => x).map((x) => (x!.startsWith('-') ? `--exclude=${x?.slice(1)}` : `--include=${x}`)),
-      ...this.#backupState.mapFormsToSettings(['backup-id', 'backup-name', 'dbpath']).map((x: any) => `${x.Name}=${x.Value}`),      
+      ...this.#backupState
+        .mapFormsToSettings(['backup-id', 'backup-name', 'dbpath'])
+        .map((x) => `${x.Name.startsWith('--') ? '' : '--'}${x.Name}=${x.Value}`),
       '--disable-module=console-password-input',
     ];
 
