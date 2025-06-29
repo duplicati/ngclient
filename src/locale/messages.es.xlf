@@ -2272,6 +2272,7 @@
       </trans-unit>
       <trans-unit id="3426168472695783385" datatype="html">
         <source>Alternative FTP</source>
+        <target>FTP alternativo</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
           <context context-type="linenumber">1194</context>
@@ -3828,6 +3829,7 @@ a ese día s eliminarán.</target>
       </trans-unit>
       <trans-unit id="3536233353612358287" datatype="html">
         <source>Computer</source>
+        <target>Ordenador</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/file-tree/file-tree.component.ts</context>
           <context context-type="linenumber">195</context>

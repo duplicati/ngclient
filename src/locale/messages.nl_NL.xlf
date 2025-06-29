@@ -2397,6 +2397,7 @@
       </trans-unit>
       <trans-unit id="3426168472695783385" datatype="html">
         <source>Alternative FTP</source>
+        <target>Alternatieve FTP</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
           <context context-type="linenumber">1194</context>
@@ -2664,6 +2665,7 @@
       </trans-unit>
       <trans-unit id="7386195554617540895" datatype="html">
         <source>Aliyun OSS</source>
+        <target>Aliyun OSS</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
           <context context-type="linenumber">1737</context>
@@ -4072,6 +4074,7 @@
       </trans-unit>
       <trans-unit id="3536233353612358287" datatype="html">
         <source>Computer</source>
+        <target>Computer</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/file-tree/file-tree.component.ts</context>
           <context context-type="linenumber">195</context>
