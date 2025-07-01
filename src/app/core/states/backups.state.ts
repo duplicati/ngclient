@@ -62,39 +62,39 @@ const SORT_OPTIONS = [
   },
   {
     value: '-id',
-    label: $localize`Backup ID (decending)`,
+    label: $localize`Backup ID (descending)`,
   },
   {
     value: '-name',
-    label: $localize`Backup name (decending)`,
+    label: $localize`Backup name (descending)`,
   },
   {
     value: '-lastrun',
-    label: $localize`Last run time (decending)`,
+    label: $localize`Last run time (descending)`,
   },
   {
     value: '-nextrun',
-    label: $localize`Next run time (decending)`,
+    label: $localize`Next run time (descending)`,
   },
   {
     value: '-schedule',
-    label: $localize`Is scheduled (decending)`,
+    label: $localize`Is scheduled (descending)`,
   },
   {
     value: '-backend',
-    label: $localize`Destination type (decending)`,
+    label: $localize`Destination type (descending)`,
   },
   {
     value: '-sourcesize',
-    label: $localize`Source size (decending)`,
+    label: $localize`Source size (descending)`,
   },
   {
     value: '-destinationsize',
-    label: $localize`Destination size (decending)`,
+    label: $localize`Destination size (descending)`,
   },
   {
     value: '-duration',
-    label: $localize`Duration (decending)`,
+    label: $localize`Duration (descending)`,
   },
 ] as const;
 export type OrderBy = (typeof SORT_OPTIONS)[number]['value'];
