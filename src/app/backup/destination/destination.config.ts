@@ -280,14 +280,21 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in Google Cloud Storage.`,
     oauthField: 'authid',
     customFields: {
-      path: {
+      bucket: {
         type: 'Bucketname',
-        name: 'path',
-        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
+        name: 'bucket',
         shortDescription: $localize`Bucket name`,
         longDescription: $localize`Bucket name`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
         isMandatory: true,
+      },
+      path: {
+        type: 'Path',
+        name: 'path',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
+        shortDescription: $localize`Folder path`,
+        longDescription: $localize`Folder path`,
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
     },
     dynamicFields: [
@@ -310,13 +317,15 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     ],
     mapper: {
       to: (fields: ValueOfDestinationFormGroup): string => {
-        return buildUrlFromFields(fields, null, null, fields.custom.path);
+        const { bucket, path } = fields.custom;
+        return buildUrlFromFields(fields, bucket, null, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path: getSimplePath(urlObj),
+            path: removeLeadingSlash(urlObj.pathname),
+            bucket: urlObj.hostname,
           },
           ...fromSearchParams(destinationType, urlObj),
         };
