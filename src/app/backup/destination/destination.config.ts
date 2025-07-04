@@ -817,8 +817,8 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
+            path: removeLeadingSlash(urlObj.pathname),
             bucket: urlObj.hostname,
-            path: decodeURIComponent(urlObj.pathname),
           },
           ...fromSearchParams(destinationType, urlObj),
         };
