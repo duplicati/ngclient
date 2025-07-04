@@ -5,6 +5,8 @@ import { loadTranslations } from '@angular/localize';
 import localeCs from '@angular/common/locales/cs';
 import localeDa from '@angular/common/locales/da';
 import localeDe from '@angular/common/locales/de';
+import localeEn from '@angular/common/locales/en';
+import localeEnGb from '@angular/common/locales/en-GB';
 import localeEs from '@angular/common/locales/es';
 import localeFi from '@angular/common/locales/fi';
 import localeFr from '@angular/common/locales/fr';
@@ -22,6 +24,8 @@ import localeZhHant from '@angular/common/locales/zh-Hant';
 
 // Mapping locale codes to their imported Angular locale data
 const ANGULAR_LOCALE_DATA: Record<string, any> = {
+  'en': localeEn,
+  'en-GB': localeEnGb,
   'nl': localeNl,
   'fr': localeFr,
   'de': localeDe,
