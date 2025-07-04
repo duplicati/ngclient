@@ -19,9 +19,10 @@ import locale_sv from 'dayjs/esm/locale/sv';
 import locale_zh_cn from 'dayjs/esm/locale/zh-cn';
 import locale_zh_tw from 'dayjs/esm/locale/zh-tw';
 
+// Lowercase locale names for simpler lookup
 export const DAYJS_LOCALES = {
-  'en-US': locale_en,
-  'en-GB': locale_en_gb,
+  'en-us': locale_en,
+  'en-gb': locale_en_gb,
   cs: locale_cs,
   da: locale_da,
   de: locale_de,
@@ -30,15 +31,13 @@ export const DAYJS_LOCALES = {
   fr: locale_fr,
   hu: locale_hu,
   it: locale_it,
-  'ja-JP': locale_ja,
-  'nl-NL': locale_nl,
+  ja: locale_ja,
+  nl: locale_nl,
   pl: locale_pl,
   pt: locale_pt,
-  'pt-BR': locale_pt, // Note: maps to 'pt' since Day.js does not have a pt-br variant
   ru: locale_ru,
-  'sr-RS': locale_sr,
-  'sv-SE': locale_sv,
-  'zh-CN': locale_zh_cn,
-  'zh-Hans:': locale_zh_cn, 
-  'zh-TW': locale_zh_tw,
+  sr: locale_sr,
+  sv: locale_sv,
+  zh: locale_zh_cn,
+  'zh-tw': locale_zh_tw,
 } as { [key: string]: ILocale };
