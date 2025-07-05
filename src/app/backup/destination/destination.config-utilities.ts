@@ -124,7 +124,11 @@ export function addPort(port: string | number | null | undefined) {
 }
 
 export function getConfigurationByKey(key: string): DestinationConfigEntry {
-  const config = DESTINATION_CONFIG.find((x) => x.key === key || x.customKey === key);
+  const config = DESTINATION_CONFIG.find((x) => x.key === key || x.customKey === key)
+    // Previous versions used 's' postfix as shorthand for enabling SSL (e.g. ftps, webdavs, etc.)
+    ?? DESTINATION_CONFIG.find((x) => `${x.key}s` === key) 
+    ?? null;
+  
   return (
     config ?? {
       key: key,
@@ -189,8 +193,20 @@ export function fromTargetPath(targetPath: string) {
     );
   }
 
+  const config = getConfigurationByKey(destinationType);
+
+  // Previous versions used 's' postfix as shorthand for enabling SSL (e.g. ftps, webdavs, etc.)
+  // If this is the case, we fix the url to use the correct protocol, and add the use-ssl query parameter
+  let extraQuery = '';
+  if (`${config.key}s` === destinationType)
+  {
+    extraQuery += fakeProtocolPrefixed.indexOf('?') === -1 ? '?' : '&';
+    extraQuery += 'use-ssl=true';
+    targetPath = config.key + targetPath.substring(destinationType.length);
+  }
+
   try {
-    const urlObj = new URL(fakeProtocolPrefixed);
+    const urlObj = new URL(fakeProtocolPrefixed + extraQuery);
 
     if (urlObj.host === 'undefined') return null;
 
@@ -203,8 +219,8 @@ export function fromTargetPath(targetPath: string) {
 
     if (hostAsNumber && !hostAsIpAddress) return null;
 
-    return getConfigurationByKey(destinationType).mapper.from(
-      destinationType,
+    return config.mapper.from(
+      config.key,
       urlObj,
       targetPath
     );

@@ -23,6 +23,7 @@ import { IDynamicModule } from '../../core/openapi';
 import { TestDestinationService } from '../../core/services/test-destination.service';
 import { DestinationConfigState } from '../../core/states/destinationconfig.state';
 import { BackupState } from '../backup.state';
+import { getConfigurationByKey } from './destination.config-utilities';
 import { SingleDestinationComponent } from './single-destination/single-destination.component';
 
 const fb = new FormBuilder();
@@ -111,9 +112,8 @@ export default class DestinationComponent {
     if (!targetUrl) return null;
 
     const destinationType = targetUrl.split('://')[0];
-    const options = this.destinationTypeOptions();
-
-    return options.find((x) => destinationType === x.key);
+    
+    return getConfigurationByKey(destinationType) ?? null;
   });
 
   copyTargetUrl() {

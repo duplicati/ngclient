@@ -19,6 +19,7 @@ import {
   SparkleMenuComponent,
 } from '@sparkle-ui/core';
 import { BackupState } from '../../backup/backup.state';
+import { getConfigurationByKey } from '../../backup/destination/destination.config-utilities';
 import { SingleDestinationComponent } from '../../backup/destination/single-destination/single-destination.component';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { IDynamicModule } from '../../core/openapi';
@@ -77,9 +78,8 @@ export default class RestoreDestinationComponent {
     if (!targetUrl) return null;
 
     const destinationType = targetUrl.split('://')[0];
-    const options = this.destinationTypeOptions();
 
-    return options.find((x) => destinationType === x.key);
+    return getConfigurationByKey(destinationType);
   });
 
   copyTargetUrl() {
