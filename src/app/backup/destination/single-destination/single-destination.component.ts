@@ -336,6 +336,17 @@ export class SingleDestinationComponent {
     return true;
   }
 
+  isTrue(value: any): boolean {
+    if (typeof value === 'boolean') {
+      return value;
+    }
+    if (typeof value === 'string') {
+      const lowerValue = value.toLowerCase();
+      return lowerValue === 'true' || lowerValue === '1' || lowerValue === 'yes' || lowerValue === 'on';
+    }
+    return false;
+  }
+
   onKeyDown(fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string, type: FormView['type'], event: KeyboardEvent) {
     if (type === 'Hostname' || type === 'Bucketname') {
       const controlKeys = [

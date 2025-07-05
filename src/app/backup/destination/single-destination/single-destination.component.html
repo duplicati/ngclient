@@ -342,8 +342,8 @@
       } @else if (item.formView.type === 'Boolean') {
         <spk-toggle
           class="primary raised"
-          [class.active]="formInput === 'true'"
-          (click)="updateFieldValue(item.fieldGroup, item.formView.name, formInput === 'true' ? 'false' : 'true')">
+          [class.active]="isTrue(formInput)"
+          (click)="updateFieldValue(item.fieldGroup, item.formView.name, isTrue(formInput) ? 'false' : 'true')">
           <label [for]="formFieldId">
             {{ labelContent }}
             @if (item.formView.longDescription) {
