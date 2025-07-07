@@ -81,7 +81,7 @@ export class OptionsListComponent {
 
         if (option) {
           if (option.type === 'Boolean') {
-            _value = (_value && _value.toLowerCase() === 'true') || false;
+            _value = this.isTrue(_value);
           }
 
           if (option.type === 'Integer') {
@@ -133,6 +133,17 @@ export class OptionsListComponent {
       .filter((group) => group.options.length > 0);
   });
 
+  isTrue(value: any): boolean {
+    if (typeof value === 'boolean') {
+      return value;
+    }
+    if (typeof value === 'string') {
+      const lowerValue = value.toLowerCase();
+      return lowerValue === 'true' || lowerValue === '1' || lowerValue === 'yes' || lowerValue === 'on';
+    }
+    return false;
+  }
+
   inAppOptions(optionName: string) {
     const optionIndex = this.applicationOptions()?.findIndex((x) => x.Name?.replace('--', '') === optionName);
 
@@ -165,7 +176,7 @@ export class OptionsListComponent {
       let value: any = option.defaultValue ?? '';
 
       if (option.type === 'Boolean') {
-        value = value.toLowerCase() === 'true' || false;
+        value = this.isTrue(value);
       }
 
       if (option.type === 'Integer') {
@@ -184,7 +195,7 @@ export class OptionsListComponent {
       const index = newSettings.findIndex((s) => s.Name === option.Name);
 
       if (option.FormView.type === 'Boolean') {
-        newSettings[index].Value = newValue ? 'True' : 'False';
+        newSettings[index].Value = this.isTrue(newValue) ? 'True' : 'False';
         return newSettings;
       }
 
