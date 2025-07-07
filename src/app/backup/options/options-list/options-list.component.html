@@ -198,7 +198,7 @@
           <input
             type="checkbox"
             [id]="formId"
-            [ngModel]="isTrue(item.Value())"
+            [ngModel]="item.Value()"
             (ngModelChange)="updateSettingValue(item, $event)" />
         </spk-toggle>
       } @else if (item.FormView.type === 'Flags') {

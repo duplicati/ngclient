@@ -88,6 +88,13 @@ export class OptionsListComponent {
             _value = parseInt(_value) || 0;
           }
 
+          if (option.type === 'Enumeration' && option.options) {
+            const cmpvalue = _value?.trim().toLowerCase();
+            const optionValue = option.options.find((opt) => (opt ?? '').trim().toLocaleLowerCase() === cmpvalue);
+            if (optionValue)
+              _value = optionValue;
+          }
+
           return {
             ...setting,
             Value: signal(_value),
@@ -202,6 +209,15 @@ export class OptionsListComponent {
       if (option.FormView.type === 'Integer') {
         newSettings[index].Value = newValue.toString();
         return newSettings;
+      }
+
+      if (option.FormView.type === 'Enumeration' && option.FormView.options) {
+        const cmpvalue = newValue?.trim().toLowerCase() ?? '';
+        const optionValue = option.FormView.options.find((opt) => (opt ?? '').trim().toLocaleLowerCase() === cmpvalue);
+        if (optionValue) {
+          newSettings[index].Value = optionValue;
+          return newSettings;
+        }
       }
 
       newSettings[index].Value = newValue;
