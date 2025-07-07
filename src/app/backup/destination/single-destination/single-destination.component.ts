@@ -71,11 +71,9 @@ export class SingleDestinationComponent {
 
     if (!targetUrl) return null;
 
-    const destType = targetUrl.split('://')[0];
-
-    this.#destType = destType;
-
-    return destType;
+    const config = getConfigurationByKey(targetUrl.split('://')[0]);
+    this.#destType = config?.customKey ?? config?.key;
+    return this.#destType;
   });
 
   destinationForm = signal({
