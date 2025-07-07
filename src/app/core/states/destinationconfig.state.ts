@@ -1,5 +1,6 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { DESTINATION_CONFIG } from '../../backup/destination/destination.config';
+import { getConfigurationByKey } from '../../backup/destination/destination.config-utilities';
 import { SysinfoState } from './sysinfo.state';
 
 @Injectable({
@@ -14,8 +15,14 @@ export class DestinationConfigState {
       .map((x) => x.Key!)
       .filter((x) => x);
 
-    return DESTINATION_CONFIG
+    const supported = DESTINATION_CONFIG
       .filter(x => supportedKeys.includes(x.key));
+
+    const unsupported = supportedKeys
+      .filter(key => !supported.some(x => x.key === key))
+      .map(key => getConfigurationByKey(key));
+
+    return [...supported, ...unsupported];
   });
 
   destinationTypeOptions = computed(() =>
