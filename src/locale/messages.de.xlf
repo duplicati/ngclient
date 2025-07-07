@@ -163,6 +163,7 @@
       </trans-unit>
       <trans-unit id="5415084174014370042" datatype="html">
         <source>Explicit only</source>
+        <target>Nur explizit</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/logs/logs-live/logs-live.state.ts</context>
           <context context-type="linenumber">20</context>
@@ -170,6 +171,7 @@
       </trans-unit>
       <trans-unit id="2796278452811394835" datatype="html">
         <source>Profiling</source>
+        <target>Profiling</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/logs/logs-live/logs-live.state.ts</context>
           <context context-type="linenumber">24</context>
@@ -297,6 +299,7 @@
       </trans-unit>
       <trans-unit id="1159494656863595937" datatype="html">
         <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>flow-arrow<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Explicit only </source>
+        <target><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>flow-arrow<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Nur explizit </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/logs/logs.component.html</context>
           <context context-type="linenumber">30,32</context>
@@ -304,6 +307,7 @@
       </trans-unit>
       <trans-unit id="312516529635558836" datatype="html">
         <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>speedometer<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Profiling </source>
+        <target><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>speedometer<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Profiling </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/logs/logs.component.html</context>
           <context context-type="linenumber">35,37</context>
@@ -792,6 +796,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="4703018356411140603" datatype="html">
         <source>Confirm delete?</source>
+        <target>Löschen bestätigen?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/database/database.component.ts</context>
           <context context-type="linenumber">107</context>
@@ -799,6 +804,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="8107426596525492464" datatype="html">
         <source>Do you really want to delete the database for <x id="PH" equiv-text="this.activeBackup()?.Backup?.Name"/>?</source>
+        <target>Wollen Sie wirklich die Datenbank für <x id="PH" equiv-text="this.activeBackup()?.Backup?.Name"/> löschen?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/database/database.component.ts</context>
           <context context-type="linenumber">108</context>
@@ -806,6 +812,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="4575941789207096693" datatype="html">
         <source>Delete database</source>
+        <target>Datenbank löschen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/database/database.component.ts</context>
           <context context-type="linenumber">109</context>
@@ -813,6 +820,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="4413149424136914535" datatype="html">
         <source>Confirm reassign?</source>
+        <target>Neuzuordnung bestätigen?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/database/database.component.ts</context>
           <context context-type="linenumber">165</context>
@@ -820,6 +828,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="874638284344241379" datatype="html">
         <source>The target database path already exists and may belong to another backup. Are you sure you want to assign this backup to an existing database?</source>
+        <target>Die Ziel-Datenbank existiert bereits und gehört möglicherweise zu einer anderen Sicherung. Sind Sie sicher, dass Sie diese Sicherung einer existierenden Datenbank zuordnen wollen?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/database/database.component.ts</context>
           <context context-type="linenumber">166</context>
@@ -827,6 +836,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="4007514142718714117" datatype="html">
         <source>Assign existing database</source>
+        <target>Zuordnung zu existierender Datenbank</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/database/database.component.ts</context>
           <context context-type="linenumber">167</context>
@@ -926,6 +936,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="5748310444422372504" datatype="html">
         <source> Backup destination <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (hasDestination) {"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button             spk-button             type=&quot;button&quot;             class=&quot;small&quot;             [class.loader]=&quot;testSignal() == 'testing'&quot;             [disabled]=&quot;testSignal() == 'testing'&quot;             (click)=&quot;testDestination(0, true)&quot;&gt;"/> Test destination <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;spk-menu&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>dots-three-vertical<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_TAG_BUTTON_2" ctype="x-button_2" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;openTargetUrlDialog()&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>link<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Edit target URL <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (hasDestination) {"/><x id="START_TAG_BUTTON_3" ctype="x-button_3" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;copyTargetUrl()&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>copy<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Copy url to clipboard <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;/spk-menu&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
+        <target> Sicherungsziel <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (hasDestination) {"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button             spk-button             type=&quot;button&quot;             class=&quot;small&quot;             [class.loader]=&quot;testSignal() == 'testing'&quot;             [disabled]=&quot;testSignal() == 'testing'&quot;             (click)=&quot;testDestination(0, true)&quot;&gt;"/> Test Ziel <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;spk-menu&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>dots-three-vertical<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_TAG_BUTTON_2" ctype="x-button_2" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;openTargetUrlDialog()&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>link<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Bearbeite Ziel-URL <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (hasDestination) {"/><x id="START_TAG_BUTTON_3" ctype="x-button_3" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;copyTargetUrl()&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>copy<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Kopiere URL in das Clipboard <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;/spk-menu&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
           <context context-type="linenumber">6,42</context>
@@ -937,6 +948,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="614106095760206100" datatype="html">
         <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon icon&gt;"/>spinner<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Testing connection... </source>
+        <target><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon icon&gt;"/>spinner<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Prüfe Verbindung... </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
           <context context-type="linenumber">44,46</context>
@@ -948,6 +960,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="7842698586727183374" datatype="html">
         <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon icon&gt;"/>check<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Connection tested successfully. </source>
+        <target><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon icon&gt;"/>check<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Verbindung erfolgreich getestet. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
           <context context-type="linenumber">49,51</context>
@@ -959,6 +972,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="1419693291305912728" datatype="html">
         <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon icon&gt;"/>warning<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> <x id="INTERPOLATION" equiv-text="{{ testErrorMessage() }}"/> </source>
+        <target><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon icon&gt;"/>Warnung<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> <x id="INTERPOLATION" equiv-text="{{ testErrorMessage() }}"/> </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
           <context context-type="linenumber">54,56</context>
@@ -990,6 +1004,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="4776685509889010215" datatype="html">
         <source>All destinations</source>
+        <target>Alle Ziele</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
           <context context-type="linenumber">86,88</context>
@@ -1029,6 +1044,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="3879442064735163639" datatype="html">
         <source><x id="START_BLOCK_IF" equiv-text="@if (testSignal() == 'testing') {"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon class=&quot;loader&quot;&gt;"/>spinner<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SPK_ICON_1" ctype="x-spk_icon_1" equiv-text="&lt;spk-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_BLOCK_ELSE" equiv-text="}"/> Continue </source>
+        <target><x id="START_BLOCK_IF" equiv-text="@if (testSignal() == 'testing') {"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon class=&quot;loader&quot;&gt;"/>spinner<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SPK_ICON_1" ctype="x-spk_icon_1" equiv-text="&lt;spk-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_BLOCK_ELSE" equiv-text="}"/> Weiter </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
           <context context-type="linenumber">114,121</context>
@@ -1052,6 +1068,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="5101542792933660276" datatype="html">
         <source>Be careful, this will overwrite everything you have in your destination.</source>
+        <target>Vorsicht, dies wird alles im Ziel überschreiben.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
           <context context-type="linenumber">128</context>
@@ -1075,6 +1092,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="6515463725820941423" datatype="html">
         <source>The remote destination already contains a backup. Please use a different folder for each backup.</source>
+        <target>Das Ziel-Verzeichnis enthält bereits eine Sicherung. Bitte benutzen Sie für jede Sicherung einen anderen Ordner.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.ts</context>
           <context context-type="linenumber">157</context>
@@ -1154,6 +1172,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="1240543125905662878" datatype="html">
         <source>The remote destination contains unknown files.</source>
+        <target>Der Zielordner enthält unbekannte Dateien.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.ts</context>
           <context context-type="linenumber">170</context>
@@ -1177,6 +1196,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="1972243131321755929" datatype="html">
         <source>An error occurred while testing the destination.</source>
+        <target>Beim Testen des Ziels trat ein Fehler auf.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.ts</context>
           <context context-type="linenumber">190</context>
@@ -1188,6 +1208,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="4242811395702198211" datatype="html">
         <source>Test destination</source>
+        <target>Teste Ziel</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.ts</context>
           <context context-type="linenumber">241</context>
@@ -1207,6 +1228,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="7172730963053009398" datatype="html">
         <source>You have not tested the destination yet. Do you want to test it now?</source>
+        <target>Sie haben das Ziel noch nicht getestet. Möchten Sie es jetzt testen?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.ts</context>
           <context context-type="linenumber">242</context>
@@ -1218,6 +1240,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="4206907006786602213" datatype="html">
         <source>Test now</source>
+        <target>Teste jetzt</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.ts</context>
           <context context-type="linenumber">243</context>
@@ -1229,6 +1252,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="7896499136113414870" datatype="html">
         <source>Skip test and continue</source>
+        <target>Überspringe Test und fahre fort</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.ts</context>
           <context context-type="linenumber">244</context>
@@ -1240,6 +1264,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="455447489361080104" datatype="html">
         <source>Test did not succeed</source>
+        <target>Test war nicht erfolgreich</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.ts</context>
           <context context-type="linenumber">254</context>
@@ -1251,6 +1276,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="2084996286795174816" datatype="html">
         <source>Failed to test the destination.</source>
+        <target>Fehler beim Test des Ziels.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.ts</context>
           <context context-type="linenumber">255</context>
@@ -1262,6 +1288,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="4072519016821448506" datatype="html">
         <source>The destination has not been tested successfully. Are you sure you want to continue?</source>
+        <target>Das Ziel wurde nicht erfolgreich getestet. Sind Sie sicher, dass Sie fortfahren wollen?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.ts</context>
           <context context-type="linenumber">274</context>
@@ -1273,6 +1300,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="963687369569950686" datatype="html">
         <source>Yes, continue</source>
+        <target>Ja, fortfahren</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.ts</context>
           <context context-type="linenumber">275</context>
@@ -1284,6 +1312,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="3863996906560165957" datatype="html">
         <source>Using a leading slash is most likely wrong, and will result in objects being created with a leading slash in the name.</source>
+        <target>Die Benutzung eines führenden Slash ist meist falsch und resultiert in Objekten, die mit führendem Slash im Namen erzeugt werden.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
           <context context-type="linenumber">43</context>
@@ -1355,6 +1384,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="1016380376885380137" datatype="html">
         <source>Store backups with SSH.</source>
+        <target>Sicherungen mit SSH speichern.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
           <context context-type="linenumber">117</context>
@@ -1373,83 +1403,83 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">384</context>
+          <context context-type="linenumber">393</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">385</context>
+          <context context-type="linenumber">394</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">510</context>
+          <context context-type="linenumber">519</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">511</context>
+          <context context-type="linenumber">520</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">569</context>
+          <context context-type="linenumber">578</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">570</context>
+          <context context-type="linenumber">579</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">964</context>
+          <context context-type="linenumber">973</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">965</context>
+          <context context-type="linenumber">974</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1136</context>
+          <context context-type="linenumber">1145</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1137</context>
+          <context context-type="linenumber">1146</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1200</context>
+          <context context-type="linenumber">1209</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1201</context>
+          <context context-type="linenumber">1210</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1263</context>
+          <context context-type="linenumber">1272</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1264</context>
+          <context context-type="linenumber">1273</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1327</context>
+          <context context-type="linenumber">1336</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1328</context>
+          <context context-type="linenumber">1337</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1429</context>
+          <context context-type="linenumber">1438</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1430</context>
+          <context context-type="linenumber">1439</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1482</context>
+          <context context-type="linenumber">1491</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1483</context>
+          <context context-type="linenumber">1492</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2698719400644288116" datatype="html">
@@ -1469,59 +1499,59 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">518</context>
+          <context context-type="linenumber">527</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">519</context>
+          <context context-type="linenumber">528</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">577</context>
+          <context context-type="linenumber">586</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">578</context>
+          <context context-type="linenumber">587</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">972</context>
+          <context context-type="linenumber">981</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">973</context>
+          <context context-type="linenumber">982</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1144</context>
+          <context context-type="linenumber">1153</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1145</context>
+          <context context-type="linenumber">1154</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1208</context>
+          <context context-type="linenumber">1217</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1209</context>
+          <context context-type="linenumber">1218</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1271</context>
+          <context context-type="linenumber">1280</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1272</context>
+          <context context-type="linenumber">1281</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1437</context>
+          <context context-type="linenumber">1446</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1438</context>
+          <context context-type="linenumber">1447</context>
         </context-group>
       </trans-unit>
       <trans-unit id="765777744179252038" datatype="html">
@@ -1553,19 +1583,27 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">336</context>
+          <context context-type="linenumber">295</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">337</context>
+          <context context-type="linenumber">296</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">393</context>
+          <context context-type="linenumber">345</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">394</context>
+          <context context-type="linenumber">346</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">402</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">403</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/source-data/source-data.component.html</context>
@@ -1574,17 +1612,18 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="8669916777817210558" datatype="html">
         <source>Using a leading slash makes the path absolute, pointing to the root of the filesystem.</source>
+        <target>Die Benutzung eines führenden Slash macht den Pfad absolut und zeigt auf das Root-Verzeichnis des Dateisystems.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
           <context context-type="linenumber">142</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1219</context>
+          <context context-type="linenumber">1228</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1282</context>
+          <context context-type="linenumber">1291</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6287501959303066769" datatype="html">
@@ -1601,6 +1640,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="4999325208946009372" datatype="html">
         <source>SSH private key</source>
+        <target>SSH privater Schlüssel</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
           <context context-type="linenumber">164</context>
@@ -1608,6 +1648,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="283763651838103633" datatype="html">
         <source>An SSH private key. Supported formats are OpenSSL, OpenSSH, PuTTY, and PEM.</source>
+        <target>Ein SSH privater Schlüssel. Unterstützte Formate sind OpenSSL, OpenSSH, PuTTY und PEM.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
           <context context-type="linenumber">165</context>
@@ -1642,35 +1683,36 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">286</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
           <context context-type="linenumber">287</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">288</context>
+          <context context-type="linenumber">785</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">776</context>
+          <context context-type="linenumber">786</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">777</context>
+          <context context-type="linenumber">836</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">827</context>
+          <context context-type="linenumber">837</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">828</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1743</context>
+          <context context-type="linenumber">1752</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3629264924285282944" datatype="html">
         <source>The hostname of the S3 compatible server to connect to</source>
+        <target>Der Hostname des zu verbindenden S3 kompatiblen Servers</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
           <context context-type="linenumber">213</context>
@@ -1697,7 +1739,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Google Drive</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">328</context>
+          <context context-type="linenumber">337</context>
         </context-group>
       </trans-unit>
       <trans-unit id="672439927759604285" datatype="html">
@@ -1705,7 +1747,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Speichert Sicherungen im Google Drive.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">329</context>
+          <context context-type="linenumber">338</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2824778775727635891" datatype="html">
@@ -1713,7 +1755,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>pCloud</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">365</context>
+          <context context-type="linenumber">374</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6067224471499272941" datatype="html">
@@ -1721,7 +1763,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Speichert Sicherungen in der pCloud.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">366</context>
+          <context context-type="linenumber">375</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2571561222043199870" datatype="html">
@@ -1729,7 +1771,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Azure Blob Speicher</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">427</context>
+          <context context-type="linenumber">436</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2373982793777599122" datatype="html">
@@ -1737,7 +1779,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Speichert Sicherungen im Azure Blob Speicher.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">428</context>
+          <context context-type="linenumber">437</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6135071031116720136" datatype="html">
@@ -1745,11 +1787,11 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Container-Name</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">434</context>
+          <context context-type="linenumber">443</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">435</context>
+          <context context-type="linenumber">444</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8192419514129699261" datatype="html">
@@ -1757,15 +1799,15 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Kontoname</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">442</context>
+          <context context-type="linenumber">451</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">534</context>
+          <context context-type="linenumber">543</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">593</context>
+          <context context-type="linenumber">602</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1956226327175747295" datatype="html">
@@ -1773,15 +1815,15 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Zugriffsschlüssel</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">447</context>
+          <context context-type="linenumber">456</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">539</context>
+          <context context-type="linenumber">548</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">598</context>
+          <context context-type="linenumber">607</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4776297842943067423" datatype="html">
@@ -1789,7 +1831,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>OneDrive</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">468</context>
+          <context context-type="linenumber">477</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4000469533344318986" datatype="html">
@@ -1797,7 +1839,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Speichert Sicherungen in OneDrive.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">469</context>
+          <context context-type="linenumber">478</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5208346970841973547" datatype="html">
@@ -1805,139 +1847,139 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Pfad auf Server</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">476</context>
+          <context context-type="linenumber">485</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">477</context>
+          <context context-type="linenumber">486</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">526</context>
+          <context context-type="linenumber">535</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">527</context>
+          <context context-type="linenumber">536</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">585</context>
+          <context context-type="linenumber">594</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">586</context>
+          <context context-type="linenumber">595</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">630</context>
+          <context context-type="linenumber">639</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">631</context>
+          <context context-type="linenumber">640</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">670</context>
+          <context context-type="linenumber">679</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">671</context>
+          <context context-type="linenumber">680</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">706</context>
+          <context context-type="linenumber">715</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">707</context>
+          <context context-type="linenumber">716</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">742</context>
+          <context context-type="linenumber">751</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">743</context>
+          <context context-type="linenumber">752</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">879</context>
+          <context context-type="linenumber">888</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">880</context>
+          <context context-type="linenumber">889</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">930</context>
+          <context context-type="linenumber">939</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">931</context>
+          <context context-type="linenumber">940</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">980</context>
+          <context context-type="linenumber">989</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">981</context>
+          <context context-type="linenumber">990</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1152</context>
+          <context context-type="linenumber">1161</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1153</context>
+          <context context-type="linenumber">1162</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1215</context>
+          <context context-type="linenumber">1224</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1216</context>
+          <context context-type="linenumber">1225</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1278</context>
+          <context context-type="linenumber">1287</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1279</context>
+          <context context-type="linenumber">1288</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1367</context>
+          <context context-type="linenumber">1376</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1368</context>
+          <context context-type="linenumber">1377</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1445</context>
+          <context context-type="linenumber">1454</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1446</context>
+          <context context-type="linenumber">1455</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1499</context>
+          <context context-type="linenumber">1508</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1500</context>
+          <context context-type="linenumber">1509</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1643</context>
+          <context context-type="linenumber">1652</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1708</context>
+          <context context-type="linenumber">1717</context>
         </context-group>
       </trans-unit>
       <trans-unit id="763792998446030240" datatype="html">
@@ -1945,7 +1987,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>OneDrive Business</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">504</context>
+          <context context-type="linenumber">513</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5203119002517875277" datatype="html">
@@ -1953,7 +1995,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Speichert Sicherungen in OneDrive Business.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">505</context>
+          <context context-type="linenumber">514</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8305208554017693899" datatype="html">
@@ -1961,7 +2003,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Microsoft SharePoint</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">563</context>
+          <context context-type="linenumber">572</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6243043133204186678" datatype="html">
@@ -1969,11 +2011,11 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Speichert Sicherungen in Microsoft Sharepoint.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">564</context>
+          <context context-type="linenumber">573</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">623</context>
+          <context context-type="linenumber">632</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3650610066444563362" datatype="html">
@@ -1981,7 +2023,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Microsoft SharePoint v2</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">622</context>
+          <context context-type="linenumber">631</context>
         </context-group>
       </trans-unit>
       <trans-unit id="730703184011067892" datatype="html">
@@ -1989,7 +2031,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Dropbox</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">662</context>
+          <context context-type="linenumber">671</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4598054074055792393" datatype="html">
@@ -1997,7 +2039,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Speichert Sicherungen in Dropbox.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">663</context>
+          <context context-type="linenumber">672</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1828758656215814459" datatype="html">
@@ -2005,7 +2047,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Box.com</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">698</context>
+          <context context-type="linenumber">707</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3845443824080997838" datatype="html">
@@ -2013,7 +2055,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Speichert Sicherungen in Box.com.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">699</context>
+          <context context-type="linenumber">708</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4182355748133624753" datatype="html">
@@ -2021,7 +2063,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Jottacloud</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">734</context>
+          <context context-type="linenumber">743</context>
         </context-group>
       </trans-unit>
       <trans-unit id="157333137085730907" datatype="html">
@@ -2029,7 +2071,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Speichert Sicherungen in Jottacloud.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">735</context>
+          <context context-type="linenumber">744</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2391709980016316191" datatype="html">
@@ -2037,7 +2079,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>B2 Cloud Storage</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">770</context>
+          <context context-type="linenumber">779</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1560119022164856777" datatype="html">
@@ -2045,7 +2087,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Speichert Sicherungen im B2 Cloud Speicher.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">771</context>
+          <context context-type="linenumber">780</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6376261217871722243" datatype="html">
@@ -2053,19 +2095,19 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Pfad im Bucket</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">785</context>
+          <context context-type="linenumber">794</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">786</context>
+          <context context-type="linenumber">795</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">836</context>
+          <context context-type="linenumber">845</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">837</context>
+          <context context-type="linenumber">846</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2385634023146528014" datatype="html">
@@ -2073,7 +2115,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Anwendungs-ID</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">793</context>
+          <context context-type="linenumber">802</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4850391806785872653" datatype="html">
@@ -2081,7 +2123,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Anwendungs-Schlüssel</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">798</context>
+          <context context-type="linenumber">807</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6620903652878498037" datatype="html">
@@ -2089,7 +2131,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>IDrive e2</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">821</context>
+          <context context-type="linenumber">830</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5817791938505061739" datatype="html">
@@ -2097,7 +2139,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Speichert Sicherungen in IDrive e2.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">822</context>
+          <context context-type="linenumber">831</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4055246236738746947" datatype="html">
@@ -2105,7 +2147,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Zugriffs-ID</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">844</context>
+          <context context-type="linenumber">853</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8206437921423261892" datatype="html">
@@ -2113,7 +2155,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Zugriffs-Geheimnis</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">849</context>
+          <context context-type="linenumber">858</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3690832063756455175" datatype="html">
@@ -2121,7 +2163,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Mega.nz</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">872</context>
+          <context context-type="linenumber">881</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7456819223000178588" datatype="html">
@@ -2129,7 +2171,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Speichert Sicherungen in Mega.nz.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">873</context>
+          <context context-type="linenumber">882</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5248717555542428023" datatype="html">
@@ -2137,23 +2179,23 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Benutzername</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">887</context>
+          <context context-type="linenumber">896</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">988</context>
+          <context context-type="linenumber">997</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1164</context>
+          <context context-type="linenumber">1173</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1227</context>
+          <context context-type="linenumber">1236</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1290</context>
+          <context context-type="linenumber">1299</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1431416938026210429" datatype="html">
@@ -2161,23 +2203,23 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Passwort</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">892</context>
+          <context context-type="linenumber">901</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">993</context>
+          <context context-type="linenumber">1002</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1169</context>
+          <context context-type="linenumber">1178</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1232</context>
+          <context context-type="linenumber">1241</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1295</context>
+          <context context-type="linenumber">1304</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/export/export.component.html</context>
@@ -2197,7 +2239,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Microsoft Office 365 Gruppe</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">914</context>
+          <context context-type="linenumber">923</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7763987319419032945" datatype="html">
@@ -2205,7 +2247,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Speichert Sicherungen in der Microsoft Office 365 Gruppe.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">915</context>
+          <context context-type="linenumber">924</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1618818512996162696" datatype="html">
@@ -2213,11 +2255,11 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Gruppen-E-Mail</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">921</context>
+          <context context-type="linenumber">930</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">922</context>
+          <context context-type="linenumber">931</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5118817596420170522" datatype="html">
@@ -2225,7 +2267,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Rackspace CloudFiles</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">958</context>
+          <context context-type="linenumber">967</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1891100445393831017" datatype="html">
@@ -2233,7 +2275,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Speichert Sicherungen in Rackspace CloudFiles.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">959</context>
+          <context context-type="linenumber">968</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1879517876731100451" datatype="html">
@@ -2241,7 +2283,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Rclone</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1017</context>
+          <context context-type="linenumber">1026</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6511418996017048042" datatype="html">
@@ -2249,7 +2291,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Speichert Sicherungen in Rclone.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1018</context>
+          <context context-type="linenumber">1027</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4206380462628164369" datatype="html">
@@ -2257,7 +2299,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Lokales Repository</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1022</context>
+          <context context-type="linenumber">1031</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9125368577826703997" datatype="html">
@@ -2265,7 +2307,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Entferntes Repository</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1027</context>
+          <context context-type="linenumber">1036</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2153379598793229223" datatype="html">
@@ -2273,7 +2315,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Pfad auf dem entfernten Repository</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1033</context>
+          <context context-type="linenumber">1042</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1640334719601029575" datatype="html">
@@ -2281,7 +2323,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>OpenStack Object Storage</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1069</context>
+          <context context-type="linenumber">1078</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5365065159713730999" datatype="html">
@@ -2289,7 +2331,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Speichert Sicherungen im OpenStack Object Storage.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1070</context>
+          <context context-type="linenumber">1079</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8720332287407681000" datatype="html">
@@ -2297,23 +2339,23 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Behälter</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1075</context>
+          <context context-type="linenumber">1084</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1076</context>
+          <context context-type="linenumber">1085</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1376</context>
+          <context context-type="linenumber">1385</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1637</context>
+          <context context-type="linenumber">1646</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1702</context>
+          <context context-type="linenumber">1711</context>
         </context-group>
       </trans-unit>
       <trans-unit id="715869236704033904" datatype="html">
@@ -2321,7 +2363,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Authentifikations-URL</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1084</context>
+          <context context-type="linenumber">1093</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2724055831234181057" datatype="html">
@@ -2329,7 +2371,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Version</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1091</context>
+          <context context-type="linenumber">1100</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
@@ -2341,7 +2383,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Domänenname</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1098</context>
+          <context context-type="linenumber">1107</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5934961163128207428" datatype="html">
@@ -2349,7 +2391,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Tenant-Name</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1102</context>
+          <context context-type="linenumber">1111</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2702200797962830082" datatype="html">
@@ -2357,11 +2399,11 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Region</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1106</context>
+          <context context-type="linenumber">1115</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1382</context>
+          <context context-type="linenumber">1391</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8893412912393613367" datatype="html">
@@ -2369,7 +2411,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>WebDAV</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1130</context>
+          <context context-type="linenumber">1139</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4161869179420419180" datatype="html">
@@ -2377,7 +2419,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Speichert Sicherungen per WebDAV.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1131</context>
+          <context context-type="linenumber">1140</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5266103021965994312" datatype="html">
@@ -2385,11 +2427,11 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>SSL benutzen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1160</context>
+          <context context-type="linenumber">1169</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1453</context>
+          <context context-type="linenumber">1462</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3426168472695783385" datatype="html">
@@ -2397,7 +2439,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Alternative FTP</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1194</context>
+          <context context-type="linenumber">1203</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2761209516328971502" datatype="html">
@@ -2405,11 +2447,11 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Speichert Sicherungen in FTP.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1195</context>
+          <context context-type="linenumber">1204</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1258</context>
+          <context context-type="linenumber">1267</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4535111608023460568" datatype="html">
@@ -2417,7 +2459,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>FTP</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1257</context>
+          <context context-type="linenumber">1266</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2148217343719147606" datatype="html">
@@ -2425,7 +2467,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Sia Dezentrale Cloud</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1321</context>
+          <context context-type="linenumber">1330</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6971306072134434435" datatype="html">
@@ -2433,7 +2475,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Speichert Sicherungen in der Sia Dezentralen Cloud.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1322</context>
+          <context context-type="linenumber">1331</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7087256114435682275" datatype="html">
@@ -2441,7 +2483,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Tencent COS</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1360</context>
+          <context context-type="linenumber">1369</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7121157188144306851" datatype="html">
@@ -2449,7 +2491,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Speichert Sicherungen in Tencent COS.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1361</context>
+          <context context-type="linenumber">1370</context>
         </context-group>
       </trans-unit>
       <trans-unit id="328109290615470663" datatype="html">
@@ -2457,7 +2499,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>COS App Id</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1387</context>
+          <context context-type="linenumber">1396</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5210567302572235333" datatype="html">
@@ -2465,7 +2507,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>COS Secret Id</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1393</context>
+          <context context-type="linenumber">1402</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8319916360691242924" datatype="html">
@@ -2473,7 +2515,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>COS Secret Key</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1399</context>
+          <context context-type="linenumber">1408</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3973868637264779754" datatype="html">
@@ -2481,7 +2523,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Tahoe LAFS</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1423</context>
+          <context context-type="linenumber">1432</context>
         </context-group>
       </trans-unit>
       <trans-unit id="863931951136375296" datatype="html">
@@ -2489,7 +2531,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Speichert Sicherungen in Tahoe LAFS.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1424</context>
+          <context context-type="linenumber">1433</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6479800160169142188" datatype="html">
@@ -2497,7 +2539,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>CIFS</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1476</context>
+          <context context-type="linenumber">1485</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7734626379287363859" datatype="html">
@@ -2505,7 +2547,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Speichert Sicherungen in CIFS.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1477</context>
+          <context context-type="linenumber">1486</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5098290215983190635" datatype="html">
@@ -2513,11 +2555,11 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Freigabe Name</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1490</context>
+          <context context-type="linenumber">1499</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1491</context>
+          <context context-type="linenumber">1500</context>
         </context-group>
       </trans-unit>
       <trans-unit id="732218849333506427" datatype="html">
@@ -2525,7 +2567,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Filen.io</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1539</context>
+          <context context-type="linenumber">1548</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4267087859628904259" datatype="html">
@@ -2533,7 +2575,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Speichert Sicherungen in Filen.io.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1540</context>
+          <context context-type="linenumber">1549</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8554734047079490713" datatype="html">
@@ -2541,11 +2583,11 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Pfad auf Filen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1546</context>
+          <context context-type="linenumber">1555</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1547</context>
+          <context context-type="linenumber">1556</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2792782099373246525" datatype="html">
@@ -2553,7 +2595,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Filejump</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1578</context>
+          <context context-type="linenumber">1587</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8754096557728124922" datatype="html">
@@ -2561,7 +2603,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Speichert Sicherungen in Filejump.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1579</context>
+          <context context-type="linenumber">1588</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1317354077788346238" datatype="html">
@@ -2569,11 +2611,11 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Pfad auf Filejump</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1585</context>
+          <context context-type="linenumber">1594</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1586</context>
+          <context context-type="linenumber">1595</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5297710070167842134" datatype="html">
@@ -2581,7 +2623,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>API Token</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1594</context>
+          <context context-type="linenumber">1603</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6015867774087473210" datatype="html">
@@ -2589,7 +2631,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Filejump API Token</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1595</context>
+          <context context-type="linenumber">1604</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7767043792653794161" datatype="html">
@@ -2597,7 +2639,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Storj Access Grant</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1626</context>
+          <context context-type="linenumber">1635</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7990311587063681599" datatype="html">
@@ -2605,7 +2647,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Speichert Sicherungen in Storj Access Grant.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1627</context>
+          <context context-type="linenumber">1636</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5694580546178076526" datatype="html">
@@ -2613,7 +2655,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Access Grant</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1631</context>
+          <context context-type="linenumber">1640</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8050244774979733855" datatype="html">
@@ -2621,11 +2663,11 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Satellit</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1648</context>
+          <context context-type="linenumber">1657</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1684</context>
+          <context context-type="linenumber">1693</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7732296756511089144" datatype="html">
@@ -2633,7 +2675,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Storj API-Key</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1679</context>
+          <context context-type="linenumber">1688</context>
         </context-group>
       </trans-unit>
       <trans-unit id="520993283570669753" datatype="html">
@@ -2641,7 +2683,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Speichert Sicherungen in Storj API Key.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1680</context>
+          <context context-type="linenumber">1689</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8517109745758603034" datatype="html">
@@ -2649,7 +2691,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>API-Schlüssel</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1691</context>
+          <context context-type="linenumber">1700</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7896650584449704588" datatype="html">
@@ -2657,32 +2699,35 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Geheimnis</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1696</context>
+          <context context-type="linenumber">1705</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7386195554617540895" datatype="html">
         <source>Aliyun OSS</source>
+        <target>Aliyun OSS</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1737</context>
+          <context context-type="linenumber">1746</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7236053877128063351" datatype="html">
         <source>Store backups in Aliyun OSS</source>
+        <target>Speichert Sicherungen in Aliyun OSS</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1738</context>
+          <context context-type="linenumber">1747</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4890321515347479714" datatype="html">
         <source>Path in bucket</source>
+        <target>Pfad im Bucket</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1751</context>
+          <context context-type="linenumber">1760</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1752</context>
+          <context context-type="linenumber">1761</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1245076565562757606" datatype="html">
@@ -2695,6 +2740,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="5961940096745011179" datatype="html">
         <source>This field is mandatory</source>
+        <target>Dies ist ein Pflichtfeld</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/single-destination/single-destination.component.html</context>
           <context context-type="linenumber">101,102</context>
@@ -2742,6 +2788,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="6017971563558877057" datatype="html">
         <source>An empty path means storing data in the initial or root folder, which is not recommended</source>
+        <target>Ein leerer Pfad bedeutet, dass Daten Ausgangs- oder Root-Ordner gespeichert werden, was nicht empfohlen ist.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/single-destination/single-destination.component.html</context>
           <context context-type="linenumber">151,152</context>
@@ -2749,6 +2796,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="5524327479542660567" datatype="html">
         <source>Hostname is invalid</source>
+        <target>Der Hostname ist ungültig</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/single-destination/single-destination.component.html</context>
           <context context-type="linenumber">156</context>
@@ -2756,6 +2804,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="6181209593952488230" datatype="html">
         <source>Bucket name is invalid</source>
+        <target>Der Bucketname ist ungültig</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/single-destination/single-destination.component.html</context>
           <context context-type="linenumber">159</context>
@@ -2766,7 +2815,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
         <target>Dies ist eine undokumentierte Option.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/single-destination/single-destination.component.ts</context>
-          <context context-type="linenumber">278</context>
+          <context context-type="linenumber">262</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3801215978313579965" datatype="html">
@@ -2931,6 +2980,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="4368717062247754533" datatype="html">
         <source> Tip: Be sure to save your password. If you lose it, you will not be able to import the configuration. </source>
+        <target> Tipp: Stellen Sie sicher, dass Sie ihr Passwort speichern. Wenn Sie es verlieren, werden Sie Ihre Konfiguration nicht importieren können.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/export/export.component.html</context>
           <context context-type="linenumber">148,149</context>
@@ -3294,6 +3344,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="8541023457380904996" datatype="html">
         <source>took <x id="PH" equiv-text="durationString"/></source>
+        <target>dauerte <x id="PH" equiv-text="durationString"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.ts</context>
           <context context-type="linenumber">98</context>
@@ -3301,6 +3352,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="581899245209188161" datatype="html">
         <source>uploaded <x id="PH" equiv-text="this.#sizePipe.transform(item.data?.BackendStatistics?.BytesUploaded)"/></source>
+        <target>Hochgeladen <x id="PH" equiv-text="this.#sizePipe.transform(item.data?.BackendStatistics?.BytesUploaded)"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.ts</context>
           <context context-type="linenumber">101</context>
@@ -3308,6 +3360,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="8248629668799578905" datatype="html">
         <source>backup size <x id="PH" equiv-text="this.#sizePipe.transform(item.data?.BackendStatistics?.KnownFileSize)"/></source>
+        <target>Sicherungs-Größe <x id="PH" equiv-text="this.#sizePipe.transform(item.data?.BackendStatistics?.KnownFileSize)"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.ts</context>
           <context context-type="linenumber">103</context>
@@ -3315,6 +3368,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="errorCount" datatype="html">
         <source><x id="PH" equiv-text="errorCount"/> error<x id="PH_1" equiv-text="errorCount === 1 ? '' : 's'"/></source>
+        <target><x id="PH" equiv-text="errorCount"/> Fehler<x id="PH_1" equiv-text="errorCount === 1 ? '' : 's'"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.ts</context>
           <context context-type="linenumber">106</context>
@@ -3322,6 +3376,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="warningCount" datatype="html">
         <source><x id="PH" equiv-text="warningCount"/> warning<x id="PH_1" equiv-text="warningCount === 1 ? '' : 's'"/></source>
+        <target><x id="PH" equiv-text="warningCount"/> Warnung<x id="PH_1" equiv-text="warningCount === 1 ? '' : 's'"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.ts</context>
           <context context-type="linenumber">109</context>
@@ -3960,6 +4015,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="4423804770700890047" datatype="html">
         <source> Fils with the Hidden attribute <x id="TAG_INPUT" ctype="x-input" equiv-text="&lt;input type=&quot;checkbox&quot; i18n-placeholder placeholder=&quot;Hidden files&quot; formControlName=&quot;hidden&quot; /&gt;"/></source>
+        <target> Dateien mit Attribut versteckt <x id="TAG_INPUT" ctype="x-input" equiv-text="&lt;input type=&quot;checkbox&quot; i18n-placeholder placeholder=&quot;Hidden files&quot; formControlName=&quot;hidden&quot; /&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/source-data/source-data.component.html</context>
           <context context-type="linenumber">99,101</context>
@@ -3975,6 +4031,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="2832611524065169256" datatype="html">
         <source> Files with the System attribute <x id="TAG_INPUT" ctype="x-input" equiv-text="&lt;input type=&quot;checkbox&quot; i18n-placeholder placeholder=&quot;System files&quot; formControlName=&quot;system&quot; /&gt;"/></source>
+        <target>Dateien mit Attribut System <x id="TAG_INPUT" ctype="x-input" equiv-text="&lt;input type=&quot;checkbox&quot; i18n-placeholder placeholder=&quot;System files&quot; formControlName=&quot;system&quot; /&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/source-data/source-data.component.html</context>
           <context context-type="linenumber">104,106</context>
@@ -3990,6 +4047,7 @@ Sollte die Reparatur nicht erfolgreich sein, so kann die lokale Datenbank gelös
       </trans-unit>
       <trans-unit id="1589352445802565487" datatype="html">
         <source> Files with the Temporary attribute <x id="TAG_INPUT" ctype="x-input" equiv-text="&lt;input type=&quot;checkbox&quot; i18n-placeholder placeholder=&quot;Temporary files&quot; formControlName=&quot;temporary&quot; /&gt;"/></source>
+        <target>Dateien mit Attribut temporär <x id="TAG_INPUT" ctype="x-input" equiv-text="&lt;input type=&quot;checkbox&quot; i18n-placeholder placeholder=&quot;Temporary files&quot; formControlName=&quot;temporary&quot; /&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/source-data/source-data.component.html</context>
           <context context-type="linenumber">109,111</context>
@@ -4828,72 +4886,66 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
           <context context-type="linenumber">61</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="8149679858799280161" datatype="html">
-        <source>Backup ID (decending)</source>
-        <target>Sicherungs-ID (absteigend)</target>
+      <trans-unit id="8425663107952209979" datatype="html">
+        <source>Backup ID (descending)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/states/backups.state.ts</context>
           <context context-type="linenumber">65</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="3571057299734435815" datatype="html">
-        <source>Backup name (decending)</source>
-        <target>Sicherungsname (absteigend)</target>
+      <trans-unit id="6691368664411079640" datatype="html">
+        <source>Backup name (descending)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/states/backups.state.ts</context>
           <context context-type="linenumber">69</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="1381387501087934175" datatype="html">
-        <source>Last run time (decending)</source>
-        <target>Letzte Laufzeit (absteigend)</target>
+      <trans-unit id="1720223831667583982" datatype="html">
+        <source>Last run time (descending)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/states/backups.state.ts</context>
           <context context-type="linenumber">73</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="5990428901007951478" datatype="html">
-        <source>Next run time (decending)</source>
-        <target>Nächste Laufzeit (absteigend)</target>
+      <trans-unit id="3548427502443095216" datatype="html">
+        <source>Next run time (descending)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/states/backups.state.ts</context>
           <context context-type="linenumber">77</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="261681077596084341" datatype="html">
-        <source>Is scheduled (decending)</source>
-        <target>Ist geplant (absteigend)</target>
+      <trans-unit id="3582567836824428368" datatype="html">
+        <source>Is scheduled (descending)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/states/backups.state.ts</context>
           <context context-type="linenumber">81</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="4897903973579744203" datatype="html">
-        <source>Destination type (decending)</source>
-        <target>Ziel Typ (absteigend)</target>
+      <trans-unit id="1398113374692650009" datatype="html">
+        <source>Destination type (descending)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/states/backups.state.ts</context>
           <context context-type="linenumber">85</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="6113605807319696390" datatype="html">
-        <source>Source size (decending)</source>
+      <trans-unit id="1000626195922280414" datatype="html">
+        <source>Source size (descending)</source>
         <target>Quell-Größe (absteigend)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/states/backups.state.ts</context>
           <context context-type="linenumber">89</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="7002045189944465670" datatype="html">
-        <source>Destination size (decending)</source>
+      <trans-unit id="7276123141026532901" datatype="html">
+        <source>Destination size (descending)</source>
         <target>Ziel-Größe (absteigend)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/states/backups.state.ts</context>
           <context context-type="linenumber">93</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="8973134407260426781" datatype="html">
-        <source>Duration (decending)</source>
+      <trans-unit id="2557674464792014090" datatype="html">
+        <source>Duration (descending)</source>
         <target>Dauer (absteigend)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/states/backups.state.ts</context>
@@ -5218,6 +5270,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="168135303014923503" datatype="html">
         <source> Duplicati needs to be secured with a passphrase and a random passphrase has been generated for you. <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/><x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> If you open Duplicati from the tray icon, you do not need a passphrase, but if you plan to open it from another location you need to set a passphrase you know. Do you want to set a passphrase now? </source>
+        <target> Duplicati muss mit einer Passphrase gesichert werden und eine zufällige Passphrase wurde für Sie erstellt. <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/><x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> Wenn Sie Duplicati vom Tray-Icon öffnen, benötigen Sie keine Passphrase, aber wenn Sie planen, es von einem anderen Ort zu öffnen, benötigen Sie eine Passphrase, die Sie kennen. Wollen Sie jetzt eine Passphrase erzeugen? </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/layout/change-passphrase-alert-dialog/change-passphrase-alert-dialog.component.html</context>
           <context context-type="linenumber">7,12</context>
@@ -5549,6 +5602,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="2575426314635221755" datatype="html">
         <source>Metadata settings</source>
+        <target>Metadaten Einstellungen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/options/options.component.html</context>
           <context context-type="linenumber">38</context>
@@ -5556,6 +5610,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="1664469528585743409" datatype="html">
         <source> Restore file metadata <x id="TAG_INPUT" ctype="x-input" equiv-text="&lt;input type=&quot;checkbox&quot; formControlName=&quot;includeMetadata&quot; /&gt;"/></source>
+        <target> Datei Metadaten wiederherstellen <x id="TAG_INPUT" ctype="x-input" equiv-text="&lt;input type=&quot;checkbox&quot; formControlName=&quot;includeMetadata&quot; /&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/options/options.component.html</context>
           <context context-type="linenumber">41,43</context>
@@ -5571,6 +5626,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="8375589255950676550" datatype="html">
         <source>The remote destination does not contain any backups. Please check if the destination details are correct.</source>
+        <target>Das Ziel-Verzeichnis enthält keine Sicherungen. Bitte prüfen Sie, ob die Ziel-Details richtig sind.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
           <context context-type="linenumber">120</context>
@@ -5582,6 +5638,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="6867872438242299616" datatype="html">
         <source>Folder contains no backup</source>
+        <target>Der Ordner enthält keine Sicherung</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
           <context context-type="linenumber">125</context>
@@ -5589,6 +5646,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="4215258942370951684" datatype="html">
         <source>The remote destination is empty. Please check if the destination details are correct.</source>
+        <target>Das Ziel-Verzeichnis ist leer. Bitte prüfen Sie, ob die Ziel-Details richtig sind.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
           <context context-type="linenumber">135</context>
@@ -5600,6 +5658,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="2612838071660502685" datatype="html">
         <source>Folder is empty</source>
+        <target>Der Ordner ist leer</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
           <context context-type="linenumber">140</context>
@@ -5635,6 +5694,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="867581740512495020" datatype="html">
         <source>Missing Local Database</source>
+        <target>Die lokale Datenbank fehlt</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-flow.state.ts</context>
           <context context-type="linenumber">181</context>
@@ -5642,6 +5702,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="3802457877200357493" datatype="html">
         <source>The local database for this backup is missing. Please repair or recreate the local database before restoring.</source>
+        <target>Die lokale Datenbank für diese Sicherung fehlt. Bitte reparieren Sie die lokale Datenbank oder erstellen sie neu bevor Sie eine Wiederherstellung ausführen.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-flow.state.ts</context>
           <context context-type="linenumber">182</context>
@@ -5697,6 +5758,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="3166265465367390657" datatype="html">
         <source>check-bold</source>
+        <target>check-bold</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-progress/restore-progress.component.html</context>
           <context context-type="linenumber">12</context>
@@ -5704,6 +5766,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="1862345698928393598" datatype="html">
         <source>warning-octagon</source>
+        <target>warning-octagon</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-progress/restore-progress.component.html</context>
           <context context-type="linenumber">19</context>
