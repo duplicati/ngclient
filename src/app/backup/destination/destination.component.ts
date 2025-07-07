@@ -107,21 +107,21 @@ export default class DestinationComponent {
   });
 
   selectedDestinationType = computed(() => {
-    const targetUrl = this.#backupState.targetUrlModel();
+    const targetUrl = this.targetUrlModel();
 
     if (!targetUrl) return null;
 
     const destinationType = targetUrl.split('://')[0];
-    
+
     return getConfigurationByKey(destinationType) ?? null;
   });
 
   copyTargetUrl() {
-    navigator.clipboard.writeText(this.#backupState.targetUrlModel() ?? '');
+    navigator.clipboard.writeText(this.targetUrlModel() ?? '');
   }
 
   openTargetUrlDialog() {
-    const targetUrl = this.#backupState.targetUrlModel();
+    const targetUrl = this.targetUrlModel();
     this.targetUrlCtrl.set(targetUrl);
     this.targetUrlInitial.set(targetUrl);
     this.targetUrlDialogOpen.set(true);
@@ -139,7 +139,7 @@ export default class DestinationComponent {
   }
 
   testDestination(destinationIndex: number, suppressErrorDialogs: boolean, callback?: () => void) {
-    const targetUrl = this.#backupState.targetUrlModel();
+    const targetUrl = this.targetUrlModel();
 
     if (!targetUrl) return;
 
