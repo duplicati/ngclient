@@ -202,12 +202,6 @@ export class SingleDestinationComponent {
     destinationFormConfig.advanced.sort((a, b) => a.order! - b.order!);
 
     this.destinationFormConfig.set(destinationFormConfig);
-  });
-
-  targetUrlEffect = effect(() => {
-    const config = this.destinationFormConfig();
-
-    if (!config) return;
 
     const targetUrl = this.targetUrl();
 
@@ -217,18 +211,10 @@ export class SingleDestinationComponent {
 
     if (!targetUrlData) return;
 
-    const formValues = {
+    this.destinationForm.set({
       custom: targetUrlData.custom,
       dynamic: targetUrlData.dynamic,
       advanced: targetUrlData.advanced,
-    };
-
-    this.destinationForm.update((y) => {
-      y.custom = { ...y.custom, ...formValues.custom };
-      y.dynamic = { ...y.dynamic, ...formValues.dynamic };
-      y.advanced = { ...y.advanced, ...formValues.advanced };
-
-      return y;
     });
   });
 
