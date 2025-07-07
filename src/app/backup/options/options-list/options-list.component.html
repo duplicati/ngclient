@@ -68,13 +68,14 @@
             <ng-container *ngTemplateOutlet="defaultLabel" />
           </label>
 
-          <div class="form-row">
+          <div>
             <spk-form-field>
               <input type="text" [ngModel]="item.Name" (ngModelChange)="updateFreeTextSettingName(item, $event)" />
 
               <spk-icon prefix>rectangle-dashed</spk-icon>
             </spk-form-field>
-
+          </div>
+          <div>
             <spk-form-field>
               <input type="text" [ngModel]="item.Value()" (ngModelChange)="updateSettingValue(item, $event)" />
 
