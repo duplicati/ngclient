@@ -9,6 +9,7 @@ import {
   DestinationConfig,
   DoubleSlashConfig,
   fromSearchParams,
+  fromUrlObj,
   getSimplePath,
   removeLeadingSlash,
   toSearchParams,
@@ -171,12 +172,13 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, server, port, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        const { server, port, path } = fromUrlObj(urlObj); 
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            server: urlObj.hostname,
-            port: urlObj.port,
-            path: removeLeadingSlash(urlObj.pathname),
+            server,
+            port,
+            path
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -263,11 +265,12 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, bucket, null, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        const { server, path } = fromUrlObj(urlObj); 
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path: removeLeadingSlash(urlObj.pathname),
-            bucket: urlObj.hostname,
+            path: path,
+            bucket: server,
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -321,11 +324,12 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, bucket, null, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        const { server, path } = fromUrlObj(urlObj); 
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path: removeLeadingSlash(urlObj.pathname),
-            bucket: urlObj.hostname,
+            path: path,
+            bucket: server,
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -418,13 +422,12 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, server, null, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
-        const pathWithoutPrefixSlash = urlObj.pathname.replace(/^\//, '');
-
+        const { server, path } = fromUrlObj(urlObj); 
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            server: urlObj.hostname,
-            path: pathWithoutPrefixSlash,
+            server: server,
+            path: path,
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -555,12 +558,13 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, server, port, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        const { server, port, path } = fromUrlObj(urlObj); 
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            server: urlObj.hostname,
-            port: urlObj.port,
-            path: removeLeadingSlash(urlObj.pathname),
+            server: server,
+            port: port,
+            path: path,
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -614,12 +618,13 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, server, port, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        const { server, port, path } = fromUrlObj(urlObj); 
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            server: urlObj.hostname,
-            port: urlObj.port,
-            path: removeLeadingSlash(urlObj.pathname),
+            server: server,
+            port: port,
+            path: path,
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -814,11 +819,12 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, bucket, null, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        const { server, path } = fromUrlObj(urlObj); 
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path: removeLeadingSlash(urlObj.pathname),
-            bucket: urlObj.hostname,
+            path: path,
+            bucket: server,
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -865,11 +871,12 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, bucket, null, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        const { server, path } = fromUrlObj(urlObj); 
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            bucket: urlObj.hostname,
-            path: removeLeadingSlash(urlObj.pathname),
+            bucket: server,
+            path: path,
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -1009,12 +1016,13 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, server, port, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        const { server, port, path } = fromUrlObj(urlObj); 
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            server: urlObj.hostname,
-            port: urlObj.port,
-            path: removeLeadingSlash(urlObj.pathname),
+            server: server,
+            port: port,
+            path: path,
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -1058,12 +1066,13 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         const { advanced, dynamic } = fromSearchParams(destinationType, urlObj);
+        const { server, path } = fromUrlObj(urlObj); 
 
         return <ValueOfDestinationFormGroup>{
           destinationType,
           dynamic: {
-            'rclone-remote-repository': urlObj.hostname,
-            'rclone-remote-path': urlObj.pathname,
+            'rclone-remote-repository': server,
+            'rclone-remote-path': path,
             ...dynamic,
           },
           ...advanced,
@@ -1121,11 +1130,12 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, bucket, null, null);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        const { server, path } = fromUrlObj(urlObj); 
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path: removeLeadingSlash(urlObj.pathname),
-            bucket: urlObj.hostname,
+            path: path,
+            bucket: server,
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -1185,12 +1195,13 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, server, port, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        const { server, port, path } = fromUrlObj(urlObj); 
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            server: urlObj.hostname,
-            port: urlObj.port,
-            path: removeLeadingSlash(urlObj.pathname),
+            server: server,
+            port: port,
+            path: path,
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -1248,12 +1259,13 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, server, port, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        const { server, port, path } = fromUrlObj(urlObj); 
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            server: urlObj.hostname,
-            port: urlObj.port,
-            path: removeLeadingSlash(urlObj.pathname),
+            server: server,
+            port: port,
+            path: path,
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -1311,12 +1323,13 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, server, port, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        const { server, port, path } = fromUrlObj(urlObj); 
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            server: urlObj.hostname,
-            port: urlObj.port,
-            path: removeLeadingSlash(urlObj.pathname),
+            server: server,
+            port: port,
+            path: path,
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -1468,12 +1481,13 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, server, port, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        const { server, port, path } = fromUrlObj(urlObj); 
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            server: urlObj.hostname,
-            port: urlObj.port,
-            path: removeLeadingSlash(urlObj.pathname),
+            server: server,
+            port: port,
+            path: path,
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -1528,15 +1542,17 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, server, null, concatPaths(share, path));
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
-        const share = urlObj.pathname.split('/')[1];
-        const path = urlObj.pathname.split('/').slice(2).join('/');
+        const { server, path } = fromUrlObj(urlObj); 
+
+        const share = path.split('/')[1];
+        const subpath = path.split('/').slice(2).join('/');
 
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            server: urlObj.hostname,
-            share,
-            path,
+            server: server,
+            share: share,
+            path: subpath,
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -1783,11 +1799,12 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, bucket, null, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
+        const { server, path } = fromUrlObj(urlObj); 
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path: removeLeadingSlash(urlObj.pathname),
-            bucket: urlObj.hostname,
+            path: path,
+            bucket: server,
           },
           ...fromSearchParams(destinationType, urlObj),
         };

@@ -74,11 +74,11 @@ export function buildUrlFromFields(fields: ValueOfDestinationFormGroup, server: 
 
 export function buildUrl(protocol: string, server: string | null | undefined, port: string | number | null | undefined, path: string | null | undefined, args: [string, string | number | unknown][]) {
   const urlParams = toSearchParams(args);
-  const serverPart = addServer(server);
+  const serverPart = encodeURIComponent(addServer(server));
   const serverAndPortPart = serverPart == '' ? '' : serverPart + addPort(port);
   const pathPart = path ?? '';
 
-  const serverAndPath = concatPaths(serverAndPortPart, pathPart);
+  const serverAndPath = concatPaths(serverAndPortPart, encodePathPreservingSlashes(pathPart));
   return `${protocol}://${serverAndPath}${urlParams}`;
 }
 
@@ -99,6 +99,10 @@ export function concatPaths(...paths: (string | null | undefined)[]) {
   return result;
 }
 
+export function encodePathPreservingSlashes(path: string) {
+  return path.split('/') .map(encodeURIComponent).join('/');
+}
+
 export function getSimplePath(url: URL | string | null | undefined) {
   if (url === null || url === undefined || url === '') return '';
   if (typeof url === 'string') {
@@ -108,7 +112,7 @@ export function getSimplePath(url: URL | string | null | undefined) {
       return '';
     }
   }
-  return (url.hostname ?? '') + (url.pathname == '/' ? '' : url.pathname ?? '');
+  return decodeURIComponent(url.hostname ?? '') + decodeURIComponent(url.pathname == '/' ? '' : url.pathname ?? '');
 }
   
 
@@ -136,6 +140,14 @@ export function getConfigurationByKey(key: string): DestinationConfigEntry {
       ...DESTINATION_CONFIG_DEFAULT,
     }
   );
+}
+
+export function fromUrlObj(urlObj: URL) {
+  return {
+    server: decodeURIComponent(urlObj.hostname),
+    port: urlObj.port,
+    path: removeLeadingSlash(decodeURIComponent(urlObj.pathname)),
+  }
 }
 
 export function fromSearchParams(destinationType: string, urlObj: URL) {
