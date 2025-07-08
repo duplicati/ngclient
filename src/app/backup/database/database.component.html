@@ -49,6 +49,16 @@
         <spk-icon>clock-counter-clockwise</spk-icon>
         Restore (delete and repair)
       </button>
+
+      <button
+        spk-button
+        i18n
+        [class.loader]="isCreatingBugReport()"
+        [disabled]="isCreatingBugReport() || !isValidatedPath() || pathHasChanged()"
+        (click)="createErrorReport()">
+        <spk-icon>file-plus</spk-icon>
+        Create bug report database
+      </button>
     </div>
   </article>
 

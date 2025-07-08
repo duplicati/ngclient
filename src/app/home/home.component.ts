@@ -155,18 +155,4 @@ export default class HomeComponent {
         },
       });
   }
-
-  createErrorReport(id: string) {
-    this.loadingId.set(id);
-    this.#dupServer
-      .postApiV1BackupByIdCreatereport({ id })
-      .pipe(finalize(() => this.loadingId.set(null)))
-      .subscribe({
-        next: () => {
-          this.successId.set(id);
-
-          setTimeout(() => this.successId.set(null), 2000);
-        },
-      });
-  }
 }

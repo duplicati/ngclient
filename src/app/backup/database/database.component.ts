@@ -7,7 +7,7 @@ import {
   SparkleDialogService,
   SparkleFormFieldComponent,
   SparkleIconComponent,
-  SparkleTooltipDirective,
+  SparkleTooltipDirective
 } from '@sparkle-ui/core';
 import { debounceTime, distinctUntilChanged, finalize, map, take } from 'rxjs';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
@@ -78,6 +78,8 @@ export default class DatabaseComponent {
   isSavingDbPath = signal(false);
   isSavingAndRepairing = signal(false);
   isMovingDb = signal(false);
+  isCreatingBugReport = signal(false);
+  createdReport = signal(false);
 
   activeBackupEffect = effect(() => {
     const activeBackup = this.activeBackup();
@@ -221,4 +223,17 @@ export default class DatabaseComponent {
       .pipe(finalize(() => this.isMovingDb.set(false)))
       .subscribe(() => this.#firstDBPath.set(currentPath));
   }
+
+  createErrorReport() {
+    this.isCreatingBugReport.set(true);
+    this.#dupServer
+      .postApiV1BackupByIdCreatereport({ id: this.backupId()! })
+      .pipe(finalize(() => this.isCreatingBugReport.set(false)))
+      .subscribe({
+        next: () => {
+          this.createdReport.set(true);
+          window.setTimeout(() => this.createdReport.set(false), 3000);
+        },
+      });
+  }  
 }
