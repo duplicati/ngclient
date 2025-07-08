@@ -129,7 +129,8 @@ export class SingleDestinationComponent {
 
     if (customFields) {
       Object.entries(customFields).forEach(([key, value], index) => {
-        destinationFormConfig.custom.push({ order: 900 + index, ...value });
+        const order = value.order ?? index;
+        destinationFormConfig.custom.push({ order: 900 + order, ...value });
       });
     }
 
@@ -151,13 +152,17 @@ export class SingleDestinationComponent {
           ? (asDynamic?.defaultValue ?? element.DefaultValue)
           : element.DefaultValue;
 
+        const order = overwriting && asDynamic?.order !== undefined
+          ? asDynamic.order
+          : index;
+
         const newField = {
           name: name,
           type: element.Type as ArgumentType,
           shortDescription: element.ShortDescription ?? undefined,
           longDescription: element.LongDescription ?? undefined,
           options: element.ValidValues,
-          order: 900 + index,
+          order: 900 + order,
         };
 
         const patchedNewField = overwriting
@@ -176,6 +181,10 @@ export class SingleDestinationComponent {
 
         const asAdvanced = advancedFields.find((x) => x === name || (x as CustomFormView).name === name);
         const overwriting = asAdvanced && typeof asAdvanced !== 'string';
+        const order = overwriting && asAdvanced?.order !== undefined
+          ? asAdvanced.order
+          : index;
+
         const newField = {
           name: name as string,
           type: element.Type as ArgumentType,
@@ -183,7 +192,7 @@ export class SingleDestinationComponent {
           longDescription: element.LongDescription ?? undefined,
           options: element.ValidValues,
           defaultValue: element.DefaultValue,
-          order: 900 + index,
+          order: 900 + order,
         };
 
         const patchedNewField = overwriting
