@@ -1,5 +1,4 @@
 import { computed, inject, Injectable } from '@angular/core';
-import { DESTINATION_CONFIG } from '../../backup/destination/destination.config';
 import { getConfigurationByKey } from '../../backup/destination/destination.config-utilities';
 import { SysinfoState } from './sysinfo.state';
 
@@ -10,19 +9,24 @@ export class DestinationConfigState {
   #sysinfo = inject(SysinfoState);
 
   supportedDestinationTypes = computed(() => {
-    const supportedKeys = this.#sysinfo
+    return this.#sysinfo
       .backendModules()
-      .map((x) => x.Key!)
-      .filter((x) => x);
+      .map((m) => {
+        if (!m?.Key) {
+          return null;
+        }
+        const entry = getConfigurationByKey(m.Key);
+        const defaultEntry = (<any>entry).isDefaultEntry === true;
+        if (!defaultEntry)
+            return entry;
 
-    const supported = DESTINATION_CONFIG
-      .filter(x => supportedKeys.includes(x.key));
-
-    const unsupported = supportedKeys
-      .filter(key => !supported.some(x => x.key === key))
-      .map(key => getConfigurationByKey(key));
-
-    return [...supported, ...unsupported];
+        return {
+          ...entry,
+          displayName: m.DisplayName || entry.displayName || m.Key,
+          description: m.Description || entry.description || '',
+        };
+      })
+      .filter((x) => x !== null);
   });
 
   destinationTypeOptions = computed(() =>
