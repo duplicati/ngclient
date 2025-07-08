@@ -112,7 +112,7 @@
             (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
         </app-file-tree>
       } @else if (item.formView.type === 'FolderTree') {
-        <app-file-tree [hideShortcuts]="true" [startingPath]="fieldValue">
+        <app-file-tree [hideShortcuts]="true" [enableCreateFolder]="true" [startingPath]="fieldValue">
           <label [for]="formFieldId">
             @if (item.formView.isMandatory && isFieldEmpty) {
               <sup i18n-spkTooltip spkTooltip="This field is mandatory">*</sup>

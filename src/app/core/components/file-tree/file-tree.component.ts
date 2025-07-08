@@ -14,11 +14,13 @@ import {
 import { FormsModule } from '@angular/forms';
 import {
   SparkleButtonGroupComponent,
+  SparkleDialogComponent,
+  SparkleDialogService,
   SparkleFormFieldComponent,
   SparkleIconComponent,
   SparkleListComponent,
   SparkleProgressBarComponent,
-  SparkleToggleComponent,
+  SparkleToggleComponent
 } from '@sparkle-ui/core';
 import { catchError, finalize, forkJoin, map, Observable, of } from 'rxjs';
 import {
@@ -29,6 +31,7 @@ import {
   TreeNodeDto,
 } from '../../openapi';
 import { SysinfoState } from '../../states/sysinfo.state';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 enum TreeEvalEnum {
   ExcludedByParent = -2,
@@ -82,6 +85,7 @@ const ROOTPATH = '/';
     SparkleFormFieldComponent,
     SparkleListComponent,
     SparkleProgressBarComponent,
+    SparkleDialogComponent,
     NgTemplateOutlet,
     FormsModule,
   ],
@@ -95,6 +99,7 @@ const ROOTPATH = '/';
 export default class FileTreeComponent {
   #dupServer = inject(DuplicatiServerService);
   #sysInfo = inject(SysinfoState);
+  #dialog = inject(SparkleDialogService);
 
   multiSelect = input(false);
   disabled = input(false);
@@ -107,11 +112,15 @@ export default class FileTreeComponent {
   backupSettings = input<BackupSettings | null>(null);
   pathRefreshTrigger = input(false);
   showHiddenNodes = input(false);
+  enableCreateFolder = input(false);
   hideShortcuts = input(false);
   includes = output<string[]>();
   excludes = output<string[]>();
 
   _showHiddenNodes = signal(false);
+  createFolderDialogOpen = signal(false);
+  createFolderPath = signal<string | null>(null);
+
   treeContainerRef = viewChild<ElementRef<HTMLDivElement>>('treeContainer');
   formRef = viewChild<ElementRef<HTMLFormElement>>('formRef');
   pathDiscoveryMethod = signal<'browse' | 'path'>('browse');
@@ -415,6 +424,12 @@ export default class FileTreeComponent {
       .some((x) => x.startsWith(nodeId));
   }
 
+  isCurrentPathFolder() {
+    const currentPath = this.currentPath();
+    if (!currentPath) return false;
+    return currentPath.endsWith(this.pathDelimiter()) || (currentPath.startsWith('%') && currentPath.endsWith('%') && !currentPath.includes(this.pathDelimiter()));
+  }
+
   #globMatch(str: string, pattern: string, evaluateFullPath = false): boolean {
     const regexPattern = pattern
       .replace(/\*/g, '.*')
@@ -598,6 +613,51 @@ export default class FileTreeComponent {
         this.#getPath(node, path);
       }
     }
+  }
+
+  openCreateFolderDialog() {
+    this.createFolderPath.set(null);
+    this.createFolderDialogOpen.set(true);
+    return false;    
+  }
+
+  closeCreateFolderDialog(save: boolean) {
+    if (save && this.createFolderPath()?.length && this.isCurrentPathFolder()) {
+      const path = this.createFolderPath()?.trim();
+      if (path) {
+        const currentPath = this.currentPath();
+        const newPath = this.#appendDirSep(path);
+        const fullPath = currentPath + newPath;
+        this.#dupServer.postApiV1RemoteoperationCreate({
+          requestBody: {
+            path: 'file://' + fullPath,
+          }
+        }).subscribe({
+          next: () => {
+            this.currentPath.set(fullPath);
+            this.#getPath(null, currentPath);
+            setTimeout(() => { this.#findActiveNodeAndScrollTo(); }, 500);
+            this.createFolderDialogOpen.set(false);
+          },
+          error: (err) => {
+            const m = err?.message?.match(/user-information\s*:\s*(.*?)(?:\s*,|$)/i);
+            const message = m ? m[1] : err?.message || $localize`An error occurred while trying to create the folder.`;
+
+            this.#dialog.open(ConfirmDialogComponent, {
+              data: {
+                title: $localize`Cannot create folder`,
+                message: message,
+                confirmText: $localize`OK`,
+                cancelText: undefined,
+              },
+            });
+          }
+        });
+      }
+    }else {
+      this.createFolderDialogOpen.set(false);
+    }
+    return false;    
   }
 
   #findActiveNodeAndScrollTo() {

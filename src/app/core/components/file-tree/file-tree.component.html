@@ -78,15 +78,29 @@
       *ngTemplateOutlet="recursiveTree; context: { $implicit: { children: treeStructure(), level: 0 } }"></ng-container>
   </div>
 
-  @if (!accepts() && !isByBackupSettings()) {
-    <spk-toggle
-      [class.active]="_showHiddenNodes()"
-      class="primary raised browse-files-toggle"
-      (click)="_showHiddenNodes.set(!_showHiddenNodes())"
-      i18n>
-      Show hidden {{ showFiles() ? 'files' : 'folders' }}
-    </spk-toggle>
-  }
+  <div class="footer">
+    @if (!accepts() && !isByBackupSettings()) {
+      <spk-toggle
+        [class.active]="_showHiddenNodes()"
+        class="primary raised browse-files-toggle"
+        (click)="_showHiddenNodes.set(!_showHiddenNodes())"
+        i18n>
+        Show hidden {{ showFiles() ? 'files' : 'folders' }}
+      </spk-toggle>
+    }
+
+    @if (enableCreateFolder()) {
+      <button
+        spk-button
+        type="button"
+        (click)="openCreateFolderDialog()"
+        [disabled]="!isCurrentPathFolder()"
+        class="small create-folder"
+        i18n>
+        Create folder
+      </button>
+    }
+  </div>
 </div>
 
 <div #formRef class="form-field" [class.hidden]="pathDiscoveryMethod() !== 'path'">
@@ -98,3 +112,35 @@
   <!-- <pre>{{ selectedPaths() | json }}</pre> -->
   <!-- <pre>{{ currentPath() }}</pre> -->
 </div>
+
+@if (createFolderDialogOpen()) {
+  <spk-dialog [(isOpen)]="createFolderDialogOpen" [options]="{ maxWidth: '700px', width: '100%' }">
+    <header header>
+      <h2 i18n>Enter new folder path</h2>
+    </header>
+
+    <div content>
+      <div>
+        Folder will be created under
+        <pre>{{ currentPath() }}</pre>
+      </div>
+      <spk-form-field>
+        <textarea id="targetUrl" autocomplete="off" [(ngModel)]="createFolderPath"></textarea>
+      </spk-form-field>
+    </div>
+
+    <footer footer>
+      <button spk-button type="button" (click)="closeCreateFolderDialog(false)">Cancel</button>
+
+      <button
+        spk-button
+        class="raised primary"
+        (click)="closeCreateFolderDialog(true)"
+        [disabled]="!createFolderPath()?.length"
+        i18n>
+        Create folder
+        <spk-icon>folder-plus</spk-icon>
+      </button>
+    </footer>
+  </spk-dialog>
+}

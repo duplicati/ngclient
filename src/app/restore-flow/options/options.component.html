@@ -14,7 +14,7 @@
       <input type="radio" name="restoreFrom" value="pickLocation" formControlName="restoreFrom" />
     </spk-radio>
 
-    <app-file-tree [disabled]="optionsFormSignal()?.restoreFrom !== 'pickLocation'">
+    <app-file-tree [disabled]="optionsFormSignal()?.restoreFrom !== 'pickLocation'" [enableCreateFolder]="true">
       <label for="path">Path</label>
       <input type="text" id="path" formControlName="restoreFromPath" />
     </app-file-tree>
