@@ -272,7 +272,7 @@
           </ng-template>
         }
       } @else if (item.formView.type === 'NonValidatedSelectableString') {
-        @let options = mapOptions(item.formView);
+        @let options = mapOptionsWithFreeText(item.formView, formInput);
 
         @if (options) {
           <spk-select

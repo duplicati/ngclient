@@ -382,6 +382,20 @@ export class SingleDestinationComponent {
     return null;
   }
 
+  mapOptionsWithFreeText(item: FormView, freeText: string | null | undefined): { key: string, value: string | null | undefined }[] | null | undefined {
+    const options = this.mapOptions(item);
+    if (!options) return null;
+
+    if (freeText && freeText.length > 0) {
+      const existing = options.find((x) => x.value === freeText);
+      if (!existing) {
+        options.push({ key: freeText, value: freeText });
+      }
+    }
+
+    return options;
+  }
+
   #oauthInProgress = signal(false);
 
   oauthStartTokenCreation(backendKey: string, fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string, usev2?: number | null) {
