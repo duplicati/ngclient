@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   SparkleAlertComponent,
@@ -33,11 +33,16 @@ export class NotificationComponent {
   #snackbar = inject(SparkleAlertService);
   #notificationState = inject(NotificationsState);
   #dupServer = inject(DuplicatiServerService);
+  #generatedDownloadLink = signal<string | null>(null);
 
   serverState = this.#notificationState.serverState;
 
   index = input.required<number>();
   notification = input.required<ExtendedNotificationDto>();
+  
+  downloadLink = computed(() => {
+    return this.#generatedDownloadLink() || this.notification().DownloadLink || '';
+  });
 
   deleteNotificationByIndex() {
     this.#notificationState.deleteNotification(this.index());
@@ -113,7 +118,7 @@ export class NotificationComponent {
 
     this.#dupServer
       .postApiV1AuthIssuetokenByOperation({
-        operation: `bugreport/${id}`,
+        operation: `bugreport`,
       })
       .subscribe({
         next: (res) => {
@@ -122,11 +127,27 @@ export class NotificationComponent {
             return;
           }
 
-          item.DownloadLink = res.Token;
+          const link = `api/v1/bugreport/${id}?token=${res.Token}`;
+            
+          item.DownloadLink = link;
+          this.#generatedDownloadLink.set(link);
+
+          this.triggerDownload(link);
         },
         error: (err) => {
           this.#snackbar.error(`Failed to get bug report URL: ${err.message}`);
         },
       });
+  }
+
+  triggerDownload(link: string) {
+    const a = document.createElement('a');
+    a.href = link;
+    a.download = '';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    try { a.click();} 
+    catch { }
+    document.body.removeChild(a);
   }
 }

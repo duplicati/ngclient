@@ -8,10 +8,10 @@
       {{ _notification.Message }}
     }
 
-    @if (_notification?.DownloadLink) {
+    @if (downloadLink()) {
       <div i18n>
         If the backup file was not downloaded automatically,
-        <a [href]="_notification.DownloadLink" target="_blank">right click and choose "Save as …"</a>
+        <a [href]="downloadLink()" target="_blank">right click and choose "Save as …"</a>
       </div>
     }
 
@@ -20,7 +20,7 @@
         <button spk-button class="small outlined" (click)="doRepair(_notification.BackupID!)" i18n>Repair</button>
       }
 
-      @if (_notification.Action?.startsWith('bug-report:created:') && !_notification.DownloadLink) {
+      @if (_notification.Action?.startsWith('bug-report:created:') && !downloadLink()) {
         <button spk-button class="small outlined" (click)="doDownloadBugreport(_notification)" i18n>Download</button>
       }
 
