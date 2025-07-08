@@ -10,35 +10,43 @@
     <app-logo></app-logo>
   </div>
 
-  <div class="login-row">
-    <input type="text" hidden autocomplete="off" name="username" formControlName="user" />
+  <div class="inner">
+    <div class="login-row">
+      <input type="text" hidden autocomplete="off" name="username" formControlName="user" />
 
-    <spk-form-field>
-      <label for="password">
-        Password
+      <spk-form-field>
+        <label for="password">
+          Password
 
-        <a
-          href="https://docs.duplicati.com/detailed-descriptions/duplicati-access-password"
-          target="_blank"
-          rel="noopener noreferrer">
-          <spk-icon>question</spk-icon>
-        </a>
+          <a
+            href="https://docs.duplicati.com/detailed-descriptions/duplicati-access-password"
+            target="_blank"
+            rel="noopener noreferrer">
+            <spk-icon>question</spk-icon>
+          </a>
+        </label>
+
+        <input
+          #passwordInput
+          type="password"
+          name="password"
+          autocomplete="current-password"
+          i18n-placeholder
+          placeholder="Enter your password"
+          tabindex="1"
+          formControlName="pass" />
+      </spk-form-field>
+
+      <button spk-button class="raised primary" [class.loader]="isLoading()" type="submit">
+        Login
+        <spk-icon>arrow-right</spk-icon>
+      </button>
+    </div>
+    <div class="login-row checkbox">
+      <label for="rememberMe" class="remember-me">
+        <input type="checkbox" id="rememberMe" tabindex="2" formControlName="rememberMe" />
+        Keep me logged in
       </label>
-
-      <input
-        #passwordInput
-        type="password"
-        name="password"
-        autocomplete="current-password"
-        i18n-placeholder
-        placeholder="Enter your password"
-        tabindex="1"
-        formControlName="pass" />
-    </spk-form-field>
-
-    <button spk-button class="raised primary" [class.loader]="isLoading()" type="submit">
-      Login
-      <spk-icon>arrow-right</spk-icon>
-    </button>
+    </div>
   </div>
 </form>

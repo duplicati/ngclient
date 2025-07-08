@@ -9,6 +9,7 @@ import {
 } from '@sparkle-ui/core';
 import { finalize } from 'rxjs';
 import LogoComponent from '../core/components/logo/logo.component';
+import { localStorageSignal } from '../core/functions/localstorage-signal';
 import { AppAuthState } from '../core/states/app-auth.state';
 
 const fb = new FormBuilder();
@@ -31,12 +32,14 @@ export default class LoginComponent {
   #router = inject(Router);
   #auth = inject(AppAuthState);
 
+  rememberMe = localStorageSignal('rememberMe', false, true);
   failedLogin = signal(false);
   successLogin = signal(false);
   isLoading = signal(false);
   loginForm = fb.group({
     user: fb.control<string>(''), // Used as a honeypot to prevent autofill
     pass: fb.control<string>('', Validators.required),
+    rememberMe: fb.control<boolean>(this.rememberMe()),
   });
   passwordInput = viewChild<ElementRef<HTMLInputElement>>('passwordInput');
   passwordEffect = effect(() => {
@@ -45,13 +48,18 @@ export default class LoginComponent {
     }
   });
 
+
   ngOnInit() {
+    this.loginForm.controls.rememberMe.valueChanges
+      .subscribe(v => this.rememberMe.set(v ?? false));
+
     queueMicrotask(() => this.passwordInput()?.nativeElement?.focus());
   }
 
   submit() {
     const password = this.loginForm.value.pass;
     const username = this.loginForm.value.user;
+    this.rememberMe.set(this.loginForm.value.rememberMe ?? false);
 
     if (username) return; // Honeypot
     if (!password) return;
@@ -59,7 +67,7 @@ export default class LoginComponent {
     this.isLoading.set(true);
 
     this.#auth
-      .login(password)
+      .login(password, this.rememberMe())
       .pipe(
         finalize(() => {
           this.isLoading.set(false);

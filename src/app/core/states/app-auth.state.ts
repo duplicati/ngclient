@@ -6,6 +6,7 @@ import { AccessTokenOutputDto, DuplicatiServerService } from '../openapi';
 import { RelayconfigState } from './relayconfig.state';
 
 export const dummytoken = 'PROXY_AUTHED_FAKE_TOKEN';
+const SESSION_STORAGE_ACCESS_TOKEN = 'accessToken';
 
 @Injectable({
   providedIn: 'root',
@@ -15,23 +16,31 @@ export class AppAuthState {
   #http = inject(HttpClient);
   #dupServer = inject(DuplicatiServerService);
   #relayConfigState = inject(RelayconfigState);
-  #token = signal<string | null>(null);
+  #token = signal<string | null>(sessionStorage.getItem(SESSION_STORAGE_ACCESS_TOKEN));
   #isLoggingOut = signal(false);
 
   token = this.#token.asReadonly();
   isLoggingOut = this.#isLoggingOut.asReadonly();
 
-  login(pass: string) {
+  login(pass: string, rememberMe: boolean) {
     return this.#dupServer
       .postApiV1AuthLogin({
         requestBody: {
           Password: pass,
-          RememberMe: true,
+          RememberMe: rememberMe,
         },
       })
       .pipe(
         take(1),
-        tap((res) => res.AccessToken && this.#token.set(res.AccessToken))
+        tap((res) => { 
+          if (res.AccessToken) {
+            this.#token.set(res.AccessToken);
+            sessionStorage.setItem(SESSION_STORAGE_ACCESS_TOKEN, res.AccessToken || '');
+          } else {
+            this.#token.set(null);
+            sessionStorage.removeItem(SESSION_STORAGE_ACCESS_TOKEN);
+          }
+        })
       );
   }
 
@@ -75,6 +84,7 @@ export class AppAuthState {
 
   logout() {
     this.#isLoggingOut.set(true);
+    sessionStorage.removeItem(SESSION_STORAGE_ACCESS_TOKEN);
 
     this.#dupServer
       .postApiV1AuthRefreshLogout()
