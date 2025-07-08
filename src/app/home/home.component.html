@@ -113,7 +113,7 @@
                     @if (backup.Backup?.Metadata?.['LastBackupDuration']) {
                       {{ backup.Backup?.Metadata?.['LastBackupDuration'] | durationFormat: timeType() === 'actual' }}
                     } @else {
-                      <ng-container i18n>N/A</ng-container>
+                      <ng-container>-</ng-container>
                     }
                   </p>
 
@@ -122,7 +122,7 @@
                     @if (backup.Backup?.Metadata?.['SourceFilesSize']) {
                       {{ backup.Backup?.Metadata?.['SourceFilesSize'] | bytes }}
                     } @else {
-                      <ng-container i18n>N/A</ng-container>
+                      <ng-container>-</ng-container>
                     }
                   </p>
 
@@ -131,7 +131,7 @@
                     @if (backup.Backup?.Metadata?.['TargetFilesSize']) {
                       {{ backup.Backup?.Metadata?.['TargetFilesSize'] | bytes }}
                     } @else {
-                      <ng-container i18n>N/A</ng-container>
+                      <ng-container>-</ng-container>
                     }
                   </p>
                 </div>
@@ -162,7 +162,11 @@
               <ng-container *ngTemplateOutlet="sortIcons" />
             </th>
             <th i18n spkSort="lastrun">
-              Last successful backup
+              Last backup
+              <ng-container *ngTemplateOutlet="sortIcons" />
+            </th>
+            <th i18n spkSort="nextrun">
+              Next run
               <ng-container *ngTemplateOutlet="sortIcons" />
             </th>
             <th i18n spkSort="duration">
@@ -193,34 +197,41 @@
                 @if (backup.Backup?.Metadata?.['LastBackupDate']) {
                   {{ backup.Backup?.Metadata?.['LastBackupDate'] | relativeTime: timeType() === 'actual' }}
                 } @else {
-                  <ng-container i18n>N/A</ng-container>
+                  <ng-container>-</ng-container>
+                }
+              </td>
+              <td>
+                @if (backup.Schedule?.Time) {
+                  {{ backup.Schedule?.Time | relativeTime: timeType() === 'actual' }}
+                } @else {
+                  <ng-container>-</ng-container>
                 }
               </td>
               <td>
                 @if (backup.Backup?.Metadata?.['LastBackupDuration']) {
                   {{ backup.Backup?.Metadata?.['LastBackupDuration'] | durationFormat: timeType() === 'actual' }}
                 } @else {
-                  <ng-container i18n>N/A</ng-container>
+                  <ng-container>-</ng-container>
                 }
               </td>
               <td>
                 @if (backup.Backup?.Metadata?.['SourceFilesSize']) {
                   {{ backup.Backup?.Metadata?.['SourceFilesSize'] | bytes }}
                 } @else {
-                  <ng-container i18n>N/A</ng-container>
+                  <ng-container>-</ng-container>
                 }
               </td>
               <td>
                 @if (backup.Backup?.Metadata?.['TargetFilesSize']) {
                   {{ backup.Backup?.Metadata?.['TargetFilesSize'] | bytes }}
                 } @else {
-                  <ng-container i18n>N/A</ng-container>
+                  <ng-container>-</ng-container>
                 }
               </td>
               <td>
                 @let versions = getBackupVersionCount(backup);
                 <span i18n>
-                  {versions, plural, =0 {No version yet} =1 {1 Version} other {{{ versions }} Versions}}
+                  {versions, plural, =0 {No versions} =1 {1 Version} other {{{ versions }} Versions}}
                 </span>
               </td>
 
