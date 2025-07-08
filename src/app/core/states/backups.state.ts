@@ -1,8 +1,8 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { finalize, take, tap } from 'rxjs';
 import { randomUUID } from '../functions/crypto';
+import { localStorageSignal } from '../functions/localstorage-signal';
 import { DeleteApiV1BackupByIdData, DuplicatiServerService } from '../openapi';
-import { LOCALSTORAGE } from '../services/localstorage.token';
 import { ServerStateService } from '../services/server-state.service';
 import { Subscribed } from '../types/subscribed';
 import { SysinfoState } from './sysinfo.state';
@@ -104,7 +104,6 @@ export type TimeType = 'actual' | 'relative';
   providedIn: 'root',
 })
 export class BackupsState {
-  #ls = inject(LOCALSTORAGE);
   #dupServer = inject(DuplicatiServerService);
   #sysinfo = inject(SysinfoState);
   #serverState = inject(ServerStateService);
@@ -115,10 +114,8 @@ export class BackupsState {
   #startingBackup = signal<string | null>(null);
   #deletingBackup = signal<string | null>(null);
 
-  #timeType = signal<TimeType>(
-    this.#ls.getItemParsed<TimeType>(LOCALSTORAGE_BACKUP_LIST_SHOW_ACTUAL_TIMES, true) ?? 'relative'
-  );
-  #orderBy = signal(this.#ls.getItemParsed<OrderBy>(LOCALSTORAGE_BACKUP_LIST_ORDER_BY, true) ?? 'id');
+  #timeType = localStorageSignal<TimeType>(LOCALSTORAGE_BACKUP_LIST_SHOW_ACTUAL_TIMES, 'relative');
+  #orderBy = localStorageSignal<OrderBy>(LOCALSTORAGE_BACKUP_LIST_ORDER_BY, 'id');
 
   orderByOptions = signal(SORT_OPTIONS);
   orderBy = this.#orderBy.asReadonly();
@@ -151,7 +148,6 @@ export class BackupsState {
   }
 
   setOrderBy(orderBy: OrderBy) {
-    this.#ls.setItemParsed(LOCALSTORAGE_BACKUP_LIST_ORDER_BY, orderBy, true);
     this.#orderBy.set(orderBy);
     // Prevent fetching backups if the connection method is not yet set
     if (!this.#serverState.isConnectionMethodSet())
@@ -164,7 +160,6 @@ export class BackupsState {
   }
 
   setTimeType(timeType: TimeType) {
-    this.#ls.setItemParsed(LOCALSTORAGE_BACKUP_LIST_SHOW_ACTUAL_TIMES, timeType, true);
     this.#timeType.set(timeType);
   }
 

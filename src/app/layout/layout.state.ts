@@ -1,5 +1,5 @@
-import { Injectable, effect, inject, signal } from '@angular/core';
-import { LOCALSTORAGE } from '../core/services/localstorage.token';
+import { Injectable, effect, signal } from '@angular/core';
+import { localStorageSignal } from '../core/functions/localstorage-signal';
 
 declare global {
   interface Window {
@@ -11,9 +11,7 @@ declare global {
   providedIn: 'root',
 })
 export class LayoutState {
-  #ls = inject(LOCALSTORAGE);
-  #storedDarkMode = this.#ls.getItemParsed<boolean>('darkTheme', true);
-  #isDarkMode = signal(false);
+  #isDarkMode = localStorageSignal<boolean | null>('darkTheme', null, true);
   #isMobile = signal(window?.innerWidth <= 768);
   #isNavOpen = signal(false);
 
@@ -24,7 +22,7 @@ export class LayoutState {
   constructor() {
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme:dark)').matches;
 
-    if (prefersDarkMode && this.#storedDarkMode) {
+    if (prefersDarkMode && this.#isDarkMode() === null) {
       this.setDarkMode();
     }
 
@@ -46,17 +44,14 @@ export class LayoutState {
   }
 
   toggleBodyClass() {
-    this.#ls.setItemParsed('darkTheme', !this.isDarkMode(), true);
     this.#isDarkMode.set(!this.isDarkMode());
   }
 
   setDarkMode() {
-    this.#ls.setItemParsed('darkTheme', true, true);
     this.#isDarkMode.set(true);
   }
 
   setLightMode() {
-    this.#ls.setItemParsed('darkTheme', false, true);
     this.#isDarkMode.set(false);
   }
 
