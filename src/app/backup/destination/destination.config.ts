@@ -46,6 +46,7 @@ const DEFAULT_DOUBLESLASH_CONFIG: DoubleSlashConfig = {
 
 export const DESTINATION_CONFIG_DEFAULT = {
   description: $localize`Unknown destination type`,
+  isDefaultEntry: true,
   customFields: {
     path: {
       type: 'String' as ArgumentType,
@@ -1495,9 +1496,9 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     },
   },
   {
-    key: 'cifs',
-    displayName: $localize`CIFS`,
-    description: $localize`Store backups in CIFS.`,
+    key: 'smb',
+    displayName: $localize`Windows Share (SMB)`,
+    description: $localize`Store backups on SMB storage.`,
     customFields: {
       server: {
         type: 'Hostname',
