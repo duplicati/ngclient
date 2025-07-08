@@ -68,7 +68,7 @@ export default class HomeComponent {
 
   timeType = this.#backupsState.timeType;
 
-  viewMode = localStorageSignal<'list' | 'details'>('list', 'viewMode');
+  viewMode = localStorageSignal<'list' | 'details'>('viewMode', 'list');
 
   sortByColumn = signal<OrderBy | null>(this.#backupsState.orderBy());
   loadingId = signal<string | null>(null);

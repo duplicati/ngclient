@@ -6,22 +6,23 @@ export class LOCALSTORAGE implements Storage {
   private platformId = inject(PLATFORM_ID);
   private STORAGE_VERSION = 'v1';
   private APP_NAME = 'duplicati';
+  private PERSISTED_PREFIX = `persist:`;
 
-  getItemParsed<T>(key: string, presistedThroughClear = false): T | null {
+  getItemParsed<T>(key: string, persistThroughClear = false): T | null {
     if (isPlatformServer(this.platformId)) return null;
 
     return JSON.parse(
       localStorage.getItem(
-        `${this.STORAGE_VERSION}:${presistedThroughClear ? 'presist-duplicati' : this.APP_NAME}:${key}`
+        `${this.STORAGE_VERSION}:${persistThroughClear ? this.PERSISTED_PREFIX : ''}${this.APP_NAME}:${key}`
       ) ?? 'null'
     );
   }
 
-  setItemParsed<T>(key: string, value: T, presistThroughClear = false): void {
+  setItemParsed<T>(key: string, value: T, persistThroughClear = false): void {
     if (isPlatformServer(this.platformId)) return;
 
     return localStorage.setItem(
-      `${this.STORAGE_VERSION}:${presistThroughClear ? 'presist-duplicati' : this.APP_NAME}:${key}`,
+      `${this.STORAGE_VERSION}:${persistThroughClear ? this.PERSISTED_PREFIX : ''}${this.APP_NAME}:${key}`,
       JSON.stringify(value)
     );
   }
@@ -46,6 +47,7 @@ export class LOCALSTORAGE implements Storage {
     if (isPlatformServer(this.platformId)) return;
 
     localStorage.removeItem(`${this.STORAGE_VERSION}:${this.APP_NAME}:${key}`);
+    localStorage.removeItem(`${this.STORAGE_VERSION}:${this.PERSISTED_PREFIX}${this.APP_NAME}:${key}`);
   }
 
   clearAllNotCurrentVersion(): void {
@@ -68,7 +70,7 @@ export class LOCALSTORAGE implements Storage {
     if (isPlatformServer(this.platformId)) return;
 
     for (var key in localStorage) {
-      if (key.includes(this.APP_NAME) && !key.includes(`presist-${this.APP_NAME}`)) {
+      if (key.includes(this.APP_NAME) && !key.includes(this.PERSISTED_PREFIX)) {
         localStorage.removeItem(key);
       }
     }
