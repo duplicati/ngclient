@@ -26,6 +26,7 @@ export type StatusWithContent = Status & {
 };
 
 const STATUS_STATES: Record<string, string> = {
+  Starting_Operation: $localize`Starting operation …`,
   Backup_Begin: $localize`Starting backup …`,
   Backup_PreBackupVerify: $localize`Verifying backend data …`,
   Backup_PostBackupTest: $localize`Verifying remote data …`,
@@ -56,10 +57,10 @@ const STATUS_STATES: Record<string, string> = {
   BugReport_Running: $localize`Creating bug report …`,
   Delete_Listing: $localize`Listing remote files …`,
   Delete_Deleting: $localize`Deleting remote files …`,
-  'PurgeFiles_Begin,': $localize`Listing remote files for purge …`,
-  'PurgeFiles_Process,': $localize`Purging files …`,
-  'PurgeFiles_Compact,': $localize`Compacting remote data …`,
-  'PurgeFiles_Complete,': $localize`Purging files complete!`,
+  PurgeFiles_Begin: $localize`Listing remote files for purge …`,
+  PurgeFiles_Process: $localize`Purging files …`,
+  PurgeFiles_Compact: $localize`Compacting remote data …`,
+  PurgeFiles_Complete: $localize`Purging files complete!`,
   Error: $localize`Error!`,
 };
 
