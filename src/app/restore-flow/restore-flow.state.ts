@@ -88,6 +88,41 @@ export class RestoreFlowState {
   submit() {
     this.isSubmitting.set(true);
     const id = this.backupId();
+    const isTemporary = this.backup()?.Backup?.IsTemporary ?? false;    
+
+    if (isTemporary) {
+      // If this is a temporary backup, we have a partial database created for the file picking step.
+      // We need to create a fresh temporary backup with no database, so the restore flow creates a partial database for the restore.
+      this.#dupServer
+      .postApiV1BackupByIdCopytotemp({
+        id: this.backupId() ?? ''
+      })
+      .subscribe({
+        next: (res) => {
+          this.#submitRestore(res.ID ?? '');
+        },
+        error: (err) => this.showErrorDialog($localize`An error occurred while copying the backup to a temporary location: ${err.message}`),
+      });
+    } else {
+      this.#submitRestore(id ?? '');
+    }
+
+  }
+
+  showErrorDialog(message: string) {
+    this.#dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: $localize`Error occured`,
+        message: message,
+        confirmText: $localize`OK`,
+        cancelText: undefined,
+      },
+      closed: (_) => {
+      },
+    });
+  }
+
+  #submitRestore(id: string) {
     const optionsValue = this.optionsForm.value;
     const selectFilesFormValue = this.selectFilesForm.value;
     const _selectedOption = this.selectOption();
