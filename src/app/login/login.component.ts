@@ -32,6 +32,7 @@ export default class LoginComponent {
   #auth = inject(AppAuthState);
 
   failedLogin = signal(false);
+  successLogin = signal(false);
   isLoading = signal(false);
   loginForm = fb.group({
     user: fb.control<string>(''), // Used as a honeypot to prevent autofill
@@ -66,7 +67,10 @@ export default class LoginComponent {
         })
       )
       .subscribe({
-        next: () => this.#router.navigate(['/']),
+        next: () => { 
+          this.successLogin.set(true);
+          this.#router.navigate(['/']) 
+        },
       });
   }
 }
