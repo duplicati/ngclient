@@ -50,3 +50,14 @@ label {
     display: block;
   }
 }
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: p2r(8);
+}
+
+.raw-text-area {
+  min-height: 12rem; 
+  white-space: pre;
+}

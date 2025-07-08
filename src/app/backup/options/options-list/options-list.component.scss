@@ -65,3 +65,8 @@ spk-icon {
 .deprecated {
   text-decoration: line-through;
 }
+
+.raw-text-area {
+  min-height: 12rem;
+  white-space: pre;
+}

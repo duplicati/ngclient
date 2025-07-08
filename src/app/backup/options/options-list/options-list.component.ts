@@ -62,6 +62,7 @@ export class OptionsListComponent {
   hiddenOptions = input<string[]>([]);
   hasFreeTextSettings = input(false);
   applicationOptions = input<SettingDto[] | null | undefined>();
+  showTextArea = signal(false);
 
   allOptionsGrouped = this.#sysInfo.allOptionsGrouped;
   allOptions = this.#sysInfo.allOptions;
@@ -76,8 +77,7 @@ export class OptionsListComponent {
 
         let _value: any = setting.Value ?? '';
 
-        if (option && hiddenNames.includes(option.name))
-          return null;
+        if (option && hiddenNames.includes(option.name)) return null;
 
         if (option) {
           if (option.type === 'Boolean') {
@@ -91,8 +91,7 @@ export class OptionsListComponent {
           if (option.type === 'Enumeration' && option.options) {
             const cmpvalue = _value?.trim().toLowerCase();
             const optionValue = option.options.find((opt) => (opt ?? '').trim().toLocaleLowerCase() === cmpvalue);
-            if (optionValue)
-              _value = optionValue;
+            if (optionValue) _value = optionValue;
           }
 
           return {
@@ -139,6 +138,44 @@ export class OptionsListComponent {
       }))
       .filter((group) => group.options.length > 0);
   });
+
+  settingsAsText = computed(() => {
+    return this.selectedSettings()
+      .map((setting) => {
+        const value = setting.Value();
+        
+        let valueString = '';
+        if (typeof value === 'boolean') {
+          valueString = this.isTrue(value) ? 'True' : 'False';
+        } else if (typeof value === 'number') {
+          valueString = value.toString();
+        } else if (value !== null && value !== undefined) {
+          valueString = value.toString();
+        }
+        const name = setting.Name ?? '';
+        return `${name}=${valueString}`;
+      })
+      .join('\n');
+  });
+
+  updateSettingsFromText(newValue: any) {
+    if (typeof newValue !== 'string') return;
+
+    const lines = newValue
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0);
+    const newSettings: SettingInputDto[] = [];
+
+    for (const line of lines) {
+      const [name, value] = line.split('=').map((part) => part.trim());
+      if (name && name.trim().length > 0 && value !== undefined) {
+        newSettings.push({ Name: `${name}`, Value: value });
+      }
+    }
+
+    this.options.update(() => newSettings);
+  }
 
   isTrue(value: any): boolean {
     if (typeof value === 'boolean') {

@@ -39,43 +39,80 @@
   }
 
   <spk-toggle-card [disallowToggle]="true" class="advanced-options">
-    <ng-container title i18n>
-      Advanced options
+    <ng-container title>
+      <ng-container i18n>Advanced options</ng-container>
 
       @let _nonSelectedAdvancedFormViews = nonSelectedAdvancedFormViews();
 
-      <spk-menu [searchable]="true">
-        <button spk-button type="button" class="outlined small" [disabled]="_nonSelectedAdvancedFormViews.length === 0">
-          Add advanced option
-          <spk-icon>plus</spk-icon>
+      @if (showTextArea()) {
+        <button spk-button type="button" class="outlined small" (click)="showTextArea.set(false)" i18n>
+          Show editor
+          <spk-icon>link</spk-icon>
         </button>
-
-        <ng-container menu>
-          @for (formView of _nonSelectedAdvancedFormViews; track $index) {
-            <button #option type="button" (click)="addAdvancedOption(formView)">
-              {{ formView.name }}
+      } @else {
+        <div class="actions">
+          <spk-menu [searchable]="true">
+            <button
+              i18n
+              spk-button
+              type="button"
+              class="outlined small"
+              [disabled]="_nonSelectedAdvancedFormViews.length === 0">
+              Add advanced option
+              <spk-icon>plus</spk-icon>
             </button>
-          }
-        </ng-container>
-      </spk-menu>
+
+            <ng-container menu>
+              @for (formView of _nonSelectedAdvancedFormViews; track $index) {
+                <button #option type="button" (click)="addAdvancedOption(formView)">
+                  {{ formView.name }}
+                </button>
+              }
+            </ng-container>
+          </spk-menu>
+
+          <spk-menu>
+            <button spk-button type="button" class="small">
+              <spk-icon>dots-three-vertical</spk-icon>
+            </button>
+
+            <ng-container menu>
+              <button spk-button type="button" class="small" (click)="showTextArea.set(true)">
+                <spk-icon>link</spk-icon>
+                Edit contents as text
+              </button>
+            </ng-container>
+          </spk-menu>
+        </div>
+      }
     </ng-container>
 
-    @for (optionName of advancedFormFieldNames(); track $index) {
-      @let formView = getFormView('advanced', optionName) ?? getDefaultFormView(optionName);
+    @if (showTextArea()) {
+      <textarea
+        class="raw-text-area"
+        wrap="off"
+        [ngModel]="settingsAsText()"
+        (ngModelChange)="updateSettingsFromText($event)"
+        [ngModelOptions]="{ updateOn: 'blur' }"
+        placeholder="Paste advanced options here, one per line."></textarea>
+    } @else {
+      @for (optionName of advancedFormFieldNames(); track $index) {
+        @let formView = getFormView('advanced', optionName) ?? getDefaultFormView(optionName);
 
-      <ng-container
-        *ngTemplateOutlet="
-          fieldTemplate;
-          context: {
-            $implicit: {
-              index: $index,
-              formView: formView,
-              fieldGroup: 'advanced',
-              destinationType: _destinationType,
-              oauthField: config.oauthField,
-            },
-          }
-        "></ng-container>
+        <ng-container
+          *ngTemplateOutlet="
+            fieldTemplate;
+            context: {
+              $implicit: {
+                index: $index,
+                formView: formView,
+                fieldGroup: 'advanced',
+                destinationType: _destinationType,
+                oauthField: config.oauthField,
+              },
+            }
+          "></ng-container>
+      }
     }
   </spk-toggle-card>
 

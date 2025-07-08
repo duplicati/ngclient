@@ -1,5 +1,15 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, Injector, input, model, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  Injector,
+  input,
+  model,
+  signal,
+} from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   SparkleButtonComponent,
@@ -21,7 +31,13 @@ import { DestinationConfigState } from '../../../core/states/destinationconfig.s
 import { SysinfoState } from '../../../core/states/sysinfo.state';
 import { ServerSettingsService } from '../../../settings/server-settings.service';
 import { BackupState } from '../../backup.state';
-import { CustomFormView, FormView, fromTargetPath, getConfigurationByKey, toTargetPath } from '../destination.config-utilities';
+import {
+  CustomFormView,
+  FormView,
+  fromTargetPath,
+  getConfigurationByKey,
+  toTargetPath,
+} from '../destination.config-utilities';
 
 type DestinationConfig = {
   destinationType: string;
@@ -84,6 +100,8 @@ export class SingleDestinationComponent {
 
   advancedFormFieldNames = computed(() => Object.keys(this.destinationForm().advanced));
   destinationFormConfig = signal<DestinationConfig | null>(null);
+
+  showTextArea = signal(false);
 
   nonSelectedAdvancedFormViews = computed(() => {
     const config = this.destinationFormConfig();
@@ -152,9 +170,7 @@ export class SingleDestinationComponent {
           ? (asDynamic?.defaultValue ?? element.DefaultValue)
           : element.DefaultValue;
 
-        const order = overwriting && asDynamic?.order !== undefined
-          ? asDynamic.order
-          : index;
+        const order = overwriting && asDynamic?.order !== undefined ? asDynamic.order : index;
 
         const newField = {
           name: name,
@@ -181,9 +197,7 @@ export class SingleDestinationComponent {
 
         const asAdvanced = advancedFields.find((x) => x === name || (x as CustomFormView).name === name);
         const overwriting = asAdvanced && typeof asAdvanced !== 'string';
-        const order = overwriting && asAdvanced?.order !== undefined
-          ? asAdvanced.order
-          : index;
+        const order = overwriting && asAdvanced?.order !== undefined ? asAdvanced.order : index;
 
         const newField = {
           name: name as string,
@@ -290,42 +304,42 @@ export class SingleDestinationComponent {
 
   isValidBucketname(name: string): boolean {
     if (!name) return false;
-  
+
     const length = name.length;
-  
+
     // Length between 3 and 63 characters
     if (length < 3 || length > 63) return false;
-  
+
     // Must be lowercase letters, numbers, dots, or hyphens
     if (!/^[a-z0-9.-]+$/.test(name)) return false;
-  
+
     // Must start and end with a letter or number
     if (!/^[a-z0-9]/.test(name) || !/[a-z0-9]$/.test(name)) return false;
-  
+
     // Cannot be formatted like an IP address
     if (/^\d{1,3}(\.\d{1,3}){3}$/.test(name)) return false;
-  
+
     // Cannot contain adjacent periods or dashes next to periods
     if (/(\.\.)|(\.-)|(-\.)/.test(name)) return false;
-  
+
     return true;
   }
 
   isValidHostname(hostname: string): boolean {
     if (!hostname || hostname.length > 253) return false;
-  
+
     const labels = hostname.split('.');
-  
+
     for (const label of labels) {
       // Each label must be 1–63 characters
       if (!label || label.length > 63) return false;
-  
+
       // Must start and end with alphanumeric characters
       if (!/^[a-zA-Z0-9]([-a-zA-Z0-9]*[a-zA-Z0-9])?$/.test(label)) {
         return false;
       }
     }
-  
+
     return true;
   }
 
@@ -340,12 +354,14 @@ export class SingleDestinationComponent {
     return false;
   }
 
-  onKeyDown(fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string, type: FormView['type'], event: KeyboardEvent) {
+  onKeyDown(
+    fieldGroup: 'custom' | 'dynamic' | 'advanced',
+    fieldName: string,
+    type: FormView['type'],
+    event: KeyboardEvent
+  ) {
     if (type === 'Hostname' || type === 'Bucketname') {
-      const controlKeys = [
-        'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight',
-        'Tab', 'Home', 'End'
-      ];
+      const controlKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Home', 'End'];
       if (controlKeys.includes(event.key)) return;
       if (event.key == '/' || event.key == '\\' || event.key == ':') {
         event.preventDefault();
@@ -370,19 +386,20 @@ export class SingleDestinationComponent {
     this.destinationForm.set({ ...form });
   }
 
-  mapOptions(item: FormView) : { key: string, value: string | null | undefined }[] | null | undefined {
+  mapOptions(item: FormView): { key: string; value: string | null | undefined }[] | null | undefined {
     const loadOptions = item.loadOptions;
-    if (loadOptions)
-      return loadOptions(this.injector)();
-    
+    if (loadOptions) return loadOptions(this.injector)();
+
     const options = item.options;
-    if (options) 
-      return options.map((x) => ({ key: x, value: x }));
+    if (options) return options.map((x) => ({ key: x, value: x }));
 
     return null;
   }
 
-  mapOptionsWithFreeText(item: FormView, freeText: string | null | undefined): { key: string, value: string | null | undefined }[] | null | undefined {
+  mapOptionsWithFreeText(
+    item: FormView,
+    freeText: string | null | undefined
+  ): { key: string; value: string | null | undefined }[] | null | undefined {
     const options = this.mapOptions(item);
     if (!options) return null;
 
@@ -398,29 +415,29 @@ export class SingleDestinationComponent {
 
   #oauthInProgress = signal(false);
 
-  oauthStartTokenCreation(backendKey: string, fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string, usev2?: number | null) {
+  oauthStartTokenCreation(
+    backendKey: string,
+    fieldGroup: 'custom' | 'dynamic' | 'advanced',
+    fieldName: string,
+    usev2?: number | null
+  ) {
     this.#oauthInProgress.set(true);
 
-    let oauthUrl = (usev2 ?? 1) == 2
-      ? this.#sysinfo.defaultOAuthUrlV2()
-      : this.#sysinfo.defaultOAuthUrl();
+    let oauthUrl = (usev2 ?? 1) == 2 ? this.#sysinfo.defaultOAuthUrlV2() : this.#sysinfo.defaultOAuthUrl();
 
     const serverOverride = this.#serverSettings.serverSettings()?.['--oauth-url'];
-    if (serverOverride && serverOverride.length > 0)
-      oauthUrl = serverOverride;
+    if (serverOverride && serverOverride.length > 0) oauthUrl = serverOverride;
 
     if (this.useBackupState()) {
       const backupServerOverride = this.#backupState.mapFormsToSettings().find((x) => x.Name === '--oauth-url')?.Value;
-      if (backupServerOverride && backupServerOverride.length > 0)
-        oauthUrl = backupServerOverride;      
+      if (backupServerOverride && backupServerOverride.length > 0) oauthUrl = backupServerOverride;
     }
 
-    const formOverride = this.destinationForm().advanced["oauth-url"];
-    if (formOverride && formOverride.length > 0)
-      oauthUrl = formOverride;
-    
+    const formOverride = this.destinationForm().advanced['oauth-url'];
+    if (formOverride && formOverride.length > 0) oauthUrl = formOverride;
+
     const startlink = `${oauthUrl}?type=${backendKey}`;
-    
+
     const w = 450;
     const h = 600;
     const left = screen.width / 2 - w / 2;
@@ -449,5 +466,46 @@ export class SingleDestinationComponent {
     });
 
     return false;
+  }
+
+  settingsAsText = computed(() => {
+    const advanced = this.destinationForm().advanced; 
+
+    return Object.entries(advanced)
+      .map(([key, value]) => {
+        const name = key ?? '';
+        let valueString = '';
+        if (typeof value === 'boolean') {
+          valueString = this.isTrue(value) ? 'True' : 'False';
+        } else if (typeof value === 'number') {
+          valueString = value.toString();
+        } else if (value !== null && value !== undefined) {
+          valueString = value.toString();
+        }
+        return `${name}=${valueString}`;
+      })
+      .join('\n');
+  });
+
+  updateSettingsFromText(newValue: any) {
+    if (typeof newValue !== 'string') return;
+
+    const lines = newValue
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0);
+    const newSettings: Record<string, any> = {};
+
+    for (const line of lines) {
+      const [name, value] = line.split('=').map((part) => part.trim());
+      if (name && name.trim().length > 0 && value !== undefined) {
+        newSettings[name] = value;
+      }
+    }
+
+    this.destinationForm.update((x) => ({
+      ...x,
+      advanced: newSettings,
+    }));
   }
 }
