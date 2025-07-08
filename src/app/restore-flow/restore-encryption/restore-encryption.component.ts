@@ -3,7 +3,9 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SparkleButtonComponent, SparkleFormFieldComponent, SparkleIconComponent } from '@sparkle-ui/core';
 import { finalize } from 'rxjs';
-import { DuplicatiServerService } from '../../core/openapi';
+import { OptionsListComponent } from '../../backup/options/options-list/options-list.component';
+import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
+import { DuplicatiServerService, SettingInputDto } from '../../core/openapi';
 import { RestoreFlowState } from '../restore-flow.state';
 
 const fb = new FormBuilder();
@@ -16,7 +18,14 @@ export const createEncryptionForm = () => {
 
 @Component({
   selector: 'app-restore-encryption',
-  imports: [ReactiveFormsModule, SparkleFormFieldComponent, SparkleIconComponent, SparkleButtonComponent],
+  imports: [
+    ReactiveFormsModule,
+    SparkleFormFieldComponent,
+    SparkleIconComponent,
+    SparkleButtonComponent,
+    ToggleCardComponent,
+    OptionsListComponent,
+  ],
   templateUrl: './restore-encryption.component.html',
   styleUrl: './restore-encryption.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,6 +38,7 @@ export default class RestoreEncryptionComponent {
 
   encryptionForm = this.#restoreFlowState.encryptionForm;
   creatingTemporaryBackup = signal(false);
+  settings = signal<SettingInputDto[]>([]);
 
   next() {
     const currentTargetUrl = this.#restoreFlowState.destinationTargetUrl();
@@ -40,11 +50,24 @@ export default class RestoreEncryptionComponent {
 
     const pass = this.encryptionForm.value?.passphrase ?? null;
 
-    let settings = [{ Name: '--no-encryption', Value: 'true' }];
+    let settings: SettingInputDto[] = [];      
 
     if (pass) {
-      settings = [{ Name: '--passphrase', Value: pass }];
+      settings.push({ Name: '--passphrase', Value: pass });
+    } else {
+      settings.push({ Name: '--no-encryption', Value: 'true' });
     }
+
+    this.settings().forEach((setting) => {
+      let name = setting.Name?.trim();
+      if (name && name !== '--') {
+        if (!name.startsWith('--')) {
+          name = `--${name}`;
+        }
+        settings.push({ Name: name, Value: setting.Value ?? '' });
+      }
+    });
+
 
     this.#dupServer
       .postApiV1Backups({

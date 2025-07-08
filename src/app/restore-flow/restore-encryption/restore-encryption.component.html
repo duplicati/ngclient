@@ -9,6 +9,12 @@
       formControlName="passphrase" />
   </spk-form-field>
 
+  <app-toggle-card>
+    <ng-container title i18n>Advanced options</ng-container>
+
+    <app-options-list [(options)]="settings" [hasFreeTextSettings]="true" />
+  </app-toggle-card>
+
   <div class="form-actions">
     <button spk-button type="button" (click)="back()" i18n>
       <spk-icon>arrow-left</spk-icon>
