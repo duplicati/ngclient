@@ -11,9 +11,8 @@ import {
   fromSearchParams,
   fromUrlObj,
   getSimplePath,
-  removeLeadingSlash,
   toSearchParams,
-  ValueOfDestinationFormGroup,
+  ValueOfDestinationFormGroup
 } from './destination.config-utilities';
 
 const fb = new FormBuilder();
@@ -1369,7 +1368,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path: removeLeadingSlash(urlObj.pathname),
+            path: getSimplePath(urlObj),
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -1397,30 +1396,25 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         name: 'cos-bucket',
         type: 'Bucketname',
         shortDescription: $localize`Bucket`,
-        order: 1,
         isMandatory: true,
       },
       {
         name: 'cos-region',
         shortDescription: $localize`Region`,
-        order: 2,
       },
       {
         name: 'cos-app-id',
         shortDescription: $localize`COS App Id`,
-        order: 3,
         isMandatory: true,
       },
       {
         name: 'cos-secret-id',
         shortDescription: $localize`COS Secret Id`,
-        order: 4,
         isMandatory: true,
       },
       {
         name: 'cos-secret-key',
         shortDescription: $localize`COS Secret Key`,
-        order: 5,
         isMandatory: true,
       },
     ],
@@ -1432,7 +1426,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path: removeLeadingSlash(urlObj.pathname),
+            path: getSimplePath(urlObj),
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -1763,13 +1757,6 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     displayName: $localize`Aliyun OSS`,
     description: $localize`Store backups in Aliyun OSS`,
     customFields: {
-      bucket: {
-        type: 'Bucketname',
-        name: 'oss-bucket-name',
-        shortDescription: $localize`Bucket name`,
-        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
-        isMandatory: true,
-      },
       path: {
         type: 'Path',
         name: 'path',
@@ -1781,31 +1768,35 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     },
     dynamicFields: [
       {
+        type: 'Bucketname',
+        name: 'oss-bucket-name',
+        shortDescription: $localize`Bucket name`,
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+        isMandatory: true,
+      },
+      {
         name: 'oss-endpoint', 
-        isMandatory: true
+        isMandatory: true,
       },
       {
         name: 'oss-access-key-id', 
-        isMandatory: true
+        isMandatory: true,
       },
       {
         name: 'oss-access-key-secret',
-        isMandatory: true
+        isMandatory: true,
       },
     ],
     mapper: {
       to: (fields: ValueOfDestinationFormGroup): string => {
         const path = fields.custom.path;
-        const bucket = fields.custom['oss-bucket-name'];
-        return buildUrlFromFields(fields, bucket, null, path);
+        return buildUrlFromFields(fields, null, null, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
-        const { server, path } = fromUrlObj(urlObj); 
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path: path,
-            bucket: server,
+            path: getSimplePath(urlObj),
           },
           ...fromSearchParams(destinationType, urlObj),
         };
