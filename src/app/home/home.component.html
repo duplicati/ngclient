@@ -101,6 +101,13 @@
                     {{ backup.Backup?.Metadata?.['LastBackupFinished'] | relativeTime: timeType() === 'actual' }}
                   </p>
 
+                  @if (backup.Schedule?.Time) {
+                    <p>
+                      <span i18n>Next scheduled run:</span>
+                      {{ backup.Schedule?.Time | relativeTime: timeType() === 'actual' }}
+                    </p>
+                  }
+
                   <p>
                     <span i18n>Duration:</span>
                     @if (backup.Backup?.Metadata?.['LastBackupDuration']) {
