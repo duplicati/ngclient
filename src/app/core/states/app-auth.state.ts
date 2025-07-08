@@ -35,7 +35,8 @@ export class AppAuthState {
         tap((res) => { 
           if (res.AccessToken) {
             this.#token.set(res.AccessToken);
-            sessionStorage.setItem(SESSION_STORAGE_ACCESS_TOKEN, res.AccessToken || '');
+            if (rememberMe)
+              sessionStorage.setItem(SESSION_STORAGE_ACCESS_TOKEN, res.AccessToken || '');
           } else {
             this.#token.set(null);
             sessionStorage.removeItem(SESSION_STORAGE_ACCESS_TOKEN);
@@ -80,6 +81,10 @@ export class AppAuthState {
           return of(false);
         })
       );
+  }
+
+  clearSessionToken() {
+    sessionStorage.removeItem(SESSION_STORAGE_ACCESS_TOKEN);
   }
 
   logout() {

@@ -83,6 +83,7 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
 
         if (!isLoginRequest && !isRefreshRequest) {
           if (error.status === 401) {
+            auth.clearSessionToken();
             refreshRequest ??= auth.refreshToken().pipe(shareReplay());
 
             return refreshRequest!.pipe(
