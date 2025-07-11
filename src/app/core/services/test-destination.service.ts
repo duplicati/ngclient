@@ -138,7 +138,11 @@ export class TestDestinationService {
         cancelText: $localize`Cancel`,
       },
       closed: (res) => {
-        if (!res) return;
+        if (!res)
+        {
+          this.reportNoAction(observer, targetUrl, destinationIndex, $localize`The remote folder does not exist.`);
+          return;
+        }
 
         if (this.#sysinfo.hasV2TestOperations()) {
           this.#dupServer
@@ -264,10 +268,11 @@ export class TestDestinationService {
     });
   }
 
-  private reportNoAction(observer: Subscriber<TestDestinationResult>, targetUrl: string, destinationIndex: number) {
+  private reportNoAction(observer: Subscriber<TestDestinationResult>, targetUrl: string, destinationIndex: number, message: string) {
     observer.next({
       action: 'generic-error',
       targetUrl,
+      errorMessage: message,
       testAgain: false,
       destinationIndex,
     });
@@ -292,7 +297,7 @@ export class TestDestinationService {
       },
       closed: (res: boolean) => {
         if (!res) {
-          this.reportNoAction(observer, targetUrl, destinationIndex);
+          this.reportNoAction(observer, targetUrl, destinationIndex, $localize`The server certificate is not trusted.`);
           return;
         }
 
@@ -326,7 +331,7 @@ export class TestDestinationService {
         },
         closed: (res) => {
           if (!res) {
-            this.reportNoAction(observer, targetUrl, destinationIndex);
+            this.reportNoAction(observer, targetUrl, destinationIndex, $localize`The host key was not approved.`);
             return;
           }
 
@@ -355,7 +360,7 @@ with the REPORTED host key: ${reportedhostkey}?`,
         },
         closed: (res) => {
           if (!res) {
-            this.reportNoAction(observer, targetUrl, destinationIndex);
+            this.reportNoAction(observer, targetUrl, destinationIndex, $localize`The host key was not approved.`);
             return;
           }
 
