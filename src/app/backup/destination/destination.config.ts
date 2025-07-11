@@ -1554,8 +1554,8 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         const { server, path } = fromUrlObj(urlObj); 
 
-        const share = path.split('/')[1];
-        const subpath = path.split('/').slice(2).join('/');
+        const share = path.split('/')[0];
+        const subpath = path.split('/').slice(1).join('/');
 
         return <ValueOfDestinationFormGroup>{
           destinationType,
