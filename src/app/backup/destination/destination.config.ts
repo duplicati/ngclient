@@ -105,7 +105,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path: path.split('?')[0],
+            path: decodeURIComponent(path.split('?')[0]),
           },
           ...fromSearchParams(destinationType, urlObj),
         };
