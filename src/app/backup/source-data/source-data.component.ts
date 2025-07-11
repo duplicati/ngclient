@@ -187,8 +187,9 @@ export default class SourceDataComponent {
     const newPath = this.newPathCtrl.value;
 
     // TODO - Add path validation
+    const updatedPath = (currentPath ?? '').trim() === '' ? newPath : `${currentPath}\0${newPath}`;
 
-    this.sourceDataForm.controls.path.setValue(`${currentPath}\0${newPath}`);
+    this.sourceDataForm.controls.path.setValue(updatedPath);
     this.newPathCtrl.setValue('');
   }
 
