@@ -98,9 +98,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         const hasLeadingSlash = plainPath.startsWith('file:///');
-        const _tempPath = hasLeadingSlash ? plainPath.split('file:///')[1] : plainPath.split('file://')[1];
-        const isWindows = _tempPath.slice(1).startsWith(':\\');
-        const path = isWindows ? _tempPath : '/' + _tempPath;
+        const path = hasLeadingSlash ? plainPath.split('file:///')[1] : plainPath.split('file://')[1];
 
         return <ValueOfDestinationFormGroup>{
           destinationType,
