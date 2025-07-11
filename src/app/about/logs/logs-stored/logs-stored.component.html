@@ -10,7 +10,7 @@
 
   @for (row of _logs; track $index) {
     <tr (click)="toggleRow($index)">
-      <td>{{ row['Timestamp'] | date: 'MMM dd. hh:mm' }}</td>
+      <td>{{ row['Timestamp'] ? (row['Timestamp'] * 1000 | date: 'medium') : '-' }}</td>
       <td class="id">{{ row['BackupID'] >= 0 ? row['BackupID'] : '-' }}</td>
       <td>{{ row['Message'] }}</td>
       <td>

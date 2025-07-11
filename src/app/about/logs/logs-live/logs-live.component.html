@@ -14,7 +14,7 @@
 
     @for (row of logs(); track $index) {
       <tr (click)="toggleRow($index)">
-        <td>{{ row['When'] | date: 'MMM dd. hh:mm' }}</td>
+        <td>{{ row['When'] | date: 'medium' }}</td>
         <td>{{ subStringMessage(row['Message']) }}</td>
         <td class="sticky-end">
           <button spk-button class="outlined small" [class.rotated-icon]="$index === openRowIndex()" type="button">
