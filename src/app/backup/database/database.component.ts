@@ -52,13 +52,15 @@ export default class DatabaseComponent {
   pathHasChanged = computed(() => this.backupFilePath() !== this.#firstDBPath());
   isValidatingPath = signal(false);
   #debouncedBackupFilePath = debouncedSignal(this.backupFilePath, 500);
+  #movedDbPath = signal<boolean>(false);
   isWaitingForValidation = computed(
     () => this.#debouncedBackupFilePath() != this.backupFilePath() || this.isValidatingPath()
   );
 
   backupFilePathEffect = effect(() => {
     const backupFilePath = this.#debouncedBackupFilePath();
-    const _ = this.activeBackup(); // Also trigger if the backup changes
+    const _1 = this.activeBackup(); // Also trigger if the backup changes
+    const _2 = this.#movedDbPath(); // Also trigger if the movedDbPath changes
 
     if (backupFilePath === '') return;
 
@@ -221,7 +223,10 @@ export default class DatabaseComponent {
         },
       })
       .pipe(finalize(() => this.isMovingDb.set(false)))
-      .subscribe(() => this.#firstDBPath.set(currentPath));
+      .subscribe(() => {
+        this.#movedDbPath.update((x) => !x);
+        this.#firstDBPath.set(currentPath);
+      });
   }
 
   createErrorReport() {
