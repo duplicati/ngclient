@@ -121,19 +121,22 @@ export default class SourceDataComponent {
 
   removePath(path: string) {
     const currentPath = this.sourceDataForm.controls.path.value ?? '';
-    const indexOfPath = currentPath.indexOf(path);
+    const paths = currentPath.split('\0');
+    const indexOfPath = paths.indexOf(path);
 
     if (indexOfPath === -1) return;
 
-    const pathToRemove = indexOfPath === 0 ? path : '\0' + path;
-    const nonFilterPath = currentPath.replace(pathToRemove, '');
+    paths.splice(indexOfPath, 1);
+    const nonFilterPath = paths.filter((x) => x && x !== '').join('\0');
 
     this.sourceDataForm.controls.path.setValue(nonFilterPath);
   }
 
   addFilter(newPath = '-*') {
     const currentPath = this.sourceDataForm.controls.path.value;
-    this.sourceDataForm.controls.path.setValue(`${currentPath!}\0${newPath}`);
+    const combined = [currentPath, newPath].filter((x) => x &&x !== '').join('\0');
+
+    this.sourceDataForm.controls.path.setValue(combined);
   }
 
   patchPathAt(newPath: string, index: number) {
@@ -147,7 +150,8 @@ export default class SourceDataComponent {
       .map((x, i) => (i === index ? `${newPath}` : `${x}`))
       .join('\0');
 
-    this.sourceDataForm.controls.path.setValue(`${nonFilterPath}\0${_newPath}`);
+      const combined = [nonFilterPath, _newPath].filter((x) => x && x !== '').join('\0');
+      this.sourceDataForm.controls.path.setValue(combined);
   }
 
   removePathAt(index: number) {
@@ -161,7 +165,8 @@ export default class SourceDataComponent {
       .filter((_, i) => i !== index)
       .join('\0');
 
-    this.sourceDataForm.controls.path.setValue(`${nonFilterPath}\0${_newPath}`);
+    const combined = [nonFilterPath, _newPath].filter((x) => x && x !== '').join('\0');
+    this.sourceDataForm.controls.path.setValue(combined);
   }
 
   getPath() {
@@ -187,8 +192,11 @@ export default class SourceDataComponent {
     const newPath = this.newPathCtrl.value;
 
     // TODO - Add path validation
-    const updatedPath = (currentPath ?? '').trim() === '' ? newPath : `${currentPath}\0${newPath}`;
+    const existing = currentPath?.split('\0') || [];
+    if (newPath && !existing.includes(newPath))
+      existing.push(newPath);
 
+    const updatedPath = existing.filter((x) => x && x !== '').join('\0');
     this.sourceDataForm.controls.path.setValue(updatedPath);
     this.newPathCtrl.setValue('');
   }
