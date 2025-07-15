@@ -98,12 +98,14 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         const hasLeadingSlash = plainPath.startsWith('file:///');
-        const path = hasLeadingSlash ? plainPath.split('file:///')[1] : plainPath.split('file://')[1];
+        const _tempPath = decodeURIComponent(hasLeadingSlash ? plainPath.split('file:///')[1] : plainPath.split('file://')[1]);
+        const isWindows = _tempPath.slice(1).startsWith(':\\');
+        const path = isWindows ? _tempPath : '/' + _tempPath;
 
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path: decodeURIComponent(path.split('?')[0]),
+            path: path.split('?')[0],
           },
           ...fromSearchParams(destinationType, urlObj),
         };

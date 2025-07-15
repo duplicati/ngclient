@@ -77,9 +77,11 @@ export function buildUrl(protocol: string, server: string | null | undefined, po
   const serverPart = encodeURIComponent(addServer(server));
   const serverAndPortPart = serverPart == '' ? '' : serverPart + addPort(port);
   const pathPart = path ?? '';
+  const isWindows = pathPart.slice(1).startsWith(':\\');
+  const protocolPrefix = isWindows && protocol == 'file' ? 'file:///' : `${protocol}://`;
 
   const serverAndPath = concatPaths(serverAndPortPart, encodePathPreservingSlashes(pathPart));
-  return `${protocol}://${serverAndPath}${urlParams}`;
+  return `${protocolPrefix}${serverAndPath}${urlParams}`;
 }
 
 export function removeLeadingSlash(path: string | null | undefined) {
@@ -192,7 +194,10 @@ export function fromTargetPath(targetPath: string) {
   const canParse = URL.canParse(targetPath);
   const destinationType = targetPath.split('://')[0];
   const path = targetPath.split('://')[1];
-  const fakeProtocolPrefixed = 'http://' + path;
+  // Handle Windows paths that are not real URLs, e.g. file://C:/path/to/file
+  const fakeProtocolPrefixed = destinationType === 'file'
+    ? 'http://dummy'
+    : 'http://' + path;
 
   if (!path) return null;
 
@@ -237,7 +242,7 @@ export function fromTargetPath(targetPath: string) {
       targetPath
     );
   } catch (error) {
-    // console.error('Error while parsing target path', error);
+    console.error('Error while parsing target path', error);
     return null;
   }
 }
