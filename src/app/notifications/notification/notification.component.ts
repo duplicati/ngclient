@@ -127,7 +127,7 @@ export class NotificationComponent {
             return;
           }
 
-          const link = `api/v1/bugreport/${id}?token=${res.Token}`;
+          const link = `${location.origin}/api/v1/bugreport/${id}?token=${res.Token}`;
             
           item.DownloadLink = link;
           this.#generatedDownloadLink.set(link);
