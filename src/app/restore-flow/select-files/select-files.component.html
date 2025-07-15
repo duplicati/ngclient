@@ -18,6 +18,9 @@
           @if (option.FileSizes) {
             ({{ option.FileSizes | bytes }})
           }
+          @if (option.IsFullBackup === false) {
+            <span class="partial" i18n>(partial)</span>
+          }
         </div>
       </ng-template>
     </spk-select>
