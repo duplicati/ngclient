@@ -26,6 +26,12 @@
   flex-direction: column;
   gap: p2r(4);
   min-width: p2r(300);
+  flex: 1 0;
+
+  sh-progress-bar {
+    max-width: p2r(300);
+    width: 100%;
+  }
 
   .label {
     display: flex;
