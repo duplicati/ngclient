@@ -1,6 +1,6 @@
 {
   "name": "@duplicati/ngclient",
-  "version": "0.0.141",
+  "version": "0.0.142",
   "license": "MIT",
   "contributors": [
     "sp90",
@@ -32,7 +32,7 @@
     "@angular/platform-browser": "^20.1.4",
     "@angular/platform-browser-dynamic": "^20.1.4",
     "@angular/router": "^20.1.4",
-    "@ship-ui/core": "^0.13.12", 
+    "@ship-ui/core": "^0.13.12",
     "dayjs": "^1.11.13",
     "marked": "^15.0.7",
     "ngxtension": "^4.5.0",
