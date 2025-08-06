@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { SparkleFormFieldComponent, SparkleIconComponent, SparkleSelectComponent } from '@sparkle-ui/core';
+import { ShipFormFieldComponent, ShipIconComponent, ShipSelectComponent } from '@ship-ui/core';
 
 type ExpressionDirection = '-' | '+';
 type _ExpressionType =
@@ -72,7 +72,7 @@ const EXPRESSION_OPTIONS: ExpressionTypeMap[] = [
 
 @Component({
   selector: 'app-new-filter',
-  imports: [FormsModule, SparkleSelectComponent, SparkleFormFieldComponent, SparkleIconComponent],
+  imports: [FormsModule, ShipSelectComponent, ShipFormFieldComponent, ShipIconComponent],
   templateUrl: './new-filter.component.html',
   styleUrl: './new-filter.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

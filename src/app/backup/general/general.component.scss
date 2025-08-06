@@ -1,4 +1,4 @@
-@use '@sparkle-ui/core/styles/helpers' as *;
+@use '@ship-ui/core/styles/helpers' as *;
 
 :host {
   display: block;
@@ -37,7 +37,7 @@ sup {
 }
 
 .copy {
-  spk-icon.spk-success {
+  sh-icon.sh-success {
     color: var(--success-8);
   }
 }

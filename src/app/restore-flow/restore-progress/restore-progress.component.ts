@@ -2,11 +2,11 @@ import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
-  SparkleCardComponent,
-  SparkleIconComponent,
-  SparkleProgressBarComponent,
-  SparkleSpinnerComponent,
-} from '@sparkle-ui/core';
+    ShipCardComponent,
+    ShipIconComponent,
+    ShipProgressBarComponent,
+    ShipSpinnerComponent,
+} from '@ship-ui/core';
 import LogsLiveComponent from '../../about/logs/logs-live/logs-live.component';
 import { StatusBarState } from '../../core/components/status-bar/status-bar.state';
 import { DuplicatiServerService, GetTaskStateDto } from '../../core/openapi';
@@ -19,10 +19,10 @@ import { RestoreFlowState } from '../restore-flow.state';
   selector: 'app-restore-progress',
   imports: [
     LogsLiveComponent,
-    SparkleProgressBarComponent,
-    SparkleSpinnerComponent,
-    SparkleIconComponent,
-    SparkleCardComponent,
+    ShipProgressBarComponent,
+    ShipSpinnerComponent,
+    ShipIconComponent,
+    ShipCardComponent,
     NotificationsComponent,
     BytesPipe,
     DecimalPipe,

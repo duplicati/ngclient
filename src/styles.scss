@@ -1,5 +1,5 @@
-@use '@sparkle-ui/core/styles/helpers' as *;
-@use '@sparkle-ui/core/styles' as * with (
+@use '@ship-ui/core/styles/helpers' as *;
+@use '@ship-ui/core/styles' as * with (
   $useInterTight: false,
   $useApexcharts: false
 );
@@ -26,7 +26,7 @@ body {
   }
 }
 
-.sparkle-popup-menu {
+.ship-popup-menu {
   min-width: initial;
 
   &.right {

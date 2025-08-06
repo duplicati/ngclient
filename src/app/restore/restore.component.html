@@ -3,36 +3,36 @@
 <section>
   <h2 i18n>Where do you want to restore from?</h2>
 
-  <spk-card class="type-a">
+  <sh-card class="type-a">
     <img src="assets/images/backup.png" alt="" width="48px" />
     <div class="text">
       <h3>Direct restore from backup files</h3>
       <p>Point to your backup files and restore from there.</p>
     </div>
-    <button spk-button [routerLink]="['/restore-from-files']">
+    <button shButton [routerLink]="['/restore-from-files']">
       Start
-      <spk-icon>play-circle</spk-icon>
+      <sh-icon>play-circle</sh-icon>
     </button>
-  </spk-card>
+  </sh-card>
 
-  <spk-card class="type-a">
+  <sh-card class="type-a">
     <img src="assets/images/restore.png" alt="" width="48px" />
     <div class="text">
       <h3>Restore from configuration</h3>
       <p>Load destination from an exported job or a storage provider</p>
     </div>
-    <button spk-button [routerLink]="['/restore/from-config']">
+    <button shButton [routerLink]="['/restore/from-config']">
       Start
-      <spk-icon>play-circle</spk-icon>
+      <sh-icon>play-circle</sh-icon>
     </button>
-  </spk-card>
+  </sh-card>
 
-  <spk-divider>Or existing</spk-divider>
+  <sh-divider>Or existing</sh-divider>
 
   @defer (when !backupsLoading()) {
     @if (backups().length) {
       @for (backup of backups(); track $index) {
-        <spk-card class="type-a">
+        <sh-card class="type-a">
           <img src="assets/images/folder.png" alt="" width="48px" />
 
           <div class="text">
@@ -43,18 +43,18 @@
             </p>
           </div>
 
-          <button spk-button [routerLink]="['/restore', backup.Backup?.ID]" i18n>
+          <button shButton [routerLink]="['/restore', backup.Backup?.ID]" i18n>
             Restore
-            <spk-icon>arrow-right</spk-icon>
+            <sh-icon>arrow-right</sh-icon>
           </button>
-        </spk-card>
+        </sh-card>
       }
     } @else {
       <ng-container i18n>No backups founds</ng-container>
     }
   } @placeholder {
     <div class="loading-list">
-      <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
+      <sh-progress-bar class="indeterminate primary"></sh-progress-bar>
 
       <div class="text">
         <h3 i18n>Loading backups...</h3>

@@ -1,23 +1,23 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  ElementRef,
-  inject,
-  Injector,
-  signal,
-  viewChild,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    ElementRef,
+    inject,
+    Injector,
+    signal,
+    viewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  SparkleAlertComponent,
-  SparkleDialogComponent,
-  SparkleDialogService,
-  SparkleFormFieldComponent,
-  SparkleIconComponent,
-  SparkleMenuComponent,
-} from '@sparkle-ui/core';
+    ShipAlertComponent,
+    ShipDialogComponent,
+    ShipDialogService,
+    ShipFormFieldComponent,
+    ShipIconComponent,
+    ShipMenuComponent,
+} from '@ship-ui/core';
 import { BackupState } from '../../backup/backup.state';
 import { getConfigurationByKey } from '../../backup/destination/destination.config-utilities';
 import { SingleDestinationComponent } from '../../backup/destination/single-destination/single-destination.component';
@@ -33,11 +33,11 @@ import { RestoreFlowState } from '../restore-flow.state';
     SingleDestinationComponent,
 
     FormsModule,
-    SparkleFormFieldComponent,
-    SparkleMenuComponent,
-    SparkleIconComponent,
-    SparkleDialogComponent,
-    SparkleAlertComponent,
+    ShipFormFieldComponent,
+    ShipMenuComponent,
+    ShipIconComponent,
+    ShipDialogComponent,
+    ShipAlertComponent,
   ],
   templateUrl: './restore-destination.component.html',
   styleUrl: './restore-destination.component.scss',
@@ -47,7 +47,7 @@ import { RestoreFlowState } from '../restore-flow.state';
 export default class RestoreDestinationComponent {
   #router = inject(Router);
   #route = inject(ActivatedRoute);
-  #dialog = inject(SparkleDialogService);
+  #dialog = inject(ShipDialogService);
   #testDestination = inject(TestDestinationService);
   injector = inject(Injector);
   #restoreFlowState = inject(RestoreFlowState);

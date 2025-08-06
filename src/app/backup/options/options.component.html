@@ -6,7 +6,7 @@
       <label for="size" i18n>
         Remote volume size
         @if (exceededVolumeSize()) {
-          <spk-icon class="warning">warning</spk-icon>
+          <sh-icon class="warning">warning</sh-icon>
         }
       </label>
     </app-size>
@@ -20,17 +20,17 @@
     <p i18n>
       The backups will be split up into multiple files called volumes. Here you can set the maximum size of the
       individual volume files.
-      <a href="https://forum.duplicati.com/t/choosing-sizes-in-duplicati/17683" target="_blank" class="spk-primary">
+      <a href="https://forum.duplicati.com/t/choosing-sizes-in-duplicati/17683" target="_blank" class="sh-primary">
         Read more
-        <spk-icon suffix>arrow-square-out</spk-icon>
+        <sh-icon suffix>arrow-square-out</sh-icon>
       </a>
     </p>
   </div>
 
-  <spk-select [options]="retentionOptions()" [inlineSearch]="true" [isClearable]="false" value="value" label="name">
+  <sh-select [options]="retentionOptions()" [inlineSearch]="true" [isClearable]="false" value="value" label="name">
     <label for="size" i18n>Backup retention</label>
     <input type="text" [(ngModel)]="optionsFields.backupRetention" />
-  </spk-select>
+  </sh-select>
 
   @if (optionsFields.backupRetention() === 'all') {
     <p i18n>Nothing will be deleted. The backup size will grow with each change.</p>
@@ -41,10 +41,10 @@
     </app-timespan>
   } @else if (optionsFields.backupRetention() === 'versions') {
     <p i18n>Once there are more backups than the specified number, the oldest backups are deleted.</p>
-    <spk-form-field>
+    <sh-form-field>
       <label for="backupRetentionVersions" i18n>Number of versions</label>
       <input type="number" id="backupRetentionVersions" [(ngModel)]="optionsFields.backupRetentionVersions" />
-    </spk-form-field>
+    </sh-form-field>
   } @else if (optionsFields.backupRetention() === 'smart') {
     <p i18n>
       Over time backups will be deleted automatically. There will remain one backup for each of the last 7 days, each of
@@ -56,11 +56,11 @@
       is: 7D:1D,4W:1W,36M:1M. This example keeps one backup for each of the next 7 days, one for each of the next 4
       weeks, and one for each of the next 36 months. This can also be written as 1W:1D,1M:1W,3Y:1M.
     </p>
-    <spk-form-field>
+    <sh-form-field>
       <p i18n>Once there are more backups than the specified number, the oldest backups are deleted.</p>
       <label for="backupRetentionCustom" i18n>Retention expression</label>
       <input type="text" id="backupRetentionCustom" [(ngModel)]="optionsFields.backupRetentionCustom" />
-    </spk-form-field>
+    </sh-form-field>
   }
 
   <app-options-list
@@ -81,13 +81,13 @@
     ]" />
 
   <div class="form-actions">
-    <button spk-button type="button" (click)="goBack()" i18n>
-      <spk-icon>arrow-left</spk-icon>
+    <button shButton type="button" (click)="goBack()" i18n>
+      <sh-icon>arrow-left</sh-icon>
       Go back
     </button>
 
-    <button spk-button class="raised primary" [class.loader]="isSubmitting()" (click)="submit()" i18n>
-      <spk-icon>arrow-right</spk-icon>
+    <button shButton class="raised primary" [class.loader]="isSubmitting()" (click)="submit()" i18n>
+      <sh-icon>arrow-right</sh-icon>
       Submit
     </button>
   </div>

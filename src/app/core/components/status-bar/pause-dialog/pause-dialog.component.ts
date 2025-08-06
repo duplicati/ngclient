@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { SparkleAlertComponent, SparkleCheckboxComponent, SparkleRadioComponent } from '@sparkle-ui/core';
+import { ShipAlertComponent, ShipCheckboxComponent, ShipRadioComponent } from '@ship-ui/core';
 import { finalize } from 'rxjs';
 import { DuplicatiServerService } from '../../../openapi';
 
@@ -18,7 +18,7 @@ const PAUSE_OPTIONS = [
 
 @Component({
   selector: 'app-pause-dialog',
-  imports: [FormsModule, SparkleRadioComponent, SparkleCheckboxComponent, SparkleAlertComponent],
+  imports: [FormsModule, ShipRadioComponent, ShipCheckboxComponent, ShipAlertComponent],
   templateUrl: './pause-dialog.component.html',
   styleUrl: './pause-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,4 +1,4 @@
-@use '@sparkle-ui/core/styles/helpers' as *;
+@use '@ship-ui/core/styles/helpers' as *;
 
 :host {
   display: flex;
@@ -26,6 +26,6 @@ form {
   max-width: p2r(500);
 }
 
-spk-file-upload {
+sh-file-upload {
   width: 100%;
 }

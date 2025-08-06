@@ -3,12 +3,12 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import {
-  SparkleButtonComponent,
-  SparkleDialogService,
-  SparkleFormFieldComponent,
-  SparkleIconComponent,
-  SparkleTooltipDirective
-} from '@sparkle-ui/core';
+    ShipButtonComponent,
+    ShipDialogService,
+    ShipFormFieldComponent,
+    ShipIconComponent,
+    ShipTooltipDirective
+} from '@ship-ui/core';
 import { debounceTime, distinctUntilChanged, finalize, map, take } from 'rxjs';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
@@ -26,10 +26,10 @@ function debouncedSignal<T>(source: Signal<T>, wait: number) {
   imports: [
     FormsModule,
     StatusBarComponent,
-    SparkleButtonComponent,
-    SparkleFormFieldComponent,
-    SparkleIconComponent,
-    SparkleTooltipDirective,
+    ShipButtonComponent,
+    ShipFormFieldComponent,
+    ShipIconComponent,
+    ShipTooltipDirective,
     RouterLink,
   ],
   templateUrl: './database.component.html',
@@ -40,7 +40,7 @@ export default class DatabaseComponent {
   #route = inject(ActivatedRoute);
   #backups = inject(BackupsState);
   #dupServer = inject(DuplicatiServerService);
-  #dialog = inject(SparkleDialogService);
+  #dialog = inject(ShipDialogService);
   #firstDBPath = signal('');
 
   backupId = toSignal<string>(this.#route.params.pipe(map((x) => x['id'])));

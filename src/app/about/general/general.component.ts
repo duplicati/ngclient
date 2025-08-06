@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { SparkleButtonComponent, SparkleIconComponent, SparkleProgressBarComponent } from '@sparkle-ui/core';
+import { ShipButtonComponent, ShipIconComponent, ShipProgressBarComponent } from '@ship-ui/core';
 import { finalize, map } from 'rxjs';
 import { DuplicatiServerService } from '../../core/openapi';
 import { ServerStateService } from '../../core/services/server-state.service';
@@ -8,7 +8,7 @@ import { SysinfoState } from '../../core/states/sysinfo.state';
 
 @Component({
   selector: 'app-general',
-  imports: [SparkleProgressBarComponent, SparkleButtonComponent, SparkleIconComponent],
+  imports: [ShipProgressBarComponent, ShipButtonComponent, ShipIconComponent],
   templateUrl: './general.component.html',
   styleUrl: './general.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

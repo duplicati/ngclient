@@ -2,11 +2,11 @@ import { DatePipe, JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, input, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import {
-  SparkleButtonComponent,
-  SparkleDividerComponent,
-  SparkleIconComponent,
-  SparkleProgressBarComponent,
-} from '@sparkle-ui/core';
+    ShipButtonComponent,
+    ShipDividerComponent,
+    ShipIconComponent,
+    ShipProgressBarComponent,
+} from '@ship-ui/core';
 import { map } from 'rxjs';
 import ToggleCardComponent from '../../../core/components/toggle-card/toggle-card.component';
 import { DuplicatiServerService } from '../../../core/openapi';
@@ -36,10 +36,10 @@ type LogEntryEvaluated = {
   selector: 'app-general-log',
   imports: [
     ToggleCardComponent,
-    SparkleDividerComponent,
-    SparkleProgressBarComponent,
-    SparkleButtonComponent,
-    SparkleIconComponent,
+    ShipDividerComponent,
+    ShipProgressBarComponent,
+    ShipButtonComponent,
+    ShipIconComponent,
     BytesPipe,
     DatePipe,
     DurationFormatPipe,

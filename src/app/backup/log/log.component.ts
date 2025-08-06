@@ -3,11 +3,11 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import {
-  SparkleButtonComponent,
-  SparkleChipComponent,
-  SparkleIconComponent,
-  SparkleTabsComponent,
-} from '@sparkle-ui/core';
+    ShipButtonComponent,
+    ShipChipComponent,
+    ShipIconComponent,
+    ShipTabsComponent,
+} from '@ship-ui/core';
 import { map } from 'rxjs';
 import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
 import { BytesPipe } from '../../core/pipes/byte.pipe';
@@ -19,7 +19,7 @@ import { RemoteLogComponent } from './remote-log/remote-log.component';
 @Component({
   selector: 'app-log',
   imports: [
-    SparkleTabsComponent,
+    ShipTabsComponent,
     GeneralLogComponent,
     RemoteLogComponent,
     RouterLink,
@@ -27,9 +27,9 @@ import { RemoteLogComponent } from './remote-log/remote-log.component';
     DurationFormatPipe,
     DatePipe,
     StatusBarComponent,
-    SparkleIconComponent,
-    SparkleButtonComponent,
-    SparkleChipComponent,
+    ShipIconComponent,
+    ShipButtonComponent,
+    ShipChipComponent,
   ],
   templateUrl: './log.component.html',
   styleUrl: './log.component.scss',

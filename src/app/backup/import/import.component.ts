@@ -2,13 +2,13 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import {
-  SparkleAlertService,
-  SparkleButtonComponent,
-  SparkleFileUploadComponent,
-  SparkleFormFieldComponent,
-  SparkleIconComponent,
-  SparkleToggleComponent,
-} from '@sparkle-ui/core';
+    ShipAlertService,
+    ShipButtonComponent,
+    ShipFileUploadComponent,
+    ShipFormFieldComponent,
+    ShipIconComponent,
+    ShipToggleComponent,
+} from '@ship-ui/core';
 import { finalize } from 'rxjs';
 import { DuplicatiServerService } from '../../core/openapi';
 import { BackupDraft, BackupsState } from '../../core/states/backups.state';
@@ -20,18 +20,18 @@ const fb = new FormBuilder();
   imports: [
     ReactiveFormsModule,
     RouterLink,
-    SparkleFormFieldComponent,
-    SparkleIconComponent,
-    SparkleButtonComponent,
-    SparkleToggleComponent,
-    SparkleFileUploadComponent,
+    ShipFormFieldComponent,
+    ShipIconComponent,
+    ShipButtonComponent,
+    ShipToggleComponent,
+    ShipFileUploadComponent,
   ],
   templateUrl: './import.component.html',
   styleUrl: './import.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ImportComponent {
-  #sparkleAlertService = inject(SparkleAlertService);
+  #shipAlertService = inject(ShipAlertService);
   #dupServer = inject(DuplicatiServerService);
   #backupsState = inject(BackupsState);
   #router = inject(Router);
@@ -126,7 +126,7 @@ export default class ImportComponent {
       .subscribe({
         next: (res) => {
           if (isDirectImport) {
-            this.#sparkleAlertService.success('Backup imported successfully.');
+            this.#shipAlertService.success('Backup imported successfully.');
             this.#router.navigate(['/']);
             return;
           }
@@ -135,7 +135,7 @@ export default class ImportComponent {
           this.#router.navigate(['/backup-draft', draftId]);
         },
         error: (err) => {
-          this.#sparkleAlertService.error(err.message);
+          this.#shipAlertService.error(err.message);
         },
       });
   }

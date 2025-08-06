@@ -1,4 +1,4 @@
-@use '@sparkle-ui/core/styles/helpers' as *;
+@use '@ship-ui/core/styles/helpers' as *;
 
 :host {
   display: block;
@@ -11,7 +11,7 @@ section {
   gap: p2r(16);
 }
 
-spk-tabs {
+sh-tabs {
   margin-bottom: p2r(16);
 }
 
@@ -37,7 +37,7 @@ spk-tabs {
       align-items: center;
       gap: p2r(8);
 
-      spk-icon {
+      sh-icon {
         color: var(--base-8);
       }
     }

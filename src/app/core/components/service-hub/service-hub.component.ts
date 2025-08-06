@@ -1,23 +1,23 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  WritableSignal,
-  computed,
-  effect,
-  inject,
-  model,
-  signal,
-  viewChild,
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    WritableSignal,
+    computed,
+    effect,
+    inject,
+    model,
+    signal,
+    viewChild,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
-  SparkleAlertComponent,
-  SparkleAlertItemInternal,
-  SparkleAlertService,
-  SparkleButtonComponent,
-  SparkleIconComponent,
-} from '@sparkle-ui/core';
+    ShipAlertComponent,
+    ShipAlertItemInternal,
+    ShipAlertService,
+    ShipButtonComponent,
+    ShipIconComponent,
+} from '@ship-ui/core';
 import { NotificationComponent } from '../../../notifications/notification/notification.component';
 import { NotificationsComponent } from '../../../notifications/notifications.component';
 import { NotificationsState } from '../../../notifications/notifications.state';
@@ -25,13 +25,13 @@ import { NotificationDto } from '../../openapi';
 
 const fb = new FormBuilder();
 
-type SparkleAlertItemCountDown = {
-  content: SparkleAlertItemInternal;
+type ShipAlertItemCountDown = {
+  content: ShipAlertItemInternal;
   countDown: number;
   type: 'alert';
 };
 
-type SparkleNotificationCountDown = {
+type ShipNotificationCountDown = {
   content: NotificationDto;
   countDown: number;
   type: 'notification';
@@ -42,10 +42,10 @@ type Interval = ReturnType<typeof setInterval>;
   selector: 'app-service-hub',
   imports: [
     ReactiveFormsModule,
-    SparkleAlertComponent,
-    SparkleIconComponent,
-    SparkleButtonComponent,
-    SparkleAlertComponent,
+    ShipAlertComponent,
+    ShipIconComponent,
+    ShipButtonComponent,
+    ShipAlertComponent,
     NotificationsComponent,
     NotificationComponent,
   ],
@@ -54,7 +54,7 @@ type Interval = ReturnType<typeof setInterval>;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ServiceHubComponent {
-  #sparkleAlertService = inject(SparkleAlertService);
+  #shipAlertService = inject(ShipAlertService);
   #notificationsState = inject(NotificationsState);
 
   isSubmitting = signal(false);
@@ -64,11 +64,11 @@ export default class ServiceHubComponent {
   });
 
   notifications = this.#notificationsState.notifications;
-  shownMessage = signal<SparkleNotificationCountDown | SparkleAlertItemCountDown | null>(null);
+  shownMessage = signal<ShipNotificationCountDown | ShipAlertItemCountDown | null>(null);
   shownMessageInterval: Interval | null = null;
-  alertHistory = this.#sparkleAlertService.alertHistory;
-  alertHistoryIsOpen = this.#sparkleAlertService.alertHistoryIsOpen;
-  alertHistoryIsHidden = this.#sparkleAlertService.alertHistoryIsHidden;
+  alertHistory = this.#shipAlertService.alertHistory;
+  alertHistoryIsOpen = this.#shipAlertService.alertHistoryIsOpen;
+  alertHistoryIsHidden = this.#shipAlertService.alertHistoryIsHidden;
   numberOfOpenAlerts = computed(() => this.alertHistory().filter((x) => x.isOpen).length);
   scroller = viewChild<ElementRef<HTMLDivElement>>('scroller');
   isAlertsOpen = model<boolean>(false);
@@ -105,7 +105,7 @@ export default class ServiceHubComponent {
           }
 
           if (message !== null) {
-            (this.shownMessage as WritableSignal<SparkleNotificationCountDown>).update((x) => ({
+            (this.shownMessage as WritableSignal<ShipNotificationCountDown>).update((x) => ({
               ...x,
               countDown: x.countDown - 1,
             }));
@@ -130,7 +130,7 @@ export default class ServiceHubComponent {
           }
 
           if (message !== null) {
-            (this.shownMessage as WritableSignal<SparkleAlertItemCountDown>).update((x) => ({
+            (this.shownMessage as WritableSignal<ShipAlertItemCountDown>).update((x) => ({
               ...x,
               countDown: x.countDown - 1,
             }));
@@ -170,7 +170,7 @@ export default class ServiceHubComponent {
   }
 
   deleteAlertByIndex(id: string) {
-    this.#sparkleAlertService.removeAlert(id);
+    this.#shipAlertService.removeAlert(id);
   }
 
   private scrollToBottom() {

@@ -1,4 +1,4 @@
-@use '@sparkle-ui/core/styles/helpers' as *;
+@use '@ship-ui/core/styles/helpers' as *;
 
 :host {
   display: flex;
@@ -15,7 +15,7 @@ textarea ~ grammarly-extension {
   display: none;
 }
 
-spk-select {
+sh-select {
   --miw: p2r(120);
 }
 
@@ -35,7 +35,7 @@ label {
   align-items: center;
   gap: p2r(4);
 
-  spk-icon {
+  sh-icon {
     font-size: p2r(16);
   }
 }

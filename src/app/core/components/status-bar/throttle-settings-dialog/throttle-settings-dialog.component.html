@@ -8,40 +8,40 @@
     <div class="field-row">
       <label i18n>Max upload speed</label>
 
-      <spk-form-field>
+      <sh-form-field>
         <input
           type="number"
           (paste)="cleanupInputAfterPasting($event)"
           (keydown)="blockDecimalKeys($event)"
           [(ngModel)]="maxUpload" />
-      </spk-form-field>
+      </sh-form-field>
 
-      <spk-select [isClearable]="false" [options]="sizeOptions()">
+      <sh-select [isClearable]="false" [options]="sizeOptions()">
         <input type="text" [(ngModel)]="maxUploadUnit" />
-      </spk-select>
+      </sh-select>
     </div>
 
     <div class="field-row">
       <label i18n>Max download speed</label>
 
-      <spk-form-field>
+      <sh-form-field>
         <input
           type="number"
           (paste)="cleanupInputAfterPasting($event)"
           (keydown)="blockDecimalKeys($event)"
           [(ngModel)]="maxDownload" />
-      </spk-form-field>
+      </sh-form-field>
 
-      <spk-select [isClearable]="false" [options]="sizeOptions()">
+      <sh-select [isClearable]="false" [options]="sizeOptions()">
         <input type="text" [(ngModel)]="maxDownloadUnit" />
-      </spk-select>
+      </sh-select>
     </div>
   </div>
 </div>
 
 <footer footer>
-  <button spk-button (click)="closed.emit(false)" i18n>Cancel</button>
-  <button spk-button class="raised primary" [class.loader]="isSubmitting()" (click)="submit()" i18n>
+  <button shButton (click)="closed.emit(false)" i18n>Cancel</button>
+  <button shButton class="raised primary" [class.loader]="isSubmitting()" (click)="submit()" i18n>
     Update settings
   </button>
 </footer>

@@ -2,15 +2,15 @@ import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input, model, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
-  SparkleButtonComponent,
-  SparkleFormFieldComponent,
-  SparkleIconComponent,
-  SparkleMenuComponent,
-  SparkleSelectComponent,
-  SparkleToggleCardComponent,
-  SparkleToggleComponent,
-  SparkleTooltipDirective,
-} from '@sparkle-ui/core';
+    ShipButtonComponent,
+    ShipFormFieldComponent,
+    ShipIconComponent,
+    ShipMenuComponent,
+    ShipSelectComponent,
+    ShipToggleCardComponent,
+    ShipToggleComponent,
+    ShipTooltipDirective,
+} from '@ship-ui/core';
 import FileTreeComponent from '../../../core/components/file-tree/file-tree.component';
 import { SizeComponent } from '../../../core/components/size/size.component';
 import { TimespanComponent } from '../../../core/components/timespan/timespan.component';
@@ -39,14 +39,14 @@ type SizeSettingItem = {
   imports: [
     FormsModule,
     FileTreeComponent,
-    SparkleToggleCardComponent,
-    SparkleFormFieldComponent,
-    SparkleButtonComponent,
-    SparkleMenuComponent,
-    SparkleTooltipDirective,
-    SparkleIconComponent,
-    SparkleSelectComponent,
-    SparkleToggleComponent,
+    ShipToggleCardComponent,
+    ShipFormFieldComponent,
+    ShipButtonComponent,
+    ShipMenuComponent,
+    ShipTooltipDirective,
+    ShipIconComponent,
+    ShipSelectComponent,
+    ShipToggleComponent,
     SizeComponent,
     TimespanComponent,
     NgTemplateOutlet,

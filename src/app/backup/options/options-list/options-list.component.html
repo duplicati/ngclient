@@ -1,18 +1,18 @@
-<spk-toggle-card [disallowToggle]="true">
+<sh-toggle-card [disallowToggle]="true">
   <ng-container title>
     <ng-container i18n>Advanced options</ng-container>
 
     <div class="actions">
       @if (showTextArea()) {
-        <button spk-button type="button" class="outlined small" (click)="showTextArea.set(false)" i18n>
+        <button shButton type="button" class="outlined small" (click)="showTextArea.set(false)" i18n>
           Show editor
-          <spk-icon>link</spk-icon>
+          <sh-icon>link</sh-icon>
         </button>
       } @else {
-        <spk-menu [searchable]="true">
-          <button spk-button type="button" class="outlined small" i18n>
+        <sh-menu [searchable]="true">
+          <button shButton type="button" class="outlined small" i18n>
             Add advanced option
-            <spk-icon>plus</spk-icon>
+            <sh-icon>plus</sh-icon>
           </button>
 
           <ng-container menu>
@@ -30,26 +30,26 @@
               }
             }
           </ng-container>
-        </spk-menu>
+        </sh-menu>
 
         @if (hasFreeTextSettings()) {
-          <spk-menu>
-            <button spk-button type="button" class="small">
-              <spk-icon>dots-three-vertical</spk-icon>
+          <sh-menu>
+            <button shButton type="button" class="small">
+              <sh-icon>dots-three-vertical</sh-icon>
             </button>
 
             <ng-container menu>
-              <button spk-button type="button" class="outlined small" (click)="addFreeTextSetting()" i18n>
-                <spk-icon>pen</spk-icon>
+              <button shButton type="button" class="outlined small" (click)="addFreeTextSetting()" i18n>
+                <sh-icon>pen</sh-icon>
                 New custom option
               </button>
 
-              <button spk-button type="button" class="small" (click)="showTextArea.set(true)">
-                <spk-icon>link</spk-icon>
+              <button shButton type="button" class="small" (click)="showTextArea.set(true)">
+                <sh-icon>link</sh-icon>
                 Edit contents as text
               </button>
             </ng-container>
-          </spk-menu>
+          </sh-menu>
         }
       }
     </div>
@@ -74,19 +74,19 @@
 
       <ng-template #defaultLabel>
         @if (inApplicationOptions) {
-          <spk-icon
+          <sh-icon
             class="error"
-            i18n-spkTooltip
-            spkTooltip="By adding this option it will override the matching global option">
+            i18n-shTooltip
+            shTooltip="By adding this option it will override the matching global option">
             warning-octagon
-          </spk-icon>
+          </sh-icon>
         }
         <span [class.deprecated]="item.FormView.deprecatedDescription">{{ item.FormView.shortDescription }}</span>
 
         @if (item.FormView.deprecatedDescription) {
-          <spk-icon class="warn" [spkTooltip]="item.FormView.deprecatedDescription">archive</spk-icon>
+          <sh-icon class="warn" [shTooltip]="item.FormView.deprecatedDescription">archive</sh-icon>
         } @else if (item.FormView.longDescription) {
-          <spk-icon class="primary" [spkTooltip]="item.FormView.longDescription">question</spk-icon>
+          <sh-icon class="primary" [shTooltip]="item.FormView.longDescription">question</sh-icon>
         }
       </ng-template>
 
@@ -98,18 +98,18 @@
             </label>
 
             <div>
-              <spk-form-field>
+              <sh-form-field>
                 <input type="text" [ngModel]="item.Name" (ngModelChange)="updateFreeTextSettingName(item, $event)" />
 
-                <spk-icon prefix>rectangle-dashed</spk-icon>
-              </spk-form-field>
+                <sh-icon prefix>rectangle-dashed</sh-icon>
+              </sh-form-field>
             </div>
             <div>
-              <spk-form-field>
+              <sh-form-field>
                 <input type="text" [ngModel]="item.Value()" (ngModelChange)="updateSettingValue(item, $event)" />
 
-                <spk-icon prefix>textbox</spk-icon>
-              </spk-form-field>
+                <sh-icon prefix>textbox</sh-icon>
+              </sh-form-field>
             </div>
           </div>
         } @else if (item.FormView.type === 'FileTree') {
@@ -140,7 +140,7 @@
         } @else if (
           item.FormView.type === 'String' || item.FormView.type === 'Path' || item.FormView.type === 'Decimal'
         ) {
-          <spk-form-field>
+          <sh-form-field>
             <label [for]="formId">
               <ng-container *ngTemplateOutlet="defaultLabel" />
             </label>
@@ -152,13 +152,13 @@
               (ngModelChange)="updateSettingValue(item, $event)" />
 
             @if (item.FormView.type === 'Path') {
-              <spk-icon prefix>link</spk-icon>
+              <sh-icon prefix>link</sh-icon>
             } @else {
-              <spk-icon prefix>textbox</spk-icon>
+              <sh-icon prefix>textbox</sh-icon>
             }
-          </spk-form-field>
+          </sh-form-field>
         } @else if (item.FormView.type === 'Password') {
-          <spk-form-field>
+          <sh-form-field>
             <label [for]="formId">
               <ng-container *ngTemplateOutlet="defaultLabel" />
             </label>
@@ -170,19 +170,19 @@
               [ngModel]="item.Value()"
               (ngModelChange)="updateSettingValue(item, $event)" />
 
-            <spk-icon prefix>password</spk-icon>
+            <sh-icon prefix>password</sh-icon>
             @if ($any(item).showPassword) {
-              <spk-icon class="clickable" suffix (click)="$any(item).showPassword = !$any(item).showPassword">
+              <sh-icon class="clickable" suffix (click)="$any(item).showPassword = !$any(item).showPassword">
                 eye
-              </spk-icon>
+              </sh-icon>
             } @else {
-              <spk-icon class="clickable" suffix (click)="$any(item).showPassword = !$any(item).showPassword">
+              <sh-icon class="clickable" suffix (click)="$any(item).showPassword = !$any(item).showPassword">
                 eye-slash
-              </spk-icon>
+              </sh-icon>
             }
-          </spk-form-field>
+          </sh-form-field>
         } @else if (item.FormView.type === 'Enumeration') {
-          <spk-select [options]="item.FormView.options!" [isClearable]="false" [optionTemplate]="enumOptionTemplate">
+          <sh-select [options]="item.FormView.options!" [isClearable]="false" [optionTemplate]="enumOptionTemplate">
             <label [for]="formId">
               <ng-container *ngTemplateOutlet="defaultLabel" />
             </label>
@@ -192,7 +192,7 @@
               [id]="formId"
               [ngModel]="item.Value()"
               (ngModelChange)="updateSettingValue(item, $event)" />
-          </spk-select>
+          </sh-select>
 
           <ng-template let-item #enumOptionTemplate>
             {{ item }}
@@ -208,7 +208,7 @@
             </label>
           </app-size>
         } @else if (item.FormView.type === 'Integer') {
-          <spk-form-field>
+          <sh-form-field>
             <label [for]="formId">
               <ng-container *ngTemplateOutlet="defaultLabel" />
             </label>
@@ -217,10 +217,10 @@
               [id]="formId"
               [ngModel]="item.Value()"
               (ngModelChange)="updateSettingValue(item, $event)" />
-            <spk-icon prefix>numpad</spk-icon>
-          </spk-form-field>
+            <sh-icon prefix>numpad</sh-icon>
+          </sh-form-field>
         } @else if (item.FormView.type === 'Boolean') {
-          <spk-toggle class="primary raised">
+          <sh-toggle class="primary raised">
             <label [for]="formId">
               <ng-container *ngTemplateOutlet="defaultLabel" />
             </label>
@@ -230,9 +230,9 @@
               [id]="formId"
               [ngModel]="item.Value()"
               (ngModelChange)="updateSettingValue(item, $event)" />
-          </spk-toggle>
+          </sh-toggle>
         } @else if (item.FormView.type === 'Flags') {
-          <spk-select
+          <sh-select
             class="primary raised"
             [options]="item.FormView.options!"
             [selectMultiple]="true"
@@ -241,7 +241,7 @@
               <ng-container *ngTemplateOutlet="defaultLabel" />
             </label>
             <input type="text" id="text" [ngModel]="item.Value()" (ngModelChange)="updateSettingValue(item, $event)" />
-          </spk-select>
+          </sh-select>
 
           <ng-template let-item #optionTemplate>
             {{ item }}
@@ -258,10 +258,10 @@
           </app-timespan>
         }
 
-        <button spk-button class="outlined remove-btn" type="button" (click)="removeSetting(item)">
-          <spk-icon>x-bold</spk-icon>
+        <button shButton class="outlined remove-btn" type="button" (click)="removeSetting(item)">
+          <sh-icon>x-bold</sh-icon>
         </button>
       </div>
     }
   }
-</spk-toggle-card>
+</sh-toggle-card>

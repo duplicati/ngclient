@@ -1,5 +1,5 @@
 @if (resource.isLoading()) {
-  <spk-progress-bar class="indeterminate primary" />
+  <sh-progress-bar class="indeterminate primary" />
 }
 
 @for (item of resource.value(); track $index) {
@@ -26,7 +26,7 @@
       <div class="spacer"></div>
 
       <div class="action">
-        <spk-icon class="toggle-indicator" [class.open]="item.id === openEntry()">caret-down</spk-icon>
+        <sh-icon class="toggle-indicator" [class.open]="item.id === openEntry()">caret-down</sh-icon>
       </div>
     </header>
 
@@ -65,16 +65,16 @@
         </app-toggle-card>
 
         <div class="extra-info">
-          <spk-divider />
+          <sh-divider />
 
           @if (item.data?.TestResults) {
             <details name="details">
               <summary i18n>
-                <spk-icon>circle-half-tilt</spk-icon>
+                <sh-icon>circle-half-tilt</sh-icon>
                 Test phase
 
                 <div class="actions">
-                  <spk-icon class="toggle-indicator">caret-down</spk-icon>
+                  <sh-icon class="toggle-indicator">caret-down</sh-icon>
                 </div>
               </summary>
 
@@ -83,7 +83,7 @@
                 <p i18n>End: {{ item.data?.TestResults?.EndTime | date: 'medium' }}</p>
                 <p i18n>Duration: {{ item.data?.TestResults?.Duration | durationFormat }}</p>
                 <p i18n>Verifications: {{ item.data?.TestResults?.VerificationsActualLength }}</p>
-                <spk-divider />
+                <sh-divider />
                 <p i18n>Warnings: {{ item.data?.TestResults?.WarningsActualLength }}</p>
                 <p i18n>Errors: {{ item.data?.TestResults?.ErrorsActualLength }}</p>
               </div>
@@ -91,11 +91,11 @@
 
             <details name="details">
               <summary i18n>
-                <spk-icon>file-archive</spk-icon>
+                <sh-icon>file-archive</sh-icon>
                 Compact phase
 
                 <div class="actions">
-                  <spk-icon class="toggle-indicator">caret-down</spk-icon>
+                  <sh-icon class="toggle-indicator">caret-down</sh-icon>
                 </div>
               </summary>
 
@@ -103,7 +103,7 @@
                 <p i18n>Start: {{ item.data?.CompactResults?.BeginTime | date: 'medium' }}</p>
                 <p i18n>End: {{ item.data?.CompactResults?.EndTime | date: 'medium' }}</p>
                 <p i18n>Duration: {{ item.data?.CompactResults?.Duration | durationFormat }}</p>
-                <spk-divider />
+                <sh-divider />
                 <p i18n>
                   Deleted files: {{ item.data?.CompactResults?.DeletedFileCount }} ({{
                     item.data?.CompactResults?.DeletedFileSize | bytes: true : true
@@ -119,7 +119,7 @@
                     item.data?.CompactResults?.UploadedFileSize | bytes: true : true
                   }})
                 </p>
-                <spk-divider />
+                <sh-divider />
                 <p i18n>Warnings: {{ item.data?.CompactResults?.WarningsActualLength }}</p>
                 <p i18n>Errors: {{ item.data?.CompactResults?.ErrorsActualLength }}</p>
               </div>
@@ -129,11 +129,11 @@
           @if (item.data?.MainOperation === 'Test') {
             <details name="details">
               <summary i18n>
-                <spk-icon>warning-circle</spk-icon>
+                <sh-icon>warning-circle</sh-icon>
                 Verifications {{ $any(item.data).VerificationsActualLength }}
 
                 <div class="actions">
-                  <spk-icon class="toggle-indicator">caret-down</spk-icon>
+                  <sh-icon class="toggle-indicator">caret-down</sh-icon>
                 </div>
               </summary>
 
@@ -147,11 +147,11 @@
 
           <details name="details">
             <summary i18n>
-              <spk-icon>warning-circle</spk-icon>
+              <sh-icon>warning-circle</sh-icon>
               Warnings {{ item.data?.WarningsActualLength }}
 
               <div class="actions">
-                <spk-icon class="toggle-indicator">caret-down</spk-icon>
+                <sh-icon class="toggle-indicator">caret-down</sh-icon>
               </div>
             </summary>
 
@@ -164,11 +164,11 @@
 
           <details name="details">
             <summary i18n>
-              <spk-icon>warning</spk-icon>
+              <sh-icon>warning</sh-icon>
               Errors {{ item.data?.ErrorsActualLength }}
 
               <div class="actions">
-                <spk-icon class="toggle-indicator">caret-down</spk-icon>
+                <sh-icon class="toggle-indicator">caret-down</sh-icon>
               </div>
             </summary>
 
@@ -182,20 +182,20 @@
               }
             </div>
           </details>
-          <spk-divider />
+          <sh-divider />
 
           <details>
             <summary i18n>
-              <spk-icon>notepad</spk-icon>
+              <sh-icon>notepad</sh-icon>
               Complete log
 
               <div class="actions">
-                <spk-icon class="toggle-indicator">caret-down</spk-icon>
+                <sh-icon class="toggle-indicator">caret-down</sh-icon>
               </div>
             </summary>
 
             <code>
-              <button spk-button class="small">Copy</button>
+              <button shButton class="small">Copy</button>
 
               {{ item.data | json }}
             </code>

@@ -51,7 +51,7 @@
 
     <div class="right passphrase-form">
       @if (showPassphraseForm()) {
-        <spk-form-field>
+        <sh-form-field>
           <label for="password" i18n>Passphrase</label>
           <input
             type="password"
@@ -61,9 +61,9 @@
             placeholder="Enter new password"
             tabindex="1"
             [(ngModel)]="passphrase" />
-        </spk-form-field>
+        </sh-form-field>
 
-        <spk-form-field>
+        <sh-form-field>
           <label for="repeatPassword" i18n>Repeat passphrase</label>
           <input
             type="password"
@@ -76,27 +76,27 @@
             [(ngModel)]="repeatPassphrase" />
 
           @if (passphrase().length !== 0 && passphrase() === repeatPassphrase()) {
-            <spk-icon suffix class="spk-success">check</spk-icon>
+            <sh-icon suffix class="sh-success">check</sh-icon>
           } @else {
-            <spk-icon suffix>prohibit</spk-icon>
+            <sh-icon suffix>prohibit</sh-icon>
           }
-        </spk-form-field>
+        </sh-form-field>
 
         <div class="actions">
-          <button spk-button [class.loader]="isUpdating()" (click)="cancelPasswordChange()" i18n>Cancel</button>
+          <button shButton [class.loader]="isUpdating()" (click)="cancelPasswordChange()" i18n>Cancel</button>
 
           @if (passphrase().length !== 0 && passphrase() === repeatPassphrase()) {
-            <button spk-button class="raised primary" [class.loader]="isUpdating()" (click)="updatePassphrase()" i18n>
+            <button shButton class="raised primary" [class.loader]="isUpdating()" (click)="updatePassphrase()" i18n>
               Update passphrase
             </button>
           } @else {
             <button
-              spk-button
+              shButton
               class="raised primary"
               [class.loader]="isUpdating()"
               [disabled]="true"
-              i18n-spkTooltip
-              spkTooltip="Password have to be filled and have to match"
+              i18n-shTooltip
+              shTooltip="Password have to be filled and have to match"
               (click)="updatePassphrase()"
               i18n>
               Update passphrase
@@ -105,10 +105,10 @@
         </div>
       } @else {
         <div class="actions">
-          <button spk-button i18n (click)="openPassphraseForm()" i18n>Change password</button>
+          <button shButton i18n (click)="openPassphraseForm()" i18n>Change password</button>
 
           @if (passwordUpdated()) {
-            <spk-icon class="spk-success">check</spk-icon>
+            <sh-icon class="sh-success">check</sh-icon>
           }
         </div>
       }
@@ -122,13 +122,13 @@
     </div>
 
     <div class="right">
-      <spk-select [options]="languageOptions()" value="value" label="label" [isClearable]="false" [inlineSearch]="true">
+      <sh-select [options]="languageOptions()" value="value" label="label" [isClearable]="false" [inlineSearch]="true">
         <input
           type="text"
           [ngModel]="langCtrl()"
           (ngModelChange)="updateLocale($event)"
           [ngModelOptions]="{ standalone: true }" />
-      </spk-select>
+      </sh-select>
     </div>
   </section>
 
@@ -142,25 +142,25 @@
     </div>
 
     <div class="right remote-access-form">
-      <spk-toggle class="primary raised" [class.active]="allowRemoteAccess()" (click)="updateRemoteAccess()">
+      <sh-toggle class="primary raised" [class.active]="allowRemoteAccess()" (click)="updateRemoteAccess()">
         <label i18n>Allow remote access</label>
-      </spk-toggle>
+      </sh-toggle>
 
       @if (allowRemoteAccess()) {
-        <spk-form-field>
+        <sh-form-field>
           <label for="allowedHostnames" i18n>Allowed hostnames</label>
           <textarea type="text" id="allowedHostnames" [(ngModel)]="allowedHostnames"></textarea>
-        </spk-form-field>
+        </sh-form-field>
 
-        <spk-alert type="primary" i18n>
+        <sh-alert type="primary" i18n>
           To prevent various DNS based attacks, Duplicati limits the allowed hostnames to the ones listed here. Direct
           IP access and localhost is always allowed. Multiple hostnames can be supplied with a semicolon separator. If
           any of the allowed hostnames is an asterisk (*), all hostnames are allowed and this feature is disabled. If
           the field is empty, only IP address and localhost access is allowed.
-        </spk-alert>
+        </sh-alert>
 
         <button
-          spk-button
+          shButton
           class="raised primary"
           [class.loader]="updatingAllowedHosts()"
           (click)="updateAllowedHostnames()"
@@ -183,9 +183,9 @@
     </div>
 
     <div class="right">
-      <spk-toggle class="primary raised" [class.active]="disableTrayIconLogin()" (click)="saveDisableTrayIconLogin()">
+      <sh-toggle class="primary raised" [class.active]="disableTrayIconLogin()" (click)="saveDisableTrayIconLogin()">
         <label i18n>Prevent tray icon automatic log-in</label>
-      </spk-toggle>
+      </sh-toggle>
     </div>
   </section>
 
@@ -199,27 +199,27 @@
       </p>
 
       @if (updatingChannel()) {
-        <spk-progress-bar class="indeterminate primary" />
+        <sh-progress-bar class="indeterminate primary" />
       }
     </div>
 
     <div class="right radios">
       <div class="radio-option" (click)="setNewChannel('')">
-        <spk-radio class="primary raised" [class.active]="updateChannel() === ''" i18n>
+        <sh-radio class="primary raised" [class.active]="updateChannel() === ''" i18n>
           Default ({{ sysinfo()?.DefaultUpdateChannel }})
-        </spk-radio>
+        </sh-radio>
 
         <p i18n>Same as the base install version: {{ sysinfo()?.ServerVersionType }}</p>
       </div>
 
       <div class="radio-option" (click)="setNewChannel('stable')">
-        <spk-radio class="primary raised" [class.active]="updateChannel() === 'stable'" i18n>Stable</spk-radio>
+        <sh-radio class="primary raised" [class.active]="updateChannel() === 'stable'" i18n>Stable</sh-radio>
 
         <p i18n>Official releases</p>
       </div>
 
       <div class="radio-option" (click)="setNewChannel('beta')">
-        <spk-radio class="primary raised" [class.active]="updateChannel() === 'beta'" i18n>Beta</spk-radio>
+        <sh-radio class="primary raised" [class.active]="updateChannel() === 'beta'" i18n>Beta</sh-radio>
 
         <p i18n>
           Try out the new features that we are working on. Currently the most stable version available. Test Restore
@@ -228,15 +228,15 @@
       </div>
 
       <div class="radio-option" (click)="setNewChannel('experimental')">
-        <spk-radio class="primary raised" [class.active]="updateChannel() === 'experimental'" i18n>
+        <sh-radio class="primary raised" [class.active]="updateChannel() === 'experimental'" i18n>
           Experimental
-        </spk-radio>
+        </sh-radio>
 
         <p i18n>Specific builds for developers only. Not for use with important data.</p>
       </div>
 
       <div class="radio-option" (click)="setNewChannel('canary')">
-        <spk-radio class="primary raised" [class.active]="updateChannel() === 'canary'" i18n>Canary</spk-radio>
+        <sh-radio class="primary raised" [class.active]="updateChannel() === 'canary'" i18n>Canary</sh-radio>
 
         <p i18n>Individual builds for developers only. Not for use with important data.</p>
       </div>
@@ -244,7 +244,7 @@
   </section>
 </div>
 
-<spk-divider />
+<sh-divider />
 
 <div class="content">
   <section>
@@ -258,7 +258,7 @@
 
     <div class="right">
       <div class="field-row">
-        <spk-range-slider [unit]="timeType() === 'none' ? 's' : timeType()" class="raised primary">
+        <sh-range-slider [unit]="timeType() === 'none' ? 's' : timeType()" class="raised primary">
           <input
             type="range"
             [min]="timeRange()[0]"
@@ -266,15 +266,15 @@
             [disabled]="timeType() === 'none'"
             [(ngModel)]="timeValue"
             [ngModelOptions]="{ standalone: true }" />
-        </spk-range-slider>
+        </sh-range-slider>
 
-        <spk-select [options]="timeTypeOptions()" [isClearable]="false" label="label" value="value">
+        <sh-select [options]="timeTypeOptions()" [isClearable]="false" label="label" value="value">
           <input type="text" [ngModel]="timeType()" (ngModelChange)="updateTimeType($event)" />
 
           <ng-template let-option>
             {{ option.label }}
           </ng-template>
-        </spk-select>
+        </sh-select>
       </div>
     </div>
   </section>
@@ -294,7 +294,7 @@
     </div>
 
     <div class="right">
-      <spk-select
+      <sh-select
         [options]="usageStatisticsOptions()"
         [isLoading]="updatingUsageStatistics()"
         label="label"
@@ -308,7 +308,7 @@
         <ng-template let-option>
           {{ option.label }}
         </ng-template>
-      </spk-select>
+      </sh-select>
     </div>
   </section>
 </div>

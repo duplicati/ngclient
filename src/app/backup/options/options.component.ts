@@ -2,11 +2,11 @@ import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signa
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  SparkleButtonComponent,
-  SparkleFormFieldComponent,
-  SparkleIconComponent,
-  SparkleSelectComponent,
-} from '@sparkle-ui/core';
+    ShipButtonComponent,
+    ShipFormFieldComponent,
+    ShipIconComponent,
+    ShipSelectComponent,
+} from '@ship-ui/core';
 import { SizeComponent } from '../../core/components/size/size.component';
 import { TimespanComponent } from '../../core/components/timespan/timespan.component';
 import { BackupState } from '../backup.state';
@@ -46,12 +46,12 @@ const MinVolumeSize = 1024 * 1024 * 5; // 5MiB
     FormsModule,
     ReactiveFormsModule,
     OptionsListComponent,
-    SparkleButtonComponent,
-    SparkleIconComponent,
-    SparkleSelectComponent,
+    ShipButtonComponent,
+    ShipIconComponent,
+    ShipSelectComponent,
     SizeComponent,
     TimespanComponent,
-    SparkleFormFieldComponent,
+    ShipFormFieldComponent,
   ],
   templateUrl: './options.component.html',
   styleUrl: './options.component.scss',

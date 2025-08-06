@@ -2,8 +2,8 @@
 
 <section>
   <div class="back">
-    <button type="button" class="small" spk-button routerLink="/" i18n>
-      <spk-icon>arrow-left</spk-icon>
+    <button type="button" class="small" shButton routerLink="/" i18n>
+      <sh-icon>arrow-left</sh-icon>
       Back
     </button>
   </div>
@@ -28,37 +28,37 @@
 
     <div class="actions maintenance">
       <button
-        spk-button
+        shButton
         i18n
         [class.loader]="isRepairing()"
         [disabled]="!isValidatedPath() || pathHasChanged()"
         (click)="repairDatabase()">
-        <spk-icon>wrench</spk-icon>
+        <sh-icon>wrench</sh-icon>
         Repair
       </button>
 
       <button
-        spk-button
+        shButton
         i18n
         [class.loader]="isDeleting()"
         [disabled]="!isValidatedPath() || pathHasChanged()"
         (click)="deleteDatabase()">
-        <spk-icon>trash</spk-icon>
+        <sh-icon>trash</sh-icon>
         Delete
       </button>
 
-      <button spk-button i18n [class.loader]="isRestoring()" [disabled]="pathHasChanged()" (click)="restoreDatabase()">
-        <spk-icon>clock-counter-clockwise</spk-icon>
+      <button shButton i18n [class.loader]="isRestoring()" [disabled]="pathHasChanged()" (click)="restoreDatabase()">
+        <sh-icon>clock-counter-clockwise</sh-icon>
         Restore (delete and repair)
       </button>
 
       <button
-        spk-button
+        shButton
         i18n
         [class.loader]="isCreatingBugReport()"
         [disabled]="isCreatingBugReport() || !isValidatedPath() || pathHasChanged()"
         (click)="createErrorReport()">
-        <spk-icon>file-plus</spk-icon>
+        <sh-icon>file-plus</sh-icon>
         Create bug report database
       </button>
     </div>
@@ -67,40 +67,40 @@
   <article>
     <h2 i18n>Placement</h2>
 
-    <spk-form-field [class]="isValidatedPath() ? 'success' : 'error'">
+    <sh-form-field [class]="isValidatedPath() ? 'success' : 'error'">
       <input type="text" [(ngModel)]="backupFilePath" />
       @if (isWaitingForValidation()) {
-        <spk-icon class="primary" prefix>spinner</spk-icon>
+        <sh-icon class="primary" prefix>spinner</sh-icon>
       } @else if (isValidatedPath()) {
-        <spk-icon prefix>check</spk-icon>
+        <sh-icon prefix>check</sh-icon>
       } @else {
-        <spk-icon prefix [spkTooltip]="'File not found'">warning</spk-icon>
+        <sh-icon prefix [shTooltip]="'File not found'">warning</sh-icon>
       }
-    </spk-form-field>
+    </sh-form-field>
 
     <div class="actions placement">
-      <button spk-button i18n [disabled]="!pathHasChanged()" (click)="resetDatabasePath()">
-        <spk-icon>backspace</spk-icon>
+      <button shButton i18n [disabled]="!pathHasChanged()" (click)="resetDatabasePath()">
+        <sh-icon>backspace</sh-icon>
         Reset
       </button>
-      <button spk-button i18n [disabled]="!pathHasChanged() || isWaitingForValidation()" (click)="saveDatabasePath()">
-        <spk-icon>floppy-disk</spk-icon>
+      <button shButton i18n [disabled]="!pathHasChanged() || isWaitingForValidation()" (click)="saveDatabasePath()">
+        <sh-icon>floppy-disk</sh-icon>
         Save
       </button>
       <button
-        spk-button
+        shButton
         i18n
         [disabled]="!pathHasChanged() || isWaitingForValidation()"
         (click)="saveAndRepairDatabasePath()">
-        <spk-icon>wrench</spk-icon>
+        <sh-icon>wrench</sh-icon>
         Save & Repair
       </button>
       <button
-        spk-button
+        shButton
         i18n
         [disabled]="!pathHasChanged() || isValidatedPath() || isWaitingForValidation()"
         (click)="moveDatabasePath()">
-        <spk-icon>flow-arrow</spk-icon>
+        <sh-icon>flow-arrow</sh-icon>
         Move existing database
       </button>
     </div>

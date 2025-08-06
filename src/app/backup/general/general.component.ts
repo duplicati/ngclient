@@ -1,24 +1,24 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  ElementRef,
-  inject,
-  signal,
-  viewChild,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    effect,
+    ElementRef,
+    inject,
+    signal,
+    viewChild,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  SparkleAlertComponent,
-  SparkleButtonComponent,
-  SparkleFormFieldComponent,
-  SparkleIconComponent,
-  SparkleProgressBarComponent,
-  SparkleSelectComponent,
-  SparkleTooltipDirective,
-} from '@sparkle-ui/core';
+    ShipAlertComponent,
+    ShipButtonComponent,
+    ShipFormFieldComponent,
+    ShipIconComponent,
+    ShipProgressBarComponent,
+    ShipSelectComponent,
+    ShipTooltipDirective,
+} from '@ship-ui/core';
 import { PasswordGeneratorService } from '../../core/services/password-generator.service';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 import { validateWhen, watchField } from '../../core/validators/custom.validators';
@@ -59,14 +59,14 @@ export const NONE_OPTION = {
   selector: 'app-general',
   imports: [
     ReactiveFormsModule,
-    SparkleFormFieldComponent,
-    SparkleSelectComponent,
-    SparkleButtonComponent,
-    SparkleIconComponent,
-    SparkleProgressBarComponent,
-    SparkleAlertComponent,
-    SparkleTooltipDirective,
-    SparkleAlertComponent,
+    ShipFormFieldComponent,
+    ShipSelectComponent,
+    ShipButtonComponent,
+    ShipIconComponent,
+    ShipProgressBarComponent,
+    ShipAlertComponent,
+    ShipTooltipDirective,
+    ShipAlertComponent,
   ],
   templateUrl: './general.component.html',
   styleUrl: './general.component.scss',

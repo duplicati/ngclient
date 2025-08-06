@@ -1,34 +1,34 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  ElementRef,
-  inject,
-  input,
-  output,
-  signal,
-  viewChild,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    effect,
+    ElementRef,
+    inject,
+    input,
+    output,
+    signal,
+    viewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
-  SparkleButtonGroupComponent,
-  SparkleDialogComponent,
-  SparkleDialogService,
-  SparkleFormFieldComponent,
-  SparkleIconComponent,
-  SparkleListComponent,
-  SparkleProgressBarComponent,
-  SparkleToggleComponent
-} from '@sparkle-ui/core';
+    ShipButtonGroupComponent,
+    ShipDialogComponent,
+    ShipDialogService,
+    ShipFormFieldComponent,
+    ShipIconComponent,
+    ShipListComponent,
+    ShipProgressBarComponent,
+    ShipToggleComponent
+} from '@ship-ui/core';
 import { catchError, finalize, forkJoin, map, Observable, of } from 'rxjs';
 import {
-  DuplicatiServerService,
-  GetApiV1BackupByIdFilesData,
-  GetApiV1BackupByIdFilesResponse,
-  PostApiV1FilesystemResponse,
-  TreeNodeDto,
+    DuplicatiServerService,
+    GetApiV1BackupByIdFilesData,
+    GetApiV1BackupByIdFilesResponse,
+    PostApiV1FilesystemResponse,
+    TreeNodeDto,
 } from '../../openapi';
 import { SysinfoState } from '../../states/sysinfo.state';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
@@ -79,13 +79,13 @@ const ROOTPATH = '/';
 @Component({
   selector: 'app-file-tree',
   imports: [
-    SparkleButtonGroupComponent,
-    SparkleToggleComponent,
-    SparkleIconComponent,
-    SparkleFormFieldComponent,
-    SparkleListComponent,
-    SparkleProgressBarComponent,
-    SparkleDialogComponent,
+    ShipButtonGroupComponent,
+    ShipToggleComponent,
+    ShipIconComponent,
+    ShipFormFieldComponent,
+    ShipListComponent,
+    ShipProgressBarComponent,
+    ShipDialogComponent,
     NgTemplateOutlet,
     FormsModule,
   ],
@@ -99,7 +99,7 @@ const ROOTPATH = '/';
 export default class FileTreeComponent {
   #dupServer = inject(DuplicatiServerService);
   #sysInfo = inject(SysinfoState);
-  #dialog = inject(SparkleDialogService);
+  #dialog = inject(ShipDialogService);
 
   multiSelect = input(false);
   disabled = input(false);

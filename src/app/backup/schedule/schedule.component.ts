@@ -2,12 +2,12 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  SparkleButtonComponent,
-  SparkleFormFieldComponent,
-  SparkleIconComponent,
-  SparkleSelectComponent,
-  SparkleToggleComponent,
-} from '@sparkle-ui/core';
+    ShipButtonComponent,
+    ShipFormFieldComponent,
+    ShipIconComponent,
+    ShipSelectComponent,
+    ShipToggleComponent,
+} from '@ship-ui/core';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { BackupState } from '../backup.state';
 
@@ -66,11 +66,11 @@ export const SCHEDULE_FIELD_DEFAULTS = {
   selector: 'app-schedule',
   imports: [
     FormsModule,
-    SparkleFormFieldComponent,
-    SparkleToggleComponent,
-    SparkleIconComponent,
-    SparkleButtonComponent,
-    SparkleSelectComponent,
+    ShipFormFieldComponent,
+    ShipToggleComponent,
+    ShipIconComponent,
+    ShipButtonComponent,
+    ShipSelectComponent,
     ToggleCardComponent,
   ],
   templateUrl: './schedule.component.html',

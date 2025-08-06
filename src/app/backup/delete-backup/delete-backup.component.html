@@ -13,19 +13,19 @@
       database.
     </p>
 
-    <spk-checkbox class="primary raised">
+    <sh-checkbox class="primary raised">
       Delete local database
       <input type="checkbox" [(ngModel)]="deleteLocalDb" />
-    </spk-checkbox>
+    </sh-checkbox>
   </section>
 }
 
 <section>
   <h4 i18n>Export configuration</h4>
   <p i18n>If you want to use the backup later, you can export the configuration before deleting it.</p>
-  <button spk-button [routerLink]="['/backup', id(), 'export']">
+  <button shButton [routerLink]="['/backup', id(), 'export']">
     Export configuration
-    <spk-icon>caret-right</spk-icon>
+    <sh-icon>caret-right</sh-icon>
   </button>
 </section>
 
@@ -40,14 +40,14 @@
       ({{ fileSize | bytes: true : true }}) from the remote storage?
     </p>
 
-    <spk-checkbox class="primary raised">
+    <sh-checkbox class="primary raised">
       Delete remote files
       <input type="checkbox" [(ngModel)]="deleteRemoteFiles" />
-    </spk-checkbox>
+    </sh-checkbox>
   </section>
 }
 
 <div class="actions">
-  <button spk-button [routerLink]="['/']" i18n>Cancel</button>
-  <button spk-button class="raised error" [class.loader]="isDeleting()" (click)="deleteBackup()">Delete backup</button>
+  <button shButton [routerLink]="['/']" i18n>Cancel</button>
+  <button shButton class="raised error" [class.loader]="isDeleting()" (click)="deleteBackup()">Delete backup</button>
 </div>

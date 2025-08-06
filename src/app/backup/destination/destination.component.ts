@@ -1,23 +1,23 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  ElementRef,
-  inject,
-  Injector,
-  signal,
-  viewChild,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    ElementRef,
+    inject,
+    Injector,
+    signal,
+    viewChild,
 } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  SparkleAlertComponent,
-  SparkleDialogComponent,
-  SparkleDialogService,
-  SparkleFormFieldComponent,
-  SparkleIconComponent,
-  SparkleMenuComponent,
-} from '@sparkle-ui/core';
+    ShipAlertComponent,
+    ShipDialogComponent,
+    ShipDialogService,
+    ShipFormFieldComponent,
+    ShipIconComponent,
+    ShipMenuComponent,
+} from '@ship-ui/core';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { IDynamicModule } from '../../core/openapi';
 import { TestDestinationService } from '../../core/services/test-destination.service';
@@ -66,11 +66,11 @@ export type DestinationFormGroupValue = ReturnType<typeof createDestinationFormG
     SingleDestinationComponent,
 
     FormsModule,
-    SparkleFormFieldComponent,
-    SparkleMenuComponent,
-    SparkleIconComponent,
-    SparkleDialogComponent,
-    SparkleAlertComponent,
+    ShipFormFieldComponent,
+    ShipMenuComponent,
+    ShipIconComponent,
+    ShipDialogComponent,
+    ShipAlertComponent,
   ],
   templateUrl: './destination.component.html',
   styleUrl: './destination.component.scss',
@@ -81,7 +81,7 @@ export default class DestinationComponent {
   #route = inject(ActivatedRoute);
   #backupState = inject(BackupState);
   #destinationState = inject(DestinationConfigState);
-  #dialog = inject(SparkleDialogService);
+  #dialog = inject(ShipDialogService);
   #testDestination = inject(TestDestinationService);
   injector = inject(Injector);
 

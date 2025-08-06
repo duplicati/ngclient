@@ -4,15 +4,15 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
-  SparkleAlertComponent,
-  SparkleButtonComponent,
-  SparkleButtonGroupComponent,
-  SparkleFormFieldComponent,
-  SparkleIconComponent,
-  SparkleProgressBarComponent,
-  SparkleToggleComponent,
-  SparkleTooltipDirective,
-} from '@sparkle-ui/core';
+    ShipAlertComponent,
+    ShipButtonComponent,
+    ShipButtonGroupComponent,
+    ShipFormFieldComponent,
+    ShipIconComponent,
+    ShipProgressBarComponent,
+    ShipToggleComponent,
+    ShipTooltipDirective,
+} from '@ship-ui/core';
 import { finalize, switchMap } from 'rxjs';
 import { DuplicatiServerService } from '../../core/openapi';
 import { PasswordGeneratorService } from '../../core/services/password-generator.service';
@@ -26,14 +26,14 @@ const fb = new FormBuilder();
   imports: [
     ReactiveFormsModule,
     RouterLink,
-    SparkleButtonGroupComponent,
-    SparkleToggleComponent,
-    SparkleIconComponent,
-    SparkleFormFieldComponent,
-    SparkleButtonComponent,
-    SparkleAlertComponent,
-    SparkleProgressBarComponent,
-    SparkleTooltipDirective,
+    ShipButtonGroupComponent,
+    ShipToggleComponent,
+    ShipIconComponent,
+    ShipFormFieldComponent,
+    ShipButtonComponent,
+    ShipAlertComponent,
+    ShipProgressBarComponent,
+    ShipTooltipDirective,
   ],
   templateUrl: './export.component.html',
   styleUrl: './export.component.scss',

@@ -1,11 +1,11 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, inject, input, signal } from '@angular/core';
-import { SparkleIconComponent, SparkleListComponent, SparkleTableComponent } from '@sparkle-ui/core';
+import { ShipIconComponent, ShipListComponent, ShipTableComponent } from '@ship-ui/core';
 import { LogsLiveState } from './logs-live.state';
 
 @Component({
   selector: 'app-logs-live',
-  imports: [SparkleTableComponent, SparkleIconComponent, SparkleListComponent, DatePipe],
+  imports: [ShipTableComponent, ShipIconComponent, ShipListComponent, DatePipe],
   templateUrl: './logs-live.component.html',
   styleUrl: './logs-live.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

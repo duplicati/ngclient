@@ -2,29 +2,29 @@
 
 <section>
   <header>
-    <spk-card class="type-a" [routerLink]="['/add-backup']">
+    <sh-card class="type-a" [routerLink]="['/add-backup']">
       <img src="assets/images/backup.png" alt="" width="48px" />
       <div class="text">
         <h3 i18n>Backups</h3>
         <p i18n>Backups are stored in the cloud and can be restored at any time.</p>
       </div>
-      <button type="button" spk-button i18n>
+      <button type="button" shButton i18n>
         Add
-        <spk-icon>plus</spk-icon>
+        <sh-icon>plus</sh-icon>
       </button>
-    </spk-card>
+    </sh-card>
 
-    <spk-card class="type-a" [routerLink]="['/restore']">
+    <sh-card class="type-a" [routerLink]="['/restore']">
       <img src="assets/images/restore.png" alt="" width="48px" />
       <div class="text">
         <h3 i18n>Restores</h3>
         <p i18n>Restores allow you to restore your data from the cloud.</p>
       </div>
-      <button type="button" spk-button i18n>
+      <button type="button" shButton i18n>
         Start
-        <spk-icon>arrow-right</spk-icon>
+        <sh-icon>arrow-right</sh-icon>
       </button>
-    </spk-card>
+    </sh-card>
   </header>
 
   <div class="content">
@@ -32,37 +32,37 @@
       <ng-container i18n>My backups</ng-container>
 
       <div class="actions">
-        <spk-button-group class="small">
+        <sh-button-group class="small">
           <button type="button" [class.active]="viewMode() === 'list'" i18n (click)="viewMode.set('list')">
-            <spk-icon>rows</spk-icon>
+            <sh-icon>rows</sh-icon>
             List
           </button>
 
           <button type="button" [class.active]="viewMode() === 'details'" i18n (click)="viewMode.set('details')">
-            <spk-icon>list</spk-icon>
+            <sh-icon>list</sh-icon>
             Details
           </button>
-        </spk-button-group>
+        </sh-button-group>
 
-        <spk-menu class="table-overview">
-          <button type="button" class="small" spk-button i18n>
+        <sh-menu class="table-overview">
+          <button type="button" class="small" shButton i18n>
             Time:
             <strong>{{ timeType() }}</strong>
-            <spk-icon>clock</spk-icon>
+            <sh-icon>clock</sh-icon>
           </button>
 
           <ng-container menu>
             <button type="button" (click)="setTimeType('relative')" i18n>Relative time</button>
             <button type="button" (click)="setTimeType('actual')" i18n>Actual time</button>
           </ng-container>
-        </spk-menu>
+        </sh-menu>
 
         @if (viewMode() === 'list') {
-          <spk-menu class="table-overview">
-            <button type="button" class="small" spk-button i18n>
+          <sh-menu class="table-overview">
+            <button type="button" class="small" shButton i18n>
               Order by:
               <strong>{{ orderBy() }}</strong>
-              <spk-icon>arrows-down-up</spk-icon>
+              <sh-icon>arrows-down-up</sh-icon>
             </button>
 
             <ng-container menu>
@@ -76,7 +76,7 @@
                 </button>
               }
             </ng-container>
-          </spk-menu>
+          </sh-menu>
         }
       </div>
     </h2>
@@ -90,10 +90,10 @@
                 <div class="text">
                   <h3>
                     {{ backup.Backup?.Name ?? MISSING_BACKUP_NAME }}
-                    <spk-chip>
-                      <spk-icon>{{ getBackendIcon(backup.Backup?.TargetURL) }}</spk-icon>
+                    <sh-chip>
+                      <sh-icon>{{ getBackendIcon(backup.Backup?.TargetURL) }}</sh-icon>
                       {{ getBackendType(backup.Backup?.TargetURL) }}
-                    </spk-chip>
+                    </sh-chip>
                   </h3>
 
                   <p>
@@ -137,9 +137,9 @@
                 </div>
 
                 @let versions = getBackupVersionCount(backup);
-                <spk-chip class="simple success" i18n>
+                <sh-chip class="simple success" i18n>
                   {versions, plural, =0 {No version yet} =1 {1 Version} other {{{ versions }} Versions}}
-                </spk-chip>
+                </sh-chip>
 
                 <div class="actions">
                   <ng-container *ngTemplateOutlet="actions; context: { $implicit: backup }"></ng-container>
@@ -151,33 +151,33 @@
           }
         </div>
       } @else if (viewMode() === 'details') {
-        <spk-table class="type-b" [data]="backups()" [loading]="backupsLoading()" [(sortByColumn)]="sortByColumn">
+        <sh-table class="type-b" [data]="backups()" [loading]="backupsLoading()" [(sortByColumn)]="sortByColumn">
           <tr table-header>
-            <th i18n spkSort="name">
+            <th i18n shSort="name">
               Backup
               <ng-container *ngTemplateOutlet="sortIcons" />
             </th>
-            <th i18n spkSort="type">
+            <th i18n shSort="type">
               Type
               <ng-container *ngTemplateOutlet="sortIcons" />
             </th>
-            <th i18n spkSort="lastrun">
+            <th i18n shSort="lastrun">
               Last backup
               <ng-container *ngTemplateOutlet="sortIcons" />
             </th>
-            <th i18n spkSort="nextrun">
+            <th i18n shSort="nextrun">
               Next run
               <ng-container *ngTemplateOutlet="sortIcons" />
             </th>
-            <th i18n spkSort="duration">
+            <th i18n shSort="duration">
               Duration
               <ng-container *ngTemplateOutlet="sortIcons" />
             </th>
-            <th i18n spkSort="sourcesize">
+            <th i18n shSort="sourcesize">
               Source
               <ng-container *ngTemplateOutlet="sortIcons" />
             </th>
-            <th i18n spkSort="destinationsize">
+            <th i18n shSort="destinationsize">
               Destination
               <ng-container *ngTemplateOutlet="sortIcons" />
             </th>
@@ -240,11 +240,11 @@
               </td>
             </tr>
           }
-        </spk-table>
+        </sh-table>
       }
     } @placeholder {
       <div class="loading-list">
-        <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
+        <sh-progress-bar class="indeterminate primary"></sh-progress-bar>
 
         <div class="text">
           <h3 i18n>Loading backups...</h3>
@@ -256,30 +256,30 @@
 
 <ng-template #actions let-backup>
   <button
-    spk-button
+    shButton
     [class.loader]="startingBackup() === backup.Backup?.ID"
     (click)="startBackup($any(backup.Backup?.ID))"
     i18n>
-    <spk-icon>play-circle</spk-icon>
+    <sh-icon>play-circle</sh-icon>
     @if (viewMode() === 'list') {
       Start
     }
   </button>
 
-  <button type="button" spk-button [routerLink]="['/backup', backup.Backup?.ID]">
-    <spk-icon>pencil-simple</spk-icon>
+  <button type="button" shButton [routerLink]="['/backup', backup.Backup?.ID]">
+    <sh-icon>pencil-simple</sh-icon>
   </button>
 
-  <spk-menu [right]="true">
+  <sh-menu>
     <button
       type="button"
-      spk-button
+      shButton
       [class.loader]="loadingId() === backup.Backup?.ID"
       [class.success]="successId() === backup.Backup?.ID">
       @if (successId() === backup.Backup?.ID) {
-        <spk-icon>check</spk-icon>
+        <sh-icon>check</sh-icon>
       } @else {
-        <spk-icon>dots-three-vertical</spk-icon>
+        <sh-icon>dots-three-vertical</sh-icon>
       }
     </button>
 
@@ -287,58 +287,58 @@
       <h3 title>Operations</h3>
 
       <button type="button" [routerLink]="['/restore', backup.Backup?.ID]" i18n>
-        <spk-icon>clock-counter-clockwise</spk-icon>
+        <sh-icon>clock-counter-clockwise</sh-icon>
         Restore
       </button>
 
       <button type="button" [routerLink]="['/backup', backup.Backup?.ID, 'export']" i18n>
-        <spk-icon>export</spk-icon>
+        <sh-icon>export</sh-icon>
         Export
       </button>
 
       <button type="button" [routerLink]="['/backup', backup.Backup?.ID, 'delete']" i18n>
-        <spk-icon>x-circle</spk-icon>
+        <sh-icon>x-circle</sh-icon>
         Delete
       </button>
 
-      <spk-divider />
+      <sh-divider />
 
       <h3 title>Advanced</h3>
 
       <button type="button" [routerLink]="['/backup', backup.Backup?.ID, 'database']" i18n>
-        <spk-icon>database</spk-icon>
+        <sh-icon>database</sh-icon>
         Database
       </button>
 
       <button type="button" (click)="verifyFiles(backup.Backup?.ID!)" i18n>
-        <spk-icon>check-square-offset</spk-icon>
+        <sh-icon>check-square-offset</sh-icon>
         Verify files
       </button>
 
       <button type="button" (click)="compressBackup(backup.Backup?.ID!)" i18n>
-        <spk-icon>file-archive</spk-icon>
+        <sh-icon>file-archive</sh-icon>
         Compress now
       </button>
 
       <button type="button" [routerLink]="['/backup', backup.Backup?.ID, 'commandline']" i18n>
-        <spk-icon>terminal-window</spk-icon>
+        <sh-icon>terminal-window</sh-icon>
         Commandline
       </button>
 
-      <spk-divider />
+      <sh-divider />
 
       <h3 title>Reporting</h3>
 
       <button type="button" [routerLink]="['/backup', backup.Backup?.ID, 'log']" i18n>
-        <spk-icon>notepad</spk-icon>
+        <sh-icon>notepad</sh-icon>
         Log
       </button>
     </ng-container>
-  </spk-menu>
+  </sh-menu>
 </ng-template>
 
 <ng-template #sortIcons>
-  <spk-icon class="filter">funnel-simple</spk-icon>
-  <spk-icon class="asc">sort-ascending</spk-icon>
-  <spk-icon class="desc">sort-descending</spk-icon>
+  <sh-icon class="filter">funnel-simple</sh-icon>
+  <sh-icon class="asc">sort-ascending</sh-icon>
+  <sh-icon class="desc">sort-descending</sh-icon>
 </ng-template>

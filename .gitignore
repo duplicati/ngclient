@@ -44,7 +44,7 @@ testem.log
 .DS_Store
 Thumbs.db
 
-# Sparkle generated files
-/src/assets/spk.css
-/src/assets/spk.woff2
-/src/assets/spk-*.woff2
+# Generated files
+/src/assets/sh-*.woff2
+/src/assets/sh.woff2
+/src/assets/ship.css

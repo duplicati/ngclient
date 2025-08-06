@@ -1,18 +1,18 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { SparkleDialogService } from '@sparkle-ui/core';
+import { ShipDialogService } from '@ship-ui/core';
 import { finalize } from 'rxjs';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import {
-  ArgumentType,
-  BackupAndScheduleInputDto,
-  BackupDto,
-  DuplicatiServerService,
-  ICommandLineArgument,
-  ScheduleDto,
-  SettingDto,
-  SettingInputDto,
+    ArgumentType,
+    BackupAndScheduleInputDto,
+    BackupDto,
+    DuplicatiServerService,
+    ICommandLineArgument,
+    ScheduleDto,
+    SettingDto,
+    SettingInputDto,
 } from '../core/openapi';
 import { TimespanLiteralsService } from '../core/services/timespan-literals.service';
 import { SysinfoState } from '../core/states/sysinfo.state';
@@ -32,7 +32,7 @@ export type TestState = '' | 'testing' | 'success' | 'warning' | 'error';
 export class BackupState {
   #router = inject(Router);
   #sysinfo = inject(SysinfoState);
-  #dialog = inject(SparkleDialogService);
+  #dialog = inject(ShipDialogService);
   #dupServer = inject(DuplicatiServerService);
   #timespanLiteralService = inject(TimespanLiteralsService);
 

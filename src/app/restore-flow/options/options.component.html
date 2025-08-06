@@ -4,15 +4,15 @@
   <app-toggle-card [disallowToggle]="true">
     <ng-container title i18n>Where do you want to restore files to?</ng-container>
 
-    <spk-radio class="raised primary" i18n>
+    <sh-radio class="raised primary" i18n>
       Original location
       <input type="radio" name="restoreFrom" value="orignal" formControlName="restoreFrom" />
-    </spk-radio>
+    </sh-radio>
 
-    <spk-radio class="raised primary" i18n>
+    <sh-radio class="raised primary" i18n>
       Pick location
       <input type="radio" name="restoreFrom" value="pickLocation" formControlName="restoreFrom" />
-    </spk-radio>
+    </sh-radio>
 
     <app-file-tree [disabled]="optionsFormSignal()?.restoreFrom !== 'pickLocation'" [enableCreateFolder]="true">
       <label for="path">Path</label>
@@ -23,39 +23,39 @@
   <app-toggle-card [disallowToggle]="true">
     <ng-container title i18n>How do you want to handle existing files?</ng-container>
 
-    <spk-radio class="raised primary" i18n>
+    <sh-radio class="raised primary" i18n>
       Overwrite
       <input type="radio" name="handleExisting" value="overwrite" formControlName="handleExisting" />
-    </spk-radio>
+    </sh-radio>
 
-    <spk-radio class="raised primary" i18n>
+    <sh-radio class="raised primary" i18n>
       Save different versions with timestamp in file name
       <input type="radio" name="handleExisting" value="saveTimestamp" formControlName="handleExisting" />
-    </spk-radio>
+    </sh-radio>
   </app-toggle-card>
 
   <app-toggle-card>
     <ng-container title i18n>Metadata settings</ng-container>
 
-    <spk-toggle class="primary raised" i18n>
+    <sh-toggle class="primary raised" i18n>
       Restore file metadata
       <input type="checkbox" formControlName="includeMetadata" />
-    </spk-toggle>
+    </sh-toggle>
 
-    <spk-toggle class="primary raised" i18n>
+    <sh-toggle class="primary raised" i18n>
       Restore read/write permissions
       <input type="checkbox" formControlName="permissions" />
-    </spk-toggle>
+    </sh-toggle>
   </app-toggle-card>
 
   <div class="form-actions">
-    <button spk-button type="button" (click)="goBack()" i18n>
-      <spk-icon>arrow-left</spk-icon>
+    <button shButton type="button" (click)="goBack()" i18n>
+      <sh-icon>arrow-left</sh-icon>
       Go back
     </button>
 
-    <button spk-button [class.loader]="isSubmitting()" class="raised primary" type="submit" i18n>
-      <spk-icon>arrow-right</spk-icon>
+    <button shButton [class.loader]="isSubmitting()" class="raised primary" type="submit" i18n>
+      <sh-icon>arrow-right</sh-icon>
       Submit
     </button>
   </div>

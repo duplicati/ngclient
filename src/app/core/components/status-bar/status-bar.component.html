@@ -2,11 +2,11 @@
   <div class="current-backup-progress">
     @if (serverState()?.ActiveTask && statusData()?.task?.Status && statusData()?.task?.Status !== 'Completed') {
       <div>{{ statusData()!.actionText }} - {{ statusData()!.statusText }}</div>
-      <spk-progress-bar class="raised primary" [value]="statusData()!.progress * 100"></spk-progress-bar>
+      <sh-progress-bar class="raised primary" [value]="statusData()!.progress * 100"></sh-progress-bar>
     } @else if (nextBackup().backup || nextBackup().time) {
       <div class="label">
         {{ nextBackup().backup?.Backup?.Name }} -
-        <spk-icon>clock</spk-icon>
+        <sh-icon>clock</sh-icon>
         {{ nextBackup().time | relativeTime }} at
         {{ nextBackup().time | date: 'shortTime' }}
       </div>
@@ -15,7 +15,7 @@
     } @else {
       <div class="label label-loading" i18n>
         Loading
-        <spk-spinner [style.--spinner-size]="'12px'" [style.--spinner-thickness]="'2px'"></spk-spinner>
+        <sh-spinner [style.--spinner-size]="'12px'" [style.--spinner-thickness]="'2px'"></sh-spinner>
       </div>
     }
   </div>
@@ -23,30 +23,30 @@
   <div class="current-backup-actions">
     @if (runningTask()) {
       @if (isStopping()) {
-        <button spk-button i18n (click)="abort()">
-          <spk-icon>skull</spk-icon>
+        <button shButton i18n (click)="abort()">
+          <sh-icon>skull</sh-icon>
           Abort
         </button>
       } @else {
-        <button spk-button i18n (click)="stop()">
-          <spk-icon>stop</spk-icon>
+        <button shButton i18n (click)="stop()">
+          <sh-icon>stop</sh-icon>
           Stop
         </button>
       }
     }
 
-    <button spk-button i18n [class.loader]="isResuming()" (click)="pauseResume()">
+    <button shButton i18n [class.loader]="isResuming()" (click)="pauseResume()">
       @if (clientIsRunning()) {
-        <spk-icon>pause</spk-icon>
+        <sh-icon>pause</sh-icon>
         Pause
       } @else {
-        <spk-icon>play</spk-icon>
+        <sh-icon>play</sh-icon>
         Start
       }
     </button>
 
-    <button spk-button (click)="openThrottleSettingsDialog()">
-      <spk-icon>speedometer</spk-icon>
+    <button shButton (click)="openThrottleSettingsDialog()">
+      <sh-icon>speedometer</sh-icon>
     </button>
   </div>
 </div>

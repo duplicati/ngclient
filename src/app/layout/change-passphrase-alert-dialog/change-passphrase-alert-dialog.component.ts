@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
-  SparkleAlertComponent,
-  SparkleFormFieldComponent,
-  SparkleIconComponent,
-  SparkleTooltipDirective,
-} from '@sparkle-ui/core';
+    ShipAlertComponent,
+    ShipFormFieldComponent,
+    ShipIconComponent,
+    ShipTooltipDirective,
+} from '@ship-ui/core';
 import { finalize } from 'rxjs';
 import { DuplicatiServerService } from '../../core/openapi';
 
@@ -13,10 +13,10 @@ import { DuplicatiServerService } from '../../core/openapi';
   selector: 'app-change-passphrase-alert-dialog',
   imports: [
     FormsModule,
-    SparkleAlertComponent,
-    SparkleFormFieldComponent,
-    SparkleIconComponent,
-    SparkleTooltipDirective,
+    ShipAlertComponent,
+    ShipFormFieldComponent,
+    ShipIconComponent,
+    ShipTooltipDirective,
   ],
   templateUrl: './change-passphrase-alert-dialog.component.html',
   styleUrl: './change-passphrase-alert-dialog.component.scss',

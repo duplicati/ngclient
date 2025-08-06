@@ -3,14 +3,14 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
-  SparkleButtonComponent,
-  SparkleDialogService,
-  SparkleDividerComponent,
-  SparkleFormFieldComponent,
-  SparkleIconComponent,
-  SparkleProgressBarComponent,
-  SparkleSelectComponent,
-} from '@sparkle-ui/core';
+    ShipButtonComponent,
+    ShipDialogService,
+    ShipDividerComponent,
+    ShipFormFieldComponent,
+    ShipIconComponent,
+    ShipProgressBarComponent,
+    ShipSelectComponent,
+} from '@ship-ui/core';
 import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
 import { StatusBarState } from '../../core/components/status-bar/status-bar.state';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
@@ -30,12 +30,12 @@ const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'] as const;
     ToggleCardComponent,
     ReactiveFormsModule,
     RouterLink,
-    SparkleFormFieldComponent,
-    SparkleButtonComponent,
-    SparkleDividerComponent,
-    SparkleSelectComponent,
-    SparkleProgressBarComponent,
-    SparkleIconComponent,
+    ShipFormFieldComponent,
+    ShipButtonComponent,
+    ShipDividerComponent,
+    ShipSelectComponent,
+    ShipProgressBarComponent,
+    ShipIconComponent,
   ],
   templateUrl: './commandline.component.html',
   styleUrl: './commandline.component.scss',
@@ -49,7 +49,7 @@ export default class CommandlineComponent {
   #route = inject(ActivatedRoute);
   #commandline = inject(CommandlineService);
   #statusBarState = inject(StatusBarState);
-  #dialog = inject(SparkleDialogService);
+  #dialog = inject(ShipDialogService);
 
   #routeParamsSignal = toSignal(this.#route.params);
   commandOptions = toSignal(this.#commandline.getApiV1Commandline());

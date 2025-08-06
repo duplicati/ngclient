@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { SparkleRadioComponent, SparkleStepperComponent } from '@sparkle-ui/core';
+import { ShipRadioComponent, ShipStepperComponent } from '@ship-ui/core';
 import { BackupState } from '../backup/backup.state';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { RestoreFlowState } from './restore-flow.state';
@@ -9,8 +9,8 @@ import { RestoreFlowState } from './restore-flow.state';
 @Component({
   selector: 'app-restore-flow',
   imports: [
-    SparkleStepperComponent,
-    SparkleRadioComponent,
+    ShipStepperComponent,
+    ShipRadioComponent,
     StatusBarComponent,
     RouterOutlet,
     RouterLink,

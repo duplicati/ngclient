@@ -1,24 +1,24 @@
 @if (pathState()) {
-  <spk-select [options]="expressionOptions()" [isClearable]="false" value="value" label="key">
+  <sh-select [options]="expressionOptions()" [isClearable]="false" value="value" label="key">
     <input
       type="text"
       i18n-placeholder
       placeholder="Select an option..."
       [ngModel]="pathState()?.type"
       (ngModelChange)="updateStateType($event)" />
-  </spk-select>
+  </sh-select>
 
   @if (pathState()?.type === '-FileGroup' || pathState()?.type === '+FileGroup') {
-    <spk-select [options]="fileGroupOptions()" [isClearable]="false" value="value" label="key">
+    <sh-select [options]="fileGroupOptions()" [isClearable]="false" value="value" label="key">
       <input type="text" [ngModel]="pathState()?.expression" (ngModelChange)="updateStateExpression($event)" />
-    </spk-select>
+    </sh-select>
   } @else {
-    <spk-form-field>
+    <sh-form-field>
       <input type="text" [ngModel]="pathState()?.expression" (ngModelChange)="updateStateExpression($event)" />
-    </spk-form-field>
+    </sh-form-field>
   }
 
   <div class="filter-removal" (click)="removeFilter()">
-    <spk-icon class="spk-primary">x-circle</spk-icon>
+    <sh-icon class="sh-primary">x-circle</sh-icon>
   </div>
 }

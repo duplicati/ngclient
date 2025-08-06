@@ -1,12 +1,12 @@
-<button spk-button [class]="alertHistory().length ? 'error' : ''" (click)="toggleAlerts()">
-  <spk-icon>info</spk-icon>
+<button shButton [class]="alertHistory().length ? 'error' : ''" (click)="toggleAlerts()">
+  <sh-icon>info</sh-icon>
 </button>
 
-<button spk-button [class]="notifications().length ? 'error' : ''" (click)="toggleNotifications()">
+<button shButton [class]="notifications().length ? 'error' : ''" (click)="toggleNotifications()">
   @if (this.notifications().length) {
-    <spk-icon>bell-ringing</spk-icon>
+    <sh-icon>bell-ringing</sh-icon>
   } @else {
-    <spk-icon>bell</spk-icon>
+    <sh-icon>bell</sh-icon>
   }
 </button>
 
@@ -16,15 +16,15 @@
     @if (_shownMessage.type === 'notification') {
       <app-notification [index]="0" [notification]="_shownMessage.content"></app-notification>
     } @else {
-      <spk-alert [class]="_shownMessage.content.type || 'error'">
-        <div sparkle-alert-title>{{ _shownMessage.content.title }}</div>
+      <sh-alert [class]="_shownMessage.content.type || 'error'">
+        <div ship-alert-title>{{ _shownMessage.content.title }}</div>
 
         @if (_shownMessage.content.content) {
-          <div sparkle-alert-content>
+          <div ship-alert-content>
             {{ _shownMessage.content.content }}
           </div>
         }
-      </spk-alert>
+      </sh-alert>
     }
   </div>
 }
@@ -35,8 +35,8 @@
       <h6 class="paragraph-20" i18n>
         Notifications
 
-        <button spk-button (click)="toggleNotifications()">
-          <spk-icon>x-circle</spk-icon>
+        <button shButton (click)="toggleNotifications()">
+          <sh-icon>x-circle</sh-icon>
         </button>
       </h6>
 
@@ -55,15 +55,15 @@
       <h6 class="paragraph-20" i18n>
         Alerts
 
-        <button spk-button (click)="toggleAlerts()">
-          <spk-icon>x-circle</spk-icon>
+        <button shButton (click)="toggleAlerts()">
+          <sh-icon>x-circle</sh-icon>
         </button>
       </h6>
 
       <div class="alert-stream-modal-list-scroller" #scroller>
         <div class="alert-stream-modal-list">
           @for (alert of alertHistory(); track $index) {
-            <spk-alert #alerts [class]="alert.type" [id]="alert.id" (click)="deleteAlertByIndex(alert.id)">
+            <sh-alert #alerts [class]="alert.type" [id]="alert.id" (click)="deleteAlertByIndex(alert.id)">
               <div title>{{ alert.title }}</div>
 
               @if (alert.content) {
@@ -71,7 +71,7 @@
                   {{ alert.content }}
                 </div>
               }
-            </spk-alert>
+            </sh-alert>
           } @empty {
             <p i18n class="no-alerts">No alerts yet</p>
           }

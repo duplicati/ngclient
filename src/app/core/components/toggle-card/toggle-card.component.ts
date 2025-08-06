@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, input, model } from '@angular/core';
-import { SparkleIconComponent } from '@sparkle-ui/core';
+import { ShipIconComponent } from '@ship-ui/core';
 
 @Component({
     selector: 'app-toggle-card',
-    imports: [SparkleIconComponent],
+    imports: [ShipIconComponent],
     templateUrl: './toggle-card.component.html',
     styleUrl: './toggle-card.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,

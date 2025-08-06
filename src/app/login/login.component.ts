@@ -2,11 +2,12 @@ import { ChangeDetectionStrategy, Component, effect, ElementRef, inject, signal,
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
-  SparkleAlertComponent,
-  SparkleButtonComponent,
-  SparkleFormFieldComponent,
-  SparkleIconComponent,
-} from '@sparkle-ui/core';
+  ShipAlertComponent,
+  ShipButtonComponent,
+  ShipCheckboxComponent,
+  ShipFormFieldComponent,
+  ShipIconComponent,
+} from '@ship-ui/core';
 import { finalize } from 'rxjs';
 import LogoComponent from '../core/components/logo/logo.component';
 import { localStorageSignal } from '../core/functions/localstorage-signal';
@@ -19,10 +20,11 @@ const fb = new FormBuilder();
   imports: [
     ReactiveFormsModule,
     LogoComponent,
-    SparkleFormFieldComponent,
-    SparkleIconComponent,
-    SparkleButtonComponent,
-    SparkleAlertComponent,
+    ShipFormFieldComponent,
+    ShipIconComponent,
+    ShipButtonComponent,
+    ShipAlertComponent,
+    ShipCheckboxComponent,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
@@ -48,10 +50,8 @@ export default class LoginComponent {
     }
   });
 
-
   ngOnInit() {
-    this.loginForm.controls.rememberMe.valueChanges
-      .subscribe(v => this.rememberMe.set(v ?? false));
+    this.loginForm.controls.rememberMe.valueChanges.subscribe((v) => this.rememberMe.set(v ?? false));
 
     queueMicrotask(() => this.passwordInput()?.nativeElement?.focus());
   }
@@ -75,9 +75,9 @@ export default class LoginComponent {
         })
       )
       .subscribe({
-        next: () => { 
+        next: () => {
           this.successLogin.set(true);
-          this.#router.navigate(['/']) 
+          this.#router.navigate(['/']);
         },
       });
   }

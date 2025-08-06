@@ -1,19 +1,19 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  SparkleAlertComponent,
-  SparkleAlertService,
-  SparkleAlertType,
-  SparkleButtonComponent,
-  SparkleDialogService,
-  SparkleProgressBarComponent,
-} from '@sparkle-ui/core';
+    ShipAlertComponent,
+    ShipAlertService,
+    ShipAlertType,
+    ShipButtonComponent,
+    ShipDialogService,
+    ShipProgressBarComponent,
+} from '@ship-ui/core';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServerService, NotificationType } from '../../core/openapi';
 import { ExtendedNotificationDto } from '../notifications.component';
 import { NotificationsState } from '../notifications.state';
 
-const NOTIFICATION_TYPE_MAP: Record<string, SparkleAlertType> = {
+const NOTIFICATION_TYPE_MAP: Record<string, ShipAlertType> = {
   Error: 'error',
   Warning: 'warn',
   Information: 'primary',
@@ -21,7 +21,7 @@ const NOTIFICATION_TYPE_MAP: Record<string, SparkleAlertType> = {
 
 @Component({
   selector: 'app-notification',
-  imports: [SparkleProgressBarComponent, SparkleButtonComponent, SparkleAlertComponent],
+  imports: [ShipProgressBarComponent, ShipButtonComponent, ShipAlertComponent],
   templateUrl: './notification.component.html',
   styleUrl: './notification.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,8 +29,8 @@ const NOTIFICATION_TYPE_MAP: Record<string, SparkleAlertType> = {
 export class NotificationComponent {
   #router = inject(Router);
   #activatedRoute = inject(ActivatedRoute);
-  #dialog = inject(SparkleDialogService);
-  #snackbar = inject(SparkleAlertService);
+  #dialog = inject(ShipDialogService);
+  #snackbar = inject(ShipAlertService);
   #notificationState = inject(NotificationsState);
   #dupServer = inject(DuplicatiServerService);
   #generatedDownloadLink = signal<string | null>(null);
@@ -52,7 +52,7 @@ export class NotificationComponent {
     this.#notificationState.deleteAllNotifications();
   }
 
-  getAlertType(type?: NotificationType): SparkleAlertType {
+  getAlertType(type?: NotificationType): ShipAlertType {
     return type ? NOTIFICATION_TYPE_MAP[type] || 'primary' : 'primary';
   }
 

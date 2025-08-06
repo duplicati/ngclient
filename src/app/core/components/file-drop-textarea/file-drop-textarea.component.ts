@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, effect, ElementRef, input, signal, ViewChild } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { SparkleButtonComponent, SparkleIconComponent } from '@sparkle-ui/core';
+import { ShipButtonComponent, ShipIconComponent } from '@ship-ui/core';
 
 @Component({
   selector: 'app-file-drop-textarea',
   templateUrl: './file-drop-textarea.component.html',
   styleUrls: ['./file-drop-textarea.component.scss'],
   standalone: true,
-  imports: [FormsModule, SparkleIconComponent, SparkleButtonComponent],
+  imports: [FormsModule, ShipIconComponent, ShipButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {

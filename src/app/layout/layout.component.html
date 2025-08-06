@@ -1,78 +1,78 @@
-<spk-sidenav>
+<sh-sidenav>
   <div sidenav>
     <header>
       <app-logo />
 
-      <button spk-button class="icon small" (click)="toggleBodyClass()">
+      <button shButton class="icon small" (click)="toggleBodyClass()">
         @if (isDarkMode()) {
-          <spk-icon>sun</spk-icon>
+          <sh-icon>sun</sh-icon>
         } @else {
-          <spk-icon>moon</spk-icon>
+          <sh-icon>moon</sh-icon>
         }
       </button>
     </header>
 
-    <spk-list class="base-1 primary">
+    <sh-list class="base-1 primary">
       <button action routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" i18n>
-        <spk-icon>house</spk-icon>
+        <sh-icon>house</sh-icon>
         Home
       </button>
 
       <button action routerLink="/add-backup" routerLinkActive="active" i18n>
-        <spk-icon>database</spk-icon>
+        <sh-icon>database</sh-icon>
         Add backup
       </button>
 
       <button action routerLink="/restore" routerLinkActive="active" i18n>
-        <spk-icon>clock-counter-clockwise</spk-icon>
+        <sh-icon>clock-counter-clockwise</sh-icon>
         Restore
       </button>
 
       <button action routerLink="/settings" routerLinkActive="active" i18n>
-        <spk-icon>gear</spk-icon>
+        <sh-icon>gear</sh-icon>
         Settings
       </button>
-    </spk-list>
+    </sh-list>
 
     <div class="spacer"></div>
 
-    <spk-list class="base-1l primary">
+    <sh-list class="base-1l primary">
       @if (!relayIsEnabled()) {
         <button action (click)="changeDefaultClientTo('ngax')" i18n>
-          <spk-icon>skip-back</spk-icon>
+          <sh-icon>skip-back</sh-icon>
           Use old UI
         </button>
 
         <button action (click)="logout()" i18n>
-          <spk-icon>sign-out</spk-icon>
+          <sh-icon>sign-out</sh-icon>
           Log out
         </button>
       }
 
-      <spk-divider />
+      <sh-divider />
 
       <button action routerLink="/about" routerLinkActive="active" i18n>
-        <spk-icon>info</spk-icon>
+        <sh-icon>info</sh-icon>
         About Duplicati
       </button>
 
       <a href="https://docs.duplicati.com" target="_blank" action i18n>
-        <spk-icon>files</spk-icon>
+        <sh-icon>files</sh-icon>
         Documentation
 
-        <spk-icon suffix>arrow-square-out</spk-icon>
+        <sh-icon suffix>arrow-square-out</sh-icon>
       </a>
 
       <a href="https://forum.duplicati.com" target="_blank" action i18n>
-        <spk-icon>chats-circle</spk-icon>
+        <sh-icon>chats-circle</sh-icon>
         Visit forum
 
-        <spk-icon suffix>arrow-square-out</spk-icon>
+        <sh-icon suffix>arrow-square-out</sh-icon>
       </a>
-    </spk-list>
+    </sh-list>
   </div>
 
   <router-outlet />
 
   <app-service-hub></app-service-hub>
-</spk-sidenav>
+</sh-sidenav>

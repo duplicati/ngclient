@@ -1,9 +1,9 @@
 @let _notification = notification();
 
-<spk-alert [class]="getAlertType(_notification.Type)">
-  <div sparkle-alert-title>{{ _notification.Title }}</div>
+<sh-alert [class]="getAlertType(_notification.Type)">
+  <div ship-alert-title>{{ _notification.Title }}</div>
 
-  <div sparkle-alert-content class="content">
+  <div ship-alert-content class="content">
     @if (_notification.Action !== 'update:new' && _notification.Action !== 'update:manual') {
       {{ _notification.Message }}
     }
@@ -17,11 +17,11 @@
 
     <div class="actions">
       @if (_notification.Message?.includes('please run repair')) {
-        <button spk-button class="small outlined" (click)="doRepair(_notification.BackupID!)" i18n>Repair</button>
+        <button shButton class="small outlined" (click)="doRepair(_notification.BackupID!)" i18n>Repair</button>
       }
 
       @if (_notification.Action?.startsWith('bug-report:created:') && !downloadLink()) {
-        <button spk-button class="small outlined" (click)="doDownloadBugreport(_notification)" i18n>Download</button>
+        <button shButton class="small outlined" (click)="doDownloadBugreport(_notification)" i18n>Download</button>
       }
 
       @if (_notification.Action === 'update:new') {
@@ -30,20 +30,20 @@
           <a [href]="serverState()?.UpdateDownloadLink">{{ _notification.Message }}</a>
 
           @if (serverState()?.UpdaterState === 'Downloading') {
-            <spk-progress-bar [value]="serverState()?.UpdateDownloadProgress" />
+            <sh-progress-bar [value]="serverState()?.UpdateDownloadProgress" />
           }
 
-          <button spk-button class="small outlined" (click)="doShowUpdate()" i18n>Show Update</button>
+          <button shButton class="small outlined" (click)="doShowUpdate()" i18n>Show Update</button>
         </div>
       }
 
       @if (_notification.Action === 'backup:show-log') {
-        <button spk-button class="small outlined" (click)="doShowLog(_notification.BackupID!)" i18n>Show Log</button>
+        <button shButton class="small outlined" (click)="doShowLog(_notification.BackupID!)" i18n>Show Log</button>
       }
 
       @if (_notification.Action === 'config:issue:unencrypted-database') {
         <button
-          spk-button
+          shButton
           class="small outlined"
           (click)="doShowLink('https://docs.duplicati.com/detailed-descriptions/the-server-database')"
           i18n>
@@ -53,7 +53,7 @@
 
       @if (_notification.Action === 'config:issue:windows-folder-used') {
         <button
-          spk-button
+          shButton
           class="small outlined"
           (click)="doShowLink('https://docs.duplicati.com/detailed-descriptions/the-server-database')"
           i18n>
@@ -61,7 +61,7 @@
         </button>
       }
 
-      <button spk-button class="small outlined" (click)="deleteNotificationByIndex()" i18n>Dismiss</button>
+      <button shButton class="small outlined" (click)="deleteNotificationByIndex()" i18n>Dismiss</button>
     </div>
   </div>
-</spk-alert>
+</sh-alert>

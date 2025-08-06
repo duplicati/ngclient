@@ -1,5 +1,5 @@
 @if (resource.isLoading()) {
-  <spk-progress-bar class="indeterminate primary" />
+  <sh-progress-bar class="indeterminate primary" />
 }
 
 @for (item of resource.value(); track $index) {
@@ -8,23 +8,23 @@
       <h3>{{ item.timestamp | date: 'medium' }}: {{ item.operation }} {{ item.path }}</h3>
 
       <div class="actions">
-        <spk-icon class="toggle-indicator" [class.open]="item.id === openEntry()">caret-down</spk-icon>
+        <sh-icon class="toggle-indicator" [class.open]="item.id === openEntry()">caret-down</sh-icon>
       </div>
     </header>
 
     @if (item.id === openEntry()) {
       <section class="log-content">
         <button
-          spk-button
+          shButton
           class="small"
           [class.success]="copiedFromIndex() === $index"
           (click)="copyToClipboard(item.data, $index)"
           i18n>
           @if (copiedFromIndex() === $index) {
-            <spk-icon>check</spk-icon>
+            <sh-icon>check</sh-icon>
             Copied
           } @else {
-            <spk-icon>copy</spk-icon>
+            <sh-icon>copy</sh-icon>
             Copy to clipboard
           }
         </button>

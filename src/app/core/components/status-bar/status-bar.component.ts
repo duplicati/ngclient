@@ -1,12 +1,12 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import {
-  SparkleButtonComponent,
-  SparkleDialogService,
-  SparkleIconComponent,
-  SparkleProgressBarComponent,
-  SparkleSpinnerComponent,
-} from '@sparkle-ui/core';
+    ShipButtonComponent,
+    ShipDialogService,
+    ShipIconComponent,
+    ShipProgressBarComponent,
+    ShipSpinnerComponent,
+} from '@ship-ui/core';
 import { DuplicatiServerService } from '../../openapi';
 import { RelativeTimePipe } from '../../pipes/relative-time.pipe';
 import { ServerStateService } from '../../services/server-state.service';
@@ -21,12 +21,12 @@ const date = new Date();
 @Component({
   selector: 'app-status-bar',
   imports: [
-    SparkleProgressBarComponent,
+    ShipProgressBarComponent,
     RelativeTimePipe,
     DatePipe,
-    SparkleIconComponent,
-    SparkleButtonComponent,
-    SparkleSpinnerComponent,
+    ShipIconComponent,
+    ShipButtonComponent,
+    ShipSpinnerComponent,
   ],
   templateUrl: './status-bar.component.html',
   styleUrl: './status-bar.component.scss',
@@ -35,7 +35,7 @@ const date = new Date();
 export default class StatusBarComponent {
   #dupServer = inject(DuplicatiServerService);
   #statusBarState = inject(StatusBarState);
-  #dialog = inject(SparkleDialogService);
+  #dialog = inject(ShipDialogService);
   #backupsState = inject(BackupsState);
   #relayconfigState = inject(RelayconfigState);
   #sysinfo = inject(SysinfoState);

@@ -1,22 +1,22 @@
 <ng-content select="label" ngProjectAs="label" />
 
-<spk-form-field [attr.readonly]="readonly() || undefined">
+<sh-form-field [attr.readonly]="readonly() || undefined">
   <input type="number" [id]="customId()" [(ngModel)]="timespan" [disabled]="readonly()" />
 
   <ng-content select="[prefix]" />
   <ng-content select="[suffix]" />
-</spk-form-field>
+</sh-form-field>
 
-<spk-menu [openIndicator]="true">
-  <button spk-button class="trigger" type="button" i18n>{{ unitLabel() }}</button>
+<sh-menu [openIndicator]="true">
+  <button shButton class="trigger" type="button" i18n>{{ unitLabel() }}</button>
 
   <ng-container menu>
     @for (option of timeOptions(); track $index) {
-      <button spk-button type="button" class="small" (click)="updateUnit(option.value)" i18n>{{ option.label }}</button>
+      <button shButton type="button" class="small" (click)="updateUnit(option.value)" i18n>{{ option.label }}</button>
     }
   </ng-container>
-</spk-menu>
-<!-- <spk-select
+</sh-menu>
+<!-- <sh-select
   i18n-placeholder
   placeholder="Select an item..."
   [options]="timeOptions()"
@@ -30,4 +30,4 @@
   <ng-template let-option>
     {{ option.label }}
   </ng-template>
-</spk-select> -->
+</sh-select> -->

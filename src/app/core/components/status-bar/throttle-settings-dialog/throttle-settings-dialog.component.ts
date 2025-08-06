@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { SparkleFormFieldComponent, SparkleSelectComponent } from '@sparkle-ui/core';
+import { ShipFormFieldComponent, ShipSelectComponent } from '@ship-ui/core';
 import { finalize } from 'rxjs';
 import { DuplicatiServerService } from '../../../openapi';
 
@@ -47,7 +47,7 @@ const SUBMISSION_UNIT_THRESHOLDS = [
 
 @Component({
   selector: 'app-throttle-settings-dialog',
-  imports: [FormsModule, SparkleFormFieldComponent, SparkleSelectComponent],
+  imports: [FormsModule, ShipFormFieldComponent, ShipSelectComponent],
   templateUrl: './throttle-settings-dialog.component.html',
   styleUrl: './throttle-settings-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,17 +1,17 @@
 <h3 class="title-30" i18n>Schedule</h3>
 
 <div class="toggle-wrap">
-  <spk-toggle class="raised primary" i18n>
+  <sh-toggle class="raised primary" i18n>
     Automatically run backups
     <input type="checkbox" [(ngModel)]="scheduleFields.autoRun" />
-  </spk-toggle>
+  </sh-toggle>
 
   <p i18n>If a date was missed, the job will run as soon as possible.</p>
 </div>
 
 @if (scheduleFields.autoRun()) {
   <div class="row-inputs">
-    <spk-form-field>
+    <sh-form-field>
       <label for="time" i18n>Next time</label>
       <input
         type="time"
@@ -19,10 +19,10 @@
         #timeRef
         [(ngModel)]="scheduleFields.nextTime().time"
         (focus)="timeRef.showPicker()" />
-      <spk-icon suffix>clock</spk-icon>
-    </spk-form-field>
+      <sh-icon suffix>clock</sh-icon>
+    </sh-form-field>
 
-    <spk-form-field>
+    <sh-form-field>
       <label for="date"></label>
       <input
         type="date"
@@ -30,71 +30,71 @@
         #dateRef
         [(ngModel)]="scheduleFields.nextTime().date"
         (focus)="dateRef.showPicker()" />
-      <spk-icon suffix>calendar</spk-icon>
-    </spk-form-field>
+      <sh-icon suffix>calendar</sh-icon>
+    </sh-form-field>
   </div>
 
   <div class="row-inputs">
-    <spk-form-field>
+    <sh-form-field>
       <label for="repeatValue" i18n>Run again every</label>
       <input type="number" id="repeatValue" [(ngModel)]="scheduleFields.runAgain().repeatValue" />
-    </spk-form-field>
+    </sh-form-field>
 
-    <spk-select [options]="unitOptions" [isClearable]="false" value="key" label="label">
+    <sh-select [options]="unitOptions" [isClearable]="false" value="key" label="label">
       <input type="text" id="repeatUnit" [(ngModel)]="scheduleFields.runAgain().repeatUnit" />
-    </spk-select>
+    </sh-select>
   </div>
 
   <app-toggle-card [disallowToggle]="true">
     <ng-container title i18n>Allowed days</ng-container>
 
     <div class="days-wrap">
-      <spk-toggle class="raised primary" i18n>
+      <sh-toggle class="raised primary" i18n>
         Monday
         <input type="checkbox" [(ngModel)]="scheduleFields.runAgain().allowedDays.mon" />
-      </spk-toggle>
+      </sh-toggle>
 
-      <spk-toggle class="raised primary" i18n>
+      <sh-toggle class="raised primary" i18n>
         Tuesday
         <input type="checkbox" [(ngModel)]="scheduleFields.runAgain().allowedDays.tue" />
-      </spk-toggle>
+      </sh-toggle>
 
-      <spk-toggle class="raised primary" i18n>
+      <sh-toggle class="raised primary" i18n>
         Wednesday
         <input type="checkbox" [(ngModel)]="scheduleFields.runAgain().allowedDays.wed" />
-      </spk-toggle>
+      </sh-toggle>
 
-      <spk-toggle class="raised primary" i18n>
+      <sh-toggle class="raised primary" i18n>
         Thursday
         <input type="checkbox" [(ngModel)]="scheduleFields.runAgain().allowedDays.thu" />
-      </spk-toggle>
+      </sh-toggle>
 
-      <spk-toggle class="raised primary" i18n>
+      <sh-toggle class="raised primary" i18n>
         Friday
         <input type="checkbox" [(ngModel)]="scheduleFields.runAgain().allowedDays.fri" />
-      </spk-toggle>
+      </sh-toggle>
 
-      <spk-toggle class="raised primary" i18n>
+      <sh-toggle class="raised primary" i18n>
         Saturday
         <input type="checkbox" [(ngModel)]="scheduleFields.runAgain().allowedDays.sat" />
-      </spk-toggle>
+      </sh-toggle>
 
-      <spk-toggle class="raised primary" i18n>
+      <sh-toggle class="raised primary" i18n>
         Sunday
         <input type="checkbox" [(ngModel)]="scheduleFields.runAgain().allowedDays.sun" />
-      </spk-toggle>
+      </sh-toggle>
     </div>
   </app-toggle-card>
 }
 
 <div class="form-actions">
-  <button spk-button type="button" (click)="goBack()" i18n>
-    <spk-icon>arrow-left</spk-icon>
+  <button shButton type="button" (click)="goBack()" i18n>
+    <sh-icon>arrow-left</sh-icon>
     Go back
   </button>
 
-  <button spk-button class="raised primary" (click)="next()" i18n>
-    <spk-icon>arrow-right</spk-icon>
+  <button shButton class="raised primary" (click)="next()" i18n>
+    <sh-icon>arrow-right</sh-icon>
     Continue
   </button>
 </div>

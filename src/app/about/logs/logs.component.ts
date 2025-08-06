@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { SparkleButtonGroupComponent, SparkleIconComponent, SparkleMenuComponent } from '@sparkle-ui/core';
+import { ShipButtonGroupComponent, ShipIconComponent, ShipMenuComponent } from '@ship-ui/core';
 import { LogsLiveState } from './logs-live/logs-live.state';
 
 @Component({
   selector: 'app-logs',
   imports: [
-    SparkleButtonGroupComponent,
-    SparkleIconComponent,
-    SparkleMenuComponent,
+    ShipButtonGroupComponent,
+    ShipIconComponent,
+    ShipMenuComponent,
     RouterOutlet,
     RouterLinkActive,
     RouterLink,

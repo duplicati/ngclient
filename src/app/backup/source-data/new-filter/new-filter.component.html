@@ -1,13 +1,13 @@
-<spk-select [options]="expressionOptions()" [isClearable]="false" value="value" label="key">
+<sh-select [options]="expressionOptions()" [isClearable]="false" value="value" label="key">
   <input
     type="text"
     i18n-placeholder
     placeholder="Select an option..."
     [(ngModel)]="pathType"
     (ngModelChange)="updateFilter()" />
-</spk-select>
+</sh-select>
 
-<spk-form-field class="expression-input">
+<sh-form-field class="expression-input">
   <input type="text" [(ngModel)]="internalPath" (ngModelChange)="updateFilter()" />
   @if (currentExpressionOption()?.startsWith?.length) {
     <ng-container prefix>{{ currentExpressionOption()?.startsWith }}</ng-container>
@@ -16,8 +16,8 @@
   @if (currentExpressionOption()?.endsWith?.length) {
     <ng-container suffix>{{ currentExpressionOption()?.endsWith }}</ng-container>
   }
-</spk-form-field>
+</sh-form-field>
 
 <div class="filter-removal" (click)="removeFilter()">
-  <spk-icon class="spk-primary">x-circle</spk-icon>
+  <sh-icon class="sh-primary">x-circle</sh-icon>
 </div>

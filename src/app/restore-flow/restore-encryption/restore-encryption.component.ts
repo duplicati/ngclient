@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SparkleButtonComponent, SparkleFormFieldComponent, SparkleIconComponent } from '@sparkle-ui/core';
+import { ShipButtonComponent, ShipFormFieldComponent, ShipIconComponent } from '@ship-ui/core';
 import { finalize } from 'rxjs';
 import { OptionsListComponent } from '../../backup/options/options-list/options-list.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
@@ -20,9 +20,9 @@ export const createEncryptionForm = () => {
   selector: 'app-restore-encryption',
   imports: [
     ReactiveFormsModule,
-    SparkleFormFieldComponent,
-    SparkleIconComponent,
-    SparkleButtonComponent,
+    ShipFormFieldComponent,
+    ShipIconComponent,
+    ShipButtonComponent,
     ToggleCardComponent,
     OptionsListComponent,
   ],

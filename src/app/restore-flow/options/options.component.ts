@@ -2,11 +2,11 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  SparkleButtonComponent,
-  SparkleIconComponent,
-  SparkleRadioComponent,
-  SparkleToggleComponent,
-} from '@sparkle-ui/core';
+    ShipButtonComponent,
+    ShipIconComponent,
+    ShipRadioComponent,
+    ShipToggleComponent,
+} from '@ship-ui/core';
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { RestoreFlowState } from '../restore-flow.state';
@@ -29,10 +29,10 @@ export const createRestoreOptionsForm = () => {
         ReactiveFormsModule,
         ToggleCardComponent,
         FileTreeComponent,
-        SparkleToggleComponent,
-        SparkleRadioComponent,
-        SparkleButtonComponent,
-        SparkleIconComponent,
+        ShipToggleComponent,
+        ShipRadioComponent,
+        ShipButtonComponent,
+        ShipIconComponent,
     ],
     templateUrl: './options.component.html',
     styleUrl: './options.component.scss',

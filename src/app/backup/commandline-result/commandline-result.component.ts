@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { SparkleButtonComponent, SparkleIconComponent } from '@sparkle-ui/core';
+import { ShipButtonComponent, ShipIconComponent } from '@ship-ui/core';
 import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
 import { CommandLineLogOutputDto, DuplicatiServerService } from '../../core/openapi';
 
@@ -9,7 +9,7 @@ type Status = 'starting' | 'started' | 'finished' | 'aborted';
 
 @Component({
   selector: 'app-commandline-result',
-  imports: [StatusBarComponent, SparkleIconComponent, SparkleButtonComponent, RouterLink],
+  imports: [StatusBarComponent, ShipIconComponent, ShipButtonComponent, RouterLink],
   templateUrl: './commandline-result.component.html',
   styleUrl: './commandline-result.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

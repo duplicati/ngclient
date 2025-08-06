@@ -1,7 +1,7 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { SparkleAlertService } from '@sparkle-ui/core';
+import { ShipAlertService } from '@ship-ui/core';
 import { catchError, finalize, map, Observable, shareReplay, switchMap, throwError } from 'rxjs';
 import { ENVIRONMENT_TOKEN } from '../../../environments/environment-token';
 import { mapLocale } from '../locales/locales.utility';
@@ -17,7 +17,7 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   const ls = inject(LOCALSTORAGE);
   const env = inject(ENVIRONMENT_TOKEN);
   const locale = ls.getItem('locale');
-  const sparkleAlertService = inject(SparkleAlertService);
+  const shipAlertService = inject(ShipAlertService);
   const mappedLocale = mapLocale(locale);
   const isLoginRequest = req.url === '/api/v1/auth/login';
   const isRefreshRequest = req.url === '/api/v1/auth/refresh';
@@ -72,7 +72,7 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
         } else if (isConnectionTestRequest || isValidateFsTestRequest) {
           // Suppress errors for test requests, API needs to change
         } else {
-          sparkleAlertService.error(errorMsg);
+          shipAlertService.error(errorMsg);
         }
 
         // Don't error handle refresh requests

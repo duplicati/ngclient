@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { SparkleDialogService } from '@sparkle-ui/core';
+import { ShipDialogService } from '@ship-ui/core';
 import { Observable, Subscriber } from 'rxjs';
 import { ConfirmDialogComponent } from '../components/confirm-dialog/confirm-dialog.component';
 import { DestinationTestResponseDto, DuplicatiServerService, PostApiV2DestinationTestResponse } from '../openapi';
@@ -23,7 +23,7 @@ export type TestDestinationResult = {
 })
 export class TestDestinationService {
   #dupServer = inject(DuplicatiServerService);
-  #dialog = inject(SparkleDialogService);
+  #dialog = inject(ShipDialogService);
   #sysinfo = inject(SysinfoState);
 
   testDestination(targetUrl: string, destinationIndex: number, askToCreate: boolean, suppressErrorDialogs: boolean) {

@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { SparkleDialogService } from '@sparkle-ui/core';
+import { ShipDialogService } from '@ship-ui/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { DisconnectedDialogComponent } from '../components/disconnected-dialog/disconnected-dialog.component';
@@ -12,7 +12,7 @@ type ConnectionStatus = 'connected' | 'disconnected' | 'connecting';
   providedIn: 'root',
 })
 export class ServerStatusLongPollService {
-  dialog = inject(SparkleDialogService);
+  dialog = inject(ShipDialogService);
   #dupServer = inject(DuplicatiServerService);
   #connectionStatus = signal<ConnectionStatus>('disconnected');
   #serverState = signal<ServerStatusDto | null>(null);

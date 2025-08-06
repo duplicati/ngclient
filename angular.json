@@ -153,8 +153,8 @@
               },
               {
                 "glob": "**/*",
-                "input": "./node_modules/@sparkle-ui/core/assets",
-                "output": "./sparkle-ui-assets/"
+                "input": "./node_modules/@ship-ui/core/assets",
+                "output": "./ship-ui-assets/"
               }
             ],
             "styles": ["src/styles.scss"],

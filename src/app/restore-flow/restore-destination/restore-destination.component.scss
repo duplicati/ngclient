@@ -1,4 +1,4 @@
-@use '@sparkle-ui/core/styles/helpers' as *;
+@use '@ship-ui/core/styles/helpers' as *;
 
 :host {
   display: block;
@@ -13,7 +13,7 @@ header {
   gap: p2r(8);
 
   h2,
-  spk-alert {
+  sh-alert {
     width: 100%;
   }
 

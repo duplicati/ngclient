@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { SparkleButtonComponent, SparkleDialogComponent, SparkleIconComponent } from '@sparkle-ui/core';
+import { ShipButtonComponent, ShipDialogComponent, ShipIconComponent } from '@ship-ui/core';
 import { map } from 'rxjs';
 import { DuplicatiServerService, LicenseDto } from '../../core/openapi';
 
@@ -14,7 +14,7 @@ type Data = {
 
 @Component({
   selector: 'app-libraries',
-  imports: [SparkleIconComponent, SparkleButtonComponent, SparkleDialogComponent],
+  imports: [ShipIconComponent, ShipButtonComponent, ShipDialogComponent],
   templateUrl: './libraries.component.html',
   styleUrl: './libraries.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,7 +1,7 @@
 @if (logLevel() === 'Disabled') {
   <div class="live-view-disabled" i18n>Live logs are disabled</div>
 } @else {
-  <spk-table
+  <sh-table
     [class.type-b]="asSimpleList()"
     [data]="logs()"
     [loading]="logsLoading()"
@@ -17,8 +17,8 @@
         <td>{{ row['When'] | date: 'medium' }}</td>
         <td>{{ subStringMessage(row['Message']) }}</td>
         <td class="sticky-end">
-          <button spk-button class="outlined small" [class.rotated-icon]="$index === openRowIndex()" type="button">
-            <spk-icon>caret-down</spk-icon>
+          <button shButton class="outlined small" [class.rotated-icon]="$index === openRowIndex()" type="button">
+            <sh-icon>caret-down</sh-icon>
           </button>
         </td>
       </tr>
@@ -26,13 +26,13 @@
       @if ($index === openRowIndex()) {
         <tr>
           <td class="expanded-cell">
-            <spk-list class="primary">
+            <sh-list class="primary">
               <div item>ID: {{ row['ID'] }}</div>
               <div item>Type: {{ row['Type'] }}</div>
               <div item>Tag: {{ row['Tag'] }}</div>
               <div item>TaskID: {{ row['TaskID'] }}</div>
               <div item>MessageID: {{ row['MessageID'] }}</div>
-            </spk-list>
+            </sh-list>
 
             @if (row['Exception']) {
               <code>
@@ -59,5 +59,5 @@
     }
 
     <div table-no-rows i18n>No data available</div>
-  </spk-table>
+  </sh-table>
 }

@@ -86,14 +86,14 @@
         </context-group>
       </trans-unit>
       <trans-unit id="742060281986941452" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>download<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Download update - <x id="INTERPOLATION" equiv-text="{{ serverState()?.UpdatedVersion }}"/> </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>download<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Download update - <x id="INTERPOLATION" equiv-text="{{ serverState()?.UpdatedVersion }}"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/general/general.component.html</context>
           <context context-type="linenumber">16,19</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1798705857149002871" datatype="html">
-        <source> Details <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-square-in<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/></source>
+        <source> Details <x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>arrow-square-in<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/libraries/libraries.component.html</context>
           <context context-type="linenumber">22,25</context>
@@ -239,14 +239,14 @@
         </context-group>
       </trans-unit>
       <trans-unit id="5891618167203817503" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>archive<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Stored </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>archive<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Stored </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/logs/logs.component.html</context>
           <context context-type="linenumber">4,8</context>
         </context-group>
       </trans-unit>
       <trans-unit id="954073855850637461" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>play<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Live </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>play<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Live </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/logs/logs.component.html</context>
           <context context-type="linenumber">9,12</context>
@@ -260,63 +260,63 @@
         </context-group>
       </trans-unit>
       <trans-unit id="5016930187002842284" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>bell-simple-slash<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Disabled </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>bell-simple-slash<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Disabled </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/logs/logs.component.html</context>
           <context context-type="linenumber">20,22</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7787729563049164194" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>megaphone-simple<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Verbose </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>megaphone-simple<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Verbose </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/logs/logs.component.html</context>
           <context context-type="linenumber">25,27</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1159494656863595937" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>flow-arrow<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Explicit only </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>flow-arrow<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Explicit only </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/logs/logs.component.html</context>
           <context context-type="linenumber">30,32</context>
         </context-group>
       </trans-unit>
       <trans-unit id="312516529635558836" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>speedometer<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Profiling </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>speedometer<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Profiling </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/logs/logs.component.html</context>
           <context context-type="linenumber">35,37</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3172721049795682150" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-arc-left<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Retry </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>arrow-arc-left<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Retry </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/logs/logs.component.html</context>
           <context context-type="linenumber">40,42</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6472740031606351563" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>info<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Information </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>info<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Information </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/logs/logs.component.html</context>
           <context context-type="linenumber">45,47</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7834130801196698427" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>person-simple-run<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Dry run </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>person-simple-run<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Dry run </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/logs/logs.component.html</context>
           <context context-type="linenumber">50,52</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1741511350611866896" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>warning<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Warning </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>warning<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Warning </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/logs/logs.component.html</context>
           <context context-type="linenumber">55,57</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2361526793931044345" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>warning-octagon<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Error </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>warning-octagon<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Error </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/about/logs/logs.component.html</context>
           <context context-type="linenumber">60,62</context>
@@ -352,7 +352,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="6634311421058524384" datatype="html">
-        <source> Add a new backup <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>plus<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/></source>
+        <source> Add a new backup <x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>plus<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/add-backup/add-backup.component.html</context>
           <context context-type="linenumber">14,17</context>
@@ -373,21 +373,21 @@
         </context-group>
       </trans-unit>
       <trans-unit id="1443301150206825736" datatype="html">
-        <source> Import from file <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>upload-simple<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/></source>
+        <source> Import from file <x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>upload-simple<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/add-backup/add-backup.component.html</context>
           <context context-type="linenumber">24,27</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4660895955450102466" datatype="html">
-        <source><x id="START_TAG_SPK_RADIO" ctype="x-spk_radio" equiv-text="&lt;spk-radio /&gt;"/><x id="CLOSE_TAG_SPK_RADIO" ctype="x-spk_radio" equiv-text="&lt;spk-radio /&gt;"/> General </source>
+        <source><x id="START_TAG_SPK_RADIO" ctype="x-sh_radio" equiv-text="&lt;sh-radio /&gt;"/><x id="CLOSE_TAG_SPK_RADIO" ctype="x-sh_radio" equiv-text="&lt;sh-radio /&gt;"/> General </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/backup.component.html</context>
           <context context-type="linenumber">13,16</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4268981097413283587" datatype="html">
-        <source><x id="START_TAG_SPK_RADIO" ctype="x-spk_radio" equiv-text="&lt;spk-radio /&gt;"/><x id="CLOSE_TAG_SPK_RADIO" ctype="x-spk_radio" equiv-text="&lt;spk-radio /&gt;"/> Destination </source>
+        <source><x id="START_TAG_SPK_RADIO" ctype="x-sh_radio" equiv-text="&lt;sh-radio /&gt;"/><x id="CLOSE_TAG_SPK_RADIO" ctype="x-sh_radio" equiv-text="&lt;sh-radio /&gt;"/> Destination </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/backup.component.html</context>
           <context context-type="linenumber">21,24</context>
@@ -398,21 +398,21 @@
         </context-group>
       </trans-unit>
       <trans-unit id="3437041682690094518" datatype="html">
-        <source><x id="START_TAG_SPK_RADIO" ctype="x-spk_radio" equiv-text="&lt;spk-radio /&gt;"/><x id="CLOSE_TAG_SPK_RADIO" ctype="x-spk_radio" equiv-text="&lt;spk-radio /&gt;"/> Source Data </source>
+        <source><x id="START_TAG_SPK_RADIO" ctype="x-sh_radio" equiv-text="&lt;sh-radio /&gt;"/><x id="CLOSE_TAG_SPK_RADIO" ctype="x-sh_radio" equiv-text="&lt;sh-radio /&gt;"/> Source Data </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/backup.component.html</context>
           <context context-type="linenumber">29,32</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5390327966777304408" datatype="html">
-        <source><x id="START_TAG_SPK_RADIO" ctype="x-spk_radio" equiv-text="&lt;spk-radio /&gt;"/><x id="CLOSE_TAG_SPK_RADIO" ctype="x-spk_radio" equiv-text="&lt;spk-radio /&gt;"/> Schedule </source>
+        <source><x id="START_TAG_SPK_RADIO" ctype="x-sh_radio" equiv-text="&lt;sh-radio /&gt;"/><x id="CLOSE_TAG_SPK_RADIO" ctype="x-sh_radio" equiv-text="&lt;sh-radio /&gt;"/> Schedule </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/backup.component.html</context>
           <context context-type="linenumber">37,40</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8063021104464016367" datatype="html">
-        <source><x id="START_TAG_SPK_RADIO" ctype="x-spk_radio" equiv-text="&lt;spk-radio /&gt;"/><x id="CLOSE_TAG_SPK_RADIO" ctype="x-spk_radio" equiv-text="&lt;spk-radio /&gt;"/> Options </source>
+        <source><x id="START_TAG_SPK_RADIO" ctype="x-sh_radio" equiv-text="&lt;sh-radio /&gt;"/><x id="CLOSE_TAG_SPK_RADIO" ctype="x-sh_radio" equiv-text="&lt;sh-radio /&gt;"/> Options </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/backup.component.html</context>
           <context context-type="linenumber">45,48</context>
@@ -533,7 +533,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="7449085270978368926" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-left<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Back </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>arrow-left<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Back </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/commandline-result/commandline-result.component.html</context>
           <context context-type="linenumber">6,9</context>
@@ -560,7 +560,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="4141934916617164675" datatype="html">
-        <source> Running commandline task... <x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button type=&quot;button&quot; class=&quot;small&quot; spk-button (click)=&quot;abort()&quot;&gt;"/>Abort<x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/></source>
+        <source> Running commandline task... <x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button type=&quot;button&quot; class=&quot;small&quot; shButton (click)=&quot;abort()&quot;&gt;"/>Abort<x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/commandline-result/commandline-result.component.html</context>
           <context context-type="linenumber">12,16</context>
@@ -630,14 +630,14 @@
         </context-group>
       </trans-unit>
       <trans-unit id="5475319282573821635" datatype="html">
-        <source> The backups will be split up into multiple files called volumes. Here you can set the maximum size of the individual volume files. <x id="START_LINK" ctype="x-a" equiv-text="&lt;a href=&quot;#&quot; class=&quot;spk-primary&quot;&gt;"/>Read more<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a&gt;"/></source>
+        <source> The backups will be split up into multiple files called volumes. Here you can set the maximum size of the individual volume files. <x id="START_LINK" ctype="x-a" equiv-text="&lt;a href=&quot;#&quot; class=&quot;sh-primary&quot;&gt;"/>Read more<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/commandline/commandline.component.html</context>
           <context context-type="linenumber">57,62</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3620282304335475447" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Run &quot;<x id="INTERPOLATION" equiv-text="{{ baseCmdForm.value.command }}"/>&quot; command now </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Run &quot;<x id="INTERPOLATION" equiv-text="{{ baseCmdForm.value.command }}"/>&quot; command now </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/commandline/commandline.component.html</context>
           <context context-type="linenumber">66,69</context>
@@ -673,21 +673,21 @@
         </context-group>
       </trans-unit>
       <trans-unit id="7771638789388093486" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>wrench<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Repair </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>wrench<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Repair </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/database/database.component.html</context>
           <context context-type="linenumber">34,36</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3530997852386935403" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>trash<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Delete </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>trash<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Delete </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/database/database.component.html</context>
           <context context-type="linenumber">44,46</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5732873617412457985" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>clock-counter-clockwise<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Restore (delete and repair) </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>clock-counter-clockwise<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Restore (delete and repair) </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/database/database.component.html</context>
           <context context-type="linenumber">49,51</context>
@@ -701,28 +701,28 @@
         </context-group>
       </trans-unit>
       <trans-unit id="3039731188346589681" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>backspace<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Reset </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>backspace<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Reset </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/database/database.component.html</context>
           <context context-type="linenumber">71,73</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2182559453523670122" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>floppy-disk<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Save </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>floppy-disk<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Save </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/database/database.component.html</context>
           <context context-type="linenumber">75,77</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1161038607941463943" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>wrench<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Save &amp; Repair </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>wrench<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Save &amp; Repair </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/database/database.component.html</context>
           <context context-type="linenumber">83,85</context>
         </context-group>
       </trans-unit>
       <trans-unit id="431884413915520025" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>flow-arrow<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Move existing database </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>flow-arrow<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Move existing database </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/database/database.component.html</context>
           <context context-type="linenumber">91,93</context>
@@ -857,7 +857,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="5748310444422372504" datatype="html">
-        <source> Backup destination <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (hasDestination) {"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button             spk-button             type=&quot;button&quot;             class=&quot;small&quot;             [class.loader]=&quot;testSignal() == 'testing'&quot;             [disabled]=&quot;testSignal() == 'testing'&quot;             (click)=&quot;testDestination(0, true)&quot;&gt;"/> Test destination <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;spk-menu&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>dots-three-vertical<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_TAG_BUTTON_2" ctype="x-button_2" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;openTargetUrlDialog()&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>link<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Edit target URL <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (hasDestination) {"/><x id="START_TAG_BUTTON_3" ctype="x-button_3" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;copyTargetUrl()&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>copy<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Copy url to clipboard <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;/spk-menu&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
+        <source> Backup destination <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (hasDestination) {"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button             shButton             type=&quot;button&quot;             class=&quot;small&quot;             [class.loader]=&quot;testSignal() == 'testing'&quot;             [disabled]=&quot;testSignal() == 'testing'&quot;             (click)=&quot;testDestination(0, true)&quot;&gt;"/> Test destination <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_TAG_SPK_MENU" ctype="x-sh_menu" equiv-text="&lt;sh-menu&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>dots-three-vertical<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_TAG_BUTTON_2" ctype="x-button_2" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;openTargetUrlDialog()&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>link<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Edit target URL <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (hasDestination) {"/><x id="START_TAG_BUTTON_3" ctype="x-button_3" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;copyTargetUrl()&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>copy<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Copy url to clipboard <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SPK_MENU" ctype="x-sh_menu" equiv-text="&lt;/sh-menu&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
           <context context-type="linenumber">6,42</context>
@@ -868,7 +868,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="614106095760206100" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon icon&gt;"/>spinner<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Testing connection... </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon icon&gt;"/>spinner<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Testing connection... </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
           <context context-type="linenumber">44,46</context>
@@ -879,7 +879,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="7842698586727183374" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon icon&gt;"/>check<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Connection tested successfully. </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon icon&gt;"/>check<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Connection tested successfully. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
           <context context-type="linenumber">49,51</context>
@@ -890,7 +890,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="1419693291305912728" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon icon&gt;"/>warning<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> <x id="INTERPOLATION" equiv-text="{{ testErrorMessage() }}"/> </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon icon&gt;"/>warning<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> <x id="INTERPOLATION" equiv-text="{{ testErrorMessage() }}"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
           <context context-type="linenumber">54,56</context>
@@ -909,7 +909,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="297083673179540834" datatype="html">
-        <source> Current destination type <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/><x id="INTERPOLATION" equiv-text="{{ selectedDestinationType()?.displayName }}"/>.<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/><x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> Want to select another? <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;spk-primary&quot;&gt;"/>Click here<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
+        <source> Current destination type <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/><x id="INTERPOLATION" equiv-text="{{ selectedDestinationType()?.displayName }}"/>.<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/><x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> Want to select another? <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;sh-primary&quot;&gt;"/>Click here<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
           <context context-type="linenumber">66,73</context>
@@ -931,7 +931,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="6897142954122660647" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-left<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Go back </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>arrow-left<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Go back </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
           <context context-type="linenumber">104,108</context>
@@ -958,7 +958,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="3879442064735163639" datatype="html">
-        <source><x id="START_BLOCK_IF" equiv-text="@if (testSignal() == 'testing') {"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon class=&quot;loader&quot;&gt;"/>spinner<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SPK_ICON_1" ctype="x-spk_icon_1" equiv-text="&lt;spk-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_BLOCK_ELSE" equiv-text="}"/> Continue </source>
+        <source><x id="START_BLOCK_IF" equiv-text="@if (testSignal() == 'testing') {"/><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon class=&quot;loader&quot;&gt;"/>spinner<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SPK_ICON_1" ctype="x-sh_icon_1" equiv-text="&lt;sh-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_BLOCK_ELSE" equiv-text="}"/> Continue </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
           <context context-type="linenumber">114,121</context>
@@ -991,7 +991,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="738940470889774841" datatype="html">
-        <source> Override target URL <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>swap<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/></source>
+        <source> Override target URL <x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>swap<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.component.html</context>
           <context context-type="linenumber">141,144</context>
@@ -2536,7 +2536,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="1245076565562757606" datatype="html">
-        <source> Advanced options <x id="START_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;spk-menu [searchable]=&quot;true&quot;&gt;"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;outlined small&quot; [disabled]=&quot;_nonSelectedAdvancedFormViews.length === 0&quot;&gt;"/> Add advanced option <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>plus<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_BLOCK_FOR" equiv-text="@for (formView of _nonSelectedAdvancedFormViews; track $index) {"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button #option type=&quot;button&quot; (click)=&quot;addAdvancedOption(formView)&quot;&gt;"/> <x id="INTERPOLATION" equiv-text="{{ formView.name }}"/> <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_FOR" equiv-text="}"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SPK_MENU" ctype="x-spk_menu" equiv-text="&lt;/spk-menu&gt;"/></source>
+        <source> Advanced options <x id="START_TAG_SPK_MENU" ctype="x-sh_menu" equiv-text="&lt;sh-menu [searchable]=&quot;true&quot;&gt;"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;outlined small&quot; [disabled]=&quot;_nonSelectedAdvancedFormViews.length === 0&quot;&gt;"/> Add advanced option <x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>plus<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_BLOCK_FOR" equiv-text="@for (formView of _nonSelectedAdvancedFormViews; track $index) {"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button #option type=&quot;button&quot; (click)=&quot;addAdvancedOption(formView)&quot;&gt;"/> <x id="INTERPOLATION" equiv-text="{{ formView.name }}"/> <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_FOR" equiv-text="}"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SPK_MENU" ctype="x-sh_menu" equiv-text="&lt;/sh-menu&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/single-destination/single-destination.component.html</context>
           <context context-type="linenumber">43,63</context>
@@ -2629,7 +2629,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="8197963425703827499" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>export<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Export </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>export<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Export </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/export/export.component.html</context>
           <context context-type="linenumber">24,26</context>
@@ -2640,14 +2640,14 @@
         </context-group>
       </trans-unit>
       <trans-unit id="8665135189152588486" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>terminal-window<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> As command line </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>terminal-window<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> As command line </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/export/export.component.html</context>
           <context context-type="linenumber">36,40</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4816286798483961152" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>file<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> To file </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>file<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> To file </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/export/export.component.html</context>
           <context context-type="linenumber">41,44</context>
@@ -2731,7 +2731,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="7277615865551752868" datatype="html">
-        <source><x id="START_BLOCK_IF" equiv-text="@if (showPassword()) {"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>eye-slash<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> hide <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>eye<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> show <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
+        <source><x id="START_BLOCK_IF" equiv-text="@if (showPassword()) {"/><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>eye-slash<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> hide <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>eye<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> show <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/export/export.component.html</context>
           <context context-type="linenumber">119,128</context>
@@ -2742,7 +2742,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="250125554019119336" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>password<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Generate password </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>password<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Generate password </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/export/export.component.html</context>
           <context context-type="linenumber">129,131</context>
@@ -2753,7 +2753,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="664869762369460585" datatype="html">
-        <source><x id="START_BLOCK_IF" equiv-text="@if (copiedPassword()) {"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon class=&quot;spk-success&quot;&gt;"/>check<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Copied password <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SPK_ICON_1" ctype="x-spk_icon_1" equiv-text="&lt;spk-icon&gt;"/>copy<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Copy password <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
+        <source><x id="START_BLOCK_IF" equiv-text="@if (copiedPassword()) {"/><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon class=&quot;sh-success&quot;&gt;"/>check<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Copied password <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SPK_ICON_1" ctype="x-sh_icon_1" equiv-text="&lt;sh-icon&gt;"/>copy<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Copy password <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/export/export.component.html</context>
           <context context-type="linenumber">135,142</context>
@@ -2779,7 +2779,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="1929647644580302975" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon icon&gt;"/>lock<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Encrypted backup </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon icon&gt;"/>lock<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Encrypted backup </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/general/general.component.html</context>
           <context context-type="linenumber">6,8</context>
@@ -2833,14 +2833,14 @@
         </context-group>
       </trans-unit>
       <trans-unit id="3830440168854135631" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-left<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Exit </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>arrow-left<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Exit </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/general/general.component.html</context>
           <context context-type="linenumber">128,132</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6672428652644452214" datatype="html">
-        <source> Continue <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/></source>
+        <source> Continue <x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/general/general.component.html</context>
           <context context-type="linenumber">134,137</context>
@@ -2851,7 +2851,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="7357294036326725134" datatype="html">
-        <source> Import backup configuration <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;outlined&quot; [routerLink]=&quot;['/']&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-left<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Back <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button         spk-button         type=&quot;submit&quot;         class=&quot;raised primary&quot;         (click)=&quot;submit()&quot;         [disabled]=&quot;isImporting()&quot;         [class.loader]=&quot;isImporting()&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>download-simple<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Import <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
+        <source> Import backup configuration <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;outlined&quot; [routerLink]=&quot;['/']&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>arrow-left<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Back <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button         shButton         type=&quot;submit&quot;         class=&quot;raised primary&quot;         (click)=&quot;submit()&quot;         [disabled]=&quot;isImporting()&quot;         [class.loader]=&quot;isImporting()&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>download-simple<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Import <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/import/import.component.html</context>
           <context context-type="linenumber">3,23</context>
@@ -3001,7 +3001,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="6949240435527620156" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>circle-half-tilt<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Test phase <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_TAG_SPK_ICON_1" ctype="x-spk_icon_1" equiv-text="&lt;spk-icon class=&quot;toggle-indicator&quot;&gt;"/>caret-down<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>circle-half-tilt<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Test phase <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_TAG_SPK_ICON_1" ctype="x-sh_icon_1" equiv-text="&lt;sh-icon class=&quot;toggle-indicator&quot;&gt;"/>caret-down<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
           <context context-type="linenumber">73,79</context>
@@ -3037,7 +3037,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="1207175779142818708" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>file-archive<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Compact phase <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_TAG_SPK_ICON_1" ctype="x-spk_icon_1" equiv-text="&lt;spk-icon class=&quot;toggle-indicator&quot;&gt;"/>caret-down<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>file-archive<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Compact phase <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_TAG_SPK_ICON_1" ctype="x-sh_icon_1" equiv-text="&lt;sh-icon class=&quot;toggle-indicator&quot;&gt;"/>caret-down<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
           <context context-type="linenumber">94,100</context>
@@ -3065,28 +3065,28 @@
         </context-group>
       </trans-unit>
       <trans-unit id="3027321058767165559" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>warning-circle<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Verifications <x id="INTERPOLATION" equiv-text="{{ $any(item.data).VerificationsActualLength }}"/> <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_TAG_SPK_ICON_1" ctype="x-spk_icon_1" equiv-text="&lt;spk-icon class=&quot;toggle-indicator&quot;&gt;"/>caret-down<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>warning-circle<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Verifications <x id="INTERPOLATION" equiv-text="{{ $any(item.data).VerificationsActualLength }}"/> <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_TAG_SPK_ICON_1" ctype="x-sh_icon_1" equiv-text="&lt;sh-icon class=&quot;toggle-indicator&quot;&gt;"/>caret-down<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
           <context context-type="linenumber">132,138</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6838500787561325322" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>warning-circle<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Warnings <x id="INTERPOLATION" equiv-text="{{ item.data?.WarningsActualLength }}"/> <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_TAG_SPK_ICON_1" ctype="x-spk_icon_1" equiv-text="&lt;spk-icon class=&quot;toggle-indicator&quot;&gt;"/>caret-down<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>warning-circle<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Warnings <x id="INTERPOLATION" equiv-text="{{ item.data?.WarningsActualLength }}"/> <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_TAG_SPK_ICON_1" ctype="x-sh_icon_1" equiv-text="&lt;sh-icon class=&quot;toggle-indicator&quot;&gt;"/>caret-down<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
           <context context-type="linenumber">150,156</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4914376870636868464" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>warning<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Errors <x id="INTERPOLATION" equiv-text="{{ item.data?.ErrorsActualLength }}"/> <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_TAG_SPK_ICON_1" ctype="x-spk_icon_1" equiv-text="&lt;spk-icon class=&quot;toggle-indicator&quot;&gt;"/>caret-down<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>warning<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Errors <x id="INTERPOLATION" equiv-text="{{ item.data?.ErrorsActualLength }}"/> <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_TAG_SPK_ICON_1" ctype="x-sh_icon_1" equiv-text="&lt;sh-icon class=&quot;toggle-indicator&quot;&gt;"/>caret-down<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
           <context context-type="linenumber">167,173</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3225458864616615214" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>notepad<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Complete log <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_TAG_SPK_ICON_1" ctype="x-spk_icon_1" equiv-text="&lt;spk-icon class=&quot;toggle-indicator&quot;&gt;"/>caret-down<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>notepad<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Complete log <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_TAG_SPK_ICON_1" ctype="x-sh_icon_1" equiv-text="&lt;sh-icon class=&quot;toggle-indicator&quot;&gt;"/>caret-down<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/general-log/general-log.component.html</context>
           <context context-type="linenumber">189,195</context>
@@ -3253,21 +3253,21 @@
         </context-group>
       </trans-unit>
       <trans-unit id="4220403089455275702" datatype="html">
-        <source><x id="START_BLOCK_IF" equiv-text="@if (copiedFromIndex() === $index) {"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>check<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Copied <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>copy<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Copy to clipboard <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
+        <source><x id="START_BLOCK_IF" equiv-text="@if (copiedFromIndex() === $index) {"/><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>check<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Copied <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>copy<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Copy to clipboard <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/log/remote-log/remote-log.component.html</context>
           <context context-type="linenumber">23,31</context>
         </context-group>
       </trans-unit>
       <trans-unit id="449572842721474374" datatype="html">
-        <source> New custom option <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>pen<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/></source>
+        <source> New custom option <x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>pen<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/options/options-list/options-list.component.html</context>
           <context context-type="linenumber">8,11</context>
         </context-group>
       </trans-unit>
       <trans-unit id="203037501352070364" datatype="html">
-        <source> Add advanced option <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>plus<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/></source>
+        <source> Add advanced option <x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>plus<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/options/options-list/options-list.component.html</context>
           <context context-type="linenumber">15,19</context>
@@ -3289,7 +3289,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="7766212448855852249" datatype="html">
-        <source> Remote volume size <x id="START_BLOCK_IF" equiv-text="@if (exceededVolumeSize()) {"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon class=&quot;warning&quot;&gt;"/>warning<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/></source>
+        <source> Remote volume size <x id="START_BLOCK_IF" equiv-text="@if (exceededVolumeSize()) {"/><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon class=&quot;warning&quot;&gt;"/>warning<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/options/options.component.html</context>
           <context context-type="linenumber">7,12</context>
@@ -3303,7 +3303,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="2186662269691248621" datatype="html">
-        <source> The backups will be split up into multiple files called volumes. Here you can set the maximum size of the individual volume files. <x id="START_LINK" ctype="x-a" equiv-text="&lt;a href=&quot;https://forum.duplicati.com/t/choosing-sizes-in-duplicati/17683&quot; target=&quot;_blank&quot; class=&quot;spk-primary&quot;&gt;"/> Read more <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon suffix&gt;"/>arrow-square-out<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a&gt;"/></source>
+        <source> The backups will be split up into multiple files called volumes. Here you can set the maximum size of the individual volume files. <x id="START_LINK" ctype="x-a" equiv-text="&lt;a href=&quot;https://forum.duplicati.com/t/choosing-sizes-in-duplicati/17683&quot; target=&quot;_blank&quot; class=&quot;sh-primary&quot;&gt;"/> Read more <x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon suffix&gt;"/>arrow-square-out<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/options/options.component.html</context>
           <context context-type="linenumber">21,28</context>
@@ -3381,7 +3381,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="1529880429462712941" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Submit </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Submit </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/options/options.component.html</context>
           <context context-type="linenumber">90,93</context>
@@ -3528,7 +3528,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="1985492856544078017" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Continue </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Continue </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/schedule/schedule.component.html</context>
           <context context-type="linenumber">97,100</context>
@@ -3797,7 +3797,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="8877761497641789855" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>upload<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/></source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>upload<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/file-drop-textarea/file-drop-textarea.component.html</context>
           <context context-type="linenumber">4,8</context>
@@ -3833,14 +3833,14 @@
         </context-group>
       </trans-unit>
       <trans-unit id="5747571579646724655" datatype="html">
-        <source> Notifications <x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button spk-button (click)=&quot;toggleNotifications()&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>x-circle<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/></source>
+        <source> Notifications <x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button shButton (click)=&quot;toggleNotifications()&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>x-circle<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/service-hub/service-hub.component.html</context>
           <context context-type="linenumber">36,43</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6338307542699418921" datatype="html">
-        <source> Alerts <x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button spk-button (click)=&quot;toggleAlerts()&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>x-circle<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/></source>
+        <source> Alerts <x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button shButton (click)=&quot;toggleAlerts()&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>x-circle<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/service-hub/service-hub.component.html</context>
           <context context-type="linenumber">56,63</context>
@@ -3958,28 +3958,28 @@
         </context-group>
       </trans-unit>
       <trans-unit id="4652155926610989305" datatype="html">
-        <source> Loading <x id="START_TAG_SPK_SPINNER" ctype="x-spk_spinner" equiv-text="&lt;spk-spinner [style.--spinner-size]=&quot;'12px'&quot; [style.--spinner-thickness]=&quot;'2px'&quot;&gt;"/><x id="CLOSE_TAG_SPK_SPINNER" ctype="x-spk_spinner" equiv-text="&lt;/spk-spinner&gt;"/></source>
+        <source> Loading <x id="START_TAG_SPK_SPINNER" ctype="x-sh_spinner" equiv-text="&lt;sh-spinner [style.--spinner-size]=&quot;'12px'&quot; [style.--spinner-thickness]=&quot;'2px'&quot;&gt;"/><x id="CLOSE_TAG_SPK_SPINNER" ctype="x-sh_spinner" equiv-text="&lt;/sh-spinner&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.component.html</context>
           <context context-type="linenumber">17,21</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8233224133812179244" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>skull<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Abort </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>skull<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Abort </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.component.html</context>
           <context context-type="linenumber">27,29</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4402828945099740984" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>stop<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Stop </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>stop<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Stop </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.component.html</context>
           <context context-type="linenumber">32,34</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4840737408713327304" datatype="html">
-        <source><x id="START_BLOCK_IF" equiv-text="@if (clientIsRunning()) {"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>pause<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Pause <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>play<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Start <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
+        <source><x id="START_BLOCK_IF" equiv-text="@if (clientIsRunning()) {"/><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>pause<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Pause <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>play<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Start <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/status-bar/status-bar.component.html</context>
           <context context-type="linenumber">39,48</context>
@@ -4610,7 +4610,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         </context-group>
       </trans-unit>
       <trans-unit id="2189252250041336479" datatype="html">
-        <source> Add <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>plus<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/></source>
+        <source> Add <x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>plus<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
           <context context-type="linenumber">12,15</context>
@@ -4631,7 +4631,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         </context-group>
       </trans-unit>
       <trans-unit id="6462449391546115362" datatype="html">
-        <source> Start <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/></source>
+        <source> Start <x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
           <context context-type="linenumber">24,27</context>
@@ -4645,21 +4645,21 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         </context-group>
       </trans-unit>
       <trans-unit id="682278623256273498" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>rows<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> List </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>rows<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> List </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
           <context context-type="linenumber">37,39</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9174140765277982826" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>list<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Details </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>list<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Details </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
           <context context-type="linenumber">42,44</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3196103062923438120" datatype="html">
-        <source> Time: <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/><x id="INTERPOLATION" equiv-text="{{ timeType() }}"/><x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>clock<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/></source>
+        <source> Time: <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/><x id="INTERPOLATION" equiv-text="{{ timeType() }}"/><x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>clock<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
           <context context-type="linenumber">49,54</context>
@@ -4680,7 +4680,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         </context-group>
       </trans-unit>
       <trans-unit id="5249602569151695245" datatype="html">
-        <source> Order by: <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/><x id="INTERPOLATION" equiv-text="{{ orderBy() }}"/><x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrows-down-up<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/></source>
+        <source> Order by: <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/><x id="INTERPOLATION" equiv-text="{{ orderBy() }}"/><x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>arrows-down-up<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
           <context context-type="linenumber">63,66</context>
@@ -4794,14 +4794,14 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         </context-group>
       </trans-unit>
       <trans-unit id="4210377108810462983" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>play-circle<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (viewMode() === 'list') {"/> Start <x id="CLOSE_BLOCK_IF" equiv-text="}"/></source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>play-circle<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (viewMode() === 'list') {"/> Start <x id="CLOSE_BLOCK_IF" equiv-text="}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
           <context context-type="linenumber">245,251</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6140244061719179299" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>clock-counter-clockwise<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Restore </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>clock-counter-clockwise<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Restore </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
           <context context-type="linenumber">272,274</context>
@@ -4812,49 +4812,49 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         </context-group>
       </trans-unit>
       <trans-unit id="7451545083202537816" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>x-circle<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Delete </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>x-circle<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Delete </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
           <context context-type="linenumber">282,284</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7738293589333220469" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>database<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Database </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>database<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Database </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
           <context context-type="linenumber">291,293</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1083010658432553302" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>check-square-offset<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Verify files </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>check-square-offset<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Verify files </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
           <context context-type="linenumber">296,298</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6202866429550604106" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>file-archive<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Compress now </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>file-archive<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Compress now </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
           <context context-type="linenumber">301,303</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6544486364372139849" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>terminal-window<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Commandline </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>terminal-window<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Commandline </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
           <context context-type="linenumber">306,308</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2503583316401039863" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>notepad<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Log </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>notepad<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Log </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
           <context context-type="linenumber">315,317</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3788466118167694746" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>file-plus<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Create error report </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>file-plus<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Create error report </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
           <context context-type="linenumber">320,322</context>
@@ -4933,56 +4933,56 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         </context-group>
       </trans-unit>
       <trans-unit id="6166449652204002380" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>house<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Home </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>house<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Home </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/layout/layout.component.html</context>
           <context context-type="linenumber">17,19</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4867177665529601865" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>database<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Add backup </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>database<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Add backup </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/layout/layout.component.html</context>
           <context context-type="linenumber">22,24</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7595948833924495990" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>gear<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Settings </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>gear<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Settings </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/layout/layout.component.html</context>
           <context context-type="linenumber">32,34</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7505628785704584115" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>skip-back<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Use old UI </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>skip-back<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Use old UI </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/layout/layout.component.html</context>
           <context context-type="linenumber">42,44</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8606000898892664964" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>sign-out<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Log out </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>sign-out<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Log out </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/layout/layout.component.html</context>
           <context context-type="linenumber">47,49</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4108226852041103967" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>info<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> About Duplicati </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>info<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> About Duplicati </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/layout/layout.component.html</context>
           <context context-type="linenumber">55,57</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7379892647521163299" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>files<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Documentation <x id="START_TAG_SPK_ICON_1" ctype="x-spk_icon_1" equiv-text="&lt;spk-icon suffix&gt;"/>arrow-square-out<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/></source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>files<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Documentation <x id="START_TAG_SPK_ICON_1" ctype="x-sh_icon_1" equiv-text="&lt;sh-icon suffix&gt;"/>arrow-square-out<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/layout/layout.component.html</context>
           <context context-type="linenumber">60,66</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5457678225123473535" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>chats-circle<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Visit forum <x id="START_TAG_SPK_ICON_1" ctype="x-spk_icon_1" equiv-text="&lt;spk-icon suffix&gt;"/>arrow-square-out<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/></source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>chats-circle<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Visit forum <x id="START_TAG_SPK_ICON_1" ctype="x-sh_icon_1" equiv-text="&lt;sh-icon suffix&gt;"/>arrow-square-out<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/layout/layout.component.html</context>
           <context context-type="linenumber">67,72</context>
@@ -5239,14 +5239,14 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         </context-group>
       </trans-unit>
       <trans-unit id="523132197967351935" datatype="html">
-        <source><x id="START_TAG_SPK_RADIO" ctype="x-spk_radio" equiv-text="&lt;spk-radio /&gt;"/><x id="CLOSE_TAG_SPK_RADIO" ctype="x-spk_radio" equiv-text="&lt;spk-radio /&gt;"/> Encryption </source>
+        <source><x id="START_TAG_SPK_RADIO" ctype="x-sh_radio" equiv-text="&lt;sh-radio /&gt;"/><x id="CLOSE_TAG_SPK_RADIO" ctype="x-sh_radio" equiv-text="&lt;sh-radio /&gt;"/> Encryption </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-flow.component.html</context>
           <context context-type="linenumber">11,14</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3080584926843453062" datatype="html">
-        <source><x id="START_TAG_SPK_RADIO" ctype="x-spk_radio" equiv-text="&lt;spk-radio /&gt;"/><x id="CLOSE_TAG_SPK_RADIO" ctype="x-spk_radio" equiv-text="&lt;spk-radio /&gt;"/> Select files </source>
+        <source><x id="START_TAG_SPK_RADIO" ctype="x-sh_radio" equiv-text="&lt;sh-radio /&gt;"/><x id="CLOSE_TAG_SPK_RADIO" ctype="x-sh_radio" equiv-text="&lt;sh-radio /&gt;"/> Select files </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-flow.component.html</context>
           <context context-type="linenumber">15,18</context>
@@ -5327,7 +5327,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         </context-group>
       </trans-unit>
       <trans-unit id="6451001551495258671" datatype="html">
-        <source> Restore progress: <x id="INTERPOLATION" equiv-text="{{ statusData()?.statusText }}"/> <x id="START_TAG_SPK_SPINNER" ctype="x-spk_spinner" equiv-text="&lt;spk-spinner class=&quot;primary&quot; /&gt;"/><x id="CLOSE_TAG_SPK_SPINNER" ctype="x-spk_spinner" equiv-text="&lt;spk-spinner class=&quot;primary&quot; /&gt;"/></source>
+        <source> Restore progress: <x id="INTERPOLATION" equiv-text="{{ statusData()?.statusText }}"/> <x id="START_TAG_SPK_SPINNER" ctype="x-sh_spinner" equiv-text="&lt;sh-spinner class=&quot;primary&quot; /&gt;"/><x id="CLOSE_TAG_SPK_SPINNER" ctype="x-sh_spinner" equiv-text="&lt;sh-spinner class=&quot;primary&quot; /&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/restore-progress/restore-progress.component.html</context>
           <context context-type="linenumber">26,31</context>
@@ -5363,14 +5363,14 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         </context-group>
       </trans-unit>
       <trans-unit id="8738453414615918510" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-left<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> <x id="INTERPOLATION" equiv-text="{{ isFileRestore() ? 'Back' : 'Exit' }}"/> </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>arrow-left<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> <x id="INTERPOLATION" equiv-text="{{ isFileRestore() ? 'Back' : 'Exit' }}"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore-flow/select-files/select-files.component.html</context>
           <context context-type="linenumber">45,49</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8264839983147966663" datatype="html">
-        <source> Restore from config <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button spk-button type=&quot;button&quot; class=&quot;outlined&quot; [routerLink]=&quot;['/']&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-left<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Back <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button         spk-button         type=&quot;submit&quot;         class=&quot;raised primary&quot;         (click)=&quot;submit()&quot;         [disabled]=&quot;isRestoring()&quot;         [class.loader]=&quot;isRestoring()&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>download-simple<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Restore <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
+        <source> Restore from config <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;outlined&quot; [routerLink]=&quot;['/']&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>arrow-left<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Back <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button         shButton         type=&quot;submit&quot;         class=&quot;raised primary&quot;         (click)=&quot;submit()&quot;         [disabled]=&quot;isRestoring()&quot;         [class.loader]=&quot;isRestoring()&quot;&gt;"/><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>download-simple<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Restore <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore/restore-from-config/restore-from-config.component.html</context>
           <context context-type="linenumber">3,23</context>
@@ -5392,7 +5392,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         </context-group>
       </trans-unit>
       <trans-unit id="6121258177180845233" datatype="html">
-        <source> Restore <x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/></source>
+        <source> Restore <x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/restore/restore.component.html</context>
           <context context-type="linenumber">47,50</context>
@@ -5406,7 +5406,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         </context-group>
       </trans-unit>
       <trans-unit id="8008550364351900929" datatype="html">
-        <source><x id="START_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;spk-icon&gt;"/>floppy-disk<x id="CLOSE_TAG_SPK_ICON" ctype="x-spk_icon" equiv-text="&lt;/spk-icon&gt;"/> Save settings </source>
+        <source><x id="START_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>floppy-disk<x id="CLOSE_TAG_SPK_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Save settings </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/settings/advanced-options-settings/advanced-options-settings.component.html</context>
           <context context-type="linenumber">6,9</context>

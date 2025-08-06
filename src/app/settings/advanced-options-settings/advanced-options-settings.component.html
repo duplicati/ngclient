@@ -1,9 +1,9 @@
 <div class="actions">
   @if (saved()) {
-    <spk-alert class="success" i18n>Settings saved</spk-alert>
+    <sh-alert class="success" i18n>Settings saved</sh-alert>
   }
-  <button spk-button type="button" class="raised primary" [class.loader]="isSubmitting()" (click)="submit()" i18n>
-    <spk-icon>floppy-disk</spk-icon>
+  <button shButton type="button" class="raised primary" [class.loader]="isSubmitting()" (click)="submit()" i18n>
+    <sh-icon>floppy-disk</sh-icon>
     Save settings
   </button>
 </div>

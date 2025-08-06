@@ -4,26 +4,26 @@
   <h2 i18n>Add a new backup</h2>
 
   <div class="backup-types">
-    <spk-card class="type-a">
+    <sh-card class="type-a">
       <img src="assets/images/new-backup.png" />
       <h3 i18n>New backup</h3>
 
       <p i18n>Configure a new backup. Choose your destination, source data and schedule.</p>
 
-      <button spk-button class="raised primary" [routerLink]="['/backup/new']" i18n>
+      <button shButton class="raised primary" [routerLink]="['/backup/new']" i18n>
         Add a new backup
-        <spk-icon>plus</spk-icon>
+        <sh-icon>plus</sh-icon>
       </button>
-    </spk-card>
+    </sh-card>
 
-    <spk-card class="type-a">
+    <sh-card class="type-a">
       <img src="assets/images/new-backup.png" />
       <h3 i18n>Import from file</h3>
       <p i18n>Import backup configuration from a file. During import, you can adjust the settings.</p>
-      <button spk-button class="raised primary" [routerLink]="['/backup/import']" i18n>
+      <button shButton class="raised primary" [routerLink]="['/backup/import']" i18n>
         Import from file
-        <spk-icon>upload-simple</spk-icon>
+        <sh-icon>upload-simple</sh-icon>
       </button>
-    </spk-card>
+    </sh-card>
   </div>
 </section>

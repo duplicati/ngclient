@@ -1,5 +1,5 @@
 @if (isLoading()) {
-  <spk-progress-bar class="indeterminate primary" />
+  <sh-progress-bar class="indeterminate primary" />
 }
 
 <section>
@@ -9,20 +9,20 @@
 
   <div class="actions">
     @if (serverState()?.UpdaterState === 'Waiting') {
-      <button spk-button (click)="checkForUpdates()" [class.loader]="checkingForUpdates()">Check for updates</button>
+      <button shButton (click)="checkForUpdates()" [class.loader]="checkingForUpdates()">Check for updates</button>
 
       @if (serverState()?.UpdateDownloadLink) {
-        <a class="primary raised" spk-button [href]="serverState()?.UpdateDownloadLink" target="_blank" i18n>
-          <spk-icon>download</spk-icon>
+        <a class="primary raised" shButton [href]="serverState()?.UpdateDownloadLink" target="_blank" i18n>
+          <sh-icon>download</sh-icon>
           Download update - {{ serverState()?.UpdatedVersion }}
         </a>
       }
     } @else if (serverState()?.UpdaterState === 'Checking') {
-      <button spk-button (click)="checkForUpdates()">Checking for updates …</button>
+      <button shButton (click)="checkForUpdates()">Checking for updates …</button>
     }
 
     @if (serverState()?.UpdaterState === 'Downloading') {
-      <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
+      <sh-progress-bar class="indeterminate primary"></sh-progress-bar>
     }
   </div>
 

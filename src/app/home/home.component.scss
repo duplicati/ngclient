@@ -1,4 +1,4 @@
-@use '@sparkle-ui/core/styles/helpers' as *;
+@use '@ship-ui/core/styles/helpers' as *;
 
 :host {
   display: block;
@@ -24,7 +24,7 @@ header {
   gap: p2r(16);
 }
 
-spk-card {
+sh-card {
   display: flex;
   align-items: center;
   gap: p2r(16);
@@ -76,7 +76,7 @@ spk-card {
       align-items: center;
       gap: p2r(8);
 
-      spk-icon {
+      sh-icon {
         color: var(--base-8);
       }
     }
@@ -101,23 +101,23 @@ spk-card {
 .sortable {
   user-select: none;
 
-  spk-icon {
+  sh-icon {
     margin-left: p2r(8);
     font-size: p2r(16);
     justify-self: flex-end;
     display: none;
   }
 
-  &:not(.sort-asc):not(.sort-desc) spk-icon.filter {
+  &:not(.sort-asc):not(.sort-desc) sh-icon.filter {
     display: block;
   }
 
-  &.sort-asc spk-icon.asc {
+  &.sort-asc sh-icon.asc {
     display: block;
     color: var(--base-12);
   }
 
-  &.sort-desc spk-icon.desc {
+  &.sort-desc sh-icon.desc {
     display: block;
     color: var(--base-12);
   }

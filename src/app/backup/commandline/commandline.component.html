@@ -2,52 +2,52 @@
 
 <section>
   <div class="back">
-    <button type="button" class="small" spk-button routerLink="/" i18n>
-      <spk-icon>arrow-left</spk-icon>
+    <button type="button" class="small" shButton routerLink="/" i18n>
+      <sh-icon>arrow-left</sh-icon>
       Back
     </button>
   </div>
 
   @if (!finishedLoading()) {
-    <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
+    <sh-progress-bar class="indeterminate primary"></sh-progress-bar>
   } @else {
     <form [formGroup]="baseCmdForm">
-      <spk-select [options]="commandOptions() ?? ['backup']" [inlineSearch]="true" placeholder="Select a command...">
+      <sh-select [options]="commandOptions() ?? ['backup']" [inlineSearch]="true" placeholder="Select a command...">
         <label for="command" i18n>Command</label>
         <input type="text" id="command" formControlName="command" />
-      </spk-select>
+      </sh-select>
 
-      <spk-form-field>
+      <sh-form-field>
         <label for="targetUrl" i18n>TargetUrl</label>
         <textarea id="targetUrl" autocomplete="off" formControlName="targetUrl"></textarea>
-      </spk-form-field>
+      </sh-form-field>
 
-      <spk-form-field>
+      <sh-form-field>
         <label for="arguments" i18n>Commandline Arguments</label>
         <textarea id="arguments" autocomplete="off" formControlName="arguments"></textarea>
-      </spk-form-field>
+      </sh-form-field>
     </form>
 
-    <spk-divider i18n>Advanced options</spk-divider>
+    <sh-divider i18n>Advanced options</sh-divider>
 
     <form [formGroup]="standardFields">
-      <spk-form-field>
+      <sh-form-field>
         <label for="backup-id" i18n>Backup ID</label>
         <input id="backup-id" formControlName="backup-id" />
-      </spk-form-field>
+      </sh-form-field>
 
-      <spk-form-field>
+      <sh-form-field>
         <label for="backup-name" i18n>Backup Name</label>
         <input id="backup-name" formControlName="backup-name" />
-      </spk-form-field>
+      </sh-form-field>
 
       <app-toggle-card [disallowToggle]="true">
         <ng-container title i18n>Filters</ng-container>
         <ng-container content formGroupName="filters">
           @for (filterCtrl of standardFields.controls.filters.controls; track $index) {
-            <spk-form-field>
+            <sh-form-field>
               <input id="filter-{{ $index }}" [formControl]="filterCtrl" />
-            </spk-form-field>
+            </sh-form-field>
           }
         </ng-container>
       </app-toggle-card>
@@ -56,14 +56,14 @@
     <p i18n>
       The backups will be split up into multiple files called volumes. Here you can set the maximum size of the
       individual volume files.
-      <a href="#" class="spk-primary">Read more</a>
+      <a href="#" class="sh-primary">Read more</a>
     </p>
 
     <app-options-list [(options)]="settings" [hasFreeTextSettings]="true" />
 
     <div class="form-actions">
-      <button spk-button class="raised primary" [class.loader]="isSubmitting()" (click)="submit()" i18n>
-        <spk-icon>arrow-right</spk-icon>
+      <button shButton class="raised primary" [class.loader]="isSubmitting()" (click)="submit()" i18n>
+        <sh-icon>arrow-right</sh-icon>
         Run "{{ baseCmdForm.value.command }}" command now
       </button>
     </div>

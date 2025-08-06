@@ -1,35 +1,35 @@
 <app-status-bar />
 
 @if (!isProgressPage()) {
-  <spk-stepper>
+  <sh-stepper>
     @if (isFileRestore()) {
       <div step routerLinkActive="active" [routerLink]="['/restore-from-files/destination']" i18n>
-        <spk-radio />
+        <sh-radio />
         Destination
       </div>
       <div step routerLinkActive="active" [routerLink]="['/restore-from-files/encryption']" i18n>
-        <spk-radio />
+        <sh-radio />
         Encryption
       </div>
       <div step routerLinkActive="active" [routerLink]="['/restore-from-files/select-files']" i18n>
-        <spk-radio />
+        <sh-radio />
         Select files
       </div>
       <div step routerLinkActive="active" [routerLink]="['/restore-from-files/options']" i18n>
-        <spk-radio />
+        <sh-radio />
         Options
       </div>
     } @else {
       <div step routerLinkActive="active" [routerLink]="['/restore', backupId(), 'select-files']" i18n>
-        <spk-radio />
+        <sh-radio />
         Select files
       </div>
       <div step routerLinkActive="active" [routerLink]="['/restore', backupId(), 'options']" i18n>
-        <spk-radio />
+        <sh-radio />
         Options
       </div>
     }
-  </spk-stepper>
+  </sh-stepper>
 }
 
 <section>

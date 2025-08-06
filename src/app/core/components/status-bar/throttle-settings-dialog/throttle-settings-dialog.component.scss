@@ -1,4 +1,4 @@
-@use '@sparkle-ui/core/styles/helpers' as *;
+@use '@ship-ui/core/styles/helpers' as *;
 
 :host {
   display: block;
@@ -38,11 +38,11 @@ header {
     grid-area: label;
   }
 
-  spk-form-field {
+  sh-form-field {
     grid-area: input;
   }
 
-  spk-select {
+  sh-select {
     grid-area: select;
   }
 }

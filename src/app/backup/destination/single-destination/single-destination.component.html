@@ -38,28 +38,28 @@
       "></ng-container>
   }
 
-  <spk-toggle-card [disallowToggle]="true" class="advanced-options">
+  <sh-toggle-card [disallowToggle]="true" class="advanced-options">
     <ng-container title>
       <ng-container i18n>Advanced options</ng-container>
 
       @let _nonSelectedAdvancedFormViews = nonSelectedAdvancedFormViews();
 
       @if (showTextArea()) {
-        <button spk-button type="button" class="outlined small" (click)="showTextArea.set(false)" i18n>
+        <button shButton type="button" class="outlined small" (click)="showTextArea.set(false)" i18n>
           Show editor
-          <spk-icon>link</spk-icon>
+          <sh-icon>link</sh-icon>
         </button>
       } @else {
         <div class="actions">
-          <spk-menu [searchable]="true">
+          <sh-menu [searchable]="true">
             <button
               i18n
-              spk-button
+              shButton
               type="button"
               class="outlined small"
               [disabled]="_nonSelectedAdvancedFormViews.length === 0">
               Add advanced option
-              <spk-icon>plus</spk-icon>
+              <sh-icon>plus</sh-icon>
             </button>
 
             <ng-container menu>
@@ -69,20 +69,20 @@
                 </button>
               }
             </ng-container>
-          </spk-menu>
+          </sh-menu>
 
-          <spk-menu>
-            <button spk-button type="button" class="small">
-              <spk-icon>dots-three-vertical</spk-icon>
+          <sh-menu>
+            <button shButton type="button" class="small">
+              <sh-icon>dots-three-vertical</sh-icon>
             </button>
 
             <ng-container menu>
-              <button spk-button type="button" class="small" (click)="showTextArea.set(true)">
-                <spk-icon>link</spk-icon>
+              <button shButton type="button" class="small" (click)="showTextArea.set(true)">
+                <sh-icon>link</sh-icon>
                 Edit contents as text
               </button>
             </ng-container>
-          </spk-menu>
+          </sh-menu>
         </div>
       }
     </ng-container>
@@ -114,7 +114,7 @@
           "></ng-container>
       }
     }
-  </spk-toggle-card>
+  </sh-toggle-card>
 
   <ng-template #fieldTemplate let-item>
     <div class="field-row" [class.single-field]="item.fieldGroup !== 'advanced'">
@@ -135,11 +135,11 @@
           [selectFiles]="true">
           <label [for]="formFieldId">
             @if (item.formView.isMandatory && isFieldEmpty) {
-              <sup i18n-spkTooltip spkTooltip="This field is mandatory">*</sup>
+              <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
             }
             {{ labelContent }}
             @if (item.formView.longDescription) {
-              <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+              <sh-icon class="primary" [shTooltip]="item.formView.longDescription">question</sh-icon>
             }
           </label>
           <input
@@ -152,11 +152,11 @@
         <app-file-tree [hideShortcuts]="true" [enableCreateFolder]="true" [startingPath]="fieldValue">
           <label [for]="formFieldId">
             @if (item.formView.isMandatory && isFieldEmpty) {
-              <sup i18n-spkTooltip spkTooltip="This field is mandatory">*</sup>
+              <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
             }
             {{ labelContent }}
             @if (item.formView.longDescription) {
-              <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+              <sh-icon class="primary" [shTooltip]="item.formView.longDescription">question</sh-icon>
             }
           </label>
           <input
@@ -172,28 +172,28 @@
         item.formView.type === 'Hostname' ||
         item.formView.type === 'Bucketname'
       ) {
-        <spk-form-field>
+        <sh-form-field>
           <label [for]="formFieldId">
             @if (item.formView.isMandatory && isFieldEmpty) {
-              <sup i18n-spkTooltip spkTooltip="This field is mandatory">*</sup>
+              <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
             }
             {{ labelContent }}
             @if (item.formView.longDescription) {
-              <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+              <sh-icon class="primary" [shTooltip]="item.formView.longDescription">question</sh-icon>
             }
             @if (isFieldEmpty && item.formView.type === 'Path') {
-              <spk-icon
+              <sh-icon
                 class="warn"
-                i18n-spkTooltip
-                spkTooltip="An empty path means storing data in the initial or root folder, which is not recommended">
+                i18n-shTooltip
+                shTooltip="An empty path means storing data in the initial or root folder, which is not recommended">
                 warning
-              </spk-icon>
+              </sh-icon>
             }
             @if (item.formView.type == 'Hostname' && !isFieldEmpty && !isValidHostname(fieldValue)) {
-              <spk-icon class="error" i18n-spkTooltip spkTooltip="Hostname is invalid">x-circle</spk-icon>
+              <sh-icon class="error" i18n-shTooltip shTooltip="Hostname is invalid">x-circle</sh-icon>
             }
             @if (item.formView.type == 'Bucketname' && !isFieldEmpty && !isValidBucketname(fieldValue)) {
-              <spk-icon class="warn" i18n-spkTooltip spkTooltip="Bucket name is invalid">warning</spk-icon>
+              <sh-icon class="warn" i18n-shTooltip shTooltip="Bucket name is invalid">warning</sh-icon>
             }
           </label>
 
@@ -210,32 +210,32 @@
           @let slashType = item.formView.doubleSlash?.type;
 
           @if (item.formView.type === 'Path') {
-            <spk-icon
+            <sh-icon
               prefix
               [class.error]="leadingSlashesMessage && slashType === 'error'"
               [class.warn]="leadingSlashesMessage && slashType === 'warning'"
-              [spkTooltip]="leadingSlashesMessage">
+              [shTooltip]="leadingSlashesMessage">
               link
-            </spk-icon>
+            </sh-icon>
           } @else if (item.formView.type === 'Email') {
-            <spk-icon prefix>envelope</spk-icon>
+            <sh-icon prefix>envelope</sh-icon>
           } @else if (item.formView.type === 'Hostname') {
-            <spk-icon prefix>hard-drives</spk-icon>
+            <sh-icon prefix>hard-drives</sh-icon>
           } @else if (item.formView.type === 'Bucketname') {
-            <spk-icon prefix>jar</spk-icon>
+            <sh-icon prefix>jar</sh-icon>
           } @else {
-            <spk-icon prefix>textbox</spk-icon>
+            <sh-icon prefix>textbox</sh-icon>
           }
-        </spk-form-field>
+        </sh-form-field>
       } @else if (item.formView.type === 'Password') {
-        <spk-form-field>
+        <sh-form-field>
           <label [for]="formFieldId">
             @if (item.formView.isMandatory && isFieldEmpty) {
-              <sup i18n-spkTooltip spkTooltip="This field is mandatory">*</sup>
+              <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
             }
             {{ labelContent }}
             @if (item.formView.longDescription) {
-              <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+              <sh-icon class="primary" [shTooltip]="item.formView.longDescription">question</sh-icon>
             }
           </label>
           <input
@@ -260,29 +260,29 @@
               AuthID
             </span>
           } @else {
-            <spk-icon prefix>password</spk-icon>
+            <sh-icon prefix>password</sh-icon>
           }
           @if ($any(item.formView).showPassword) {
-            <spk-icon
+            <sh-icon
               class="clickable"
               suffix
               (click)="$any(item.formView).showPassword = !$any(item.formView).showPassword">
               eye
-            </spk-icon>
+            </sh-icon>
           } @else {
-            <spk-icon
+            <sh-icon
               class="clickable"
               suffix
               (click)="$any(item.formView).showPassword = !$any(item.formView).showPassword">
               eye-slash
-            </spk-icon>
+            </sh-icon>
           }
-        </spk-form-field>
+        </sh-form-field>
       } @else if (item.formView.type === 'Enumeration') {
         @let options = mapOptions(item.formView);
 
         @if (options) {
-          <spk-select
+          <sh-select
             [options]="options"
             [isClearable]="false"
             [optionTemplate]="enumOptionTemplate"
@@ -290,11 +290,11 @@
             value="value">
             <label [for]="formFieldId">
               @if (item.formView.isMandatory && isFieldEmpty) {
-                <sup i18n-spkTooltip spkTooltip="This field is mandatory">*</sup>
+                <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
               }
               {{ labelContent }}
               @if (item.formView.longDescription) {
-                <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+                <sh-icon class="primary" [shTooltip]="item.formView.longDescription">question</sh-icon>
               }
             </label>
             <input
@@ -302,7 +302,7 @@
               [id]="formFieldId"
               [ngModel]="formInput"
               (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
-          </spk-select>
+          </sh-select>
 
           <ng-template let-option #enumOptionTemplate>
             {{ option.key }} {{ option.value && option.value != option.key ? '(' + option.value + ')' : '' }}
@@ -312,7 +312,7 @@
         @let options = mapOptionsWithFreeText(item.formView, formInput);
 
         @if (options) {
-          <spk-select
+          <sh-select
             [options]="options"
             [asFreeText]="true"
             [inlineSearch]="true"
@@ -321,11 +321,11 @@
             value="value">
             <label [for]="formFieldId">
               @if (item.formView.isMandatory && isFieldEmpty) {
-                <sup i18n-spkTooltip spkTooltip="This field is mandatory">*</sup>
+                <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
               }
               {{ labelContent }}
               @if (item.formView.longDescription) {
-                <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+                <sh-icon class="primary" [shTooltip]="item.formView.longDescription">question</sh-icon>
               }
             </label>
 
@@ -334,13 +334,13 @@
               [id]="formFieldId"
               [ngModel]="formInput"
               (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
-          </spk-select>
+          </sh-select>
 
           <ng-template let-option #nonValidatedOptionTemplate>
             {{ option.key }} {{ option.value && option.value != option.key ? '(' + option.value + ')' : '' }}
           </ng-template>
         } @else {
-          <spk-progress-bar class="indeterminate primary" />
+          <sh-progress-bar class="indeterminate primary" />
         }
       } @else if (item.formView.type === 'Size') {
         <app-size
@@ -350,23 +350,23 @@
           [customId]="formFieldId">
           <label [for]="formFieldId">
             @if (item.formView.isMandatory && isFieldEmpty) {
-              <sup i18n-spkTooltip spkTooltip="This field is mandatory">*</sup>
+              <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
             }
             {{ labelContent }}
             @if (item.formView.longDescription) {
-              <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+              <sh-icon class="primary" [shTooltip]="item.formView.longDescription">question</sh-icon>
             }
           </label>
         </app-size>
       } @else if (item.formView.type === 'Integer') {
-        <spk-form-field>
+        <sh-form-field>
           <label [for]="formFieldId">
             @if (item.formView.isMandatory && isFieldEmpty) {
-              <sup i18n-spkTooltip spkTooltip="This field is mandatory">*</sup>
+              <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
             }
             {{ labelContent }}
             @if (item.formView.longDescription) {
-              <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+              <sh-icon class="primary" [shTooltip]="item.formView.longDescription">question</sh-icon>
             }
           </label>
           <input
@@ -374,25 +374,25 @@
             [id]="formFieldId"
             [ngModel]="formInput"
             (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
-          <spk-icon prefix>numpad</spk-icon>
-        </spk-form-field>
+          <sh-icon prefix>numpad</sh-icon>
+        </sh-form-field>
       } @else if (item.formView.type === 'Boolean') {
-        <spk-toggle
+        <sh-toggle
           class="primary raised"
           [class.active]="isTrue(formInput)"
           (click)="updateFieldValue(item.fieldGroup, item.formView.name, isTrue(formInput) ? 'false' : 'true')">
           <label [for]="formFieldId">
             {{ labelContent }}
             @if (item.formView.longDescription) {
-              <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+              <sh-icon class="primary" [shTooltip]="item.formView.longDescription">question</sh-icon>
             }
           </label>
-        </spk-toggle>
+        </sh-toggle>
       } @else if (item.formView.type === 'Flags') {
         @let options = mapOptions(item.formView);
 
         @if (options) {
-          <spk-select
+          <sh-select
             [options]="options"
             [selectMultiple]="true"
             key="key"
@@ -401,11 +401,11 @@
             [optionTemplate]="optionTemplate">
             <label [for]="formFieldId">
               @if (item.formView.isMandatory && isFieldEmpty) {
-                <sup i18n-spkTooltip spkTooltip="This field is mandatory">*</sup>
+                <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
               }
               {{ labelContent }}
               @if (item.formView.longDescription) {
-                <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+                <sh-icon class="primary" [shTooltip]="item.formView.longDescription">question</sh-icon>
               }
             </label>
             <input
@@ -413,7 +413,7 @@
               id="text"
               [ngModel]="formInput"
               (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
-          </spk-select>
+          </sh-select>
 
           <ng-template let-option #optionTemplate>
             {{ option.key }} {{ option.value && option.value != option.key ? '(' + option.value + ')' : '' }}
@@ -427,11 +427,11 @@
           [customId]="formFieldId">
           <label [for]="formFieldId">
             @if (item.formView.isMandatory && isFieldEmpty) {
-              <sup i18n-spkTooltip spkTooltip="This field is mandatory">*</sup>
+              <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
             }
             {{ labelContent }}
             @if (item.formView.longDescription) {
-              <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+              <sh-icon class="primary" [shTooltip]="item.formView.longDescription">question</sh-icon>
             }
           </label>
         </app-timespan>
@@ -443,19 +443,19 @@
           [placeholder]="item.formView.longDescription">
           <label>
             @if (item.formView.isMandatory && isFieldEmpty) {
-              <sup i18n-spkTooltip spkTooltip="This field is mandatory">*</sup>
+              <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
             }
             {{ item.formView.shortDescription ?? item.formView.name }}
             @if (item.formView.longDescription) {
-              <spk-icon class="primary" [spkTooltip]="item.formView.longDescription">question</spk-icon>
+              <sh-icon class="primary" [shTooltip]="item.formView.longDescription">question</sh-icon>
             }
           </label>
         </app-file-drop-textarea>
       }
 
       @if (item.fieldGroup === 'advanced') {
-        <button spk-button class="outlined" type="button" (click)="removeAdvancedOption(item.formView.name)">
-          <spk-icon>x-circle</spk-icon>
+        <button shButton class="outlined" type="button" (click)="removeAdvancedOption(item.formView.name)">
+          <sh-icon>x-circle</sh-icon>
         </button>
       }
     </div>

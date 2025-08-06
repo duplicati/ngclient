@@ -8,7 +8,7 @@
       <div class="actions">
         @if (hasDestination) {
           <button
-            spk-button
+            shButton
             type="button"
             class="small"
             [disabled]="testSignal() == 'testing'"
@@ -18,47 +18,47 @@
           </button>
         }
 
-        <spk-menu>
-          <button spk-button type="button" class="small">
-            <spk-icon>dots-three-vertical</spk-icon>
+        <sh-menu>
+          <button shButton type="button" class="small">
+            <sh-icon>dots-three-vertical</sh-icon>
           </button>
 
           <ng-container menu>
-            <button spk-button type="button" class="small" (click)="openTargetUrlDialog()">
-              <spk-icon>link</spk-icon>
+            <button shButton type="button" class="small" (click)="openTargetUrlDialog()">
+              <sh-icon>link</sh-icon>
               Edit target URL
             </button>
             @if (hasDestination) {
-              <button spk-button type="button" class="small" (click)="copyTargetUrl()">
-                <spk-icon>copy</spk-icon>
+              <button shButton type="button" class="small" (click)="copyTargetUrl()">
+                <sh-icon>copy</sh-icon>
                 Copy url to clipboard
               </button>
             }
           </ng-container>
-        </spk-menu>
+        </sh-menu>
       </div>
     </h3>
 
     @if (testSignal() == 'testing') {
-      <spk-alert i18n>
-        <spk-icon icon>spinner</spk-icon>
+      <sh-alert i18n>
+        <sh-icon icon>spinner</sh-icon>
         Testing connection...
-      </spk-alert>
+      </sh-alert>
     } @else if (testSignal() == 'success') {
-      <spk-alert class="success" i18n>
-        <spk-icon icon>check</spk-icon>
+      <sh-alert class="success" i18n>
+        <sh-icon icon>check</sh-icon>
         Connection tested successfully.
-      </spk-alert>
+      </sh-alert>
     } @else if (testSignal() == 'warning') {
-      <spk-alert class="warn" i18n>
-        <spk-icon icon>warning</spk-icon>
+      <sh-alert class="warn" i18n>
+        <sh-icon icon>warning</sh-icon>
         {{ testErrorMessage() }}
-      </spk-alert>
+      </sh-alert>
     } @else if (testSignal() == 'error') {
-      <spk-alert class="error" i18n>
-        <spk-icon icon>warning</spk-icon>
+      <sh-alert class="error" i18n>
+        <sh-icon icon>warning</sh-icon>
         {{ testErrorMessage() }}
-      </spk-alert>
+      </sh-alert>
     }
 
     @if (hasDestination) {
@@ -67,7 +67,7 @@
         <strong>{{ selectedDestinationType()?.displayName }}.</strong>
         <br />
         Want to select another?
-        <span class="spk-primary">Click here</span>
+        <span class="sh-primary">Click here</span>
       </p>
     }
   </header>
@@ -82,8 +82,8 @@
       }
     </div>
 
-    <spk-menu [searchable]="true">
-      <button spk-button type="button" class="outlined" i18n>All destinations</button>
+    <sh-menu [searchable]="true">
+      <button shButton type="button" class="outlined" i18n>All destinations</button>
 
       <ng-container menu>
         @for (destination of destinationTypeOptions(); track $index) {
@@ -92,7 +92,7 @@
           </button>
         }
       </ng-container>
-    </spk-menu>
+    </sh-menu>
   }
 
   @if (hasDestination) {
@@ -100,21 +100,21 @@
   }
 
   <div class="form-actions">
-    <button spk-button type="button" (click)="goBack()" i18n>
-      <spk-icon>arrow-left</spk-icon>
+    <button shButton type="button" (click)="goBack()" i18n>
+      <sh-icon>arrow-left</sh-icon>
       Go back
     </button>
 
     <button
-      spk-button
+      shButton
       class="raised primary"
       type="submit"
       [disabled]="testSignal() == 'testing' || !hasDestination"
       i18n>
       @if (testSignal() == 'testing') {
-        <spk-icon class="loader">spinner</spk-icon>
+        <sh-icon class="loader">spinner</sh-icon>
       } @else {
-        <spk-icon>arrow-right</spk-icon>
+        <sh-icon>arrow-right</sh-icon>
       }
       Continue
     </button>
@@ -122,25 +122,25 @@
 </form>
 
 @if (targetUrlDialogOpen()) {
-  <spk-dialog [(isOpen)]="targetUrlDialogOpen" [options]="{ maxWidth: '700px', width: '100%' }">
+  <sh-dialog [(isOpen)]="targetUrlDialogOpen" [options]="{ maxWidth: '700px', width: '100%' }">
     <header header>
       <h2 i18n>Edit target URL</h2>
-      <spk-alert class="warn" i18n>Be careful, this will overwrite everything you have in your destination.</spk-alert>
+      <sh-alert class="warn" i18n>Be careful, this will overwrite everything you have in your destination.</sh-alert>
     </header>
 
     <div content>
-      <spk-form-field>
+      <sh-form-field>
         <textarea id="targetUrl" autocomplete="off" [(ngModel)]="targetUrlCtrl"></textarea>
-      </spk-form-field>
+      </sh-form-field>
     </div>
 
     <footer footer>
-      <button spk-button type="button" (click)="closeTargetUrlDialog(false)">Cancel</button>
+      <button shButton type="button" (click)="closeTargetUrlDialog(false)">Cancel</button>
 
-      <button spk-button class="raised primary" type="submit" (click)="closeTargetUrlDialog(true)" i18n>
+      <button shButton class="raised primary" type="submit" (click)="closeTargetUrlDialog(true)" i18n>
         Override target URL
-        <spk-icon>swap</spk-icon>
+        <sh-icon>swap</sh-icon>
       </button>
     </footer>
-  </spk-dialog>
+  </sh-dialog>
 }

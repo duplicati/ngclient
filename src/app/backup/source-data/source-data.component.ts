@@ -3,12 +3,12 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  SparkleButtonComponent,
-  SparkleFormFieldComponent,
-  SparkleIconComponent,
-  SparkleSelectComponent,
-  SparkleToggleComponent,
-} from '@sparkle-ui/core';
+    ShipButtonComponent,
+    ShipFormFieldComponent,
+    ShipIconComponent,
+    ShipSelectComponent,
+    ShipToggleComponent,
+} from '@ship-ui/core';
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { BackupState } from '../backup.state';
@@ -48,11 +48,11 @@ export const createSourceDataForm = (
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    SparkleFormFieldComponent,
-    SparkleIconComponent,
-    SparkleButtonComponent,
-    SparkleToggleComponent,
-    SparkleSelectComponent,
+    ShipFormFieldComponent,
+    ShipIconComponent,
+    ShipButtonComponent,
+    ShipToggleComponent,
+    ShipSelectComponent,
     NewFilterComponent,
     FileTreeComponent,
     ToggleCardComponent,

@@ -1,4 +1,4 @@
-@use '@sparkle-ui/core/styles/helpers' as *;
+@use '@ship-ui/core/styles/helpers' as *;
 
 :host {
   display: flex;
@@ -39,7 +39,7 @@ form {
   justify-content: space-between;
 }
 
-spk-divider {
+sh-divider {
   margin: p2r(12 0);
 }
 

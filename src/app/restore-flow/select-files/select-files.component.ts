@@ -3,11 +3,11 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } 
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  SparkleButtonComponent,
-  SparkleIconComponent,
-  SparkleProgressBarComponent,
-  SparkleSelectComponent,
-} from '@sparkle-ui/core';
+    ShipButtonComponent,
+    ShipIconComponent,
+    ShipProgressBarComponent,
+    ShipSelectComponent,
+} from '@ship-ui/core';
 import { finalize, Subject, take, takeUntil } from 'rxjs';
 import FileTreeComponent, { BackupSettings } from '../../core/components/file-tree/file-tree.component';
 import { DuplicatiServerService, GetApiV1BackupByIdFilesData, TreeNodeDto } from '../../core/openapi';
@@ -33,10 +33,10 @@ export const createRestoreSelectFilesForm = () => {
     DatePipe,
     BytesPipe,
     FileTreeComponent,
-    SparkleButtonComponent,
-    SparkleIconComponent,
-    SparkleSelectComponent,
-    SparkleProgressBarComponent,
+    ShipButtonComponent,
+    ShipIconComponent,
+    ShipSelectComponent,
+    ShipProgressBarComponent,
   ],
   templateUrl: './select-files.component.html',
   styleUrl: './select-files.component.scss',

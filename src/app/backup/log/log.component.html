@@ -2,8 +2,8 @@
 
 <section>
   <div class="back">
-    <button type="button" class="small" spk-button routerLink="/" i18n>
-      <spk-icon>arrow-left</spk-icon>
+    <button type="button" class="small" shButton routerLink="/" i18n>
+      <sh-icon>arrow-left</sh-icon>
       Back
     </button>
   </div>
@@ -14,7 +14,7 @@
       <div class="text">
         <h3>
           {{ _backup.Backup?.Name ?? MISSING_BACKUP_NAME }}
-          <spk-icon>database</spk-icon>
+          <sh-icon>database</sh-icon>
         </h3>
 
         <p>
@@ -49,19 +49,19 @@
       </div>
 
       @if (_backup.Backup?.Metadata?.['BackupListCount']) {
-        <spk-chip class="simple success" i18n>{{ _backup.Backup?.Metadata?.['BackupListCount'] }} Version</spk-chip>
+        <sh-chip class="simple success" i18n>{{ _backup.Backup?.Metadata?.['BackupListCount'] }} Version</sh-chip>
       } @else {
-        <spk-chip class="simple" i18n>No version yet</spk-chip>
+        <sh-chip class="simple" i18n>No version yet</sh-chip>
       }
     </div>
   }
 
-  <spk-tabs class="primary">
+  <sh-tabs class="primary">
     <button tab [class.active]="activeTab() === 'general'" (click)="activeTab.set('general')" i18n>General</button>
     <button tab [class.active]="activeTab() === 'destination'" (click)="activeTab.set('destination')" i18n>
       Destination
     </button>
-  </spk-tabs>
+  </sh-tabs>
 
   @if (activeTab() === 'general') {
     <app-general-log [backupId]="backupId()!" />

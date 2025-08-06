@@ -1,11 +1,11 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
-import { SparkleDialogService } from '@sparkle-ui/core';
+import { ShipDialogService } from '@ship-ui/core';
 import { finalize, map, of, switchMap } from 'rxjs';
 import {
-  DuplicatiServerService,
-  GetApiV1ProgressstateResponse,
-  GetApiV1TaskByTaskidResponse,
-  ServerStatusDto,
+    DuplicatiServerService,
+    GetApiV1ProgressstateResponse,
+    GetApiV1TaskByTaskidResponse,
+    ServerStatusDto,
 } from '../../openapi';
 import { BytesPipe } from '../../pipes/byte.pipe';
 import { ServerStateService } from '../../services/server-state.service';
@@ -72,7 +72,7 @@ export class StatusBarState {
   #dupServer = inject(DuplicatiServerService);
   #backupState = inject(BackupsState);
   #serverState = inject(ServerStateService);
-  #dialog = inject(SparkleDialogService);
+  #dialog = inject(ShipDialogService);
   #sysinfo = inject(SysinfoState);
   #isFetching = signal(false);
   #statusData = signal<StatusWithContent | null>(null);

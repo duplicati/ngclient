@@ -1,4 +1,4 @@
-@use '@sparkle-ui/core/styles/helpers' as *;
+@use '@ship-ui/core/styles/helpers' as *;
 
 :host {
   display: block;
@@ -9,7 +9,7 @@ h3 {
   margin: p2r(0 0 20);
 }
 
-spk-table {
+sh-table {
   --table-columns: auto auto 1fr auto;
 
   td.id {

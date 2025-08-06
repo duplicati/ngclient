@@ -1,4 +1,4 @@
-@use '@sparkle-ui/core/styles/helpers' as *;
+@use '@ship-ui/core/styles/helpers' as *;
 
 :host {
   display: block;
@@ -42,7 +42,7 @@ section {
     gap: p2r(4);
     align-items: flex-start;
 
-    spk-button-group {
+    sh-button-group {
       margin-top: p2r(4);
     }
 
@@ -96,7 +96,7 @@ section {
 .radio-option {
   cursor: pointer;
 
-  spk-radio {
+  sh-radio {
     color: var(--base-8);
     margin-bottom: p2r(4);
   }
@@ -118,8 +118,8 @@ section {
   gap: p2r(8);
   width: 100%;
 
-  spk-form-field,
-  spk-select {
+  sh-form-field,
+  sh-select {
     flex: 1 0;
   }
 }

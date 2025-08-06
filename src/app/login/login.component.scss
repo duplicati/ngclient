@@ -1,4 +1,4 @@
-@use '@sparkle-ui/core/styles/helpers' as *;
+@use '@ship-ui/core/styles/helpers' as *;
 
 :host {
   display: block;
@@ -24,7 +24,7 @@ form {
   }
 }
 
-spk-alert {
+sh-alert {
   max-width: p2r(320);
   margin: 0 auto;
 }

@@ -4,13 +4,13 @@
   @if (!isNew()) {
     <p>Editing: {{ backupName() }}</p>
   }
-  <spk-stepper>
+  <sh-stepper>
     <div
       step
       routerLinkActive="active"
       [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'general']"
       i18n>
-      <spk-radio />
+      <sh-radio />
       General
     </div>
     <div
@@ -18,7 +18,7 @@
       routerLinkActive="active"
       [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'destination']"
       i18n>
-      <spk-radio />
+      <sh-radio />
       Destination
     </div>
     <div
@@ -26,7 +26,7 @@
       routerLinkActive="active"
       [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'source-data']"
       i18n>
-      <spk-radio />
+      <sh-radio />
       Source Data
     </div>
     <div
@@ -34,7 +34,7 @@
       routerLinkActive="active"
       [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'schedule']"
       i18n>
-      <spk-radio />
+      <sh-radio />
       Schedule
     </div>
     <div
@@ -42,14 +42,14 @@
       routerLinkActive="active"
       [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'options']"
       i18n>
-      <spk-radio />
+      <sh-radio />
       Options
     </div>
-  </spk-stepper>
+  </sh-stepper>
 </header>
 
 @if (!finishedLoading()) {
-  <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
+  <sh-progress-bar class="indeterminate primary"></sh-progress-bar>
 } @else {
   <section>
     <router-outlet></router-outlet>

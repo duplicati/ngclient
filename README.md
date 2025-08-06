@@ -7,7 +7,7 @@
 
 ### Deps
 
-- SparkleUI - https://sparkle-ui.dev/
+- ShipUI - https://ship-ui.dev/
 - Angular 20 - https://angular.dev
 - Dayjs - https://day.js.org/en/
 - Phosphor Icons - https://phosphoricons.com/

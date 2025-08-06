@@ -3,25 +3,25 @@
     Export backup configuration
 
     <div class="actions">
-      <button spk-button class="outlined" [routerLink]="['/']" i18n>
-        <spk-icon>arrow-left</spk-icon>
+      <button shButton class="outlined" [routerLink]="['/']" i18n>
+        <sh-icon>arrow-left</sh-icon>
         Back
       </button>
 
       <button
-        spk-button
+        shButton
         class="raised primary"
         (click)="submit()"
         i18n
-        i18n-spkTooltip
-        spkTooltip="Remember to copy the password"
+        i18n-shTooltip
+        shTooltip="Remember to copy the password"
         [class.loading]="isExporting()"
         [disabled]="
           exportForm.invalid ||
           (showCopyPassword() && !copiedPassword()) ||
           (encryptionFieldSignal() && exportForm.value.repeatPassword !== exportForm.value.password)
         ">
-        <spk-icon>export</spk-icon>
+        <sh-icon>export</sh-icon>
         Export
       </button>
     </div>
@@ -31,33 +31,33 @@
 </header>
 
 <form [formGroup]="exportForm" autocomplete="off">
-  <spk-button-group>
+  <sh-button-group>
     <button type="button" [class.active]="exportType() === 'cmd'" (click)="exportType.set('cmd')" i18n>
-      <spk-icon>terminal-window</spk-icon>
+      <sh-icon>terminal-window</sh-icon>
       As command line
     </button>
 
     <button type="button" [class.active]="exportType() === 'file'" (click)="exportType.set('file')" i18n>
-      <spk-icon>file</spk-icon>
+      <sh-icon>file</sh-icon>
       To file
     </button>
-  </spk-button-group>
+  </sh-button-group>
 
-  <spk-toggle class="raised primary" i18n>
+  <sh-toggle class="raised primary" i18n>
     Export passwords
     <input type="checkbox" formControlName="exportPasswords" />
-  </spk-toggle>
+  </sh-toggle>
 
   @if (exportType() === 'file') {
-    <spk-toggle class="primary raised" i18n>
+    <sh-toggle class="primary raised" i18n>
       Encrypt file
       <input type="checkbox" formControlName="encryption" />
-    </spk-toggle>
+    </sh-toggle>
   }
 
   @if (encryptionFieldSignal()) {
     <div class="passwords">
-      <spk-form-field>
+      <sh-form-field>
         <label for="password" i18n>
           Create a password
           <sup>*</sup>
@@ -80,19 +80,19 @@
             {{ exportForm.controls.password.errors?.['minlength'].requiredLength }} characters long
           </span>
         }
-      </spk-form-field>
+      </sh-form-field>
 
       @if (exportForm.value.password) {
-        <spk-progress-bar
+        <sh-progress-bar
           class="raised"
           [class.error]="calculatePasswordStrength() === 1"
           [class.warn]="calculatePasswordStrength() === 2"
           [class.primary]="calculatePasswordStrength() === 4"
           [class.success]="calculatePasswordStrength() === 5"
-          [value]="calculatePasswordStrength() * (100 / 5)"></spk-progress-bar>
+          [value]="calculatePasswordStrength() * (100 / 5)"></sh-progress-bar>
       }
 
-      <spk-form-field>
+      <sh-form-field>
         <input
           [type]="showPassword() ? 'text' : 'password'"
           id="repeatPassword"
@@ -112,31 +112,31 @@
             {{ exportForm.controls.repeatPassword.errors?.['minlength'].requiredLength }} characters long
           </span>
         }
-      </spk-form-field>
+      </sh-form-field>
 
       <div class="password-actions">
-        <button spk-button type="button" class="small" (click)="showPassword.set(!showPassword())" i18n>
+        <button shButton type="button" class="small" (click)="showPassword.set(!showPassword())" i18n>
           @if (showPassword()) {
-            <spk-icon>eye-slash</spk-icon>
+            <sh-icon>eye-slash</sh-icon>
             hide
           } @else {
-            <spk-icon>eye</spk-icon>
+            <sh-icon>eye</sh-icon>
             show
           }
         </button>
 
-        <button spk-button type="button" class="small" (click)="generatePassword()" i18n>
-          <spk-icon>password</spk-icon>
+        <button shButton type="button" class="small" (click)="generatePassword()" i18n>
+          <sh-icon>password</sh-icon>
           Generate password
         </button>
 
         @if (showCopyPassword()) {
-          <button spk-button type="button" class="small copy" (click)="copyPassword()" i18n>
+          <button shButton type="button" class="small copy" (click)="copyPassword()" i18n>
             @if (copiedPassword()) {
-              <spk-icon class="spk-success">check</spk-icon>
+              <sh-icon class="sh-success">check</sh-icon>
               Copied password
             } @else {
-              <spk-icon>copy</spk-icon>
+              <sh-icon>copy</sh-icon>
               Copy password
             }
           </button>
@@ -144,9 +144,9 @@
       </div>
 
       @if (exportForm.value.password && exportForm.value.password === exportForm.value.repeatPassword) {
-        <spk-alert class="primary" i18n>
+        <sh-alert class="primary" i18n>
           Tip: Be sure to save your password. If you lose it, you will not be able to import the configuration.
-        </spk-alert>
+        </sh-alert>
       }
     </div>
   }

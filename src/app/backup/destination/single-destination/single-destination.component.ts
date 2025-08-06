@@ -1,27 +1,27 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  inject,
-  Injector,
-  input,
-  model,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    effect,
+    inject,
+    Injector,
+    input,
+    model,
+    signal,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
-  SparkleButtonComponent,
-  SparkleFormFieldComponent,
-  SparkleIconComponent,
-  SparkleMenuComponent,
-  SparkleProgressBarComponent,
-  SparkleSelectComponent,
-  SparkleToggleCardComponent,
-  SparkleToggleComponent,
-  SparkleTooltipDirective,
-} from '@sparkle-ui/core';
+    ShipButtonComponent,
+    ShipFormFieldComponent,
+    ShipIconComponent,
+    ShipMenuComponent,
+    ShipProgressBarComponent,
+    ShipSelectComponent,
+    ShipToggleCardComponent,
+    ShipToggleComponent,
+    ShipTooltipDirective,
+} from '@ship-ui/core';
 import { FileDropTextareaComponent } from '../../../core/components/file-drop-textarea/file-drop-textarea.component';
 import FileTreeComponent from '../../../core/components/file-tree/file-tree.component';
 import { SizeComponent } from '../../../core/components/size/size.component';
@@ -32,11 +32,11 @@ import { SysinfoState } from '../../../core/states/sysinfo.state';
 import { ServerSettingsService } from '../../../settings/server-settings.service';
 import { BackupState } from '../../backup.state';
 import {
-  CustomFormView,
-  FormView,
-  fromTargetPath,
-  getConfigurationByKey,
-  toTargetPath,
+    CustomFormView,
+    FormView,
+    fromTargetPath,
+    getConfigurationByKey,
+    toTargetPath,
 } from '../destination.config-utilities';
 
 type DestinationConfig = {
@@ -58,15 +58,15 @@ type DestinationConfig = {
     TimespanComponent,
     FileDropTextareaComponent,
 
-    SparkleFormFieldComponent,
-    SparkleButtonComponent,
-    SparkleIconComponent,
-    SparkleToggleCardComponent,
-    SparkleMenuComponent,
-    SparkleSelectComponent,
-    SparkleTooltipDirective,
-    SparkleToggleComponent,
-    SparkleProgressBarComponent,
+    ShipFormFieldComponent,
+    ShipButtonComponent,
+    ShipIconComponent,
+    ShipToggleCardComponent,
+    ShipMenuComponent,
+    ShipSelectComponent,
+    ShipTooltipDirective,
+    ShipToggleComponent,
+    ShipProgressBarComponent,
   ],
   templateUrl: './single-destination.component.html',
   styleUrl: './single-destination.component.scss',

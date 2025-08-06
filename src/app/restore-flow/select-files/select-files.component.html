@@ -2,9 +2,9 @@
   <h3 class="title-30" i18n>Select files</h3>
 
   @if (versionOptionsLoading()) {
-    <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
+    <sh-progress-bar class="indeterminate primary"></sh-progress-bar>
   } @else {
-    <spk-select [options]="versionOptions()" [isClearable]="false" value="Version" (cleared)="abortLoading()">
+    <sh-select [options]="versionOptions()" [isClearable]="false" value="Version" (cleared)="abortLoading()">
       <input
         type="text"
         i18n-placeholder
@@ -23,10 +23,10 @@
           }
         </div>
       </ng-template>
-    </spk-select>
+    </sh-select>
 
     @if (isRepairing() || versionOptionsLoading() || loadingRootPath()) {
-      <spk-progress-bar class="indeterminate primary"></spk-progress-bar>
+      <sh-progress-bar class="indeterminate primary"></sh-progress-bar>
     }
 
     @if (showFileTree()) {
@@ -44,13 +44,13 @@
   }
 
   <div class="form-actions">
-    <button spk-button type="button" (click)="back()" i18n>
-      <spk-icon>arrow-left</spk-icon>
+    <button shButton type="button" (click)="back()" i18n>
+      <sh-icon>arrow-left</sh-icon>
       {{ isFileRestore() ? 'Back' : 'Exit' }}
     </button>
 
-    <button spk-button class="raised primary" type="submit" i18n>
-      <spk-icon>arrow-right</spk-icon>
+    <button shButton class="raised primary" type="submit" i18n>
+      <sh-icon>arrow-right</sh-icon>
       Continue
     </button>
   </div>

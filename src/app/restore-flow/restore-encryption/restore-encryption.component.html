@@ -1,5 +1,5 @@
 <form [formGroup]="encryptionForm" (submit)="next()">
-  <spk-form-field>
+  <sh-form-field>
     <label for="password" i18n>Password</label>
     <input
       type="password"
@@ -7,7 +7,7 @@
       i18n-placeholder
       placeholder="Enter backup passphrase if defined."
       formControlName="passphrase" />
-  </spk-form-field>
+  </sh-form-field>
 
   <app-toggle-card>
     <ng-container title i18n>Advanced options</ng-container>
@@ -16,13 +16,13 @@
   </app-toggle-card>
 
   <div class="form-actions">
-    <button spk-button type="button" (click)="back()" i18n>
-      <spk-icon>arrow-left</spk-icon>
+    <button shButton type="button" (click)="back()" i18n>
+      <sh-icon>arrow-left</sh-icon>
       Back
     </button>
 
-    <button spk-button class="raised primary" type="submit" i18n>
-      <spk-icon>arrow-right</spk-icon>
+    <button shButton class="raised primary" type="submit" i18n>
+      <sh-icon>arrow-right</sh-icon>
       Continue
     </button>
   </div>

@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { SparkleButtonComponent } from '@sparkle-ui/core';
+import { ShipButtonComponent } from '@ship-ui/core';
 import CustomCardComponent from '../core/components/custom-card/custom-card.component';
 import { AppAuthState } from '../core/states/app-auth.state';
 
 @Component({
     selector: 'app-logout',
-    imports: [CustomCardComponent, SparkleButtonComponent],
+    imports: [CustomCardComponent, ShipButtonComponent],
     templateUrl: './logout.component.html',
     styleUrl: './logout.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush

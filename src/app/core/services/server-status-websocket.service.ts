@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { SparkleDialogService } from '@sparkle-ui/core';
+import { ShipDialogService } from '@ship-ui/core';
 import { Observable, Subscriber } from 'rxjs';
 import { DisconnectedDialogComponent } from '../components/disconnected-dialog/disconnected-dialog.component';
 import { GetApiV1BackupsResponse, GetTaskStateDto, IProgressEventData, ServerStatusDto } from '../openapi';
@@ -65,7 +65,7 @@ const LOGGING_ENABLED = false;
 export class ServerStatusWebSocketService {
   #auth = inject(AppAuthState);
   #sysinfo = inject(SysinfoState);
-  dialog = inject(SparkleDialogService);
+  dialog = inject(ShipDialogService);
   #websocket: WebSocket | null = null;
 
   #connectionStatus = signal<ConnectionStatus>('disconnected');

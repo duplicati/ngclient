@@ -1,4 +1,4 @@
-@use '@sparkle-ui/core/styles/helpers' as *;
+@use '@ship-ui/core/styles/helpers' as *;
 
 :host {
   display: block;
@@ -78,7 +78,7 @@ details {
       gap: p2r(8);
       user-select: none;
 
-      spk-icon {
+      sh-icon {
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -88,7 +88,7 @@ details {
     }
   }
 
-  &[open] summary .actions spk-icon {
+  &[open] summary .actions sh-icon {
     transform: rotate(180deg);
   }
 

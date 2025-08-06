@@ -1,7 +1,7 @@
 import { DatePipe, JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, input, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { SparkleIconComponent, SparkleProgressBarComponent } from '@sparkle-ui/core';
+import { ShipIconComponent, ShipProgressBarComponent } from '@ship-ui/core';
 import { map } from 'rxjs';
 import { DuplicatiServerService } from '../../../core/openapi';
 
@@ -30,7 +30,7 @@ type RemoteLogEntryEvaluated = {
 
 @Component({
   selector: 'app-remote-log',
-  imports: [JsonPipe, SparkleProgressBarComponent, SparkleIconComponent, DatePipe],
+  imports: [JsonPipe, ShipProgressBarComponent, ShipIconComponent, DatePipe],
   templateUrl: './remote-log.component.html',
   styleUrl: './remote-log.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

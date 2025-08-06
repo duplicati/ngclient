@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
-  SparkleButtonComponent,
-  SparkleCardComponent,
-  SparkleDividerComponent,
-  SparkleIconComponent,
-  SparkleProgressBarComponent,
-} from '@sparkle-ui/core';
+    ShipButtonComponent,
+    ShipCardComponent,
+    ShipDividerComponent,
+    ShipIconComponent,
+    ShipProgressBarComponent,
+} from '@ship-ui/core';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { BackupAndScheduleOutputDto, DuplicatiServerService } from '../core/openapi';
 import { BackupsState } from '../core/states/backups.state';
@@ -15,11 +15,11 @@ import { BackupsState } from '../core/states/backups.state';
   selector: 'app-restore',
   imports: [
     StatusBarComponent,
-    SparkleCardComponent,
-    SparkleButtonComponent,
-    SparkleDividerComponent,
-    SparkleIconComponent,
-    SparkleProgressBarComponent,
+    ShipCardComponent,
+    ShipButtonComponent,
+    ShipDividerComponent,
+    ShipIconComponent,
+    ShipProgressBarComponent,
     RouterLink,
   ],
   templateUrl: './restore.component.html',

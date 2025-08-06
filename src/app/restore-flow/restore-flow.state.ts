@@ -1,7 +1,7 @@
 import { effect, inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SparkleDialogService } from '@sparkle-ui/core';
+import { ShipDialogService } from '@ship-ui/core';
 import { catchError, finalize, forkJoin, Observable, retry, switchMap, take, throwError, timer } from 'rxjs';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServerService, GetBackupResultDto, ListFilesetsResponseDto } from '../core/openapi';
@@ -26,7 +26,7 @@ export class RestoreFlowState {
   #router = inject(Router);
   #route = inject(ActivatedRoute);
   #sysinfo = inject(SysinfoState);
-  #dialog = inject(SparkleDialogService);
+  #dialog = inject(ShipDialogService);
   #dupServer = inject(DuplicatiServerService);
 
   backupId = signal<string | null>(null);

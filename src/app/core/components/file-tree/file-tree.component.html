@@ -1,5 +1,5 @@
 @if (!multiSelect()) {
-  <spk-button-group>
+  <sh-button-group>
     <button
       type="button"
       [class.active]="pathDiscoveryMethod() === 'browse'"
@@ -15,7 +15,7 @@
       i18n>
       Manually type path
     </button>
-  </spk-button-group>
+  </sh-button-group>
 }
 
 <div class="section" [class.hidden]="pathDiscoveryMethod() !== 'browse'">
@@ -23,11 +23,11 @@
 
   <div class="browse-files" [class.visualize-accepted]="accepts()" #treeContainer>
     @if (isLoading()) {
-      <spk-progress-bar class="indeterminate primary" />
+      <sh-progress-bar class="indeterminate primary" />
     }
 
     <ng-template #recursiveTree let-data>
-      <spk-list [style.padding-left.rem]="data.level * 0.25">
+      <sh-list [style.padding-left.rem]="data.level * 0.25">
         @for (node of data.children; track node.id) {
           @if ((node.hidden && _showHiddenNodes()) || !node.hidden) {
             <div
@@ -43,23 +43,23 @@
               <div class="icon" [class.file]="node.cls === 'file'">
                 @if (node.id !== '/') {
                   @if (node.children.length) {
-                    <spk-icon class="small">caret-down</spk-icon>
+                    <sh-icon class="small">caret-down</sh-icon>
                   } @else if (node.cls === 'file') {
-                    <spk-icon class="small"></spk-icon>
+                    <sh-icon class="small"></sh-icon>
                   } @else {
-                    <spk-icon class="small">caret-right</spk-icon>
+                    <sh-icon class="small">caret-right</sh-icon>
                   }
                   @if (node.children.length) {
-                    <spk-icon class="primary">folder-open</spk-icon>
+                    <sh-icon class="primary">folder-open</sh-icon>
                   } @else if (node.id === '%HOME%') {
-                    <spk-icon class="primary">folder-user</spk-icon>
+                    <sh-icon class="primary">folder-user</sh-icon>
                   } @else if (node.cls === 'file') {
-                    <spk-icon class="primary">file</spk-icon>
+                    <sh-icon class="primary">file</sh-icon>
                   } @else {
-                    <spk-icon class="primary">folder</spk-icon>
+                    <sh-icon class="primary">folder</sh-icon>
                   }
                 } @else {
-                  <spk-icon class="primary">desktop-tower</spk-icon>
+                  <sh-icon class="primary">desktop-tower</sh-icon>
                 }
               </div>
 
@@ -77,7 +77,7 @@
             }
           }
         }
-      </spk-list>
+      </sh-list>
     </ng-template>
 
     <ng-container
@@ -86,18 +86,18 @@
 
   <div class="footer">
     @if (!accepts() && !isByBackupSettings()) {
-      <spk-toggle
+      <sh-toggle
         [class.active]="_showHiddenNodes()"
         class="primary raised browse-files-toggle"
         (click)="_showHiddenNodes.set(!_showHiddenNodes())"
         i18n>
         Show hidden {{ showFiles() ? 'files' : 'folders' }}
-      </spk-toggle>
+      </sh-toggle>
     }
 
     @if (enableCreateFolder()) {
       <button
-        spk-button
+        shButton
         type="button"
         (click)="openCreateFolderDialog()"
         [disabled]="!isCurrentPathFolder()"
@@ -110,17 +110,17 @@
 </div>
 
 <div #formRef class="form-field" [class.hidden]="pathDiscoveryMethod() !== 'path'">
-  <spk-form-field>
+  <sh-form-field>
     <ng-content select="label" ngProjectAs="label"></ng-content>
     <ng-content select="input" ngProjectAs="input"></ng-content>
-  </spk-form-field>
+  </sh-form-field>
 
   <!-- <pre>{{ selectedPaths() | json }}</pre> -->
   <!-- <pre>{{ currentPath() }}</pre> -->
 </div>
 
 @if (createFolderDialogOpen()) {
-  <spk-dialog [(isOpen)]="createFolderDialogOpen" [options]="{ maxWidth: '700px', width: '100%' }">
+  <sh-dialog [(isOpen)]="createFolderDialogOpen" [options]="{ maxWidth: '700px', width: '100%' }">
     <header header>
       <h2 i18n>Enter new folder path</h2>
     </header>
@@ -130,23 +130,23 @@
         Folder will be created under
         <pre>{{ currentPath() }}</pre>
       </div>
-      <spk-form-field>
+      <sh-form-field>
         <textarea id="targetUrl" autocomplete="off" [(ngModel)]="createFolderPath"></textarea>
-      </spk-form-field>
+      </sh-form-field>
     </div>
 
     <footer footer>
-      <button spk-button type="button" (click)="closeCreateFolderDialog(false)">Cancel</button>
+      <button shButton type="button" (click)="closeCreateFolderDialog(false)">Cancel</button>
 
       <button
-        spk-button
+        shButton
         class="raised primary"
         (click)="closeCreateFolderDialog(true)"
         [disabled]="!createFolderPath()?.length"
         i18n>
         Create folder
-        <spk-icon>folder-plus</spk-icon>
+        <sh-icon>folder-plus</sh-icon>
       </button>
     </footer>
-  </spk-dialog>
+  </sh-dialog>
 }

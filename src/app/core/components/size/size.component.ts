@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { SparkleFormFieldComponent, SparkleSelectComponent } from '@sparkle-ui/core';
+import { ShipFormFieldComponent, ShipSelectComponent } from '@ship-ui/core';
 
 const SIZE_OPTIONS = [
   {
@@ -33,7 +33,7 @@ const PER_SECOND_FIELDS = ['throttle-upload', 'throttle-download'];
 
 @Component({
   selector: 'app-size',
-  imports: [SparkleSelectComponent, SparkleFormFieldComponent, FormsModule],
+  imports: [ShipSelectComponent, ShipFormFieldComponent, FormsModule],
   templateUrl: './size.component.html',
   styleUrl: './size.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, effect, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { SparkleAlertComponent, SparkleButtonComponent, SparkleIconComponent } from '@sparkle-ui/core';
+import { ShipAlertComponent, ShipButtonComponent, ShipIconComponent } from '@ship-ui/core';
 import { finalize } from 'rxjs';
 import { OptionsListComponent } from '../../backup/options/options-list/options-list.component';
 import { DuplicatiServerService, SettingDto } from '../../core/openapi';
@@ -13,9 +13,9 @@ const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
   imports: [
     ReactiveFormsModule,
     OptionsListComponent,
-    SparkleButtonComponent,
-    SparkleIconComponent,
-    SparkleAlertComponent,
+    ShipButtonComponent,
+    ShipIconComponent,
+    ShipAlertComponent,
   ],
   templateUrl: './advanced-options-settings.component.html',
   styleUrl: './advanced-options-settings.component.scss',

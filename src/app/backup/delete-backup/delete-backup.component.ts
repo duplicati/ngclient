@@ -3,11 +3,11 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import {
-  SparkleButtonComponent,
-  SparkleCheckboxComponent,
-  SparkleDialogService,
-  SparkleIconComponent,
-} from '@sparkle-ui/core';
+    ShipButtonComponent,
+    ShipCheckboxComponent,
+    ShipDialogService,
+    ShipIconComponent,
+} from '@ship-ui/core';
 import { catchError, finalize, map, of } from 'rxjs';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServerService } from '../../core/openapi';
@@ -16,14 +16,14 @@ import { BackupsState } from '../../core/states/backups.state';
 
 @Component({
   selector: 'app-delete-backup',
-  imports: [SparkleCheckboxComponent, SparkleButtonComponent, SparkleIconComponent, BytesPipe, FormsModule, RouterLink],
+  imports: [ShipCheckboxComponent, ShipButtonComponent, ShipIconComponent, BytesPipe, FormsModule, RouterLink],
   templateUrl: './delete-backup.component.html',
   styleUrl: './delete-backup.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class DeleteBackupComponent {
   #dupServer = inject(DuplicatiServerService);
-  #dialog = inject(SparkleDialogService);
+  #dialog = inject(ShipDialogService);
   #backupsState = inject(BackupsState);
   #router = inject(Router);
 

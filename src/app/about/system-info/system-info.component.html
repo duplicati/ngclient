@@ -1,7 +1,7 @@
 <h3 i18n>System info</h3>
 
 <ng-template #recursiveTree let-data>
-  <spk-list [style.padding-left.rem]="data.level * 0.25">
+  <sh-list [style.padding-left.rem]="data.level * 0.25">
     @for (node of data.children; track node.id) {
       <div
         action
@@ -10,9 +10,9 @@
         [class.open]="node.isOpen()"
         (click)="node.children.length > 0 && toggleNode(node)">
         @if (node.children.length > 0) {
-          <spk-icon [class.open]="node.isOpen()">caret-down</spk-icon>
+          <sh-icon [class.open]="node.isOpen()">caret-down</sh-icon>
         } @else {
-          <spk-icon>dot</spk-icon>
+          <sh-icon>dot</sh-icon>
         }
 
         <div class="text">{{ node.text }}</div>
@@ -26,7 +26,7 @@
           "></ng-container>
       }
     }
-  </spk-list>
+  </sh-list>
 </ng-template>
 
 <ng-container

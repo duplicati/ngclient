@@ -2,14 +2,14 @@
   <ng-content select="label" ngProjectAs="label" />
 </div>
 
-<spk-form-field [attr.readonly]="readonly() || undefined">
+<sh-form-field [attr.readonly]="readonly() || undefined">
   <input type="number" [id]="customId()" [(ngModel)]="timespan" [disabled]="readonly()" />
 
   <ng-content select="[prefix]" />
   <ng-content select="[suffix]" />
-</spk-form-field>
+</sh-form-field>
 
-<spk-select
+<sh-select
   [options]="sizeOptions()"
   value="value"
   label="label"
@@ -19,4 +19,4 @@
   <input type="text" [(ngModel)]="unit" />
 
   <ng-template let-option>{{ option.label }}{{ hasPerSecond() ? '/s' : '' }}</ng-template>
-</spk-select>
+</sh-select>

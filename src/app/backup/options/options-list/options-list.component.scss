@@ -1,15 +1,15 @@
-@use '@sparkle-ui/core/styles/helpers' as *;
+@use '@ship-ui/core/styles/helpers' as *;
 
 :host {
   display: block;
 }
 
-spk-select {
+sh-select {
   --miw: p2r(120);
 }
 
-spk-toggle {
-  spk-icon {
+sh-toggle {
+  sh-icon {
     font-size: p2r(16);
   }
 }
@@ -45,7 +45,7 @@ label {
   gap: p2r(4);
 }
 
-spk-icon {
+sh-icon {
   font-size: p2r(16);
 }
 

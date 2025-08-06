@@ -1,4 +1,4 @@
-@use '@sparkle-ui/core/styles/helpers' as *;
+@use '@ship-ui/core/styles/helpers' as *;
 
 :host {
   display: block;
@@ -8,7 +8,7 @@
   }
 }
 
-spk-stepper {
+sh-stepper {
   max-width: p2r(500);
   margin: p2r(40) auto;
 }

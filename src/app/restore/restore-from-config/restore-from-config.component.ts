@@ -2,12 +2,12 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import {
-  SparkleAlertService,
-  SparkleButtonComponent,
-  SparkleFileDragDropDirective,
-  SparkleFormFieldComponent,
-  SparkleIconComponent,
-} from '@sparkle-ui/core';
+    ShipAlertService,
+    ShipButtonComponent,
+    ShipFileDragDropDirective,
+    ShipFormFieldComponent,
+    ShipIconComponent,
+} from '@ship-ui/core';
 import { finalize, switchMap } from 'rxjs';
 import { BackupAndScheduleInputDto, DuplicatiServerService } from '../../core/openapi';
 import { BackupDraft } from '../../core/states/backups.state';
@@ -19,17 +19,17 @@ const fb = new FormBuilder();
   imports: [
     ReactiveFormsModule,
     RouterLink,
-    SparkleFileDragDropDirective,
-    SparkleFormFieldComponent,
-    SparkleIconComponent,
-    SparkleButtonComponent,
+    ShipFileDragDropDirective,
+    ShipFormFieldComponent,
+    ShipIconComponent,
+    ShipButtonComponent,
   ],
   templateUrl: './restore-from-config.component.html',
   styleUrl: './restore-from-config.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class RestoreFromConfigComponent {
-  #sparkleAlertService = inject(SparkleAlertService);
+  #shipAlertService = inject(ShipAlertService);
   #dupServer = inject(DuplicatiServerService);
   #router = inject(Router);
 
@@ -106,7 +106,7 @@ export default class RestoreFromConfigComponent {
           this.#router.navigate(['/restore-draft', res.ID]);
         },
         error: (err) => {
-          this.#sparkleAlertService.error(err.message);
+          this.#shipAlertService.error(err.message);
         },
       });
   }

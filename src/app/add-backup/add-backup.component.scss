@@ -1,4 +1,4 @@
-@use '@sparkle-ui/core/styles/helpers' as *;
+@use '@ship-ui/core/styles/helpers' as *;
 
 :host {
   display: block;
@@ -19,7 +19,7 @@ div.backup-types {
   max-width: p2r(700);
 }
 
-spk-card {
+sh-card {
   display: flex;
   flex-direction: column;
   align-items: center;

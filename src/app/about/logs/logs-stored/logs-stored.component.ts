@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
-import { SparkleButtonComponent, SparkleIconComponent, SparkleTableComponent } from '@sparkle-ui/core';
+import { ShipButtonComponent, ShipIconComponent, ShipTableComponent } from '@ship-ui/core';
 import { finalize } from 'rxjs';
 import { DuplicatiServerService } from '../../../core/openapi';
 
@@ -20,7 +20,7 @@ type Pagination = {
 
 @Component({
   selector: 'app-logs-stored',
-  imports: [SparkleTableComponent, DatePipe, SparkleIconComponent, SparkleButtonComponent],
+  imports: [ShipTableComponent, DatePipe, ShipIconComponent, ShipButtonComponent],
   templateUrl: './logs-stored.component.html',
   styleUrl: './logs-stored.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

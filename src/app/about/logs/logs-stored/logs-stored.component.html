@@ -1,6 +1,6 @@
 @let _logs = logs();
 
-<spk-table class="type-b" [data]="_logs" [loading]="logsIsLoading()" [style.grid-template-columns]="'1fr 1fr 1fr auto'">
+<sh-table class="type-b" [data]="_logs" [loading]="logsIsLoading()" [style.grid-template-columns]="'1fr 1fr 1fr auto'">
   <tr table-header>
     <th i18n>Timestamp</th>
     <th i18n>Backup ID</th>
@@ -14,8 +14,8 @@
       <td class="id">{{ row['BackupID'] >= 0 ? row['BackupID'] : '-' }}</td>
       <td>{{ row['Message'] }}</td>
       <td>
-        <button spk-button class="outlined small" [class.rotated-icon]="$index === openRowIndex()" type="button">
-          <spk-icon>caret-down</spk-icon>
+        <button shButton class="outlined small" [class.rotated-icon]="$index === openRowIndex()" type="button">
+          <sh-icon>caret-down</sh-icon>
         </button>
       </td>
     </tr>
@@ -36,10 +36,10 @@
   }
 
   <div table-no-rows i18n>No data available</div>
-</spk-table>
+</sh-table>
 
 <footer>
-  <button spk-button class="primary raised" i18n (click)="loadMore()" [disabled]="logsIsLoading() || noMoreItems()">
+  <button shButton class="primary raised" i18n (click)="loadMore()" [disabled]="logsIsLoading() || noMoreItems()">
     @if (noMoreItems()) {
       No more items
     } @else {

@@ -3,15 +3,15 @@
 </header>
 
 <div content>
-  <spk-alert type="warning" i18n>
+  <sh-alert type="warning" i18n>
     Duplicati needs to be secured with a passphrase and a random passphrase has been generated for you.
     <br />
     <br />
     If you open Duplicati from the tray icon, you do not need a passphrase, but if you plan to open it from another
     location you need to set a passphrase you know. Do you want to set a passphrase now?
-  </spk-alert>
+  </sh-alert>
 
-  <spk-form-field>
+  <sh-form-field>
     <label for="password" i18n>Passphrase</label>
     <input
       type="password"
@@ -21,9 +21,9 @@
       placeholder="Enter new password"
       tabindex="1"
       [(ngModel)]="passphrase" />
-  </spk-form-field>
+  </sh-form-field>
 
-  <spk-form-field>
+  <sh-form-field>
     <label for="repeatPassword" i18n>Repeat passphrase</label>
     <input
       type="password"
@@ -36,28 +36,28 @@
       [(ngModel)]="repeatPassphrase" />
 
     @if (passphrase().length !== 0 && passphrase() === repeatPassphrase()) {
-      <spk-icon suffix class="spk-success">check</spk-icon>
+      <sh-icon suffix class="sh-success">check</sh-icon>
     } @else {
-      <spk-icon suffix>prohibit</spk-icon>
+      <sh-icon suffix>prohibit</sh-icon>
     }
-  </spk-form-field>
+  </sh-form-field>
 </div>
 
 <footer footer>
-  <button spk-button [class.loader]="isUpdating()" (click)="cancel()" i18n>Not now thanks</button>
+  <button shButton [class.loader]="isUpdating()" (click)="cancel()" i18n>Not now thanks</button>
 
   @if (passphrase().length !== 0 && passphrase() === repeatPassphrase()) {
-    <button spk-button class="raised primary" [class.loader]="isUpdating()" (click)="updatePassphrase()" i18n>
+    <button shButton class="raised primary" [class.loader]="isUpdating()" (click)="updatePassphrase()" i18n>
       Yes, update passphrase now
     </button>
   } @else {
     <button
-      spk-button
+      shButton
       class="raised primary"
       [class.loader]="isUpdating()"
       [disabled]="true"
-      i18n-spkTooltip
-      spkTooltip="Password have to be filled and have to match"
+      i18n-shTooltip
+      shTooltip="Password have to be filled and have to match"
       (click)="updatePassphrase()"
       i18n>
       Yes, update passphrase now

@@ -1,4 +1,4 @@
-@use '@sparkle-ui/core/styles/helpers' as *;
+@use '@ship-ui/core/styles/helpers' as *;
 
 :host {
   display: flex;
@@ -11,7 +11,7 @@
   flex-direction: column;
   padding: p2r(16 0);
 
-  spk-tabs {
+  sh-tabs {
     margin: p2r(0 32);
   }
 

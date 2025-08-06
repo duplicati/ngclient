@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { SparkleProgressBarComponent, SparkleRadioComponent, SparkleStepperComponent } from '@sparkle-ui/core';
+import { ShipProgressBarComponent, ShipRadioComponent, ShipStepperComponent } from '@ship-ui/core';
 import { take } from 'rxjs';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { DuplicatiServerService, GetBackupResultDto, SettingDto } from '../core/openapi';
@@ -15,9 +15,9 @@ import { BackupState } from './backup.state';
     RouterLink,
     RouterLinkActive,
     StatusBarComponent,
-    SparkleRadioComponent,
-    SparkleStepperComponent,
-    SparkleProgressBarComponent,
+    ShipRadioComponent,
+    ShipStepperComponent,
+    ShipProgressBarComponent,
   ],
   templateUrl: './backup.component.html',
   styleUrl: './backup.component.scss',

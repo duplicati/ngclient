@@ -1,9 +1,9 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 
+import { ShipDialogService } from '@ship-ui/core';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServerService, RemoteControlStatusOutput } from '../../core/openapi';
 import { SysinfoState } from '../../core/states/sysinfo.state';
-import { SparkleDialogService } from '@sparkle-ui/core';
 
 type State =
   | 'connected'
@@ -21,7 +21,7 @@ type Timeout = ReturnType<typeof setTimeout>;
   providedIn: 'root',
 })
 export class RemoteControlState {
-  #dialog = inject(SparkleDialogService);
+  #dialog = inject(ShipDialogService);
   #dupServer = inject(DuplicatiServerService);
   #sysinfo = inject(SysinfoState);
 

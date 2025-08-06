@@ -1,4 +1,4 @@
-@use '@sparkle-ui/core/styles/helpers' as *;
+@use '@ship-ui/core/styles/helpers' as *;
 
 :host {
   display: flex;
@@ -46,7 +46,7 @@
       grid-area: label;
     }
 
-    spk-toggle {
+    sh-toggle {
       grid-area: toggle;
       flex-direction: row-reverse;
     }
@@ -75,7 +75,7 @@
   background: var(--base-1);
   position: relative;
 
-  spk-progress-bar {
+  sh-progress-bar {
     position: absolute;
     top: 0;
     left: 0;
@@ -92,7 +92,7 @@
     }
   }
 
-  spk-list {
+  sh-list {
     --list-active-bg: var(--base-3);
 
     gap: p2r(2);
@@ -121,7 +121,7 @@
       &.root {
         gap: p2r(4);
 
-        .icon:has(spk-icon:nth-child(2)) {
+        .icon:has(sh-icon:nth-child(2)) {
           width: p2r(48);
         }
 

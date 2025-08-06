@@ -1,67 +1,67 @@
 <div class="filters">
-  <spk-button-group>
+  <sh-button-group>
     <button type="button" routerLink="/about/logs/stored" routerLinkActive="active" i18n>
-      <spk-icon>archive</spk-icon>
+      <sh-icon>archive</sh-icon>
       Stored
     </button>
 
     <button type="button" routerLink="/about/logs/live" routerLinkActive="active" i18n>
-      <spk-icon>play</spk-icon>
+      <sh-icon>play</sh-icon>
       Live
     </button>
-  </spk-button-group>
+  </sh-button-group>
 
   @if (currentUrl().startsWith('/about/logs/live')) {
-    <spk-menu [openIndicator]="true">
-      <button spk-button type="button" i18n>Log level: {{ logLevelByLabel() }}</button>
+    <sh-menu [openIndicator]="true">
+      <button shButton type="button" i18n>Log level: {{ logLevelByLabel() }}</button>
 
       <ng-container menu>
-        <button spk-button type="button" class="small" (click)="updateLogLevel('Disabled')" i18n>
-          <spk-icon>bell-simple-slash</spk-icon>
+        <button shButton type="button" class="small" (click)="updateLogLevel('Disabled')" i18n>
+          <sh-icon>bell-simple-slash</sh-icon>
           Disabled
         </button>
 
-        <button spk-button type="button" class="small" (click)="updateLogLevel('Verbose')" i18n>
-          <spk-icon>megaphone-simple</spk-icon>
+        <button shButton type="button" class="small" (click)="updateLogLevel('Verbose')" i18n>
+          <sh-icon>megaphone-simple</sh-icon>
           Verbose
         </button>
 
-        <button spk-button type="button" class="small" (click)="updateLogLevel('ExplicitOnly')" i18n>
-          <spk-icon>flow-arrow</spk-icon>
+        <button shButton type="button" class="small" (click)="updateLogLevel('ExplicitOnly')" i18n>
+          <sh-icon>flow-arrow</sh-icon>
           Explicit only
         </button>
 
-        <button spk-button type="button" class="small" (click)="updateLogLevel('Profiling')" i18n>
-          <spk-icon>speedometer</spk-icon>
+        <button shButton type="button" class="small" (click)="updateLogLevel('Profiling')" i18n>
+          <sh-icon>speedometer</sh-icon>
           Profiling
         </button>
 
-        <button spk-button type="button" class="small" (click)="updateLogLevel('Retry')" i18n>
-          <spk-icon>arrow-arc-left</spk-icon>
+        <button shButton type="button" class="small" (click)="updateLogLevel('Retry')" i18n>
+          <sh-icon>arrow-arc-left</sh-icon>
           Retry
         </button>
 
-        <button spk-button type="button" class="small" (click)="updateLogLevel('Information')" i18n>
-          <spk-icon>info</spk-icon>
+        <button shButton type="button" class="small" (click)="updateLogLevel('Information')" i18n>
+          <sh-icon>info</sh-icon>
           Information
         </button>
 
-        <button spk-button type="button" class="small" (click)="updateLogLevel('DryRun')" i18n>
-          <spk-icon>person-simple-run</spk-icon>
+        <button shButton type="button" class="small" (click)="updateLogLevel('DryRun')" i18n>
+          <sh-icon>person-simple-run</sh-icon>
           Dry run
         </button>
 
-        <button spk-button type="button" class="small" (click)="updateLogLevel('Warning')" i18n>
-          <spk-icon>warning</spk-icon>
+        <button shButton type="button" class="small" (click)="updateLogLevel('Warning')" i18n>
+          <sh-icon>warning</sh-icon>
           Warning
         </button>
 
-        <button spk-button type="button" class="small" (click)="updateLogLevel('Error')" i18n>
-          <spk-icon>warning-octagon</spk-icon>
+        <button shButton type="button" class="small" (click)="updateLogLevel('Error')" i18n>
+          <sh-icon>warning-octagon</sh-icon>
           Error
         </button>
       </ng-container>
-    </spk-menu>
+    </sh-menu>
   }
 </div>
 

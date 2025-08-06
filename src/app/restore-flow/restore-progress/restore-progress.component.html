@@ -2,34 +2,34 @@
 <section>
   @if (restoreResult() != '') {
     <!-- @if (showComplete()) { -->
-    <spk-card class="progress type-a">
+    <sh-card class="progress type-a">
       <ng-container title i18n>Restore completed</ng-container>
       @if (restoreResult() == 'success') {
         <div class="complete-success">
           <svg class="border-svg">
             <circle class="border-circle" cx="50" cy="50" r="45" />
           </svg>
-          <spk-icon class="success" i18n>check-bold</spk-icon>
+          <sh-icon class="success" i18n>check-bold</sh-icon>
         </div>
       } @else {
         <div class="complete-failure">
           <svg class="border-svg">
             <circle class="border-circle" cx="50" cy="50" r="45" />
           </svg>
-          <spk-icon class="error" i18n>warning-octagon</spk-icon>
+          <sh-icon class="error" i18n>warning-octagon</sh-icon>
         </div>
       }
-    </spk-card>
+    </sh-card>
   } @else {
-    <spk-card class="progress type-a">
+    <sh-card class="progress type-a">
       <h3 i18n>
         Restore progress: {{ statusData()?.statusText }}
 
-        <spk-spinner class="primary" />
+        <sh-spinner class="primary" />
       </h3>
 
       <div class="progress-content">
-        <spk-progress-bar [value]="statusData()?.OverallProgress"></spk-progress-bar>
+        <sh-progress-bar [value]="statusData()?.OverallProgress"></sh-progress-bar>
 
         <p>
           <span i18n>Files processed:</span>
@@ -49,18 +49,18 @@
           }
         </p>
       </div>
-    </spk-card>
+    </sh-card>
   }
 
-  <spk-card class="notifications type-a">
+  <sh-card class="notifications type-a">
     <h3 i18n>Notifications</h3>
 
     <div class="notification-list">
       <app-notifications [notificationFilterPredicate]="notificationFilterPredicate()" />
     </div>
-  </spk-card>
+  </sh-card>
 
-  <spk-card class="logs type-a">
+  <sh-card class="logs type-a">
     <h3 i18n>Logs</h3>
 
     <app-logs-live
@@ -68,5 +68,5 @@
       [polling]="restoreResult() == ''"
       [whenFilter]="lastRestoreStarted()?.getTime()"
       [backupIdFilter]="backupId()"></app-logs-live>
-  </spk-card>
+  </sh-card>
 </section>
