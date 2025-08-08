@@ -409,6 +409,7 @@
     "5139724972778583243": "Tempo relativo",
     "7459785994766804203": "Tempo effettivo",
     "7708270344948043036": "{$INTERPOLATION}",
+    "5195907025136652253": "Prossima esecuzione:",
     "4220765745195024064": "Durata:",
     "8856905278208146821": "{$ICU}",
     "4301968594246501194": "{VAR_PLURAL, plural, =0 {Ancora nessuna versione} =1 {1 Versione} other {{{INTERPOLATION}} Versioni}}",

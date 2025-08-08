@@ -5063,6 +5063,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
       </trans-unit>
       <trans-unit id="5195907025136652253" datatype="html">
         <source>Next scheduled run:</source>
+        <target>Volgende geplande uitvoering:</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
           <context context-type="linenumber">106,107</context>
