@@ -2,6 +2,7 @@
 
 export type AccessTokenOutputDto = {
     AccessToken?: (string) | null;
+    RefreshNonce?: (string) | null;
 };
 
 export type AcknowlegdementDto = {
@@ -394,6 +395,10 @@ export type PageInfo = {
     Pages?: number;
 };
 
+export type RefreshTokenInputDto = {
+    Nonce?: (string) | null;
+};
+
 export type RemoteControlStatusOutput = {
     CanEnable?: boolean;
     IsEnabled?: boolean;
@@ -631,6 +636,10 @@ export type PostApiV1CommandlineResponse = (CommandlineTaskStartedDto);
 
 export type GetApiV1AcknowledgementsResponse = (AcknowlegdementDto);
 
+export type PostApiV1AuthRefreshData = {
+    requestBody?: RefreshTokenInputDto;
+};
+
 export type PostApiV1AuthRefreshResponse = (AccessTokenOutputDto);
 
 export type PostApiV1AuthSigninData = {
@@ -650,6 +659,10 @@ export type PostApiV1AuthIssuesignintokenData = {
 };
 
 export type PostApiV1AuthIssuesignintokenResponse = (SigninTokenOutputDto);
+
+export type PostApiV1AuthRefreshLogoutData = {
+    requestBody?: RefreshTokenInputDto;
+};
 
 export type PostApiV1AuthRefreshLogoutResponse = (unknown);
 
