@@ -3,8 +3,8 @@
 :host {
   display: block;
   width: 100%;
-  max-width: p2r(520);
-  padding: p2r(40);
+  max-width: p2r(640);
+  padding: p2r(40 40 0);
 }
 
 header {
@@ -41,6 +41,13 @@ form {
   display: flex;
   flex-direction: column;
   gap: p2r(24);
+  height: 100%;
+  overflow: hidden;
+  padding: p2r(0 0 40);
+}
+
+.current-destination {
+  margin: p2r(16 0 0);
 }
 
 .form-actions {

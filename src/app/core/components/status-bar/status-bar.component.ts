@@ -1,11 +1,11 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import {
-    ShipButtonComponent,
-    ShipDialogService,
-    ShipIconComponent,
-    ShipProgressBarComponent,
-    ShipSpinnerComponent,
+  ShipButtonComponent,
+  ShipDialogService,
+  ShipIconComponent,
+  ShipProgressBarComponent,
+  ShipSpinnerComponent,
 } from '@ship-ui/core';
 import { DuplicatiServerService } from '../../openapi';
 import { RelativeTimePipe } from '../../pipes/relative-time.pipe';
@@ -18,6 +18,7 @@ import { StatusBarState } from './status-bar.state';
 import ThrottleSettingsDialogComponent from './throttle-settings-dialog/throttle-settings-dialog.component';
 
 const date = new Date();
+
 @Component({
   selector: 'app-status-bar',
   imports: [
@@ -39,7 +40,7 @@ export default class StatusBarComponent {
   #backupsState = inject(BackupsState);
   #relayconfigState = inject(RelayconfigState);
   #sysinfo = inject(SysinfoState);
-  #serverState  = inject(ServerStateService);
+  #serverState = inject(ServerStateService);
 
   minsAgo = date.setMinutes(date.getMinutes() - 1);
 
@@ -98,7 +99,7 @@ export default class StatusBarComponent {
   }
 
   ngAfterViewInit() {
-    const defaultConnectionMethod = 
+    const defaultConnectionMethod =
       this.#relayconfigState.relayIsEnabled() || !this.#sysinfo.hasWebSocket() ? 'longpoll' : 'websocket';
     this.#statusBarState.setConnectionMethod(defaultConnectionMethod);
   }

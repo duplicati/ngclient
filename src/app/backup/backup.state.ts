@@ -5,14 +5,14 @@ import { ShipDialogService } from '@ship-ui/core';
 import { finalize } from 'rxjs';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import {
-    ArgumentType,
-    BackupAndScheduleInputDto,
-    BackupDto,
-    DuplicatiServerService,
-    ICommandLineArgument,
-    ScheduleDto,
-    SettingDto,
-    SettingInputDto,
+  ArgumentType,
+  BackupAndScheduleInputDto,
+  BackupDto,
+  DuplicatiServerService,
+  ICommandLineArgument,
+  ScheduleDto,
+  SettingDto,
+  SettingInputDto,
 } from '../core/openapi';
 import { TimespanLiteralsService } from '../core/services/timespan-literals.service';
 import { SysinfoState } from '../core/states/sysinfo.state';
@@ -116,7 +116,7 @@ export class BackupState {
     return this.advancedOptions()
       .sort((a, b) => (a?.name && b?.name ? a?.name.localeCompare(b?.name) : 0))
       .filter((x) => this.selectedOptions()?.findIndex((y) => y.name === x.name) === -1);
-  });  
+  });
 
   submit(withoutExit = false) {
     this.isSubmitting.set(true);
@@ -124,8 +124,7 @@ export class BackupState {
     const backup = this.#mapFormsToBackup();
     const backupId = this.backupId();
 
-    if (this.isDraft() && backup.Backup)
-      backup.Backup.Metadata = this.backupMetadata();
+    if (this.isDraft() && backup.Backup) backup.Backup.Metadata = this.backupMetadata();
 
     if (backupId === 'new' || !backupId || this.isDraft()) {
       this.#dupServer
@@ -203,7 +202,7 @@ export class BackupState {
 
   mapGeneralToForm(backup: BackupDto) {
     const name = backup.Name ?? '';
-    const description = backup.Description ?? '';    
+    const description = backup.Description ?? '';
     const encryptionModule = backup.Settings?.find((x) => x.Name === 'encryption-module');
     const passphrase = backup.Settings?.find((x) => x.Name === 'passphrase')?.Value ?? '';
     const encryption = encryptionModule?.Value && encryptionModule.Value.length ? encryptionModule.Value : '';
@@ -230,10 +229,10 @@ export class BackupState {
       baseUpdate.password = passphrase;
       baseUpdate.repeatPassword = passphrase;
     }
-    
+
     if (compressionModule && compressionModule !== '') {
       baseUpdate.compression = compressionModule;
-    } 
+    }
 
     this.generalForm.patchValue(baseUpdate);
   }
@@ -329,7 +328,7 @@ export class BackupState {
   }
 
   storeMetadata(backup: BackupDto, isDraft: boolean) {
-    this.backupMetadata.set(isDraft ? backup.Metadata ?? null : null);
+    this.backupMetadata.set(isDraft ? (backup.Metadata ?? null) : null);
   }
 
   getScheduleFormValue() {
@@ -452,13 +451,14 @@ export class BackupState {
       ];
     }
 
-    let compression = [{
-      Name: 'compression-module',
-      Value: generalFormValue.compression,
-    }];
+    let compression = [
+      {
+        Name: 'compression-module',
+        Value: generalFormValue.compression,
+      },
+    ];
 
-    if (generalFormValue.compression === '')
-      compression = [];
+    if (generalFormValue.compression === '') compression = [];
 
     const optionFields = [
       {
@@ -535,7 +535,9 @@ export class BackupState {
     };
   }
 
-  setTargetUrl(targetUrl: string | null) {
+  setTargetUrl(targetUrl: string | null, resetLastTargetUrl = false) {
+    if (resetLastTargetUrl) this.#lastTargetUrl = null;
+
     this.targetUrlModel.set(targetUrl);
   }
 

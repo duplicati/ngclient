@@ -1,0 +1,19 @@
+@use '@ship-ui/core/styles/helpers' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(16);
+  height: 100%;
+  overflow: hidden;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(16);
+  height: 100%;
+  overflow: auto;
+  padding-bottom: p2r(16);
+  border-bottom: p2r(1) solid var(--base-4);
+}

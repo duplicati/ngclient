@@ -1,28 +1,30 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    ElementRef,
-    inject,
-    Injector,
-    signal,
-    viewChild,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  ElementRef,
+  inject,
+  Injector,
+  signal,
+  viewChild,
 } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-    ShipAlertComponent,
-    ShipDialogComponent,
-    ShipDialogService,
-    ShipFormFieldComponent,
-    ShipIconComponent,
-    ShipMenuComponent,
+  ShipAlertComponent,
+  ShipDialogComponent,
+  ShipDialogService,
+  ShipFormFieldComponent,
+  ShipIconComponent,
+  ShipMenuComponent,
 } from '@ship-ui/core';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { IDynamicModule } from '../../core/openapi';
 import { TestDestinationService } from '../../core/services/test-destination.service';
-import { DestinationConfigState } from '../../core/states/destinationconfig.state';
+import { DestinationTypeOption } from '../../core/states/destinationconfig.state';
 import { BackupState } from '../backup.state';
+import { DestinationListItemComponent } from './destination-list-item/destination-list-item.component';
+import { DestinationListComponent } from './destination-list/destination-list.component';
 import { getConfigurationByKey } from './destination.config-utilities';
 import { SingleDestinationComponent } from './single-destination/single-destination.component';
 
@@ -64,6 +66,8 @@ export type DestinationFormGroupValue = ReturnType<typeof createDestinationFormG
   selector: 'app-destination',
   imports: [
     SingleDestinationComponent,
+    DestinationListComponent,
+    DestinationListItemComponent,
 
     FormsModule,
     ShipFormFieldComponent,
@@ -80,7 +84,6 @@ export default class DestinationComponent {
   #router = inject(Router);
   #route = inject(ActivatedRoute);
   #backupState = inject(BackupState);
-  #destinationState = inject(DestinationConfigState);
   #dialog = inject(ShipDialogService);
   #testDestination = inject(TestDestinationService);
   injector = inject(Injector);
@@ -93,18 +96,8 @@ export default class DestinationComponent {
   targetUrlDialogOpen = signal(false);
   toggleNewDestination = signal(true);
 
-  destinationTypeOptionsInFocus = signal(['file', 'ssh', 's3', 'gcs', 'googledrive', 'azure']);
-  destinationTypeOptions = this.#destinationState.destinationTypeOptions;
-
   testSignal = this.#backupState.testSignal;
   testErrorMessage = this.#backupState.testErrorMessage;
-
-  destinationTypeOptionsFocused = computed(() => {
-    const focused = this.destinationTypeOptionsInFocus();
-    const options = this.destinationTypeOptions();
-
-    return focused.map((x) => options.find((y) => y.key === x)!);
-  });
 
   selectedDestinationType = computed(() => {
     const targetUrl = this.targetUrlModel();
@@ -114,6 +107,19 @@ export default class DestinationComponent {
     const destinationType = targetUrl.split('://')[0];
 
     return getConfigurationByKey(destinationType) ?? null;
+  });
+
+  selectedDestinationTypeOption = computed(() => {
+    const x = this.selectedDestinationType();
+    return x
+      ? ({
+          key: x.customKey ?? x.key,
+          customKey: x.customKey ?? null,
+          displayName: x.displayName,
+          description: x.description,
+          icon: x.icon,
+        } as DestinationTypeOption)
+      : null;
   });
 
   copyTargetUrl() {
@@ -215,11 +221,11 @@ export default class DestinationComponent {
   }
 
   setDestination(key: IDynamicModule['Key']) {
-    this.#backupState.setTargetUrl(`${key}://`);
+    this.#backupState.setTargetUrl(`${key}://`, true);
   }
 
   removeDestination() {
-    this.#backupState.setTargetUrl(null);
+    this.#backupState.setTargetUrl(null, true);
   }
 
   goBack() {

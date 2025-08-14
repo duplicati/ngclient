@@ -1,0 +1,50 @@
+@use '@ship-ui/core/styles/helpers' as *;
+
+:host {
+  display: block;
+}
+
+sh-card {
+  display: grid;
+  align-items: center;
+  grid-template-columns: p2r(48) 1fr auto;
+  grid-template-areas:
+    'icon name actions'
+    'icon description actions';
+  gap: p2r(4 16);
+  // padding: p2r(16);
+
+  .icon {
+    grid-area: icon;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: p2r(48);
+    height: p2r(48);
+    border-radius: var(--shape-2);
+
+    img {
+      object-fit: contain;
+      width: 100%;
+      border-radius: var(--shape-2);
+      overflow: hidden;
+    }
+  }
+
+  .name {
+    grid-area: name;
+    font: var(--paragraph-10);
+  }
+
+  .description {
+    grid-area: description;
+    color: var(--base-8);
+  }
+
+  .actions {
+    grid-area: actions;
+    display: flex;
+    align-items: center;
+    gap: p2r(8);
+  }
+}

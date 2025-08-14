@@ -1,6 +1,14 @@
-import { computed, inject, Injectable } from '@angular/core';
+import { computed, inject, Injectable, Signal } from '@angular/core';
 import { getConfigurationByKey } from '../../backup/destination/destination.config-utilities';
 import { SysinfoState } from './sysinfo.state';
+
+export type DestinationTypeOption = {
+  key: string;
+  customKey: string | null;
+  displayName: string;
+  description: string;
+  icon: string;
+};
 
 @Injectable({
   providedIn: 'root',
@@ -17,8 +25,7 @@ export class DestinationConfigState {
         }
         const entry = getConfigurationByKey(m.Key);
         const defaultEntry = (<any>entry).isDefaultEntry === true;
-        if (!defaultEntry)
-            return entry;
+        if (!defaultEntry) return entry;
 
         return {
           ...entry,
@@ -35,8 +42,9 @@ export class DestinationConfigState {
       customKey: x.customKey ?? null,
       displayName: x.displayName,
       description: x.description,
+      icon: x.icon,
     }))
-  );
+  ) as Signal<DestinationTypeOption[]>;
 
   backendModules = computed(() => this.#sysinfo.backendModules() ?? []);
 }

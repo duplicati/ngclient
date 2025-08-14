@@ -23,7 +23,15 @@ export type OAuthVersion = 1 | 2;
 
 export type FormView = {
   name: string;
-  type: ArgumentType | 'FileTree' | 'FolderTree' | 'NonValidatedSelectableString' | 'Email' | 'FreeText' | 'Hostname' | 'Bucketname';
+  type:
+    | ArgumentType
+    | 'FileTree'
+    | 'FolderTree'
+    | 'NonValidatedSelectableString'
+    | 'Email'
+    | 'FreeText'
+    | 'Hostname'
+    | 'Bucketname';
   accepts?: string;
   shortDescription?: string;
   longDescription?: string;
@@ -34,7 +42,7 @@ export type FormView = {
   doubleSlash?: DoubleSlashConfig;
   oauthVersion?: OAuthVersion;
   order?: number;
-  isMandatory?: boolean
+  isMandatory?: boolean;
 };
 
 export type CustomFormView = FormView & {
@@ -50,6 +58,7 @@ export type DestinationConfigEntry = {
   key: string;
   displayName: string;
   description: string;
+  icon: string;
   customKey?: string;
   oauthField?: string;
   customFields?: {
@@ -62,17 +71,25 @@ export type DestinationConfigEntry = {
 };
 export type DestinationConfig = DestinationConfigEntry[];
 
-export function buildUrlFromFields(fields: ValueOfDestinationFormGroup, server: string | null | undefined, port: string | number | null | undefined, path: string | null | undefined, ) {
-  return buildUrl(
-    fields.destinationType ?? 'file',
-    server,
-    port,
-    path,
-    [...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]
-  );
+export function buildUrlFromFields(
+  fields: ValueOfDestinationFormGroup,
+  server: string | null | undefined,
+  port: string | number | null | undefined,
+  path: string | null | undefined
+) {
+  return buildUrl(fields.destinationType ?? 'file', server, port, path, [
+    ...Object.entries(fields.advanced),
+    ...Object.entries(fields.dynamic),
+  ]);
 }
 
-export function buildUrl(protocol: string, server: string | null | undefined, port: string | number | null | undefined, path: string | null | undefined, args: [string, string | number | unknown][]) {
+export function buildUrl(
+  protocol: string,
+  server: string | null | undefined,
+  port: string | number | null | undefined,
+  path: string | null | undefined,
+  args: [string, string | number | unknown][]
+) {
   const urlParams = toSearchParams(args);
   const serverPart = encodeURIComponent(addServer(server));
   const serverAndPortPart = serverPart == '' ? '' : serverPart + addPort(port);
@@ -102,7 +119,7 @@ export function concatPaths(...paths: (string | null | undefined)[]) {
 }
 
 export function encodePathPreservingSlashes(path: string) {
-  return path.split('/') .map(encodeURIComponent).join('/');
+  return path.split('/').map(encodeURIComponent).join('/');
 }
 
 export function getSimplePath(url: URL | string | null | undefined) {
@@ -114,9 +131,8 @@ export function getSimplePath(url: URL | string | null | undefined) {
       return '';
     }
   }
-  return decodeURIComponent(url.hostname ?? '') + decodeURIComponent(url.pathname == '/' ? '' : url.pathname ?? '');
+  return decodeURIComponent(url.hostname ?? '') + decodeURIComponent(url.pathname == '/' ? '' : (url.pathname ?? ''));
 }
-  
 
 export function addServer(server: string | null | undefined) {
   if (server === null || server === undefined || server === '') return '';
@@ -130,11 +146,12 @@ export function addPort(port: string | number | null | undefined) {
 }
 
 export function getConfigurationByKey(key: string): DestinationConfigEntry {
-  const config = DESTINATION_CONFIG.find((x) => x.key === key || x.customKey === key)
+  const config =
+    DESTINATION_CONFIG.find((x) => x.key === key || x.customKey === key) ??
     // Previous versions used 's' postfix as shorthand for enabling SSL (e.g. ftps, webdavs, etc.)
-    ?? DESTINATION_CONFIG.find((x) => `${x.key}s` === key) 
-    ?? null;
-  
+    DESTINATION_CONFIG.find((x) => `${x.key}s` === key) ??
+    null;
+
   return (
     config ?? {
       key: key,
@@ -149,7 +166,7 @@ export function fromUrlObj(urlObj: URL) {
     server: decodeURIComponent(urlObj.hostname),
     port: urlObj.port,
     path: removeLeadingSlash(decodeURIComponent(urlObj.pathname)),
-  }
+  };
 }
 
 export function fromSearchParams(destinationType: string, urlObj: URL) {
@@ -195,19 +212,13 @@ export function fromTargetPath(targetPath: string) {
   const destinationType = targetPath.split('://')[0];
   const path = targetPath.split('://')[1];
   // Handle Windows paths that are not real URLs, e.g. file://C:/path/to/file
-  const fakeProtocolPrefixed = destinationType === 'file'
-    ? 'http://dummy'
-    : 'http://' + path;
+  const fakeProtocolPrefixed = destinationType === 'file' ? 'http://dummy' : 'http://' + path;
 
   if (!path) return null;
 
   // Only local files allow the shortcut file paths like file://%MUSIC%/music.mp3 to music folder
   if (path.startsWith('%') && destinationType === 'file') {
-    return getConfigurationByKey(destinationType).mapper.from(
-      destinationType,
-      new URL('http://localhost'),
-      targetPath
-    );
+    return getConfigurationByKey(destinationType).mapper.from(destinationType, new URL('http://localhost'), targetPath);
   }
 
   const config = getConfigurationByKey(destinationType);
@@ -215,8 +226,7 @@ export function fromTargetPath(targetPath: string) {
   // Previous versions used 's' postfix as shorthand for enabling SSL (e.g. ftps, webdavs, etc.)
   // If this is the case, we fix the url to use the correct protocol, and add the use-ssl query parameter
   let extraQuery = '';
-  if (`${config.key}s` === destinationType)
-  {
+  if (`${config.key}s` === destinationType) {
     extraQuery += fakeProtocolPrefixed.indexOf('?') === -1 ? '?' : '&';
     extraQuery += 'use-ssl=true';
     targetPath = config.key + targetPath.substring(destinationType.length);
@@ -236,11 +246,7 @@ export function fromTargetPath(targetPath: string) {
 
     if (hostAsNumber && !hostAsIpAddress) return null;
 
-    return config.mapper.from(
-      config.key,
-      urlObj,
-      targetPath
-    );
+    return config.mapper.from(config.key, urlObj, targetPath);
   } catch (error) {
     console.error('Error while parsing target path', error);
     return null;

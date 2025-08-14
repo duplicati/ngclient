@@ -1,0 +1,14 @@
+@let item = destination();
+
+<sh-card class="type-b">
+  <div class="icon">
+    <img src="{{ item.icon }}" alt="{{ item.displayName }}" />
+  </div>
+
+  <div class="name">{{ item.displayName }}</div>
+  <div class="description">{{ item.description }}</div>
+
+  <div class="actions">
+    <ng-content></ng-content>
+  </div>
+</sh-card>

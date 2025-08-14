@@ -12,7 +12,7 @@ import {
   fromUrlObj,
   getSimplePath,
   toSearchParams,
-  ValueOfDestinationFormGroup
+  ValueOfDestinationFormGroup,
 } from './destination.config-utilities';
 
 const fb = new FormBuilder();
@@ -45,6 +45,7 @@ const DEFAULT_DOUBLESLASH_CONFIG: DoubleSlashConfig = {
 
 export const DESTINATION_CONFIG_DEFAULT = {
   description: $localize`Unknown destination type`,
+  icon: '/assets/dest-icons/file-system.png',
   isDefaultEntry: true,
   customFields: {
     path: {
@@ -81,6 +82,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'file',
     displayName: $localize`File system`,
     description: $localize`Store backups on your local file system.`,
+    icon: '/assets/dest-icons/file-system.png',
     customFields: {
       path: {
         type: 'FolderTree',
@@ -98,7 +100,9 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         const hasLeadingSlash = plainPath.startsWith('file:///');
-        const _tempPath = decodeURIComponent(hasLeadingSlash ? plainPath.split('file:///')[1] : plainPath.split('file://')[1]);
+        const _tempPath = decodeURIComponent(
+          hasLeadingSlash ? plainPath.split('file:///')[1] : plainPath.split('file://')[1]
+        );
         const isWindows = _tempPath.slice(1).startsWith(':\\');
         const path = isWindows ? _tempPath : '/' + _tempPath;
 
@@ -116,6 +120,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'ssh',
     displayName: $localize`SSH`,
     description: $localize`Store backups with SSH.`,
+    icon: '/assets/dest-icons/ssh.png',
     customFields: {
       server: {
         type: 'Hostname',
@@ -172,13 +177,13 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, server, port, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
-        const { server, port, path } = fromUrlObj(urlObj); 
+        const { server, port, path } = fromUrlObj(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
             server,
             port,
-            path
+            path,
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -189,6 +194,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 's3',
     displayName: $localize`S3 Compatible`,
     description: $localize`Store backups in any S3 compatible bucket.`,
+    icon: '/assets/dest-icons/aws.png',
     customFields: {
       bucket: {
         type: 'Bucketname',
@@ -265,7 +271,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, bucket, null, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
-        const { server, path } = fromUrlObj(urlObj); 
+        const { server, path } = fromUrlObj(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
@@ -281,6 +287,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'gcs',
     displayName: $localize`Google Cloud Storage`,
     description: $localize`Store backups in Google Cloud Storage.`,
+    icon: '/assets/dest-icons/google-cloud.png',
     oauthField: 'authid',
     customFields: {
       bucket: {
@@ -324,7 +331,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, bucket, null, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
-        const { server, path } = fromUrlObj(urlObj); 
+        const { server, path } = fromUrlObj(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
@@ -340,6 +347,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'googledrive',
     displayName: $localize`Google Drive`,
     description: $localize`Store backups in Google Drive.`,
+    icon: '/assets/dest-icons/google-drive.png',
     oauthField: 'authid',
     customFields: {
       path: {
@@ -377,6 +385,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'pcloud',
     displayName: $localize`pCloud`,
     description: $localize`Store backups in pCloud.`,
+    icon: '/assets/dest-icons/pcloud.png',
     oauthField: 'authid',
     customFields: {
       server: {
@@ -422,7 +431,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, server, null, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
-        const { server, path } = fromUrlObj(urlObj); 
+        const { server, path } = fromUrlObj(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
@@ -438,6 +447,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'azure',
     displayName: $localize`Azure Blob Storage`,
     description: $localize`Store backups in Azure Blob Storage.`,
+    icon: '/assets/dest-icons/azure.png',
     customFields: {
       path: {
         type: 'Path',
@@ -479,6 +489,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'onedrivev2',
     displayName: $localize`OneDrive`,
     description: $localize`Store backups in OneDrive.`,
+    icon: '/assets/dest-icons/one-drive.png',
     oauthField: 'authid',
     customFields: {
       path: {
@@ -515,6 +526,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'od4b',
     displayName: $localize`OneDrive Business`,
     description: $localize`Store backups in OneDrive Business.`,
+    icon: '/assets/dest-icons/one-drive.png',
     customFields: {
       server: {
         type: 'Hostname',
@@ -558,7 +570,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, server, port, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
-        const { server, port, path } = fromUrlObj(urlObj); 
+        const { server, port, path } = fromUrlObj(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
@@ -575,6 +587,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'mssp',
     displayName: $localize`Microsoft SharePoint`,
     description: $localize`Store backups in Microsoft SharePoint.`,
+    icon: '/assets/dest-icons/sharepoint.png',
     customFields: {
       server: {
         type: 'Hostname',
@@ -618,7 +631,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, server, port, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
-        const { server, port, path } = fromUrlObj(urlObj); 
+        const { server, port, path } = fromUrlObj(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
@@ -635,6 +648,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'sharepoint',
     displayName: $localize`Microsoft SharePoint v2`,
     description: $localize`Store backups in Microsoft SharePoint.`,
+    icon: '/assets/dest-icons/sharepoint.png',
     oauthField: 'authid',
     customFields: {
       path: {
@@ -675,6 +689,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'dropbox',
     displayName: $localize`Dropbox`,
     description: $localize`Store backups in Dropbox.`,
+    icon: '/assets/dest-icons/dropbox.png',
     oauthField: 'authid',
     customFields: {
       path: {
@@ -711,6 +726,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'box',
     displayName: $localize`Box.com`,
     description: $localize`Store backups in Box.com.`,
+    icon: '/assets/dest-icons/box-com.png',
     oauthField: 'authid',
     customFields: {
       path: {
@@ -747,6 +763,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'jottacloud',
     displayName: $localize`Jottacloud`,
     description: $localize`Store backups in Jottacloud.`,
+    icon: '/assets/dest-icons/jottacloud.png',
     oauthField: 'authid',
     customFields: {
       path: {
@@ -783,6 +800,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'b2',
     displayName: $localize`B2 Cloud Storage`,
     description: $localize`Store backups in B2 Cloud Storage.`,
+    icon: '/assets/dest-icons/backblaze.png',
     customFields: {
       bucket: {
         type: 'Bucketname',
@@ -819,7 +837,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, bucket, null, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
-        const { server, path } = fromUrlObj(urlObj); 
+        const { server, path } = fromUrlObj(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
@@ -835,6 +853,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'e2',
     displayName: $localize`IDrive e2`,
     description: $localize`Store backups in IDrive e2.`,
+    icon: '/assets/dest-icons/idrive-e2.png',
     customFields: {
       bucket: {
         type: 'Bucketname',
@@ -871,7 +890,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, bucket, null, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
-        const { server, path } = fromUrlObj(urlObj); 
+        const { server, path } = fromUrlObj(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
@@ -887,6 +906,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'mega',
     displayName: $localize`Mega.nz`,
     description: $localize`Store backups in Mega.nz.`,
+    icon: '/assets/dest-icons/mega-nz.png',
     customFields: {
       path: {
         type: 'Path',
@@ -929,6 +949,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'msgroup',
     displayName: $localize`Microsoft Office 365 Group`,
     description: $localize`Store backups in Microsoft Office 365 Group.`,
+    icon: '/assets/dest-icons/office-365.png',
     oauthField: 'authid',
     customFields: {
       groupEmail: {
@@ -973,6 +994,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'cloudfiles',
     displayName: $localize`Rackspace CloudFiles`,
     description: $localize`Store backups in Rackspace CloudFiles.`,
+    icon: '/assets/dest-icons/rackspace.png',
     customFields: {
       server: {
         type: 'Hostname',
@@ -1016,7 +1038,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, server, port, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
-        const { server, port, path } = fromUrlObj(urlObj); 
+        const { server, port, path } = fromUrlObj(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
@@ -1033,6 +1055,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'rclone',
     displayName: $localize`Rclone`,
     description: $localize`Store backups in Rclone.`,
+    icon: '/assets/dest-icons/rclone.png',
     dynamicFields: [
       {
         name: 'rclone-local-repository',
@@ -1066,7 +1089,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
         const { advanced, dynamic } = fromSearchParams(destinationType, urlObj);
-        const { server, path } = fromUrlObj(urlObj); 
+        const { server, path } = fromUrlObj(urlObj);
 
         return <ValueOfDestinationFormGroup>{
           destinationType,
@@ -1086,6 +1109,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'openstack',
     displayName: $localize`OpenStack Object Storage`,
     description: $localize`Store backups in OpenStack Object Storage.`,
+    icon: '/assets/dest-icons/open-stack.png',
     customFields: {
       bucket: {
         type: 'Bucketname',
@@ -1130,7 +1154,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, bucket, null, null);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
-        const { server, path } = fromUrlObj(urlObj); 
+        const { server, path } = fromUrlObj(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
@@ -1148,6 +1172,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'webdav',
     displayName: $localize`WebDAV`,
     description: $localize`Store backups in WebDAV.`,
+    icon: '/assets/dest-icons/webdav.png',
     customFields: {
       server: {
         type: 'Hostname',
@@ -1195,7 +1220,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, server, port, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
-        const { server, port, path } = fromUrlObj(urlObj); 
+        const { server, port, path } = fromUrlObj(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
@@ -1213,6 +1238,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'aftp',
     displayName: $localize`Alternative FTP`,
     description: $localize`Store backups in FTP.`,
+    icon: '/assets/dest-icons/ftp.png',
     customFields: {
       server: {
         type: 'Hostname',
@@ -1259,7 +1285,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, server, port, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
-        const { server, port, path } = fromUrlObj(urlObj); 
+        const { server, port, path } = fromUrlObj(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
@@ -1277,6 +1303,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'ftp',
     displayName: $localize`FTP`,
     description: $localize`Store backups in FTP.`,
+    icon: '/assets/dest-icons/ftp.png',
     customFields: {
       server: {
         type: 'Hostname',
@@ -1323,7 +1350,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, server, port, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
-        const { server, port, path } = fromUrlObj(urlObj); 
+        const { server, port, path } = fromUrlObj(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
@@ -1342,6 +1369,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'sia',
     displayName: $localize`Sia Decentrilized Cloud`,
     description: $localize`Store backups in Sia Decentrilized Cloud.`,
+    icon: '/assets/dest-icons/sia-cloud.png',
     customFields: {
       server: {
         type: 'Hostname',
@@ -1381,6 +1409,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'cos',
     displayName: $localize`Tencent COS`,
     description: $localize`Store backups in Tencent COS.`,
+    icon: '/assets/dest-icons/tencent-cloud.png',
     customFields: {
       bucket: {
         name: 'bucket',
@@ -1427,7 +1456,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
           advanced: {
             ...fields.advanced,
             'cos-bucket': bucket,
-          }
+          },
         };
 
         return buildUrlFromFields(patched, null, null, path);
@@ -1454,6 +1483,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'tahoe',
     displayName: $localize`Tahoe LAFS`,
     description: $localize`Store backups in Tahoe LAFS.`,
+    icon: '/assets/dest-icons/tahoelafs.png',
     customFields: {
       server: {
         type: 'Hostname',
@@ -1491,7 +1521,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, server, port, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
-        const { server, port, path } = fromUrlObj(urlObj); 
+        const { server, port, path } = fromUrlObj(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
@@ -1508,6 +1538,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'smb',
     displayName: $localize`Windows Share (SMB)`,
     description: $localize`Store backups on SMB storage.`,
+    icon: '/assets/dest-icons/smb.png',
     customFields: {
       server: {
         type: 'Hostname',
@@ -1552,7 +1583,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return buildUrlFromFields(fields, server, null, concatPaths(share, path));
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
-        const { server, path } = fromUrlObj(urlObj); 
+        const { server, path } = fromUrlObj(urlObj);
 
         const share = path.split('/')[0];
         const subpath = path.split('/').slice(1).join('/');
@@ -1573,6 +1604,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'filen',
     displayName: $localize`Filen.io`,
     description: $localize`Store backups in Filen.io.`,
+    icon: '/assets/dest-icons/filen.png',
     customFields: {
       path: {
         type: 'Path',
@@ -1601,7 +1633,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path: getSimplePath(urlObj)
+            path: getSimplePath(urlObj),
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -1612,6 +1644,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'filejump',
     displayName: $localize`Filejump`,
     description: $localize`Store backups in Filejump.`,
+    icon: '/assets/dest-icons/file-jump.png',
     customFields: {
       path: {
         type: 'Path',
@@ -1646,7 +1679,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path: getSimplePath(urlObj)
+            path: getSimplePath(urlObj),
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -1660,6 +1693,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     customKey: 'storjAccessGrant',
     displayName: $localize`Storj Access Grant`,
     description: $localize`Store backups in Storj Access Grant.`,
+    icon: '/assets/dest-icons/storj.png',
     dynamicFields: [
       {
         name: 'storj-shared-access',
@@ -1701,7 +1735,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         delete fields.advanced['storj-auth-method'];
         return <ValueOfDestinationFormGroup>{
           destinationType,
-          ...fields
+          ...fields,
         };
       },
     },
@@ -1713,6 +1747,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     customKey: 'storjApiKey',
     displayName: $localize`Storj API Key`,
     description: $localize`Store backups in Storj API Key.`,
+    icon: '/assets/dest-icons/storj.png',
     dynamicFields: [
       {
         name: 'storj-satellite',
@@ -1760,7 +1795,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         delete fields.advanced['storj-auth-method'];
         return <ValueOfDestinationFormGroup>{
           destinationType,
-          ...fields
+          ...fields,
         };
       },
     },
@@ -1771,8 +1806,9 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'aliyunoss',
     displayName: $localize`Aliyun OSS`,
     description: $localize`Store backups in Aliyun OSS`,
+    icon: '/assets/dest-icons/aliyun.png',
     customFields: {
-      bucket:{
+      bucket: {
         type: 'Bucketname',
         name: 'bucket',
         shortDescription: $localize`Bucket name`,
@@ -1790,11 +1826,11 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     },
     dynamicFields: [
       {
-        name: 'oss-endpoint', 
+        name: 'oss-endpoint',
         isMandatory: true,
       },
       {
-        name: 'oss-access-key-id', 
+        name: 'oss-access-key-id',
         isMandatory: true,
       },
       {
@@ -1810,8 +1846,8 @@ export const DESTINATION_CONFIG: DestinationConfig = [
           advanced: {
             ...fields.advanced,
             'oss-bucket-name': bucket,
-          }
-        }
+          },
+        };
 
         return buildUrlFromFields(patched, null, null, path);
       },
@@ -1819,7 +1855,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const searchParams = fromSearchParams(destinationType, urlObj);
         const bucket = searchParams.advanced['oss-bucket-name'];
         delete searchParams.advanced['oss-bucket-name'];
-        
+
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {

@@ -1,0 +1,14 @@
+<sh-form-field>
+  <input type="text" i18n-placeholder placeholder="Search for destination..." [(ngModel)]="destinationSearchTerm" />
+</sh-form-field>
+
+<div class="list">
+  @for (option of destinationTypeOptionsFocused(); track $index) {
+    <app-destination-list-item [destination]="option">
+      <button shButton i18n (click)="setDestination.emit(option.key)" type="button">
+        Choose
+        <sh-icon>arrow-right</sh-icon>
+      </button>
+    </app-destination-list-item>
+  }
+</div>
