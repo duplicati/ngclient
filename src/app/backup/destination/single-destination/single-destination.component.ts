@@ -1,43 +1,31 @@
 import { NgTemplateOutlet } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, Injector, model, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    effect,
-    inject,
-    Injector,
-    input,
-    model,
-    signal,
-} from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {
-    ShipButtonComponent,
-    ShipFormFieldComponent,
-    ShipIconComponent,
-    ShipMenuComponent,
-    ShipProgressBarComponent,
-    ShipSelectComponent,
-    ShipToggleCardComponent,
-    ShipToggleComponent,
-    ShipTooltipDirective,
+  ShipButtonComponent,
+  ShipFormFieldComponent,
+  ShipIconComponent,
+  ShipMenuComponent,
+  ShipProgressBarComponent,
+  ShipSelectComponent,
+  ShipToggleCardComponent,
+  ShipToggleComponent,
+  ShipTooltipDirective,
 } from '@ship-ui/core';
 import { FileDropTextareaComponent } from '../../../core/components/file-drop-textarea/file-drop-textarea.component';
 import FileTreeComponent from '../../../core/components/file-tree/file-tree.component';
 import { SizeComponent } from '../../../core/components/size/size.component';
 import { TimespanComponent } from '../../../core/components/timespan/timespan.component';
 import { ArgumentType, ICommandLineArgument } from '../../../core/openapi';
-import { DestinationConfigState } from '../../../core/states/destinationconfig.state';
-import { SysinfoState } from '../../../core/states/sysinfo.state';
-import { ServerSettingsService } from '../../../settings/server-settings.service';
-import { BackupState } from '../../backup.state';
+
 import {
-    CustomFormView,
-    FormView,
-    fromTargetPath,
-    getConfigurationByKey,
-    toTargetPath,
+  CustomFormView,
+  FormView,
+  fromTargetPath,
+  getConfigurationByKey,
+  toTargetPath,
 } from '../destination.config-utilities';
+import { SINGLE_DESTINATION_STATE } from './single-destination.provider';
 
 type DestinationConfig = {
   destinationType: string;
@@ -49,7 +37,6 @@ type DestinationConfig = {
 @Component({
   selector: 'app-single-destination',
   imports: [
-    ReactiveFormsModule,
     FormsModule,
     NgTemplateOutlet,
 
@@ -73,22 +60,27 @@ type DestinationConfig = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SingleDestinationComponent {
-  #backupState = inject(BackupState);
-  #sysinfo = inject(SysinfoState);
-  #serverSettings = inject(ServerSettingsService);
-  #destinationState = inject(DestinationConfigState);
-  injector = inject(Injector);
-  targetUrl = model.required<string | null>();
-  useBackupState = input(false);
+  #stateProvider = inject(SINGLE_DESTINATION_STATE);
 
+  injector = inject(Injector);
+
+  backendModules = this.#stateProvider.backendModules;
+  serverSettingsOverride = this.#stateProvider.serverSettingsOverride;
+  backupServerOverride = this.#stateProvider.backupServerOverride;
+  oauthUrls = this.#stateProvider.oauthUrls;
   #destType: string | null = null;
+
+  targetUrl = model.required<string | null>();
+
   destinationType = computed(() => {
     const targetUrl = this.targetUrl();
 
     if (!targetUrl) return null;
 
     const config = getConfigurationByKey(targetUrl.split('://')[0]);
+
     this.#destType = config?.customKey ?? config?.key;
+
     return this.#destType;
   });
 
@@ -120,7 +112,7 @@ export class SingleDestinationComponent {
 
     const destinationConfig = getConfigurationByKey(key);
     const _key = destinationConfig?.key;
-    const item = this.#destinationState.backendModules().find((x) => x.Key === _key) ?? {
+    const item = this.backendModules().find((x) => x.Key === _key) ?? {
       Key: key,
       DisplayName: key,
       Description: getConfigurationByKey(key).description,
@@ -423,18 +415,23 @@ export class SingleDestinationComponent {
   ) {
     this.#oauthInProgress.set(true);
 
-    let oauthUrl = (usev2 ?? 1) == 2 ? this.#sysinfo.defaultOAuthUrlV2() : this.#sysinfo.defaultOAuthUrl();
+    let oauthUrl = (usev2 ?? 1) == 2 ? this.oauthUrls().v2 : this.oauthUrls().v1;
 
-    const serverOverride = this.#serverSettings.serverSettings()?.['--oauth-url'];
-    if (serverOverride && serverOverride.length > 0) oauthUrl = serverOverride;
+    const backupServerOverride = this.backupServerOverride();
+    const serverSettingsOverride = this.serverSettingsOverride();
+    const formOverride = this.destinationForm().advanced['oauth-url'];
 
-    if (this.useBackupState()) {
-      const backupServerOverride = this.#backupState.mapFormsToSettings().find((x) => x.Name === '--oauth-url')?.Value;
-      if (backupServerOverride && backupServerOverride.length > 0) oauthUrl = backupServerOverride;
+    if (serverSettingsOverride && serverSettingsOverride.length > 0) {
+      oauthUrl = serverSettingsOverride;
     }
 
-    const formOverride = this.destinationForm().advanced['oauth-url'];
-    if (formOverride && formOverride.length > 0) oauthUrl = formOverride;
+    if (backupServerOverride && backupServerOverride.length > 0) {
+      oauthUrl = backupServerOverride;
+    }
+
+    if (formOverride && formOverride.length > 0) {
+      oauthUrl = formOverride;
+    }
 
     const startlink = `${oauthUrl}?type=${backendKey}`;
 
@@ -469,7 +466,7 @@ export class SingleDestinationComponent {
   }
 
   settingsAsText = computed(() => {
-    const advanced = this.destinationForm().advanced; 
+    const advanced = this.destinationForm().advanced;
 
     return Object.entries(advanced)
       .map(([key, value]) => {
