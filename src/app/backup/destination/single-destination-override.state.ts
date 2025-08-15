@@ -4,18 +4,19 @@ import { DestinationConfigState } from '../../core/states/destinationconfig.stat
 import { SysinfoState } from '../../core/states/sysinfo.state';
 import { ServerSettingsService } from '../../settings/server-settings.service';
 import { BackupState } from '../backup.state';
+import { SingleDestinationStateDefault } from './single-destination/single-destination-default.state';
 
 @Injectable({
   providedIn: 'root',
 })
-export class SingleDestinationStateOverride {
+export class SingleDestinationStateOverride implements SingleDestinationStateDefault {
   #sysinfo = inject(SysinfoState);
   #backupState = inject(BackupState);
   #serverSettings = inject(ServerSettingsService);
   #destinationState = inject(DestinationConfigState);
 
   backendModules = computed(() => this.#destinationState.backendModules());
-  serverOverride = computed(() => this.#serverSettings.serverSettings()?.['--oauth-url']);
+  serverSettingsOverride = computed(() => this.#serverSettings.serverSettings()?.['--oauth-url']);
   backupServerOverride = computed(() => {
     const backupServerOverride = this.#backupState.mapFormsToSettings().find((x) => x.Name === '--oauth-url')?.Value;
 

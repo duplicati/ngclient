@@ -61,13 +61,8 @@ type DestinationConfig = {
 })
 export class SingleDestinationComponent {
   #stateProvider = inject(SINGLE_DESTINATION_STATE);
-
   injector = inject(Injector);
 
-  backendModules = this.#stateProvider.backendModules;
-  serverSettingsOverride = this.#stateProvider.serverSettingsOverride;
-  backupServerOverride = this.#stateProvider.backupServerOverride;
-  oauthUrls = this.#stateProvider.oauthUrls;
   #destType: string | null = null;
 
   targetUrl = model.required<string | null>();
@@ -112,7 +107,7 @@ export class SingleDestinationComponent {
 
     const destinationConfig = getConfigurationByKey(key);
     const _key = destinationConfig?.key;
-    const item = this.backendModules().find((x) => x.Key === _key) ?? {
+    const item = this.#stateProvider.backendModules().find((x) => x.Key === _key) ?? {
       Key: key,
       DisplayName: key,
       Description: getConfigurationByKey(key).description,
@@ -415,11 +410,12 @@ export class SingleDestinationComponent {
   ) {
     this.#oauthInProgress.set(true);
 
-    let oauthUrl = (usev2 ?? 1) == 2 ? this.oauthUrls().v2 : this.oauthUrls().v1;
-
-    const backupServerOverride = this.backupServerOverride();
-    const serverSettingsOverride = this.serverSettingsOverride();
+    const oauthUrls = this.#stateProvider.oauthUrls();
+    const backupServerOverride = this.#stateProvider.backupServerOverride();
+    const serverSettingsOverride = this.#stateProvider.serverSettingsOverride();
     const formOverride = this.destinationForm().advanced['oauth-url'];
+
+    let oauthUrl = (usev2 ?? 1) == 2 ? oauthUrls.v2 : oauthUrls.v1;
 
     if (serverSettingsOverride && serverSettingsOverride.length > 0) {
       oauthUrl = serverSettingsOverride;

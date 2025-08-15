@@ -22,12 +22,12 @@ sh-select {
 [prefix].link {
   cursor: pointer;
   text-decoration: underline;
-  color: var(--primary-500);
+  color: var(--primary-8);
 }
 
 .clickable {
   cursor: pointer;
-  color: var(--primary-500);
+  color: var(--primary-8);
 }
 
 label {
@@ -58,6 +58,6 @@ label {
 }
 
 .raw-text-area {
-  min-height: 12rem; 
+  min-height: 12rem;
   white-space: pre;
 }
