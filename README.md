@@ -3,11 +3,11 @@
 ### Prerequisites
 
 - Node.js 22 - https://formulae.brew.sh/formula/node
-- bun latest - https://bun.sh/docs/installation
+- bun latest - https://bun.sh/docs/installation (Could be removed as a dependency requires changing a few commands in the package.json scripts)
 
-### Deps
+### Dependencies
 
-- ShipUI - https://shipui.com/ - ([Docs](https://docs.shipui.com/))
+- ShipUI - https://shipui.com/ - ([Docs](https://docs.shipui.com/), [GitHub](https://github.com/shipuicom/core))
 - Angular 20 - https://angular.dev
 - Dayjs - https://day.js.org/en/
 - Phosphor Icons - https://phosphoricons.com/
