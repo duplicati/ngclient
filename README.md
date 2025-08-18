@@ -7,7 +7,7 @@
 
 ### Deps
 
-- ShipUI - https://ship-ui.dev/
+- ShipUI - https://shipui.com/ - ([Docs](https://docs.shipui.com/))
 - Angular 20 - https://angular.dev
 - Dayjs - https://day.js.org/en/
 - Phosphor Icons - https://phosphoricons.com/
