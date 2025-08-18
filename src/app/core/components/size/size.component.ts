@@ -70,8 +70,10 @@ export class SizeComponent implements ControlValueAccessor {
       const match = value.match(/^(\d+)(bytes|kb|mb|gb|tb|pb|b)$/i);
 
       if (match) {
-        this.timespan.set(parseInt(match[1], 10));
-        this.unit.set(match[2].toUpperCase());
+        queueMicrotask(() => {
+          this.timespan.set(parseInt(match[1], 10));
+          this.unit.set(match[2].toUpperCase());
+        });
       } else {
         this.timespan.set(0);
         this.unit.set('MB');
