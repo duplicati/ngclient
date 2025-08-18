@@ -5,10 +5,10 @@ import { ShipFormFieldComponent, ShipSelectComponent } from '@ship-ui/core';
 const PER_SECOND_FIELDS = ['throttle-upload', 'throttle-download'];
 
 const SIZE_OPTIONS = [
-  {
-    value: 'B',
-    label: 'Bytes',
-  },
+  // {
+  //   value: 'B',
+  //   label: 'Bytes',
+  // },
   {
     value: 'KB',
     label: 'KB',
@@ -35,6 +35,13 @@ export const splitSize = (value: string) => {
   if (!value || typeof value !== 'string' || value.length === 0) return { size: 0, unit: 'MB' };
 
   const match = value.match(/^(\d+)(bytes|kb|mb|gb|tb|pb|b)$/i);
+
+  if (match && (match[2].toUpperCase() === 'B' || match[2].toUpperCase() === 'BYTES')) {
+    return {
+      size: 1,
+      unit: 'KB',
+    };
+  }
 
   return {
     size: match ? parseInt(match[1], 10) : 0,
