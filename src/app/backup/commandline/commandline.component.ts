@@ -3,13 +3,13 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
-    ShipButtonComponent,
-    ShipDialogService,
-    ShipDividerComponent,
-    ShipFormFieldComponent,
-    ShipIconComponent,
-    ShipProgressBarComponent,
-    ShipSelectComponent,
+  ShipButtonComponent,
+  ShipDialogService,
+  ShipDividerComponent,
+  ShipFormFieldComponent,
+  ShipIconComponent,
+  ShipProgressBarComponent,
+  ShipSelectComponent,
 } from '@ship-ui/core';
 import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
 import { StatusBarState } from '../../core/components/status-bar/status-bar.state';
@@ -19,7 +19,6 @@ import { BackupState } from '../backup.state';
 import { OptionsListComponent } from '../options/options-list/options-list.component';
 
 const fb = new FormBuilder();
-const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'] as const;
 
 @Component({
   selector: 'app-commandline',
@@ -53,7 +52,6 @@ export default class CommandlineComponent {
 
   #routeParamsSignal = toSignal(this.#route.params);
   commandOptions = toSignal(this.#commandline.getApiV1Commandline());
-  sizeOptions = signal<string[]>(SIZE_OPTIONS as any);
   isSubmitting = signal(false);
   optionsFields = this.#backupState.optionsFields;
 

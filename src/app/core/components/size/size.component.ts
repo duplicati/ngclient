@@ -2,9 +2,11 @@ import { ChangeDetectionStrategy, Component, computed, effect, input, signal } f
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { ShipFormFieldComponent, ShipSelectComponent } from '@ship-ui/core';
 
+const PER_SECOND_FIELDS = ['throttle-upload', 'throttle-download'];
+
 const SIZE_OPTIONS = [
   {
-    value: 'bytes',
+    value: 'B',
     label: 'Bytes',
   },
   {
@@ -29,8 +31,16 @@ const SIZE_OPTIONS = [
   },
 ];
 
-const PER_SECOND_FIELDS = ['throttle-upload', 'throttle-download'];
+export const splitSize = (value: string) => {
+  if (!value || typeof value !== 'string' || value.length === 0) return { size: 0, unit: 'MB' };
 
+  const match = value.match(/^(\d+)(bytes|kb|mb|gb|tb|pb|b)$/i);
+
+  return {
+    size: match ? parseInt(match[1], 10) : 0,
+    unit: match ? match[2].toUpperCase() : 'MB',
+  };
+};
 @Component({
   selector: 'app-size',
   imports: [ShipSelectComponent, ShipFormFieldComponent, FormsModule],
@@ -67,12 +77,12 @@ export class SizeComponent implements ControlValueAccessor {
 
   writeValue(value: string): void {
     if (value) {
-      const match = value.match(/^(\d+)(bytes|kb|mb|gb|tb|pb|b)$/i);
+      const match = splitSize(value);
 
       if (match) {
         queueMicrotask(() => {
-          this.timespan.set(parseInt(match[1], 10));
-          this.unit.set(match[2].toUpperCase());
+          this.timespan.set(match.size);
+          this.unit.set(match.unit);
         });
       } else {
         this.timespan.set(0);

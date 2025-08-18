@@ -6,20 +6,12 @@ import { OptionsListComponent } from '../../backup/options/options-list/options-
 import { DuplicatiServerService, SettingDto } from '../../core/openapi';
 import { ServerSettingsService } from '../server-settings.service';
 
-const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
-
 @Component({
   selector: 'app-advanced-options-settings',
-  imports: [
-    ReactiveFormsModule,
-    OptionsListComponent,
-    ShipButtonComponent,
-    ShipIconComponent,
-    ShipAlertComponent,
-  ],
+  imports: [ReactiveFormsModule, OptionsListComponent, ShipButtonComponent, ShipIconComponent, ShipAlertComponent],
   templateUrl: './advanced-options-settings.component.html',
   styleUrl: './advanced-options-settings.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class AdvancedOptionsSettingsComponent {
   #serverSettingsService = inject(ServerSettingsService);
@@ -30,7 +22,6 @@ export default class AdvancedOptionsSettingsComponent {
   isSubmitting = signal(false);
   isLoadingOptions = signal(true);
   saved = signal(false);
-  sizeOptions = signal(SIZE_OPTIONS);
 
   lastRecievedServerSettings = signal<{ [key: string]: string }>({});
   serverSettingsEffect = effect(() => {

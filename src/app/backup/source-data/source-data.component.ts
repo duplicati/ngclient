@@ -2,20 +2,14 @@ import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signa
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-    ShipButtonComponent,
-    ShipFormFieldComponent,
-    ShipIconComponent,
-    ShipSelectComponent,
-    ShipToggleComponent,
-} from '@ship-ui/core';
+import { ShipButtonComponent, ShipFormFieldComponent, ShipIconComponent, ShipToggleComponent } from '@ship-ui/core';
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
+import { SizeComponent, splitSize } from '../../core/components/size/size.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { BackupState } from '../backup.state';
 import { NewFilterComponent } from './new-filter/new-filter.component';
 
 const fb = new FormBuilder();
-const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
 
 export const createSourceDataForm = (
   defaults = {
@@ -52,10 +46,10 @@ export const createSourceDataForm = (
     ShipIconComponent,
     ShipButtonComponent,
     ShipToggleComponent,
-    ShipSelectComponent,
     NewFilterComponent,
     FileTreeComponent,
     ToggleCardComponent,
+    SizeComponent,
   ],
   templateUrl: './source-data.component.html',
   styleUrl: './source-data.component.scss',
@@ -71,7 +65,6 @@ export default class SourceDataComponent {
 
   newPathCtrl = new FormControl('');
   filesLargerThan = computed(() => this.sourceDataFormSignal()?.excludes?.filesLargerThan?.size !== null);
-  sizeOptions = signal(SIZE_OPTIONS);
   osType = this.#backupState.osType;
 
   pathSignal = toSignal(this.sourceDataForm.controls.path.valueChanges);
@@ -94,6 +87,14 @@ export default class SourceDataComponent {
   editPath(oldPath: string) {
     this.oldPath.set(oldPath);
     this.editingPath.set(oldPath);
+  }
+
+  updateFilesLargerThan($event: any) {
+    const { size, unit } = splitSize($event);
+    this.sourceDataForm.controls.excludes.controls.filesLargerThan.setValue({
+      size,
+      unit,
+    });
   }
 
   updatePath() {
@@ -134,7 +135,7 @@ export default class SourceDataComponent {
 
   addFilter(newPath = '-*') {
     const currentPath = this.sourceDataForm.controls.path.value;
-    const combined = [currentPath, newPath].filter((x) => x &&x !== '').join('\0');
+    const combined = [currentPath, newPath].filter((x) => x && x !== '').join('\0');
 
     this.sourceDataForm.controls.path.setValue(combined);
   }
@@ -150,8 +151,8 @@ export default class SourceDataComponent {
       .map((x, i) => (i === index ? `${newPath}` : `${x}`))
       .join('\0');
 
-      const combined = [nonFilterPath, _newPath].filter((x) => x && x !== '').join('\0');
-      this.sourceDataForm.controls.path.setValue(combined);
+    const combined = [nonFilterPath, _newPath].filter((x) => x && x !== '').join('\0');
+    this.sourceDataForm.controls.path.setValue(combined);
   }
 
   removePathAt(index: number) {
@@ -193,8 +194,7 @@ export default class SourceDataComponent {
 
     // TODO - Add path validation
     const existing = currentPath?.split('\0') || [];
-    if (newPath && !existing.includes(newPath))
-      existing.push(newPath);
+    if (newPath && !existing.includes(newPath)) existing.push(newPath);
 
     const updatedPath = existing.filter((x) => x && x !== '').join('\0');
     this.sourceDataForm.controls.path.setValue(updatedPath);

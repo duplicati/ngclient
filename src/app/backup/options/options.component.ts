@@ -1,12 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-    ShipButtonComponent,
-    ShipFormFieldComponent,
-    ShipIconComponent,
-    ShipSelectComponent,
-} from '@ship-ui/core';
+import { ShipButtonComponent, ShipFormFieldComponent, ShipIconComponent, ShipSelectComponent } from '@ship-ui/core';
 import { SizeComponent } from '../../core/components/size/size.component';
 import { TimespanComponent } from '../../core/components/timespan/timespan.component';
 import { BackupState } from '../backup.state';
