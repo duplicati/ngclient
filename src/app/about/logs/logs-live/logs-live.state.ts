@@ -80,9 +80,7 @@ export class LogsLiveState {
   });
 
   logLevelEffect = effect(() => {
-    if (this.logLevel() === 'Disabled') {
-      this.timerInterval = undefined;
-    } else if (this.isPolling()) {
+    if (this.isPolling()) {
       this.#logs.set([]);
       this.id.set(0);
       queueMicrotask(() => this.loadLogs());
@@ -91,8 +89,7 @@ export class LogsLiveState {
         this.loadLogs();
       }, 3000);
     } else {
-      this.timerInterval && clearInterval(this.timerInterval);
-      this.timerInterval = undefined;
+      this.clearPolling();
     }
   });
 
@@ -126,6 +123,10 @@ export class LogsLiveState {
 
   updateLogLevel(logLevel: string) {
     this.logLevel.set(logLevel);
+
+    if (logLevel === 'Disabled') {
+      this.clearPolling();
+    }
   }
 
   #getHighestId(items: LogEntry[]) {
@@ -134,6 +135,11 @@ export class LogsLiveState {
 
   destroy() {
     this.logLevel.set('Disabled');
+    this.clearPolling();
+  }
+
+  clearPolling() {
     this.timerInterval && clearInterval(this.timerInterval);
+    this.timerInterval = undefined;
   }
 }

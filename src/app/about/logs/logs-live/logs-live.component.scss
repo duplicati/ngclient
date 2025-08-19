@@ -2,6 +2,7 @@
 
 :host {
   display: block;
+  padding: p2r(0 32);
 
   &.simple-list {
     sh-table {
