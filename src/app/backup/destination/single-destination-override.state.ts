@@ -34,4 +34,16 @@ export class SingleDestinationStateOverride implements SingleDestinationStateDef
       v2,
     };
   });
+
+  TEXTS = {
+    advancedOptions: $localize`Advanced options`,
+    showEditor: $localize`Show editor`,
+    addAdvancedOption: $localize`Add advanced option`,
+    editContentsAsText: $localize`Edit contents as text`,
+    mandatoryField: $localize`This field is mandatory`,
+    emptyPath: $localize`An empty path means storing data in the initial or root folder, which is not recommended`,
+    hostnameInvalid: $localize`Hostname is invalid`,
+    bucketnameInvalid: $localize`Bucket name is invalid`,
+    customAdvancedOptionPlaceholder: $localize`Paste advanced options here, one per line.`,
+  };
 }

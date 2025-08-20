@@ -64,6 +64,7 @@ export class SingleDestinationComponent {
   injector = inject(Injector);
 
   #destType: string | null = null;
+  TEXTS = this.#stateProvider.TEXTS;
 
   targetUrl = model.required<string | null>();
 
