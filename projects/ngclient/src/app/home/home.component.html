@@ -89,29 +89,29 @@
               <div class="backup">
                 <div class="text">
                   <h3>
-                    {{ backup.Backup?.Name ?? MISSING_BACKUP_NAME }}
+                    {{ backup.Backup.Name ?? MISSING_BACKUP_NAME }}
                     <sh-chip>
-                      <sh-icon>{{ getBackendIcon(backup.Backup?.TargetURL) }}</sh-icon>
-                      {{ getBackendType(backup.Backup?.TargetURL) }}
+                      <sh-icon>{{ getBackendIcon(backup.Backup.TargetURL) }}</sh-icon>
+                      {{ getBackendType(backup.Backup.TargetURL) }}
                     </sh-chip>
                   </h3>
 
                   <p>
                     <span i18n>Last successful backup:</span>
-                    {{ backup.Backup?.Metadata?.['LastBackupFinished'] | relativeTime: timeType() === 'actual' }}
+                    {{ backup.Backup.Metadata?.['LastBackupFinished'] | relativeTime: timeType() === 'actual' }}
                   </p>
 
-                  @if (backup.Schedule?.Time) {
+                  @if (backup.Schedule.Time) {
                     <p>
                       <span i18n>Next scheduled run:</span>
-                      {{ backup.Schedule?.Time | relativeTime: timeType() === 'actual' }}
+                      {{ backup.Schedule.Time | relativeTime: timeType() === 'actual' }}
                     </p>
                   }
 
                   <p>
                     <span i18n>Duration:</span>
-                    @if (backup.Backup?.Metadata?.['LastBackupDuration']) {
-                      {{ backup.Backup?.Metadata?.['LastBackupDuration'] | durationFormat: timeType() === 'actual' }}
+                    @if (backup.Backup.Metadata?.['LastBackupDuration']) {
+                      {{ backup.Backup.Metadata?.['LastBackupDuration'] | durationFormat: timeType() === 'actual' }}
                     } @else {
                       <ng-container>-</ng-container>
                     }
@@ -119,8 +119,8 @@
 
                   <p>
                     <span i18n>Source:</span>
-                    @if (backup.Backup?.Metadata?.['SourceFilesSize']) {
-                      {{ backup.Backup?.Metadata?.['SourceFilesSize'] | bytes }}
+                    @if (backup.Backup.Metadata?.['SourceFilesSize']) {
+                      {{ backup.Backup.Metadata?.['SourceFilesSize'] | bytes }}
                     } @else {
                       <ng-container>-</ng-container>
                     }
@@ -128,8 +128,8 @@
 
                   <p>
                     <span i18n>Destination:</span>
-                    @if (backup.Backup?.Metadata?.['TargetFilesSize']) {
-                      {{ backup.Backup?.Metadata?.['TargetFilesSize'] | bytes }}
+                    @if (backup.Backup.Metadata?.['TargetFilesSize']) {
+                      {{ backup.Backup.Metadata?.['TargetFilesSize'] | bytes }}
                     } @else {
                       <ng-container>-</ng-container>
                     }
@@ -188,42 +188,42 @@
           @for (backup of backups(); track $index) {
             <tr>
               <td>
-                {{ backup.Backup?.Name ?? MISSING_BACKUP_NAME }}
+                {{ backup.Backup.Name ?? MISSING_BACKUP_NAME }}
               </td>
               <td>
-                {{ getBackendType(backup.Backup?.TargetURL) }}
+                {{ getBackendType(backup.Backup.TargetURL) }}
               </td>
               <td>
-                @if (backup.Backup?.Metadata?.['LastBackupDate']) {
-                  {{ backup.Backup?.Metadata?.['LastBackupDate'] | relativeTime: timeType() === 'actual' }}
+                @if (backup.Backup.Metadata?.['LastBackupDate']) {
+                  {{ backup.Backup.Metadata?.['LastBackupDate'] | relativeTime: timeType() === 'actual' }}
                 } @else {
                   <ng-container>-</ng-container>
                 }
               </td>
               <td>
-                @if (backup.Schedule?.Time) {
-                  {{ backup.Schedule?.Time | relativeTime: timeType() === 'actual' }}
+                @if (backup.Schedule.Time) {
+                  {{ backup.Schedule.Time | relativeTime: timeType() === 'actual' }}
                 } @else {
                   <ng-container>-</ng-container>
                 }
               </td>
               <td>
-                @if (backup.Backup?.Metadata?.['LastBackupDuration']) {
-                  {{ backup.Backup?.Metadata?.['LastBackupDuration'] | durationFormat: timeType() === 'actual' }}
+                @if (backup.Backup.Metadata?.['LastBackupDuration']) {
+                  {{ backup.Backup.Metadata?.['LastBackupDuration'] | durationFormat: timeType() === 'actual' }}
                 } @else {
                   <ng-container>-</ng-container>
                 }
               </td>
               <td>
-                @if (backup.Backup?.Metadata?.['SourceFilesSize']) {
-                  {{ backup.Backup?.Metadata?.['SourceFilesSize'] | bytes }}
+                @if (backup.Backup.Metadata?.['SourceFilesSize']) {
+                  {{ backup.Backup.Metadata?.['SourceFilesSize'] | bytes }}
                 } @else {
                   <ng-container>-</ng-container>
                 }
               </td>
               <td>
-                @if (backup.Backup?.Metadata?.['TargetFilesSize']) {
-                  {{ backup.Backup?.Metadata?.['TargetFilesSize'] | bytes }}
+                @if (backup.Backup.Metadata?.['TargetFilesSize']) {
+                  {{ backup.Backup.Metadata?.['TargetFilesSize'] | bytes }}
                 } @else {
                   <ng-container>-</ng-container>
                 }
@@ -257,8 +257,8 @@
 <ng-template #actions let-backup>
   <button
     shButton
-    [class.loader]="startingBackup() === backup.Backup?.ID"
-    (click)="startBackup($any(backup.Backup?.ID))"
+    [class.loader]="startingBackup() === backup.Backup.ID"
+    (click)="startBackup($any(backup.Backup.ID))"
     i18n>
     <sh-icon>play-circle</sh-icon>
     @if (viewMode() === 'list') {
@@ -266,7 +266,7 @@
     }
   </button>
 
-  <button type="button" shButton [routerLink]="['/backup', backup.Backup?.ID]">
+  <button type="button" shButton [routerLink]="['/backup', backup.Backup.ID]">
     <sh-icon>pencil-simple</sh-icon>
   </button>
 
@@ -274,9 +274,9 @@
     <button
       type="button"
       shButton
-      [class.loader]="loadingId() === backup.Backup?.ID"
-      [class.success]="successId() === backup.Backup?.ID">
-      @if (successId() === backup.Backup?.ID) {
+      [class.loader]="loadingId() === backup.Backup.ID"
+      [class.success]="successId() === backup.Backup.ID">
+      @if (successId() === backup.Backup.ID) {
         <sh-icon>check</sh-icon>
       } @else {
         <sh-icon>dots-three-vertical</sh-icon>
@@ -286,17 +286,17 @@
     <ng-container menu>
       <h3 title>Operations</h3>
 
-      <button type="button" [routerLink]="['/restore', backup.Backup?.ID]" i18n>
+      <button type="button" [routerLink]="['/restore', backup.Backup.ID]" i18n>
         <sh-icon>clock-counter-clockwise</sh-icon>
         Restore
       </button>
 
-      <button type="button" [routerLink]="['/backup', backup.Backup?.ID, 'export']" i18n>
+      <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'export']" i18n>
         <sh-icon>export</sh-icon>
         Export
       </button>
 
-      <button type="button" [routerLink]="['/backup', backup.Backup?.ID, 'delete']" i18n>
+      <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'delete']" i18n>
         <sh-icon>x-circle</sh-icon>
         Delete
       </button>
@@ -305,22 +305,22 @@
 
       <h3 title>Advanced</h3>
 
-      <button type="button" [routerLink]="['/backup', backup.Backup?.ID, 'database']" i18n>
+      <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'database']" i18n>
         <sh-icon>database</sh-icon>
         Database
       </button>
 
-      <button type="button" (click)="verifyFiles(backup.Backup?.ID!)" i18n>
+      <button type="button" (click)="verifyFiles(backup.Backup.ID!)" i18n>
         <sh-icon>check-square-offset</sh-icon>
         Verify files
       </button>
 
-      <button type="button" (click)="compressBackup(backup.Backup?.ID!)" i18n>
+      <button type="button" (click)="compressBackup(backup.Backup.ID!)" i18n>
         <sh-icon>file-archive</sh-icon>
         Compress now
       </button>
 
-      <button type="button" [routerLink]="['/backup', backup.Backup?.ID, 'commandline']" i18n>
+      <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'commandline']" i18n>
         <sh-icon>terminal-window</sh-icon>
         Commandline
       </button>
@@ -329,7 +329,7 @@
 
       <h3 title>Reporting</h3>
 
-      <button type="button" [routerLink]="['/backup', backup.Backup?.ID, 'log']" i18n>
+      <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'log']" i18n>
         <sh-icon>notepad</sh-icon>
         Log
       </button>
