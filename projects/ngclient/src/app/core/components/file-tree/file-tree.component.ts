@@ -1,34 +1,34 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    effect,
-    ElementRef,
-    inject,
-    input,
-    output,
-    signal,
-    viewChild,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  inject,
+  input,
+  output,
+  signal,
+  viewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
-    ShipButtonGroupComponent,
-    ShipDialogComponent,
-    ShipDialogService,
-    ShipFormFieldComponent,
-    ShipIconComponent,
-    ShipListComponent,
-    ShipProgressBarComponent,
-    ShipToggleComponent
+  ShipButtonGroupComponent,
+  ShipDialogComponent,
+  ShipDialogService,
+  ShipFormFieldComponent,
+  ShipIconComponent,
+  ShipListComponent,
+  ShipProgressBarComponent,
+  ShipToggleComponent,
 } from '@ship-ui/core';
 import { catchError, finalize, forkJoin, map, Observable, of } from 'rxjs';
 import {
-    DuplicatiServerService,
-    GetApiV1BackupByIdFilesData,
-    GetApiV1BackupByIdFilesResponse,
-    PostApiV1FilesystemResponse,
-    TreeNodeDto,
+  DuplicatiServerService,
+  GetApiV1BackupByIdFilesData,
+  GetApiV1BackupByIdFilesResponse,
+  PostApiV1FilesystemResponse,
+  TreeNodeDto,
 } from '../../openapi';
 import { SysinfoState } from '../../states/sysinfo.state';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
@@ -193,8 +193,8 @@ export default class FileTreeComponent {
           children: [],
           evalState: evalState,
           isIndeterminate: false,
-          cls: this.#isFolder(rootPath, pathDelimiter) ? 'folder' : 'file'
-        };
+          cls: this.#isFolder(rootPath, pathDelimiter) ? 'folder' : 'file',
+        } as any as FileTreeNode;
       });
     } else {
       roots = [
@@ -207,7 +207,7 @@ export default class FileTreeComponent {
           evalState: TreeEvalEnum.None,
           isIndeterminate: false,
           cls: 'folder',
-        },
+        } as any as FileTreeNode,
       ];
     }
 
@@ -249,7 +249,7 @@ export default class FileTreeComponent {
               text: node.text,
               cls: node.cls,
               children: [],
-            };
+            } as any as FileTreeNode;
 
             if (accepts) {
               newNode.accepted = this.matchAccepts(accepts, newNode);
@@ -427,7 +427,10 @@ export default class FileTreeComponent {
   isCurrentPathFolder() {
     const currentPath = this.currentPath();
     if (!currentPath) return false;
-    return currentPath.endsWith(this.pathDelimiter()) || (currentPath.startsWith('%') && currentPath.endsWith('%') && !currentPath.includes(this.pathDelimiter()));
+    return (
+      currentPath.endsWith(this.pathDelimiter()) ||
+      (currentPath.startsWith('%') && currentPath.endsWith('%') && !currentPath.includes(this.pathDelimiter()))
+    );
   }
 
   #globMatch(str: string, pattern: string, evaluateFullPath = false): boolean {
@@ -524,7 +527,7 @@ export default class FileTreeComponent {
                 fileSize: x.fileSize,
                 resolvedpath: x.resolvedpath,
                 parentPath: this.getParentPath(x.id ?? ''),
-              };
+              } as any as TreeNode;
               return node;
             })
           );
@@ -618,7 +621,7 @@ export default class FileTreeComponent {
   openCreateFolderDialog() {
     this.createFolderPath.set(null);
     this.createFolderDialogOpen.set(true);
-    return false;    
+    return false;
   }
 
   closeCreateFolderDialog(save: boolean) {
@@ -628,36 +631,42 @@ export default class FileTreeComponent {
         const currentPath = this.currentPath();
         const newPath = this.#appendDirSep(path);
         const fullPath = currentPath + newPath;
-        this.#dupServer.postApiV1RemoteoperationCreate({
-          requestBody: {
-            path: 'file://' + fullPath,
-          }
-        }).subscribe({
-          next: () => {
-            this.currentPath.set(fullPath);
-            this.#getPath(null, currentPath);
-            setTimeout(() => { this.#findActiveNodeAndScrollTo(); }, 500);
-            this.createFolderDialogOpen.set(false);
-          },
-          error: (err) => {
-            const m = err?.message?.match(/user-information\s*:\s*(.*?)(?:\s*,|$)/i);
-            const message = m ? m[1] : err?.message || $localize`An error occurred while trying to create the folder.`;
+        this.#dupServer
+          .postApiV1RemoteoperationCreate({
+            requestBody: {
+              path: 'file://' + fullPath,
+            },
+          })
+          .subscribe({
+            next: () => {
+              this.currentPath.set(fullPath);
+              this.#getPath(null, currentPath);
+              setTimeout(() => {
+                this.#findActiveNodeAndScrollTo();
+              }, 500);
+              this.createFolderDialogOpen.set(false);
+            },
+            error: (err) => {
+              const m = err?.message?.match(/user-information\s*:\s*(.*?)(?:\s*,|$)/i);
+              const message = m
+                ? m[1]
+                : err?.message || $localize`An error occurred while trying to create the folder.`;
 
-            this.#dialog.open(ConfirmDialogComponent, {
-              data: {
-                title: $localize`Cannot create folder`,
-                message: message,
-                confirmText: $localize`OK`,
-                cancelText: undefined,
-              },
-            });
-          }
-        });
+              this.#dialog.open(ConfirmDialogComponent, {
+                data: {
+                  title: $localize`Cannot create folder`,
+                  message: message,
+                  confirmText: $localize`OK`,
+                  cancelText: undefined,
+                },
+              });
+            },
+          });
       }
-    }else {
+    } else {
       this.createFolderDialogOpen.set(false);
     }
-    return false;    
+    return false;
   }
 
   #findActiveNodeAndScrollTo() {

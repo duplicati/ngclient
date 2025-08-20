@@ -43,7 +43,7 @@ export default class AdvancedOptionsSettingsComponent {
           x.push({
             Name: name,
             Value: value,
-          });
+          } as any);
 
           return x;
         });

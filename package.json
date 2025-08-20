@@ -8,8 +8,8 @@
   ],
   "scripts": {
     "gen:package-json": "bun scripts/generate-package-json.ts",
-    "gen:font": "ship-fg --src='./src' --out='./src/assets' --rootPath='./'",
-    "watch:font": "ship-fg --src='./src' --out='./src/assets' --rootPath='./' --watch",
+    "gen:font": "ship-fg --src='./projects/ngclient/src' --out='./projects/ngclient/src/assets' --rootPath='./'",
+    "watch:font": "ship-fg --src='./projects/ngclient/src' --out='./projects/ngclient/src/assets' --rootPath='./' --watch",
     "ng": "ng",
     "start": "bun run watch:font & ng serve",
     "start:windows": "bun run watch:font & ng serve --configuration windows",
@@ -38,16 +38,15 @@
     "marked": "^15.0.7",
     "ngxtension": "^4.5.0",
     "rxjs": "~7.8.0",
-    "tslib": "^2.8.1",
-    "xml2js": "^0.6.2"
+    "tslib": "^2.8.1"
   },
   "devDependencies": {
     "@angular/build": "^20.1.6",
     "@angular/cli": "^20.1.6",
     "@angular/compiler-cli": "^20.1.6",
     "@hey-api/openapi-ts": "^0.64.11",
-    "fast-xml-parser": "^5.2.2",
     "prettier": "^3.5.3",
-    "typescript": "~5.8.0"
+    "typescript": "~5.8.0",
+    "xml2js": "^0.6.2"
   }
 }

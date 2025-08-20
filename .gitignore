@@ -45,6 +45,6 @@ testem.log
 Thumbs.db
 
 # Generated files
-/src/assets/sh-*.woff2
-/src/assets/sh.woff2
-/src/assets/ship.css
+/projects/ngclient/src/assets/sh-*.woff2
+/projects/ngclient/src/assets/sh.woff2
+/projects/ngclient/src/assets/ship.css

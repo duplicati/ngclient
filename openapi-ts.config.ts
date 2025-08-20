@@ -5,7 +5,7 @@ const apiInput = 'http://localhost:8200/swagger/v1/swagger.json';
 export default defineConfig({
   // client: 'legacy/angular',
   input: localFile || apiInput,
-  output: 'src/app/core/openapi',
+  output: 'projects/ngclient/src/app/core/openapi',
   plugins: [
     ...defaultPlugins,
     {

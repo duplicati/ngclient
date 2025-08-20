@@ -24,7 +24,7 @@ export class AppAuthState {
   isLoggingOut = this.#isLoggingOut.asReadonly();
 
   private setRefreshNonce(nonce: string | null | undefined, persist: boolean) {
-    if (!nonce) {      
+    if (!nonce) {
       sessionStorage.removeItem(SESSION_STORAGE_REFRESH_NONCE_KEY);
       return;
     }
@@ -36,7 +36,7 @@ export class AppAuthState {
     }
   }
 
-  private getRefreshNonceBody(): { body: PostApiV1AuthRefreshData | undefined, local: boolean } {
+  private getRefreshNonceBody(): { body: PostApiV1AuthRefreshData | undefined; local: boolean } {
     // Prefer session storage for nonce, if present
     // Note that the local storage is for persistent login and is shared across tabs, so we cannot cache it in a signal
     const sessionStoredNonce = sessionStorage.getItem(SESSION_STORAGE_REFRESH_NONCE_KEY);
@@ -45,8 +45,6 @@ export class AppAuthState {
     const body = storedNonce ? { requestBody: { Nonce: storedNonce } } : undefined;
     return { body, local: storedNonce === localStoredNonce };
   }
-
-
 
   login(pass: string, rememberMe: boolean) {
     return this.#dupServer
@@ -58,7 +56,7 @@ export class AppAuthState {
       })
       .pipe(
         take(1),
-        tap((res) => { 
+        tap((res) => {
           if (res.AccessToken) {
             this.#token.set(res.AccessToken);
             this.setRefreshNonce(res.RefreshNonce, rememberMe);
@@ -118,8 +116,7 @@ export class AppAuthState {
     const { body, local } = this.getRefreshNonceBody();
 
     sessionStorage.removeItem(SESSION_STORAGE_REFRESH_NONCE_KEY);
-    if (local)
-      localStorage.removeItem(LOCAL_STORAGE_REFRESH_NONCE_KEY);
+    if (local) localStorage.removeItem(LOCAL_STORAGE_REFRESH_NONCE_KEY);
 
     this.#dupServer
       .postApiV1AuthRefreshLogout(body)

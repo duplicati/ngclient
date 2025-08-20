@@ -34,8 +34,8 @@
           "skipTests": true
         }
       },
-      "root": "",
-      "sourceRoot": "src",
+      "root": "projects/ngclient",
+      "sourceRoot": "projects/ngclient/src",
       "prefix": "app",
       "i18n": {
         "sourceLocale": {
@@ -134,16 +134,16 @@
           "builder": "@angular/build:application",
           "options": {
             "outputPath": "dist/ngclient",
-            "index": "src/index.html",
-            "browser": "src/main.ts",
-            "tsConfig": "tsconfig.app.json",
+            "index": "projects/ngclient/src/index.html",
+            "browser": "projects/ngclient/src/main.ts",
+            "tsConfig": "projects/ngclient/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "polyfills": ["@angular/localize/init"],
             "assets": [
-              "src/assets",
+              "projects/ngclient/src/assets",
               {
                 "glob": "messages.{en_US,en_GB,cs,da,de,es,fi,fr,hu,it,ja_JP,nl_NL,pl,pt_BR,pt,ru,sr_RS,sv_SE,zh_CN,zh_TW,zh-Hans}.json",
-                "input": "./src/locale",
+                "input": "./projects/ngclient/src/locale",
                 "output": "./locale/"
               },
               {
@@ -157,16 +157,15 @@
                 "output": "./ship-ui-assets/"
               }
             ],
-            "styles": ["src/styles.scss"],
-            "scripts": []
+            "styles": ["projects/ngclient/src/styles.scss"]
           },
           "configurations": {
             "production": {
               "outputHashing": "all",
               "fileReplacements": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
+                  "replace": "projects/ngclient/src/environments/environment.ts",
+                  "with": "projects/ngclient/src/environments/environment.prod.ts"
                 }
               ]
             },
@@ -186,11 +185,11 @@
             },
             "development": {
               "buildTarget": "ngclient:build:development",
-              "proxyConfig": "src/proxy-localhost.conf.mjs"
+              "proxyConfig": "projects/ngclient/src/proxy-localhost.conf.mjs"
             },
             "windows": {
               "buildTarget": "ngclient:build:development",
-              "proxyConfig": "src/proxy-parallels.conf.mjs"
+              "proxyConfig": "projects/ngclient/src/proxy-parallels.conf.mjs"
             }
           },
           "defaultConfiguration": "development"
@@ -200,36 +199,10 @@
           "options": {
             "buildTarget": "ngclient:build",
             "format": "json",
-            "outputPath": "src/locale"
+            "outputPath": "projects/ngclient/src/locale"
           }
         }
       }
-    }
-  },
-  "schematics": {
-    "@schematics/angular:component": {
-      "type": "component"
-    },
-    "@schematics/angular:directive": {
-      "type": "directive"
-    },
-    "@schematics/angular:service": {
-      "type": "service"
-    },
-    "@schematics/angular:guard": {
-      "typeSeparator": "."
-    },
-    "@schematics/angular:interceptor": {
-      "typeSeparator": "."
-    },
-    "@schematics/angular:module": {
-      "typeSeparator": "."
-    },
-    "@schematics/angular:pipe": {
-      "typeSeparator": "."
-    },
-    "@schematics/angular:resolver": {
-      "typeSeparator": "."
     }
   }
 }

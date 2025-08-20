@@ -6,7 +6,7 @@ export type AccessTokenOutputDto = {
 };
 
 export type AcknowlegdementDto = {
-    Acknowledgements?: (string) | null;
+    Acknowledgements: (string) | null;
 };
 
 export type ActiveTransfer = {
@@ -21,31 +21,31 @@ export type ActiveTransfer = {
 export type ArgumentType = 'String' | 'Integer' | 'Boolean' | 'Timespan' | 'DateTime' | 'Size' | 'Enumeration' | 'Path' | 'Password' | 'Flags' | 'Decimal' | 'Unknown';
 
 export type BackupAndScheduleInputDto = {
-    Backup?: BackupInputDto;
+    Backup: BackupInputDto;
     Schedule?: ScheduleInputDto;
 };
 
 export type BackupAndScheduleOutputDto = {
-    Backup?: BackupDto;
-    Schedule?: ScheduleDto;
+    Backup: BackupDto;
+    Schedule: ScheduleDto;
 };
 
 export type BackupDto = {
-    ID?: (string) | null;
-    Name?: (string) | null;
-    Description?: (string) | null;
-    Tags?: Array<(string)> | null;
-    TargetURL?: (string) | null;
-    DBPath?: (string) | null;
-    DBPathExists?: boolean;
-    Sources?: Array<(string)> | null;
-    Settings?: Array<SettingDto> | null;
-    Filters?: Array<FilterDto> | null;
-    Metadata?: {
+    ID: (string) | null;
+    Name: (string) | null;
+    Description: (string) | null;
+    Tags: Array<(string)> | null;
+    TargetURL: (string) | null;
+    DBPath: (string) | null;
+    DBPathExists: boolean;
+    Sources: Array<(string)> | null;
+    Settings: Array<SettingDto> | null;
+    Filters: Array<FilterDto> | null;
+    Metadata: {
         [key: string]: (string);
     } | null;
-    IsTemporary?: boolean;
-    IsUnencryptedOrPassphraseStored?: boolean;
+    IsTemporary: boolean;
+    IsUnencryptedOrPassphraseStored: boolean;
 };
 
 export type BackupInputDto = {
@@ -63,8 +63,8 @@ export type BackupInputDto = {
 };
 
 export type ChangelogDto = {
-    Version?: (string) | null;
-    Changelog?: (string) | null;
+    Version: (string) | null;
+    Changelog: (string) | null;
 };
 
 export type CommandLineLogOutputDto = {
@@ -99,29 +99,29 @@ export type DeleteBackupOutputDto = {
 };
 
 export type DestinationTestRequestDto = {
-    DestinationUrl?: (string) | null;
-    Options?: {
+    DestinationUrl: (string) | null;
+    Options: {
         [key: string]: (string);
     } | null;
-    AutoCreate?: boolean;
+    AutoCreate: boolean;
 };
 
 export type DestinationTestResponseDto = {
-    Success?: boolean;
-    Error?: (string) | null;
-    StatusCode?: (string) | null;
+    Success: boolean;
+    Error: (string) | null;
+    StatusCode: (string) | null;
     Data?: DestinationTestResult;
 };
 
 export type DestinationTestResult = {
-    FolderExists?: (boolean) | null;
-    FolderIsEmpty?: (boolean) | null;
-    FolderContainsBackupFiles?: (boolean) | null;
-    FolderContainsEncryptedBackupFiles?: (boolean) | null;
-    AfterConnect?: (boolean) | null;
-    HostCertificate?: (string) | null;
-    ReportedHostKey?: (string) | null;
-    AcceptedHostKey?: (string) | null;
+    FolderExists: (boolean) | null;
+    FolderIsEmpty: (boolean) | null;
+    FolderContainsBackupFiles: (boolean) | null;
+    FolderContainsEncryptedBackupFiles: (boolean) | null;
+    AfterConnect: (boolean) | null;
+    HostCertificate: (string) | null;
+    ReportedHostKey: (string) | null;
+    AcceptedHostKey: (string) | null;
 };
 
 export type ExportArgsOnlyDto = {
@@ -139,9 +139,9 @@ export type FilesystemInput = {
 };
 
 export type FilterDto = {
-    Order?: number;
-    Include?: boolean;
-    Expression?: (string) | null;
+    Order: number;
+    Include: boolean;
+    Expression: (string) | null;
 };
 
 export type FilterGroupsDto = {
@@ -261,108 +261,108 @@ export type IssueSigninTokenInputDto = {
 };
 
 export type IWebModule = {
+    readonly SupportedCommands?: Array<ICommandLineArgument> | null;
     readonly Key?: (string) | null;
     readonly DisplayName?: (string) | null;
     readonly Description?: (string) | null;
-    readonly SupportedCommands?: Array<ICommandLineArgument> | null;
 };
 
 export type LicenseDto = {
-    Title?: (string) | null;
-    Url?: (string) | null;
-    License?: (string) | null;
-    Jsondata?: (string) | null;
+    Title: (string) | null;
+    Url: (string) | null;
+    License: (string) | null;
+    Jsondata: (string) | null;
 };
 
 export type ListFilesetsRequestDto = {
-    BackupId?: (string) | null;
+    BackupId: (string) | null;
     ForceRemoteListing?: (boolean) | null;
 };
 
 export type ListFilesetsResponseDto = {
-    Success?: boolean;
-    Error?: (string) | null;
-    StatusCode?: (string) | null;
+    Success: boolean;
+    Error: (string) | null;
+    StatusCode: (string) | null;
     Data?: Array<ListFilesetsResponseItem> | null;
-    PageInfo?: PageInfo;
+    PageInfo: PageInfo;
 };
 
 export type ListFilesetsResponseItem = {
-    Version?: number;
-    Time?: string;
-    IsFullBackup?: (boolean) | null;
-    FileCount?: (number) | null;
-    FileSizes?: (number) | null;
+    Version: number;
+    Time: string;
+    IsFullBackup: (boolean) | null;
+    FileCount: (number) | null;
+    FileSizes: (number) | null;
 };
 
 export type ListFileVersionsItemDto = {
-    Version?: number;
-    Time?: string;
-    Path?: (string) | null;
-    Size?: number;
-    IsDirectory?: boolean;
-    IsSymlink?: boolean;
-    LastModified?: string;
+    Version: number;
+    Time: string;
+    Path: (string) | null;
+    Size: number;
+    IsDirectory: boolean;
+    IsSymlink: boolean;
+    LastModified: string;
 };
 
 export type ListFileVersionsOutputDto = {
-    Success?: boolean;
-    Error?: (string) | null;
-    StatusCode?: (string) | null;
+    Success: boolean;
+    Error: (string) | null;
+    StatusCode: (string) | null;
     Data?: Array<ListFileVersionsItemDto> | null;
-    PageInfo?: PageInfo;
+    PageInfo: PageInfo;
 };
 
 export type ListFileVersionsRequestDto = {
-    PageSize?: (number) | null;
-    Page?: (number) | null;
-    BackupId?: (string) | null;
-    Paths?: Array<(string)> | null;
+    PageSize: (number) | null;
+    Page: (number) | null;
+    BackupId: (string) | null;
+    Paths: Array<(string)> | null;
 };
 
 export type ListFolderContentItemDto = {
-    Path?: (string) | null;
-    Size?: number;
-    IsDirectory?: boolean;
-    IsSymlink?: boolean;
-    LastModified?: string;
+    Path: (string) | null;
+    Size: number;
+    IsDirectory: boolean;
+    IsSymlink: boolean;
+    LastModified: string;
 };
 
 export type ListFolderContentRequestDto = {
-    PageSize?: (number) | null;
-    Page?: (number) | null;
-    BackupId?: (string) | null;
-    Paths?: Array<(string)> | null;
-    Time?: (string) | null;
+    PageSize: (number) | null;
+    Page: (number) | null;
+    BackupId: (string) | null;
+    Paths: Array<(string)> | null;
+    Time: (string) | null;
 };
 
 export type ListFolderContentResponseDto = {
-    Success?: boolean;
-    Error?: (string) | null;
-    StatusCode?: (string) | null;
+    Success: boolean;
+    Error: (string) | null;
+    StatusCode: (string) | null;
     Data?: Array<ListFolderContentItemDto> | null;
-    PageInfo?: PageInfo;
+    PageInfo: PageInfo;
 };
 
 export type LiveControlState = 'Running' | 'Paused';
 
 export type LocaleDto = {
-    Code?: (string) | null;
-    EnglishName?: (string) | null;
-    DisplayName?: (string) | null;
+    Code: (string) | null;
+    EnglishName: (string) | null;
+    DisplayName: (string) | null;
 };
 
 export type LogEntry = {
-    When?: string;
-    ID?: number;
-    Message?: (string) | null;
-    Tag?: (string) | null;
-    MessageID?: (string) | null;
-    ExceptionID?: (string) | null;
-    Type?: LogMessageType;
-    Exception?: (string) | null;
-    BackupID?: (string) | null;
-    TaskID?: (string) | null;
+    When: string;
+    ID: number;
+    Message: (string) | null;
+    Tag: (string) | null;
+    MessageID: (string) | null;
+    ExceptionID: (string) | null;
+    Type: LogMessageType;
+    Exception: (string) | null;
+    BackupID: (string) | null;
+    TaskID: (string) | null;
 };
 
 export type LoginInputDto = {
@@ -373,17 +373,17 @@ export type LoginInputDto = {
 export type LogMessageType = 'ExplicitOnly' | 'Profiling' | 'Verbose' | 'Retry' | 'Information' | 'DryRun' | 'Warning' | 'Error';
 
 export type NotificationDto = {
-    ID?: number;
-    Type?: NotificationType;
-    Title?: (string) | null;
-    Message?: (string) | null;
-    Exception?: (string) | null;
-    BackupID?: (string) | null;
-    Action?: (string) | null;
-    Timestamp?: string;
-    LogEntryID?: (string) | null;
-    MessageID?: (string) | null;
-    MessageLogTag?: (string) | null;
+    ID: number;
+    Type: NotificationType;
+    Title: (string) | null;
+    Message: (string) | null;
+    Exception: (string) | null;
+    BackupID: (string) | null;
+    Action: (string) | null;
+    Timestamp: string;
+    LogEntryID: (string) | null;
+    MessageID: (string) | null;
+    MessageLogTag: (string) | null;
 };
 
 export type NotificationType = 'Information' | 'Warning' | 'Error';
@@ -431,13 +431,13 @@ export type RestoreInputDto = {
 };
 
 export type ScheduleDto = {
-    ID?: number;
-    Tags?: Array<(string)> | null;
-    Time?: string;
-    Repeat?: (string) | null;
-    LastRun?: string;
-    Rule?: (string) | null;
-    AllowedDays?: Array<DayOfWeek> | null;
+    ID: number;
+    Tags: Array<(string)> | null;
+    Time: string;
+    Repeat: (string) | null;
+    LastRun: string;
+    Rule: (string) | null;
+    AllowedDays: Array<DayOfWeek> | null;
 };
 
 export type ScheduleInputDto = {
@@ -451,61 +451,61 @@ export type ScheduleInputDto = {
 };
 
 export type SearchEntriesItemDto = {
-    Version?: number;
-    Time?: string;
-    Path?: (string) | null;
-    Size?: number;
-    IsDirectory?: boolean;
-    IsSymlink?: boolean;
-    LastModified?: string;
+    Version: number;
+    Time: string;
+    Path: (string) | null;
+    Size: number;
+    IsDirectory: boolean;
+    IsSymlink: boolean;
+    LastModified: string;
 };
 
 export type SearchEntriesRequestDto = {
-    PageSize?: (number) | null;
-    Page?: (number) | null;
-    BackupId?: (string) | null;
-    Paths?: Array<(string)> | null;
-    Filters?: Array<(string)> | null;
-    Time?: (string) | null;
+    PageSize: (number) | null;
+    Page: (number) | null;
+    BackupId: (string) | null;
+    Paths: Array<(string)> | null;
+    Filters: Array<(string)> | null;
+    Time: (string) | null;
 };
 
 export type SearchEntriesResponseDto = {
-    Success?: boolean;
-    Error?: (string) | null;
-    StatusCode?: (string) | null;
+    Success: boolean;
+    Error: (string) | null;
+    StatusCode: (string) | null;
     Data?: Array<SearchEntriesItemDto> | null;
-    PageInfo?: PageInfo;
+    PageInfo: PageInfo;
 };
 
 export type ServerStatusDto = {
-    ActiveTask?: Int64StringTuple;
-    ProgramState?: LiveControlState;
-    SchedulerQueueIds?: Array<Int64StringTuple> | null;
-    ProposedSchedule?: Array<StringDateTimeTuple> | null;
-    HasWarning?: boolean;
-    HasError?: boolean;
-    SuggestedStatusIcon?: SuggestedStatusIcon;
-    EstimatedPauseEnd?: string;
-    LastEventID?: number;
-    LastDataUpdateID?: number;
-    LastNotificationUpdateID?: number;
-    UpdatedVersion?: (string) | null;
-    UpdaterState?: UpdatePollerStates;
-    UpdateDownloadLink?: (string) | null;
-    UpdateDownloadProgress?: number;
+    ActiveTask: Int64StringTuple;
+    ProgramState: LiveControlState;
+    SchedulerQueueIds: Array<Int64StringTuple> | null;
+    ProposedSchedule: Array<StringDateTimeTuple> | null;
+    HasWarning: boolean;
+    HasError: boolean;
+    SuggestedStatusIcon: SuggestedStatusIcon;
+    EstimatedPauseEnd: string;
+    LastEventID: number;
+    LastDataUpdateID: number;
+    LastNotificationUpdateID: number;
+    UpdatedVersion: (string) | null;
+    UpdaterState: UpdatePollerStates;
+    UpdateDownloadLink: (string) | null;
+    UpdateDownloadProgress: number;
     readonly Type?: (string) | null;
 };
 
 export type SettingDto = {
-    Filter?: (string) | null;
-    Name?: (string) | null;
-    Value?: (string) | null;
-    Argument?: ICommandLineArgument;
+    Filter: (string) | null;
+    Name: (string) | null;
+    Value: (string) | null;
+    Argument: ICommandLineArgument;
 };
 
 export type SettingInputDto = {
     Filter?: (string) | null;
-    Name?: (string) | null;
+    Name: (string) | null;
     Value?: (string) | null;
 };
 
@@ -523,8 +523,8 @@ export type SingleOperationTokenOutputDto = {
 };
 
 export type SpecialFolderDto = {
-    ID?: (string) | null;
-    Path?: (string) | null;
+    ID: (string) | null;
+    Path: (string) | null;
 };
 
 export type StartRegistrationInput = {
@@ -539,47 +539,47 @@ export type StringDateTimeTuple = {
 export type SuggestedStatusIcon = 'Ready' | 'ReadyWarning' | 'ReadyError' | 'Paused' | 'Active' | 'ActivePaused' | 'Disconnected';
 
 export type SystemInfoDto = {
-    APIVersion?: number;
-    PasswordPlaceholder?: (string) | null;
-    ServerVersion?: (string) | null;
-    ServerVersionName?: (string) | null;
-    ServerVersionType?: (string) | null;
-    RemoteControlRegistrationUrl?: (string) | null;
-    StartedBy?: (string) | null;
-    DefaultUpdateChannel?: (string) | null;
-    DefaultUsageReportLevel?: (string) | null;
-    ServerTime?: string;
-    ServerTimeZone?: (string) | null;
-    OSType?: (string) | null;
-    OSVersion?: (string) | null;
-    DirectorySeparator?: string;
-    PathSeparator?: string;
-    CaseSensitiveFilesystem?: boolean;
-    MachineName?: (string) | null;
-    PackageTypeId?: (string) | null;
-    UserName?: (string) | null;
-    NewLine?: (string) | null;
-    CLRVersion?: (string) | null;
-    Options?: Array<ICommandLineArgument> | null;
-    CompressionModules?: Array<IDynamicModule> | null;
-    EncryptionModules?: Array<IDynamicModule> | null;
-    BackendModules?: Array<IDynamicModule> | null;
-    GenericModules?: Array<IDynamicModule> | null;
-    WebModules?: Array<IDynamicModule> | null;
-    ConnectionModules?: Array<IDynamicModule> | null;
-    ServerModules?: Array<unknown> | null;
-    SecretProviderModules?: Array<IDynamicModule> | null;
-    UsingAlternateUpdateURLs?: boolean;
-    LogLevels?: Array<(string)> | null;
-    SpecialFolders?: Array<SpecialFolderDto> | null;
-    BrowserLocale?: LocaleDto;
-    SupportedLocales?: Array<LocaleDto> | null;
-    BrowserLocaleSupported?: boolean;
-    TimeZones?: Array<TimeZoneDto> | null;
-    APIExtensions?: Array<(string)> | null;
-    APIScopes?: Array<(string)> | null;
-    DefaultOAuthURL?: (string) | null;
-    DefaultOAuthURLv2?: (string) | null;
+    APIVersion: number;
+    PasswordPlaceholder: (string) | null;
+    ServerVersion: (string) | null;
+    ServerVersionName: (string) | null;
+    ServerVersionType: (string) | null;
+    RemoteControlRegistrationUrl: (string) | null;
+    StartedBy: (string) | null;
+    DefaultUpdateChannel: (string) | null;
+    DefaultUsageReportLevel: (string) | null;
+    ServerTime: string;
+    ServerTimeZone: (string) | null;
+    OSType: (string) | null;
+    OSVersion: (string) | null;
+    DirectorySeparator: string;
+    PathSeparator: string;
+    CaseSensitiveFilesystem: boolean;
+    MachineName: (string) | null;
+    PackageTypeId: (string) | null;
+    UserName: (string) | null;
+    NewLine: (string) | null;
+    CLRVersion: (string) | null;
+    Options: Array<ICommandLineArgument> | null;
+    CompressionModules: Array<IDynamicModule> | null;
+    EncryptionModules: Array<IDynamicModule> | null;
+    BackendModules: Array<IDynamicModule> | null;
+    GenericModules: Array<IDynamicModule> | null;
+    WebModules: Array<IDynamicModule> | null;
+    ConnectionModules: Array<IDynamicModule> | null;
+    ServerModules: Array<unknown> | null;
+    SecretProviderModules: Array<IDynamicModule> | null;
+    UsingAlternateUpdateURLs: boolean;
+    LogLevels: Array<(string)> | null;
+    SpecialFolders: Array<SpecialFolderDto> | null;
+    BrowserLocale: LocaleDto;
+    SupportedLocales: Array<LocaleDto> | null;
+    BrowserLocaleSupported: boolean;
+    TimeZones: Array<TimeZoneDto> | null;
+    APIExtensions: Array<(string)> | null;
+    APIScopes: Array<(string)> | null;
+    DefaultOAuthURL: (string) | null;
+    DefaultOAuthURLv2: (string) | null;
 };
 
 export type TaskStartedDto = {
@@ -588,24 +588,24 @@ export type TaskStartedDto = {
 };
 
 export type TimeZoneDto = {
-    ID?: (string) | null;
-    DisplayName?: (string) | null;
-    CurrentUTCOffset?: (string) | null;
+    ID: (string) | null;
+    DisplayName: (string) | null;
+    CurrentUTCOffset: (string) | null;
 };
 
 export type TreeNodeDto = {
-    text?: (string) | null;
-    id?: (string) | null;
-    cls?: (string) | null;
-    iconCls?: (string) | null;
-    check?: boolean;
-    leaf?: boolean;
-    resolvedpath?: (string) | null;
-    hidden?: boolean;
-    systemFile?: boolean;
-    temporary?: boolean;
-    symlink?: boolean;
-    fileSize?: number;
+    text: (string) | null;
+    id: (string) | null;
+    cls: (string) | null;
+    iconCls: (string) | null;
+    check: boolean;
+    leaf: boolean;
+    resolvedpath: (string) | null;
+    hidden: boolean;
+    systemFile: boolean;
+    temporary: boolean;
+    symlink: boolean;
+    fileSize: number;
 };
 
 export type UpdateCertificateInputDto = {

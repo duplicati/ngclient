@@ -1,8 +1,8 @@
+/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
 /* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "outDir": "./out-tsc",
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
@@ -16,13 +16,21 @@
     "declaration": false,
     "experimentalDecorators": true,
     "moduleResolution": "bundler",
-    "importHelpers": false,
+    "importHelpers": true,
     "target": "ESNext",
     "module": "ESNext",
     "lib": ["ESNext", "dom"],
     "typeRoots": ["node_modules/@types", "node_modules/ngxtension"],
     "types": ["@angular/localize"]
   },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "typeCheckHostBindings": true,
+    "strictTemplates": true
+  },
+  "files": [],
   "exclude": [
     ".git",
     ".app-cache",
@@ -36,10 +44,13 @@
     "**/dist/*",
     "**/node_modules/*"
   ],
-  "angularCompilerOptions": {
-    "enableI18nLegacyMessageIdFormat": false,
-    "strictInjectionParameters": true,
-    "strictInputAccessModifiers": true,
-    "strictTemplates": true
-  }
+
+  "references": [
+    {
+      "path": "./projects/ngclient/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/ngclient/tsconfig.spec.json"
+    }
+  ]
 }

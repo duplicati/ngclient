@@ -2,10 +2,10 @@ import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { ShipDialogService } from '@ship-ui/core';
 import { finalize, map, of, switchMap } from 'rxjs';
 import {
-    DuplicatiServerService,
-    GetApiV1ProgressstateResponse,
-    GetApiV1TaskByTaskidResponse,
-    ServerStatusDto,
+  DuplicatiServerService,
+  GetApiV1ProgressstateResponse,
+  GetApiV1TaskByTaskidResponse,
+  ServerStatusDto,
 } from '../../openapi';
 import { BytesPipe } from '../../pipes/byte.pipe';
 import { ServerStateService } from '../../services/server-state.service';
@@ -85,10 +85,11 @@ export class StatusBarState {
 
     if (!serverState) return this.lastState;
 
-    serverState.ProposedSchedule = serverState.ProposedSchedule?.map((x) => ({
-      ...x,
-      backup: x.Item1 ? this.#backupState.getBackupById(x.Item1) : null,
-    }));
+    serverState.ProposedSchedule =
+      serverState.ProposedSchedule?.map((x) => ({
+        ...x,
+        backup: x.Item1 ? this.#backupState.getBackupById(x.Item1) : null,
+      })) ?? null;
 
     this.lastState = serverState;
 
