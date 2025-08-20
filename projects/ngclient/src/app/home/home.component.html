@@ -91,7 +91,8 @@
                   <h3>
                     {{ backup.Backup.Name ?? MISSING_BACKUP_NAME }}
                     <sh-chip>
-                      <sh-icon>{{ getBackendIcon(backup.Backup.TargetURL) }}</sh-icon>
+                      <img [src]="getBackendIcon(backup.Backup.TargetURL)" alt="" />
+                      <!-- <sh-icon>{{ getBackendIcon(backup.Backup.TargetURL) }}</sh-icon> -->
                       {{ getBackendType(backup.Backup.TargetURL) }}
                     </sh-chip>
                   </h3>

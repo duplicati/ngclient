@@ -2,16 +2,16 @@ import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
-    ShipButtonComponent,
-    ShipButtonGroupComponent,
-    ShipCardComponent,
-    ShipChipComponent,
-    ShipDividerComponent,
-    ShipIconComponent,
-    ShipMenuComponent,
-    ShipProgressBarComponent,
-    ShipSortDirective,
-    ShipTableComponent,
+  ShipButtonComponent,
+  ShipButtonGroupComponent,
+  ShipCardComponent,
+  ShipChipComponent,
+  ShipDividerComponent,
+  ShipIconComponent,
+  ShipMenuComponent,
+  ShipProgressBarComponent,
+  ShipSortDirective,
+  ShipTableComponent,
 } from '@ship-ui/core';
 import { finalize } from 'rxjs';
 import { S3_HOST_SUFFIX_MAP } from '../backup/destination/destination.config';
@@ -96,8 +96,7 @@ export default class HomeComponent {
     if (!targetUrl) return '';
     const backend = targetUrl.split('://')[0];
     const match = getConfigurationByKey(backend);
-    const override = DestinationOverrides[match.key];
-    return override?.Icon ?? 'database';
+    return match.icon ?? 'database';
   }
 
   getBackendType(targetUrl: string | null | undefined) {

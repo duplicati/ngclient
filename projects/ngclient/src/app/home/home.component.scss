@@ -71,6 +71,11 @@ sh-card {
     width: 100%;
     max-width: 40%;
 
+    img {
+      width: p2r(20);
+      height: p2r(20);
+    }
+
     h3 {
       display: flex;
       align-items: center;
