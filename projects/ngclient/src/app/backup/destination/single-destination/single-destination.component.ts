@@ -1,6 +1,16 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, Injector, model, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  Injector,
+  input,
+  model,
+  signal,
+} from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   ShipButtonComponent,
   ShipFormFieldComponent,
@@ -17,7 +27,10 @@ import FileTreeComponent from '../../../core/components/file-tree/file-tree.comp
 import { SizeComponent } from '../../../core/components/size/size.component';
 import { TimespanComponent } from '../../../core/components/timespan/timespan.component';
 import { ArgumentType, ICommandLineArgument } from '../../../core/openapi';
-
+import { DestinationConfigState } from '../../../core/states/destinationconfig.state';
+import { SysinfoState } from '../../../core/states/sysinfo.state';
+import { ServerSettingsService } from '../../../settings/server-settings.service';
+import { BackupState } from '../../backup.state';
 import {
   CustomFormView,
   FormView,
@@ -25,7 +38,6 @@ import {
   getConfigurationByKey,
   toTargetPath,
 } from '../destination.config-utilities';
-import { SINGLE_DESTINATION_STATE } from './single-destination.provider';
 
 type DestinationConfig = {
   destinationType: string;
@@ -37,6 +49,7 @@ type DestinationConfig = {
 @Component({
   selector: 'app-single-destination',
   imports: [
+    ReactiveFormsModule,
     FormsModule,
     NgTemplateOutlet,
 
@@ -60,23 +73,22 @@ type DestinationConfig = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SingleDestinationComponent {
-  #stateProvider = inject(SINGLE_DESTINATION_STATE);
+  #backupState = inject(BackupState);
+  #sysinfo = inject(SysinfoState);
+  #serverSettings = inject(ServerSettingsService);
+  #destinationState = inject(DestinationConfigState);
   injector = inject(Injector);
+  targetUrl = model.required<string | null>();
+  useBackupState = input(false);
 
   #destType: string | null = null;
-  TEXTS = this.#stateProvider.TEXTS;
-
-  targetUrl = model.required<string | null>();
-
   destinationType = computed(() => {
     const targetUrl = this.targetUrl();
 
     if (!targetUrl) return null;
 
     const config = getConfigurationByKey(targetUrl.split('://')[0]);
-
     this.#destType = config?.customKey ?? config?.key;
-
     return this.#destType;
   });
 
@@ -108,7 +120,7 @@ export class SingleDestinationComponent {
 
     const destinationConfig = getConfigurationByKey(key);
     const _key = destinationConfig?.key;
-    const item = this.#stateProvider.backendModules().find((x) => x.Key === _key) ?? {
+    const item = this.#destinationState.backendModules().find((x) => x.Key === _key) ?? {
       Key: key,
       DisplayName: key,
       Description: getConfigurationByKey(key).description,
@@ -411,24 +423,18 @@ export class SingleDestinationComponent {
   ) {
     this.#oauthInProgress.set(true);
 
-    const oauthUrls = this.#stateProvider.oauthUrls();
-    const backupServerOverride = this.#stateProvider.backupServerOverride();
-    const serverSettingsOverride = this.#stateProvider.serverSettingsOverride();
+    let oauthUrl = (usev2 ?? 1) == 2 ? this.#sysinfo.defaultOAuthUrlV2() : this.#sysinfo.defaultOAuthUrl();
+
+    const serverOverride = this.#serverSettings.serverSettings()?.['--oauth-url'];
+    if (serverOverride && serverOverride.length > 0) oauthUrl = serverOverride;
+
+    if (this.useBackupState()) {
+      const backupServerOverride = this.#backupState.mapFormsToSettings().find((x) => x.Name === '--oauth-url')?.Value;
+      if (backupServerOverride && backupServerOverride.length > 0) oauthUrl = backupServerOverride;
+    }
+
     const formOverride = this.destinationForm().advanced['oauth-url'];
-
-    let oauthUrl = (usev2 ?? 1) == 2 ? oauthUrls.v2 : oauthUrls.v1;
-
-    if (serverSettingsOverride && serverSettingsOverride.length > 0) {
-      oauthUrl = serverSettingsOverride;
-    }
-
-    if (backupServerOverride && backupServerOverride.length > 0) {
-      oauthUrl = backupServerOverride;
-    }
-
-    if (formOverride && formOverride.length > 0) {
-      oauthUrl = formOverride;
-    }
+    if (formOverride && formOverride.length > 0) oauthUrl = formOverride;
 
     const startlink = `${oauthUrl}?type=${backendKey}`;
 

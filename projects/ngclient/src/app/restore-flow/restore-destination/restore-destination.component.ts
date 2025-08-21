@@ -20,9 +20,7 @@ import {
 } from '@ship-ui/core';
 import { BackupState } from '../../backup/backup.state';
 import { getConfigurationByKey } from '../../backup/destination/destination.config-utilities';
-import { SingleDestinationStateOverride } from '../../backup/destination/single-destination-override.state';
 import { SingleDestinationComponent } from '../../backup/destination/single-destination/single-destination.component';
-import { SINGLE_DESTINATION_STATE } from '../../backup/destination/single-destination/single-destination.provider';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { IDynamicModule } from '../../core/openapi';
 import { TestDestinationService } from '../../core/services/test-destination.service';
@@ -44,13 +42,7 @@ import { RestoreFlowState } from '../restore-flow.state';
   templateUrl: './restore-destination.component.html',
   styleUrl: './restore-destination.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    BackupState,
-    {
-      provide: SINGLE_DESTINATION_STATE,
-      useClass: SingleDestinationStateOverride,
-    },
-  ],
+  providers: [BackupState],
 })
 export default class RestoreDestinationComponent {
   #router = inject(Router);

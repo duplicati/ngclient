@@ -26,9 +26,7 @@ import { BackupState } from '../backup.state';
 import { DestinationListItemComponent } from './destination-list-item/destination-list-item.component';
 import { DestinationListComponent } from './destination-list/destination-list.component';
 import { getConfigurationByKey } from './destination.config-utilities';
-import { SingleDestinationStateOverride } from './single-destination-override.state';
 import { SingleDestinationComponent } from './single-destination/single-destination.component';
-import { SINGLE_DESTINATION_STATE } from './single-destination/single-destination.provider';
 
 const fb = new FormBuilder();
 
@@ -81,12 +79,6 @@ export type DestinationFormGroupValue = ReturnType<typeof createDestinationFormG
   templateUrl: './destination.component.html',
   styleUrl: './destination.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    {
-      provide: SINGLE_DESTINATION_STATE,
-      useClass: SingleDestinationStateOverride,
-    },
-  ],
 })
 export default class DestinationComponent {
   #router = inject(Router);

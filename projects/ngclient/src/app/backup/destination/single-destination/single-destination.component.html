@@ -4,6 +4,8 @@
 @if (_destinationType && config) {
   @let form = destinationForm();
 
+  <!-- <pre>{{ targetUrl() }}</pre> -->
+
   @for (formView of config.custom; track $index) {
     <ng-container
       *ngTemplateOutlet="
@@ -38,24 +40,25 @@
 
   <sh-toggle-card [disallowToggle]="true" class="advanced-options">
     <ng-container title>
-      {{ TEXTS.advancedOptions }}
+      <ng-container i18n>Advanced options</ng-container>
 
       @let _nonSelectedAdvancedFormViews = nonSelectedAdvancedFormViews();
 
       @if (showTextArea()) {
-        <button shButton type="button" class="outlined small" (click)="showTextArea.set(false)">
-          {{ TEXTS.showEditor }}
+        <button shButton type="button" class="outlined small" (click)="showTextArea.set(false)" i18n>
+          Show editor
           <sh-icon>link</sh-icon>
         </button>
       } @else {
         <div class="actions">
           <sh-menu [searchable]="true">
             <button
+              i18n
               shButton
               type="button"
               class="outlined small"
               [disabled]="_nonSelectedAdvancedFormViews.length === 0">
-              {{ TEXTS.addAdvancedOption }}
+              Add advanced option
               <sh-icon>plus</sh-icon>
             </button>
 
@@ -76,7 +79,7 @@
             <ng-container menu>
               <button shButton type="button" class="small" (click)="showTextArea.set(true)">
                 <sh-icon>link</sh-icon>
-                {{ TEXTS.editContentsAsText }}
+                Edit contents as text
               </button>
             </ng-container>
           </sh-menu>
@@ -91,7 +94,7 @@
         [ngModel]="settingsAsText()"
         (ngModelChange)="updateSettingsFromText($event)"
         [ngModelOptions]="{ updateOn: 'blur' }"
-        [placeholder]="TEXTS.customAdvancedOptionPlaceholder"></textarea>
+        placeholder="Paste advanced options here, one per line."></textarea>
     } @else {
       @for (optionName of advancedFormFieldNames(); track $index) {
         @let formView = getFormView('advanced', optionName) ?? getDefaultFormView(optionName);
@@ -132,7 +135,7 @@
           [selectFiles]="true">
           <label [for]="formFieldId">
             @if (item.formView.isMandatory && isFieldEmpty) {
-              <sup [shTooltip]="TEXTS.mandatoryField">*</sup>
+              <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
             }
             {{ labelContent }}
             @if (item.formView.longDescription) {
@@ -149,7 +152,7 @@
         <app-file-tree [hideShortcuts]="true" [enableCreateFolder]="true" [startingPath]="fieldValue">
           <label [for]="formFieldId">
             @if (item.formView.isMandatory && isFieldEmpty) {
-              <sup [shTooltip]="TEXTS.mandatoryField">*</sup>
+              <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
             }
             {{ labelContent }}
             @if (item.formView.longDescription) {
@@ -172,20 +175,25 @@
         <sh-form-field>
           <label [for]="formFieldId">
             @if (item.formView.isMandatory && isFieldEmpty) {
-              <sup [shTooltip]="TEXTS.mandatoryField">*</sup>
+              <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
             }
             {{ labelContent }}
             @if (item.formView.longDescription) {
               <sh-icon class="primary" [shTooltip]="item.formView.longDescription">question</sh-icon>
             }
             @if (isFieldEmpty && item.formView.type === 'Path') {
-              <sh-icon class="warn" [shTooltip]="">warning</sh-icon>
+              <sh-icon
+                class="warn"
+                i18n-shTooltip
+                shTooltip="An empty path means storing data in the initial or root folder, which is not recommended">
+                warning
+              </sh-icon>
             }
             @if (item.formView.type == 'Hostname' && !isFieldEmpty && !isValidHostname(fieldValue)) {
-              <sh-icon class="error" [shTooltip]="TEXTS.hostnameInvalid">x-circle</sh-icon>
+              <sh-icon class="error" i18n-shTooltip shTooltip="Hostname is invalid">x-circle</sh-icon>
             }
             @if (item.formView.type == 'Bucketname' && !isFieldEmpty && !isValidBucketname(fieldValue)) {
-              <sh-icon class="warn" [shTooltip]="TEXTS.bucketnameInvalid">warning</sh-icon>
+              <sh-icon class="warn" i18n-shTooltip shTooltip="Bucket name is invalid">warning</sh-icon>
             }
           </label>
 
@@ -223,7 +231,7 @@
         <sh-form-field>
           <label [for]="formFieldId">
             @if (item.formView.isMandatory && isFieldEmpty) {
-              <sup [shTooltip]="TEXTS.mandatoryField">*</sup>
+              <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
             }
             {{ labelContent }}
             @if (item.formView.longDescription) {
@@ -282,7 +290,7 @@
             value="value">
             <label [for]="formFieldId">
               @if (item.formView.isMandatory && isFieldEmpty) {
-                <sup [shTooltip]="TEXTS.mandatoryField">*</sup>
+                <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
               }
               {{ labelContent }}
               @if (item.formView.longDescription) {
@@ -313,7 +321,7 @@
             value="value">
             <label [for]="formFieldId">
               @if (item.formView.isMandatory && isFieldEmpty) {
-                <sup [shTooltip]="TEXTS.mandatoryField">*</sup>
+                <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
               }
               {{ labelContent }}
               @if (item.formView.longDescription) {
@@ -342,7 +350,7 @@
           [customId]="formFieldId">
           <label [for]="formFieldId">
             @if (item.formView.isMandatory && isFieldEmpty) {
-              <sup [shTooltip]="TEXTS.mandatoryField">*</sup>
+              <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
             }
             {{ labelContent }}
             @if (item.formView.longDescription) {
@@ -354,7 +362,7 @@
         <sh-form-field>
           <label [for]="formFieldId">
             @if (item.formView.isMandatory && isFieldEmpty) {
-              <sup [shTooltip]="TEXTS.mandatoryField">*</sup>
+              <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
             }
             {{ labelContent }}
             @if (item.formView.longDescription) {
@@ -393,7 +401,7 @@
             [optionTemplate]="optionTemplate">
             <label [for]="formFieldId">
               @if (item.formView.isMandatory && isFieldEmpty) {
-                <sup [shTooltip]="TEXTS.mandatoryField">*</sup>
+                <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
               }
               {{ labelContent }}
               @if (item.formView.longDescription) {
@@ -419,7 +427,7 @@
           [customId]="formFieldId">
           <label [for]="formFieldId">
             @if (item.formView.isMandatory && isFieldEmpty) {
-              <sup [shTooltip]="TEXTS.mandatoryField">*</sup>
+              <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
             }
             {{ labelContent }}
             @if (item.formView.longDescription) {
@@ -435,7 +443,7 @@
           [placeholder]="item.formView.longDescription">
           <label>
             @if (item.formView.isMandatory && isFieldEmpty) {
-              <sup [shTooltip]="TEXTS.mandatoryField">*</sup>
+              <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
             }
             {{ item.formView.shortDescription ?? item.formView.name }}
             @if (item.formView.longDescription) {

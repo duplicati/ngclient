@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, ElementRef, input, signal, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, ElementRef, input, signal, viewChild } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { ShipButtonComponent, ShipIconComponent } from '@ship-ui/core';
 
@@ -23,7 +23,7 @@ export class FileDropTextareaComponent implements ControlValueAccessor {
   readonly = signal(false);
   placeholder = input<string | null>('Drop a file here or use the browse button');
 
-  @ViewChild('fileInput') fileInputRef!: ElementRef<HTMLInputElement>;
+  fileInputRef = viewChild<ElementRef<HTMLInputElement>>('fileInput');
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -52,7 +52,7 @@ export class FileDropTextareaComponent implements ControlValueAccessor {
   }
 
   triggerBrowse() {
-    this.fileInputRef.nativeElement.click();
+    this.fileInputRef()?.nativeElement.click();
     return false;
   }
 
