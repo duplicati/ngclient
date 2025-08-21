@@ -12,6 +12,11 @@
     "isolatedModules": true,
     "esModuleInterop": true,
     "sourceMap": true,
+    "paths": {
+      "ngclient-lib": [
+        "./dist/ngclient-lib"
+      ]
+    },
     "allowJs": true,
     "declaration": false,
     "experimentalDecorators": true,
@@ -51,6 +56,12 @@
     },
     {
       "path": "./projects/ngclient/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/ngclient-lib/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/ngclient-lib/tsconfig.spec.json"
     }
   ]
 }

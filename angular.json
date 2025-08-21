@@ -203,6 +203,32 @@
           }
         }
       }
+    },
+    "ngclient-lib": {
+      "projectType": "library",
+      "root": "projects/ngclient-lib",
+      "sourceRoot": "projects/ngclient-lib/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ngclient-lib/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ngclient-lib/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:karma",
+          "options": {
+            "tsConfig": "projects/ngclient-lib/tsconfig.spec.json"
+          }
+        }
+      }
     }
   }
 }

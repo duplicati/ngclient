@@ -45,6 +45,7 @@
     "@angular/cli": "^20.1.6",
     "@angular/compiler-cli": "^20.1.6",
     "@hey-api/openapi-ts": "^0.64.11",
+    "ng-packagr": "^20.1.0",
     "prettier": "^3.5.3",
     "typescript": "~5.8.0",
     "xml2js": "^0.6.2"
