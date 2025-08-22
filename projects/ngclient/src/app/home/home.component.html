@@ -102,6 +102,7 @@
                     {{ backup.Backup.Metadata?.['LastBackupFinished'] | relativeTime: timeType() === 'actual' }}
                   </p>
 
+                  <!-- Warning: Model says Schedule cannot be null, but it can, so dont remove the short-circuit operator -->
                   @if (backup?.Schedule?.Time) {
                     <p>
                       <span i18n>Next scheduled run:</span>
@@ -202,7 +203,8 @@
                 }
               </td>
               <td>
-                @if (backup.Schedule.Time) {
+                <!-- Warning: Model says Schedule cannot be null, but it can, so dont remove the short-circuit operator -->
+                @if (backup?.Schedule?.Time) {
                   {{ backup.Schedule.Time | relativeTime: timeType() === 'actual' }}
                 } @else {
                   <ng-container>-</ng-container>
