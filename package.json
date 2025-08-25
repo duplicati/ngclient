@@ -33,7 +33,7 @@
     "@angular/platform-browser-dynamic": "^20.1.7",
     "@angular/localize": "^20.1.7",
     "@angular/router": "^20.1.7",
-    "@ship-ui/core": "^0.13.27",
+    "@ship-ui/core": "^0.14.8",
     "dayjs": "^1.11.13",
     "marked": "^15.0.7",
     "ngxtension": "^4.5.0",

@@ -5,6 +5,7 @@ import { provideRouter, withComponentInputBinding } from '@angular/router';
 
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+import { SHIP_CONFIG } from '@ship-ui/core';
 import { environment } from '../environments/environment';
 import { ENVIRONMENT_TOKEN } from '../environments/environment-token';
 import { routes } from './app.routes';
@@ -28,6 +29,12 @@ export const appConfig: ApplicationConfig = {
 
     { provide: ENVIRONMENT_TOKEN, useValue: environment },
     { provide: LOCALE_ID, useValue: getLocale() },
+    {
+      provide: SHIP_CONFIG,
+      useValue: {
+        alertVariant: 'simple',
+      },
+    },
     NotificationsState,
     StatusBarState,
     DayJsProvider,
