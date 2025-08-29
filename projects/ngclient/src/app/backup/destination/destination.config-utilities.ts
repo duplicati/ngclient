@@ -1,6 +1,6 @@
 import { Injector, Signal } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { ArgumentType, ICommandLineArgument } from '../../core/openapi';
+import { ArgumentType, ICommandLineArgument, SettingInputDto } from '../../core/openapi';
 import { WebModuleOption } from '../../core/services/webmodules.service';
 import { DestinationFormGroupValue } from './destination.component';
 import { DESTINATION_CONFIG, DESTINATION_CONFIG_DEFAULT } from './destination.config';
@@ -251,4 +251,26 @@ export function fromTargetPath(targetPath: string) {
     console.error('Error while parsing target path', error);
     return null;
   }
+}
+
+export function parseKeyValueText(text: string): [string, string][] {
+  if (typeof text !== 'string' || !text.trim()) return [];
+  return text
+    .split('\n')
+    .map(line => line.trim())
+    .filter(line => line)
+    .map(line => {
+      const [key, ...valueParts] = line.split('=');
+      const value = valueParts.join('=').trim();
+      return key.trim() ? [key.trim(), value] : null;
+    })
+    .filter((pair): pair is [string, string] => pair !== null);
+}
+
+export function parseKeyValueTextToSettings(text: string): SettingInputDto[] {
+  return parseKeyValueText(text).map(([Name, Value]) => ({ Name, Value }));
+}
+
+export function parseKeyValueTextToObject(text: string): Record<string, string> {
+  return Object.fromEntries(parseKeyValueText(text));
 }
