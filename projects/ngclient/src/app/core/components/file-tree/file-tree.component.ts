@@ -13,6 +13,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
+  ShipButtonComponent,
   ShipButtonGroupComponent,
   ShipDialogComponent,
   ShipDialogService,
@@ -79,6 +80,7 @@ const ROOTPATH = '/';
 @Component({
   selector: 'app-file-tree',
   imports: [
+    ShipButtonComponent,
     ShipButtonGroupComponent,
     ShipToggleComponent,
     ShipIconComponent,

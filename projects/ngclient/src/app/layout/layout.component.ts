@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import {
-    ShipButtonComponent,
-    ShipDialogService,
-    ShipDividerComponent,
-    ShipIconComponent,
-    ShipListComponent,
-    ShipSidenavComponent,
+  ShipButtonComponent,
+  ShipDialogService,
+  ShipDividerComponent,
+  ShipIconComponent,
+  ShipListComponent,
+  ShipSidenavComponent,
 } from '@ship-ui/core';
 import LogoComponent from '../core/components/logo/logo.component';
 import ServiceHubComponent from '../core/components/service-hub/service-hub.component';
@@ -47,6 +47,9 @@ export default class LayoutComponent {
 
   relayIsEnabled = this.#relayConfigState.relayIsEnabled;
   isDarkMode = this.#layoutState.isDarkMode;
+  isNavOpen = this.#layoutState.isNavOpen;
+  isMobile = this.#layoutState.isMobile;
+  sidenavType = this.#layoutState.sidenavType;
 
   ngOnInit() {
     this.#notificaitonsState.init();
@@ -63,6 +66,10 @@ export default class LayoutComponent {
         }
       },
     });
+  }
+
+  toggleNav() {
+    this.#layoutState.toggleNav();
   }
 
   toggleBodyClass() {

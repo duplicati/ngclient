@@ -1,5 +1,8 @@
-import { Injectable, effect, signal } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { DOCUMENT, Injectable, PLATFORM_ID, computed, effect, inject, signal } from '@angular/core';
+import { ShipSidenavType } from '@ship-ui/core';
 import { localStorageSignal } from '../core/functions/localstorage-signal';
+import { WINDOW } from '../core/providers/window';
 
 declare global {
   interface Window {
@@ -11,36 +14,43 @@ declare global {
   providedIn: 'root',
 })
 export class LayoutState {
+  #window = inject(WINDOW);
+  #document = inject(DOCUMENT);
+  #platformId = inject(PLATFORM_ID);
   #isDarkMode = localStorageSignal<boolean | null>('darkTheme', null, true);
-  #isMobile = signal(window?.innerWidth <= 768);
-  #isNavOpen = signal(false);
+
+  #currentWidth = signal(this.#window.innerWidth);
+  isMobile = computed(() => this.#currentWidth() < 1024);
+  sidenavType = signal<ShipSidenavType>(this.isMobile() ? 'overlay' : '');
+  isNavOpen = signal(false);
 
   isDarkMode = this.#isDarkMode.asReadonly();
-  isMobile = this.#isMobile.asReadonly();
-  isNavOpen = this.#isNavOpen.asReadonly();
+
+  darkModeEffect = effect(() => {
+    if (this.#isDarkMode()) {
+      this.#document.documentElement.classList.add('dark');
+      this.#document.documentElement.classList.remove('light');
+    } else {
+      this.#document.documentElement.classList.remove('dark');
+      this.#document.documentElement.classList.add('light');
+    }
+  });
+
+  isMobileEffect = effect(() => {
+    this.isNavOpen.set(!this.isMobile());
+    this.sidenavType.set(this.isMobile() ? 'overlay' : '');
+  });
 
   constructor() {
-    const prefersDarkMode = window.matchMedia('(prefers-color-scheme:dark)').matches;
-
-    if (prefersDarkMode && this.#isDarkMode() === null) {
-      this.setDarkMode();
+    if (isPlatformBrowser(this.#platformId)) {
+      this.#window?.addEventListener('resize', () => {
+        this.#currentWidth.set(this.#window.innerWidth);
+      });
     }
-
-    effect(() => {
-      if (this.#isDarkMode()) {
-        document.body.classList.add('dark');
-      } else {
-        document.body.classList.remove('dark');
-      }
-    });
-  }
-
-  ngOnInit() {
-    window.addEventListener('resize', this.#resizeHandler);
   }
 
   toggleNav() {
-    this.#isNavOpen.set(!this.isNavOpen());
+    this.isNavOpen.set(!this.isNavOpen());
   }
 
   toggleBodyClass() {
@@ -53,13 +63,5 @@ export class LayoutState {
 
   setLightMode() {
     this.#isDarkMode.set(false);
-  }
-
-  #resizeHandler() {
-    this.#isMobile.set(window.innerWidth <= 768);
-  }
-
-  ngOnDestroy() {
-    window.removeEventListener('resize', this.#resizeHandler);
   }
 }

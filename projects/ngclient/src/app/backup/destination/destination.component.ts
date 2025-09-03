@@ -12,6 +12,7 @@ import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   ShipAlertComponent,
+  ShipButtonComponent,
   ShipDialogComponent,
   ShipDialogService,
   ShipFormFieldComponent,
@@ -70,6 +71,7 @@ export type DestinationFormGroupValue = ReturnType<typeof createDestinationFormG
     DestinationListItemComponent,
 
     FormsModule,
+    ShipButtonComponent,
     ShipFormFieldComponent,
     ShipMenuComponent,
     ShipIconComponent,

@@ -34,7 +34,7 @@
     left: 0;
     right: 0;
     z-index: -2;
-    background: radial-gradient(rgba(var(--primary-rgb-100), 1) 0%, #00000000 60%);
+    background: radial-gradient(rgb(from var(--primary-1) r g b / 1) 0%, #00000000 60%);
   }
 
   img.noise {
