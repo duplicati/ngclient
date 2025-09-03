@@ -1,7 +1,7 @@
 <app-status-bar />
 
 @if (!isProgressPage()) {
-  <sh-stepper>
+  <sh-stepper class="primary">
     @if (isFileRestore()) {
       <div step routerLinkActive="active" [routerLink]="['/restore-from-files/destination']" i18n>
         <sh-radio />

@@ -5,9 +5,12 @@
     <title>Duplicati ngclient</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- <link rel="icon" type="image/x-icon" href="favicon.ico" /> -->
     <link rel="icon" href="assets/duplicati-logo.png" />
     <link rel="stylesheet" href="assets/ship.css" />
+    <script>
+      let theme = localStorage.getItem('v1:persist:duplicati:darkTheme') === 'true' ? 'dark' : 'light';
+      document.documentElement.classList.add(theme);
+    </script>
     <style type="text/css">
       @font-face {
         font-family: 'Inter Tight';
@@ -17,10 +20,27 @@
         font-style: normal;
       }
 
+      html {
+        --startingBg: #fff;
+        --startingColor: #000;
+
+        background: var(--startingBg);
+      }
+
+      html.light {
+        --startingBg: #fff;
+        --startingColor: #000;
+      }
+
+      html.dark {
+        --startingBg: #000;
+        --startingColor: #fff;
+      }
+
       body > .loading {
         font-family: 'Inter Tight', sans-serif;
         font-size: 24px;
-        color: #000;
+        color: var(--startingColor);
         display: none;
         height: 100vh;
         width: 100vw;

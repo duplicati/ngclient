@@ -1,17 +1,17 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
-    ShipAlertComponent,
-    ShipButtonComponent,
-    ShipDividerComponent,
-    ShipFormFieldComponent,
-    ShipIconComponent,
-    ShipProgressBarComponent,
-    ShipRadioComponent,
-    ShipRangeSliderComponent,
-    ShipSelectComponent,
-    ShipToggleComponent,
-    ShipTooltipDirective,
+  ShipAlertComponent,
+  ShipButtonComponent,
+  ShipDividerComponent,
+  ShipFormFieldComponent,
+  ShipIconComponent,
+  ShipProgressBarComponent,
+  ShipRadioComponent,
+  ShipRangeSliderComponent,
+  ShipSelectComponent,
+  ShipToggleComponent,
+  ShipTooltipDirective,
 } from '@ship-ui/core';
 import { catchError, finalize, of } from 'rxjs';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
@@ -302,10 +302,9 @@ export default class SettingsComponent {
     const _ = this.timeValue();
     // Prevent triggering a patch request when the component is initializing
     const loaded = this.#serverSettingsService.serverSettings();
-    if (!loaded || (loaded['startup-delay'] === '' && this.timeType() === 'none'))
-        return;
+    if (!loaded || (loaded['startup-delay'] === '' && this.timeType() === 'none')) return;
 
-      this.updateStartupDelay();
+    this.updateStartupDelay();
   });
 
   updateLocale(newLocale: string) {
