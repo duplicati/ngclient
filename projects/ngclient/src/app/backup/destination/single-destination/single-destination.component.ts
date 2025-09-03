@@ -36,6 +36,7 @@ import {
   FormView,
   fromTargetPath,
   getConfigurationByKey,
+  parseKeyValueTextToObject,
   toTargetPath,
 } from '../destination.config-utilities';
 
@@ -490,19 +491,7 @@ export class SingleDestinationComponent {
   updateSettingsFromText(newValue: any) {
     if (typeof newValue !== 'string') return;
 
-    const lines = newValue
-      .split('\n')
-      .map((line) => line.trim())
-      .filter((line) => line.length > 0);
-    const newSettings: Record<string, any> = {};
-
-    for (const line of lines) {
-      const [name, value] = line.split('=').map((part) => part.trim());
-      if (name && name.trim().length > 0 && value !== undefined) {
-        newSettings[name] = value;
-      }
-    }
-
+    const newSettings = parseKeyValueTextToObject(newValue);
     this.destinationForm.update((x) => ({
       ...x,
       advanced: newSettings,

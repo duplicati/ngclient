@@ -16,7 +16,7 @@ import { SizeComponent } from '../../../core/components/size/size.component';
 import { TimespanComponent } from '../../../core/components/timespan/timespan.component';
 import { SettingDto, SettingInputDto } from '../../../core/openapi';
 import { SysinfoState } from '../../../core/states/sysinfo.state';
-import { FormView } from '../../destination/destination.config-utilities';
+import { FormView, parseKeyValueTextToSettings } from '../../destination/destination.config-utilities';
 
 type SettingItem = {
   Filter?: string | null;
@@ -157,23 +157,11 @@ export class OptionsListComponent {
       })
       .join('\n');
   });
-
+  
   updateSettingsFromText(newValue: any) {
     if (typeof newValue !== 'string') return;
-
-    const lines = newValue
-      .split('\n')
-      .map((line) => line.trim())
-      .filter((line) => line.length > 0);
-    const newSettings: SettingInputDto[] = [];
-
-    for (const line of lines) {
-      const [name, value] = line.split('=').map((part) => part.trim());
-      if (name && name.trim().length > 0 && value !== undefined) {
-        newSettings.push({ Name: `${name}`, Value: value });
-      }
-    }
-
+    
+    const newSettings = parseKeyValueTextToSettings(newValue);
     this.options.update(() => newSettings);
   }
 
