@@ -215,59 +215,59 @@ export default class FileTreeComponent {
 
     roots.map((root) => {
       const nodeMap = new Map<string, FileTreeNode>();
-      const rootPath = root?.id!;
+
+      if (!root.id) {
+        return;
+      }
+      const rootPath = root.id;
 
       if (accepts) {
         root.accepted = true;
       }
 
-      nodeMap.set(root.id!, root);
+      nodeMap.set(rootPath, root);
 
-      const filteredNodes = rootPaths.length > 0 ? nodes.filter((x) => x.parentPath.startsWith(root.id!)) : nodes;
+      const filteredNodes = rootPaths.length > 0 ? nodes.filter((x) => x.parentPath.startsWith(rootPath)) : nodes;
 
       for (const node of filteredNodes) {
-        const itemPath = rootPaths.length > 0 ? (node.id as string).replace(rootPath ?? '', '') : node.id!;
-        const pathParts = itemPath.split(pathDelimiter).filter(Boolean);
+        if (!node.id) {
+          continue;
+        }
+        const nodePath = node.id;
 
-        let evaluatedPath = '';
-        let parentNode = root;
+        if (!node.cls) {
+          continue;
+        }
 
-        for (const part of pathParts) {
-          evaluatedPath += part + pathDelimiter;
+        if (nodeMap.has(nodePath)) {
+          continue;
+        }
 
-          if (!nodeMap.has(evaluatedPath)) {
-            const evalState =
-              node.hidden === true && showHiddenNodes
-                ? TreeEvalEnum.None
-                : this.#eval(currentPaths, node.id!, node.cls!, parentNode);
+        const parentNode = nodeMap.get(node.parentPath);
+        const evalState =
+          node.hidden === true && showHiddenNodes
+            ? TreeEvalEnum.None
+            : this.#eval(currentPaths, nodePath, node.cls, parentNode);
 
-            const newNode: FileTreeNode = {
-              id: node.id,
-              isIndeterminate: this.isIndeterminate(currentPaths, node.id!),
-              evalState,
-              parentPath: evaluatedPath,
-              resolvedpath: node.cls == 'folder' ? this.#appendDirSep(node.resolvedpath) : evaluatedPath,
-              hidden: node.hidden,
-              text: node.text,
-              cls: node.cls,
-              children: [],
-            } as any as FileTreeNode;
+        const newNode: FileTreeNode = {
+          ...node,
+          isIndeterminate: this.isIndeterminate(currentPaths, nodePath),
+          evalState: evalState,
+          children: [],
+        };
 
-            if (accepts) {
-              newNode.accepted = this.matchAccepts(accepts, newNode);
-            }
+        if (accepts) {
+          newNode.accepted = this.matchAccepts(accepts, newNode);
+        }
 
-            nodeMap.set(evaluatedPath, newNode);
-            parentNode.children.push(newNode);
-          }
-
-          parentNode = nodeMap.get(evaluatedPath)!;
+        nodeMap.set(nodePath, newNode);
+        if (parentNode) {
+          parentNode.children.push(newNode);
         }
       }
 
       return root;
     });
-
     return roots;
   });
 
@@ -278,7 +278,12 @@ export default class FileTreeComponent {
     return path + pathDelimiter;
   }
 
-  #eval(currentPaths: string[], nodeId: string, nodeType: string, parentNode: FileTreeNode | null): TreeEvalEnum {
+  #eval(
+    currentPaths: string[],
+    nodeId: string,
+    nodeType: string,
+    parentNode: FileTreeNode | null | undefined
+  ): TreeEvalEnum {
     if (parentNode && parentNode.evalState === TreeEvalEnum.Excluded) return TreeEvalEnum.ExcludedByParent;
 
     let result = TreeEvalEnum.None;
@@ -772,7 +777,6 @@ export default class FileTreeComponent {
     });
 
     let urlPieces: string[] = [ROOTPATH];
-
     segmentArr.forEach((segments) => {
       segments.forEach((_, index) => {
         const urlCombined = segments.slice(0, index + 1).join(pathDelimiter);
@@ -808,30 +812,12 @@ export default class FileTreeComponent {
         next: (res) => {
           const results = res.filter((x) => x.status === 'success') as FilePathResult[];
           const errors = res.filter((x) => x.status === 'error') as FilePathResult[];
-
           this.treeNodes.update((y) => {
             const allNewNodes = results.flatMap((x) => {
-              return (x.value as any).map((z: any) => {
-                const path = z.id;
-                const resolvedPath = z.id.startsWith('%') && z.id.endsWith('%') ? z.resolvedpath + pathDelimiter : z.id;
-                const parentPath = path && path.split(pathDelimiter).filter(Boolean).slice(0, -1).join(pathDelimiter);
-                const _pathWithoutTrailingSlash = path && path.split(pathDelimiter).filter(Boolean).join(pathDelimiter);
-                const pathWithoutTrailingSlash = pathDelimiter + _pathWithoutTrailingSlash;
-                const found =
-                  pathArr.findIndex((x) => {
-                    return this.multiSelect() ? pathWithoutTrailingSlash.startsWith(x) : pathWithoutTrailingSlash === x;
-                  }) > -1;
-
-                const pathExistInArray = pathArr.findIndex((x) => x === path) > -1;
-                const isDeselected = deselectedPaths.findIndex((x) => x === pathWithoutTrailingSlash) > -1;
-
-                return {
-                  ...z,
-                  cls: this.#isFolder(resolvedPath, pathDelimiter) || resolvedPath == ROOTPATH ? 'folder' : 'file',
-                  parentPath: parentPath.startsWith('%') ? parentPath : pathDelimiter + parentPath,
-                  isSelected: (found && !isDeselected) || pathExistInArray,
-                };
-              });
+              if (Array.isArray(x.value)) {
+                return x.value.map((z) => ({ ...z, parentPath: x.url }));
+              }
+              return [];
             });
 
             const arrayUniqueByKey = [...new Map([...y, ...allNewNodes].map((item) => [item.id, item])).values()];
