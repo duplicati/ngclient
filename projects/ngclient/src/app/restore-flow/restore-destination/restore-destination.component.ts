@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   ShipAlertComponent,
+  ShipButtonComponent,
   ShipDialogComponent,
   ShipDialogService,
   ShipFormFieldComponent,
@@ -33,6 +34,7 @@ import { RestoreFlowState } from '../restore-flow.state';
     SingleDestinationComponent,
 
     FormsModule,
+    ShipButtonComponent,
     ShipFormFieldComponent,
     ShipMenuComponent,
     ShipIconComponent,

@@ -2,7 +2,7 @@
 
 <section>
   <header>
-    <sh-card class="type-a" [routerLink]="['/add-backup']">
+    <sh-card class="type-a actionable" [routerLink]="['/add-backup']">
       <img src="assets/images/backup.png" alt="" width="48px" />
       <div class="text">
         <h3 i18n>Backups</h3>
@@ -14,7 +14,7 @@
       </button>
     </sh-card>
 
-    <sh-card class="type-a" [routerLink]="['/restore']">
+    <sh-card class="type-a actionable" [routerLink]="['/restore']">
       <img src="assets/images/restore.png" alt="" width="48px" />
       <div class="text">
         <h3 i18n>Restores</h3>
@@ -91,7 +91,7 @@
                   <h3>
                     {{ backup.Backup.Name ?? MISSING_BACKUP_NAME }}
                     <sh-chip>
-                      <img [src]="getBackendIcon(backup.Backup.TargetURL)" alt="" />
+                      <img class="provider-icon" [src]="getBackendIcon(backup.Backup.TargetURL)" alt="" />
                       <!-- <sh-icon>{{ getBackendIcon(backup.Backup.TargetURL) }}</sh-icon> -->
                       {{ getBackendType(backup.Backup.TargetURL) }}
                     </sh-chip>
@@ -193,7 +193,11 @@
                 {{ backup.Backup.Name ?? MISSING_BACKUP_NAME }}
               </td>
               <td>
-                {{ getBackendType(backup.Backup.TargetURL) }}
+                <sh-chip class="small">
+                  <img class="provider-icon" [src]="getBackendIcon(backup.Backup.TargetURL)" alt="" />
+                  <!-- <sh-icon>{{ getBackendIcon(backup.Backup.TargetURL) }}</sh-icon> -->
+                  {{ getBackendType(backup.Backup.TargetURL) }}
+                </sh-chip>
               </td>
               <td>
                 @if (backup.Backup.Metadata?.['LastBackupDate']) {

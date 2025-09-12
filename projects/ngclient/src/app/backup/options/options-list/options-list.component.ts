@@ -2,14 +2,14 @@ import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input, model, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
-    ShipButtonComponent,
-    ShipFormFieldComponent,
-    ShipIconComponent,
-    ShipMenuComponent,
-    ShipSelectComponent,
-    ShipToggleCardComponent,
-    ShipToggleComponent,
-    ShipTooltipDirective,
+  ShipButtonComponent,
+  ShipFormFieldComponent,
+  ShipIconComponent,
+  ShipMenuComponent,
+  ShipSelectComponent,
+  ShipToggleCardComponent,
+  ShipToggleComponent,
+  ShipTooltipDirective,
 } from '@ship-ui/core';
 import FileTreeComponent from '../../../core/components/file-tree/file-tree.component';
 import { SizeComponent } from '../../../core/components/size/size.component';
@@ -39,6 +39,10 @@ type SizeSettingItem = {
   imports: [
     FormsModule,
     FileTreeComponent,
+    SizeComponent,
+    TimespanComponent,
+    NgTemplateOutlet,
+
     ShipToggleCardComponent,
     ShipFormFieldComponent,
     ShipButtonComponent,
@@ -47,9 +51,6 @@ type SizeSettingItem = {
     ShipIconComponent,
     ShipSelectComponent,
     ShipToggleComponent,
-    SizeComponent,
-    TimespanComponent,
-    NgTemplateOutlet,
   ],
   templateUrl: './options-list.component.html',
   styleUrl: './options-list.component.scss',
@@ -143,7 +144,7 @@ export class OptionsListComponent {
     return this.selectedSettings()
       .map((setting) => {
         const value = setting.Value();
-        
+
         let valueString = '';
         if (typeof value === 'boolean') {
           valueString = this.isTrue(value) ? 'True' : 'False';
@@ -157,10 +158,10 @@ export class OptionsListComponent {
       })
       .join('\n');
   });
-  
+
   updateSettingsFromText(newValue: any) {
     if (typeof newValue !== 'string') return;
-    
+
     const newSettings = parseKeyValueTextToSettings(newValue);
     this.options.update(() => newSettings);
   }
