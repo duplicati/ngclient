@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, output, signal } from '@ang
 import { FormsModule } from '@angular/forms';
 import { ShipAlertComponent, ShipCheckboxComponent, ShipRadioComponent } from '@ship-ui/core';
 import { finalize } from 'rxjs';
-import { DuplicatiServerService } from '../../../openapi';
+import { DuplicatiServer } from '../../../openapi';
 
 const PAUSE_OPTIONS = [
   { label: $localize`5 minutes`, value: '5m' },
@@ -24,7 +24,7 @@ const PAUSE_OPTIONS = [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PauseDialogComponent {
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
 
   pauseOptions = signal(PAUSE_OPTIONS);
 

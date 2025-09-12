@@ -1,11 +1,11 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { DuplicatiServerService, GetApiV1ServersettingsResponse } from '../core/openapi';
+import { DuplicatiServer, GetApiV1ServersettingsResponse } from '../core/openapi';
 @Injectable({
   providedIn: 'root',
 })
 export class ServerSettingsService {
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
 
   #initialServerSettings = toSignal(this.#dupServer.getApiV1Serversettings());
   #serverSettings = signal<GetApiV1ServersettingsResponse | undefined>(undefined);

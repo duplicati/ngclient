@@ -2,14 +2,14 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import {
-    ShipAlertService,
-    ShipButtonComponent,
-    ShipFileDragDropDirective,
-    ShipFormFieldComponent,
-    ShipIconComponent,
+  ShipAlertService,
+  ShipButtonComponent,
+  ShipFileDragDropDirective,
+  ShipFormFieldComponent,
+  ShipIconComponent,
 } from '@ship-ui/core';
 import { finalize, switchMap } from 'rxjs';
-import { BackupAndScheduleInputDto, DuplicatiServerService } from '../../core/openapi';
+import { BackupAndScheduleInputDto, DuplicatiServer } from '../../core/openapi';
 import { BackupDraft } from '../../core/states/backups.state';
 
 const fb = new FormBuilder();
@@ -30,7 +30,7 @@ const fb = new FormBuilder();
 })
 export default class RestoreFromConfigComponent {
   #shipAlertService = inject(ShipAlertService);
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
   #router = inject(Router);
 
   isRestoring = signal(false);
@@ -90,10 +90,10 @@ export default class RestoreFromConfigComponent {
       .pipe(
         switchMap((res) => {
           const data = res.data as BackupDraft;
-          const draft : BackupAndScheduleInputDto = {
-            Backup: data.Backup
+          const draft: BackupAndScheduleInputDto = {
+            Backup: data.Backup,
           };
-          
+
           return this.#dupServer.postApiV1Backups({
             requestBody: draft,
             temporary: true,

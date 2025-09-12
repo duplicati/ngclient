@@ -1,12 +1,12 @@
-import { inject, Injectable, signal } from "@angular/core";
-import { finalize } from "rxjs";
-import { DuplicatiServerService } from "../openapi";
+import { inject, Injectable, signal } from '@angular/core';
+import { finalize } from 'rxjs';
+import { DuplicatiServer } from '../openapi';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CrashLogState {
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
 
   isLoaded = signal(false);
   crashLog = signal<string | null>(null);
@@ -17,9 +17,9 @@ export class CrashLogState {
       .getApiV1LogdataCrashlog()
       .pipe(finalize(() => this.isLoaded.set(true)))
       .subscribe({
-          next: (res) => {
+        next: (res) => {
           this.crashLog.set(res.Logdata ?? null);
-          }
+        },
       });
   }
 }

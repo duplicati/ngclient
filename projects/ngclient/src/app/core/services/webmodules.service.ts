@@ -1,16 +1,15 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { map } from 'rxjs';
 import { LazySignal } from '../functions/lazy-signal';
-import { DuplicatiServerService, WebModuleOutputDto } from '../openapi';
+import { DuplicatiServer, WebModuleOutputDto } from '../openapi';
 
 export type WebModuleOption = { key: string; value: any };
-
 
 @Injectable({
   providedIn: 'root',
 })
 export class WebModulesService {
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
 
   #s3Providers = new LazySignal(() => this.getS3Config('Providers'));
   #s3Regions = new LazySignal(() => this.getS3Config('Regions'));
@@ -22,41 +21,57 @@ export class WebModulesService {
 
     const merged = [
       ...(providers ?? []),
-      ...(regionHosts?.map(x => ({ key: `Amazon ${x.key}`, value: x.value })) ?? []),
+      ...(regionHosts?.map((x) => ({ key: `Amazon ${x.key}`, value: x.value })) ?? []),
     ];
-    
-    return Array.from(
-      new Map(merged.map(item => [item.value, item])).values()
-    );
-  });
 
+    return Array.from(new Map(merged.map((item) => [item.value, item])).values());
+  });
 
   #storjSatellites = new LazySignal(() => this.getStorjConfig('Satellites'));
   #storjAuthenticationMethods = new LazySignal(() => this.getStorjConfig('AuthenticationMethods'));
-  
+
   #openstackProviders = new LazySignal(() => this.getOpenstackConfig('Providers'));
   #openstackVersions = new LazySignal(() => this.getOpenstackConfig('Versions'));
-  
+
   #gcsLocations = new LazySignal(() => this.getGcsConfig('Locations'));
   #gcsStorageClasses = new LazySignal(() => this.getGcsConfig('StorageClasses'));
 
-  
   getS3AllProviders() {
     this.#s3Providers.load();
     this.#s3RegionHosts.load();
     return this.#s3AllProviders;
   }
 
-  getS3Providers() {return this.#s3Providers.load(); }
-  getS3Regions() {return this.#s3Regions.load(); }
-  getS3RegionHosts() {return this.#s3RegionHosts.load(); }
-  getS3StorageClasses() {return this.#s3StorageClasses.load(); }
-  getStorjSatellites() {return this.#storjSatellites.load(); }
-  getStorjAuthenticationMethods() {return this.#storjAuthenticationMethods.load(); }
-  getOpenstackProviders() {return this.#openstackProviders.load(); }
-  getOpenstackVersions() {return this.#openstackVersions.load(); }
-  getGcsLocations() {return this.#gcsLocations.load(); }
-  getGcsStorageClasses() {return this.#gcsStorageClasses.load(); }
+  getS3Providers() {
+    return this.#s3Providers.load();
+  }
+  getS3Regions() {
+    return this.#s3Regions.load();
+  }
+  getS3RegionHosts() {
+    return this.#s3RegionHosts.load();
+  }
+  getS3StorageClasses() {
+    return this.#s3StorageClasses.load();
+  }
+  getStorjSatellites() {
+    return this.#storjSatellites.load();
+  }
+  getStorjAuthenticationMethods() {
+    return this.#storjAuthenticationMethods.load();
+  }
+  getOpenstackProviders() {
+    return this.#openstackProviders.load();
+  }
+  getOpenstackVersions() {
+    return this.#openstackVersions.load();
+  }
+  getGcsLocations() {
+    return this.#gcsLocations.load();
+  }
+  getGcsStorageClasses() {
+    return this.#gcsStorageClasses.load();
+  }
 
   private getS3Config(config: 'Providers' | 'Regions' | 'RegionHosts' | 'StorageClasses') {
     return this.#dupServer

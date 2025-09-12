@@ -16,7 +16,7 @@ import {
 import { catchError, finalize, of } from 'rxjs';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { LANGUAGES } from '../core/locales/locales.utility';
-import { DuplicatiServerService } from '../core/openapi';
+import { DuplicatiServer } from '../core/openapi';
 import { LOCALSTORAGE } from '../core/services/localstorage.token';
 import { SysinfoState } from '../core/states/sysinfo.state';
 import { LayoutState } from '../layout/layout.state';
@@ -132,7 +132,7 @@ type UsageStatisticsType = (typeof USAGE_STATISTICS_OPTIONS)[number];
 export default class SettingsComponent {
   #layoutState = inject(LayoutState);
   #sysinfo = inject(SysinfoState);
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
   #serverSettingsService = inject(ServerSettingsService);
   #remoteControlState = inject(RemoteControlState);
   #ls = inject(LOCALSTORAGE);

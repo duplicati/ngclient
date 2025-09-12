@@ -3,7 +3,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ShipAlertComponent, ShipButtonComponent, ShipIconComponent } from '@ship-ui/core';
 import { finalize } from 'rxjs';
 import { OptionsListComponent } from '../../backup/options/options-list/options-list.component';
-import { DuplicatiServerService, SettingDto } from '../../core/openapi';
+import { DuplicatiServer, SettingDto } from '../../core/openapi';
 import { ServerSettingsService } from '../server-settings.service';
 
 @Component({
@@ -15,7 +15,7 @@ import { ServerSettingsService } from '../server-settings.service';
 })
 export default class AdvancedOptionsSettingsComponent {
   #serverSettingsService = inject(ServerSettingsService);
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
 
   settings = signal<SettingDto[]>([]);

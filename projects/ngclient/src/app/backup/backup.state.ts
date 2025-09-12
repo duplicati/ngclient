@@ -8,7 +8,7 @@ import {
   ArgumentType,
   BackupAndScheduleInputDto,
   BackupDto,
-  DuplicatiServerService,
+  DuplicatiServer,
   ICommandLineArgument,
   ScheduleDto,
   SettingDto,
@@ -33,7 +33,7 @@ export class BackupState {
   #router = inject(Router);
   #sysinfo = inject(SysinfoState);
   #dialog = inject(ShipDialogService);
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
   #timespanLiteralService = inject(TimespanLiteralsService);
 
   generalForm = createGeneralForm();
@@ -133,10 +133,10 @@ export class BackupState {
         })
         .pipe(finalize(() => this.isSubmitting.set(false)))
         .subscribe({
-          next: (res) => {
+          next: () => {
             if (!withoutExit) this.exit(false);
           },
-          error: (err) => {},
+          error: () => {},
         });
     } else {
       this.#dupServer
@@ -146,10 +146,10 @@ export class BackupState {
         })
         .pipe(finalize(() => this.isSubmitting.set(false)))
         .subscribe({
-          next: (res) => {
+          next: () => {
             if (!withoutExit) this.exit(false);
           },
-          error: (err) => {},
+          error: () => {},
         });
     }
   }

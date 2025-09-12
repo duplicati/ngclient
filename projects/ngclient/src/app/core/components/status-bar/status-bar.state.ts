@@ -2,7 +2,7 @@ import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { ShipDialogService } from '@ship-ui/core';
 import { finalize, map, of, switchMap } from 'rxjs';
 import {
-  DuplicatiServerService,
+  DuplicatiServer,
   GetApiV1ProgressstateResponse,
   GetApiV1TaskByTaskidResponse,
   ServerStatusDto,
@@ -69,7 +69,7 @@ const STATUS_STATES: Record<string, string> = {
 })
 export class StatusBarState {
   #bytesPipe = inject(BytesPipe);
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
   #backupState = inject(BackupsState);
   #serverState = inject(ServerStateService);
   #dialog = inject(ShipDialogService);

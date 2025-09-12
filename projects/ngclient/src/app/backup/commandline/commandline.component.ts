@@ -14,7 +14,7 @@ import {
 import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
 import { StatusBarState } from '../../core/components/status-bar/status-bar.state';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
-import { BackupDto, CommandlineService, DuplicatiServerService, GetBackupResultDto } from '../../core/openapi';
+import { BackupDto, Commandline, DuplicatiServer, GetBackupResultDto } from '../../core/openapi';
 import { BackupState } from '../backup.state';
 import { OptionsListComponent } from '../options/options-list/options-list.component';
 
@@ -43,10 +43,10 @@ const fb = new FormBuilder();
 })
 export default class CommandlineComponent {
   #backupState = inject(BackupState);
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
   #router = inject(Router);
   #route = inject(ActivatedRoute);
-  #commandline = inject(CommandlineService);
+  #commandline = inject(Commandline);
   #statusBarState = inject(StatusBarState);
   #dialog = inject(ShipDialogService);
 

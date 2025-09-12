@@ -7,7 +7,7 @@ import {
   ShipProgressBarComponent,
   ShipSpinnerComponent,
 } from '@ship-ui/core';
-import { DuplicatiServerService } from '../../openapi';
+import { DuplicatiServer } from '../../openapi';
 import { RelativeTimePipe } from '../../pipes/relative-time.pipe';
 import { ServerStateService } from '../../services/server-state.service';
 import { BackupsState } from '../../states/backups.state';
@@ -34,7 +34,7 @@ const date = new Date();
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class StatusBarComponent {
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
   #statusBarState = inject(StatusBarState);
   #dialog = inject(ShipDialogService);
   #backupsState = inject(BackupsState);

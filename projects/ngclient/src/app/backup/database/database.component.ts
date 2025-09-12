@@ -3,16 +3,16 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import {
-    ShipButtonComponent,
-    ShipDialogService,
-    ShipFormFieldComponent,
-    ShipIconComponent,
-    ShipTooltipDirective
+  ShipButtonComponent,
+  ShipDialogService,
+  ShipFormFieldComponent,
+  ShipIconComponent,
+  ShipTooltipDirective,
 } from '@ship-ui/core';
 import { debounceTime, distinctUntilChanged, finalize, map, take } from 'rxjs';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
-import { DuplicatiServerService } from '../../core/openapi';
+import { DuplicatiServer } from '../../core/openapi';
 import { BackupsState } from '../../core/states/backups.state';
 
 function debouncedSignal<T>(source: Signal<T>, wait: number) {
@@ -39,7 +39,7 @@ function debouncedSignal<T>(source: Signal<T>, wait: number) {
 export default class DatabaseComponent {
   #route = inject(ActivatedRoute);
   #backups = inject(BackupsState);
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
   #dialog = inject(ShipDialogService);
   #firstDBPath = signal('');
 
@@ -240,5 +240,5 @@ export default class DatabaseComponent {
           window.setTimeout(() => this.createdReport.set(false), 3000);
         },
       });
-  }  
+  }
 }

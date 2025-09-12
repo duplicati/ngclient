@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { Observable, Subscriber } from 'rxjs';
-import { DuplicatiServerService, GetTaskStateDto } from '../openapi';
+import { DuplicatiServer, GetTaskStateDto } from '../openapi';
 import { SysinfoState } from '../states/sysinfo.state';
 import { ServerStatusLongPollService } from './server-status-longpoll.service';
 import { ServerStatusWebSocketService, SubscriptionService } from './server-status-websocket.service';
@@ -13,12 +13,14 @@ const RECENT_COMPLETED_TASKS = 10;
 export class ServerStateService {
   #wsService = inject(ServerStatusWebSocketService);
   #longPollService = inject(ServerStatusLongPollService);
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
   #sysinfo = inject(SysinfoState);
 
   #connectionMethod = signal<ConnectionMethod>('longpoll');
   #isConnectionMethodSet = signal<boolean>(false);
-  #useWebsocketStateInfo = computed(() => this.#sysinfo.hasTaskCompletedOption() && this.#connectionMethod() === 'websocket');
+  #useWebsocketStateInfo = computed(
+    () => this.#sysinfo.hasTaskCompletedOption() && this.#connectionMethod() === 'websocket'
+  );
 
   #waitForTaskItems: Record<number, Subscriber<GetTaskStateDto>[]> = {};
   #pollingTimerId: number | null = null;
@@ -29,12 +31,11 @@ export class ServerStateService {
     this.#wsService.subscribe('taskcompleted');
     this.#wsService.taskCompleted.subscribe((task) => {
       this.#recentCompletedTasks.unshift(task);
-      if (this.#recentCompletedTasks.length > RECENT_COMPLETED_TASKS)
-        this.#recentCompletedTasks.pop();
+      if (this.#recentCompletedTasks.length > RECENT_COMPLETED_TASKS) this.#recentCompletedTasks.pop();
 
       if (!task.ID) return;
       const entry = this.#waitForTaskItems[task.ID];
-      
+
       if (entry) {
         entry.forEach((subscriber) => {
           subscriber.next(task);
@@ -140,8 +141,7 @@ export class ServerStateService {
 
         if (finished) {
           this.#recentCompletedTasks.unshift(task);
-          if (this.#recentCompletedTasks.length > RECENT_COMPLETED_TASKS)
-            this.#recentCompletedTasks.pop();
+          if (this.#recentCompletedTasks.length > RECENT_COMPLETED_TASKS) this.#recentCompletedTasks.pop();
 
           this.#waitForTaskItems[nextTaskId].forEach((subscriber) => {
             subscriber.next(task);

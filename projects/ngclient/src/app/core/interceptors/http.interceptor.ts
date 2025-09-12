@@ -48,15 +48,15 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
     map((event) => {
       // V2 responses returns http status 200 and the error message in the body
       if (event.type === 4 && event.status === 200 && isV2Request) {
-        const body = (event.body as any);
+        const body = event.body as any;
         if (body?.Success === false) {
           throw {
             status: 200,
             message: body?.Error ?? 'Unknown error',
             error: {
-              Error: body?.Error ?? 'Unknown error'
+              Error: body?.Error ?? 'Unknown error',
             },
-            body: body,
+            requestBody: body,
           };
         }
       }

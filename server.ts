@@ -25,7 +25,7 @@ serve({
       const proxyRequest = new Request(url, {
         method: req.method,
         headers: req.headers,
-        body: req.body,
+        requestBody: req.body,
       });
       // proxyRequest.headers.set("Host", host);
 

@@ -2,15 +2,15 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import {
-    ShipAlertService,
-    ShipButtonComponent,
-    ShipFileUploadComponent,
-    ShipFormFieldComponent,
-    ShipIconComponent,
-    ShipToggleComponent,
+  ShipAlertService,
+  ShipButtonComponent,
+  ShipFileUploadComponent,
+  ShipFormFieldComponent,
+  ShipIconComponent,
+  ShipToggleComponent,
 } from '@ship-ui/core';
 import { finalize } from 'rxjs';
-import { DuplicatiServerService } from '../../core/openapi';
+import { DuplicatiServer } from '../../core/openapi';
 import { BackupDraft, BackupsState } from '../../core/states/backups.state';
 
 const fb = new FormBuilder();
@@ -32,7 +32,7 @@ const fb = new FormBuilder();
 })
 export default class ImportComponent {
   #shipAlertService = inject(ShipAlertService);
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
   #backupsState = inject(BackupsState);
   #router = inject(Router);
 
@@ -76,7 +76,7 @@ export default class ImportComponent {
 
   #checkArrayBufferType(buffer: ArrayBuffer): 'json' | 'aes' | 'unknown' {
     const bytes = new Uint8Array(buffer);
-  
+
     // Check if it starts with "AES" and the 5th byte is 0
     if (
       bytes.length >= 5 &&
@@ -87,7 +87,7 @@ export default class ImportComponent {
     ) {
       return 'aes';
     }
-  
+
     // Attempt to decode as text and parse as JSON
     try {
       const text = new TextDecoder().decode(buffer);
@@ -98,9 +98,9 @@ export default class ImportComponent {
     } catch {
       // Not JSON
     }
-  
+
     return 'unknown';
-  }  
+  }
 
   #arrayBufferToBase64(buffer: ArrayBuffer): string {
     const bytes = new Uint8Array(buffer);

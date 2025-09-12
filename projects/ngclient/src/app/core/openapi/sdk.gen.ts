@@ -10,7 +10,7 @@ import type { GetApiV1CommandlineResponse, PostApiV1CommandlineData, PostApiV1Co
 @Injectable({
     providedIn: 'root'
 })
-export class CommandlineService {
+export class Commandline {
     constructor(public readonly http: HttpClient) { }
     
     /**
@@ -23,13 +23,12 @@ export class CommandlineService {
             url: '/api/v1/commandline'
         });
     }
-    
 }
 
 @Injectable({
     providedIn: 'root'
 })
-export class DuplicatiServerService {
+export class DuplicatiServer {
     constructor(public readonly http: HttpClient) { }
     
     /**
@@ -1476,13 +1475,12 @@ export class DuplicatiServerService {
             mediaType: 'application/json'
         });
     }
-    
 }
 
 @Injectable({
     providedIn: 'root'
 })
-export class WebModulesService {
+export class WebModules {
     constructor(public readonly http: HttpClient) { }
     
     /**
@@ -1495,5 +1493,4 @@ export class WebModulesService {
             url: '/api/v1/webmodules'
         });
     }
-    
 }

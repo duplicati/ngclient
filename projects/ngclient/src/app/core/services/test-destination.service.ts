@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { ShipDialogService } from '@ship-ui/core';
 import { Observable, Subscriber } from 'rxjs';
 import { ConfirmDialogComponent } from '../components/confirm-dialog/confirm-dialog.component';
-import { DestinationTestResponseDto, DuplicatiServerService, PostApiV2DestinationTestResponse } from '../openapi';
+import { DestinationTestResponseDto, DuplicatiServer, PostApiV2DestinationTestResponse } from '../openapi';
 import { SysinfoState } from '../states/sysinfo.state';
 
 export type TestDestinationResult = {
@@ -22,12 +22,13 @@ export type TestDestinationResult = {
   providedIn: 'root',
 })
 export class TestDestinationService {
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
   #dialog = inject(ShipDialogService);
   #sysinfo = inject(SysinfoState);
 
   testDestination(targetUrl: string, destinationIndex: number, askToCreate: boolean, suppressErrorDialogs: boolean) {
-    if (this.#sysinfo.hasV2TestOperations()) return this.testDestinationv2(targetUrl, destinationIndex, askToCreate, suppressErrorDialogs);
+    if (this.#sysinfo.hasV2TestOperations())
+      return this.testDestinationv2(targetUrl, destinationIndex, askToCreate, suppressErrorDialogs);
     else return this.testDestinationv1(targetUrl, destinationIndex, askToCreate, suppressErrorDialogs);
   }
 
@@ -92,13 +93,24 @@ export class TestDestinationService {
               return;
             }
 
-            this.handleGenericError(observer, targetUrl, destinationIndex, err?.message ?? 'Unknown error', suppressErrorDialogs);
+            this.handleGenericError(
+              observer,
+              targetUrl,
+              destinationIndex,
+              err?.message ?? 'Unknown error',
+              suppressErrorDialogs
+            );
           },
         });
     });
   }
 
-  private testDestinationv1(targetUrl: string, destinationIndex: number, askToCreate: boolean, suppressErrorDialogs: boolean) {
+  private testDestinationv1(
+    targetUrl: string,
+    destinationIndex: number,
+    askToCreate: boolean,
+    suppressErrorDialogs: boolean
+  ) {
     return new Observable<TestDestinationResult>((observer) => {
       this.#dupServer
         .postApiV1RemoteoperationTest({
@@ -117,7 +129,13 @@ export class TestDestinationService {
             observer.complete();
           },
           error: (err) => {
-            this.handleDestinationErrorv1(err.message, targetUrl, destinationIndex, askToCreate, suppressErrorDialogs).subscribe((res) => {
+            this.handleDestinationErrorv1(
+              err.message,
+              targetUrl,
+              destinationIndex,
+              askToCreate,
+              suppressErrorDialogs
+            ).subscribe((res) => {
               observer.next(res);
             });
           },
@@ -138,8 +156,7 @@ export class TestDestinationService {
         cancelText: $localize`Cancel`,
       },
       closed: (res) => {
-        if (!res)
-        {
+        if (!res) {
           this.reportNoAction(observer, targetUrl, destinationIndex, $localize`The remote folder does not exist.`);
           return;
         }
@@ -268,7 +285,12 @@ export class TestDestinationService {
     });
   }
 
-  private reportNoAction(observer: Subscriber<TestDestinationResult>, targetUrl: string, destinationIndex: number, message: string) {
+  private reportNoAction(
+    observer: Subscriber<TestDestinationResult>,
+    targetUrl: string,
+    destinationIndex: number,
+    message: string
+  ) {
     observer.next({
       action: 'generic-error',
       targetUrl,

@@ -1,6 +1,6 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { finalize } from 'rxjs';
-import { DuplicatiServerService, LogEntry, LogMessageType } from '../../../core/openapi';
+import { DuplicatiServer, LogEntry, LogMessageType } from '../../../core/openapi';
 
 type LogLevel = {
   value: LogMessageType | 'Disabled';
@@ -49,7 +49,7 @@ const LOG_LEVELS: LogLevel[] = [
   providedIn: 'root',
 })
 export class LogsLiveState {
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
   #logs = signal<LogEntry[]>([]);
 
   LOG_LEVELS = LOG_LEVELS;

@@ -1,29 +1,18 @@
 import { ChangeDetectionStrategy, Component, inject, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {
-    ShipAlertComponent,
-    ShipFormFieldComponent,
-    ShipIconComponent,
-    ShipTooltipDirective,
-} from '@ship-ui/core';
+import { ShipAlertComponent, ShipFormFieldComponent, ShipIconComponent, ShipTooltipDirective } from '@ship-ui/core';
 import { finalize } from 'rxjs';
-import { DuplicatiServerService } from '../../core/openapi';
+import { DuplicatiServer } from '../../core/openapi';
 
 @Component({
   selector: 'app-change-passphrase-alert-dialog',
-  imports: [
-    FormsModule,
-    ShipAlertComponent,
-    ShipFormFieldComponent,
-    ShipIconComponent,
-    ShipTooltipDirective,
-  ],
+  imports: [FormsModule, ShipAlertComponent, ShipFormFieldComponent, ShipIconComponent, ShipTooltipDirective],
   templateUrl: './change-passphrase-alert-dialog.component.html',
   styleUrl: './change-passphrase-alert-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChangePassphraseAlertDialogComponent {
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
   closed = output();
 
   isUpdating = signal(false);

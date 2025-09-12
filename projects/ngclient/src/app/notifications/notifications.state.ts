@@ -1,13 +1,13 @@
 import { effect, inject, Injectable, signal } from '@angular/core';
 import { catchError, finalize, forkJoin, of, take, tap } from 'rxjs';
 import { StatusBarState } from '../core/components/status-bar/status-bar.state';
-import { DuplicatiServerService, NotificationDto } from '../core/openapi';
+import { DuplicatiServer, NotificationDto } from '../core/openapi';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NotificationsState {
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
   #statusBarState = inject(StatusBarState);
 
   serverState = this.#statusBarState.serverState;

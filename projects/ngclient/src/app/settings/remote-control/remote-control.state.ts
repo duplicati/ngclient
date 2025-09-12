@@ -2,7 +2,7 @@ import { computed, effect, inject, Injectable, signal } from '@angular/core';
 
 import { ShipDialogService } from '@ship-ui/core';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
-import { DuplicatiServerService, RemoteControlStatusOutput } from '../../core/openapi';
+import { DuplicatiServer, RemoteControlStatusOutput } from '../../core/openapi';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 
 type State =
@@ -22,7 +22,7 @@ type Timeout = ReturnType<typeof setTimeout>;
 })
 export class RemoteControlState {
   #dialog = inject(ShipDialogService);
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
   #sysinfo = inject(SysinfoState);
 
   repeatRegisterTimer: Timeout | null = null;
@@ -178,20 +178,20 @@ export class RemoteControlState {
   deleteRemoteControl() {
     const _self = this;
 
-        this.#dialog.open(ConfirmDialogComponent, {
-          data: {
-            title: $localize`Confirm delete`,
-            message: $localize`Are you sure you want to delete the remote control registration?`,
-            confirmText: $localize`Delete registration`,
-            cancelText: $localize`Cancel`,
-          },
-          closed: (res) => {
-            if (!res) return;
-            _self.#dupServer.deleteApiV1RemotecontrolRegistration().subscribe({
-              next: (res) => _self.#mapRemoteControlStatus(res),
-              error: (err) => _self.#mapRemoteControlError(err),
-            });
-          }
-        });   
+    this.#dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: $localize`Confirm delete`,
+        message: $localize`Are you sure you want to delete the remote control registration?`,
+        confirmText: $localize`Delete registration`,
+        cancelText: $localize`Cancel`,
+      },
+      closed: (res) => {
+        if (!res) return;
+        _self.#dupServer.deleteApiV1RemotecontrolRegistration().subscribe({
+          next: (res) => _self.#mapRemoteControlStatus(res),
+          error: (err) => _self.#mapRemoteControlError(err),
+        });
+      },
+    });
   }
 }

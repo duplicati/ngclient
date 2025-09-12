@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
-    ShipButtonComponent,
-    ShipCardComponent,
-    ShipDividerComponent,
-    ShipIconComponent,
-    ShipProgressBarComponent,
+  ShipButtonComponent,
+  ShipCardComponent,
+  ShipDividerComponent,
+  ShipIconComponent,
+  ShipProgressBarComponent,
 } from '@ship-ui/core';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
-import { BackupAndScheduleOutputDto, DuplicatiServerService } from '../core/openapi';
+import { BackupAndScheduleOutputDto, DuplicatiServer } from '../core/openapi';
 import { BackupsState } from '../core/states/backups.state';
 
 @Component({
@@ -28,7 +28,7 @@ import { BackupsState } from '../core/states/backups.state';
 })
 export default class RestoreComponent {
   #backupsState = inject(BackupsState);
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
 
   backups = this.#backupsState.backups;
   backupsLoading = this.#backupsState.backupsLoading;

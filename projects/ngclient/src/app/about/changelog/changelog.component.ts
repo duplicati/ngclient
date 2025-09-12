@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DomSanitizer } from '@angular/platform-browser';
 import { map } from 'rxjs';
-import { DuplicatiServerService } from '../../core/openapi';
+import { DuplicatiServer } from '../../core/openapi';
 import { Marked, MarkedProvider } from '../../core/providers/marked';
 
 @Component({
@@ -13,7 +13,7 @@ import { Marked, MarkedProvider } from '../../core/providers/marked';
   providers: [MarkedProvider],
 })
 export default class ChangelogComponent {
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
   #sanitizer = inject(DomSanitizer);
   #marked = inject(Marked);
 

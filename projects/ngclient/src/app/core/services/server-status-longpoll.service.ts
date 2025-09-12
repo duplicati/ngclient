@@ -3,7 +3,7 @@ import { ShipDialogService } from '@ship-ui/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { DisconnectedDialogComponent } from '../components/disconnected-dialog/disconnected-dialog.component';
-import { DuplicatiServerService, ServerStatusDto } from '../openapi';
+import { DuplicatiServer, ServerStatusDto } from '../openapi';
 import { RelayconfigState } from '../states/relayconfig.state';
 
 type ConnectionStatus = 'connected' | 'disconnected' | 'connecting';
@@ -13,7 +13,7 @@ type ConnectionStatus = 'connected' | 'disconnected' | 'connecting';
 })
 export class ServerStatusLongPollService {
   dialog = inject(ShipDialogService);
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
   #connectionStatus = signal<ConnectionStatus>('disconnected');
   #serverState = signal<ServerStatusDto | null>(null);
   #lastEventId = signal<number>(-1);

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, output, signal } fr
 import { FormsModule } from '@angular/forms';
 import { ShipFormFieldComponent, ShipSelectComponent } from '@ship-ui/core';
 import { finalize } from 'rxjs';
-import { DuplicatiServerService } from '../../../openapi';
+import { DuplicatiServer } from '../../../openapi';
 
 const UNIT_MAP = {
   Byte: 'B',
@@ -53,7 +53,7 @@ const SUBMISSION_UNIT_THRESHOLDS = [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ThrottleSettingsDialogComponent implements OnInit {
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
 
   closed = output<boolean>();
 

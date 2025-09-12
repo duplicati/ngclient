@@ -4,17 +4,17 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
-    ShipAlertComponent,
-    ShipButtonComponent,
-    ShipButtonGroupComponent,
-    ShipFormFieldComponent,
-    ShipIconComponent,
-    ShipProgressBarComponent,
-    ShipToggleComponent,
-    ShipTooltipDirective,
+  ShipAlertComponent,
+  ShipButtonComponent,
+  ShipButtonGroupComponent,
+  ShipFormFieldComponent,
+  ShipIconComponent,
+  ShipProgressBarComponent,
+  ShipToggleComponent,
+  ShipTooltipDirective,
 } from '@ship-ui/core';
 import { finalize, switchMap } from 'rxjs';
-import { DuplicatiServerService } from '../../core/openapi';
+import { DuplicatiServer } from '../../core/openapi';
 import { PasswordGeneratorService } from '../../core/services/password-generator.service';
 import { BackupsState } from '../../core/states/backups.state';
 import { validateIf, watchField } from '../../core/validators/custom.validators';
@@ -41,7 +41,7 @@ const fb = new FormBuilder();
 })
 export default class ExportComponent {
   #passwordGeneratorService = inject(PasswordGeneratorService);
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
   #route = inject(ActivatedRoute);
   #router = inject(Router);
   #httpClient = inject(HttpClient);

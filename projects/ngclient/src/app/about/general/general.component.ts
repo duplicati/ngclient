@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ShipButtonComponent, ShipIconComponent, ShipProgressBarComponent } from '@ship-ui/core';
 import { finalize, map } from 'rxjs';
-import { DuplicatiServerService } from '../../core/openapi';
+import { DuplicatiServer } from '../../core/openapi';
 import { ServerStateService } from '../../core/services/server-state.service';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 
@@ -14,7 +14,7 @@ import { SysinfoState } from '../../core/states/sysinfo.state';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class GeneralComponent {
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
   #serverState = inject(ServerStateService);
   #sysinfo = inject(SysinfoState);
 

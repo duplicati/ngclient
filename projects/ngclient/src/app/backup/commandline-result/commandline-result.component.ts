@@ -3,7 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ShipButtonComponent, ShipIconComponent } from '@ship-ui/core';
 import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
-import { CommandLineLogOutputDto, DuplicatiServerService } from '../../core/openapi';
+import { CommandLineLogOutputDto, DuplicatiServer } from '../../core/openapi';
 
 type Status = 'starting' | 'started' | 'finished' | 'aborted';
 
@@ -15,7 +15,7 @@ type Status = 'starting' | 'started' | 'finished' | 'aborted';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class CommandlineResultComponent {
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
   #route = inject(ActivatedRoute);
   #routeParamsSignal = toSignal(this.#route.params);
   runId = computed(() => this.#routeParamsSignal()?.['runId']);

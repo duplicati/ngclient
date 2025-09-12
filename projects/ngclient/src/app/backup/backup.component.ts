@@ -4,7 +4,7 @@ import { ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet } from '@ang
 import { ShipProgressBarComponent, ShipRadioComponent, ShipStepperComponent } from '@ship-ui/core';
 import { take } from 'rxjs';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
-import { DuplicatiServerService, GetBackupResultDto, SettingDto } from '../core/openapi';
+import { DuplicatiServer, GetBackupResultDto, SettingDto } from '../core/openapi';
 import { BackupsState } from '../core/states/backups.state';
 import { BackupState } from './backup.state';
 
@@ -28,7 +28,7 @@ export default class BackupComponent {
   #route = inject(ActivatedRoute);
   #backupState = inject(BackupState);
   #backupsState = inject(BackupsState); // List
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
 
   isDraft = this.#backupState.isDraft;
   isNew = this.#backupState.isNew;

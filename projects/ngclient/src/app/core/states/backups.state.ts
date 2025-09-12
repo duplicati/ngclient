@@ -2,12 +2,12 @@ import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { finalize, take, tap } from 'rxjs';
 import { randomUUID } from '../functions/crypto';
 import { localStorageSignal } from '../functions/localstorage-signal';
-import { DeleteApiV1BackupByIdData, DuplicatiServerService } from '../openapi';
+import { DeleteApiV1BackupByIdData, DuplicatiServer } from '../openapi';
 import { ServerStateService } from '../services/server-state.service';
 import { Subscribed } from '../types/subscribed';
 import { SysinfoState } from './sysinfo.state';
 
-export type BackupRes = Subscribed<ReturnType<DuplicatiServerService['getApiV1Backups']>>;
+export type BackupRes = Subscribed<ReturnType<DuplicatiServer['getApiV1Backups']>>;
 export type Backup = BackupRes[0];
 
 export type BackupDraftItem = {
@@ -104,7 +104,7 @@ export type TimeType = 'actual' | 'relative';
   providedIn: 'root',
 })
 export class BackupsState {
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
   #sysinfo = inject(SysinfoState);
   #serverState = inject(ServerStateService);
   #timestamp: number | null = null;
@@ -126,11 +126,12 @@ export class BackupsState {
   deletingBackup = this.#deletingBackup.asReadonly();
   draftBackups = this.#draftBackups.asReadonly();
 
-  #hasWebsocketBackupListUpdate = computed(() => this.#sysinfo.hasBackupListSubscribeOption() && this.#serverState.getConnectionMethod() === 'websocket');
+  #hasWebsocketBackupListUpdate = computed(
+    () => this.#sysinfo.hasBackupListSubscribeOption() && this.#serverState.getConnectionMethod() === 'websocket'
+  );
   #backupListUpdatedEffect = effect(() => {
     const backupList = this.#serverState.backupListState();
-    if (backupList)
-      this.#backups.set(backupList);
+    if (backupList) this.#backups.set(backupList);
   });
 
   addDraftBackup(backup: BackupDraft) {
@@ -150,13 +151,10 @@ export class BackupsState {
   setOrderBy(orderBy: OrderBy) {
     this.#orderBy.set(orderBy);
     // Prevent fetching backups if the connection method is not yet set
-    if (!this.#serverState.isConnectionMethodSet())
-      return;
+    if (!this.#serverState.isConnectionMethodSet()) return;
 
-    if (this.#hasWebsocketBackupListUpdate())
-      this.#serverState.subscribe('backuplist', orderBy);
-    else
-      this.getBackups(true);
+    if (this.#hasWebsocketBackupListUpdate()) this.#serverState.subscribe('backuplist', orderBy);
+    else this.getBackups(true);
   }
 
   setTimeType(timeType: TimeType) {
@@ -173,8 +171,7 @@ export class BackupsState {
 
   getBackups(forceRefresh = false) {
     // Prevent fetching backups if the connection method is not yet set
-    if (!this.#serverState.isConnectionMethodSet())
-      return;
+    if (!this.#serverState.isConnectionMethodSet()) return;
 
     // Subscribe to backup list updates via WebSocket if the server supports it
     if (this.#hasWebsocketBackupListUpdate()) {

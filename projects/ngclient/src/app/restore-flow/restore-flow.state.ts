@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ShipDialogService } from '@ship-ui/core';
 import { catchError, finalize, forkJoin, Observable, retry, switchMap, take, throwError, timer } from 'rxjs';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
-import { DuplicatiServerService, GetBackupResultDto, ListFilesetsResponseDto } from '../core/openapi';
+import { DuplicatiServer, GetBackupResultDto, ListFilesetsResponseDto } from '../core/openapi';
 import { SysinfoState } from '../core/states/sysinfo.state';
 import { createRestoreOptionsForm } from './options/options.component';
 import { createEncryptionForm } from './restore-encryption/restore-encryption.component';
@@ -27,7 +27,7 @@ export class RestoreFlowState {
   #route = inject(ActivatedRoute);
   #sysinfo = inject(SysinfoState);
   #dialog = inject(ShipDialogService);
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
 
   backupId = signal<string | null>(null);
   backup = signal<GetBackupResultDto | null>(null);
@@ -60,7 +60,7 @@ export class RestoreFlowState {
     if (testSignalValue === 'testing' || lastTargetUrl === null || lastTargetUrl === newUrl) return;
     this.#testSignal.set('');
     this.#testErrorMessage.set(null);
-  });  
+  });
 
   init(id: 'string', isFileRestore = false) {
     this.backupId.set(id);
@@ -88,25 +88,27 @@ export class RestoreFlowState {
   submit() {
     this.isSubmitting.set(true);
     const id = this.backupId();
-    const isTemporary = this.backup()?.Backup?.IsTemporary ?? false;    
+    const isTemporary = this.backup()?.Backup?.IsTemporary ?? false;
 
     if (isTemporary) {
       // If this is a temporary backup, we have a partial database created for the file picking step.
       // We need to create a fresh temporary backup with no database, so the restore flow creates a partial database for the restore.
       this.#dupServer
-      .postApiV1BackupByIdCopytotemp({
-        id: this.backupId() ?? ''
-      })
-      .subscribe({
-        next: (res) => {
-          this.#submitRestore(res.ID ?? '');
-        },
-        error: (err) => this.showErrorDialog($localize`An error occurred while copying the backup to a temporary location: ${err.message}`),
-      });
+        .postApiV1BackupByIdCopytotemp({
+          id: this.backupId() ?? '',
+        })
+        .subscribe({
+          next: (res) => {
+            this.#submitRestore(res.ID ?? '');
+          },
+          error: (err) =>
+            this.showErrorDialog(
+              $localize`An error occurred while copying the backup to a temporary location: ${err.message}`
+            ),
+        });
     } else {
       this.#submitRestore(id ?? '');
     }
-
   }
 
   showErrorDialog(message: string) {
@@ -117,8 +119,7 @@ export class RestoreFlowState {
         confirmText: $localize`OK`,
         cancelText: undefined,
       },
-      closed: (_) => {
-      },
+      closed: (_) => {},
     });
   }
 
@@ -134,7 +135,10 @@ export class RestoreFlowState {
       .postApiV1BackupByIdRestore({
         id: id ?? '',
         requestBody: {
-          paths: selectFilesFormValue.filesToRestore?.split('\0').map((x) =>  x.endsWith('/') || x.endsWith('\\') ? `${x}*` : x) ?? [],
+          paths:
+            selectFilesFormValue.filesToRestore
+              ?.split('\0')
+              .map((x) => (x.endsWith('/') || x.endsWith('\\') ? `${x}*` : x)) ?? [],
           passphrase: selectFilesFormValue.passphrase ?? null,
           time: selectedOption?.Time,
           restore_path: optionsValue.restoreFromPath,
@@ -219,12 +223,10 @@ export class RestoreFlowState {
                   cancelText: undefined,
                 },
                 closed: (_) => {
-                  this.#router.navigate([
-                    '/backup', id, 'database'
-                  ]);
+                  this.#router.navigate(['/backup', id, 'database']);
                 },
               });
-              
+
               return;
             }
 

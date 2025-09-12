@@ -10,7 +10,7 @@ import {
 } from '@ship-ui/core';
 import LogoComponent from '../core/components/logo/logo.component';
 import ServiceHubComponent from '../core/components/service-hub/service-hub.component';
-import { DuplicatiServerService } from '../core/openapi';
+import { DuplicatiServer } from '../core/openapi';
 import { AppAuthState } from '../core/states/app-auth.state';
 import { BackupsState } from '../core/states/backups.state';
 import { RelayconfigState } from '../core/states/relayconfig.state';
@@ -38,7 +38,7 @@ import { LayoutState } from './layout.state';
 })
 export default class LayoutComponent {
   #layoutState = inject(LayoutState);
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
   #backupsState = inject(BackupsState);
   #relayConfigState = inject(RelayconfigState);
   #dialog = inject(ShipDialogService);

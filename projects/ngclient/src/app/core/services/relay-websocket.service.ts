@@ -33,7 +33,7 @@ export type RequestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 type CommandRequest = {
   method: RequestMethod;
   path: string;
-  body: string | null;
+  requestBody: string | null;
   headers: { [key: string]: string } | null;
 };
 
@@ -45,7 +45,7 @@ type PromiseResolver = {
 
 export type CommandResponse = {
   code: number;
-  body: string | null;
+  requestBody: string | null;
   headers: { [key: string]: string } | null;
 };
 
@@ -182,7 +182,7 @@ export class RelayWebsocketService {
             return;
           } else {
             const payload = JSON.parse(data.payload ?? '') as CommandResponse;
-            payload.body = payload?.body == null ? null : this.utf8Atob(payload.body);
+            payload.requestBody = payload?.requestBody == null ? null : this.utf8Atob(payload.requestBody);
             f.resolve(payload);
           }
 
@@ -219,7 +219,7 @@ export class RelayWebsocketService {
     clientId: string,
     method: RequestMethod,
     path: string,
-    body: string | null,
+    requestBody: string | null,
     headers: { [key: string]: string } | null,
     timeout: number = 5000
   ) {
@@ -234,7 +234,7 @@ export class RelayWebsocketService {
       const request: CommandRequest = {
         method,
         path,
-        body,
+        requestBody,
         headers,
       };
 

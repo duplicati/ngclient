@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@ang
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ShipButtonComponent, ShipDialogComponent, ShipIconComponent } from '@ship-ui/core';
 import { map } from 'rxjs';
-import { DuplicatiServerService, LicenseDto } from '../../core/openapi';
+import { DuplicatiServer, LicenseDto } from '../../core/openapi';
 
 type Data = {
   name: string;
@@ -20,7 +20,7 @@ type Data = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class LibrariesComponent {
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
 
   licenses = toSignal(
     this.#dupServer.getApiV1Licenses().pipe(

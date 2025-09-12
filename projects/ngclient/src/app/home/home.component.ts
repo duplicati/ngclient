@@ -19,7 +19,7 @@ import { getConfigurationByKey } from '../backup/destination/destination.config-
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { StatusBarState } from '../core/components/status-bar/status-bar.state';
 import { localStorageSignal } from '../core/functions/localstorage-signal';
-import { BackupAndScheduleOutputDto, DuplicatiServerService } from '../core/openapi';
+import { BackupAndScheduleOutputDto, DuplicatiServer } from '../core/openapi';
 import { BytesPipe } from '../core/pipes/byte.pipe';
 import { DurationFormatPipe } from '../core/pipes/duration.pipe';
 import { RelativeTimePipe } from '../core/pipes/relative-time.pipe';
@@ -54,7 +54,7 @@ const DestinationOverrides: Record<string, { Display: string | null; Icon: strin
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class HomeComponent {
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
   #statusBarState = inject(StatusBarState);
   #backupsState = inject(BackupsState);
 

@@ -2,15 +2,10 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, signal } f
 import { rxResource } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import {
-    ShipButtonComponent,
-    ShipCheckboxComponent,
-    ShipDialogService,
-    ShipIconComponent,
-} from '@ship-ui/core';
+import { ShipButtonComponent, ShipCheckboxComponent, ShipDialogService, ShipIconComponent } from '@ship-ui/core';
 import { catchError, finalize, map, of } from 'rxjs';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
-import { DuplicatiServerService } from '../../core/openapi';
+import { DuplicatiServer } from '../../core/openapi';
 import { BytesPipe } from '../../core/pipes/byte.pipe';
 import { BackupsState } from '../../core/states/backups.state';
 
@@ -22,7 +17,7 @@ import { BackupsState } from '../../core/states/backups.state';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class DeleteBackupComponent {
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
   #dialog = inject(ShipDialogService);
   #backupsState = inject(BackupsState);
   #router = inject(Router);

@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, finalize, map, Observable, of, take, tap } from 'rxjs';
-import { AccessTokenOutputDto, DuplicatiServerService, PostApiV1AuthRefreshData } from '../openapi';
+import { AccessTokenOutputDto, DuplicatiServer, PostApiV1AuthRefreshData } from '../openapi';
 import { RelayconfigState } from './relayconfig.state';
 
 export const dummytoken = 'PROXY_AUTHED_FAKE_TOKEN';
@@ -15,7 +15,7 @@ const LOCAL_STORAGE_REFRESH_NONCE_KEY = 'v1:persist:duplicati:refreshNonce';
 export class AppAuthState {
   #router = inject(Router);
   #http = inject(HttpClient);
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
   #relayConfigState = inject(RelayconfigState);
   #token = signal<string | null>(null);
   #isLoggingOut = signal(false);
@@ -36,14 +36,14 @@ export class AppAuthState {
     }
   }
 
-  private getRefreshNonceBody(): { body: PostApiV1AuthRefreshData | undefined; local: boolean } {
+  private getRefreshNonceBody(): { requestBody: PostApiV1AuthRefreshData | undefined; local: boolean } {
     // Prefer session storage for nonce, if present
     // Note that the local storage is for persistent login and is shared across tabs, so we cannot cache it in a signal
     const sessionStoredNonce = sessionStorage.getItem(SESSION_STORAGE_REFRESH_NONCE_KEY);
     const localStoredNonce = localStorage.getItem(LOCAL_STORAGE_REFRESH_NONCE_KEY);
     const storedNonce = sessionStoredNonce || localStoredNonce;
     const body = storedNonce ? { requestBody: { Nonce: storedNonce } } : undefined;
-    return { body, local: storedNonce === localStoredNonce };
+    return { requestBody: body, local: storedNonce === localStoredNonce };
   }
 
   login(pass: string, rememberMe: boolean) {
@@ -78,8 +78,8 @@ export class AppAuthState {
       });
     }
 
-    const { body, local } = this.getRefreshNonceBody();
-    return this.#dupServer.postApiV1AuthRefresh(body).pipe(
+    const { requestBody, local } = this.getRefreshNonceBody();
+    return this.#dupServer.postApiV1AuthRefresh(requestBody).pipe(
       take(1),
       tap((res) => {
         if (res.AccessToken) {
@@ -113,13 +113,13 @@ export class AppAuthState {
 
   logout() {
     this.#isLoggingOut.set(true);
-    const { body, local } = this.getRefreshNonceBody();
+    const { requestBody, local } = this.getRefreshNonceBody();
 
     sessionStorage.removeItem(SESSION_STORAGE_REFRESH_NONCE_KEY);
     if (local) localStorage.removeItem(LOCAL_STORAGE_REFRESH_NONCE_KEY);
 
     this.#dupServer
-      .postApiV1AuthRefreshLogout(body)
+      .postApiV1AuthRefreshLogout(requestBody)
       .pipe(
         take(1),
         finalize(() => {

@@ -1,15 +1,10 @@
 import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import {
-    ShipCardComponent,
-    ShipIconComponent,
-    ShipProgressBarComponent,
-    ShipSpinnerComponent,
-} from '@ship-ui/core';
+import { ShipCardComponent, ShipIconComponent, ShipProgressBarComponent, ShipSpinnerComponent } from '@ship-ui/core';
 import LogsLiveComponent from '../../about/logs/logs-live/logs-live.component';
 import { StatusBarState } from '../../core/components/status-bar/status-bar.state';
-import { DuplicatiServerService, GetTaskStateDto } from '../../core/openapi';
+import { DuplicatiServer, GetTaskStateDto } from '../../core/openapi';
 import { BytesPipe } from '../../core/pipes/byte.pipe';
 import { ServerStateService } from '../../core/services/server-state.service';
 import { ExtendedNotificationDto, NotificationsComponent } from '../../notifications/notifications.component';
@@ -32,7 +27,7 @@ import { RestoreFlowState } from '../restore-flow.state';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class RestoreProgressComponent implements OnInit {
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
   #serverState = inject(ServerStateService);
   #statusBarState = inject(StatusBarState);
   #restoreFlowState = inject(RestoreFlowState);
@@ -74,25 +69,23 @@ export default class RestoreProgressComponent implements OnInit {
     const taskid = this.#route.snapshot.params['taskid']?.toString() ?? '';
     this.#dupServer.getApiV1TaskByTaskid({ taskid }).subscribe({
       next: (res) => {
-        if (res.TaskStarted)
-          this.#taskStarted = new Date(res.TaskStarted);
+        if (res.TaskStarted) this.#taskStarted = new Date(res.TaskStarted);
         if (!res.TaskFinished && res.ID) {
-            this.#waitForTaskToComplete(res.ID);
-            return;
+          this.#waitForTaskToComplete(res.ID);
+          return;
         }
         this.#setTaskResult(res);
       },
       error: (err) => {
         console.error('Error fetching task:', err);
         this.restoreResult.set('error');
-        alert('Failed to fetch task details. Please try again later.');        
+        alert('Failed to fetch task details. Please try again later.');
       },
-    })      
+    });
   }
 
   #waitForTaskToComplete(taskId: number) {
-    this.#serverState.waitForTaskToComplete(taskId)
-    .subscribe((res) => {
+    this.#serverState.waitForTaskToComplete(taskId).subscribe((res) => {
       this.#setTaskResult(res);
     });
   }

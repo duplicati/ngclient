@@ -5,7 +5,7 @@ import { ShipButtonComponent, ShipFormFieldComponent, ShipIconComponent } from '
 import { finalize } from 'rxjs';
 import { OptionsListComponent } from '../../backup/options/options-list/options-list.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
-import { DuplicatiServerService, SettingInputDto } from '../../core/openapi';
+import { DuplicatiServer, SettingInputDto } from '../../core/openapi';
 import { RestoreFlowState } from '../restore-flow.state';
 
 const fb = new FormBuilder();
@@ -31,7 +31,7 @@ export const createEncryptionForm = () => {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class RestoreEncryptionComponent {
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
   #restoreFlowState = inject(RestoreFlowState);
   #router = inject(Router);
   #route = inject(ActivatedRoute);
@@ -50,7 +50,7 @@ export default class RestoreEncryptionComponent {
 
     const pass = this.encryptionForm.value?.passphrase ?? null;
 
-    let settings: SettingInputDto[] = [];      
+    let settings: SettingInputDto[] = [];
 
     if (pass) {
       settings.push({ Name: '--passphrase', Value: pass });
@@ -67,7 +67,6 @@ export default class RestoreEncryptionComponent {
         settings.push({ Name: name, Value: setting.Value ?? '' });
       }
     });
-
 
     this.#dupServer
       .postApiV1Backups({

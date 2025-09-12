@@ -1,7 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { finalize, Observable, tap } from 'rxjs';
 import { FormView } from '../../backup/destination/destination.config-utilities';
-import { ArgumentType, DuplicatiServerService, ICommandLineArgument, SystemInfoDto } from '../openapi';
+import { ArgumentType, DuplicatiServer, ICommandLineArgument, SystemInfoDto } from '../openapi';
 
 type FilterGroups = {
   FilterGroups: {
@@ -12,7 +12,7 @@ type FilterGroups = {
   providedIn: 'root',
 })
 export class SysinfoState {
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
 
   isLoaded = signal(false);
   systemInfo = signal<SystemInfoDto | null>(null);

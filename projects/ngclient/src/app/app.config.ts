@@ -25,6 +25,7 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(withFetch(), withInterceptors([httpInterceptorWebsocketRelay, httpInterceptor])),
+
     LOCALSTORAGE,
 
     { provide: ENVIRONMENT_TOKEN, useValue: environment },

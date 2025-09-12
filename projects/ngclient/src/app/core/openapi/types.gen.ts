@@ -34,15 +34,15 @@ export type BackupDto = {
     ID: (string) | null;
     Name: (string) | null;
     Description: (string) | null;
-    Tags: Array<(string)> | null;
+    Tags: Array<string> | null;
     TargetURL: (string) | null;
     DBPath: (string) | null;
     DBPathExists: boolean;
-    Sources: Array<(string)> | null;
+    Sources: Array<string> | null;
     Settings: Array<SettingDto> | null;
     Filters: Array<FilterDto> | null;
     Metadata: {
-        [key: string]: (string);
+        [key: string]: string;
     } | null;
     IsTemporary: boolean;
     IsUnencryptedOrPassphraseStored: boolean;
@@ -52,13 +52,13 @@ export type BackupInputDto = {
     Name?: (string) | null;
     Description?: (string) | null;
     DBPath?: (string) | null;
-    Tags?: Array<(string)> | null;
+    Tags?: Array<string> | null;
     TargetURL?: (string) | null;
-    Sources?: Array<(string)> | null;
+    Sources?: Array<string> | null;
     Settings?: Array<SettingInputDto> | null;
     Filters?: Array<FilterInputDto> | null;
     Metadata?: {
-        [key: string]: (string);
+        [key: string]: string;
     } | null;
 };
 
@@ -71,7 +71,7 @@ export type CommandLineLogOutputDto = {
     Pagesize?: number;
     Offset?: number;
     Count?: number;
-    Items?: Array<(string)> | null;
+    Items?: Array<string> | null;
     Finished?: boolean;
     Started?: boolean;
 };
@@ -101,7 +101,7 @@ export type DeleteBackupOutputDto = {
 export type DestinationTestRequestDto = {
     DestinationUrl: (string) | null;
     Options: {
-        [key: string]: (string);
+        [key: string]: string;
     } | null;
     AutoCreate: boolean;
 };
@@ -126,8 +126,8 @@ export type DestinationTestResult = {
 
 export type ExportArgsOnlyDto = {
     Backend?: (string) | null;
-    Arguments?: Array<(string)> | null;
-    Options?: Array<(string)> | null;
+    Arguments?: Array<string> | null;
+    Options?: Array<string> | null;
 };
 
 export type ExportCommandlineDto = {
@@ -146,7 +146,7 @@ export type FilterDto = {
 
 export type FilterGroupsDto = {
     FilterGroups?: {
-        [key: string]: Array<(string)>;
+        [key: string]: Array<string>;
     } | null;
 };
 
@@ -160,7 +160,7 @@ export type GetBackupResultDto = {
     Schedule?: ScheduleDto;
     Backup?: BackupDto;
     DisplayNames?: {
-        [key: string]: (string);
+        [key: string]: string;
     } | null;
 };
 
@@ -179,12 +179,12 @@ export type GetTaskStateDto = {
 };
 
 export type ICommandLineArgument = {
-    Aliases?: Array<(string)> | null;
+    Aliases?: Array<string> | null;
     LongDescription?: (string) | null;
     Name?: (string) | null;
     ShortDescription?: (string) | null;
     Type?: ArgumentType;
-    ValidValues?: Array<(string)> | null;
+    ValidValues?: Array<string> | null;
     DefaultValue?: (string) | null;
     readonly Typename?: (string) | null;
     Deprecated?: boolean;
@@ -317,7 +317,7 @@ export type ListFileVersionsRequestDto = {
     PageSize: (number) | null;
     Page: (number) | null;
     BackupId: (string) | null;
-    Paths: Array<(string)> | null;
+    Paths: Array<string> | null;
 };
 
 export type ListFolderContentItemDto = {
@@ -332,7 +332,7 @@ export type ListFolderContentRequestDto = {
     PageSize: (number) | null;
     Page: (number) | null;
     BackupId: (string) | null;
-    Paths: Array<(string)> | null;
+    Paths: Array<string> | null;
     Time: (string) | null;
 };
 
@@ -417,11 +417,11 @@ export type RepairInputDto = {
     only_paths?: (boolean) | null;
     time?: (string) | null;
     version?: (string) | null;
-    paths?: Array<(string)> | null;
+    paths?: Array<string> | null;
 };
 
 export type RestoreInputDto = {
-    paths?: Array<(string)> | null;
+    paths?: Array<string> | null;
     passphrase?: (string) | null;
     time?: (string) | null;
     restore_path?: (string) | null;
@@ -432,7 +432,7 @@ export type RestoreInputDto = {
 
 export type ScheduleDto = {
     ID: number;
-    Tags: Array<(string)> | null;
+    Tags: Array<string> | null;
     Time: string;
     Repeat: (string) | null;
     LastRun: string;
@@ -442,7 +442,7 @@ export type ScheduleDto = {
 
 export type ScheduleInputDto = {
     ID?: number;
-    Tags?: Array<(string)> | null;
+    Tags?: Array<string> | null;
     Time?: (string) | null;
     Repeat?: (string) | null;
     LastRun?: (string) | null;
@@ -464,8 +464,8 @@ export type SearchEntriesRequestDto = {
     PageSize: (number) | null;
     Page: (number) | null;
     BackupId: (string) | null;
-    Paths: Array<(string)> | null;
-    Filters: Array<(string)> | null;
+    Paths: Array<string> | null;
+    Filters: Array<string> | null;
     Time: (string) | null;
 };
 
@@ -570,14 +570,14 @@ export type SystemInfoDto = {
     ServerModules: Array<unknown> | null;
     SecretProviderModules: Array<IDynamicModule> | null;
     UsingAlternateUpdateURLs: boolean;
-    LogLevels: Array<(string)> | null;
+    LogLevels: Array<string> | null;
     SpecialFolders: Array<SpecialFolderDto> | null;
     BrowserLocale: LocaleDto;
     SupportedLocales: Array<LocaleDto> | null;
     BrowserLocaleSupported: boolean;
     TimeZones: Array<TimeZoneDto> | null;
-    APIExtensions: Array<(string)> | null;
-    APIScopes: Array<(string)> | null;
+    APIExtensions: Array<string> | null;
+    APIScopes: Array<string> | null;
     DefaultOAuthURL: (string) | null;
     DefaultOAuthURLv2: (string) | null;
 };
@@ -622,14 +622,14 @@ export type UpdatePollerStates = 'Waiting' | 'Checking' | 'Downloading';
 export type WebModuleOutputDto = {
     Status?: (string) | null;
     Result?: {
-        [key: string]: (string);
+        [key: string]: string;
     } | null;
 };
 
-export type GetApiV1CommandlineResponse = (Array<(string)>);
+export type GetApiV1CommandlineResponse = (Array<string>);
 
 export type PostApiV1CommandlineData = {
-    requestBody: Array<(string)>;
+    requestBody: Array<string>;
 };
 
 export type PostApiV1CommandlineResponse = (CommandlineTaskStartedDto);
@@ -812,7 +812,7 @@ export type PostApiV1RemoteoperationCreateData = {
 export type PostApiV1RemoteoperationCreateResponse = (unknown);
 
 export type GetApiV1ServersettingsResponse = ({
-    [key: string]: (string);
+    [key: string]: string;
 });
 
 export type PatchApiV1ServersettingsData = {
@@ -877,7 +877,7 @@ export type PostApiV1TaskByTaskidAbortData = {
 
 export type PostApiV1TaskByTaskidAbortResponse = (unknown);
 
-export type GetApiV1UisettingsResponse = (Array<(string)>);
+export type GetApiV1UisettingsResponse = (Array<string>);
 
 export type PostApiV1UisettingsData = {
     requestBody: UpdateCertificateInputDto;
@@ -890,12 +890,12 @@ export type GetApiV1UisettingsBySchemeData = {
 };
 
 export type GetApiV1UisettingsBySchemeResponse = ({
-    [key: string]: (string);
+    [key: string]: string;
 });
 
 export type PatchApiV1UisettingsBySchemeData = {
     requestBody: {
-        [key: string]: (string);
+        [key: string]: string;
     };
     scheme: string;
 };
@@ -907,7 +907,7 @@ export type PostApiV1UpdatesCheckResponse = (unknown);
 export type PostApiV1WebmoduleByModulekeyData = {
     modulekey: string;
     requestBody: {
-        [key: string]: (string);
+        [key: string]: string;
     };
 };
 

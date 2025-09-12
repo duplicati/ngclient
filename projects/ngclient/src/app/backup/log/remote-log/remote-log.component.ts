@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, inject, input, signal } from '@angu
 import { rxResource } from '@angular/core/rxjs-interop';
 import { ShipIconComponent, ShipProgressBarComponent } from '@ship-ui/core';
 import { map } from 'rxjs';
-import { DuplicatiServerService } from '../../../core/openapi';
+import { DuplicatiServer } from '../../../core/openapi';
 
 type Data = {
   Hash: string;
@@ -36,7 +36,7 @@ type RemoteLogEntryEvaluated = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RemoteLogComponent {
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
 
   backupId = input.required<string>();
 

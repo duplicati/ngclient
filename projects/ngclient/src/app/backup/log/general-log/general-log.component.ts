@@ -1,15 +1,10 @@
 import { DatePipe, JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, input, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import {
-    ShipButtonComponent,
-    ShipDividerComponent,
-    ShipIconComponent,
-    ShipProgressBarComponent,
-} from '@ship-ui/core';
+import { ShipButtonComponent, ShipDividerComponent, ShipIconComponent, ShipProgressBarComponent } from '@ship-ui/core';
 import { map } from 'rxjs';
 import ToggleCardComponent from '../../../core/components/toggle-card/toggle-card.component';
-import { DuplicatiServerService } from '../../../core/openapi';
+import { DuplicatiServer } from '../../../core/openapi';
 import { BytesPipe } from '../../../core/pipes/byte.pipe';
 import { DurationFormatPipe } from '../../../core/pipes/duration.pipe';
 import { BackupResult } from '../log.types';
@@ -50,7 +45,7 @@ type LogEntryEvaluated = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GeneralLogComponent {
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
   #sizePipe = new BytesPipe();
   #durationPipe = new DurationFormatPipe();
 
@@ -90,10 +85,8 @@ export class GeneralLogComponent {
     if (item.data?.MainOperation == 'Backup') {
       if (item.data?.Duration) {
         let durationString = this.#durationPipe.transform(item.data?.Duration, true) as string;
-        if (durationString.startsWith('0h '))
-          durationString = durationString.slice(3); 
-        if (durationString.startsWith('0m '))
-          durationString = durationString.slice(3);
+        if (durationString.startsWith('0h ')) durationString = durationString.slice(3);
+        if (durationString.startsWith('0m ')) durationString = durationString.slice(3);
 
         summary.push($localize`took ${durationString}`);
       }

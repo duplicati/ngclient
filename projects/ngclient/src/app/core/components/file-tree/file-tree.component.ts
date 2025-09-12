@@ -25,7 +25,7 @@ import {
 } from '@ship-ui/core';
 import { catchError, finalize, forkJoin, map, Observable, of } from 'rxjs';
 import {
-  DuplicatiServerService,
+  DuplicatiServer,
   GetApiV1BackupByIdFilesData,
   GetApiV1BackupByIdFilesResponse,
   PostApiV1FilesystemResponse,
@@ -99,7 +99,7 @@ const ROOTPATH = '/';
   },
 })
 export default class FileTreeComponent {
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
   #sysInfo = inject(SysinfoState);
   #dialog = inject(ShipDialogService);
 

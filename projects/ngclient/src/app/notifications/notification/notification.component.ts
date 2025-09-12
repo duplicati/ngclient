@@ -1,15 +1,15 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-    ShipAlertComponent,
-    ShipAlertService,
-    ShipAlertType,
-    ShipButtonComponent,
-    ShipDialogService,
-    ShipProgressBarComponent,
+  ShipAlertComponent,
+  ShipAlertService,
+  ShipAlertType,
+  ShipButtonComponent,
+  ShipDialogService,
+  ShipProgressBarComponent,
 } from '@ship-ui/core';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
-import { DuplicatiServerService, NotificationType } from '../../core/openapi';
+import { DuplicatiServer, NotificationType } from '../../core/openapi';
 import { ExtendedNotificationDto } from '../notifications.component';
 import { NotificationsState } from '../notifications.state';
 
@@ -32,14 +32,14 @@ export class NotificationComponent {
   #dialog = inject(ShipDialogService);
   #snackbar = inject(ShipAlertService);
   #notificationState = inject(NotificationsState);
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
   #generatedDownloadLink = signal<string | null>(null);
 
   serverState = this.#notificationState.serverState;
 
   index = input.required<number>();
   notification = input.required<ExtendedNotificationDto>();
-  
+
   downloadLink = computed(() => {
     return this.#generatedDownloadLink() || this.notification().DownloadLink || '';
   });
@@ -128,7 +128,7 @@ export class NotificationComponent {
           }
 
           const link = `${location.origin}/api/v1/bugreport/${id}?token=${res.Token}`;
-            
+
           item.DownloadLink = link;
           this.#generatedDownloadLink.set(link);
 
@@ -146,8 +146,9 @@ export class NotificationComponent {
     a.download = '';
     a.style.display = 'none';
     document.body.appendChild(a);
-    try { a.click();} 
-    catch { }
+    try {
+      a.click();
+    } catch {}
     document.body.removeChild(a);
   }
 }

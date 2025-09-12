@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { ShipButtonComponent, ShipIconComponent, ShipTableComponent } from '@ship-ui/core';
 import { finalize } from 'rxjs';
-import { DuplicatiServerService } from '../../../core/openapi';
+import { DuplicatiServer } from '../../../core/openapi';
 
 const COLUMNS = ['BackupID', 'Timestamp', 'Message', 'actions'] as const;
 
@@ -26,7 +26,7 @@ type Pagination = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class LogsStoredComponent {
-  #dupServer = inject(DuplicatiServerService);
+  #dupServer = inject(DuplicatiServer);
 
   displayedColumns = signal(COLUMNS);
   openRowIndex = signal<number | null>(null);
