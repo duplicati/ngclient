@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipButtonComponent, ShipFormFieldComponent, ShipIconComponent, ShipSelectComponent } from '@ship-ui/core';
-import { SizeComponent } from '../../core/components/size/size.component';
+import { SIZE_OPTIONS, SizeComponent, splitSize } from '../../core/components/size/size.component';
 import { TimespanComponent } from '../../core/components/timespan/timespan.component';
 import { BackupState } from '../backup.state';
 import { OptionsListComponent } from './options-list/options-list.component';
 
 export type RetentionType = 'all' | 'time' | 'versions' | 'smart' | 'custom';
-const SIZE_OPTIONS = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
+
 const RETENTION_OPTIONS: { value: RetentionType; name: string }[] = [
   {
     value: 'all',
@@ -39,13 +39,14 @@ const MinVolumeSize = 1024 * 1024 * 5; // 5MiB
   selector: 'app-advanced-options-settings',
   imports: [
     FormsModule,
-    ReactiveFormsModule,
+
     OptionsListComponent,
+    SizeComponent,
+    TimespanComponent,
+
     ShipButtonComponent,
     ShipIconComponent,
     ShipSelectComponent,
-    SizeComponent,
-    TimespanComponent,
     ShipFormFieldComponent,
   ],
   templateUrl: './options.component.html',
@@ -58,34 +59,25 @@ export default class OptionsComponent {
   #route = inject(ActivatedRoute);
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
 
-  selectedOptions = this.#backupState.selectedOptions;
-  nonSelectedOptions = this.#backupState.nonSelectedOptions;
   isSubmitting = this.#backupState.isSubmitting;
   settings = this.#backupState.settings;
   optionsFields = this.#backupState.optionsFields;
   applicationOptions = this.#backupState.applicationOptions;
 
   retentionOptions = signal(RETENTION_OPTIONS);
-
-  sizeSplit = computed(() => {
-    const value = this.optionsFields.remoteVolumeSize();
-    const match = value.match(/^(\d+)(bytes|kb|mb|gb|tb|pb|b)$/i);
-
-    return {
-      value: match ? parseInt(match[1], 10) : 0,
-      unit: match ? match[2].toUpperCase() : 'MB',
-    };
-  });
-
   exceededVolumeSize = computed(() => {
-    const currentSize = this.sizeSplit().value;
-    const currentUnit = this.sizeSplit().unit;
+    const { size, unit } = splitSize(this.optionsFields.remoteVolumeSize());
 
-    if (currentSize === null || currentSize === undefined || currentUnit === null || currentUnit === undefined) {
+    if (size === null || size === undefined || unit === null || unit === undefined) {
       return false;
     }
 
-    const current = currentSize * Math.pow(1024, SIZE_OPTIONS.indexOf(currentUnit));
+    const current =
+      size *
+      Math.pow(
+        1024,
+        SIZE_OPTIONS.findIndex((x) => x.value === unit)
+      );
     return current > MaxVolumeSize || current < MinVolumeSize;
   });
 

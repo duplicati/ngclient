@@ -4,7 +4,7 @@ import { ShipFormFieldComponent, ShipSelectComponent } from '@ship-ui/core';
 
 const PER_SECOND_FIELDS = ['throttle-upload', 'throttle-download'];
 
-const SIZE_OPTIONS = [
+export const SIZE_OPTIONS = [
   // {
   //   value: 'B',
   //   label: 'Bytes',

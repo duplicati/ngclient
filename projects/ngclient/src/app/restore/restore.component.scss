@@ -36,3 +36,15 @@ sh-card {
     gap: p2r(4);
   }
 }
+
+.actionable {
+  cursor: pointer;
+
+  &:after {
+    transition: inset 100ms linear;
+  }
+
+  &:hover {
+    --card-shp: 0;
+  }
+}

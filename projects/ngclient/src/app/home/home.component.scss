@@ -71,11 +71,6 @@ sh-card {
     width: 100%;
     max-width: 40%;
 
-    img {
-      width: p2r(20);
-      height: p2r(20);
-    }
-
     h3 {
       display: flex;
       align-items: center;
@@ -95,6 +90,11 @@ sh-card {
       }
     }
   }
+}
+
+.provider-icon {
+  width: p2r(20);
+  height: p2r(20);
 }
 
 .actions {
@@ -125,5 +125,17 @@ sh-card {
   &.sort-desc sh-icon.desc {
     display: block;
     color: var(--base-12);
+  }
+}
+
+.actionable {
+  cursor: pointer;
+
+  &:after {
+    transition: inset 100ms linear;
+  }
+
+  &:hover {
+    --card-shp: 0;
   }
 }
