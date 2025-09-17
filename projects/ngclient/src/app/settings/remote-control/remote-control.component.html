@@ -38,5 +38,16 @@
 
       <button type="button" shButton class="raised error" (click)="delete()" i18n>Delete remote control setup</button>
     }
+
+    @if (additionalReportingUrl() !== '') {
+      <sh-chip class="reporting-url primary simple" (click)="copyReportingUrl()">
+        Reporting configured by server
+        @if (copiedReportingUrl() === true) {
+          <sh-icon>check</sh-icon>
+        } @else {
+          <sh-icon>copy</sh-icon>
+        }
+      </sh-chip>
+    }
   </div>
 }

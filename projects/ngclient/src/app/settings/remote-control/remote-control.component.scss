@@ -18,3 +18,9 @@
     flex: 1 0;
   }
 }
+
+.reporting-url {
+  cursor: pointer;
+  user-select: none;
+  margin-top: p2r(4);
+}

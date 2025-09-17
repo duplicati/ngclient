@@ -1,21 +1,29 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ShipButtonComponent, ShipFormFieldComponent } from '@ship-ui/core';
+import { ShipButtonComponent, ShipChipComponent, ShipFormFieldComponent, ShipIconComponent } from '@ship-ui/core';
+import { ServerSettingsService } from '../server-settings.service';
 import { RemoteControlState } from './remote-control.state';
 
 @Component({
   selector: 'app-remote-control',
-  imports: [FormsModule, ShipFormFieldComponent, ShipButtonComponent],
+  imports: [FormsModule, ShipFormFieldComponent, ShipButtonComponent, ShipChipComponent, ShipIconComponent],
   templateUrl: './remote-control.component.html',
   styleUrl: './remote-control.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RemoteControlComponent {
   #remoteControlState = inject(RemoteControlState);
+  #serverSettingsService = inject(ServerSettingsService);
 
   state = this.#remoteControlState.state;
   claimUrl = this.#remoteControlState.claimUrl;
   registerUrl = this.#remoteControlState.registerUrl;
+  additionalReportingUrl = computed(() => {
+    const settings = this.#serverSettingsService.serverSettings();
+    return settings ? settings['additional-report-url'] || '' : '';
+  });
+
+  copiedReportingUrl = signal(false);
 
   ngOnInit() {
     this.#remoteControlState.refreshRemoteControlStatus();
@@ -39,5 +47,14 @@ export class RemoteControlComponent {
 
   delete() {
     this.#remoteControlState.deleteRemoteControl();
+  }
+
+  copyReportingUrl() {
+    const url = this.additionalReportingUrl();
+    if (url) {
+      this.copiedReportingUrl.set(true);
+      setTimeout(() => this.copiedReportingUrl.set(false), 2000);
+      navigator.clipboard.writeText(url);
+    }
   }
 }
