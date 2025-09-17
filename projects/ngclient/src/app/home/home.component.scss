@@ -90,6 +90,13 @@ sh-card {
       }
     }
   }
+
+  .tags {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: p2r(8);
+  }
 }
 
 .provider-icon {
