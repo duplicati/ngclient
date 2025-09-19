@@ -1671,11 +1671,9 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     mapper: {
       to: (fields: ValueOfDestinationFormGroup): string => {
         const { path } = fields.custom;
-        console.log(path);
         return buildUrlFromFields(fields, null, null, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
-        console.log(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
