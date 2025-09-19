@@ -49,6 +49,12 @@ export type CommandResponse = {
   headers: { [key: string]: string } | null;
 };
 
+type CommandResponseInternal = {
+  code: number;
+  body: string | null;
+  headers: { [key: string]: string } | null;
+}
+
 const ClientVersion = '1.0.0';
 const ClientId = `portal-proxy-client-${randomUUID()}`;
 const ProtocolVersion = 1;
@@ -181,9 +187,13 @@ export class RelayWebsocketService {
             f.reject(data.errorMessage);
             return;
           } else {
-            const payload = JSON.parse(data.payload ?? '') as CommandResponse;
-            payload.requestBody = payload?.requestBody == null ? null : this.utf8Atob(payload.requestBody);
-            f.resolve(payload);
+            const payload = JSON.parse(data.payload ?? '') as CommandResponseInternal;
+            const requestBody = payload?.body == null ? null : this.utf8Atob(payload.body);
+            f.resolve({
+              code: payload.code,
+              requestBody: requestBody,
+              headers: payload.headers,
+            });
           }
 
           delete this.#pendingCommands[data.messageId];
