@@ -65,7 +65,8 @@ export default class AdvancedOptionsSettingsComponent {
     const removedSettings = lastSettingKeys.filter((key) => !currentSettingNames.includes(key.replace('--', '')));
     const reduced = settings.reduce(
       (acc, curr) => {
-        acc[`--${curr.Name!}`] = curr.Value!;
+        const name = curr.Name?.startsWith('--') ? curr.Name : `--${curr.Name}`;
+        acc[name] = curr.Value!;
         return acc;
       },
       {} as { [key: string]: string | null }
