@@ -208,7 +208,6 @@ export function toTargetPath(fields: DestinationFormGroupValue): string {
 }
 
 export function fromTargetPath(targetPath: string) {
-  const canParse = URL.canParse(targetPath);
   const destinationType = targetPath.split('://')[0];
   const path = targetPath.split('://')[1];
   // Handle Windows paths that are not real URLs, e.g. file://C:/path/to/file
@@ -230,6 +229,12 @@ export function fromTargetPath(targetPath: string) {
     extraQuery += fakeProtocolPrefixed.indexOf('?') === -1 ? '?' : '&';
     extraQuery += 'use-ssl=true';
     targetPath = config.key + targetPath.substring(destinationType.length);
+  }
+
+  // Since we use a dummy protocol for the file destination, we need to handle the query part
+  if (destinationType === 'file' && path.indexOf('?') !== -1) {
+    extraQuery += extraQuery.indexOf('?') === -1 ? '?' : '&';
+    extraQuery +=  path.split('?')[1] ?? '';
   }
 
   try {
