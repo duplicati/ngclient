@@ -13,7 +13,7 @@
         type="submit"
         class="raised primary"
         (click)="submit()"
-        [disabled]="isImporting()"
+        [disabled]="isImporting() || !isValid()"
         [class.loader]="isImporting()">
         <sh-icon>download-simple</sh-icon>
         Import
