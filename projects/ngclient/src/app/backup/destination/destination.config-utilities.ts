@@ -62,6 +62,7 @@ export type DestinationConfigEntry = {
   customKey?: string;
   oauthField?: string;
   searchTerms?: string;
+  sortOrder?: number;
   customFields?: {
     [key: string]: CustomFormView;
   };

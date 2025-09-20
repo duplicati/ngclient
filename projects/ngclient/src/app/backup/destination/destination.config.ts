@@ -84,6 +84,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups on your local file system.`,
     icon: 'assets/dest-icons/file-system.png',
     searchTerms: 'local disk harddrive localdisk filesystem unc server share drive',
+    sortOrder: 100,
     customFields: {
       path: {
         type: 'FolderTree',
@@ -126,6 +127,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups with SSH.`,
     icon: 'assets/dest-icons/ssh.png',
     searchTerms: 'sftp scp secure shell',
+    sortOrder: 80,
     customFields: {
       server: {
         type: 'Hostname',
@@ -201,6 +203,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in any S3 compatible bucket.`,
     icon: 'assets/dest-icons/aws.png',
     searchTerms: 'amazon aws digitalocean spaces wasabi backblaze b2 ibm cloud minio',
+    sortOrder: 90,
     customFields: {
       bucket: {
         type: 'Bucketname',
@@ -296,6 +299,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     icon: 'assets/dest-icons/google-cloud.png',
     oauthField: 'authid',
     searchTerms: 'gcp googlecloud',
+    sortOrder: 70,
     customFields: {
       bucket: {
         type: 'Bucketname',
@@ -457,6 +461,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in Azure Blob Storage.`,
     icon: 'assets/dest-icons/azure.png',
     searchTerms: 'microsoft ms',
+    sortOrder: 60,
     customFields: {
       path: {
         type: 'Path',
@@ -922,6 +927,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     displayName: $localize`Mega.nz`,
     description: $localize`Store backups in Mega.nz.`,
     icon: 'assets/dest-icons/mega-nz.png',
+    sortOrder: -1,
     customFields: {
       path: {
         type: 'Path',
@@ -1622,6 +1628,14 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         };
       },
     },
+  },
+  {
+    key: 'cifs',
+    displayName: $localize`CIFS (deprecated)`,
+    description: $localize`Same as SMB backend, but with a different name. Use SMB instead.`,
+    icon: 'assets/dest-icons/smb.png',
+    sortOrder: -1,
+    mapper: DESTINATION_CONFIG_DEFAULT.mapper,
   },
   {
     key: 'filen',

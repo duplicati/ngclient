@@ -9,6 +9,7 @@ export type DestinationTypeOption = {
   description: string;
   icon: string;
   searchTerms: string;
+  sortOrder?: number;
 };
 
 @Injectable({
@@ -45,6 +46,7 @@ export class DestinationConfigState {
       description: x.description,
       icon: x.icon,
       searchTerms: [x.displayName, x.description, x.key, x.searchTerms ?? '', x.customKey ?? ''].join(' '),
+      sortOrder: x.sortOrder ?? 0,
     }))
   ) as Signal<DestinationTypeOption[]>;
 
