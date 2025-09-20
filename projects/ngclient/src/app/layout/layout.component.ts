@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import {
   ShipButtonComponent,
@@ -14,7 +14,9 @@ import { DuplicatiServer } from '../core/openapi';
 import { AppAuthState } from '../core/states/app-auth.state';
 import { BackupsState } from '../core/states/backups.state';
 import { RelayconfigState } from '../core/states/relayconfig.state';
+import { SysinfoState } from '../core/states/sysinfo.state';
 import { NotificationsState } from '../notifications/notifications.state';
+import { ServerSettingsService } from '../settings/server-settings.service';
 import { ChangePassphraseAlertDialogComponent } from './change-passphrase-alert-dialog/change-passphrase-alert-dialog.component';
 import { LayoutState } from './layout.state';
 
@@ -42,17 +44,36 @@ export default class LayoutComponent {
   #backupsState = inject(BackupsState);
   #relayConfigState = inject(RelayconfigState);
   #dialog = inject(ShipDialogService);
-  #notificaitonsState = inject(NotificationsState);
+  #notificationState = inject(NotificationsState);
   #auth = inject(AppAuthState);
+  #serverSettingsState = inject(ServerSettingsService);
+  #sysInfoState = inject(SysinfoState);
 
   relayIsEnabled = this.#relayConfigState.relayIsEnabled;
   isDarkMode = this.#layoutState.isDarkMode;
   isNavOpen = this.#layoutState.isNavOpen;
   isMobile = this.#layoutState.isMobile;
   sidenavType = this.#layoutState.sidenavType;
+  machineName = computed(() => {
+    const serverSettings = this.#serverSettingsState.serverSettings();
+    if (serverSettings && serverSettings['--machine-name']) {
+      return serverSettings['--machine-name'];
+    }
+
+    if (serverSettings && serverSettings['machine-name']) {
+      return serverSettings['machine-name'];
+    }
+
+    const sysinfo = this.#sysInfoState.allOptions().find((s) => s.name === 'machine-name');
+    if (sysinfo && sysinfo.defaultValue) {
+      return sysinfo.defaultValue;
+    }
+
+    return this.#sysInfoState.systemInfo()?.MachineName ?? 'Unknown';
+  });
 
   ngOnInit() {
-    this.#notificaitonsState.init();
+    this.#notificationState.init();
     this.#backupsState.getBackups(true);
     return this.#dupServer.getApiV1Serversettings().subscribe({
       next: (res) => {
