@@ -103,7 +103,10 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const _tempPath = decodeURIComponent(
           hasLeadingSlash ? plainPath.split('file:///')[1] : plainPath.split('file://')[1]
         );
-        const isWindows = _tempPath.slice(1).startsWith(':\\');
+        const isWindows = _tempPath.slice(1).startsWith(':\\') 
+          || _tempPath.slice(1).startsWith(':/')
+          || _tempPath.startsWith('\\\\'); // Check for drive letter or UNC path
+          
         const path = isWindows ? _tempPath : '/' + _tempPath;
 
         return <ValueOfDestinationFormGroup>{
