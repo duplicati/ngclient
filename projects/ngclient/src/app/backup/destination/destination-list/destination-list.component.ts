@@ -35,7 +35,7 @@ export class DestinationListComponent {
     });
 
     if (searchTerm) {
-      return sortedOptions.filter((option) => option.searchterms.toLowerCase().includes(searchTerm));
+      return sortedOptions.filter((option) => option.searchTerms.toLowerCase().includes(searchTerm));
     }
 
     return sortedOptions;
