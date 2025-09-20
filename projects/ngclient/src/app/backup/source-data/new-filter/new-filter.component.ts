@@ -20,12 +20,44 @@ type ExpressionTypeMap = {
   value: ExpressionType;
 };
 
+type FileGroupTypeMap = {
+  key: string;
+  value: string;
+};
+
 type ExpressionTypeMapExtended = {
   key: string;
   value: ExpressionType;
   startsWith: string;
   endsWith: string;
 };
+
+const FILE_GROUP_OPTIONS: FileGroupTypeMap[] = [
+  {
+    key: 'Applications',
+    value: 'Applications',
+  },
+  {
+    key: 'CacheFiles',
+    value: 'Cache Files',
+  },
+  {
+    key: 'TemporaryFiles',
+    value: 'Temporary Files',
+  },
+  {
+    key: 'OperatingSystem',
+    value: 'Operating System',
+  },
+  {
+    key: 'SystemFiles',
+    value: 'System Files',
+  },
+  {
+    key: 'DefaultExcludes',
+    value: 'Standard Excludes',
+  },
+];
 
 const EXPRESSION_OPTIONS: ExpressionTypeMap[] = [
   {
@@ -53,7 +85,7 @@ const EXPRESSION_OPTIONS: ExpressionTypeMap[] = [
     value: '+Regex',
   },
   {
-    key: 'Excludes file group',
+    key: 'Exclude file groups',
     value: '-FileGroup',
   },
   {
@@ -90,6 +122,8 @@ export class NewFilterComponent {
 
     return this.expressionOptions().find((x) => x.value === pathType);
   });
+
+  fileGroupOptions = signal<FileGroupTypeMap[]>(FILE_GROUP_OPTIONS);
 
   expressionOptions = computed(() => {
     const isWindows = this.osType() === 'Windows';
