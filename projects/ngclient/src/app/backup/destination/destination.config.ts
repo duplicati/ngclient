@@ -202,7 +202,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     displayName: $localize`S3 Compatible`,
     description: $localize`Store backups in any S3 compatible bucket.`,
     icon: 'assets/dest-icons/aws.png',
-    searchTerms: 'amazon aws digitalocean spaces wasabi backblaze b2 ibm cloud minio',
+    searchTerms: 'amazon aws spaces cloud mycloudyplace impossible scaleway hosteurope dunkel dreamhost dincloud poli systems ibm cos storadera wasabi infomaniak infomaniak さくらのクラウド seagate lyve digitalocean backblaze b2 cloudian minio linode bunnycdn microsoft azure google storage ibm oracle cloudflare alibaba huawei tencent baidu jd ucloud qiniu aliyun tcloud tencent ',
     sortOrder: 90,
     customFields: {
       bucket: {
