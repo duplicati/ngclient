@@ -68,7 +68,7 @@ function handleRequest(state: CallState, req: HttpRequest<unknown>, next: HttpHa
       }
 
       const httpResponse = new HttpResponse({
-        body: response.requestBody,
+        body: response.body,
         status: response.code,
         statusText: 'OK',
         headers: httpHeaders,

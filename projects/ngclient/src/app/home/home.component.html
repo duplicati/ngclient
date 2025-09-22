@@ -137,11 +137,16 @@
                     }
                   </p>
                 </div>
+                <div class="tags">
+                  @let versions = getBackupVersionCount(backup);
+                  <sh-chip class="simple success" i18n>
+                    {versions, plural, =0 {No version yet} =1 {1 Version} other {{{ versions }} Versions}}
+                  </sh-chip>
 
-                @let versions = getBackupVersionCount(backup);
-                <sh-chip class="simple success" i18n>
-                  {versions, plural, =0 {No version yet} =1 {1 Version} other {{{ versions }} Versions}}
-                </sh-chip>
+                  @if (backup.Backup.ExternalID) {
+                    <sh-chip class="simple primary" i18n>Externally managed</sh-chip>
+                  }
+                </div>
 
                 <div class="actions">
                   <ng-container *ngTemplateOutlet="actions; context: { $implicit: backup }"></ng-container>

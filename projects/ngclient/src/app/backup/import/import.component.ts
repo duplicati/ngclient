@@ -4,12 +4,14 @@ import { Router, RouterLink } from '@angular/router';
 import {
   ShipAlertService,
   ShipButtonComponent,
+  ShipDialogService,
   ShipFileUploadComponent,
   ShipFormFieldComponent,
   ShipIconComponent,
   ShipToggleComponent,
 } from '@ship-ui/core';
 import { finalize } from 'rxjs';
+import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer } from '../../core/openapi';
 import { BackupDraft, BackupsState } from '../../core/states/backups.state';
 
@@ -32,12 +34,15 @@ const fb = new FormBuilder();
 })
 export default class ImportComponent {
   #shipAlertService = inject(ShipAlertService);
+  #dialog = inject(ShipDialogService);
+
   #dupServer = inject(DuplicatiServer);
   #backupsState = inject(BackupsState);
   #router = inject(Router);
 
   isImporting = signal(false);
   isSecureFile = signal(false);
+  isValid = signal(false);
 
   importForm = fb.group({
     config: fb.control<string>(''),
@@ -72,6 +77,7 @@ export default class ImportComponent {
     this.importForm.patchValue({
       config: this.#arrayBufferToBase64(arrayBuffer),
     });
+    this.isValid.set(this.importForm.value.config !== '');
   }
 
   #checkArrayBufferType(buffer: ArrayBuffer): 'json' | 'aes' | 'unknown' {
@@ -135,7 +141,15 @@ export default class ImportComponent {
           this.#router.navigate(['/backup-draft', draftId]);
         },
         error: (err) => {
-          this.#shipAlertService.error(err.message);
+          const message = err.message || $localize`Unknown error`;
+          this.#dialog.open(ConfirmDialogComponent, {
+            data: {
+              title: $localize`Failed to import backup`,
+              message: message,
+              confirmText: $localize`OK`,
+              cancelText: undefined,
+            },
+          });
         },
       });
   }

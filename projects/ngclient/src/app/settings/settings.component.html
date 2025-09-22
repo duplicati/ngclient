@@ -215,15 +215,15 @@
       <div class="radio-option" (click)="setNewChannel('stable')">
         <sh-radio class="primary raised" [class.active]="updateChannel() === 'stable'" i18n>Stable</sh-radio>
 
-        <p i18n>Official releases</p>
+        <p i18n>Official stable release.</p>
       </div>
 
       <div class="radio-option" (click)="setNewChannel('beta')">
         <sh-radio class="primary raised" [class.active]="updateChannel() === 'beta'" i18n>Beta</sh-radio>
 
         <p i18n>
-          Try out the new features that we are working on. Currently the most stable version available. Test Restore
-          data before using this in production environments.
+          Try out the new features that we are working on. Test a backup and restore before using this in production
+          environments.
         </p>
       </div>
 
@@ -232,13 +232,13 @@
           Experimental
         </sh-radio>
 
-        <p i18n>Specific builds for developers only. Not for use with important data.</p>
+        <p i18n>Early previews of new features. Not for use with important data.</p>
       </div>
 
       <div class="radio-option" (click)="setNewChannel('canary')">
         <sh-radio class="primary raised" [class.active]="updateChannel() === 'canary'" i18n>Canary</sh-radio>
 
-        <p i18n>Individual builds for developers only. Not for use with important data.</p>
+        <p i18n>Builds for developers and testers only. Not for use with important data.</p>
       </div>
     </div>
   </section>

@@ -32,6 +32,7 @@ export type BackupAndScheduleOutputDto = {
 
 export type BackupDto = {
     ID: (string) | null;
+    ExternalID: (string) | null;
     Name: (string) | null;
     Description: (string) | null;
     Tags: Array<string> | null;

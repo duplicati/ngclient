@@ -17,25 +17,27 @@ export class DestinationListComponent {
   setDestination = output<string>();
 
   destinationSearchTerm = signal('');
-  destinationTypeOptionsInFocus = signal(['file', 'ssh', 's3', 'gcs', 'googledrive', 'azure']);
   destinationTypeOptions = this.#destinationState.destinationTypeOptions;
 
   destinationTypeOptionsFocused = computed(() => {
-    const focusedKeys = new Set(this.destinationTypeOptionsInFocus());
     const options = this.destinationTypeOptions();
     const searchTerm = this.destinationSearchTerm().toLowerCase();
 
     const sortedOptions = [...options].sort((a, b) => {
-      const aIsFocused = focusedKeys.has(a.key);
-      const bIsFocused = focusedKeys.has(b.key);
+      const sortOrderA = a.sortOrder ?? 0;
+      const sortOrderB = b.sortOrder ?? 0;
 
-      if (aIsFocused && !bIsFocused) return -1;
-      if (!aIsFocused && bIsFocused) return 1;
-      return 0;
-    });
+      if (sortOrderA !== sortOrderB) {
+        return sortOrderB - sortOrderA;
+      }
+
+      return a.displayName.localeCompare(b.displayName);
+    })
+    // Remove hidden options
+    .filter((option) => (option.sortOrder ?? 0) >= 0);
 
     if (searchTerm) {
-      return sortedOptions.filter((option) => option.displayName.toLowerCase().includes(searchTerm));
+      return sortedOptions.filter((option) => option.searchTerms.toLowerCase().includes(searchTerm));
     }
 
     return sortedOptions;

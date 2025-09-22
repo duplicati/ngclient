@@ -83,6 +83,8 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     displayName: $localize`File system`,
     description: $localize`Store backups on your local file system.`,
     icon: 'assets/dest-icons/file-system.png',
+    searchTerms: 'local disk harddrive localdisk filesystem unc server share drive',
+    sortOrder: 100,
     customFields: {
       path: {
         type: 'FolderTree',
@@ -103,7 +105,10 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const _tempPath = decodeURIComponent(
           hasLeadingSlash ? plainPath.split('file:///')[1] : plainPath.split('file://')[1]
         );
-        const isWindows = _tempPath.slice(1).startsWith(':\\');
+        const isWindows = _tempPath.slice(1).startsWith(':\\') 
+          || _tempPath.slice(1).startsWith(':/')
+          || _tempPath.startsWith('\\\\'); // Check for drive letter or UNC path
+          
         const path = isWindows ? _tempPath : '/' + _tempPath;
 
         return <ValueOfDestinationFormGroup>{
@@ -121,6 +126,8 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     displayName: $localize`SSH`,
     description: $localize`Store backups with SSH.`,
     icon: 'assets/dest-icons/ssh.png',
+    searchTerms: 'sftp scp secure shell',
+    sortOrder: 80,
     customFields: {
       server: {
         type: 'Hostname',
@@ -194,7 +201,9 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 's3',
     displayName: $localize`S3 Compatible`,
     description: $localize`Store backups in any S3 compatible bucket.`,
-    icon: 'assets/dest-icons/aws.png',
+    icon: 'assets/dest-icons/s3compat.png',
+    searchTerms: 'amazon aws spaces cloud mycloudyplace impossible scaleway hosteurope dunkel dreamhost dincloud poli systems ibm cos storadera wasabi infomaniak infomaniak さくらのクラウド seagate lyve digitalocean backblaze b2 cloudian minio linode bunnycdn microsoft azure google storage ibm oracle cloudflare alibaba huawei tencent baidu jd ucloud qiniu aliyun tcloud tencent ',
+    sortOrder: 90,
     customFields: {
       bucket: {
         type: 'Bucketname',
@@ -289,6 +298,8 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in Google Cloud Storage.`,
     icon: 'assets/dest-icons/google-cloud.png',
     oauthField: 'authid',
+    searchTerms: 'gcp googlecloud',
+    sortOrder: 70,
     customFields: {
       bucket: {
         type: 'Bucketname',
@@ -349,6 +360,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in Google Drive.`,
     icon: 'assets/dest-icons/google-drive.png',
     oauthField: 'authid',
+    searchTerms: 'gdrive',
     customFields: {
       path: {
         type: 'Path',
@@ -448,6 +460,8 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     displayName: $localize`Azure Blob Storage`,
     description: $localize`Store backups in Azure Blob Storage.`,
     icon: 'assets/dest-icons/azure.png',
+    searchTerms: 'microsoft ms',
+    sortOrder: 60,
     customFields: {
       path: {
         type: 'Path',
@@ -491,6 +505,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in OneDrive.`,
     icon: 'assets/dest-icons/one-drive.png',
     oauthField: 'authid',
+    searchTerms: 'micorsoft ms',
     customFields: {
       path: {
         type: 'Path',
@@ -527,6 +542,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     displayName: $localize`OneDrive Business`,
     description: $localize`Store backups in OneDrive Business.`,
     icon: 'assets/dest-icons/one-drive.png',
+    searchTerms: 'microsoft ms',
     customFields: {
       server: {
         type: 'Hostname',
@@ -588,6 +604,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     displayName: $localize`Microsoft SharePoint`,
     description: $localize`Store backups in Microsoft SharePoint.`,
     icon: 'assets/dest-icons/sharepoint.png',
+    searchTerms: 'microsoft ms',
     customFields: {
       server: {
         type: 'Hostname',
@@ -650,6 +667,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in Microsoft SharePoint.`,
     icon: 'assets/dest-icons/sharepoint.png',
     oauthField: 'authid',
+    searchTerms: 'microsoft ms',
     customFields: {
       path: {
         type: 'Path',
@@ -691,6 +709,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in Dropbox.`,
     icon: 'assets/dest-icons/dropbox.png',
     oauthField: 'authid',
+    searchTerms: 'dbx',
     customFields: {
       path: {
         type: 'Path',
@@ -801,6 +820,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     displayName: $localize`B2 Cloud Storage`,
     description: $localize`Store backups in B2 Cloud Storage.`,
     icon: 'assets/dest-icons/backblaze.png',
+    searchTerms: 'backblaze',
     customFields: {
       bucket: {
         type: 'Bucketname',
@@ -907,6 +927,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     displayName: $localize`Mega.nz`,
     description: $localize`Store backups in Mega.nz.`,
     icon: 'assets/dest-icons/mega-nz.png',
+    sortOrder: -1,
     customFields: {
       path: {
         type: 'Path',
@@ -951,6 +972,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in Microsoft Office 365 Group.`,
     icon: 'assets/dest-icons/office-365.png',
     oauthField: 'authid',
+    searchTerms: 'ms',
     customFields: {
       groupEmail: {
         type: 'Email',
@@ -1056,6 +1078,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     displayName: $localize`Rclone`,
     description: $localize`Store backups in Rclone.`,
     icon: 'assets/dest-icons/rclone.png',
+    searchTerms: 'rcl',
     dynamicFields: [
       {
         name: 'rclone-local-repository',
@@ -1110,6 +1133,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     displayName: $localize`OpenStack Object Storage`,
     description: $localize`Store backups in OpenStack Object Storage.`,
     icon: 'assets/dest-icons/open-stack.png',
+    searchTerms: 'swift',
     customFields: {
       bucket: {
         type: 'Bucketname',
@@ -1173,6 +1197,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     displayName: $localize`WebDAV`,
     description: $localize`Store backups in WebDAV.`,
     icon: 'assets/dest-icons/webdav.png',
+    searchTerms: 'web dav',
     customFields: {
       server: {
         type: 'Hostname',
@@ -1239,6 +1264,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     displayName: $localize`Alternative FTP`,
     description: $localize`Store backups in FTP.`,
     icon: 'assets/dest-icons/ftp.png',
+    searchTerms: 'alt file transfer protocol ftps',
     customFields: {
       server: {
         type: 'Hostname',
@@ -1304,6 +1330,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     displayName: $localize`FTP`,
     description: $localize`Store backups in FTP.`,
     icon: 'assets/dest-icons/ftp.png',
+    searchTerms: 'file transfer protocol ftps',
     customFields: {
       server: {
         type: 'Hostname',
@@ -1484,6 +1511,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     displayName: $localize`Tahoe LAFS`,
     description: $localize`Store backups in Tahoe LAFS.`,
     icon: 'assets/dest-icons/tahoelafs.png',
+    searchTerms: 'least authority file system',
     customFields: {
       server: {
         type: 'Hostname',
@@ -1539,6 +1567,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     displayName: $localize`Windows Share (SMB)`,
     description: $localize`Store backups on SMB storage.`,
     icon: 'assets/dest-icons/smb.png',
+    searchTerms: 'cifs samba',
     customFields: {
       server: {
         type: 'Hostname',
@@ -1599,6 +1628,14 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         };
       },
     },
+  },
+  {
+    key: 'cifs',
+    displayName: $localize`CIFS (deprecated)`,
+    description: $localize`Same as SMB backend, but with a different name. Use SMB instead.`,
+    icon: 'assets/dest-icons/smb.png',
+    sortOrder: -1,
+    mapper: DESTINATION_CONFIG_DEFAULT.mapper,
   },
   {
     key: 'filen',
@@ -1671,11 +1708,9 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     mapper: {
       to: (fields: ValueOfDestinationFormGroup): string => {
         const { path } = fields.custom;
-        console.log(path);
         return buildUrlFromFields(fields, null, null, path);
       },
       from: (destinationType: string, urlObj: URL, plainPath: string) => {
-        console.log(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {

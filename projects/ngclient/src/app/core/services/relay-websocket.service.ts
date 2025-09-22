@@ -45,7 +45,7 @@ type PromiseResolver = {
 
 export type CommandResponse = {
   code: number;
-  requestBody: string | null;
+  body: string | null;
   headers: { [key: string]: string } | null;
 };
 
@@ -182,7 +182,7 @@ export class RelayWebsocketService {
             return;
           } else {
             const payload = JSON.parse(data.payload ?? '') as CommandResponse;
-            payload.requestBody = payload?.requestBody == null ? null : this.utf8Atob(payload.requestBody);
+            payload.body = payload?.body == null ? null : this.utf8Atob(payload.body);
             f.resolve(payload);
           }
 
