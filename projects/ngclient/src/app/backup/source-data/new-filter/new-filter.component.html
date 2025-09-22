@@ -13,8 +13,8 @@
     [options]="fileGroupOptions()"
     [isClearable]="false"
     [selectMultiple]="true"
-    value="value"
-    label="key">
+    value="key"
+    label="value">
     <input type="text" [(ngModel)]="internalPath" (ngModelChange)="updateFilter()" />
   </sh-select>
 } @else {
