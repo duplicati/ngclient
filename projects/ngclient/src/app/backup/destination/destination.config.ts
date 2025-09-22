@@ -322,6 +322,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       {
         name: 'authid',
         isMandatory: true,
+        longDescription: $localize`An OAuth token with access to the Google Cloud Storage. Not required if service account JSON is provided.`,
       },
     ],
     advancedFields: [
@@ -335,6 +336,19 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         type: 'NonValidatedSelectableString', // Convert to string before submitting
         loadOptions: (injector) => injector.get(WebModulesService).getGcsStorageClasses(),
       },
+      {
+        name: 'gcs-service-account-file',
+        type: 'FileTree',
+        accepts: '.json,',
+        shortDescription: $localize`Service account JSON file`,
+        longDescription: $localize`Pick the path to a file with service account JSON.`,
+      },
+      {
+        name: 'gcs-service-account-json',
+        type: 'FreeText',        
+        shortDescription: $localize`Service account JSON`,
+        longDescription: $localize`Paste the service account JSON here.`,
+      }
     ],
     mapper: {
       to: (fields: ValueOfDestinationFormGroup): string => {
