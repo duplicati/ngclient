@@ -2175,7 +2175,7 @@ Während des Imports können Parameter angepasst werden.</target>
       </trans-unit>
       <trans-unit id="8206437921423261892" datatype="html">
         <source>Access Secret</source>
-        <target>Zugriffs-Geheimnis</target>
+        <target>Zugriffs-Secret</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
           <context context-type="linenumber">864</context>
@@ -2359,7 +2359,7 @@ Während des Imports können Parameter angepasst werden.</target>
       </trans-unit>
       <trans-unit id="8720332287407681000" datatype="html">
         <source>Bucket</source>
-        <target>Behälter</target>
+        <target>Bucket</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
           <context context-type="linenumber">1093</context>
@@ -2719,7 +2719,7 @@ Während des Imports können Parameter angepasst werden.</target>
       </trans-unit>
       <trans-unit id="7896650584449704588" datatype="html">
         <source>Secret</source>
-        <target>Geheimnis</target>
+        <target>Secret</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/destination/destination.config.ts</context>
           <context context-type="linenumber">1731</context>
@@ -3567,7 +3567,7 @@ Während des Imports können Parameter angepasst werden.</target>
       </trans-unit>
       <trans-unit id="3661147142879652554" datatype="html">
         <source> The chosen size is outside the recommended range. This may cause performance issues, excessively large temporary files or other problems. </source>
-        <target>Die gewählte Größe ist außerhalb des empfohlenen Bereichs. Die kann Performance-Einbußen, extrem große temporäre Dateien oder andere Probleme hervorrufen.</target>
+        <target>Die gewählte Größe ist außerhalb des empfohlenen Bereichs. Dies kann Performance-Einbußen, extrem große temporäre Dateien oder andere Probleme hervorrufen.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/backup/options/options.component.html</context>
           <context context-type="linenumber">16,17</context>
@@ -4123,7 +4123,7 @@ Während des Imports können Parameter angepasst werden.</target>
       </trans-unit>
       <trans-unit id="140764604930103244" datatype="html">
         <source> Show hidden <x id="INTERPOLATION" equiv-text="{{ showFiles() ? 'files' : 'folders' }}"/> </source>
-        <target> Versteckte <x id="INTERPOLATION" equiv-text="{{ showFiles() ? 'files' : 'folders' }}"/> anzeigen</target>
+        <target>Versteckte <x id="INTERPOLATION" equiv-text="{{ showFiles() ? 'files' : 'folders' }}"/> anzeigen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/components/file-tree/file-tree.component.html</context>
           <context context-type="linenumber">94,95</context>
