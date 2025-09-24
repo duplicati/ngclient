@@ -20,6 +20,7 @@ export class RemoteControlComponent {
   registerUrl = this.#remoteControlState.registerUrl;
   additionalReportingUrl = computed(() => {
     const settings = this.#serverSettingsService.serverSettings();
+    if (this.#remoteControlState.state() === 'inactive') return '';
     return settings ? settings['additional-report-url'] || '' : '';
   });
 
