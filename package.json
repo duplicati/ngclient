@@ -17,10 +17,10 @@
     "build:dev": "bun run gen:font && ng build ngclient --configuration development",
     "build:prod": "bun run gen:font & ng build ngclient --configuration production",
     "watch": "bun run watch:font & ng build --watch --configuration development",
-    "gen:tx": "ng extract-i18n --output-path src/locale --format xlf",
+    "gen:tx": "ng extract-i18n --output-path projects/ngclient/src/locale --format xlf",
     "tx:push": "tx push -s",
     "tx:pull": "tx pull -a --mode translated --minimum-perc 20",
-    "tx:sync": "ng extract-i18n --output-path src/locale --format xlf && tx push -s && tx pull -a --minimum-perc 20 && ng build --localize && npx tsx scripts/convert-xlf-to-json.ts",
+    "tx:sync": "ng extract-i18n --output-path projects/ngclient/src/locale --format xlf && tx push -s && tx pull -a --minimum-perc 20 && ng build ngclient --localize && npx tsx scripts/convert-xlf-to-json.ts",
     "gen:openapi": "openapi-ts"
   },
   "dependencies": {
