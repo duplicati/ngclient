@@ -101,6 +101,7 @@ export type DeleteBackupOutputDto = {
 
 export type DestinationTestRequestDto = {
     DestinationUrl: (string) | null;
+    BackupId?: (string) | null;
     Options: {
         [key: string]: string;
     } | null;
@@ -197,6 +198,11 @@ export type IDynamicModule = {
     readonly Description?: (string) | null;
     readonly DisplayName?: (string) | null;
     readonly Options?: Array<ICommandLineArgument> | null;
+    readonly Lookups?: {
+        [key: string]: {
+            [key: string]: string;
+        } | null;
+    } | null;
 };
 
 export type IListResultFileset = {
@@ -412,6 +418,7 @@ export type RemoteControlStatusOutput = {
 
 export type RemoteOperationInput = {
     path?: (string) | null;
+    backupId?: (string) | null;
 };
 
 export type RepairInputDto = {
@@ -738,14 +745,6 @@ export type PostApiV1FilesystemValidateData = {
 
 export type PostApiV1FilesystemValidateResponse = (unknown);
 
-export type GetApiV1HypervResponse = (Array<TreeNodeDto>);
-
-export type GetApiV1HypervByKeyData = {
-    key: string;
-};
-
-export type GetApiV1HypervByKeyResponse = (Array<TreeNodeDto>);
-
 export type GetApiV1LicensesResponse = (Array<LicenseDto>);
 
 export type GetApiV1LogdataPollData = {
@@ -766,14 +765,6 @@ export type GetApiV1LogdataLogResponse = (Array<{
 }>);
 
 export type GetApiV1LogdataCrashlogResponse = (CrashLogOutputDto);
-
-export type GetApiV1MssqlResponse = (Array<TreeNodeDto>);
-
-export type GetApiV1MssqlByKeyData = {
-    key: string;
-};
-
-export type GetApiV1MssqlByKeyResponse = (Array<TreeNodeDto>);
 
 export type GetApiV1NotificationByIdData = {
     id: number;
