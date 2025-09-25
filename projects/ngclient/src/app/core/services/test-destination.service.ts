@@ -26,14 +26,15 @@ export class TestDestinationService {
   #dialog = inject(ShipDialogService);
   #sysinfo = inject(SysinfoState);
 
-  testDestination(targetUrl: string, destinationIndex: number, askToCreate: boolean, suppressErrorDialogs: boolean) {
+  testDestination(targetUrl: string, backupId: string | null, destinationIndex: number, askToCreate: boolean, suppressErrorDialogs: boolean) {
     if (this.#sysinfo.hasV2TestOperations())
-      return this.testDestinationv2(targetUrl, destinationIndex, askToCreate, suppressErrorDialogs);
-    else return this.testDestinationv1(targetUrl, destinationIndex, askToCreate, suppressErrorDialogs);
+      return this.testDestinationv2(targetUrl, backupId, destinationIndex, askToCreate, suppressErrorDialogs);
+    else return this.testDestinationv1(targetUrl, backupId, destinationIndex, askToCreate, suppressErrorDialogs);
   }
 
   private testDestinationv2(
     targetUrl: string,
+    backupId: string | null,
     destinationIndex: number,
     askToCreate: boolean,
     suppressErrorDialogs: boolean
@@ -43,6 +44,7 @@ export class TestDestinationService {
         .postApiV2DestinationTest({
           requestBody: {
             DestinationUrl: targetUrl,
+            BackupId: backupId == "new" ? null : backupId,
             AutoCreate: false,
             Options: null,
           },
@@ -107,6 +109,7 @@ export class TestDestinationService {
 
   private testDestinationv1(
     targetUrl: string,
+    backupId: string | null,
     destinationIndex: number,
     askToCreate: boolean,
     suppressErrorDialogs: boolean
@@ -116,6 +119,7 @@ export class TestDestinationService {
         .postApiV1RemoteoperationTest({
           requestBody: {
             path: targetUrl,
+            backupId: backupId == "new" ? null : backupId,
           },
         })
         .subscribe({

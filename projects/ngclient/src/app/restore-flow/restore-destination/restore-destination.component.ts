@@ -112,7 +112,7 @@ export default class RestoreDestinationComponent {
     if (!targetUrl) return;
 
     this.#restoreFlowState.setTestState('testing');
-    this.#testDestination.testDestination(targetUrl, destinationIndex, true, suppressDialogs).subscribe({
+    this.#testDestination.testDestination(targetUrl,this.#restoreFlowState.backupId(), destinationIndex, true, suppressDialogs).subscribe({
       next: (res) => {
         if (res.action === 'success') {
           this.#restoreFlowState.setTestState('success');

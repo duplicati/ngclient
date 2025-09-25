@@ -153,7 +153,7 @@ export default class DestinationComponent {
 
     this.#backupState.setTestState('testing');
 
-    this.#testDestination.testDestination(targetUrl, destinationIndex, true, true).subscribe({
+    this.#testDestination.testDestination(targetUrl, this.#backupState.backupId(), destinationIndex, true, true).subscribe({
       next: (res) => {
         if (res.action === 'success') {
           this.#backupState.setTestState('success');
