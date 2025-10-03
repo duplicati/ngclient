@@ -4,12 +4,11 @@ import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   ShipButtonComponent,
-  ShipDialogService,
   ShipDividerComponent,
   ShipFormFieldComponent,
   ShipIconComponent,
   ShipProgressBarComponent,
-  ShipSelectComponent,
+  ShipSelectComponent
 } from '@ship-ui/core';
 import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
 import { StatusBarState } from '../../core/components/status-bar/status-bar.state';
@@ -48,7 +47,6 @@ export default class CommandlineComponent {
   #route = inject(ActivatedRoute);
   #commandline = inject(Commandline);
   #statusBarState = inject(StatusBarState);
-  #dialog = inject(ShipDialogService);
 
   #routeParamsSignal = toSignal(this.#route.params);
   commandOptions = toSignal(this.#commandline.getApiV1Commandline());
