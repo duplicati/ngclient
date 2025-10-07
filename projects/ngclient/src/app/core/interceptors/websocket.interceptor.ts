@@ -1,4 +1,5 @@
 import {
+  HttpErrorResponse,
   HttpEvent,
   HttpHandlerFn,
   HttpHeaders,
@@ -76,6 +77,13 @@ function handleRequest(state: CallState, req: HttpRequest<unknown>, next: HttpHa
 
       observer.next(httpResponse);
       observer.complete();
+    })
+    .catch((err) => {
+      observer.error(new HttpErrorResponse({
+        error: err ?? 'Unknown error',
+        status: 0,
+        statusText: err ?? 'Unknown error',
+      }));
     });
   });
 }
