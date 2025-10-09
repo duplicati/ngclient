@@ -98,7 +98,7 @@ const USAGE_STATISTICS_OPTIONS = [
     label: $localize`Crashes only`,
   },
   {
-    value: 'none',
+    value: 'disabled',
     label: $localize`None / disabled`,
   },
 ];
