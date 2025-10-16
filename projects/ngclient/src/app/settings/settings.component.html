@@ -189,6 +189,29 @@
     </div>
   </section>
 
+  @if (powerModeOptions().length > 0) {
+    <section>
+      <div class="left">
+        <h3 i18n>Power mode provider</h3>
+        <p i18n>
+          The power mode provider monitors the system for when it enters a low power state and pauses Duplicati. When
+          the system resumes, Duplicati will resume as well. Choosing the None option disables detection of low power
+          states and Duplicati will run all the time.
+        </p>
+      </div>
+
+      <div class="right">
+        <sh-select [options]="powerModeOptions()" value="value" label="label" [isClearable]="false">
+          <input
+            type="text"
+            [ngModel]="powerModeCtrl()"
+            (ngModelChange)="updatePowerMode($event)"
+            [ngModelOptions]="{ standalone: true }" />
+        </sh-select>
+      </div>
+    </section>
+  }
+
   <section>
     <div class="left">
       <h3 i18n>Update channel</h3>

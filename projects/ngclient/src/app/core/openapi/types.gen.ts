@@ -588,6 +588,7 @@ export type SystemInfoDto = {
     APIScopes: Array<string> | null;
     DefaultOAuthURL: (string) | null;
     DefaultOAuthURLv2: (string) | null;
+    PowerModeProviders: Array<string> | null;
 };
 
 export type TaskStartedDto = {

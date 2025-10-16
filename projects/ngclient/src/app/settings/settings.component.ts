@@ -144,6 +144,7 @@ export default class SettingsComponent {
   editAs = signal<'list' | 'text'>('list');
   previousLang = this.#initLang;
   langCtrl = signal<string>(this.#initLang);
+  powerModeCtrl = signal<string>('');
   usageStatistics = signal<UsageStatisticsType['value']>('');
   updatingUsageStatistics = signal(false);
   remoteControlStatus = this.#remoteControlState.status;
@@ -287,6 +288,19 @@ export default class SettingsComponent {
   }
 
   languageOptions = signal(LANGUAGES);
+
+  powerModeOptions = computed(() => {
+    const sysinfo = this.#sysinfo.systemInfo();
+    // If the only providers are default and none, don't show the options
+    if (!sysinfo?.PowerModeProviders || sysinfo.PowerModeProviders.filter(x => x !== '' && x !== 'None').length == 0) {
+      return [];
+    }
+    return sysinfo!.PowerModeProviders!.map(x => ({
+      value: x == '' ? 'default' : x,
+      label: x === '' ? $localize`Default` : x,
+    }));
+  });
+  
   usageStatisticsOptions = signal(USAGE_STATISTICS_OPTIONS);
 
   timeTypeOptions = signal(TIME_OPTIONS);
@@ -367,6 +381,26 @@ export default class SettingsComponent {
       .subscribe();
   }
 
+  updatePowerMode(newPowerMode: string) {
+    const previousPowerMode = this.powerModeCtrl();
+    if (previousPowerMode === newPowerMode) return;
+    if (newPowerMode === 'default') newPowerMode = '';
+
+    this.#dupServer
+      .patchApiV1Serversettings({
+        requestBody: {
+          'power-mode-provider': newPowerMode || '',
+        },
+      })
+      .pipe(
+        catchError(() => {
+          this.powerModeCtrl.set(previousPowerMode);
+          return of(null);
+        })
+      )
+      .subscribe();
+  }
+
   serverSettingsEffect = effect(() => {
     const serverSettings = this.#serverSettingsService.serverSettings();
 
@@ -388,6 +422,10 @@ export default class SettingsComponent {
 
     this.timeType.set(startupDelay == '' ? 'none' : timeUnitOptions.includes(unit) ? unit : 'none');
     this.timeValue.set(startupDelay == '' ? 0 : parseInt(timeStr));
+    const powerModeValue = serverSettings['power-mode-provider'] === '' || serverSettings['power-mode-provider'] == null
+       ? 'default' 
+       : serverSettings['power-mode-provider'];
+    this.powerModeCtrl.set(powerModeValue);
   });
 
   setDarkMode() {
