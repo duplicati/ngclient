@@ -388,13 +388,13 @@ export class BackupState {
         Name: generalFormValue.name,
         Description: generalFormValue.description,
         TargetURL: targetUrl ?? null,
-        Sources: pathFilters.filter((x) => !x.startsWith('-')),
+        Sources: pathFilters.filter((x) => !(x.startsWith('-') || x.startsWith('+'))),
         Settings: settings,
         Filters: pathFilters
-          .filter((x) => x.startsWith('-'))
+          .filter((x) => x.startsWith('-') || x.startsWith('+'))
           .map((x, index) => ({
             Order: index,
-            Include: false,
+            Include: x.startsWith('+'),
             Expression: x.slice(1),
           })),
       },
