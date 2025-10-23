@@ -33,7 +33,7 @@ export type RequestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 type CommandRequest = {
   method: RequestMethod;
   path: string;
-  requestBody: string | null;
+  body: string | null;
   headers: { [key: string]: string } | null;
 };
 
@@ -234,7 +234,7 @@ export class RelayWebsocketService {
       const request: CommandRequest = {
         method,
         path,
-        requestBody,
+        body: requestBody,
         headers,
       };
 
