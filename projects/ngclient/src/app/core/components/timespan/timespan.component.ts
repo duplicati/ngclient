@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { ShipFormFieldComponent, ShipMenuComponent } from '@ship-ui/core';
+import { ShipButtonComponent, ShipFormFieldComponent, ShipMenuComponent } from '@ship-ui/core';
 
 const SHORT_TIME_OPTIONS = [
   {
@@ -47,7 +47,7 @@ const SHORT_FIELD_TYPES = [
 
 @Component({
   selector: 'app-timespan',
-  imports: [ShipMenuComponent, ShipFormFieldComponent, FormsModule],
+  imports: [ShipMenuComponent, ShipFormFieldComponent, FormsModule, ShipButtonComponent],
   templateUrl: './timespan.component.html',
   styleUrl: './timespan.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
