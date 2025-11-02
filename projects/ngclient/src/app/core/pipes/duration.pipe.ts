@@ -11,21 +11,19 @@ export class DurationFormatPipe implements PipeTransform {
   transform(value: string | undefined | null, forceActualDuration = false, ...args: unknown[]): unknown {
     if (!value) return '';
 
-    const _value = value.split('.')[0];
-    const hours = parseInt(_value.split(':')[0]) ?? 0;
-    const minutes = parseInt(_value.split(':')[1]) ?? 0;
-    const seconds = parseInt(_value.split(':')[2]) ?? 0;
+    // Match: [days.]HH:MM:SS[.fraction]
+    const m = /^\s*(?:(\d+)\.)?(\d{1,2}):(\d{2}):(\d{2})(?:\.\d+)?\s*$/.exec(value);
+    if (!m) return '';
+
+    const days = parseInt(m[1] ?? '0', 10);
+    const hours = parseInt(m[2], 10);
+    const minutes = parseInt(m[3], 10);
+    const seconds = parseInt(m[4], 10);
 
     if (forceActualDuration) {
-      return `${hours}h ${minutes}m ${seconds}s`;
+      return `${days ? `${days}d ` : ''}${hours}h ${minutes}m ${seconds}s`;
     }
 
-    return this.#dayjs
-      .duration({
-        hours,
-        minutes,
-        seconds,
-      })
-      .humanize();
+    return this.#dayjs.duration({ days, hours, minutes, seconds }).humanize();
   }
 }
