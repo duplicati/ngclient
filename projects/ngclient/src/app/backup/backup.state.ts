@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { ShipDialogService } from '@ship-ui/core';
 import { finalize } from 'rxjs';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
+import { splitSize } from '../core/components/size/size.component';
 import {
   ArgumentType,
   BackupAndScheduleInputDto,
@@ -180,20 +181,24 @@ export class BackupState {
   mapSourceDataToForm(backup: BackupDto) {
     const path = backup.Sources ?? '';
     const filters = backup.Filters?.map((x) => `${x.Include ? '' : '-'}${x.Expression}`) ?? [];
-    const excludes = backup.Settings?.find((x) => x.Name === '--exclude-files-attributes')?.Value ?? '';
-    const filesLargerThan = backup.Settings?.find((x) => x.Name === '--skip-files-larger-than') ?? null;
+    const excludes =
+      backup.Settings?.find((x) => x.Name === '--exclude-files-attributes')
+        ?.Value?.toLowerCase()
+        ?.split(',') ?? [];
+    const filesLargerThan =
+      backup.Settings?.find((x) => x.Name === '--skip-files-larger-than')?.Value?.toUpperCase() ?? null;
 
     const sourceObj = {
       path: [...path, ...filters].join('\0'),
       excludes: {
-        hiddenFiles: excludes.includes('hidden'),
-        systemFiles: excludes.includes('system'),
-        tempFiles: excludes.includes('temporary'),
-        filesLargerThan: filesLargerThan?.Value?.toUpperCase() ?? null,
+        hidden: excludes.includes('hidden'),
+        system: excludes.includes('system'),
+        temporary: excludes.includes('temporary'),
+        filesLargerThan: filesLargerThan === null ? undefined : splitSize(filesLargerThan),
       },
     };
 
-    this.sourceDataForm.patchValue(sourceObj as any);
+    this.sourceDataForm.patchValue(sourceObj);
   }
 
   mapDestinationToForm(backup: BackupDto) {
