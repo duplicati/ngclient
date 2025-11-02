@@ -1,8 +1,16 @@
+@use '@ship-ui/core/styles/helpers' as *;
+
 :host {
   display: block;
 }
 
+.content {
+  margin-top: p2r(8);
+  display: flex;
+  flex-direction: column;
+  gap: p2r(8);
+}
 .message {
-  max-height: 200px;
+  max-height: p2r(200);
   overflow: auto;
 }
