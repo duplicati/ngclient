@@ -215,11 +215,9 @@
   <section>
     <div class="left">
       <h3 i18n>Update channel</h3>
-      <p>
-        @if (updateChannel() !== '' && sysinfo()?.ServerVersion) {
-          {{ sysinfo()?.ServerVersion }}
-        }
-      </p>
+      @if (sysinfo()?.ServerVersion) {
+        <p i18n>Installed version: {{ sysinfo()?.ServerVersionName }}</p>
+      }
 
       @if (updatingChannel()) {
         <sh-progress-bar class="indeterminate primary" />
