@@ -17,6 +17,7 @@ import {
 } from '../core/openapi';
 import { TimespanLiteralsService } from '../core/services/timespan-literals.service';
 import { SysinfoState } from '../core/states/sysinfo.state';
+import { ServerSettingsService } from '../settings/server-settings.service';
 import { FormView } from './destination/destination.config-utilities';
 import { createGeneralForm, NONE_OPTION } from './general/general.component';
 import { RetentionType } from './options/options.component';
@@ -35,6 +36,7 @@ export class BackupState {
   #sysinfo = inject(SysinfoState);
   #dialog = inject(ShipDialogService);
   #dupServer = inject(DuplicatiServer);
+  #serverSettings = inject(ServerSettingsService);
   #timespanLiteralService = inject(TimespanLiteralsService);
 
   generalForm = createGeneralForm();
@@ -269,8 +271,8 @@ export class BackupState {
     });
   }
 
-  mapOptionsToForms(backup: BackupDto) {
-    const modulesToIgnore = [
+  mapOptionsToForms(backup: BackupDto, includeGlobalOptions: boolean = false) {
+    const settingsToExclude = [
       '--no-encryption',
       '--exclude-files-attributes',
       '--skip-files-larger-than',
@@ -281,18 +283,36 @@ export class BackupState {
       'retention-policy',
     ];
 
-    const modulesWithoutIgnored = backup.Settings?.filter((x) => !modulesToIgnore.includes(x.Name!));
-    const ignoredModules = backup.Settings?.filter((x) => modulesToIgnore.includes(x.Name!));
+    const allSettings = (backup.Settings ?? []).map((x) => <SettingInputDto>x);
 
-    this.settings.set(modulesWithoutIgnored ?? []);
-    modulesWithoutIgnored?.forEach((x) => {
+    if (includeGlobalOptions) {
+      const serverSettings = this.#serverSettings.serverSettings() ?? {};
+      Object.keys(serverSettings)
+        .filter((x) => x.startsWith('--'))
+        .forEach((key) => {
+          const settingExists = allSettings.find((x) => x.Name === key);
+          if (!settingExists) {
+            allSettings.push({
+              Name: key,
+              Value: serverSettings[key],
+              Filter: null,
+            });
+          }
+        });
+    }
+
+    const settingsWithoutIgnored = allSettings.filter((x) => !settingsToExclude.includes(x.Name!));
+    const excludedSettings = allSettings.filter((x) => settingsToExclude.includes(x.Name!));
+
+    this.settings.set(settingsWithoutIgnored ?? []);
+    settingsWithoutIgnored?.forEach((x) => {
       if (x.Name === 'encryption-module' && this.isNew()) {
         return this.generalForm.controls.encryption.setValue(x.Value ?? '');
       }
     });
 
     var retentionValue: RetentionType = 'all';
-    ignoredModules?.forEach((x) => {
+    excludedSettings?.forEach((x) => {
       if (x.Name === 'dblock-size') {
         this.optionsFields.remoteVolumeSize.set(x.Value ?? '50MB');
       }
