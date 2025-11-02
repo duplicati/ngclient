@@ -85,6 +85,24 @@ export default class StatusBarComponent {
     this.#statusBarState.pauseResume().subscribe();
   }
 
+  hasTaskPauseResume = this.#sysinfo.hasTaskPauseResume;
+  isTaskPaused = computed(() => {
+    const activeTask = this.#serverState.serverState()?.ActiveTask;
+    return activeTask ? activeTask.Item3 : false;
+  });
+
+  pauseJob() {
+    const taskId = this.runningTask();
+    if (!taskId) return;
+    this.#dupServer.postApiV1TaskByTaskidPause({ taskid: taskId }).subscribe();
+  }
+
+  resumeJob() {
+    const taskId = this.runningTask();
+    if (!taskId) return;
+    this.#dupServer.postApiV1TaskByTaskidResume({ taskid: taskId }).subscribe();
+  }
+
   stop() {
     const taskId = this.runningTask();
     if (!taskId) return;

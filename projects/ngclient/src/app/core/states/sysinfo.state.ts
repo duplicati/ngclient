@@ -114,6 +114,11 @@ export class SysinfoState {
     return apiExtensions.includes('v1:websocket:authenticate');
   });
 
+  hasTaskPauseResume = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v1:task:pause-resume');
+  });
+
   defaultOAuthUrl = computed(() => {
     const url = this.systemInfo()?.DefaultOAuthURL ?? 'https://duplicati-oauth-handler.appspot.com/';
     if (url.endsWith('/refresh')) return url.slice(0, -'/refresh'.length);

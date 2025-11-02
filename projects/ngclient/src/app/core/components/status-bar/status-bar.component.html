@@ -28,6 +28,19 @@
           Abort
         </button>
       } @else {
+        @if (hasTaskPauseResume()) {
+          @if (isTaskPaused()) {
+            <button shButton i18n (click)="resumeJob()">
+              <sh-icon>play</sh-icon>
+              Resume
+            </button>
+          } @else {
+            <button shButton i18n (click)="pauseJob()">
+              <sh-icon>pause</sh-icon>
+              Pause
+            </button>
+          }
+        }
         <button shButton i18n (click)="stop()">
           <sh-icon>stop</sh-icon>
           Stop

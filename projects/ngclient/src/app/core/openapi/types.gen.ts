@@ -226,6 +226,12 @@ export type ImportBackupOutputDto = {
     data?: unknown;
 };
 
+export type Int64StringBooleanTuple = {
+    Item1?: number;
+    Item2?: (string) | null;
+    Item3?: boolean;
+};
+
 export type Int64StringTuple = {
     Item1?: number;
     Item2?: (string) | null;
@@ -486,7 +492,7 @@ export type SearchEntriesResponseDto = {
 };
 
 export type ServerStatusDto = {
-    ActiveTask: Int64StringTuple;
+    ActiveTask: Int64StringBooleanTuple;
     ProgramState: LiveControlState;
     SchedulerQueueIds: Array<Int64StringTuple> | null;
     ProposedSchedule: Array<StringDateTimeTuple> | null;
@@ -869,6 +875,19 @@ export type PostApiV1TaskByTaskidAbortData = {
 };
 
 export type PostApiV1TaskByTaskidAbortResponse = (unknown);
+
+export type PostApiV1TaskByTaskidPauseData = {
+    alsoTransfers?: boolean;
+    taskid: number;
+};
+
+export type PostApiV1TaskByTaskidPauseResponse = (unknown);
+
+export type PostApiV1TaskByTaskidResumeData = {
+    taskid: number;
+};
+
+export type PostApiV1TaskByTaskidResumeResponse = (unknown);
 
 export type GetApiV1UisettingsResponse = (Array<string>);
 
