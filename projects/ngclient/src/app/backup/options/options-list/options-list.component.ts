@@ -98,7 +98,6 @@ export class OptionsListComponent {
 
           const override = OPTIONS_LIST_CUSTOM_CONFIG.find((x) => x.name === option?.name);
           if (override) {
-            console.log('Overriding option:', option.name);
             option = {
               ...option,
               ...override,
