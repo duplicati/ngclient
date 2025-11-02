@@ -28,16 +28,17 @@
 
         <input
           #passwordInput
-          type="password"
+          [type]="showPassword() ? 'text' : 'password'"
           name="password"
           autocomplete="current-password"
           i18n-placeholder
           placeholder="Enter your password"
           tabindex="1"
           formControlName="pass" />
+        <sh-icon suffix (click)="showPassword.set(!showPassword())">{{ showPassword() ? 'eye' : 'eye-slash' }}</sh-icon>
       </sh-form-field>
 
-      <button shButton class="raised primary" [class.loader]="isLoading()" type="submit" i18n>
+      <button shButton class="raised primary login-button" [class.loader]="isLoading()" type="submit" i18n>
         Login
         <sh-icon>arrow-right</sh-icon>
       </button>
