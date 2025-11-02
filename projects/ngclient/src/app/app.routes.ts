@@ -2,6 +2,7 @@ import { inject, Injector } from '@angular/core';
 import { Routes } from '@angular/router';
 import { map, of, switchMap, zip } from 'rxjs';
 import { StatusBarState } from './core/components/status-bar/status-bar.state';
+import { LOCALSTORAGE } from './core/services/localstorage.token';
 import { AppAuthState } from './core/states/app-auth.state';
 import { RelayconfigState } from './core/states/relayconfig.state';
 import { SysinfoState } from './core/states/sysinfo.state';
@@ -44,6 +45,13 @@ export const PreloadGuard = () => {
   return relayconfigState.configLoaded?.pipe(switchMap(() => zip(zipArr)));
 };
 
+export const LanguageGuard = () => {
+  const ls = inject(LOCALSTORAGE);
+  const locale = ls.getItem('locale');
+  if (!locale && navigator.language) ls.setItem('locale', navigator.language);
+  return true;
+};
+
 export const routes: Routes = [
   {
     path: '',
@@ -80,7 +88,7 @@ export const routes: Routes = [
           {
             path: '',
             // If in iframe wait for relay...
-            canActivate: [PreloadGuard],
+            canActivate: [PreloadGuard, LanguageGuard],
             loadComponent: () => import('./layout/layout.component'),
             children: [
               {
