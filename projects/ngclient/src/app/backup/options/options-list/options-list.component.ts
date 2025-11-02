@@ -17,6 +17,7 @@ import { TimespanComponent } from '../../../core/components/timespan/timespan.co
 import { SettingDto, SettingInputDto } from '../../../core/openapi';
 import { SysinfoState } from '../../../core/states/sysinfo.state';
 import { FormView, parseKeyValueTextToSettings } from '../../destination/destination.config-utilities';
+import { OPTIONS_LIST_CUSTOM_CONFIG } from './options-list.config';
 
 type SettingItem = {
   Filter?: string | null;
@@ -74,7 +75,7 @@ export class OptionsListComponent {
 
     const predefinedSettings = options
       .map((setting) => {
-        const option = this.allOptions().find((opt) => opt.name === setting.Name?.replace('--', ''));
+        let option = this.allOptions().find((opt) => opt.name === setting.Name?.replace('--', ''));
 
         let _value: any = setting.Value ?? '';
 
@@ -93,6 +94,15 @@ export class OptionsListComponent {
             const cmpvalue = _value?.trim().toLowerCase();
             const optionValue = option.options.find((opt) => (opt ?? '').trim().toLocaleLowerCase() === cmpvalue);
             if (optionValue) _value = optionValue;
+          }
+
+          const override = OPTIONS_LIST_CUSTOM_CONFIG.find((x) => x.name === option?.name);
+          if (override) {
+            console.log('Overriding option:', option.name);
+            option = {
+              ...option,
+              ...override,
+            };
           }
 
           return {

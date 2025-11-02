@@ -138,7 +138,12 @@
               (ngModelChange)="updateSettingValue(item, $event)" />
           </app-file-tree>
         } @else if (
-          item.FormView.type === 'String' || item.FormView.type === 'Path' || item.FormView.type === 'Decimal'
+          item.FormView.type === 'String' ||
+          item.FormView.type === 'Path' ||
+          item.FormView.type === 'Decimal' ||
+          item.FormView.type === 'Email' ||
+          item.FormView.type === 'Hostname' ||
+          item.FormView.type === 'Bucketname'
         ) {
           <sh-form-field>
             <label [for]="formId">
@@ -146,13 +151,19 @@
             </label>
 
             <input
-              type="text"
+              [type]="item.FormView.type === 'Email' ? 'email' : 'text'"
               [id]="formId"
               [ngModel]="item.Value()"
               (ngModelChange)="updateSettingValue(item, $event)" />
 
             @if (item.FormView.type === 'Path') {
               <sh-icon prefix>link</sh-icon>
+            } @else if (item.FormView.type === 'Hostname') {
+              <sh-icon prefix>hard-drives</sh-icon>
+            } @else if (item.FormView.type === 'Bucketname') {
+              <sh-icon prefix>jar</sh-icon>
+            } @else if (item.FormView.type === 'Email') {
+              <sh-icon prefix>envelope</sh-icon>
             } @else {
               <sh-icon prefix>textbox</sh-icon>
             }
