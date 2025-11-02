@@ -3,32 +3,6 @@
 <section>
   <h2 i18n>Where do you want to restore from?</h2>
 
-  <sh-card class="type-a actionable" [routerLink]="['/restore-from-files']">
-    <img src="assets/images/backup.png" alt="" width="48px" />
-    <div class="text">
-      <h3 i18n>Direct restore from backup files</h3>
-      <p i18n>Point to your backup files and restore from there.</p>
-    </div>
-    <button shButton i18n>
-      Start
-      <sh-icon>play-circle</sh-icon>
-    </button>
-  </sh-card>
-
-  <sh-card class="type-a actionable" [routerLink]="['/restore/from-config']">
-    <img src="assets/images/restore.png" alt="" width="48px" />
-    <div class="text">
-      <h3 i18n>Restore from configuration</h3>
-      <p i18n>Load destination from an exported job</p>
-    </div>
-    <button shButton i18n>
-      Start
-      <sh-icon>play-circle</sh-icon>
-    </button>
-  </sh-card>
-
-  <sh-divider>Or existing</sh-divider>
-
   @defer (when !backupsLoading()) {
     @if (backups().length) {
       @for (backup of backups(); track $index) {
@@ -61,4 +35,32 @@
       </div>
     </div>
   }
+
+  @if (backups().length) {
+    <sh-divider>Or without a local configuration</sh-divider>
+  }
+
+  <sh-card class="type-a actionable" [routerLink]="['/restore-from-files']">
+    <img src="assets/images/backup.png" alt="" width="48px" />
+    <div class="text">
+      <h3 i18n>Direct restore from backup files</h3>
+      <p i18n>Point to your backup files and restore from there.</p>
+    </div>
+    <button shButton i18n>
+      Start
+      <sh-icon>play-circle</sh-icon>
+    </button>
+  </sh-card>
+
+  <sh-card class="type-a actionable" [routerLink]="['/restore/from-config']">
+    <img src="assets/images/restore.png" alt="" width="48px" />
+    <div class="text">
+      <h3 i18n>Restore from configuration</h3>
+      <p i18n>Load destination from an exported job</p>
+    </div>
+    <button shButton i18n>
+      Start
+      <sh-icon>play-circle</sh-icon>
+    </button>
+  </sh-card>
 </section>
