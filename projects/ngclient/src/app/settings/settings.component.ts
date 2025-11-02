@@ -79,7 +79,7 @@ type TimeTypes = (typeof TIME_OPTIONS)[number]['value'];
 const USAGE_STATISTICS_OPTIONS = [
   {
     value: 'none',
-    label: $localize`System default (information)`,
+    label: $localize`System default ($value)`,
   },
   {
     value: 'information',
@@ -150,6 +150,17 @@ export default class SettingsComponent {
   remoteControlStatus = this.#remoteControlState.status;
   updatingChannel = signal(false);
   updateChannel = signal<UpdateChannel>('');
+  usageStatisticsDisabled = computed(() => {
+    const value = this.#sysinfo.systemInfo()?.DefaultUsageReportLevel ?? '';
+    return value.toLowerCase() === 'disabled';
+  });
+
+  #setReporterDefaultEffect = effect(() => {
+    const value = this.#sysinfo.systemInfo()?.DefaultUsageReportLevel ?? '';
+    const opts = USAGE_STATISTICS_OPTIONS;
+    opts[0].label = $localize`System default (${value})`;
+    this.usageStatisticsOptions.set(opts);
+  });
 
   setNewChannel(channel: UpdateChannel) {
     const prevChannel = this.updateChannel();
@@ -292,15 +303,18 @@ export default class SettingsComponent {
   powerModeOptions = computed(() => {
     const sysinfo = this.#sysinfo.systemInfo();
     // If the only providers are default and none, don't show the options
-    if (!sysinfo?.PowerModeProviders || sysinfo.PowerModeProviders.filter(x => x !== '' && x !== 'None').length == 0) {
+    if (
+      !sysinfo?.PowerModeProviders ||
+      sysinfo.PowerModeProviders.filter((x) => x !== '' && x !== 'None').length == 0
+    ) {
       return [];
     }
-    return sysinfo!.PowerModeProviders!.map(x => ({
+    return sysinfo!.PowerModeProviders!.map((x) => ({
       value: x == '' ? 'default' : x,
       label: x === '' ? $localize`Default` : x,
     }));
   });
-  
+
   usageStatisticsOptions = signal(USAGE_STATISTICS_OPTIONS);
 
   timeTypeOptions = signal(TIME_OPTIONS);
@@ -422,9 +436,10 @@ export default class SettingsComponent {
 
     this.timeType.set(startupDelay == '' ? 'none' : timeUnitOptions.includes(unit) ? unit : 'none');
     this.timeValue.set(startupDelay == '' ? 0 : parseInt(timeStr));
-    const powerModeValue = serverSettings['power-mode-provider'] === '' || serverSettings['power-mode-provider'] == null
-       ? 'default' 
-       : serverSettings['power-mode-provider'];
+    const powerModeValue =
+      serverSettings['power-mode-provider'] === '' || serverSettings['power-mode-provider'] == null
+        ? 'default'
+        : serverSettings['power-mode-provider'];
     this.powerModeCtrl.set(powerModeValue);
   });
 
