@@ -5,7 +5,9 @@
 
   <div ship-alert-content class="content">
     @if (_notification.Action !== 'update:new' && _notification.Action !== 'update:manual') {
-      {{ _notification.Message }}
+      <div class="message">
+        {{ _notification.Message }}
+      </div>
     }
 
     @if (downloadLink()) {
