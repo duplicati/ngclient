@@ -110,12 +110,14 @@
 @if (targetUrlDialogOpen()) {
   <sh-dialog [(isOpen)]="targetUrlDialogOpen" [options]="{ maxWidth: '700px', width: '100%' }">
     <header header>
-      @if (!hasDestination) {
-        <h2 i18n>Set target URL</h2>
-      } @else {
-        <h2 i18n>Edit target URL</h2>
-      }
-      <sh-alert class="warn" i18n>Be careful, this will overwrite everything you have in your destination.</sh-alert>
+      <div class="target-dialog-header">
+        @if (!hasDestination) {
+          <h2 i18n>Set target URL</h2>
+        } @else {
+          <h2 i18n>Edit target URL</h2>
+        }
+        <sh-alert class="warn" i18n>Be careful, this will overwrite everything you have in your destination.</sh-alert>
+      </div>
     </header>
 
     <div content>
