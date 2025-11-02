@@ -99,7 +99,7 @@ export class SingleDestinationComponent {
     advanced: {} as Record<string, any>,
   });
 
-  advancedFormFieldNames = computed(() => Object.keys(this.destinationForm().advanced));
+  advancedFormFieldNames = computed(() => Object.keys(this.destinationForm().advanced ?? {}));
   destinationFormConfig = signal<DestinationConfig | null>(null);
 
   showTextArea = signal(false);
