@@ -1697,6 +1697,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     displayName: $localize`Filejump`,
     description: $localize`Store backups in Filejump.`,
     icon: 'assets/dest-icons/file-jump.png',
+    sortOrder: -1,
     customFields: {
       path: {
         type: 'Path',
