@@ -58,7 +58,6 @@ export default class OptionsComponent {
 
   submit() {
     const files = this.#restoreFlowState.selectFilesFormSignal()?.filesToRestore ?? [];
-    console.log('Submitting restore with files:', files, this.optionsFormSignal()?.restoreFrom);
     if (files.length > 0 && this.optionsFormSignal()?.restoreFrom == 'original') {
       const sourceDirSep = files[0].includes('/') ? '/' : '\\';
       if (sourceDirSep !== this.#sysinfoState.systemInfo()?.DirectorySeparator) {
