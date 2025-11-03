@@ -17,3 +17,8 @@ section {
   max-width: p2r(500);
   margin: 0 auto p2r(40);
 }
+
+.inactive {
+  pointer-events: none;
+  opacity: 0.5;
+}

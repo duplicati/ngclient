@@ -8,7 +8,14 @@ import { SysinfoState } from '../states/sysinfo.state';
 
 type ConnectionStatus = 'connected' | 'disconnected' | 'connecting' | 'authenticating';
 
-export type SubscriptionService = 'backuplist' | 'serversettings' | 'progress' | 'taskqueue' | 'taskcompleted' | 'notification' | 'legacystatus';
+export type SubscriptionService =
+  | 'backuplist'
+  | 'serversettings'
+  | 'progress'
+  | 'taskqueue'
+  | 'taskcompleted'
+  | 'notification'
+  | 'legacystatus';
 type RequestAction = 'sub' | 'unsub';
 type ResponseAction = 'reply';
 type ResponseType = SubscriptionService | ResponseAction;
@@ -74,7 +81,7 @@ export class ServerStatusWebSocketService {
   #serverTaskQueue = signal<GetTaskStateDto[] | null>(null);
   #backupListState = signal<GetApiV1BackupsResponse | null>(null);
   #disconnectedDialog: ReturnType<typeof this.dialog.open<DisconnectedDialogComponent>> | undefined = undefined;
-  #subscriptions = signal<Partial<{ [key in SubscriptionService]: any }>>({ 'legacystatus': true });
+  #subscriptions = signal<Partial<{ [key in SubscriptionService]: any }>>({ legacystatus: true });
 
   shouldConnect = signal(true);
   connectionStatus = this.#connectionStatus.asReadonly();
@@ -83,7 +90,7 @@ export class ServerStatusWebSocketService {
   subscriptions = this.#subscriptions.asReadonly();
   serverTaskQueue = this.#serverTaskQueue.asReadonly();
   backupListState = this.#backupListState.asReadonly();
-  #taskCompletedSubscriber: Subscriber<GetTaskStateDto> | null = null
+  #taskCompletedSubscriber: Subscriber<GetTaskStateDto> | null = null;
   taskCompleted = new Observable<GetTaskStateDto>((subscriber) => {
     this.#taskCompletedSubscriber = subscriber;
   });
@@ -111,7 +118,7 @@ export class ServerStatusWebSocketService {
     }
 
     const hostname = window.location.hostname;
-    const url = this.#sysinfo.hasWebSocketAuth() 
+    const url = this.#sysinfo.hasWebSocketAuth()
       ? `${protocol}//${hostname}${port}/notifications`
       : `${protocol}//${hostname}${port}/notifications?token=${token}`;
 
@@ -120,15 +127,16 @@ export class ServerStatusWebSocketService {
     this.#websocket = new WebSocket(url);
 
     this.#websocket.onopen = () => {
-      if (LOGGING_ENABLED)
-        console.log('WebSocket connection established');
+      if (LOGGING_ENABLED) console.log('WebSocket connection established');
 
       if (this.#sysinfo.hasWebSocketAuth()) {
         this.#connectionStatus.set('authenticating');
-        this.#websocket?.send(JSON.stringify({
-          Version: 1,
-          Token: token,
-        } as WebSocketAuthRequest));
+        this.#websocket?.send(
+          JSON.stringify({
+            Version: 1,
+            Token: token,
+          } as WebSocketAuthRequest)
+        );
       } else {
         this.#onconnectionEstablished();
       }
@@ -139,16 +147,14 @@ export class ServerStatusWebSocketService {
         try {
           const authReply = JSON.parse(event.data) as WebSocketAuthReply;
           if (authReply.Success) {
-            if (LOGGING_ENABLED)
-              console.log('WebSocket authentication successful');
+            if (LOGGING_ENABLED) console.log('WebSocket authentication successful');
             this.#onconnectionEstablished();
           } else {
             console.error('WebSocket authentication failed:', authReply.Message);
             this.#connectionStatus.set('disconnected');
           }
           return;
-        }
-        catch (error) {
+        } catch (error) {
           console.error('Error parsing WebSocket authentication reply', error);
           this.#connectionStatus.set('disconnected');
           return;
@@ -158,34 +164,28 @@ export class ServerStatusWebSocketService {
       try {
         const respobj = JSON.parse(event.data);
         const type = respobj?.Type as ResponseType | null;
-        
+
         if (type === 'legacystatus' || type == null) {
-          if (LOGGING_ENABLED)
-            console.log('Received legacy status update:', respobj);
+          if (LOGGING_ENABLED) console.log('Received legacy status update:', respobj);
           this.#serverState.set(respobj as ServerStatusDto);
         } else if (type === 'reply') {
           const reply = respobj as WebSocketReply;
-          if (!reply.Success) 
-            console.error('WebSocket reply error:', reply.Message);
+          if (!reply.Success) console.error('WebSocket reply error:', reply.Message);
         } else if (type === 'progress') {
           const evobj = respobj as WebsocketEventMessage<IProgressEventData>;
-          if (LOGGING_ENABLED)
-            console.log('Received progress update:', evobj.Data);
+          if (LOGGING_ENABLED) console.log('Received progress update:', evobj.Data);
           this.#serverProgress.set(evobj.Data);
         } else if (type === 'taskqueue') {
-            const evobj = respobj as WebsocketEventMessage<GetTaskStateDto[]>;
-            if (LOGGING_ENABLED)
-              console.log('Received task update:', evobj.Data);
-            this.#serverTaskQueue.set(evobj.Data);
+          const evobj = respobj as WebsocketEventMessage<GetTaskStateDto[]>;
+          if (LOGGING_ENABLED) console.log('Received task update:', evobj.Data);
+          this.#serverTaskQueue.set(evobj.Data);
         } else if (type === 'taskcompleted') {
-            const evobj = respobj as WebsocketEventMessage<GetTaskStateDto>;
-            if (LOGGING_ENABLED)
-              console.log('Received task completed:', evobj.Data);
-            this.#taskCompletedSubscriber?.next(evobj.Data);
+          const evobj = respobj as WebsocketEventMessage<GetTaskStateDto>;
+          if (LOGGING_ENABLED) console.log('Received task completed:', evobj.Data);
+          this.#taskCompletedSubscriber?.next(evobj.Data);
         } else if (type === 'backuplist') {
           const evobj = respobj as WebsocketEventMessage<GetApiV1BackupsResponse>;
-          if (LOGGING_ENABLED)
-            console.log('Received backup list update:', evobj.Data);
+          if (LOGGING_ENABLED) console.log('Received backup list update:', evobj.Data);
           this.#backupListState.set(evobj.Data);
         } else {
           console.warn('Unknown WebSocket message type:', type);
@@ -196,8 +196,7 @@ export class ServerStatusWebSocketService {
     };
 
     this.#websocket.onclose = (event) => {
-      if (LOGGING_ENABLED)
-        console.log('WebSocket connection closed', event);
+      if (LOGGING_ENABLED) console.log('WebSocket connection closed', event);
       this.#connectionStatus.set('disconnected');
 
       // Attempt reconnection
@@ -255,7 +254,7 @@ export class ServerStatusWebSocketService {
     this.reconnect();
   }
 
-  private sendSubscribeRequest<T>(subscriptionId: SubscriptionService, data: T | undefined | null) {    
+  private sendSubscribeRequest<T>(subscriptionId: SubscriptionService, data: T | undefined | null) {
     this.#websocket?.send(
       JSON.stringify({
         Version: 1,
@@ -271,13 +270,11 @@ export class ServerStatusWebSocketService {
     const currentSubscriptions = this.#subscriptions();
     const current = currentSubscriptions[subscriptionId];
 
-    if (!current || JSON.stringify(current) !== JSON.stringify(data || true))
-    {
+    if (!current || JSON.stringify(current) !== JSON.stringify(data || true)) {
       currentSubscriptions[subscriptionId] = data || true;
       this.#subscriptions.set(currentSubscriptions);
 
-      if (this.#connectionStatus() == 'connected')
-        this.sendSubscribeRequest(subscriptionId, data);
+      if (this.#connectionStatus() == 'connected') this.sendSubscribeRequest(subscriptionId, data);
     }
   }
 
@@ -297,5 +294,5 @@ export class ServerStatusWebSocketService {
           } as WebSocketRequest)
         );
     }
-  }  
+  }
 }

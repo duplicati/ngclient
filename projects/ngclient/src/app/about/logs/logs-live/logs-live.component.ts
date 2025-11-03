@@ -1,11 +1,11 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, inject, input, signal } from '@angular/core';
-import { ShipIconComponent, ShipListComponent, ShipTableComponent } from '@ship-ui/core';
+import { ShipButtonComponent, ShipIconComponent, ShipListComponent, ShipTableComponent } from '@ship-ui/core';
 import { LogsLiveState } from './logs-live.state';
 
 @Component({
   selector: 'app-logs-live',
-  imports: [ShipTableComponent, ShipIconComponent, ShipListComponent, DatePipe],
+  imports: [ShipTableComponent, ShipIconComponent, ShipListComponent, DatePipe, ShipButtonComponent],
   templateUrl: './logs-live.component.html',
   styleUrl: './logs-live.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

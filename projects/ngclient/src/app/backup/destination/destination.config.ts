@@ -12,6 +12,7 @@ import {
   fromUrlObj,
   getSimplePath,
   toSearchParams,
+  UrlLike,
   ValueOfDestinationFormGroup,
 } from './destination.config-utilities';
 
@@ -60,7 +61,7 @@ export const DESTINATION_CONFIG_DEFAULT = {
     to: (fields: ValueOfDestinationFormGroup): string => {
       return buildUrlFromFields(fields, null, null, fields.custom.path);
     },
-    from: (destinationType: string, urlObj: URL, plainPath: string) => {
+    from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
       const hasLeadingSlash = plainPath.startsWith(`${destinationType}:///`);
       const path = hasLeadingSlash
         ? plainPath.split(`${destinationType}:///`)[1]
@@ -100,15 +101,14 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       to: (fields: ValueOfDestinationFormGroup): string => {
         return buildUrlFromFields(fields, null, null, fields.custom.path);
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         const hasLeadingSlash = plainPath.startsWith('file:///');
         const _tempPath = decodeURIComponent(
           hasLeadingSlash ? plainPath.split('file:///')[1] : plainPath.split('file://')[1]
         );
-        const isWindows = _tempPath.slice(1).startsWith(':\\') 
-          || _tempPath.slice(1).startsWith(':/')
-          || _tempPath.startsWith('\\\\'); // Check for drive letter or UNC path
-          
+        const isWindows =
+          _tempPath.slice(1).startsWith(':\\') || _tempPath.slice(1).startsWith(':/') || _tempPath.startsWith('\\\\'); // Check for drive letter or UNC path
+
         const path = isWindows ? _tempPath : '/' + _tempPath;
 
         return <ValueOfDestinationFormGroup>{
@@ -183,7 +183,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const { server, port, path } = fields.custom;
         return buildUrlFromFields(fields, server, port, path);
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         const { server, port, path } = fromUrlObj(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
@@ -202,7 +202,8 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     displayName: $localize`S3 Compatible`,
     description: $localize`Store backups in any S3 compatible bucket.`,
     icon: 'assets/dest-icons/s3compat.png',
-    searchTerms: 'amazon aws spaces cloud mycloudyplace impossible scaleway hosteurope dunkel dreamhost dincloud poli systems ibm cos storadera wasabi infomaniak infomaniak さくらのクラウド seagate lyve digitalocean backblaze b2 cloudian minio linode bunnycdn microsoft azure google storage ibm oracle cloudflare alibaba huawei tencent baidu jd ucloud qiniu aliyun tcloud tencent ',
+    searchTerms:
+      'amazon aws spaces cloud mycloudyplace impossible scaleway hosteurope dunkel dreamhost dincloud poli systems ibm cos storadera wasabi infomaniak infomaniak さくらのクラウド seagate lyve digitalocean backblaze b2 cloudian minio linode bunnycdn microsoft azure google storage ibm oracle cloudflare alibaba huawei tencent baidu jd ucloud qiniu aliyun tcloud tencent ',
     sortOrder: 90,
     customFields: {
       bucket: {
@@ -279,13 +280,13 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const { bucket, path } = fields.custom;
         return buildUrlFromFields(fields, bucket, null, path);
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
-        const { server, path } = fromUrlObj(urlObj);
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
+        const { bucket, path } = fromUrlObj(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
             path: path,
-            bucket: server,
+            bucket: bucket,
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -345,23 +346,23 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
       {
         name: 'gcs-service-account-json',
-        type: 'FreeText',        
+        type: 'FreeText',
         shortDescription: $localize`Service account JSON`,
         longDescription: $localize`Paste the service account JSON here.`,
-      }
+      },
     ],
     mapper: {
       to: (fields: ValueOfDestinationFormGroup): string => {
         const { bucket, path } = fields.custom;
         return buildUrlFromFields(fields, bucket, null, path);
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
-        const { server, path } = fromUrlObj(urlObj);
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
+        const { bucket, path } = fromUrlObj(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
             path: path,
-            bucket: server,
+            bucket: bucket,
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -396,7 +397,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       to: (fields: ValueOfDestinationFormGroup): string => {
         return buildUrlFromFields(fields, null, null, fields.custom.path);
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
@@ -456,7 +457,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const { server, path } = fields.custom;
         return buildUrlFromFields(fields, server, null, path);
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         const { server, path } = fromUrlObj(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
@@ -502,7 +503,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       to: (fields: ValueOfDestinationFormGroup) => {
         return buildUrlFromFields(fields, null, null, fields.custom.path);
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
@@ -540,7 +541,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       to: (fields: ValueOfDestinationFormGroup) => {
         return buildUrlFromFields(fields, null, null, fields.custom.path);
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
@@ -599,7 +600,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const { port, server, path } = fields.custom;
         return buildUrlFromFields(fields, server, port, path);
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         const { server, port, path } = fromUrlObj(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
@@ -661,7 +662,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const { port, server, path } = fields.custom;
         return buildUrlFromFields(fields, server, port, path);
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         const { server, port, path } = fromUrlObj(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
@@ -706,7 +707,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       to: (fields: ValueOfDestinationFormGroup) => {
         return buildUrlFromFields(fields, null, null, fields.custom.path);
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
@@ -744,7 +745,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       to: (fields: ValueOfDestinationFormGroup) => {
         return buildUrlFromFields(fields, null, null, fields.custom.path);
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
@@ -781,7 +782,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       to: (fields: ValueOfDestinationFormGroup) => {
         return buildUrlFromFields(fields, null, null, fields.custom.path);
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
@@ -818,7 +819,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       to: (fields: ValueOfDestinationFormGroup) => {
         return buildUrlFromFields(fields, null, null, fields.custom.path);
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
@@ -870,13 +871,13 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const { bucket, path } = fields.custom;
         return buildUrlFromFields(fields, bucket, null, path);
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
-        const { server, path } = fromUrlObj(urlObj);
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
+        const { bucket, path } = fromUrlObj(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
             path: path,
-            bucket: server,
+            bucket: bucket,
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -923,12 +924,12 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const { bucket, path } = fields.custom;
         return buildUrlFromFields(fields, bucket, null, path);
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
-        const { server, path } = fromUrlObj(urlObj);
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
+        const { bucket, path } = fromUrlObj(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            bucket: server,
+            bucket: bucket,
             path: path,
           },
           ...fromSearchParams(destinationType, urlObj),
@@ -969,7 +970,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const path = fields.custom.path;
         return buildUrlFromFields(fields, null, null, path);
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
@@ -1015,7 +1016,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       to: (fields: ValueOfDestinationFormGroup) => {
         return buildUrlFromFields(fields, null, null, fields.custom.path);
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
@@ -1073,7 +1074,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const { port, server, path } = fields.custom;
         return buildUrlFromFields(fields, server, port, path);
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         const { server, port, path } = fromUrlObj(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
@@ -1120,11 +1121,11 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         );
 
         return buildUrl(fields.destinationType ?? 'rclone', rcloneRemoteRepository, null, rcloneRemotePath, [
-          ...Object.entries(fields.advanced),
+          ...Object.entries(fields.advanced ?? {}),
           ...rest,
         ]);
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         const { advanced, dynamic } = fromSearchParams(destinationType, urlObj);
         const { server, path } = fromUrlObj(urlObj);
 
@@ -1191,13 +1192,13 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const { bucket } = fields.custom;
         return buildUrlFromFields(fields, bucket, null, null);
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
-        const { server, path } = fromUrlObj(urlObj);
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
+        const { bucket, path } = fromUrlObj(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
             path: path,
-            bucket: server,
+            bucket: bucket,
           },
           ...fromSearchParams(destinationType, urlObj),
         };
@@ -1258,7 +1259,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const { server, port, path } = fields.custom;
         return buildUrlFromFields(fields, server, port, path);
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         const { server, port, path } = fromUrlObj(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
@@ -1324,7 +1325,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const { server, port, path } = fields.custom;
         return buildUrlFromFields(fields, server, port, path);
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         const { server, port, path } = fromUrlObj(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
@@ -1390,7 +1391,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const { port, server, path } = fields.custom;
         return buildUrlFromFields(fields, server, port, path);
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         const { server, port, path } = fromUrlObj(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
@@ -1433,7 +1434,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
 
         return buildUrl(fields.destinationType ?? 'sia', server, null, targetpath, urlParams);
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
@@ -1502,7 +1503,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
 
         return buildUrlFromFields(patched, null, null, path);
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         const searchParams = fromSearchParams(destinationType, urlObj);
         const bucket = searchParams.advanced['cos-bucket'];
         delete searchParams.advanced['cos-bucket'];
@@ -1562,7 +1563,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const { server, port, path } = fields.custom;
         return buildUrlFromFields(fields, server, port, path);
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         const { server, port, path } = fromUrlObj(urlObj);
         return <ValueOfDestinationFormGroup>{
           destinationType,
@@ -1625,7 +1626,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const { share, server, path } = fields.custom;
         return buildUrlFromFields(fields, server, null, concatPaths(share, path));
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         const { server, path } = fromUrlObj(urlObj);
 
         const share = path.split('/')[0];
@@ -1680,7 +1681,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       to: (fields: ValueOfDestinationFormGroup): string => {
         return buildUrlFromFields(fields, null, null, fields.custom.path);
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
@@ -1696,6 +1697,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     displayName: $localize`Filejump`,
     description: $localize`Store backups in Filejump.`,
     icon: 'assets/dest-icons/file-jump.png',
+    sortOrder: -1,
     customFields: {
       path: {
         type: 'Path',
@@ -1724,7 +1726,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         const { path } = fields.custom;
         return buildUrlFromFields(fields, null, null, path);
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
@@ -1779,7 +1781,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         ]);
         return `storj://storj.io/config${urlParams}`;
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         const fields = fromSearchParams(destinationType, urlObj);
         delete fields.advanced['storj-auth-method'];
         return <ValueOfDestinationFormGroup>{
@@ -1839,7 +1841,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
 
         return `storj://storj.io/config${urlParams}`;
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         const fields = fromSearchParams(destinationType, urlObj);
         delete fields.advanced['storj-auth-method'];
         return <ValueOfDestinationFormGroup>{
@@ -1900,7 +1902,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
 
         return buildUrlFromFields(patched, null, null, path);
       },
-      from: (destinationType: string, urlObj: URL, plainPath: string) => {
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         const searchParams = fromSearchParams(destinationType, urlObj);
         const bucket = searchParams.advanced['oss-bucket-name'];
         delete searchParams.advanced['oss-bucket-name'];

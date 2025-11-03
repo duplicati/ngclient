@@ -26,7 +26,13 @@ export class TestDestinationService {
   #dialog = inject(ShipDialogService);
   #sysinfo = inject(SysinfoState);
 
-  testDestination(targetUrl: string, backupId: string | null, destinationIndex: number, askToCreate: boolean, suppressErrorDialogs: boolean) {
+  testDestination(
+    targetUrl: string,
+    backupId: string | null,
+    destinationIndex: number,
+    askToCreate: boolean,
+    suppressErrorDialogs: boolean
+  ) {
     if (this.#sysinfo.hasV2TestOperations())
       return this.testDestinationv2(targetUrl, backupId, destinationIndex, askToCreate, suppressErrorDialogs);
     else return this.testDestinationv1(targetUrl, backupId, destinationIndex, askToCreate, suppressErrorDialogs);
@@ -44,7 +50,7 @@ export class TestDestinationService {
         .postApiV2DestinationTest({
           requestBody: {
             DestinationUrl: targetUrl,
-            BackupId: backupId == "new" ? null : backupId,
+            BackupId: backupId == 'new' ? null : backupId,
             AutoCreate: false,
             Options: null,
           },
@@ -65,7 +71,7 @@ export class TestDestinationService {
             );
           },
           error: (err) => {
-            const res = err?.error?.body as PostApiV2DestinationTestResponse;
+            const res = (err?.error?.body ?? err?.error?.requestBody) as PostApiV2DestinationTestResponse;
             if (res?.Data?.FolderExists === false || res?.StatusCode === 'missing-folder') {
               if (askToCreate) this.handleMissingFolder(observer, targetUrl, destinationIndex);
               else
@@ -119,7 +125,7 @@ export class TestDestinationService {
         .postApiV1RemoteoperationTest({
           requestBody: {
             path: targetUrl,
-            backupId: backupId == "new" ? null : backupId,
+            backupId: backupId == 'new' ? null : backupId,
           },
         })
         .subscribe({

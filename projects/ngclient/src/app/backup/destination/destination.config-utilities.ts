@@ -21,6 +21,44 @@ export type DoubleSlashConfig = {
 
 export type OAuthVersion = 1 | 2;
 
+export class UrlLike {
+  public host: string;
+  public hostname: string;
+  public exactHostname: string;
+  public pathname: string;
+  public port: string;
+  public protocol: string;
+  public search: string;
+  public username: string;
+  public password: string;
+  public searchParams: URLSearchParams;
+  public originalUrl: string;
+
+  constructor(url: string) {
+    const urlObj = new URL(url);
+    this.originalUrl = url;
+    this.host = urlObj.host;
+    this.hostname = urlObj.hostname;
+    this.exactHostname = this.extractExactHostname(url);
+    this.pathname = urlObj.pathname;
+    this.port = urlObj.port;
+    this.protocol = urlObj.protocol;
+    this.search = urlObj.search;
+    this.username = urlObj.username;
+    this.password = urlObj.password;
+    this.searchParams = urlObj.searchParams;
+  }
+
+  // Helper to extract the exact hostname from the original URL string
+  // This is required to avoid lowercasing issues with the built-in URL class
+  // as well as punycode conversion for strings that are not valid hostnames
+  private extractExactHostname(url: string): string {
+    // Matches protocol://[userinfo@]hostname[:port][/...]
+    const match = url.match(/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\/(?:[^@\/?#]*@)?([^:\/?#]+)/);
+    return match ? match[1] : '';
+  }
+}
+
 export type FormView = {
   name: string;
   type:
@@ -51,7 +89,7 @@ export type CustomFormView = FormView & {
 
 export type Mapping = {
   to: (fields: ValueOfDestinationFormGroup) => string;
-  from: (destinationType: string, urlObj: URL, plainPath: string) => ValueOfDestinationFormGroup;
+  from: (destinationType: string, urlObj: UrlLike, plainPath: string) => ValueOfDestinationFormGroup;
 };
 
 export type DestinationConfigEntry = {
@@ -124,16 +162,18 @@ export function encodePathPreservingSlashes(path: string) {
   return path.split('/').map(encodeURIComponent).join('/');
 }
 
-export function getSimplePath(url: URL | string | null | undefined) {
+export function getSimplePath(url: UrlLike | string | null | undefined) {
   if (url === null || url === undefined || url === '') return '';
   if (typeof url === 'string') {
     try {
-      url = new URL(url);
+      url = new UrlLike(url);
     } catch (e) {
       return '';
     }
   }
-  return decodeURIComponent(url.hostname ?? '') + decodeURIComponent(url.pathname == '/' ? '' : (url.pathname ?? ''));
+  return (
+    decodeURIComponent(url.exactHostname ?? '') + decodeURIComponent(url.pathname == '/' ? '' : (url.pathname ?? ''))
+  );
 }
 
 export function addServer(server: string | null | undefined) {
@@ -163,15 +203,16 @@ export function getConfigurationByKey(key: string): DestinationConfigEntry {
   );
 }
 
-export function fromUrlObj(urlObj: URL) {
+export function fromUrlObj(urlObj: UrlLike) {
   return {
+    bucket: decodeURIComponent(urlObj.exactHostname),
     server: decodeURIComponent(urlObj.hostname),
     port: urlObj.port,
     path: removeLeadingSlash(decodeURIComponent(urlObj.pathname)),
   };
 }
 
-export function fromSearchParams(destinationType: string, urlObj: URL) {
+export function fromSearchParams(destinationType: string, urlObj: UrlLike) {
   const advanced: { [key: string]: any } = {};
   const dynamic: { [key: string]: any } = {};
   const config = getConfigurationByKey(destinationType);
@@ -213,13 +254,24 @@ export function fromTargetPath(targetPath: string) {
   const destinationType = targetPath.split('://')[0];
   const path = targetPath.split('://')[1];
   // Handle Windows paths that are not real URLs, e.g. file://C:/path/to/file
-  const fakeProtocolPrefixed = destinationType === 'file' ? 'http://dummy' : 'http://' + path;
+  // Also handle the case where new URL('http://') fails to parse,
+  // but something like new URL('s3://') works fine.
+  const fakeProtocolPrefixed =
+    destinationType === 'file'
+      ? 'http://dummy'
+      : path == '' || path.startsWith('?')
+        ? `${destinationType}://`
+        : 'http://' + path;
 
   if (!path) return null;
 
   // Only local files allow the shortcut file paths like file://%MUSIC%/music.mp3 to music folder
   if (path.startsWith('%') && destinationType === 'file') {
-    return getConfigurationByKey(destinationType).mapper.from(destinationType, new URL('http://localhost'), targetPath);
+    return getConfigurationByKey(destinationType).mapper.from(
+      destinationType,
+      new UrlLike('http://localhost'),
+      targetPath
+    );
   }
 
   const config = getConfigurationByKey(destinationType);
@@ -236,11 +288,11 @@ export function fromTargetPath(targetPath: string) {
   // Since we use a dummy protocol for the file destination, we need to handle the query part
   if (destinationType === 'file' && path.indexOf('?') !== -1) {
     extraQuery += extraQuery.indexOf('?') === -1 ? '?' : '&';
-    extraQuery +=  path.split('?')[1] ?? '';
+    extraQuery += path.split('?')[1] ?? '';
   }
 
   try {
-    const urlObj = new URL(fakeProtocolPrefixed + extraQuery);
+    const urlObj = new UrlLike(fakeProtocolPrefixed + extraQuery);
 
     if (urlObj.host === 'undefined') return null;
 
@@ -255,7 +307,7 @@ export function fromTargetPath(targetPath: string) {
 
     return config.mapper.from(config.key, urlObj, targetPath);
   } catch (error) {
-    console.error('Error while parsing target path', error);
+    console.error('Error while parsing target path', targetPath, fakeProtocolPrefixed + extraQuery, error);
     return null;
   }
 }
@@ -264,9 +316,9 @@ export function parseKeyValueText(text: string): [string, string][] {
   if (typeof text !== 'string' || !text.trim()) return [];
   return text
     .split('\n')
-    .map(line => line.trim())
-    .filter(line => line)
-    .map(line => {
+    .map((line) => line.trim())
+    .filter((line) => line)
+    .map((line) => {
       const [key, ...valueParts] = line.split('=');
       const value = valueParts.join('=').trim();
       return key.trim() ? [key.trim(), value] : null;

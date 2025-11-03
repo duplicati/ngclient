@@ -14,7 +14,7 @@
         (click)="submit()"
         i18n
         i18n-shTooltip
-        shTooltip="Remember to copy the password"
+        [shTooltip]="encryptionFieldSignal() ? 'Remember to copy the password' : ''"
         [class.loading]="isExporting()"
         [disabled]="
           exportForm.invalid ||
@@ -118,10 +118,10 @@
         <button shButton type="button" class="small" (click)="showPassword.set(!showPassword())" i18n>
           @if (showPassword()) {
             <sh-icon>eye-slash</sh-icon>
-            hide
+            Hide
           } @else {
             <sh-icon>eye</sh-icon>
-            show
+            Show
           }
         </button>
 

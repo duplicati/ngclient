@@ -134,6 +134,7 @@
     "2976874496010813887": "O backup era temporário e não existe mais, portanto, os dados de log serão perdidos",
     "6490648157632610005": "Restaurar opções",
     "2601306210394871786": "Como você quer lidar com arquivos existentes?",
+    "1253156499530942296": "Este backup foi criado em outro sistema operacional. A restauração de arquivos sem especificar uma pasta de destino pode fazer com que os arquivos sejam restaurados em locais inesperados. Tem certeza de que deseja continuar sem escolher uma pasta de destino?",
     "325172806395484991": "Selecionar arquivos",
     "527691487030937649": "De onde você deseja restaurar?",
     "4930506384627295710": "Configurações",
@@ -141,15 +142,14 @@
     "918395176653023621": "Impedir login automático no ícone da bandeja",
     "2919975008248285707": "Canal de atualização",
     "8289732336438690874": "Beta",
-    "9121268781026454492": "Versão apenas para desenvolvedores. Não para uso com dados importantes.",
     "401382195676192367": "Canary",
-    "7438596179184557624": "Versões apenas para desenvolvedores. Não para uso com dados importantes.",
     "5320543668849212821": "Pausa após a inicialização ou a hibernação",
     "7350523198476594805": "Estatísticas de uso",
     "4531976006614415538": "Estatísticas de uso, avisos, erros e falhas",
     "4007307614127429452": "Avisos, erros e falhas",
     "7003237362536687306": "Erros e problemas",
     "7931989065782446584": "Somente falhas",
-    "6546722977616384568": "Nenhum / desabilitado"
+    "6546722977616384568": "Nenhum / desabilitado",
+    "5607669932062416162": "Padrão"
   }
 }

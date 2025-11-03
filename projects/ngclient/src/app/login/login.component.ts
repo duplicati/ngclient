@@ -43,6 +43,7 @@ export default class LoginComponent {
     pass: fb.control<string>('', Validators.required),
     rememberMe: fb.control<boolean>(this.rememberMe()),
   });
+  showPassword = signal(false);
   passwordInput = viewChild<ElementRef<HTMLInputElement>>('passwordInput');
   passwordEffect = effect(() => {
     if (this.failedLogin()) {

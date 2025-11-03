@@ -53,6 +53,7 @@ sh-divider {
   display: flex;
   flex-direction: column;
   gap: p2r(8);
+  overflow: auto;
 }
 
 .path {

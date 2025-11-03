@@ -152,6 +152,7 @@
     "2976874496010813887": "Kopia była tymczasowa i nie istnieje, stąd dane dziennika są utracone",
     "6490648157632610005": "Opcje odtwarzania",
     "2601306210394871786": "Jak chcesz potraktować istniejące pliki?",
+    "1253156499530942296": "Ta kopia zapasowa została utworzona na innym systemie operacyjnym. Odzyskiwanie plików bez określania folderu docelowego może spowodować, że pliki zostaną przywrócone w nieoczekiwanych miejscach. Czy na pewno chcesz kontynuować bez wyboru folderu docelowego?",
     "325172806395484991": "Wybierz pliki",
     "527691487030937649": "Gdzie chcesz odtworzyć?",
     "8024650600986084314": "Rejestracja do zdalnego sterowania",
@@ -168,17 +169,15 @@
     "918395176653023621": "Zapobiegaj automatycznemu logowaniu z ikony w trayu",
     "2919975008248285707": "Kanał uaktualnień",
     "3905239345805877394": "Stabilna",
-    "5175951092925375805": "Oficjalne wydania",
     "8289732336438690874": "Beta",
-    "9121268781026454492": "Szczególne kompilacje tylko dla programistów. Nie do użytku z ważnymi danymi.",
     "401382195676192367": "Robocze",
-    "7438596179184557624": "Indywidualne kompilacje tylko dla programistów. Nie do użytku z ważnymi danymi.",
     "5320543668849212821": "Wstrzymaj po uruchomieniu lub hibernacji",
     "7350523198476594805": "Statystyki użycia",
     "4531976006614415538": "Statystyki użycia , ostrzeżenia, błędy i awarie",
     "4007307614127429452": "Ostrzeżenia, błędy i awarie",
     "7003237362536687306": "Błędy i awarie",
     "7931989065782446584": "Tylko awarie",
-    "6546722977616384568": "Żaden / wyłączone"
+    "6546722977616384568": "Żaden / wyłączone",
+    "5607669932062416162": "Domyślny"
   }
 }

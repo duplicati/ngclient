@@ -215,11 +215,9 @@
   <section>
     <div class="left">
       <h3 i18n>Update channel</h3>
-      <p>
-        @if (updateChannel() !== '' && sysinfo()?.ServerVersion) {
-          {{ sysinfo()?.ServerVersion }}
-        }
-      </p>
+      @if (sysinfo()?.ServerVersion) {
+        <p i18n>Installed version: {{ sysinfo()?.ServerVersionName }}</p>
+      }
 
       @if (updatingChannel()) {
         <sh-progress-bar class="indeterminate primary" />
@@ -302,38 +300,40 @@
     </div>
   </section>
 
-  <section>
-    <div class="left">
-      <h3 i18n>Usage statistics</h3>
-      <p i18n>
-        Usage reports help us improve the user experience and evaluate impact of new features. We use them to generate
-        <a href="#">public usage statistics.</a>
-        <br />
-        <br />
-        All usage reports are sent anonymously and do not contain any personal information. They contain information
-        about hardware and operating system, the type of backend, backup duration, overall size of source data and
-        similar data. They do not contain paths, filenames, usernames, passwords or similar sensitive information.
-      </p>
-    </div>
+  @if (!usageStatisticsDisabled()) {
+    <section>
+      <div class="left">
+        <h3 i18n>Usage statistics</h3>
+        <p i18n>
+          Usage reports help us improve the user experience and evaluate impact of new features. We use them to generate
+          <a href="#">public usage statistics.</a>
+          <br />
+          <br />
+          All usage reports are sent anonymously and do not contain any personal information. They contain information
+          about hardware and operating system, the type of backend, backup duration, overall size of source data and
+          similar data. They do not contain paths, filenames, usernames, passwords or similar sensitive information.
+        </p>
+      </div>
 
-    <div class="right">
-      <sh-select
-        [options]="usageStatisticsOptions()"
-        [isLoading]="updatingUsageStatistics()"
-        label="label"
-        value="value">
-        <input
-          type="text"
-          [ngModel]="usageStatistics()"
-          (ngModelChange)="updateUsageStatistics($event)"
-          [ngModelOptions]="{ standalone: true }" />
+      <div class="right">
+        <sh-select
+          [options]="usageStatisticsOptions()"
+          [isLoading]="updatingUsageStatistics()"
+          label="label"
+          value="value">
+          <input
+            type="text"
+            [ngModel]="usageStatistics()"
+            (ngModelChange)="updateUsageStatistics($event)"
+            [ngModelOptions]="{ standalone: true }" />
 
-        <ng-template let-option>
-          {{ option.label }}
-        </ng-template>
-      </sh-select>
-    </div>
-  </section>
+          <ng-template let-option>
+            {{ option.label }}
+          </ng-template>
+        </sh-select>
+      </div>
+    </section>
+  }
 </div>
 
 <div class="content">

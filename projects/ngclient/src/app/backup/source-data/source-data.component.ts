@@ -64,7 +64,10 @@ export default class SourceDataComponent {
   sourceDataFormSignal = this.#backupState.sourceDataFormSignal;
 
   newPathCtrl = new FormControl('');
-  filesLargerThan = computed(() => this.sourceDataFormSignal()?.excludes?.filesLargerThan?.size !== null);
+  filesLargerThan = computed(() => {
+    const el = this.sourceDataFormSignal()?.excludes?.filesLargerThan ?? {};
+    return el.size !== null && el.unit !== null ? `${el.size}${el.unit}` : null;
+  });
   osType = this.#backupState.osType;
 
   pathSignal = toSignal(this.sourceDataForm.controls.path.valueChanges);

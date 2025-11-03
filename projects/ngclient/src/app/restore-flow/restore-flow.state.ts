@@ -72,7 +72,7 @@ export class RestoreFlowState {
     }
 
     if (!isFileRestore) {
-      this.getBackup(true);
+      this.getBackup();
     }
   }
 
@@ -181,9 +181,10 @@ export class RestoreFlowState {
   private loadFilesetsWithRetryv2(id: string, retriesLeft: number = 2): Observable<ListFilesetsResponseDto> {
     return this.#dupServer.postApiV2BackupListFilesets({ requestBody: { BackupId: id } }).pipe(
       catchError((err) => {
-        const isEncryptedError = err?.error?.body?.StatusCode === 'EncryptedStorageNoPassphrase';
-        const isNotFoundError = err?.error?.body?.StatusCode === 'FolderMissing';
-        const isEmptyFolderError = err?.error?.body?.StatusCode === 'EmptyRemoteFolder';
+        const statusCode = err?.error?.body?.StatusCode ?? err?.error?.requestBody?.StatusCode;
+        const isEncryptedError = statusCode === 'EncryptedStorageNoPassphrase';
+        const isNotFoundError = statusCode === 'FolderMissing';
+        const isEmptyFolderError = statusCode === 'EmptyRemoteFolder';
 
         if (isEncryptedError || isNotFoundError || isEmptyFolderError || retriesLeft === 0) {
           return throwError(() => err);
@@ -194,7 +195,7 @@ export class RestoreFlowState {
     );
   }
 
-  getBackup(setFirstToForm = false) {
+  getBackup() {
     const id = this.backupId()!;
 
     this.versionOptionsLoading.set(true);
@@ -242,9 +243,10 @@ export class RestoreFlowState {
             this.backup.set(backup);
           },
           error: (err) => {
-            const isEncryptedError = err?.error?.body?.StatusCode === 'EncryptedStorageNoPassphrase';
-            const isNotFoundError = err?.error?.body?.StatusCode === 'FolderMissing';
-            const isEmptyFolderError = err?.error?.body?.StatusCode === 'EmptyRemoteFolder';
+            const statusCode = err?.error?.body?.StatusCode ?? err?.error?.requestBody?.StatusCode;
+            const isEncryptedError = statusCode === 'EncryptedStorageNoPassphrase';
+            const isNotFoundError = statusCode === 'FolderMissing';
+            const isEmptyFolderError = statusCode === 'EmptyRemoteFolder';
 
             let errorMessage = $localize`An error occurred while loading the backup filesets: ${err.message}`;
             if (isEncryptedError)

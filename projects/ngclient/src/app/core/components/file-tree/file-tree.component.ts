@@ -131,8 +131,7 @@ export default class FileTreeComponent {
   #inputRef = signal<HTMLInputElement | null>(null);
   treeSearchQuery = signal<string>('');
   treeNodes = signal<TreeNode[]>([]);
-  isWindows = computed(() => this.#sysInfo.systemInfo()?.OSType === 'Windows');
-  pathDelimiter = computed(() => (this.isWindows() ? '\\' : '/'));
+  pathDelimiter = computed(() => this.#sysInfo.systemInfo()?.DirectorySeparator ?? '');
 
   filterGroups = this.#sysInfo.filterGroups();
   isByBackupSettings = computed(() => {

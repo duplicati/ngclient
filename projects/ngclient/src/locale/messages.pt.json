@@ -131,6 +131,7 @@
     "2976874496010813887": "A cópia de segurança era temporária e já não existe, por isso os dados de registo foram perdidos",
     "6490648157632610005": "Opções de restauro",
     "2601306210394871786": "Como deseja gerir os ficheiros existentes?",
+    "1253156499530942296": "Esta cópia de segurança foi criada noutro sistema operativo. A restauração dos ficheiros sem especificar uma pasta de destino pode fazer com que os ficheiros sejam restaurados em locais inesperados. Tem a certeza que quer continuar sem escolher uma pasta de destino?",
     "325172806395484991": "Selecionar ficheiros",
     "527691487030937649": "De onde quer restaurar?",
     "4930506384627295710": "Definições",
@@ -138,15 +139,14 @@
     "918395176653023621": "Impedir autenticação automática com o ícone da barra de tarefas",
     "2919975008248285707": "Canal de atualização",
     "8289732336438690874": "Beta",
-    "9121268781026454492": "Versões específicas apenas para programadores. Não destinadas a serem utilizadas com dados importantes.",
     "401382195676192367": "Canary",
-    "7438596179184557624": "Versões apenas para programadores. Não destinadas a serem utilizadas com dados importantes.",
     "5320543668849212821": "Pausa após o arranque ou hibernação",
     "7350523198476594805": "Estatísticas de utilização",
     "4531976006614415538": "Estatísticas de utilização, avisos e erros",
     "4007307614127429452": "Avisos e erros",
     "7003237362536687306": "Erros e términos",
     "7931989065782446584": "Apenas términos",
-    "6546722977616384568": "Nenhum / desativado"
+    "6546722977616384568": "Nenhum / desativado",
+    "5607669932062416162": "Padrão"
   }
 }

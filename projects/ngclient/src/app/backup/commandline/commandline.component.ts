@@ -8,7 +8,7 @@ import {
   ShipFormFieldComponent,
   ShipIconComponent,
   ShipProgressBarComponent,
-  ShipSelectComponent
+  ShipSelectComponent,
 } from '@ship-ui/core';
 import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
 import { StatusBarState } from '../../core/components/status-bar/status-bar.state';
@@ -90,7 +90,7 @@ export default class CommandlineComponent {
             this.#backupState.mapGeneralToForm(res.Backup);
             this.mapStandardFieldsToForm(res.Backup);
             this.mapBaseCmdToForm(res.Backup);
-            this.#backupState.mapOptionsToForms(res.Backup);
+            this.#backupState.mapOptionsToForms(res.Backup, true);
           }
 
           this.#backupState.finishedLoading.set(true);

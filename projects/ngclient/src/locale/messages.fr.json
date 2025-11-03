@@ -134,6 +134,7 @@
     "2976874496010813887": "La sauvegarde était temporaire et n'existe plus, alors les données du journal sont perdues.",
     "6490648157632610005": "Options de restauration",
     "2601306210394871786": "Comment voulez-vous traiter les fichiers existants ?",
+    "1253156499530942296": "Cette sauvegarde a été créée sur un autre système d’exploitation. Restaurer les fichiers sans préciser un dossier de destination peut créer des fichiers à des endroits inattendus. Êtes-vous surs de vouloir poursuivre sans choisir un dossier de destination ?",
     "325172806395484991": "Sélectionner les fichiers",
     "527691487030937649": "Ou voulez-vous restaurer vos fichiers ?",
     "4930506384627295710": "Paramètres",
@@ -141,15 +142,14 @@
     "918395176653023621": "Empêcher la connexion automatique de l'icône de la barre de tâches",
     "2919975008248285707": "Canal de mise à jour",
     "8289732336438690874": "Bêta",
-    "9121268781026454492": "Versions spécifiques pour les développeurs uniquement. Ne pas utiliser avec des données importantes.",
     "401382195676192367": "Canary",
-    "7438596179184557624": "Versions individuelles pour les développeurs uniquement. Ne pas utiliser avec des données importantes.",
     "5320543668849212821": "Pause après le démarrage ou l'hibernation",
     "7350523198476594805": "Statistiques d'utilisation",
     "4531976006614415538": "Statistiques d'utilisation, avertissements, erreurs et accidents",
     "4007307614127429452": "Avertissements, erreurs et accidents",
     "7003237362536687306": "Erreurs et plantages",
     "7931989065782446584": "Plantages uniquement",
-    "6546722977616384568": "Aucun / Désactivé"
+    "6546722977616384568": "Aucun / Désactivé",
+    "5607669932062416162": "Défaut"
   }
 }

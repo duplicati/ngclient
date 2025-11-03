@@ -423,7 +423,7 @@
         <source>Confirm exit?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/backup.state.ts</context>
-          <context context-type="linenumber">166</context>
+          <context context-type="linenumber">169</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-flow.state.ts</context>
@@ -434,7 +434,7 @@
         <source>Are you sure you want to exit?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/backup.state.ts</context>
-          <context context-type="linenumber">167</context>
+          <context context-type="linenumber">170</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-flow.state.ts</context>
@@ -445,7 +445,11 @@
         <source>Yes</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/backup.state.ts</context>
-          <context context-type="linenumber">168</context>
+          <context context-type="linenumber">171</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/options/options.component.ts</context>
+          <context context-type="linenumber">69</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-flow.state.ts</context>
@@ -456,7 +460,7 @@
         <source>Cancel</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/backup.state.ts</context>
-          <context context-type="linenumber">169</context>
+          <context context-type="linenumber">172</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/database/database.component.ts</context>
@@ -480,7 +484,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/confirm-dialog/confirm-dialog.component.ts</context>
-          <context context-type="linenumber">13</context>
+          <context context-type="linenumber">14</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/status-bar/pause-dialog/pause-dialog.component.html</context>
@@ -492,19 +496,23 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">156</context>
+          <context context-type="linenumber">166</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">318</context>
+          <context context-type="linenumber">328</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">352</context>
+          <context context-type="linenumber">362</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">381</context>
+          <context context-type="linenumber">391</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/options/options.component.ts</context>
+          <context context-type="linenumber">70</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
@@ -605,7 +613,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">319,320</context>
+          <context context-type="linenumber">342,343</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8132372096187045707" datatype="html">
@@ -626,18 +634,11 @@
           <context context-type="linenumber">78</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="5475319282573821635" datatype="html">
-        <source> The backups will be split up into multiple files called volumes. Here you can set the maximum size of the individual volume files. <x id="START_LINK" ctype="x-a" equiv-text="&lt;a href=&quot;#&quot; class=&quot;sh-primary&quot;&gt;"/>Read more<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a&gt;"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/ngclient/src/app/backup/commandline/commandline.component.html</context>
-          <context context-type="linenumber">57,62</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="9127008693272221009" datatype="html">
         <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Run &quot;<x id="INTERPOLATION" equiv-text="{{ baseCmdForm.value.command }}"/>&quot; command now </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/commandline/commandline.component.html</context>
-          <context context-type="linenumber">66,69</context>
+          <context context-type="linenumber">60,63</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5537334829764475895" datatype="html">
@@ -971,40 +972,40 @@
         <source>Set target URL</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">114,115</context>
+          <context context-type="linenumber">115,116</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7962953130203958368" datatype="html">
         <source>Edit target URL</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">116,117</context>
+          <context context-type="linenumber">117,118</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">127,128</context>
+          <context context-type="linenumber">128,129</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5101542792933660276" datatype="html">
         <source>Be careful, this will overwrite everything you have in your destination.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">118</context>
+          <context context-type="linenumber">119</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">128</context>
+          <context context-type="linenumber">129</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8146449293672505760" datatype="html">
         <source> Override target URL <x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>swap<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">131,134</context>
+          <context context-type="linenumber">133,136</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">141,144</context>
+          <context context-type="linenumber">143,146</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6515463725820941423" datatype="html">
@@ -1048,19 +1049,19 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/file-tree/file-tree.component.ts</context>
-          <context context-type="linenumber">666</context>
+          <context context-type="linenumber">665</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">231</context>
+          <context context-type="linenumber">241</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">273</context>
+          <context context-type="linenumber">283</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">430</context>
+          <context context-type="linenumber">440</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/notifications/notification/notification.component.ts</context>
@@ -1088,11 +1089,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-flow.state.ts</context>
-          <context context-type="linenumber">222</context>
+          <context context-type="linenumber">223</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-flow.state.ts</context>
-          <context context-type="linenumber">259</context>
+          <context context-type="linenumber">261</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1240543125905662878" datatype="html">
@@ -1227,21 +1228,21 @@
         <source>Using a leading slash is most likely wrong, and will result in objects being created with a leading slash in the name.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">43</context>
+          <context context-type="linenumber">44</context>
         </context-group>
       </trans-unit>
       <trans-unit id="432524756311798008" datatype="html">
         <source>Unknown destination type</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">47</context>
+          <context context-type="linenumber">48</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8911059720204770105" datatype="html">
         <source>Path</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">55</context>
+          <context context-type="linenumber">56</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/source-data/source-data.component.html</context>
@@ -1256,28 +1257,28 @@
         <source>File system</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">83</context>
+          <context context-type="linenumber">84</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2196800415524042283" datatype="html">
         <source>Store backups on your local file system.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">84</context>
+          <context context-type="linenumber">85</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6569880249807429105" datatype="html">
         <source>File path</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">93</context>
+          <context context-type="linenumber">94</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2464317893854091654" datatype="html">
         <source>The path to store the backup</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">94</context>
+          <context context-type="linenumber">95</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8749327426206013798" datatype="html">
@@ -1302,11 +1303,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">229</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">432</context>
+          <context context-type="linenumber">230</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1314,7 +1311,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">564</context>
+          <context context-type="linenumber">434</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1322,7 +1319,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">626</context>
+          <context context-type="linenumber">566</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1330,7 +1327,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1038</context>
+          <context context-type="linenumber">628</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1338,7 +1335,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1219</context>
+          <context context-type="linenumber">1040</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1346,7 +1343,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1286</context>
+          <context context-type="linenumber">1221</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1354,7 +1351,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1352</context>
+          <context context-type="linenumber">1288</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1362,7 +1359,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1418</context>
+          <context context-type="linenumber">1354</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1370,7 +1367,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1533</context>
+          <context context-type="linenumber">1420</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1378,11 +1375,15 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1589</context>
+          <context context-type="linenumber">1535</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
           <context context-type="linenumber">1590</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1591</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2698719400644288116" datatype="html">
@@ -1400,15 +1401,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">572</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
           <context context-type="linenumber">573</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">634</context>
+          <context context-type="linenumber">574</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1416,7 +1413,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1046</context>
+          <context context-type="linenumber">636</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1424,7 +1421,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1227</context>
+          <context context-type="linenumber">1048</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1432,7 +1429,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1294</context>
+          <context context-type="linenumber">1229</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1440,7 +1437,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1360</context>
+          <context context-type="linenumber">1296</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1448,11 +1445,15 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1541</context>
+          <context context-type="linenumber">1362</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
           <context context-type="linenumber">1542</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1543</context>
         </context-group>
       </trans-unit>
       <trans-unit id="765777744179252038" datatype="html">
@@ -1474,15 +1475,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">220</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
           <context context-type="linenumber">221</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">316</context>
+          <context context-type="linenumber">222</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1490,7 +1487,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">383</context>
+          <context context-type="linenumber">318</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1498,11 +1495,15 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">441</context>
+          <context context-type="linenumber">385</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
           <context context-type="linenumber">442</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">443</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/source-data/source-data.component.html</context>
@@ -1517,11 +1518,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1305</context>
+          <context context-type="linenumber">1306</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1371</context>
+          <context context-type="linenumber">1372</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6287501959303066769" datatype="html">
@@ -1567,15 +1568,11 @@
         <source>Bucket name</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">211</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
           <context context-type="linenumber">212</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">307</context>
+          <context context-type="linenumber">213</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1583,7 +1580,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">842</context>
+          <context context-type="linenumber">309</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1591,7 +1588,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">895</context>
+          <context context-type="linenumber">844</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1599,175 +1596,175 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1863</context>
+          <context context-type="linenumber">897</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1865</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3629264924285282944" datatype="html">
         <source>The hostname of the S3 compatible server to connect to</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">230</context>
+          <context context-type="linenumber">231</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2974956065423158526" datatype="html">
         <source>Google Cloud Storage</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">297</context>
+          <context context-type="linenumber">298</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2685289648610623245" datatype="html">
         <source>Store backups in Google Cloud Storage.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">298</context>
+          <context context-type="linenumber">299</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5715706014888226674" datatype="html">
         <source>An OAuth token with access to the Google Cloud Storage. Not required if service account JSON is provided.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">325</context>
+          <context context-type="linenumber">326</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4310843648876437875" datatype="html">
         <source>Service account JSON file</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">343</context>
+          <context context-type="linenumber">344</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3493312189618135422" datatype="html">
         <source>Pick the path to a file with service account JSON.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">344</context>
+          <context context-type="linenumber">345</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8634339063636601285" datatype="html">
         <source>Service account JSON</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">349</context>
+          <context context-type="linenumber">350</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5517352459746267593" datatype="html">
         <source>Paste the service account JSON here.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">350</context>
+          <context context-type="linenumber">351</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1592625207589774627" datatype="html">
         <source>Google Drive</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">373</context>
+          <context context-type="linenumber">374</context>
         </context-group>
       </trans-unit>
       <trans-unit id="672439927759604285" datatype="html">
         <source>Store backups in Google Drive.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">374</context>
+          <context context-type="linenumber">375</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2824778775727635891" datatype="html">
         <source>pCloud</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">412</context>
+          <context context-type="linenumber">413</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6067224471499272941" datatype="html">
         <source>Store backups in pCloud.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">413</context>
+          <context context-type="linenumber">414</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2571561222043199870" datatype="html">
         <source>Azure Blob Storage</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">474</context>
+          <context context-type="linenumber">475</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2373982793777599122" datatype="html">
         <source>Store backups in Azure Blob Storage.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">475</context>
+          <context context-type="linenumber">476</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6135071031116720136" datatype="html">
         <source>Container name</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">484</context>
+          <context context-type="linenumber">485</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">485</context>
+          <context context-type="linenumber">486</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8192419514129699261" datatype="html">
         <source>Account name</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">492</context>
+          <context context-type="linenumber">493</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">588</context>
+          <context context-type="linenumber">589</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">650</context>
+          <context context-type="linenumber">651</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1956226327175747295" datatype="html">
         <source>Access key</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">497</context>
+          <context context-type="linenumber">498</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">593</context>
+          <context context-type="linenumber">594</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">655</context>
+          <context context-type="linenumber">656</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4776297842943067423" datatype="html">
         <source>OneDrive</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">518</context>
+          <context context-type="linenumber">519</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4000469533344318986" datatype="html">
         <source>Store backups in OneDrive.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">519</context>
+          <context context-type="linenumber">520</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5208346970841973547" datatype="html">
         <source>Path on server</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">528</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
           <context context-type="linenumber">529</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">580</context>
+          <context context-type="linenumber">530</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1775,7 +1772,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">642</context>
+          <context context-type="linenumber">582</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1783,7 +1780,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">690</context>
+          <context context-type="linenumber">644</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1791,7 +1788,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">732</context>
+          <context context-type="linenumber">692</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1799,7 +1796,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">769</context>
+          <context context-type="linenumber">734</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1807,7 +1804,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">806</context>
+          <context context-type="linenumber">771</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1815,7 +1812,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">950</context>
+          <context context-type="linenumber">808</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1823,7 +1820,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1003</context>
+          <context context-type="linenumber">952</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1831,7 +1828,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1054</context>
+          <context context-type="linenumber">1005</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1839,7 +1836,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1235</context>
+          <context context-type="linenumber">1056</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1847,7 +1844,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1301</context>
+          <context context-type="linenumber">1237</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1855,7 +1852,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1367</context>
+          <context context-type="linenumber">1303</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1863,7 +1860,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1466</context>
+          <context context-type="linenumber">1369</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1871,7 +1868,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1549</context>
+          <context context-type="linenumber">1468</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1879,7 +1876,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1606</context>
+          <context context-type="linenumber">1551</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
@@ -1887,227 +1884,231 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1761</context>
+          <context context-type="linenumber">1608</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1827</context>
+          <context context-type="linenumber">1763</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1829</context>
         </context-group>
       </trans-unit>
       <trans-unit id="763792998446030240" datatype="html">
         <source>OneDrive Business</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">556</context>
+          <context context-type="linenumber">557</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5203119002517875277" datatype="html">
         <source>Store backups in OneDrive Business.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">557</context>
+          <context context-type="linenumber">558</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8305208554017693899" datatype="html">
         <source>Microsoft SharePoint</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">618</context>
+          <context context-type="linenumber">619</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6243043133204186678" datatype="html">
         <source>Store backups in Microsoft SharePoint.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">619</context>
+          <context context-type="linenumber">620</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">681</context>
+          <context context-type="linenumber">682</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3650610066444563362" datatype="html">
         <source>Microsoft SharePoint v2</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">680</context>
+          <context context-type="linenumber">681</context>
         </context-group>
       </trans-unit>
       <trans-unit id="730703184011067892" datatype="html">
         <source>Dropbox</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">722</context>
+          <context context-type="linenumber">723</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4598054074055792393" datatype="html">
         <source>Store backups in Dropbox.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">723</context>
+          <context context-type="linenumber">724</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1828758656215814459" datatype="html">
         <source>Box.com</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">760</context>
+          <context context-type="linenumber">761</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3845443824080997838" datatype="html">
         <source>Store backups in Box.com.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">761</context>
+          <context context-type="linenumber">762</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4182355748133624753" datatype="html">
         <source>Jottacloud</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">797</context>
+          <context context-type="linenumber">798</context>
         </context-group>
       </trans-unit>
       <trans-unit id="157333137085730907" datatype="html">
         <source>Store backups in Jottacloud.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">798</context>
+          <context context-type="linenumber">799</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2391709980016316191" datatype="html">
         <source>B2 Cloud Storage</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">834</context>
+          <context context-type="linenumber">835</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1560119022164856777" datatype="html">
         <source>Store backups in B2 Cloud Storage.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">835</context>
+          <context context-type="linenumber">836</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6376261217871722243" datatype="html">
         <source>Path in the bucket</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">851</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
           <context context-type="linenumber">852</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">904</context>
+          <context context-type="linenumber">853</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
           <context context-type="linenumber">905</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">906</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2385634023146528014" datatype="html">
         <source>Application ID</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">859</context>
+          <context context-type="linenumber">860</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4850391806785872653" datatype="html">
         <source>Application Key</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">864</context>
+          <context context-type="linenumber">865</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6620903652878498037" datatype="html">
         <source>IDrive e2</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">888</context>
+          <context context-type="linenumber">889</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5817791938505061739" datatype="html">
         <source>Store backups in IDrive e2.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">889</context>
+          <context context-type="linenumber">890</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4055246236738746947" datatype="html">
         <source>Access ID</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">912</context>
+          <context context-type="linenumber">913</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8206437921423261892" datatype="html">
         <source>Access Secret</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">917</context>
+          <context context-type="linenumber">918</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3690832063756455175" datatype="html">
         <source>Mega.nz</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">941</context>
+          <context context-type="linenumber">942</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7456819223000178588" datatype="html">
         <source>Store backups in Mega.nz.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">942</context>
+          <context context-type="linenumber">943</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5248717555542428023" datatype="html">
         <source>Username</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">958</context>
+          <context context-type="linenumber">959</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1062</context>
+          <context context-type="linenumber">1063</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1247</context>
+          <context context-type="linenumber">1248</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1313</context>
+          <context context-type="linenumber">1314</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1379</context>
+          <context context-type="linenumber">1380</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1431416938026210429" datatype="html">
         <source>Password</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">963</context>
+          <context context-type="linenumber">964</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1067</context>
+          <context context-type="linenumber">1068</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1252</context>
+          <context context-type="linenumber">1253</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1318</context>
+          <context context-type="linenumber">1319</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1384</context>
+          <context context-type="linenumber">1385</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/export/export.component.html</context>
@@ -2126,125 +2127,125 @@
         <source>Microsoft Office 365 Group</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">985</context>
+          <context context-type="linenumber">986</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7763987319419032945" datatype="html">
         <source>Store backups in Microsoft Office 365 Group.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">986</context>
+          <context context-type="linenumber">987</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1618818512996162696" datatype="html">
         <source>Group email</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">994</context>
+          <context context-type="linenumber">995</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">995</context>
+          <context context-type="linenumber">996</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5118817596420170522" datatype="html">
         <source>Rackspace CloudFiles</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1031</context>
+          <context context-type="linenumber">1032</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1891100445393831017" datatype="html">
         <source>Store backups in Rackspace CloudFiles.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1032</context>
+          <context context-type="linenumber">1033</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1879517876731100451" datatype="html">
         <source>Rclone</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1092</context>
+          <context context-type="linenumber">1093</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6511418996017048042" datatype="html">
         <source>Store backups in Rclone.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1093</context>
+          <context context-type="linenumber">1094</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4206380462628164369" datatype="html">
         <source>Local repository</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1099</context>
+          <context context-type="linenumber">1100</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9125368577826703997" datatype="html">
         <source>Remote repository</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1104</context>
+          <context context-type="linenumber">1105</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2153379598793229223" datatype="html">
         <source>Path on remote repository</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1110</context>
+          <context context-type="linenumber">1111</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1640334719601029575" datatype="html">
         <source>OpenStack Object Storage</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1147</context>
+          <context context-type="linenumber">1148</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5365065159713730999" datatype="html">
         <source>Store backups in OpenStack Object Storage.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1148</context>
+          <context context-type="linenumber">1149</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8720332287407681000" datatype="html">
         <source>Bucket</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1155</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
           <context context-type="linenumber">1156</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1458</context>
+          <context context-type="linenumber">1157</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1755</context>
+          <context context-type="linenumber">1459</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1821</context>
+          <context context-type="linenumber">1757</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
+          <context context-type="linenumber">1823</context>
         </context-group>
       </trans-unit>
       <trans-unit id="715869236704033904" datatype="html">
         <source>Auth URI</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1164</context>
+          <context context-type="linenumber">1165</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2724055831234181057" datatype="html">
         <source>Version</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1171</context>
+          <context context-type="linenumber">1172</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
@@ -2255,326 +2256,326 @@
         <source>Domain name</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1178</context>
+          <context context-type="linenumber">1179</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5934961163128207428" datatype="html">
         <source>Tenant name</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1182</context>
+          <context context-type="linenumber">1183</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2702200797962830082" datatype="html">
         <source>Region</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1186</context>
+          <context context-type="linenumber">1187</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1474</context>
+          <context context-type="linenumber">1475</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8893412912393613367" datatype="html">
         <source>WebDAV</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1211</context>
+          <context context-type="linenumber">1212</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4161869179420419180" datatype="html">
         <source>Store backups in WebDAV.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1212</context>
+          <context context-type="linenumber">1213</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5266103021965994312" datatype="html">
         <source>Use SSL</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1243</context>
+          <context context-type="linenumber">1244</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1557</context>
+          <context context-type="linenumber">1558</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3426168472695783385" datatype="html">
         <source>Alternative FTP</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1278</context>
+          <context context-type="linenumber">1279</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2761209516328971502" datatype="html">
         <source>Store backups in FTP.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1279</context>
+          <context context-type="linenumber">1280</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1345</context>
+          <context context-type="linenumber">1346</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4535111608023460568" datatype="html">
         <source>FTP</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1344</context>
+          <context context-type="linenumber">1345</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2148217343719147606" datatype="html">
         <source>Sia Decentrilized Cloud</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1411</context>
+          <context context-type="linenumber">1412</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6971306072134434435" datatype="html">
         <source>Store backups in Sia Decentrilized Cloud.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1412</context>
+          <context context-type="linenumber">1413</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7087256114435682275" datatype="html">
         <source>Tencent COS</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1451</context>
+          <context context-type="linenumber">1452</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7121157188144306851" datatype="html">
         <source>Store backups in Tencent COS.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1452</context>
+          <context context-type="linenumber">1453</context>
         </context-group>
       </trans-unit>
       <trans-unit id="328109290615470663" datatype="html">
         <source>COS App Id</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1478</context>
+          <context context-type="linenumber">1479</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5210567302572235333" datatype="html">
         <source>COS Secret Id</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1483</context>
+          <context context-type="linenumber">1484</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8319916360691242924" datatype="html">
         <source>COS Secret Key</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1488</context>
+          <context context-type="linenumber">1489</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3973868637264779754" datatype="html">
         <source>Tahoe LAFS</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1525</context>
+          <context context-type="linenumber">1526</context>
         </context-group>
       </trans-unit>
       <trans-unit id="863931951136375296" datatype="html">
         <source>Store backups in Tahoe LAFS.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1526</context>
+          <context context-type="linenumber">1527</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7350796876483329661" datatype="html">
         <source>Windows Share (SMB)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1581</context>
+          <context context-type="linenumber">1582</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6199963465947823058" datatype="html">
         <source>Store backups on SMB storage.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1582</context>
+          <context context-type="linenumber">1583</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5098290215983190635" datatype="html">
         <source>Share Name</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1597</context>
+          <context context-type="linenumber">1598</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1598</context>
+          <context context-type="linenumber">1599</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5984920942050514845" datatype="html">
         <source>CIFS (deprecated)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1648</context>
+          <context context-type="linenumber">1649</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1234853131116144954" datatype="html">
         <source>Same as SMB backend, but with a different name. Use SMB instead.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1649</context>
+          <context context-type="linenumber">1650</context>
         </context-group>
       </trans-unit>
       <trans-unit id="732218849333506427" datatype="html">
         <source>Filen.io</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1656</context>
+          <context context-type="linenumber">1657</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4267087859628904259" datatype="html">
         <source>Store backups in Filen.io.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1657</context>
+          <context context-type="linenumber">1658</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8554734047079490713" datatype="html">
         <source>Path on Filen</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1664</context>
+          <context context-type="linenumber">1665</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1665</context>
+          <context context-type="linenumber">1666</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2792782099373246525" datatype="html">
         <source>Filejump</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1696</context>
+          <context context-type="linenumber">1697</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8754096557728124922" datatype="html">
         <source>Store backups in Filejump.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1697</context>
+          <context context-type="linenumber">1698</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1317354077788346238" datatype="html">
         <source>Path on Filejump</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1704</context>
+          <context context-type="linenumber">1706</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1705</context>
+          <context context-type="linenumber">1707</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5297710070167842134" datatype="html">
         <source>API Token</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1713</context>
+          <context context-type="linenumber">1715</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6015867774087473210" datatype="html">
         <source>Filejump API Token</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1714</context>
+          <context context-type="linenumber">1716</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7767043792653794161" datatype="html">
         <source>Storj Access Grant</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1743</context>
+          <context context-type="linenumber">1745</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7990311587063681599" datatype="html">
         <source>Store backups in Storj Access Grant.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1744</context>
+          <context context-type="linenumber">1746</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5694580546178076526" datatype="html">
         <source>Access Grant</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1749</context>
+          <context context-type="linenumber">1751</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8050244774979733855" datatype="html">
         <source>Satellite</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1766</context>
+          <context context-type="linenumber">1768</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1803</context>
+          <context context-type="linenumber">1805</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7732296756511089144" datatype="html">
         <source>Storj API Key</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1797</context>
+          <context context-type="linenumber">1799</context>
         </context-group>
       </trans-unit>
       <trans-unit id="520993283570669753" datatype="html">
         <source>Store backups in Storj API Key.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1798</context>
+          <context context-type="linenumber">1800</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8517109745758603034" datatype="html">
         <source>API Key</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1810</context>
+          <context context-type="linenumber">1812</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7896650584449704588" datatype="html">
         <source>Secret</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1815</context>
+          <context context-type="linenumber">1817</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7386195554617540895" datatype="html">
         <source>Aliyun OSS</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1856</context>
+          <context context-type="linenumber">1858</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7236053877128063351" datatype="html">
         <source>Store backups in Aliyun OSS</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1857</context>
+          <context context-type="linenumber">1859</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4890321515347479714" datatype="html">
         <source>Path in bucket</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1871</context>
+          <context context-type="linenumber">1873</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.config.ts</context>
-          <context context-type="linenumber">1872</context>
+          <context context-type="linenumber">1874</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2777652599986788725" datatype="html">
@@ -2672,17 +2673,6 @@
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/single-destination/single-destination.component.ts</context>
           <context context-type="linenumber">286</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3801215978313579965" datatype="html">
-        <source>Remember to copy the password</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/ngclient/src/app/backup/export/export.component.html</context>
-          <context context-type="linenumber">17,18</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/ngclient/src/app/backup/general/general.component.html</context>
-          <context context-type="linenumber">144,145</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5746563779633850987" datatype="html">
@@ -2787,8 +2777,8 @@
           <context context-type="linenumber">84,85</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="7869314625141682884" datatype="html">
-        <source><x id="START_BLOCK_IF" equiv-text="@if (showPassword()) {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>eye-slash<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> hide <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>eye<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> show <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
+      <trans-unit id="1247733053324535649" datatype="html">
+        <source><x id="START_BLOCK_IF" equiv-text="@if (showPassword()) {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>eye-slash<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Hide <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>eye<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Show <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/export/export.component.html</context>
           <context context-type="linenumber">119,128</context>
@@ -2905,6 +2895,13 @@
           <context context-type="linenumber">146,149</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="3801215978313579965" datatype="html">
+        <source>Remember to copy the password</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/backup/general/general.component.html</context>
+          <context context-type="linenumber">144,145</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="9180695806457084824" datatype="html">
         <source> Import backup configuration <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;outlined&quot; [routerLink]=&quot;[&apos;/&apos;]&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>arrow-left<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Back <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button
         shButton
@@ -2959,15 +2956,15 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">183</context>
+          <context context-type="linenumber">193</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">192</context>
+          <context context-type="linenumber">202</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">212</context>
+          <context context-type="linenumber">222</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6429902869930429459" datatype="html">
@@ -3801,7 +3798,7 @@
         <source>Are you sure?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/confirm-dialog/confirm-dialog.component.ts</context>
-          <context context-type="linenumber">11</context>
+          <context context-type="linenumber">12</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2385197688904536915" datatype="html">
@@ -3864,21 +3861,21 @@
         <source>Computer</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/file-tree/file-tree.component.ts</context>
-          <context context-type="linenumber">206</context>
+          <context context-type="linenumber">205</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8003073584251221742" datatype="html">
         <source>An error occurred while trying to create the folder.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/file-tree/file-tree.component.ts</context>
-          <context context-type="linenumber">660</context>
+          <context context-type="linenumber">659</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8954671198247588674" datatype="html">
         <source>Cannot create folder</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/file-tree/file-tree.component.ts</context>
-          <context context-type="linenumber">664</context>
+          <context context-type="linenumber">663</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4319414730852685278" datatype="html">
@@ -4025,8 +4022,8 @@
           <context context-type="linenumber">32,34</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="1192437986592323780" datatype="html">
-        <source><x id="START_BLOCK_IF" equiv-text="@if (clientIsRunning()) {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>pause<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Pause <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>play<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Start <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
+      <trans-unit id="7513388682755268547" datatype="html">
+        <source><x id="START_BLOCK_IF" equiv-text="@if (clientIsRunning()) {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>pause<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Pause <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>play<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Resume <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/status-bar/status-bar.component.html</context>
           <context context-type="linenumber">39,48</context>
@@ -4350,82 +4347,82 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
-          <context context-type="linenumber">39,40</context>
+          <context context-type="linenumber">13,14</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6215915390003545324" datatype="html">
         <source>The remote destination folder does not exist.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">74</context>
+          <context context-type="linenumber">82</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">451</context>
+          <context context-type="linenumber">461</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1976412017985703383" datatype="html">
         <source>Create folder</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">153</context>
+          <context context-type="linenumber">163</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">155</context>
+          <context context-type="linenumber">165</context>
         </context-group>
       </trans-unit>
       <trans-unit id="80187630355996574" datatype="html">
         <source>The remote destination folder does not exist, do you want to create it?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">154</context>
+          <context context-type="linenumber">164</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3212901531237915445" datatype="html">
         <source>The remote folder does not exist.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">160</context>
+          <context context-type="linenumber">170</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1335321848572277710" datatype="html">
         <source>Error creating folder</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">229</context>
+          <context context-type="linenumber">239</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1721040755865732399" datatype="html">
         <source>The remote destination folder could not be created. <x id="PH" equiv-text="errorMessage"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">230</context>
+          <context context-type="linenumber">240</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8795563428819617629" datatype="html">
         <source>Folder created</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">271</context>
+          <context context-type="linenumber">281</context>
         </context-group>
       </trans-unit>
       <trans-unit id="270411010336043280" datatype="html">
         <source>The remote destination folder was created successfully.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">272</context>
+          <context context-type="linenumber">282</context>
         </context-group>
       </trans-unit>
       <trans-unit id="777574985596806423" datatype="html">
         <source>Trust the certificate</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">313</context>
+          <context context-type="linenumber">323</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">317</context>
+          <context context-type="linenumber">327</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4878290483396847024" datatype="html">
@@ -4434,57 +4431,57 @@
   The server reported the certificate hash: <x id="PH" equiv-text="certData"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">314,316</context>
+          <context context-type="linenumber">324,326</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8136272597418724504" datatype="html">
         <source>The server certificate is not trusted.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">322</context>
+          <context context-type="linenumber">332</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7282770028237993229" datatype="html">
         <source>Approve host key?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">349</context>
+          <context context-type="linenumber">359</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2770164445878213401" datatype="html">
         <source>No certificate was specified, please verify that the reported host key is correct: <x id="PH" equiv-text="reportedhostkey"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">350</context>
+          <context context-type="linenumber">360</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3821661153451769620" datatype="html">
         <source>Approve</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">351</context>
+          <context context-type="linenumber">361</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">380</context>
+          <context context-type="linenumber">390</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2088971677149285522" datatype="html">
         <source>The host key was not approved.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">356</context>
+          <context context-type="linenumber">366</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">385</context>
+          <context context-type="linenumber">395</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2406602216329132117" datatype="html">
         <source>The host key has changed</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">375</context>
+          <context context-type="linenumber">385</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2525519874157700262" datatype="html">
@@ -4494,14 +4491,14 @@ Do you want to REPLACE your CURRENT host key <x id="PH" equiv-text="suppliedhost
 with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">376,379</context>
+          <context context-type="linenumber">386,389</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6621852573972124185" datatype="html">
         <source>Test connection failed</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">428</context>
+          <context context-type="linenumber">438</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1882908083458651251" datatype="html">
@@ -4630,8 +4627,8 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
           <context context-type="linenumber">8,9</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="8999782137177065427" datatype="html">
-        <source>Backups are stored in the cloud and can be restored at any time.</source>
+      <trans-unit id="7918810463340568225" datatype="html">
+        <source>Keep your data safe at your chosen destination.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
           <context context-type="linenumber">9,10</context>
@@ -4651,8 +4648,8 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
           <context context-type="linenumber">20,21</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="9013537526263843585" datatype="html">
-        <source>Restores allow you to restore your data from the cloud.</source>
+      <trans-unit id="260432635650186996" datatype="html">
+        <source>Recover your files from any backup set.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
           <context context-type="linenumber">21,22</context>
@@ -4768,7 +4765,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
-          <context context-type="linenumber">53</context>
+          <context context-type="linenumber">27</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2737753982083076672" datatype="html">
@@ -4842,7 +4839,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
-          <context context-type="linenumber">60,61</context>
+          <context context-type="linenumber">34,35</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5538720651556504926" datatype="html">
@@ -4868,6 +4865,13 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
           <context context-type="linenumber">312,314</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6201638315245239510" datatype="html">
+        <source>Advanced</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
+          <context context-type="linenumber">318,320</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3774821360524815607" datatype="html">
@@ -4896,6 +4900,13 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
           <context context-type="linenumber">336,338</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4273460998206847730" datatype="html">
+        <source>Reporting</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
+          <context context-type="linenumber">342,344</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6438251515449676895" datatype="html">
@@ -5033,11 +5044,42 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
           <context context-type="linenumber">86,91</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="6508575097595619745" datatype="html">
+        <source> Remember to enter a password, if you can&apos;t remember the password open the duplicati client on the machine in question and make sure you open it through the tray icon then go into settings to change the password. </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/login/login.component.html</context>
+          <context context-type="linenumber">4,5</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8478646166340702449" datatype="html">
+        <source> Password <x id="START_LINK" ctype="x-a" equiv-text="&lt;a
+            href=&quot;https://docs.duplicati.com/detailed-descriptions/duplicati-access-password&quot;
+            target=&quot;_blank&quot;
+            rel=&quot;noopener noreferrer&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>question<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a&gt;"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/login/login.component.html</context>
+          <context context-type="linenumber">19,27</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="2772023564304193657" datatype="html">
         <source>Enter your password</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/login/login.component.html</context>
           <context context-type="linenumber">35,36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2676308716533799662" datatype="html">
+        <source> Login <x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/login/login.component.html</context>
+          <context context-type="linenumber">42,45</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2351615913393564557" datatype="html">
+        <source> Keep me logged in <x id="TAG_INPUT" ctype="x-input" equiv-text="&lt;input type=&quot;checkbox&quot; id=&quot;rememberMe&quot; tabindex=&quot;2&quot; formControlName=&quot;rememberMe&quot; /&gt;"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/login/login.component.html</context>
+          <context context-type="linenumber">48,50</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5245824021705017953" datatype="html">
@@ -5065,60 +5107,60 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <source> If the backup file was not downloaded automatically, <x id="START_LINK" ctype="x-a" equiv-text="&lt;a [href]=&quot;downloadLink()&quot; target=&quot;_blank&quot;&gt;"/>right click and choose &quot;Save as …&quot;<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/notifications/notification/notification.component.html</context>
-          <context context-type="linenumber">13,16</context>
+          <context context-type="linenumber">15,18</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2955903656284773523" datatype="html">
         <source>Repair</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/notifications/notification/notification.component.html</context>
-          <context context-type="linenumber">20,21</context>
+          <context context-type="linenumber">22,23</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3099741642167775297" datatype="html">
         <source>Download</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/notifications/notification/notification.component.html</context>
-          <context context-type="linenumber">24,25</context>
+          <context context-type="linenumber">26,27</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7890783466692896405" datatype="html">
         <source>New update found:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/notifications/notification/notification.component.html</context>
-          <context context-type="linenumber">29</context>
+          <context context-type="linenumber">31</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7699553138086112009" datatype="html">
         <source>Show Update</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/notifications/notification/notification.component.html</context>
-          <context context-type="linenumber">36,37</context>
+          <context context-type="linenumber">38,39</context>
         </context-group>
       </trans-unit>
       <trans-unit id="592961936173487580" datatype="html">
         <source>Show Log</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/notifications/notification/notification.component.html</context>
-          <context context-type="linenumber">41,42</context>
+          <context context-type="linenumber">43,44</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8371528822148379398" datatype="html">
         <source> Show Help </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/notifications/notification/notification.component.html</context>
-          <context context-type="linenumber">50,51</context>
+          <context context-type="linenumber">52,53</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/notifications/notification/notification.component.html</context>
-          <context context-type="linenumber">60,61</context>
+          <context context-type="linenumber">62,63</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1536087519743707362" datatype="html">
         <source>Dismiss</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/notifications/notification/notification.component.html</context>
-          <context context-type="linenumber">64,65</context>
+          <context context-type="linenumber">66,67</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3269824161944492761" datatype="html">
@@ -5178,7 +5220,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         </context-group>
       </trans-unit>
       <trans-unit id="7798761934951318578" datatype="html">
-        <source> Original location <x id="TAG_INPUT" ctype="x-input" equiv-text="&lt;input type=&quot;radio&quot; name=&quot;restoreFrom&quot; value=&quot;orignal&quot; formControlName=&quot;restoreFrom&quot; /&gt;"/></source>
+        <source> Original location <x id="TAG_INPUT" ctype="x-input" equiv-text="&lt;input type=&quot;radio&quot; name=&quot;restoreFrom&quot; value=&quot;original&quot; formControlName=&quot;restoreFrom&quot; /&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/options/options.component.html</context>
           <context context-type="linenumber">8,10</context>
@@ -5231,6 +5273,20 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/options/options.component.html</context>
           <context context-type="linenumber">46,48</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4509720553956381291" datatype="html">
+        <source>Confirm target folder</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/options/options.component.ts</context>
+          <context context-type="linenumber">67</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1253156499530942296" datatype="html">
+        <source>This backup was created on another operating system. Restoring files without specifying a destination folder can cause files to be restored in unexpected places. Are you sure you want to continue without choosing a destination folder?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/options/options.component.ts</context>
+          <context context-type="linenumber">68</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5802723289508144474" datatype="html">
@@ -5339,49 +5395,49 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <source>Missing Local Database</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-flow.state.ts</context>
-          <context context-type="linenumber">220</context>
+          <context context-type="linenumber">221</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3802457877200357493" datatype="html">
         <source>The local database for this backup is missing. Please repair or recreate the local database before restoring.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-flow.state.ts</context>
-          <context context-type="linenumber">221</context>
+          <context context-type="linenumber">222</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1814609768842652084" datatype="html">
         <source>An error occurred while loading the backup filesets: <x id="PH" equiv-text="err.message"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-flow.state.ts</context>
-          <context context-type="linenumber">249</context>
+          <context context-type="linenumber">251</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4522995268741023396" datatype="html">
         <source>The remote storage is encrypted. Please enter the passphrase to access the backup.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-flow.state.ts</context>
-          <context context-type="linenumber">251</context>
+          <context context-type="linenumber">253</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7257147754379383116" datatype="html">
         <source>The backup storage folder was not found.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-flow.state.ts</context>
-          <context context-type="linenumber">252</context>
+          <context context-type="linenumber">254</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2028113755026135188" datatype="html">
         <source>The backup storage folder does not contain any filesets.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-flow.state.ts</context>
-          <context context-type="linenumber">253</context>
+          <context context-type="linenumber">255</context>
         </context-group>
       </trans-unit>
       <trans-unit id="830496467820752652" datatype="html">
         <source>Failed to load backup filesets</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-flow.state.ts</context>
-          <context context-type="linenumber">257</context>
+          <context context-type="linenumber">259</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4631557773034366011" datatype="html">
@@ -5485,7 +5541,46 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <source> Restore <x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
-          <context context-type="linenumber">47,50</context>
+          <context context-type="linenumber">21,24</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4541630487586031467" datatype="html">
+        <source>Direct restore from backup files</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
+          <context context-type="linenumber">46,47</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7023189360364716784" datatype="html">
+        <source>Point to your backup files and restore from there.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
+          <context context-type="linenumber">47,48</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5038258894648830056" datatype="html">
+        <source> Start <x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>play-circle<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
+          <context context-type="linenumber">50,53</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
+          <context context-type="linenumber">62,65</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5030677124323180354" datatype="html">
+        <source>Restore from configuration</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
+          <context context-type="linenumber">58,59</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7267392067545204384" datatype="html">
+        <source>Load destination from an exported job</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
+          <context context-type="linenumber">59,60</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3891152409365583719" datatype="html">
@@ -5549,6 +5644,13 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.component.html</context>
           <context context-type="linenumber">39,40</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="9091802884339884246" datatype="html">
+        <source> Reporting configured by server <x id="START_BLOCK_IF" equiv-text="@if (copiedReportingUrl() === true) {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>check<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>copy<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.component.html</context>
+          <context context-type="linenumber">44,51</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1731345447408843513" datatype="html">
@@ -5706,109 +5808,130 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
           <context context-type="linenumber">178,181</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="7612216379046551796" datatype="html">
+        <source>Power mode provider</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
+          <context context-type="linenumber">195,196</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3158625479714022328" datatype="html">
+        <source> The power mode provider monitors the system for when it enters a low power state and pauses Duplicati. When the system resumes, Duplicati will resume as well. Choosing the None option disables detection of low power states and Duplicati will run all the time. </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
+          <context context-type="linenumber">197,199</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="2919975008248285707" datatype="html">
         <source>Update channel</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">194,195</context>
+          <context context-type="linenumber">217,218</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3174422874176771933" datatype="html">
+        <source>Installed version: <x id="INTERPOLATION" equiv-text="{{ sysinfo()?.ServerVersionName }}"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
+          <context context-type="linenumber">219,222</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3226311709119731062" datatype="html">
         <source> Default (<x id="INTERPOLATION" equiv-text="{{ sysinfo()?.DefaultUpdateChannel }}"/>) </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">209,210</context>
+          <context context-type="linenumber">230,231</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8713738462167694622" datatype="html">
         <source>Same as the base install version: <x id="INTERPOLATION" equiv-text="{{ sysinfo()?.ServerVersionType }}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">212,213</context>
+          <context context-type="linenumber">233,234</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3905239345805877394" datatype="html">
         <source>Stable</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">216</context>
+          <context context-type="linenumber">237</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6693055238157597591" datatype="html">
         <source>Official stable release.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">218,219</context>
+          <context context-type="linenumber">239,240</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8289732336438690874" datatype="html">
         <source>Beta</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">222</context>
+          <context context-type="linenumber">243</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1917818376626138583" datatype="html">
         <source> Try out the new features that we are working on. Test a backup and restore before using this in production environments. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">225,226</context>
+          <context context-type="linenumber">246,247</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4284966588441859260" datatype="html">
         <source> Experimental </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">232,233</context>
+          <context context-type="linenumber">253,254</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3874113050656942505" datatype="html">
         <source>Early previews of new features. Not for use with important data.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">235,236</context>
+          <context context-type="linenumber">256,257</context>
         </context-group>
       </trans-unit>
       <trans-unit id="401382195676192367" datatype="html">
         <source>Canary</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">239</context>
+          <context context-type="linenumber">260</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8365837297204989044" datatype="html">
         <source>Builds for developers and testers only. Not for use with important data.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">241,242</context>
+          <context context-type="linenumber">262,263</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5320543668849212821" datatype="html">
         <source>Pause after startup or hibernation</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">252,253</context>
+          <context context-type="linenumber">273,274</context>
         </context-group>
       </trans-unit>
       <trans-unit id="271659419607184663" datatype="html">
         <source> Duplicati will run when started, but will remain in paused state for the duration. Duplicati will occupy minimal system resources and no backups will be run. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">254,255</context>
+          <context context-type="linenumber">275,276</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7350523198476594805" datatype="html">
         <source>Usage statistics</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">284,285</context>
+          <context context-type="linenumber">306,307</context>
         </context-group>
       </trans-unit>
       <trans-unit id="241597370095584269" datatype="html">
         <source> Usage reports help us improve the user experience and evaluate impact of new features. We use them to generate <x id="START_LINK" ctype="x-a" equiv-text="&lt;a href=&quot;#&quot;&gt;"/>public usage statistics.<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a&gt;"/><x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/><x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> All usage reports are sent anonymously and do not contain any personal information. They contain information about hardware and operating system, the type of backend, backup duration, overall size of source data and similar data. They do not contain paths, filenames, usernames, passwords or similar sensitive information. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">286,292</context>
+          <context context-type="linenumber">308,314</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6252070156626006029" datatype="html">
@@ -5818,8 +5941,8 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
           <context context-type="linenumber">61</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="1024041107551843095" datatype="html">
-        <source>System default (information)</source>
+      <trans-unit id="6939005683702161102" datatype="html">
+        <source>System default ($value)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
           <context context-type="linenumber">82</context>
@@ -5858,6 +5981,20 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
           <context context-type="linenumber">102</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4931861490722469250" datatype="html">
+        <source>System default (<x id="PH" equiv-text="value"/>)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
+          <context context-type="linenumber">161</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5607669932062416162" datatype="html">
+        <source>Default</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
+          <context context-type="linenumber">314</context>
         </context-group>
       </trans-unit>
     </body>
