@@ -30,9 +30,10 @@
       <button type="button" shButton class="raised" (click)="cancel()" i18n>Cancel registration</button>
     }
 
-    @if (state() === 'connected' || state() === 'enabled') {
+    @if (state() === 'connected' || state() === 'connecting') {
       <button type="button" shButton class="raised" (click)="disable()" i18n>Disable remote control</button>
     }
+
     @if (state() === 'disabled') {
       <button type="button" shButton class="raised" (click)="enable()" i18n>Enable remote control</button>
 

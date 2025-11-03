@@ -1,0 +1,134 @@
+@use '@ship-ui/core/styles/helpers' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 100%;
+  width: 100%;
+  flex: 1 0;
+  overflow: hidden;
+  padding: p2r(32);
+
+  @include breakpoint(-milli) {
+    padding: p2r(16);
+  }
+}
+
+.main-card {
+  width: 100%;
+  height: 100%;
+  max-width: p2r(500);
+  max-height: min-content;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: p2r(16);
+  padding: p2r(32);
+
+  // &.loading-state {
+  // }
+
+  // &.ready-to-add-link {
+  // }
+
+  &.failed-to-connect {
+    sh-alert {
+      width: 100%;
+    }
+    button {
+      width: 100%;
+    }
+  }
+
+  &.is-registered,
+  &.is-connected {
+    align-items: center;
+  }
+}
+
+.loader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: p2r(8);
+  width: 100%;
+
+  sh-progress-bar {
+    --pb-b: var(--base-3);
+    border: 1px solid var(--pb-b);
+  }
+}
+
+.field-row {
+  display: flex;
+  gap: p2r(8);
+  width: 100%;
+
+  sh-form-field,
+  sh-select {
+    flex: 1 0;
+  }
+}
+
+.reporting-url {
+  cursor: pointer;
+  user-select: none;
+  margin-top: p2r(4);
+}
+
+.state {
+  position: fixed;
+  top: p2r(16);
+  right: p2r(16);
+  margin: 0;
+  color: var(--base-7);
+  font-size: p2r(12);
+}
+
+.old {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  gap: p2r(8);
+  padding: p2r(16);
+  border: 1px solid var(--base-4);
+  background: var(--base-1);
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: p2r(560);
+  transform: translateX(100%);
+
+  &.open {
+    transform: translateX(0);
+  }
+
+  .toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: p2r(8);
+    cursor: pointer;
+    position: absolute;
+    background-color: var(--base-1);
+    border: 1px solid var(--base-4);
+    border-width: p2r(1 0 1 1);
+    width: p2r(32);
+    height: p2r(40);
+    border-radius: var(--shape-2) 0 0 var(--shape-2);
+    top: p2r(60);
+    left: p2r(-32);
+    user-select: none;
+
+    sh-icon {
+      font-size: p2r(16);
+    }
+  }
+}

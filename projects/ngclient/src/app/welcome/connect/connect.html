@@ -1,0 +1,162 @@
+@let isLoading =
+  state() === 'unknown' || (typeParam() !== 'link' && state() === 'inactive') || state() === 'registering';
+@let readyToAddLink = typeParam() === 'link' && state() === 'inactive';
+@let isConnected = state() === 'connected' || state() === 'disabled' || state() === 'connecting';
+@let failedToConnect = state() === 'registeringfaulted';
+
+<sh-card
+  class="main-card type-b"
+  [class]="{
+    'loading-state': isLoading,
+    'ready-to-add-link': readyToAddLink,
+    'is-connected': isConnected,
+    'failed-to-connect': failedToConnect,
+    'is-registered': state() === 'registered',
+  }">
+  @if (isLoading) {
+    <div class="loader-content">
+      <p i18n>
+        @if (state() === 'unknown') {
+          Loading...
+        } @else {
+          Connecting to console
+        }
+      </p>
+      <sh-progress-bar class="primary indeterminate" />
+
+      @if ((registeringCounter() ?? 0) >= 5 && state() === 'registering') {
+        <button shButton (click)="cancel()">Cancel registration</button>
+      }
+    </div>
+  }
+
+  @if (readyToAddLink) {
+    <sh-form-field>
+      <label i18n for="remoteControlRegisterUrl">Paste registration URL here</label>
+      <input
+        type="text"
+        id="remoteControlRegisterUrl"
+        name="remoteControlRegisterUrl"
+        [(ngModel)]="customRegisterUrl" />
+    </sh-form-field>
+
+    <button
+      type="button"
+      shButton
+      [disabled]="!customRegisterUrlValid()"
+      class="raised"
+      (click)="registerViaCustomUrl()"
+      i18n>
+      Connect machine to console
+    </button>
+  }
+
+  @if (state() === 'registered') {
+    @if (claimUrl() !== null) {
+      <p>Visit console to finish connection</p>
+
+      <button shButton (click)="finishConnection()">Finish connection</button>
+    } @else {
+      <p>Something failed during registration we're missing claimUrl, please try again</p>
+      <button shButton (click)="retryWhenFaulted()">Retry</button>
+    }
+  }
+
+  @if (failedToConnect) {
+    <sh-alert class="error" i18n>
+      Failed to register
+
+      @if (typeParam() === 'link') {
+        <p>
+          Check if the connection link are correct, alternatively it could be your internet connection or the service
+          might be down
+        </p>
+      } @else {
+        <p>
+          There might be a problem with your internet connection or the service might be down, please try again later
+        </p>
+      }
+    </sh-alert>
+
+    <button shButton (click)="retryWhenFaulted()">
+      Retry
+      <sh-icon>arrow-arc-left</sh-icon>
+    </button>
+  }
+
+  @if (isConnected) {
+    <h3>Successfully connected</h3>
+    <p>We're going to redirect you to the home page</p>
+  }
+</sh-card>
+
+<!-- <section>
+  @if (state() === 'inactive') {
+    <span>Im inactive</span>
+  }
+
+  <pre>type: {{ typeParam() }}</pre>
+</section> -->
+
+<pre class="state">state: {{ state() }}</pre>
+
+<div class="old" [class.open]="isOldOpen()">
+  <div class="toggle" (click)="isOldOpen.set(!isOldOpen())">
+    @if (isOldOpen()) {
+      <sh-icon>caret-right</sh-icon>
+    } @else {
+      <sh-icon>caret-left</sh-icon>
+    }
+  </div>
+
+  @if (state() !== 'unknown') {
+    <div class="field-row">
+      @if (state() === 'inactive') {
+        <sh-form-field label="Registration URL" for="remoteControlRegisterUrl">
+          <input
+            type="text"
+            sh-input
+            id="remoteControlRegisterUrl"
+            name="remoteControlRegisterUrl"
+            [(ngModel)]="registerUrl" />
+        </sh-form-field>
+
+        <button type="button" shButton class="raised" (click)="registerViaCustomUrl()" i18n>
+          Register for remote control
+        </button>
+      }
+      @if (state() === 'registered') {
+        <div class="field-col">
+          <label i18n>Machine is now registered, open this link to add it to your account:</label>
+          <a href="{{ claimUrl() }}" target="_blank">{{ claimUrl() }}</a>
+        </div>
+      }
+      @if (state() === 'registering') {
+        <div class="field-col">
+          <label i18n>Registering, please wait...</label>
+        </div>
+      }
+      @if (state() === 'registering' || state() === 'registeringfaulted' || state() === 'registered') {
+        <button type="button" shButton class="raised" (click)="cancel()" i18n>Cancel registration</button>
+      }
+      @if (state() === 'connected' || state() === 'connecting') {
+        <button type="button" shButton class="raised" (click)="disable()" i18n>Disable remote control</button>
+      }
+      @if (state() === 'disabled') {
+        <button type="button" shButton class="raised" (click)="enable()" i18n>Enable remote control</button>
+
+        <button type="button" shButton class="raised error" (click)="delete()" i18n>Delete remote control setup</button>
+      }
+      @if (additionalReportingUrl() !== '') {
+        <sh-chip class="reporting-url primary simple" (click)="copyReportingUrl()" i18n>
+          Reporting configured by server
+          @if (copiedReportingUrl() === true) {
+            <sh-icon>check</sh-icon>
+          } @else {
+            <sh-icon>copy</sh-icon>
+          }
+        </sh-chip>
+      }
+    </div>
+  }
+</div>

@@ -1,0 +1,33 @@
+@let clickToRegister = state() === 'unknown' || state() === 'inactive' || state() === 'registeringfaulted';
+@let registeringFaulted = state() === 'registeringfaulted';
+@let isLoading = state() === 'registering';
+@let registered = state() === 'registered';
+@let isConnected = state() === 'connected' || state() === 'disabled' || state() === 'connecting';
+
+<!-- <pre>state: {{ state() }}</pre> -->
+@if (registeringFaulted) {
+  <div i18n class="connectivity-status" (click)="resetAndRetry()">
+    Click to register
+    <div class="status"></div>
+  </div>
+} @else if (isLoading) {
+  <div i18n class="connectivity-status" [routerLink]="['/connect/logon']">
+    Registering
+    <div class="status warning blinking"></div>
+  </div>
+} @else if (clickToRegister) {
+  <div i18n class="connectivity-status" [routerLink]="['/connect/logon']">
+    Click to register
+    <div class="status"></div>
+  </div>
+} @else if (registered) {
+  <div i18n class="connectivity-status" (click)="claim()">
+    Click to claim
+    <div class="status success blinking"></div>
+  </div>
+} @else if (isConnected) {
+  <div i18n class="connectivity-status" [routerLink]="['/settings']">
+    Connected
+    <div class="status success"></div>
+  </div>
+}

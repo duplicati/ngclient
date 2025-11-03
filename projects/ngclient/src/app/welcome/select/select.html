@@ -1,0 +1,37 @@
+<section class="left">
+  <div class="actionables">
+    <button
+      shButton
+      class="connect outlined primary"
+      (mouseenter)="hoveringConnect.set(true)"
+      (mouseleave)="hoveringConnect.set(false)"
+      routerLink="/welcome/connect/logon">
+      <div class="action">
+        <h2 i18n>Connect to console</h2>
+        <p i18n>Consolidate all your backup reports in one place.</p>
+      </div>
+    </button>
+
+    <sh-divider>or</sh-divider>
+
+    <button
+      shButton
+      class="connect outlined"
+      (mouseenter)="hoveringConnect.set(true)"
+      (mouseleave)="hoveringConnect.set(false)"
+      routerLink="/welcome/connect/link">
+      <div class="action">
+        <h2 i18n>Easy connect link to console</h2>
+        <p i18n>For enterprises that are onboarding many machines.</p>
+      </div>
+    </button>
+
+    <div class="space"></div>
+
+    <p class="without-connecting" [routerLink]="['/']">Proceed without connecting to console</p>
+  </div>
+</section>
+
+<section class="right" [class.hovering]="hoveringConnect()">
+  <img src="/assets/images/console.avif" alt="" />
+</section>

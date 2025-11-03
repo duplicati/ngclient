@@ -7,10 +7,10 @@ import { SysinfoState } from '../../core/states/sysinfo.state';
 
 type State =
   | 'connected'
+  | 'connecting'
   | 'registered'
   | 'registering'
   | 'registeringfaulted'
-  | 'enabled'
   | 'disabled'
   | 'inactive'
   | 'unknown';
@@ -29,18 +29,19 @@ export class RemoteControlState {
   state = signal<State>('unknown');
   claimUrl = signal<string | null>(null);
   registerUrl = signal<string>('');
+  customRegisterUrl = signal<string>('');
   status = computed(() => {
     const state = this.state();
 
-    if (state === 'enabled') return 'Remote control is enabled but not connected';
-    if (state === 'connected') return 'Remote control is connected';
-    if (state === 'registering') return 'Registering machine...';
-    if (state === 'registeringfaulted') return 'Registration failed';
-    if (state === 'registered') return 'Registered, waiting for accept';
-    if (state === 'disabled') return 'Remote control is configured but not enabled';
-    if (state === 'unknown') return '...loading...';
+    if (state === 'connecting') return $localize`Remote control is enabled but not connected`;
+    if (state === 'connected') return $localize`Remote control is connected`;
+    if (state === 'registering') return $localize`Registering machine...`;
+    if (state === 'registeringfaulted') return $localize`Registration failed`;
+    if (state === 'registered') return $localize`Registered, waiting for accept`;
+    if (state === 'disabled') return $localize`Remote control is configured but not enabled`;
+    if (state === 'unknown') return $localize`...loading...`;
 
-    return 'Remote control is not set up';
+    return $localize`Remote control is not set up`;
   });
 
   sysInfoEffect = effect(() => {
@@ -64,7 +65,7 @@ export class RemoteControlState {
     if (data.IsConnected) {
       this.state.set('connected');
     } else if (data.IsEnabled) {
-      this.state.set('enabled');
+      this.state.set('connecting');
     } else if (data.CanEnable) {
       this.state.set('disabled');
     } else if (data.IsRegisteringFaulted) {
@@ -94,26 +95,12 @@ export class RemoteControlState {
           next: (res) => this.#mapRemoteControlStatus(res),
           error: (err) => this.#mapRemoteControlError(err),
         });
-
-        // AppService.post('/remotecontrol/register', { RegistrationUrl: '' }).then(
-        //   function (data) {
-        //     this.#mapRemoteControlStatus(data.data);
-        //   },
-        //   () => {
-        //     AppService.get('/remotecontrol/status').then(
-        //       function (data) {
-        //         this.#mapRemoteControlStatus(data.data);
-        //       },
-        //       () => {}
-        //     );
-        //   }
-        // );
       }, 5000);
     }
 
     // If we are enabled, poll to see if we become connected
     // If we are registered, poll to see if we become disabled
-    if (currentState === 'enabled' || currentState === 'registered') {
+    if (currentState === 'connecting' || currentState === 'registered') {
       this.repeatRegisterTimer = setTimeout(() => {
         this.#dupServer.getApiV1RemotecontrolStatus().subscribe({
           next: (res) => this.#mapRemoteControlStatus(res),
@@ -122,7 +109,6 @@ export class RemoteControlState {
       }, 5000);
     }
 
-    // If we can enable and are registering, there must be a lingering registration
     if (data.IsRegistering && data.CanEnable) {
       this.#dupServer.deleteApiV1RemotecontrolRegister().subscribe({
         next: (res) => this.#mapRemoteControlStatus(res),
@@ -134,7 +120,10 @@ export class RemoteControlState {
     // AppUtils.connectionError(data);
 
     this.#dupServer.getApiV1RemotecontrolStatus().subscribe({
-      next: (res) => this.#mapRemoteControlStatus(res),
+      next: (res) => {
+        console.log('next', res);
+        this.#mapRemoteControlStatus(res);
+      },
     });
   }
 
@@ -145,13 +134,17 @@ export class RemoteControlState {
     });
   }
 
-  beginRemoteRegistration() {
+  beginRemoteRegistration(useCustomUrl = false) {
     this.state.set('registering');
 
-    this.#dupServer.postApiV1RemotecontrolRegister({ requestBody: { RegistrationUrl: this.registerUrl() } }).subscribe({
-      next: (res) => this.#mapRemoteControlStatus(res),
-      error: (err) => this.#mapRemoteControlError(err),
-    });
+    this.#dupServer
+      .postApiV1RemotecontrolRegister({
+        requestBody: { RegistrationUrl: useCustomUrl ? this.customRegisterUrl() : this.registerUrl() },
+      })
+      .subscribe({
+        next: (res) => this.#mapRemoteControlStatus(res),
+        error: (err) => this.#mapRemoteControlError(err),
+      });
   }
 
   cancelRemoteRegistration() {

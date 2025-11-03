@@ -1,0 +1,49 @@
+@use '@ship-ui/core/styles/helpers' as *;
+
+:host {
+  display: flex;
+  align-items: center;
+  padding: p2r(0 12);
+}
+
+.connectivity-status {
+  display: flex;
+  align-items: center;
+  gap: p2r(8);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--primary-8);
+  }
+}
+
+.status {
+  width: p2r(10);
+  height: p2r(10);
+  border-radius: 50%;
+  background-color: var(--base-4);
+
+  &.success {
+    background-color: var(--success-8);
+  }
+
+  &.warning {
+    background-color: var(--warn-8);
+  }
+
+  &.blinking {
+    animation: blinking 1s infinite;
+  }
+}
+
+@keyframes blinking {
+  0% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.2;
+  }
+}

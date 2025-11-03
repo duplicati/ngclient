@@ -14,6 +14,7 @@ import { BackupsState } from '../../states/backups.state';
 import { RelayconfigState } from '../../states/relayconfig.state';
 import { SysinfoState } from '../../states/sysinfo.state';
 import { PauseDialogComponent } from './pause-dialog/pause-dialog.component';
+import RemoteConnectivityStatus from './remote-connectivity-status/remote-connectivity-status';
 import { StatusBarState } from './status-bar.state';
 import ThrottleSettingsDialogComponent from './throttle-settings-dialog/throttle-settings-dialog.component';
 
@@ -22,12 +23,15 @@ const date = new Date();
 @Component({
   selector: 'app-status-bar',
   imports: [
-    ShipProgressBarComponent,
+    RemoteConnectivityStatus,
+
     RelativeTimePipe,
     DatePipe,
+
     ShipIconComponent,
     ShipButtonComponent,
     ShipSpinnerComponent,
+    ShipProgressBarComponent,
   ],
   templateUrl: './status-bar.component.html',
   styleUrl: './status-bar.component.scss',

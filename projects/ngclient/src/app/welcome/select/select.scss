@@ -1,0 +1,106 @@
+@use '@ship-ui/core/styles/helpers' as *;
+
+:host {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  grid-template-rows: 1fr;
+  height: 100vh;
+  overflow: hidden;
+  padding: p2r(32);
+
+  @include breakpoint(-milli) {
+    display: flex;
+    flex-direction: column-reverse;
+    height: auto;
+
+    padding: p2r(64 16);
+    gap: p2r(32);
+  }
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+
+  @include breakpoint(-milli) {
+    align-items: flex-start;
+  }
+
+  .actionables {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: p2r(16);
+
+    @include breakpoint(-milli) {
+      width: 100%;
+    }
+
+    button {
+      width: 100%;
+    }
+
+    sh-divider {
+      width: 100%;
+    }
+
+    .space {
+      width: 100%;
+      height: p2r(40);
+    }
+  }
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: p2r(32 32 32 0);
+
+  &.hovering {
+    img {
+      border-color: var(--primary-8);
+    }
+  }
+
+  img {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    border: 1px solid var(--base-3);
+    border-radius: var(--shape-2);
+    box-shadow: var(--box-shadow-20);
+    transition: border-color 0.2s ease-in-out;
+  }
+}
+
+.connect {
+  height: auto;
+  padding: p2r(32);
+}
+// sh-card.connect {
+//   display: flex;
+//   flex-direction: row;
+//   gap: p2r(16);
+
+//   .action {
+//     display: flex;
+//     flex-direction: column;
+//     align-items: center;
+//     justify-content: center;
+//     padding: p2r(32);
+//     gap: p2r(4);
+//   }
+// }
+
+.without-connecting {
+  text-decoration: underline;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--primary-8);
+  }
+}

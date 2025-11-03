@@ -15,6 +15,7 @@ npm-debug.log
 yarn-error.log
 
 # IDEs and editors
+.vscode/
 .idea/
 .project
 .classpath
@@ -39,10 +40,12 @@ yarn-error.log
 /libpeerconnection.log
 testem.log
 /typings
+openapi-ts-*.log
 
 # System files
 .DS_Store
 Thumbs.db
+
 
 # Generated files
 /projects/ngclient/src/assets/sh-*.woff2

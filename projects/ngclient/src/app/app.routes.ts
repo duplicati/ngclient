@@ -44,6 +44,19 @@ export const PreloadGuard = () => {
   return relayconfigState.configLoaded?.pipe(switchMap(() => zip(zipArr)));
 };
 
+export const WelcomeGuard = () => {
+  // TODO
+  // - check if the user has visited the welcome wizard before
+  // - and if redirect to the welcome wizard
+
+  return true;
+};
+
+const connectToConsoleRoute = {
+  path: 'connect/:typeParam',
+  loadComponent: () => import('./welcome/connect/connect'),
+};
+
 export const routes: Routes = [
   {
     path: '',
@@ -79,124 +92,146 @@ export const routes: Routes = [
         children: [
           {
             path: '',
-            // If in iframe wait for relay...
-            canActivate: [PreloadGuard],
-            loadComponent: () => import('./layout/layout.component'),
+            canActivate: [PreloadGuard, WelcomeGuard],
             children: [
               {
-                path: '',
-                loadComponent: () => import('./home/home.component'),
-              },
-              {
-                path: 'add-backup',
-                loadComponent: () => import('./add-backup/add-backup.component'),
-              },
-              {
-                path: 'backup/:id/export',
-                loadComponent: () => import('./backup/export/export.component'),
-              },
-              {
-                path: 'backup/import',
-                loadComponent: () => import('./backup/import/import.component'),
-              },
-              {
-                path: 'backup-draft/:id',
-                loadComponent: () => import('./backup/backup.component'),
-                loadChildren: () => import('./backup/backup.routes'),
-              },
-              {
-                path: 'backup/:id',
-                loadComponent: () => import('./backup/backup.component'),
-                loadChildren: () => import('./backup/backup.routes'),
-              },
-              {
-                path: 'backup/:id/log',
-                loadComponent: () => import('./backup/log/log.component'),
-              },
-              {
-                path: 'backup/:id/database',
-                loadComponent: () => import('./backup/database/database.component'),
-              },
-              {
-                path: 'backup/:id/commandline',
-                loadComponent: () => import('./backup/commandline/commandline.component'),
-              },
-              {
-                path: 'backup/:id/commandline/:runId',
-                loadComponent: () => import('./backup/commandline-result/commandline-result.component'),
-              },
-              {
-                path: 'backup/:id/delete',
-                loadComponent: () => import('./backup/delete-backup/delete-backup.component'),
-              },
-              {
-                path: 'restore',
+                path: 'welcome',
+                loadComponent: () => import('./welcome/welcome'),
                 children: [
                   {
                     path: '',
-                    loadComponent: () => import('./restore/restore.component'),
-                  },
-                  {
-                    path: 'from-config',
-                    loadComponent: () => import('./restore/restore-from-config/restore-from-config.component'),
-                  },
-                ],
-              },
-              {
-                path: 'restore-from-files',
-                loadComponent: () => import('./restore-flow/restore-flow.component'),
-                loadChildren: () => import('./restore-flow/restore-flow.routes'),
-              },
-              {
-                path: 'restore-draft/:id',
-                loadComponent: () => import('./restore-flow/restore-flow.component'),
-                loadChildren: () => import('./restore-flow/restore-flow.routes'),
-              },
-              {
-                path: 'restore/:id',
-                loadComponent: () => import('./restore-flow/restore-flow.component'),
-                loadChildren: () => import('./restore-flow/restore-flow.routes'),
-              },
-              {
-                path: 'settings',
-                loadComponent: () => import('./settings/settings.component'),
-              },
-              {
-                path: 'about',
-                loadComponent: () => import('./about/about.component'),
-                children: [
-                  {
-                    path: '',
-                    redirectTo: 'general',
+                    redirectTo: 'select',
                     pathMatch: 'full',
                   },
                   {
-                    path: 'general',
-                    loadComponent: () => import('./about/general/general.component'),
+                    path: 'select',
+                    loadComponent: () => import('./welcome/select/select'),
+                  },
+                  connectToConsoleRoute,
+                ],
+              },
+              {
+                path: '',
+                // If in iframe wait for relay...
+                loadComponent: () => import('./layout/layout.component'),
+                children: [
+                  {
+                    path: '',
+                    loadComponent: () => import('./home/home.component'),
+                  },
+                  connectToConsoleRoute,
+                  {
+                    path: 'add-backup',
+                    loadComponent: () => import('./add-backup/add-backup.component'),
                   },
                   {
-                    path: 'changelog',
-                    loadComponent: () => import('./about/changelog/changelog.component'),
+                    path: 'backup/:id/export',
+                    loadComponent: () => import('./backup/export/export.component'),
                   },
                   {
-                    path: 'libraries',
-                    loadComponent: () => import('./about/libraries/libraries.component'),
+                    path: 'backup/import',
+                    loadComponent: () => import('./backup/import/import.component'),
                   },
                   {
-                    path: 'system-info',
-                    loadComponent: () => import('./about/system-info/system-info.component'),
+                    path: 'backup-draft/:id',
+                    loadComponent: () => import('./backup/backup.component'),
+                    loadChildren: () => import('./backup/backup.routes'),
                   },
                   {
-                    path: 'server-settings',
-                    loadComponent: () => import('./about/server-settings/server-settings.component'),
+                    path: 'backup/:id',
+                    loadComponent: () => import('./backup/backup.component'),
+                    loadChildren: () => import('./backup/backup.routes'),
                   },
                   {
-                    path: 'logs',
-                    loadChildren: () => import('./about/logs/logs.routes'),
+                    path: 'backup/:id/log',
+                    loadComponent: () => import('./backup/log/log.component'),
                   },
                   {
-                    path: 'crashlogs',
-                    loadComponent: () => import('./about/crashlogs/crashlogs.component'),
+                    path: 'backup/:id/database',
+                    loadComponent: () => import('./backup/database/database.component'),
+                  },
+                  {
+                    path: 'backup/:id/commandline',
+                    loadComponent: () => import('./backup/commandline/commandline.component'),
+                  },
+                  {
+                    path: 'backup/:id/commandline/:runId',
+                    loadComponent: () => import('./backup/commandline-result/commandline-result.component'),
+                  },
+                  {
+                    path: 'backup/:id/delete',
+                    loadComponent: () => import('./backup/delete-backup/delete-backup.component'),
+                  },
+                  {
+                    path: 'restore',
+                    children: [
+                      {
+                        path: '',
+                        loadComponent: () => import('./restore/restore.component'),
+                      },
+                      {
+                        path: 'from-config',
+                        loadComponent: () => import('./restore/restore-from-config/restore-from-config.component'),
+                      },
+                    ],
+                  },
+                  {
+                    path: 'restore-from-files',
+                    loadComponent: () => import('./restore-flow/restore-flow.component'),
+                    loadChildren: () => import('./restore-flow/restore-flow.routes'),
+                  },
+                  {
+                    path: 'restore-draft/:id',
+                    loadComponent: () => import('./restore-flow/restore-flow.component'),
+                    loadChildren: () => import('./restore-flow/restore-flow.routes'),
+                  },
+                  {
+                    path: 'restore/:id',
+                    loadComponent: () => import('./restore-flow/restore-flow.component'),
+                    loadChildren: () => import('./restore-flow/restore-flow.routes'),
+                  },
+                  {
+                    path: 'settings',
+                    loadComponent: () => import('./settings/settings.component'),
+                  },
+                  {
+                    path: 'about',
+                    loadComponent: () => import('./about/about.component'),
+                    children: [
+                      {
+                        path: '',
+                        redirectTo: 'general',
+                        pathMatch: 'full',
+                      },
+                      {
+                        path: 'general',
+                        loadComponent: () => import('./about/general/general.component'),
+                      },
+                      {
+                        path: 'changelog',
+                        loadComponent: () => import('./about/changelog/changelog.component'),
+                      },
+                      {
+                        path: 'libraries',
+                        loadComponent: () => import('./about/libraries/libraries.component'),
+                      },
+                      {
+                        path: 'system-info',
+                        loadComponent: () => import('./about/system-info/system-info.component'),
+                      },
+                      {
+                        path: 'server-settings',
+                        loadComponent: () => import('./about/server-settings/server-settings.component'),
+                      },
+                      {
+                        path: 'logs',
+                        loadChildren: () => import('./about/logs/logs.routes'),
+                      },
+                      {
+                        path: 'crashlogs',
+                        loadComponent: () => import('./about/crashlogs/crashlogs.component'),
+                      },
+                    ],
                   },
                 ],
               },
