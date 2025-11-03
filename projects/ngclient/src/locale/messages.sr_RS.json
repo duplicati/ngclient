@@ -133,6 +133,7 @@
     "2976874496010813887": "Rezervna kopija je bila privremena i više ne postoji, tako da su podaci dnevnika izgubljeni",
     "6490648157632610005": "Vrati opcije",
     "2601306210394871786": "Kako želite da rukujete postojećim fajlovima?",
+    "1253156499530942296": "Ova rezervna kopija je napravljena na drugom operativnom sistemu. Vraćanje fajlova bez navođenja odredišne fascikle može dovesti do vraćanja fajlova na neočekivana mesta. Da li ste sigurni da želite da nastavite bez odabira odredišne fascikle?",
     "325172806395484991": "Izaberite fajlove",
     "527691487030937649": "Odakle želite da vratite?",
     "4930506384627295710": "Podešavanja",
@@ -140,15 +141,14 @@
     "918395176653023621": "Sprečite automatsko prijavljivanje ikonom na traci",
     "2919975008248285707": "Ažurirajte kanal",
     "8289732336438690874": "Beta",
-    "9121268781026454492": "Posebne verzije samo za programere. Nije za upotrebu sa važnim podacima.",
     "401382195676192367": "Canary",
-    "7438596179184557624": "Pojedinačne verzije samo za programere. Nije za upotrebu sa važnim podacima.",
     "5320543668849212821": "Pauziraj nakon pokretanja ili hibernacije",
     "7350523198476594805": "Statistika upotrebe",
     "4531976006614415538": "Statistika korišćenja, upozorenja, greške i rušenja",
     "4007307614127429452": "Upozorenja, greške i padovi",
     "7003237362536687306": "Greške i rušenja",
     "7931989065782446584": "Samo srušeni",
-    "6546722977616384568": "Ništa / onemogućeno"
+    "6546722977616384568": "Ništa / onemogućeno",
+    "5607669932062416162": "Podrazumevano"
   }
 }
