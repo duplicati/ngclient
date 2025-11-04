@@ -502,7 +502,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/options/options.component.ts</context>
-          <context context-type="linenumber">69</context>
+          <context context-type="linenumber">68</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-flow.state.ts</context>
@@ -566,7 +566,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/options/options.component.ts</context>
-          <context context-type="linenumber">70</context>
+          <context context-type="linenumber">69</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
@@ -578,11 +578,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.state.ts</context>
-          <context context-type="linenumber">186</context>
+          <context context-type="linenumber">179</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">86,88</context>
+          <context context-type="linenumber">110,112</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4021893317334181281" datatype="html">
@@ -674,7 +674,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">342,343</context>
+          <context context-type="linenumber">366,367</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8132372096187045707" datatype="html">
@@ -930,7 +930,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.state.ts</context>
-          <context context-type="linenumber">183</context>
+          <context context-type="linenumber">176</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5835203083538785597" datatype="html">
@@ -3018,7 +3018,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">73,74</context>
+          <context context-type="linenumber">97,98</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6451269955734195952" datatype="html">
@@ -3035,6 +3035,7 @@
       </trans-unit>
       <trans-unit id="1247733053324535649" datatype="html">
         <source><x id="START_BLOCK_IF" equiv-text="@if (showPassword()) {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>eye-slash<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Hide <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>eye<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Show <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
+        <target><x id="START_BLOCK_IF" equiv-text="@if (showPassword()) {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>eye-slash<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Verbergen <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>eye<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Weergeven <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/export/export.component.html</context>
           <context context-type="linenumber">119,128</context>
@@ -3197,7 +3198,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">55,56</context>
+          <context context-type="linenumber">79,80</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5838126991020480515" datatype="html">
@@ -3933,7 +3934,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
-          <context context-type="linenumber">65</context>
+          <context context-type="linenumber">66</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5531237363767747080" datatype="html">
@@ -3949,7 +3950,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
-          <context context-type="linenumber">69</context>
+          <context context-type="linenumber">70</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8070396816726827304" datatype="html">
@@ -3965,7 +3966,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
-          <context context-type="linenumber">73</context>
+          <context context-type="linenumber">74</context>
         </context-group>
       </trans-unit>
       <trans-unit id="840951359074313455" datatype="html">
@@ -4384,6 +4385,42 @@
           <context context-type="linenumber">16</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="2882790181541329307" datatype="html">
+        <source> Click to register <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;status&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
+        <target> Klik om te registreren <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;status&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/core/components/status-bar/remote-connectivity-status/remote-connectivity-status.html</context>
+          <context context-type="linenumber">10,13</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/core/components/status-bar/remote-connectivity-status/remote-connectivity-status.html</context>
+          <context context-type="linenumber">20,23</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5573241799856770061" datatype="html">
+        <source> Registering <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;status warning blinking&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
+        <target> Registreren <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;status warning blinking&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/core/components/status-bar/remote-connectivity-status/remote-connectivity-status.html</context>
+          <context context-type="linenumber">15,18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3456984930452222126" datatype="html">
+        <source> Click to claim <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;status success blinking&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
+        <target> Klik om te claimen <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;status success blinking&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/core/components/status-bar/remote-connectivity-status/remote-connectivity-status.html</context>
+          <context context-type="linenumber">25,28</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1838540954753437718" datatype="html">
+        <source> Connected <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;status success&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
+        <target> Verbonden <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;status success&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/core/components/status-bar/remote-connectivity-status/remote-connectivity-status.html</context>
+          <context context-type="linenumber">30,34</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="8863666082945976589" datatype="html">
         <source>No scheduled tasks</source>
         <target>Geen geplande taken</target>
@@ -4405,7 +4442,7 @@
         <target><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>skull<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Afbreken </target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/status-bar/status-bar.component.html</context>
-          <context context-type="linenumber">27,29</context>
+          <context context-type="linenumber">31,33</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1845281535947373751" datatype="html">
@@ -4413,14 +4450,15 @@
         <target><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>stop<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Stoppen </target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/status-bar/status-bar.component.html</context>
-          <context context-type="linenumber">32,34</context>
+          <context context-type="linenumber">36,38</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7513388682755268547" datatype="html">
         <source><x id="START_BLOCK_IF" equiv-text="@if (clientIsRunning()) {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>pause<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Pause <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>play<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Resume <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
+        <target><x id="START_BLOCK_IF" equiv-text="@if (clientIsRunning()) {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>pause<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Pauzeren <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>play<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Hervatten <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/status-bar/status-bar.component.html</context>
-          <context context-type="linenumber">39,48</context>
+          <context context-type="linenumber">43,52</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4388287151461319800" datatype="html">
@@ -5107,6 +5145,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
       </trans-unit>
       <trans-unit id="7918810463340568225" datatype="html">
         <source>Keep your data safe at your chosen destination.</source>
+        <target>Houd uw gegevens veilig op de door u gekozen bestemming.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
           <context context-type="linenumber">9,10</context>
@@ -5130,6 +5169,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
       </trans-unit>
       <trans-unit id="260432635650186996" datatype="html">
         <source>Recover your files from any backup set.</source>
+        <target>Herstel uw bestanden vanuit elke back-upset.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
           <context context-type="linenumber">21,22</context>
@@ -5377,6 +5417,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
       </trans-unit>
       <trans-unit id="6201638315245239510" datatype="html">
         <source>Advanced</source>
+        <target>Geavanceerd</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
           <context context-type="linenumber">318,320</context>
@@ -5416,6 +5457,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
       </trans-unit>
       <trans-unit id="4273460998206847730" datatype="html">
         <source>Reporting</source>
+        <target>Rapportage</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
           <context context-type="linenumber">342,344</context>
@@ -5462,7 +5504,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">61,62</context>
+          <context context-type="linenumber">85,86</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7186928219241173917" datatype="html">
@@ -5474,7 +5516,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">67,68</context>
+          <context context-type="linenumber">91,92</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5384970007856629266" datatype="html">
@@ -5506,7 +5548,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">99,100</context>
+          <context context-type="linenumber">123,124</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6533924617979855605" datatype="html">
@@ -5575,6 +5617,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
       </trans-unit>
       <trans-unit id="6508575097595619745" datatype="html">
         <source> Remember to enter a password, if you can't remember the password open the duplicati client on the machine in question and make sure you open it through the tray icon then go into settings to change the password. </source>
+        <target> Vergeet niet om een ​​wachtwoord in te voeren. Als u het wachtwoord bent vergeten, open dan de Duplicati-client op de betreffende machine en zorg ervoor dat u deze opent via het pictogram in het systeemvak. Ga vervolgens naar Instellingen om het wachtwoord te wijzigen.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/login/login.component.html</context>
           <context context-type="linenumber">4,5</context>
@@ -5582,6 +5625,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
       </trans-unit>
       <trans-unit id="8478646166340702449" datatype="html">
         <source> Password <x id="START_LINK" ctype="x-a" equiv-text="&lt;a             href=&quot;https://docs.duplicati.com/detailed-descriptions/duplicati-access-password&quot;             target=&quot;_blank&quot;             rel=&quot;noopener noreferrer&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>question<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a&gt;"/></source>
+        <target> Wachtwoord <x id="START_LINK" ctype="x-a" equiv-text="&lt;a             href=&quot;https://docs.duplicati.com/detailed-descriptions/duplicati-access-password&quot;             target=&quot;_blank&quot;             rel=&quot;noopener noreferrer&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>question<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/login/login.component.html</context>
           <context context-type="linenumber">19,27</context>
@@ -5597,6 +5641,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
       </trans-unit>
       <trans-unit id="2676308716533799662" datatype="html">
         <source> Login <x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
+        <target> Aanmelden <x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/login/login.component.html</context>
           <context context-type="linenumber">42,45</context>
@@ -5604,6 +5649,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
       </trans-unit>
       <trans-unit id="2351615913393564557" datatype="html">
         <source> Keep me logged in <x id="TAG_INPUT" ctype="x-input" equiv-text="&lt;input type=&quot;checkbox&quot; id=&quot;rememberMe&quot; tabindex=&quot;2&quot; formControlName=&quot;rememberMe&quot; /&gt;"/></source>
+        <target> Houd mij aangemeld <x id="TAG_INPUT" ctype="x-input" equiv-text="&lt;input type=&quot;checkbox&quot; id=&quot;rememberMe&quot; tabindex=&quot;2&quot; formControlName=&quot;rememberMe&quot; /&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/login/login.component.html</context>
           <context context-type="linenumber">48,50</context>
@@ -5767,6 +5813,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
       </trans-unit>
       <trans-unit id="7798761934951318578" datatype="html">
         <source> Original location <x id="TAG_INPUT" ctype="x-input" equiv-text="&lt;input type=&quot;radio&quot; name=&quot;restoreFrom&quot; value=&quot;original&quot; formControlName=&quot;restoreFrom&quot; /&gt;"/></source>
+        <target> Oorspronkelijke locatie <x id="TAG_INPUT" ctype="x-input" equiv-text="&lt;input type=&quot;radio&quot; name=&quot;restoreFrom&quot; value=&quot;original&quot; formControlName=&quot;restoreFrom&quot; /&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/options/options.component.html</context>
           <context context-type="linenumber">8,10</context>
@@ -5830,9 +5877,10 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
       </trans-unit>
       <trans-unit id="4509720553956381291" datatype="html">
         <source>Confirm target folder</source>
+        <target>Bevestig doelmap</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/options/options.component.ts</context>
-          <context context-type="linenumber">67</context>
+          <context context-type="linenumber">66</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1253156499530942296" datatype="html">
@@ -5840,7 +5888,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>De back-up werd aangemaakt op een ander besturingssysteem. Bestanden terugzetten zonder een doelmap op te geven kan tot gevolg hebben dat bestanden worden teruggezet naar onverwachte plaatsen. Bent u er zeker van dat u wilt doorgaan zonder een doelmap te kiezen?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/options/options.component.ts</context>
-          <context context-type="linenumber">68</context>
+          <context context-type="linenumber">67</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5802723289508144474" datatype="html">
@@ -6121,6 +6169,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
       </trans-unit>
       <trans-unit id="4541630487586031467" datatype="html">
         <source>Direct restore from backup files</source>
+        <target>Direct herstellen vanuit back-upbestanden</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
           <context context-type="linenumber">46,47</context>
@@ -6128,6 +6177,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
       </trans-unit>
       <trans-unit id="7023189360364716784" datatype="html">
         <source>Point to your backup files and restore from there.</source>
+        <target>Verwijs naar uw back-upbestanden en herstel vanaf daar.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
           <context context-type="linenumber">47,48</context>
@@ -6135,6 +6185,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
       </trans-unit>
       <trans-unit id="5038258894648830056" datatype="html">
         <source> Start <x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>play-circle<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
+        <target> Start <x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>play-circle<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
           <context context-type="linenumber">50,53</context>
@@ -6146,6 +6197,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
       </trans-unit>
       <trans-unit id="5030677124323180354" datatype="html">
         <source>Restore from configuration</source>
+        <target>Herstellen vanuit configuratie</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
           <context context-type="linenumber">58,59</context>
@@ -6153,6 +6205,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
       </trans-unit>
       <trans-unit id="7267392067545204384" datatype="html">
         <source>Load destination from an exported job</source>
+        <target>Bestemming laden vanuit een geëxporteerde taak</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
           <context context-type="linenumber">59,60</context>
@@ -6174,9 +6227,9 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
           <context context-type="linenumber">6,9</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="8024650600986084314" datatype="html">
-        <source>Register for remote control</source>
-        <target>Registreer voor afstandsbediening</target>
+      <trans-unit id="3256567343129957987" datatype="html">
+        <source>Register on console</source>
+        <target>Registreren op console</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.component.html</context>
           <context context-type="linenumber">13,14</context>
@@ -6206,43 +6259,108 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
           <context context-type="linenumber">30,31</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="5871595298708374790" datatype="html">
-        <source>Disable remote control</source>
-        <target>Afstandsbediening uitschakelen</target>
+      <trans-unit id="2421917420516328621" datatype="html">
+        <source>Disable console connection</source>
+        <target>Consoleverbinding uitschakelen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.component.html</context>
           <context context-type="linenumber">34,35</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="3369466914717174051" datatype="html">
-        <source>Enable remote control</source>
-        <target>Afstandsbediening inschakelen</target>
+      <trans-unit id="4766396747475517086" datatype="html">
+        <source>Enable console connection</source>
+        <target>Consoleverbinding inschakelen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.component.html</context>
-          <context context-type="linenumber">37,39</context>
+          <context context-type="linenumber">38,40</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="5706293114971448703" datatype="html">
-        <source>Delete remote control setup</source>
-        <target>Instellingen voor afstandsbediening verwijderen</target>
+      <trans-unit id="3586607267950000790" datatype="html">
+        <source> Delete console connection setup </source>
+        <target>Consoleverbindingsinstellingen verwijderen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.component.html</context>
-          <context context-type="linenumber">39,40</context>
+          <context context-type="linenumber">41,42</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9091802884339884246" datatype="html">
         <source> Reporting configured by server <x id="START_BLOCK_IF" equiv-text="@if (copiedReportingUrl() === true) {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>check<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>copy<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
+        <target> Rapportage geconfigureerd door server <x id="START_BLOCK_IF" equiv-text="@if (copiedReportingUrl() === true) {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>check<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>copy<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.component.html</context>
-          <context context-type="linenumber">44,51</context>
+          <context context-type="linenumber">47,54</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="1731345447408843513" datatype="html">
-        <source>Are you sure you want to delete the remote control registration?</source>
-        <target>Weet u zeker dat u de registratie voor afstandsbediening wilt verwijderen?</target>
+      <trans-unit id="8689646276511932056" datatype="html">
+        <source>Console connection is enabled but not connected</source>
+        <target>Consoleverbinding is ingeschakeld maar niet verbonden</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.state.ts</context>
-          <context context-type="linenumber">184</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8371604506479051501" datatype="html">
+        <source>Connected to console</source>
+        <target>Verbonden met console</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.state.ts</context>
+          <context context-type="linenumber">37</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8442667120253281835" datatype="html">
+        <source>Registering machine...</source>
+        <target>Machine wordt geregistreerd...</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.state.ts</context>
+          <context context-type="linenumber">38</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1190716408793054975" datatype="html">
+        <source>Registration failed</source>
+        <target>Registratie mislukt</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.state.ts</context>
+          <context context-type="linenumber">39</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1376781804832629456" datatype="html">
+        <source>Registered, waiting for accept</source>
+        <target>Geregistreerd, wachten op acceptatie</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.state.ts</context>
+          <context context-type="linenumber">40</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7776042610659838873" datatype="html">
+        <source>Console connection is configured but not enabled</source>
+        <target>Consoleverbinding is geconfigureerd maar niet ingeschakeld</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.state.ts</context>
+          <context context-type="linenumber">41</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7521859775853662748" datatype="html">
+        <source>...loading...</source>
+        <target>...laden...</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.state.ts</context>
+          <context context-type="linenumber">42</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4866386105421592521" datatype="html">
+        <source>Console connection is not set up</source>
+        <target>Consoleverbinding is niet ingesteld</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.state.ts</context>
+          <context context-type="linenumber">44</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2683638822020403602" datatype="html">
+        <source>Are you sure you want to delete the console registration?</source>
+        <target>Weet u zeker dat u de consoleregistratie wilt verwijderen?</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.state.ts</context>
+          <context context-type="linenumber">177</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6523392869113065483" datatype="html">
@@ -6250,7 +6368,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Verwijder registratie</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.state.ts</context>
-          <context context-type="linenumber">185</context>
+          <context context-type="linenumber">178</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4930506384627295710" datatype="html">
@@ -6269,12 +6387,44 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
           <context context-type="linenumber">7,8</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="6126600149860970237" datatype="html">
-        <source>Remote access control</source>
-        <target>Beheer van afstandsbediening</target>
+      <trans-unit id="1993678332419607044" datatype="html">
+        <source>Connect to console</source>
+        <target>Verbinden met console</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">13,14</context>
+          <context context-type="linenumber">14,15</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/welcome/select/select.html</context>
+          <context context-type="linenumber">10,11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4664670245914139935" datatype="html">
+        <source>Disable console control</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
+          <context context-type="linenumber">26,27</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2775369547539189812" datatype="html">
+        <source> Disabling console control will disable remote access to this machine from the console, but will keep the registration intact and allow pushing settings from the console. </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
+          <context context-type="linenumber">28,29</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5333744884563668373" datatype="html">
+        <source>Remote control disabled</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
+          <context context-type="linenumber">36,37</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1466040687319812391" datatype="html">
+        <source>Remote control enabled</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
+          <context context-type="linenumber">38,39</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1443956405974162192" datatype="html">
@@ -6282,7 +6432,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Kleurenthema</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">24,25</context>
+          <context context-type="linenumber">48,49</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3318604928974875276" datatype="html">
@@ -6290,7 +6440,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Pas uw applicatiethema aan</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">25,26</context>
+          <context context-type="linenumber">49,50</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3853121441237751087" datatype="html">
@@ -6298,7 +6448,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Wachtwoorden</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">48,49</context>
+          <context context-type="linenumber">72,73</context>
         </context-group>
       </trans-unit>
       <trans-unit id="649940786018804088" datatype="html">
@@ -6306,7 +6456,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Wijzig server wachtwoordzin</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">49,50</context>
+          <context context-type="linenumber">73,74</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5510631059898050305" datatype="html">
@@ -6314,11 +6464,11 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target> Wachtwoordzin bijwerken</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">90</context>
+          <context context-type="linenumber">114</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">102</context>
+          <context context-type="linenumber">126</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6309828574111583895" datatype="html">
@@ -6326,7 +6476,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Wachtwoord veranderen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">108,110</context>
+          <context context-type="linenumber">132,134</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2826581353496868063" datatype="html">
@@ -6334,7 +6484,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Taal</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">120,121</context>
+          <context context-type="linenumber">144,145</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7857633615294259004" datatype="html">
@@ -6342,7 +6492,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Selecteer een taal voor het platform</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">121,122</context>
+          <context context-type="linenumber">145,146</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4546151690452416671" datatype="html">
@@ -6350,7 +6500,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Remote toegang toestaan (herstart vereist)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">137,138</context>
+          <context context-type="linenumber">161,162</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6897429313181532546" datatype="html">
@@ -6358,7 +6508,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target> Door het toestaan van externe toegang, luistert de server naar verzoeken van elke computer in uw netwerk. Als u deze optie inschakelt, zorg er dan voor dat u de computer altijd gebruikt in een beveiligd netwerk met firewallbeveiliging. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">139,140</context>
+          <context context-type="linenumber">163,164</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2221284880137781133" datatype="html">
@@ -6366,7 +6516,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Sta externe toegang toe</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">146,147</context>
+          <context context-type="linenumber">170,171</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3225509872245812272" datatype="html">
@@ -6374,7 +6524,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Toegestane hostnamen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">151,152</context>
+          <context context-type="linenumber">175,176</context>
         </context-group>
       </trans-unit>
       <trans-unit id="155020144989998859" datatype="html">
@@ -6382,7 +6532,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target> Om diverse DNS-gebaseerde aanvallen te voorkomen, beperkt Duplicati de toegestane hostnamen tot de hier vermelde. Directe IP-toegang en localhost zijn altijd toegestaan. Meerdere hostnamen kunnen worden opgegeven met een puntkomma als scheidingsteken. Als een van de toegestane hostnamen een asterisk (*) bevat, zijn alle hostnamen toegestaan ​​en is deze functie uitgeschakeld. Als het veld leeg is, is alleen toegang via IP-adres en localhost toegestaan.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">156,159</context>
+          <context context-type="linenumber">180,183</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1878510219157274954" datatype="html">
@@ -6390,7 +6540,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target> Werk toegestane hostnamen bij </target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">168,169</context>
+          <context context-type="linenumber">192,193</context>
         </context-group>
       </trans-unit>
       <trans-unit id="918395176653023621" datatype="html">
@@ -6398,11 +6548,11 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Voorkom automatisch inloggen door systeemvak-pictogram</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">176,177</context>
+          <context context-type="linenumber">200,201</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">187,188</context>
+          <context context-type="linenumber">211,212</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8394223023612196059" datatype="html">
@@ -6410,21 +6560,23 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target> Standaard opent het pictogram in het systeemvak de gebruikersinterface met een token waarmee de gebruikersinterface wordt ontgrendeld. Dit zorgt ervoor dat u via het pictogram in het systeemvak toegang hebt tot de gebruikersinterface, terwijl anderen een wachtwoord moeten invoeren. Als u liever het wachtwoord zelf invoert, zelfs wanneer u de gebruikersinterface via het pictogram in het systeemvak opent, schakelt u deze optie in.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">178,181</context>
+          <context context-type="linenumber">202,205</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7612216379046551796" datatype="html">
         <source>Power mode provider</source>
+        <target>Provider voor energiebeheer</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">195,196</context>
+          <context context-type="linenumber">219,220</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3158625479714022328" datatype="html">
         <source> The power mode provider monitors the system for when it enters a low power state and pauses Duplicati. When the system resumes, Duplicati will resume as well. Choosing the None option disables detection of low power states and Duplicati will run all the time. </source>
+        <target> De provider voor energiebeheer controleert het systeem op momenten dat het in een energiebesparende stand terechtkomt en pauzeert Duplicati. Wanneer het systeem weer opstart, wordt Duplicati ook weer opgestart. Als u de optie 'Geen' kiest, wordt de detectie van energiebesparende standen uitgeschakeld en blijft Duplicati continu actief.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">197,199</context>
+          <context context-type="linenumber">221,223</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2919975008248285707" datatype="html">
@@ -6432,14 +6584,15 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Updatekanaal</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">217,218</context>
+          <context context-type="linenumber">241,242</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3174422874176771933" datatype="html">
         <source>Installed version: <x id="INTERPOLATION" equiv-text="{{ sysinfo()?.ServerVersionName }}"/></source>
+        <target>Geïnstalleerde versie: <x id="INTERPOLATION" equiv-text="{{ sysinfo()?.ServerVersionName }}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">219,222</context>
+          <context context-type="linenumber">243,246</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3226311709119731062" datatype="html">
@@ -6447,7 +6600,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target> Standaard (<x id="INTERPOLATION" equiv-text="{{ sysinfo()?.DefaultUpdateChannel }}"/>) </target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">230,231</context>
+          <context context-type="linenumber">254,255</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8713738462167694622" datatype="html">
@@ -6455,7 +6608,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Hetzelfde als de basisinstallatieversie: <x id="INTERPOLATION" equiv-text="{{ sysinfo()?.ServerVersionType }}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">233,234</context>
+          <context context-type="linenumber">257,258</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3905239345805877394" datatype="html">
@@ -6463,7 +6616,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Stabiel</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">237</context>
+          <context context-type="linenumber">261</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6693055238157597591" datatype="html">
@@ -6471,7 +6624,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Officiële stabiele release.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">239,240</context>
+          <context context-type="linenumber">263,264</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8289732336438690874" datatype="html">
@@ -6479,7 +6632,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Beta</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">243</context>
+          <context context-type="linenumber">267</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1917818376626138583" datatype="html">
@@ -6487,7 +6640,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target> Probeer de nieuwe functies waaraan we werken. Test een back-up en herstel voordat u deze in productieomgevingen gebruikt. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">246,247</context>
+          <context context-type="linenumber">270,271</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4284966588441859260" datatype="html">
@@ -6495,7 +6648,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target> Experimenteel </target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">253,254</context>
+          <context context-type="linenumber">277,278</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3874113050656942505" datatype="html">
@@ -6503,7 +6656,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Vroege previews van nieuwe functies. Niet voor gebruik met belangrijke gegevens.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">256,257</context>
+          <context context-type="linenumber">280,281</context>
         </context-group>
       </trans-unit>
       <trans-unit id="401382195676192367" datatype="html">
@@ -6511,7 +6664,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Canary</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">260</context>
+          <context context-type="linenumber">284</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8365837297204989044" datatype="html">
@@ -6519,7 +6672,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Alleen voor ontwikkelaars en testers. Niet voor gebruik met belangrijke gegevens.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">262,263</context>
+          <context context-type="linenumber">286,287</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5320543668849212821" datatype="html">
@@ -6527,7 +6680,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Pauzeer na opstarten of slaapmodus</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">273,274</context>
+          <context context-type="linenumber">297,298</context>
         </context-group>
       </trans-unit>
       <trans-unit id="271659419607184663" datatype="html">
@@ -6535,7 +6688,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target> Duplicati wordt uitgevoerd bij het starten, maar blijft gedurende de gehele looptijd gepauzeerd. Duplicati gebruikt minimale systeembronnen en er worden geen back-ups uitgevoerd.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">275,276</context>
+          <context context-type="linenumber">299,300</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7350523198476594805" datatype="html">
@@ -6543,7 +6696,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Gebruikstatistieken</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">306,307</context>
+          <context context-type="linenumber">330,331</context>
         </context-group>
       </trans-unit>
       <trans-unit id="241597370095584269" datatype="html">
@@ -6551,7 +6704,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Gebruiksrapporten helpen ons de gebruikerservaring te verbeteren en de impact van nieuwe functies te evalueren. We gebruiken ze voor het genereren van <x id="START_LINK" ctype="x-a" equiv-text="&lt;a href=&quot;#&quot;&gt;"/>openbare gebruiksstatistieken.<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a&gt;"/><x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/><x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> Alle gebruiksrapporten worden anoniem verzonden en bevatten geen persoonlijke informatie. Ze bevatten informatie over hardware en besturingssysteem, het type backend, de back-upduur, de totale grootte van de brongegevens en vergelijkbare gegevens. Ze bevatten geen paden, bestandsnamen, gebruikersnamen, wachtwoorden of vergelijkbare gevoelige informatie. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">308,314</context>
+          <context context-type="linenumber">332,338</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6252070156626006029" datatype="html">
@@ -6559,14 +6712,15 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Geen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
-          <context context-type="linenumber">61</context>
+          <context context-type="linenumber">62</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6939005683702161102" datatype="html">
         <source>System default ($value)</source>
+        <target>Systeemstandaard ($value)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
-          <context context-type="linenumber">82</context>
+          <context context-type="linenumber">83</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4531976006614415538" datatype="html">
@@ -6574,7 +6728,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Gebruikstatistieken, waarschuwingen, fouten en crashes</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
-          <context context-type="linenumber">86</context>
+          <context context-type="linenumber">87</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4007307614127429452" datatype="html">
@@ -6582,7 +6736,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Waarschuwingen, fouten en crashes</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
-          <context context-type="linenumber">90</context>
+          <context context-type="linenumber">91</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7003237362536687306" datatype="html">
@@ -6590,7 +6744,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Fouten en crashes</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
-          <context context-type="linenumber">94</context>
+          <context context-type="linenumber">95</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7931989065782446584" datatype="html">
@@ -6598,7 +6752,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Alleen crashes</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
-          <context context-type="linenumber">98</context>
+          <context context-type="linenumber">99</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6546722977616384568" datatype="html">
@@ -6606,14 +6760,15 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Geen / uitgeschakeld</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
-          <context context-type="linenumber">102</context>
+          <context context-type="linenumber">103</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4931861490722469250" datatype="html">
         <source>System default (<x id="PH" equiv-text="value"/>)</source>
+        <target>Systeemstandaard (<x id="PH" equiv-text="value"/>)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
-          <context context-type="linenumber">161</context>
+          <context context-type="linenumber">165</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5607669932062416162" datatype="html">
@@ -6621,7 +6776,63 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Standaard</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
-          <context context-type="linenumber">314</context>
+          <context context-type="linenumber">342</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3568815022803741004" datatype="html">
+        <source><x id="START_BLOCK_IF" equiv-text="@if (state() === 'unknown') {"/> Loading... <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/> Connecting to console <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
+        <target><x id="START_BLOCK_IF" equiv-text="@if (state() === 'unknown') {"/> Laden... <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/> Verbinden met console <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/welcome/connect/connect.html</context>
+          <context context-type="linenumber">19,25</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8638954668290822453" datatype="html">
+        <source>Paste registration URL here</source>
+        <target>Plak registratie-URL hier</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/welcome/connect/connect.html</context>
+          <context context-type="linenumber">35,36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8249430947322366329" datatype="html">
+        <source> Connect machine to console </source>
+        <target> Verbind machine met console </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/welcome/connect/connect.html</context>
+          <context context-type="linenumber">50,51</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="737772204931716568" datatype="html">
+        <source> Failed to register <x id="START_BLOCK_IF" equiv-text="@if (typeParam() === 'link') {"/><x id="START_PARAGRAPH" ctype="x-p" equiv-text="&lt;p&gt;"/> Check if the connection link are correct, alternatively it could be your internet connection or the service might be down <x id="CLOSE_PARAGRAPH" ctype="x-p" equiv-text="&lt;/p&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_PARAGRAPH" ctype="x-p" equiv-text="&lt;p&gt;"/> There might be a problem with your internet connection or the service might be down, please try again later <x id="CLOSE_PARAGRAPH" ctype="x-p" equiv-text="&lt;/p&gt;"/><x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
+        <target> Fout bij registreren <x id="START_BLOCK_IF" equiv-text="@if (typeParam() === 'link') {"/><x id="START_PARAGRAPH" ctype="x-p" equiv-text="&lt;p&gt;"/> Controleer of de verbindingslink correct is, het kan ook zijn dat uw internetverbinding of de service niet beschikbaar is. <x id="CLOSE_PARAGRAPH" ctype="x-p" equiv-text="&lt;/p&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_PARAGRAPH" ctype="x-p" equiv-text="&lt;p&gt;"/> Er kan een probleem zijn met uw internetverbinding of dat de service niet beschikbaar is. Probeer het later opnieuw. <x id="CLOSE_PARAGRAPH" ctype="x-p" equiv-text="&lt;/p&gt;"/><x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/welcome/connect/connect.html</context>
+          <context context-type="linenumber">67,81</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2345528476369109922" datatype="html">
+        <source>Consolidate all your backup reports in one place.</source>
+        <target>Consolideer al uw back-uprapporten op één plek.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/welcome/select/select.html</context>
+          <context context-type="linenumber">11,12</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="394343232364110649" datatype="html">
+        <source>Easy connect link to console</source>
+        <target>Eenvoudige verbindingslink met console</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/welcome/select/select.html</context>
+          <context context-type="linenumber">24,25</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6255885205384567391" datatype="html">
+        <source>For enterprises that are onboarding many machines.</source>
+        <target>Voor ondernemingen die veel machines implementeren.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/welcome/select/select.html</context>
+          <context context-type="linenumber">25,26</context>
         </context-group>
       </trans-unit>
     </body>

@@ -604,18 +604,16 @@
     "6597430560483889752": "Wiederherstellen {$START_TAG_SH_ICON}arrow-right{$CLOSE_TAG_SH_ICON}",
     "3891152409365583719": "Einstellungen gespeichert",
     "6231927997656324898": "{$START_TAG_SH_ICON}floppy-disk{$CLOSE_TAG_SH_ICON} Einstellungen speichern",
-    "8024650600986084314": "Registrierung für Fernzugriff",
     "3008478973302833120": "Die Maschine ist jetzt registriert, öffnen Sie diesen Link um ihn Ihrem Konto hinzuzufügen:",
     "3064490671150106718": "Registriere, bitte warten ...",
     "1112525418959962254": "Registrierung abbrechen",
-    "5871595298708374790": "Fernzugriff deaktivieren",
-    "3369466914717174051": "Fernzugriff erlauben",
-    "5706293114971448703": "Einstellungen des Fernzugriffs löschen",
-    "1731345447408843513": "Möchten Sie die Registrierung des Fernzugriffs wirklich löschen?",
+    "8442667120253281835": "Registriere Maschine...",
+    "1190716408793054975": "Registrierung fehlgeschlagen",
+    "1376781804832629456": "Registriert, warte auf Bestätigung",
+    "7521859775853662748": "...laden...",
     "6523392869113065483": "Registrierung löschen",
     "4930506384627295710": "Einstellungen",
     "8853052030834318192": "Sicherungseinstellungen konfigurieren.",
-    "6126600149860970237": "Fernzugriff Kontrolle",
     "1443956405974162192": "Farb Thema",
     "3318604928974875276": "Thema der Amwendung individuell anpassen",
     "3853121441237751087": "Passwörter",
@@ -652,6 +650,7 @@
     "4007307614127429452": "Warnungen, Fehler und Abstürze",
     "7003237362536687306": "Fehler und Abstürze",
     "7931989065782446584": "Nur Abstürze",
-    "6546722977616384568": "Keine / deaktiviert"
+    "6546722977616384568": "Keine / deaktiviert",
+    "5607669932062416162": "Standard"
   }
 }

@@ -135,6 +135,7 @@
     "1253156499530942296": "Denna säkerhetskopia skapades på ett annat operativsystem. Att återställa filer utan att ange en målmapp kan göra att filer återställs på oväntade platser. Är du säker på att du vill fortsätta utan att välja en målmapp?",
     "325172806395484991": "Välj filer",
     "527691487030937649": "Var vill du återställa från?",
+    "7521859775853662748": "...laddar...",
     "4930506384627295710": "Inställningar",
     "4546151690452416671": "Tillåt fjärrstyrning (kräver omstart)",
     "918395176653023621": "Förhindra att tray-icon automatiskt loggar in",

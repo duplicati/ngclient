@@ -138,6 +138,7 @@
     "1253156499530942296": "Esta copia de seguridad fue creada en otro sistema operativo. Restaurar estos ficheros sin indicar una carpeta de destino puede provocar que sean restaurados en ubicaciones imprevistas ¿Está seguro de que quiere continuar sin elegir una carpeta de destino?",
     "325172806395484991": "Seleccionar ficheros",
     "527691487030937649": "¿Desde dónde quiere restaurar?",
+    "7521859775853662748": "...cargando...",
     "4930506384627295710": "Configuraciones",
     "4546151690452416671": "Permitir el acceso remoto (requiere reiniciar)",
     "918395176653023621": "Impedir el inicio de sesión automático con el icono de la bandeja",
@@ -150,6 +151,7 @@
     "4007307614127429452": "Advertencias, errores y bloqueos",
     "7003237362536687306": "Errores y bloqueos",
     "7931989065782446584": "Sólo bloqueos",
-    "6546722977616384568": "Ninguno / desactivado"
+    "6546722977616384568": "Ninguno / desactivado",
+    "5607669932062416162": "Por defecto"
   }
 }

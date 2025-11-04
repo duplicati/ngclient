@@ -135,6 +135,7 @@
     "1253156499530942296": "This backup was created on another operating system. Restoring files without specifying a destination folder can cause files to be restored in unexpected places. Are you sure you want to continue without choosing a destination folder?",
     "325172806395484991": "Select files",
     "527691487030937649": "Where do you want to restore from?",
+    "7521859775853662748": "...loading...",
     "4930506384627295710": "Settings",
     "4546151690452416671": "Allow remote access (requires restart)",
     "918395176653023621": "Prevent tray icon automatic log-in",
@@ -147,6 +148,7 @@
     "4007307614127429452": "Warnings, errors and crashes",
     "7003237362536687306": "Errors and crashes",
     "7931989065782446584": "Crashes only",
-    "6546722977616384568": "None / disabled"
+    "6546722977616384568": "None / disabled",
+    "5607669932062416162": "Default"
   }
 }
