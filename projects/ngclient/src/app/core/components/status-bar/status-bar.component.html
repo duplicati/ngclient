@@ -21,7 +21,9 @@
   </div>
 
   <div class="current-backup-actions">
-    <app-remote-connectivity-status />
+    @if (!isUsingRelay()) {
+      <app-remote-connectivity-status />
+    }
 
     @if (runningTask()) {
       @if (isStopping()) {
