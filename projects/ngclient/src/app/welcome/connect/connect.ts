@@ -5,7 +5,6 @@ import {
   ShipAlertComponent,
   ShipButtonComponent,
   ShipCardComponent,
-  ShipChipComponent,
   ShipFormFieldComponent,
   ShipIconComponent,
   ShipProgressBarComponent,
@@ -21,7 +20,6 @@ import { ServerSettingsService } from '../../settings/server-settings.service';
 
     ShipFormFieldComponent,
     ShipButtonComponent,
-    ShipChipComponent,
     ShipProgressBarComponent,
     ShipCardComponent,
     ShipAlertComponent,
