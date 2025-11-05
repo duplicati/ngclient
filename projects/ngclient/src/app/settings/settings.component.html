@@ -8,16 +8,40 @@
     </div>
   </header>
 
-  <section>
-    <div class="left">
-      <h3 i18n>Connect to console</h3>
-      <p>{{ remoteControlStatus() }}</p>
-    </div>
+  @if (!isUsingRelay()) {
+    <section>
+      <div class="left">
+        <h3 i18n>Connect to console</h3>
+        <p>{{ remoteControlStatus() }}</p>
+      </div>
 
-    <div class="right">
-      <app-remote-control></app-remote-control>
-    </div>
-  </section>
+      <div class="right">
+        <app-remote-control></app-remote-control>
+      </div>
+    </section>
+
+    @if (remoteControlState() != 'inactive') {
+      <section>
+        <div class="left">
+          <h3 i18n>Disable console control</h3>
+          <p i18n>
+            Disabling console control will disable remote access to this machine from the console, but will keep the
+            registration intact and allow pushing settings from the console.
+          </p>
+        </div>
+
+        <div class="right">
+          <sh-toggle class="primary raised" [class.active]="!consoleControlDisabled()" (click)="toggleConsoleControl()">
+            @if (consoleControlDisabled()) {
+              <label i18n>Remote control disabled</label>
+            } @else {
+              <label i18n>Remote control enabled</label>
+            }
+          </sh-toggle>
+        </div>
+      </section>
+    }
+  }
 
   <section>
     <div class="left">

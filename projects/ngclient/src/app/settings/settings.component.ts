@@ -28,6 +28,7 @@ import { ServerSettingsService } from './server-settings.service';
 import { CreateSignalOptions, WritableSignal } from '@angular/core';
 import { SIGNAL, SignalGetter, signalSetFn, signalUpdateFn } from '@angular/core/primitives/signals';
 import { createSignal } from 'ngxtension/create-signal';
+import { RelayconfigState } from '../core/states/relayconfig.state';
 
 export function debounceSignal<T>(initialValue: T, time: number, options?: CreateSignalOptions<T>): WritableSignal<T> {
   const signalFn = createSignal(initialValue) as SignalGetter<T> & WritableSignal<T>;
@@ -135,6 +136,7 @@ export default class SettingsComponent {
   #dupServer = inject(DuplicatiServer);
   #serverSettingsService = inject(ServerSettingsService);
   #remoteControlState = inject(RemoteControlState);
+  #relayConfigState = inject(RelayconfigState);
   #ls = inject(LOCALSTORAGE);
   #initLang = this.#ls.getItem('locale') ?? 'en-US';
 
@@ -148,8 +150,10 @@ export default class SettingsComponent {
   usageStatistics = signal<UsageStatisticsType['value']>('');
   updatingUsageStatistics = signal(false);
   remoteControlStatus = this.#remoteControlState.status;
+  remoteControlState = this.#remoteControlState.state;
   updatingChannel = signal(false);
   updateChannel = signal<UpdateChannel>('');
+  isUsingRelay = this.#relayConfigState.relayIsEnabled;
   usageStatisticsDisabled = computed(() => {
     const value = this.#sysinfo.systemInfo()?.DefaultUsageReportLevel ?? '';
     return value.toLowerCase() === 'disabled';
@@ -188,6 +192,8 @@ export default class SettingsComponent {
   loadedAllowedHostnames = signal<string>('');
   updatingRemoteAccess = signal(false);
   updatingAllowedHosts = signal(false);
+  updatingConsoleControl = signal(false);
+  consoleControlDisabled = signal(false);
 
   updateRemoteAccess() {
     const prevValue = this.allowRemoteAccess();
@@ -228,6 +234,28 @@ export default class SettingsComponent {
         finalize(() => this.updatingAllowedHosts.set(false)),
         catchError(() => {
           this.allowedHostnames.set(loadedAllowedHostnames);
+          return of(null);
+        })
+      )
+      .subscribe();
+  }
+
+  toggleConsoleControl() {
+    const prevValue = this.consoleControlDisabled();
+    const newValue = !prevValue;
+    this.updatingConsoleControl.set(true);
+    this.consoleControlDisabled.set(newValue);
+
+    this.#dupServer
+      .patchApiV1Serversettings({
+        requestBody: {
+          'disable-console-control': newValue ? 'True' : 'False',
+        },
+      })
+      .pipe(
+        finalize(() => this.updatingConsoleControl.set(false)),
+        catchError(() => {
+          this.consoleControlDisabled.set(prevValue);
           return of(null);
         })
       )
@@ -430,6 +458,7 @@ export default class SettingsComponent {
     this.allowRemoteAccess.set(serverSettings['server-listen-interface'] === 'any');
     this.allowedHostnames.set(serverSettings['allowed-hostnames']);
     this.loadedAllowedHostnames.set(serverSettings['allowed-hostnames']);
+    this.consoleControlDisabled.set(serverSettings['disable-console-control'] === 'True' ? true : false);
     this.usageStatistics.set(
       serverSettings['usage-reporter-level'] === '' ? 'none' : serverSettings['usage-reporter-level']
     );

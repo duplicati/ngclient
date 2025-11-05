@@ -33,15 +33,15 @@ export class RemoteControlState {
   status = computed(() => {
     const state = this.state();
 
-    if (state === 'connecting') return $localize`Remote control is enabled but not connected`;
-    if (state === 'connected') return $localize`Remote control is connected`;
+    if (state === 'connecting') return $localize`Console connection is enabled but not connected`;
+    if (state === 'connected') return $localize`Connected to console`;
     if (state === 'registering') return $localize`Registering machine...`;
     if (state === 'registeringfaulted') return $localize`Registration failed`;
     if (state === 'registered') return $localize`Registered, waiting for accept`;
-    if (state === 'disabled') return $localize`Remote control is configured but not enabled`;
+    if (state === 'disabled') return $localize`Console connection is configured but not enabled`;
     if (state === 'unknown') return $localize`...loading...`;
 
-    return $localize`Remote control is not set up`;
+    return $localize`Console connection is not set up`;
   });
 
   sysInfoEffect = effect(() => {
@@ -174,7 +174,7 @@ export class RemoteControlState {
     this.#dialog.open(ConfirmDialogComponent, {
       data: {
         title: $localize`Confirm delete`,
-        message: $localize`Are you sure you want to delete the remote control registration?`,
+        message: $localize`Are you sure you want to delete the console registration?`,
         confirmText: $localize`Delete registration`,
         cancelText: $localize`Cancel`,
       },

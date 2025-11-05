@@ -160,6 +160,7 @@
     "1253156499530942296": "Denne backup blev oprettet på et andet operativsystem. Når der gendannes filer uden at angive en destination, kan disse blive oprettet på uventede placeringer. Er du sikker på at du vil fortsætte uden at vælge en destinationsmappe?",
     "325172806395484991": "Vælg filer",
     "527691487030937649": "Hvor vil du gerne gendanne fra?",
+    "7521859775853662748": "...indlæser...",
     "4930506384627295710": "Indstillinger",
     "4546151690452416671": "Tillad fjernadgang (kræver genstart)",
     "918395176653023621": "Forhindre automatisk login-in fra system ikonet",
@@ -172,6 +173,7 @@
     "4007307614127429452": "Advarsler, fejl og nedbrud",
     "7003237362536687306": "Fejl og nedbrud",
     "7931989065782446584": "Kun nedbrud",
-    "6546722977616384568": "Ingen / deaktiveret"
+    "6546722977616384568": "Ingen / deaktiveret",
+    "5607669932062416162": "Standard"
   }
 }

@@ -40,6 +40,7 @@ export default class StatusBarComponent {
   isStopping = computed(() => this.runningTask() == this.#taskStopRequested());
   #taskStopRequested = signal(-1);
   pgState = computed(() => this.#serverState.serverState());
+  isUsingRelay = this.#relayconfigState.relayIsEnabled;
 
   nextBackup = computed(() => {
     // Trigger if the backup list changes

@@ -136,6 +136,7 @@
     "1253156499530942296": "Tato záloha byla vytvořena na jiném operačním systému. Obnovení souborů bez zadání cílové složky může způsobit, že soubory budou obnoveny do neočekávaných míst. Opravdu chcete pokračovat bez zvolení cílové složky?",
     "325172806395484991": "Vybrat soubory",
     "527691487030937649": "Odkud chcete obnovit?",
+    "7521859775853662748": "…načítání…",
     "4930506384627295710": "Nastavení",
     "4546151690452416671": "Umožnit přístup na dálku (vyžaduje restart)",
     "918395176653023621": "Zabránit automatickému přihlašování ikony v oznamovací oblasti",
@@ -148,6 +149,7 @@
     "4007307614127429452": "Varování, chyby a pády",
     "7003237362536687306": "Chyby a pády",
     "7931989065782446584": "Pouze pády",
-    "6546722977616384568": "Žádné / vypnuté"
+    "6546722977616384568": "Žádné / vypnuté",
+    "5607669932062416162": "Výchozí"
   }
 }
