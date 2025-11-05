@@ -1,7 +1,7 @@
 /// <reference types="@angular/localize" />
 
 import { ApplicationConfig, LOCALE_ID, provideZonelessChangeDetection } from '@angular/core';
-import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { PreloadAllModules, provideRouter, withComponentInputBinding, withPreloading } from '@angular/router';
 
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
@@ -23,7 +23,7 @@ import { NotificationsState } from './notifications/notifications.state';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZonelessChangeDetection(),
-    provideRouter(routes, withComponentInputBinding()),
+    provideRouter(routes, withComponentInputBinding(), withPreloading(PreloadAllModules)),
     provideHttpClient(withFetch(), withInterceptors([httpInterceptorWebsocketRelay, httpInterceptor])),
 
     LOCALSTORAGE,
