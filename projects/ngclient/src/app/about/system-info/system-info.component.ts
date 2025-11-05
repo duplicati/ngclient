@@ -1,11 +1,11 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { ShipIconComponent, ShipListComponent } from '@ship-ui/core';
+import { ShipIcon, ShipList } from '@ship-ui/core';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 
 @Component({
   selector: 'app-server-settings',
-  imports: [ShipListComponent, ShipIconComponent, NgTemplateOutlet],
+  imports: [ShipList, ShipIcon, NgTemplateOutlet],
   templateUrl: './system-info.component.html',
   styleUrl: './system-info.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

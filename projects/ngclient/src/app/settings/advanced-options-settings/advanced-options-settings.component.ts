@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, effect, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ShipAlertComponent, ShipButtonComponent, ShipIconComponent } from '@ship-ui/core';
+import { ShipAlert, ShipButton, ShipIcon } from '@ship-ui/core';
 import { finalize } from 'rxjs';
 import { OptionsListComponent } from '../../backup/options/options-list/options-list.component';
 import { DuplicatiServer, SettingDto } from '../../core/openapi';
@@ -8,7 +8,7 @@ import { ServerSettingsService } from '../server-settings.service';
 
 @Component({
   selector: 'app-advanced-options-settings',
-  imports: [ReactiveFormsModule, OptionsListComponent, ShipButtonComponent, ShipIconComponent, ShipAlertComponent],
+  imports: [ReactiveFormsModule, OptionsListComponent, ShipButton, ShipIcon, ShipAlert],
   templateUrl: './advanced-options-settings.component.html',
   styleUrl: './advanced-options-settings.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

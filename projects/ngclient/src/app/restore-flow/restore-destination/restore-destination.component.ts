@@ -10,15 +10,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  ShipAlertComponent,
-  ShipButtonComponent,
-  ShipDialogComponent,
-  ShipDialogService,
-  ShipFormFieldComponent,
-  ShipIconComponent,
-  ShipMenuComponent,
-} from '@ship-ui/core';
+import { ShipAlert, ShipButton, ShipDialog, ShipDialogService, ShipFormField, ShipIcon, ShipMenu } from '@ship-ui/core';
 import { BackupState } from '../../backup/backup.state';
 import { getConfigurationByKey } from '../../backup/destination/destination.config-utilities';
 import { SingleDestinationComponent } from '../../backup/destination/single-destination/single-destination.component';
@@ -34,12 +26,12 @@ import { RestoreFlowState } from '../restore-flow.state';
     SingleDestinationComponent,
 
     FormsModule,
-    ShipButtonComponent,
-    ShipFormFieldComponent,
-    ShipMenuComponent,
-    ShipIconComponent,
-    ShipDialogComponent,
-    ShipAlertComponent,
+    ShipButton,
+    ShipFormField,
+    ShipMenu,
+    ShipIcon,
+    ShipDialog,
+    ShipAlert,
   ],
   templateUrl: './restore-destination.component.html',
   styleUrl: './restore-destination.component.scss',
@@ -112,73 +104,75 @@ export default class RestoreDestinationComponent {
     if (!targetUrl) return;
 
     this.#restoreFlowState.setTestState('testing');
-    this.#testDestination.testDestination(targetUrl,this.#restoreFlowState.backupId(), destinationIndex, true, suppressDialogs).subscribe({
-      next: (res) => {
-        if (res.action === 'success') {
-          this.#restoreFlowState.setTestState('success');
-          if (res.containsBackup === false) {
-            this.#restoreFlowState.setTestState(
-              'warning',
-              $localize`The remote destination does not contain any backups. Please check if the destination details are correct.`
-            );
-            if (!suppressDialogs) {
-              this.#dialog.open(ConfirmDialogComponent, {
-                data: {
-                  title: $localize`Folder contains no backup`,
-                  message: $localize`The remote destination does not contain any backups. Please check if the destination details are correct.`,
-                  confirmText: $localize`OK`,
-                  cancelText: undefined,
-                },
-              });
+    this.#testDestination
+      .testDestination(targetUrl, this.#restoreFlowState.backupId(), destinationIndex, true, suppressDialogs)
+      .subscribe({
+        next: (res) => {
+          if (res.action === 'success') {
+            this.#restoreFlowState.setTestState('success');
+            if (res.containsBackup === false) {
+              this.#restoreFlowState.setTestState(
+                'warning',
+                $localize`The remote destination does not contain any backups. Please check if the destination details are correct.`
+              );
+              if (!suppressDialogs) {
+                this.#dialog.open(ConfirmDialogComponent, {
+                  data: {
+                    title: $localize`Folder contains no backup`,
+                    message: $localize`The remote destination does not contain any backups. Please check if the destination details are correct.`,
+                    confirmText: $localize`OK`,
+                    cancelText: undefined,
+                  },
+                });
+              }
+            } else if (res.anyFilesFound === false) {
+              this.#restoreFlowState.setTestState(
+                'warning',
+                $localize`The remote destination is empty. Please check if the destination details are correct.`
+              );
+              if (!suppressDialogs) {
+                this.#dialog.open(ConfirmDialogComponent, {
+                  data: {
+                    title: $localize`Folder is empty`,
+                    message: $localize`The remote destination is empty. Please check if the destination details are correct.`,
+                    confirmText: $localize`OK`,
+                    cancelText: undefined,
+                  },
+                });
+              }
             }
-          } else if (res.anyFilesFound === false) {
-            this.#restoreFlowState.setTestState(
-              'warning',
-              $localize`The remote destination is empty. Please check if the destination details are correct.`
-            );
-            if (!suppressDialogs) {
-              this.#dialog.open(ConfirmDialogComponent, {
-                data: {
-                  title: $localize`Folder is empty`,
-                  message: $localize`The remote destination is empty. Please check if the destination details are correct.`,
-                  confirmText: $localize`OK`,
-                  cancelText: undefined,
-                },
-              });
-            }
+
+            callback?.();
+            return;
           }
 
-          callback?.();
-          return;
-        }
-
-        this.#restoreFlowState.setTestState(
-          'error',
-          res.errorMessage ?? $localize`An error occurred while testing the destination.`
-        );
-
-        if (res.action === 'generic-error') {
-          callback?.();
-          return;
-        }
-
-        const targetUrlHasParams = targetUrl.includes('?');
-        if (res.action === 'trust-cert') {
-          this.#restoreFlowState.updateTargetUrl(
-            targetUrl + `${targetUrlHasParams ? '&' : '?'}accept-specified-ssl-hash=${res.certData}`
+          this.#restoreFlowState.setTestState(
+            'error',
+            res.errorMessage ?? $localize`An error occurred while testing the destination.`
           );
-        }
 
-        if (res.action === 'approve-host-key') {
-          this.#restoreFlowState.updateTargetUrl(
-            targetUrl + `${targetUrlHasParams ? '&' : '?'}ssh-fingerprint=${res.reportedHostKey}`
-          );
-        }
+          if (res.action === 'generic-error') {
+            callback?.();
+            return;
+          }
 
-        if (res.testAgain) this.testDestination(res.destinationIndex, suppressDialogs);
-        else callback?.();
-      },
-    });
+          const targetUrlHasParams = targetUrl.includes('?');
+          if (res.action === 'trust-cert') {
+            this.#restoreFlowState.updateTargetUrl(
+              targetUrl + `${targetUrlHasParams ? '&' : '?'}accept-specified-ssl-hash=${res.certData}`
+            );
+          }
+
+          if (res.action === 'approve-host-key') {
+            this.#restoreFlowState.updateTargetUrl(
+              targetUrl + `${targetUrlHasParams ? '&' : '?'}ssh-fingerprint=${res.reportedHostKey}`
+            );
+          }
+
+          if (res.testAgain) this.testDestination(res.destinationIndex, suppressDialogs);
+          else callback?.();
+        },
+      });
   }
 
   setDestination(key: IDynamicModule['Key']) {

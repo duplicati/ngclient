@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ShipButtonComponent, ShipFormFieldComponent, ShipSelectComponent } from '@ship-ui/core';
+import { ShipButton, ShipFormField, ShipSelect } from '@ship-ui/core';
 import { finalize } from 'rxjs';
 import { DuplicatiServer } from '../../../openapi';
 
@@ -47,7 +47,7 @@ const SUBMISSION_UNIT_THRESHOLDS = [
 
 @Component({
   selector: 'app-throttle-settings-dialog',
-  imports: [FormsModule, ShipFormFieldComponent, ShipSelectComponent, ShipButtonComponent],
+  imports: [FormsModule, ShipFormField, ShipSelect, ShipButton],
   templateUrl: './throttle-settings-dialog.component.html',
   styleUrl: './throttle-settings-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

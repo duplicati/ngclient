@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, signal } f
 import { rxResource } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { ShipButtonComponent, ShipCheckboxComponent, ShipDialogService, ShipIconComponent } from '@ship-ui/core';
+import { ShipButton, ShipCheckbox, ShipDialogService, ShipIcon } from '@ship-ui/core';
 import { catchError, finalize, map, of } from 'rxjs';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer } from '../../core/openapi';
@@ -11,7 +11,7 @@ import { BackupsState } from '../../core/states/backups.state';
 
 @Component({
   selector: 'app-delete-backup',
-  imports: [ShipCheckboxComponent, ShipButtonComponent, ShipIconComponent, BytesPipe, FormsModule, RouterLink],
+  imports: [ShipCheckbox, ShipButton, ShipIcon, BytesPipe, FormsModule, RouterLink],
   templateUrl: './delete-backup.component.html',
   styleUrl: './delete-backup.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

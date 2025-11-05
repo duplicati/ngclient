@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  ShipAlertComponent,
+  ShipAlert,
   ShipAlertService,
   ShipAlertType,
-  ShipButtonComponent,
+  ShipButton,
   ShipDialogService,
-  ShipProgressBarComponent,
+  ShipProgressBar,
 } from '@ship-ui/core';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer, NotificationType } from '../../core/openapi';
@@ -21,7 +21,7 @@ const NOTIFICATION_TYPE_MAP: Record<string, ShipAlertType> = {
 
 @Component({
   selector: 'app-notification',
-  imports: [ShipProgressBarComponent, ShipButtonComponent, ShipAlertComponent],
+  imports: [ShipProgressBar, ShipButton, ShipAlert],
   templateUrl: './notification.component.html',
   styleUrl: './notification.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

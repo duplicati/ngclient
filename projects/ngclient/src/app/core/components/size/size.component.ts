@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { ShipFormFieldComponent, ShipSelectComponent } from '@ship-ui/core';
+import { ShipFormField, ShipSelect } from '@ship-ui/core';
 
 const PER_SECOND_FIELDS = ['throttle-upload', 'throttle-download'];
 
@@ -50,7 +50,7 @@ export const splitSize = (value: string) => {
 };
 @Component({
   selector: 'app-size',
-  imports: [ShipSelectComponent, ShipFormFieldComponent, FormsModule],
+  imports: [ShipSelect, ShipFormField, FormsModule],
   templateUrl: './size.component.html',
   styleUrl: './size.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

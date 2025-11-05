@@ -1,27 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import {
-  ShipButtonComponent,
-  ShipCardComponent,
-  ShipDividerComponent,
-  ShipIconComponent,
-  ShipProgressBarComponent,
-} from '@ship-ui/core';
+import { ShipButton, ShipCard, ShipDivider, ShipIcon, ShipProgressBar } from '@ship-ui/core';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { BackupAndScheduleOutputDto, DuplicatiServer } from '../core/openapi';
 import { BackupsState } from '../core/states/backups.state';
 
 @Component({
   selector: 'app-restore',
-  imports: [
-    StatusBarComponent,
-    ShipCardComponent,
-    ShipButtonComponent,
-    ShipDividerComponent,
-    ShipIconComponent,
-    ShipProgressBarComponent,
-    RouterLink,
-  ],
+  imports: [StatusBarComponent, ShipCard, ShipButton, ShipDivider, ShipIcon, ShipProgressBar, RouterLink],
   templateUrl: './restore.component.html',
   styleUrl: './restore.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

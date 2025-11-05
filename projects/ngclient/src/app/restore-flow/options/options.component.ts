@@ -1,13 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  ShipButtonComponent,
-  ShipDialogService,
-  ShipIconComponent,
-  ShipRadioComponent,
-  ShipToggleComponent,
-} from '@ship-ui/core';
+import { ShipButton, ShipDialogService, ShipIcon, ShipRadio, ShipToggle } from '@ship-ui/core';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
@@ -28,15 +22,7 @@ export const createRestoreOptionsForm = () => {
 
 @Component({
   selector: 'app-advanced-options-settings',
-  imports: [
-    ReactiveFormsModule,
-    ToggleCardComponent,
-    FileTreeComponent,
-    ShipToggleComponent,
-    ShipRadioComponent,
-    ShipButtonComponent,
-    ShipIconComponent,
-  ],
+  imports: [ReactiveFormsModule, ToggleCardComponent, FileTreeComponent, ShipToggle, ShipRadio, ShipButton, ShipIcon],
   templateUrl: './options.component.html',
   styleUrl: './options.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

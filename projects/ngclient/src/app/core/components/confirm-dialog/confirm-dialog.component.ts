@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
-import { ShipButtonComponent } from '@ship-ui/core';
+import { ShipButton } from '@ship-ui/core';
 
 export type ConfirmDialogData = {
   title: string;
@@ -16,7 +16,7 @@ const DEFAULT_DATA: ConfirmDialogData = {
 
 @Component({
   selector: 'app-confirm-dialog',
-  imports: [ShipButtonComponent],
+  imports: [ShipButton],
   templateUrl: './confirm-dialog.component.html',
   styleUrl: './confirm-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

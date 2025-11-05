@@ -10,15 +10,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  ShipAlertComponent,
-  ShipButtonComponent,
-  ShipDialogComponent,
-  ShipDialogService,
-  ShipFormFieldComponent,
-  ShipIconComponent,
-  ShipMenuComponent,
-} from '@ship-ui/core';
+import { ShipAlert, ShipButton, ShipDialog, ShipDialogService, ShipFormField, ShipIcon, ShipMenu } from '@ship-ui/core';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { IDynamicModule } from '../../core/openapi';
 import { TestDestinationService } from '../../core/services/test-destination.service';
@@ -71,12 +63,12 @@ export type DestinationFormGroupValue = ReturnType<typeof createDestinationFormG
     DestinationListItemComponent,
 
     FormsModule,
-    ShipButtonComponent,
-    ShipFormFieldComponent,
-    ShipMenuComponent,
-    ShipIconComponent,
-    ShipDialogComponent,
-    ShipAlertComponent,
+    ShipButton,
+    ShipFormField,
+    ShipMenu,
+    ShipIcon,
+    ShipDialog,
+    ShipAlert,
   ],
   templateUrl: './destination.component.html',
   styleUrl: './destination.component.scss',
@@ -153,73 +145,75 @@ export default class DestinationComponent {
 
     this.#backupState.setTestState('testing');
 
-    this.#testDestination.testDestination(targetUrl, this.#backupState.backupId(), destinationIndex, true, true).subscribe({
-      next: (res) => {
-        if (res.action === 'success') {
-          this.#backupState.setTestState('success');
+    this.#testDestination
+      .testDestination(targetUrl, this.#backupState.backupId(), destinationIndex, true, true)
+      .subscribe({
+        next: (res) => {
+          if (res.action === 'success') {
+            this.#backupState.setTestState('success');
 
-          if (this.#backupState.isNew()) {
-            if (res.containsBackup === true) {
-              this.#backupState.setTestState(
-                'warning',
-                $localize`The remote destination already contains a backup. Please use a different folder for each backup.`
-              );
-              if (!suppressErrorDialogs) {
-                this.#dialog.open(ConfirmDialogComponent, {
-                  data: {
-                    title: $localize`Folder contains backup`,
-                    message: $localize`The remote destination already contains a backup. You must use a different folder for each backup.`,
-                    confirmText: $localize`OK`,
-                    cancelText: undefined,
-                  },
-                });
-              }
-            } else if (res.anyFilesFound === true) {
-              this.#backupState.setTestState('warning', $localize`The remote destination contains unknown files.`);
-              if (!suppressErrorDialogs) {
-                this.#dialog.open(ConfirmDialogComponent, {
-                  data: {
-                    title: $localize`Folder is not empty`,
-                    message: $localize`The remote destination is not empty. It is recommended to use an empty folder for the backup.`,
-                    confirmText: $localize`OK`,
-                    cancelText: undefined,
-                  },
-                });
+            if (this.#backupState.isNew()) {
+              if (res.containsBackup === true) {
+                this.#backupState.setTestState(
+                  'warning',
+                  $localize`The remote destination already contains a backup. Please use a different folder for each backup.`
+                );
+                if (!suppressErrorDialogs) {
+                  this.#dialog.open(ConfirmDialogComponent, {
+                    data: {
+                      title: $localize`Folder contains backup`,
+                      message: $localize`The remote destination already contains a backup. You must use a different folder for each backup.`,
+                      confirmText: $localize`OK`,
+                      cancelText: undefined,
+                    },
+                  });
+                }
+              } else if (res.anyFilesFound === true) {
+                this.#backupState.setTestState('warning', $localize`The remote destination contains unknown files.`);
+                if (!suppressErrorDialogs) {
+                  this.#dialog.open(ConfirmDialogComponent, {
+                    data: {
+                      title: $localize`Folder is not empty`,
+                      message: $localize`The remote destination is not empty. It is recommended to use an empty folder for the backup.`,
+                      confirmText: $localize`OK`,
+                      cancelText: undefined,
+                    },
+                  });
+                }
               }
             }
+
+            callback?.();
+            return;
           }
 
-          callback?.();
-          return;
-        }
-
-        this.#backupState.setTestState(
-          'error',
-          res.errorMessage ?? $localize`An error occurred while testing the destination.`
-        );
-
-        if (res.action === 'generic-error') {
-          callback?.();
-          return;
-        }
-
-        const targetUrlHasParams = targetUrl.includes('?');
-        if (res.action === 'trust-cert') {
-          this.#backupState.setTargetUrl(
-            targetUrl + `${targetUrlHasParams ? '&' : '?'}accept-specified-ssl-hash=${res.certData}`
+          this.#backupState.setTestState(
+            'error',
+            res.errorMessage ?? $localize`An error occurred while testing the destination.`
           );
-        }
 
-        if (res.action === 'approve-host-key') {
-          this.#backupState.setTargetUrl(
-            targetUrl + `${targetUrlHasParams ? '&' : '?'}ssh-fingerprint=${res.reportedHostKey}`
-          );
-        }
+          if (res.action === 'generic-error') {
+            callback?.();
+            return;
+          }
 
-        if (res.testAgain) this.testDestination(res.destinationIndex, suppressErrorDialogs);
-        else callback?.();
-      },
-    });
+          const targetUrlHasParams = targetUrl.includes('?');
+          if (res.action === 'trust-cert') {
+            this.#backupState.setTargetUrl(
+              targetUrl + `${targetUrlHasParams ? '&' : '?'}accept-specified-ssl-hash=${res.certData}`
+            );
+          }
+
+          if (res.action === 'approve-host-key') {
+            this.#backupState.setTargetUrl(
+              targetUrl + `${targetUrlHasParams ? '&' : '?'}ssh-fingerprint=${res.reportedHostKey}`
+            );
+          }
+
+          if (res.testAgain) this.testDestination(res.destinationIndex, suppressErrorDialogs);
+          else callback?.();
+        },
+      });
   }
 
   setDestination(key: IDynamicModule['Key']) {

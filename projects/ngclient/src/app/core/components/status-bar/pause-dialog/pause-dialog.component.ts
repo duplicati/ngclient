@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ShipAlertComponent, ShipButtonComponent, ShipCheckboxComponent, ShipRadioComponent } from '@ship-ui/core';
+import { ShipAlert, ShipButton, ShipCheckbox, ShipRadio } from '@ship-ui/core';
 import { finalize } from 'rxjs';
 import { DuplicatiServer } from '../../../openapi';
 
@@ -18,7 +18,7 @@ const PAUSE_OPTIONS = [
 
 @Component({
   selector: 'app-pause-dialog',
-  imports: [FormsModule, ShipRadioComponent, ShipCheckboxComponent, ShipAlertComponent, ShipButtonComponent],
+  imports: [FormsModule, ShipRadio, ShipCheckbox, ShipAlert, ShipButton],
   templateUrl: './pause-dialog.component.html',
   styleUrl: './pause-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

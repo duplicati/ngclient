@@ -1,7 +1,7 @@
 import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ShipCardComponent, ShipIconComponent, ShipProgressBarComponent, ShipSpinnerComponent } from '@ship-ui/core';
+import { ShipCard, ShipIcon, ShipProgressBar, ShipSpinner } from '@ship-ui/core';
 import LogsLiveComponent from '../../about/logs/logs-live/logs-live.component';
 import { StatusBarState } from '../../core/components/status-bar/status-bar.state';
 import { DuplicatiServer, GetTaskStateDto } from '../../core/openapi';
@@ -14,10 +14,10 @@ import { RestoreFlowState } from '../restore-flow.state';
   selector: 'app-restore-progress',
   imports: [
     LogsLiveComponent,
-    ShipProgressBarComponent,
-    ShipSpinnerComponent,
-    ShipIconComponent,
-    ShipCardComponent,
+    ShipProgressBar,
+    ShipSpinner,
+    ShipIcon,
+    ShipCard,
     NotificationsComponent,
     BytesPipe,
     DecimalPipe,

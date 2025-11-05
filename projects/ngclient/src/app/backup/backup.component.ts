@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { ShipProgressBarComponent, ShipRadioComponent, ShipStepperComponent } from '@ship-ui/core';
+import { ShipProgressBar, ShipRadio, ShipStepper } from '@ship-ui/core';
 import { take } from 'rxjs';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { DuplicatiServer, GetBackupResultDto, SettingDto } from '../core/openapi';
@@ -10,15 +10,7 @@ import { BackupState } from './backup.state';
 
 @Component({
   selector: 'app-backup',
-  imports: [
-    RouterOutlet,
-    RouterLink,
-    RouterLinkActive,
-    StatusBarComponent,
-    ShipRadioComponent,
-    ShipStepperComponent,
-    ShipProgressBarComponent,
-  ],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, StatusBarComponent, ShipRadio, ShipStepper, ShipProgressBar],
   templateUrl: './backup.component.html',
   styleUrl: './backup.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

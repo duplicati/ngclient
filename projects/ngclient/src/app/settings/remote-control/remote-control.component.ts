@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ShipButtonComponent, ShipChipComponent, ShipFormFieldComponent, ShipIconComponent } from '@ship-ui/core';
+import { ShipButton, ShipChip, ShipFormField, ShipIcon } from '@ship-ui/core';
 import { ServerSettingsService } from '../server-settings.service';
 import { RemoteControlState } from './remote-control.state';
 
 @Component({
   selector: 'app-remote-control',
-  imports: [FormsModule, ShipFormFieldComponent, ShipButtonComponent, ShipChipComponent, ShipIconComponent],
+  imports: [FormsModule, ShipFormField, ShipButton, ShipChip, ShipIcon],
   templateUrl: './remote-control.component.html',
   styleUrl: './remote-control.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,13 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import {
-  ShipButtonComponent,
-  ShipDialogService,
-  ShipDividerComponent,
-  ShipIconComponent,
-  ShipListComponent,
-  ShipSidenavComponent,
-} from '@ship-ui/core';
+import { ShipButton, ShipDialogService, ShipDivider, ShipIcon, ShipList, ShipSidenav } from '@ship-ui/core';
 import LogoComponent from '../core/components/logo/logo.component';
 import ServiceHubComponent from '../core/components/service-hub/service-hub.component';
 import { DuplicatiServer } from '../core/openapi';
@@ -26,11 +19,11 @@ import { LayoutState } from './layout.state';
     RouterOutlet,
     RouterLink,
     RouterLinkActive,
-    ShipSidenavComponent,
-    ShipIconComponent,
-    ShipListComponent,
-    ShipButtonComponent,
-    ShipDividerComponent,
+    ShipSidenav,
+    ShipIcon,
+    ShipList,
+    ShipButton,
+    ShipDivider,
     ServiceHubComponent,
     LogoComponent,
   ],

@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
-import { ShipButtonComponent, ShipIconComponent, ShipTableComponent } from '@ship-ui/core';
+import { ShipButton, ShipIcon, ShipTable } from '@ship-ui/core';
 import { finalize } from 'rxjs';
 import { DuplicatiServer } from '../../../core/openapi';
 
@@ -20,7 +20,7 @@ type Pagination = {
 
 @Component({
   selector: 'app-logs-stored',
-  imports: [ShipTableComponent, DatePipe, ShipIconComponent, ShipButtonComponent],
+  imports: [ShipTable, DatePipe, ShipIcon, ShipButton],
   templateUrl: './logs-stored.component.html',
   styleUrl: './logs-stored.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

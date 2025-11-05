@@ -1,19 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { ShipButtonComponent, ShipButtonGroupComponent, ShipIconComponent, ShipMenuComponent } from '@ship-ui/core';
+import { ShipButton, ShipButtonGroup, ShipIcon, ShipMenu } from '@ship-ui/core';
 import { LogsLiveState } from './logs-live/logs-live.state';
 
 @Component({
   selector: 'app-logs',
-  imports: [
-    ShipButtonComponent,
-    ShipButtonGroupComponent,
-    ShipIconComponent,
-    ShipMenuComponent,
-    RouterOutlet,
-    RouterLinkActive,
-    RouterLink,
-  ],
+  imports: [ShipButton, ShipButtonGroup, ShipIcon, ShipMenu, RouterOutlet, RouterLinkActive, RouterLink],
   templateUrl: './logs.component.html',
   styleUrl: './logs.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

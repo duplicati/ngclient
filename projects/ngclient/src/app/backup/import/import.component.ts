@@ -3,12 +3,12 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import {
   ShipAlertService,
-  ShipButtonComponent,
+  ShipButton,
   ShipDialogService,
-  ShipFileUploadComponent,
-  ShipFormFieldComponent,
-  ShipIconComponent,
-  ShipToggleComponent,
+  ShipFileUpload,
+  ShipFormField,
+  ShipIcon,
+  ShipToggle,
 } from '@ship-ui/core';
 import { finalize } from 'rxjs';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
@@ -19,15 +19,7 @@ const fb = new FormBuilder();
 
 @Component({
   selector: 'app-import',
-  imports: [
-    ReactiveFormsModule,
-    RouterLink,
-    ShipFormFieldComponent,
-    ShipIconComponent,
-    ShipButtonComponent,
-    ShipToggleComponent,
-    ShipFileUploadComponent,
-  ],
+  imports: [ReactiveFormsModule, RouterLink, ShipFormField, ShipIcon, ShipButton, ShipToggle, ShipFileUpload],
   templateUrl: './import.component.html',
   styleUrl: './import.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

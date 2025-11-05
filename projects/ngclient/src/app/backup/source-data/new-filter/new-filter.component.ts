@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ShipFormFieldComponent, ShipIconComponent, ShipSelectComponent } from '@ship-ui/core';
+import { ShipFormField, ShipIcon, ShipSelect } from '@ship-ui/core';
 
 type ExpressionDirection = '-' | '+';
 type _ExpressionType =
@@ -104,7 +104,7 @@ const EXPRESSION_OPTIONS: ExpressionTypeMap[] = [
 
 @Component({
   selector: 'app-new-filter',
-  imports: [FormsModule, ShipSelectComponent, ShipFormFieldComponent, ShipIconComponent],
+  imports: [FormsModule, ShipSelect, ShipFormField, ShipIcon],
   templateUrl: './new-filter.component.html',
   styleUrl: './new-filter.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

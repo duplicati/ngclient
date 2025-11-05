@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { ShipButtonComponent } from '@ship-ui/core';
+import { ShipButton } from '@ship-ui/core';
 import CustomCardComponent from '../core/components/custom-card/custom-card.component';
 import { AppAuthState } from '../core/states/app-auth.state';
 
 @Component({
   selector: 'app-logout',
-  imports: [CustomCardComponent, ShipButtonComponent, RouterLink],
+  imports: [CustomCardComponent, ShipButton, RouterLink],
   templateUrl: './logout.component.html',
   styleUrl: './logout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

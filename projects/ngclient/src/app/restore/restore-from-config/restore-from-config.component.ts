@@ -1,13 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import {
-  ShipAlertService,
-  ShipButtonComponent,
-  ShipFileDragDropDirective,
-  ShipFormFieldComponent,
-  ShipIconComponent,
-} from '@ship-ui/core';
+import { ShipAlertService, ShipButton, ShipFileDragDrop, ShipFormField, ShipIcon } from '@ship-ui/core';
 import { finalize, switchMap } from 'rxjs';
 import { BackupAndScheduleInputDto, DuplicatiServer } from '../../core/openapi';
 import { BackupDraft } from '../../core/states/backups.state';
@@ -16,14 +10,7 @@ const fb = new FormBuilder();
 
 @Component({
   selector: 'app-restore-from-config',
-  imports: [
-    ReactiveFormsModule,
-    RouterLink,
-    ShipFileDragDropDirective,
-    ShipFormFieldComponent,
-    ShipIconComponent,
-    ShipButtonComponent,
-  ],
+  imports: [ReactiveFormsModule, RouterLink, ShipFileDragDrop, ShipFormField, ShipIcon, ShipButton],
   templateUrl: './restore-from-config.component.html',
   styleUrl: './restore-from-config.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

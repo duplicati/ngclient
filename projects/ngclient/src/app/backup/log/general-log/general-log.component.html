@@ -32,7 +32,7 @@
 
     @if (item.id === openEntry()) {
       <section class="log-content">
-        <app-toggle-card [disallowToggle]="true">
+        <sh-toggle-card [disallowToggle]="true">
           <ng-container title>
             <h3 i18n>Time</h3>
           </ng-container>
@@ -42,9 +42,9 @@
             <p i18n>End: {{ item.data?.EndTime | date: 'medium' }}</p>
             <p i18n>Duration: {{ item.data?.Duration | durationFormat }}</p>
           </ng-container>
-        </app-toggle-card>
+        </sh-toggle-card>
 
-        <app-toggle-card [disallowToggle]="true">
+        <sh-toggle-card [disallowToggle]="true">
           <ng-container title>
             <h3 i18n>Source files</h3>
           </ng-container>
@@ -62,7 +62,7 @@
             <p i18n>Too large: {{ item.data?.TooLargeFiles }}</p>
             <p i18n>Files with error: {{ item.data?.FilesWithError }}</p>
           </ng-container>
-        </app-toggle-card>
+        </sh-toggle-card>
 
         <div class="extra-info">
           <sh-divider />

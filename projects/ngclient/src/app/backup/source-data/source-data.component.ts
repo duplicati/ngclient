@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signa
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ShipButtonComponent, ShipFormFieldComponent, ShipIconComponent, ShipToggleComponent } from '@ship-ui/core';
+import { ShipButton, ShipFormField, ShipIcon, ShipToggle } from '@ship-ui/core';
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
 import { SizeComponent, splitSize } from '../../core/components/size/size.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
@@ -42,10 +42,10 @@ export const createSourceDataForm = (
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    ShipFormFieldComponent,
-    ShipIconComponent,
-    ShipButtonComponent,
-    ShipToggleComponent,
+    ShipFormField,
+    ShipIcon,
+    ShipButton,
+    ShipToggle,
     NewFilterComponent,
     FileTreeComponent,
     ToggleCardComponent,

@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ShipButtonComponent, ShipFormFieldComponent, ShipIconComponent } from '@ship-ui/core';
+import { ShipButton, ShipFormField, ShipIcon, ShipToggleCard } from '@ship-ui/core';
 import { finalize } from 'rxjs';
 import { OptionsListComponent } from '../../backup/options/options-list/options-list.component';
-import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { DuplicatiServer, SettingInputDto } from '../../core/openapi';
 import { RestoreFlowState } from '../restore-flow.state';
 
@@ -18,14 +17,7 @@ export const createEncryptionForm = () => {
 
 @Component({
   selector: 'app-restore-encryption',
-  imports: [
-    ReactiveFormsModule,
-    ShipFormFieldComponent,
-    ShipIconComponent,
-    ShipButtonComponent,
-    ToggleCardComponent,
-    OptionsListComponent,
-  ],
+  imports: [ReactiveFormsModule, ShipFormField, ShipIcon, ShipButton, ShipToggleCard, OptionsListComponent],
   templateUrl: './restore-encryption.component.html',
   styleUrl: './restore-encryption.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ShipButtonComponent, ShipDialogComponent, ShipIconComponent } from '@ship-ui/core';
+import { ShipButton, ShipDialog, ShipIcon } from '@ship-ui/core';
 import { map } from 'rxjs';
 import { DuplicatiServer, LicenseDto } from '../../core/openapi';
 
@@ -14,7 +14,7 @@ type Data = {
 
 @Component({
   selector: 'app-libraries',
-  imports: [ShipIconComponent, ShipButtonComponent, ShipDialogComponent],
+  imports: [ShipIcon, ShipButton, ShipDialog],
   templateUrl: './libraries.component.html',
   styleUrl: './libraries.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

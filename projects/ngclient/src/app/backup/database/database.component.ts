@@ -2,13 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, Signal, s
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import {
-  ShipButtonComponent,
-  ShipDialogService,
-  ShipFormFieldComponent,
-  ShipIconComponent,
-  ShipTooltipDirective,
-} from '@ship-ui/core';
+import { ShipButton, ShipDialogService, ShipFormField, ShipIcon, ShipTooltip } from '@ship-ui/core';
 import { debounceTime, distinctUntilChanged, finalize, map, take } from 'rxjs';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
@@ -23,15 +17,7 @@ function debouncedSignal<T>(source: Signal<T>, wait: number) {
 
 @Component({
   selector: 'app-database',
-  imports: [
-    FormsModule,
-    StatusBarComponent,
-    ShipButtonComponent,
-    ShipFormFieldComponent,
-    ShipIconComponent,
-    ShipTooltipDirective,
-    RouterLink,
-  ],
+  imports: [FormsModule, StatusBarComponent, ShipButton, ShipFormField, ShipIcon, ShipTooltip, RouterLink],
   templateUrl: './database.component.html',
   styleUrl: './database.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

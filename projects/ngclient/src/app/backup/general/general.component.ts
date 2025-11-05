@@ -1,23 +1,23 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    effect,
-    ElementRef,
-    inject,
-    signal,
-    viewChild,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  inject,
+  signal,
+  viewChild,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-    ShipAlertComponent,
-    ShipButtonComponent,
-    ShipFormFieldComponent,
-    ShipIconComponent,
-    ShipProgressBarComponent,
-    ShipSelectComponent,
-    ShipTooltipDirective,
+  ShipAlert,
+  ShipButton,
+  ShipFormField,
+  ShipIcon,
+  ShipProgressBar,
+  ShipSelect,
+  ShipTooltip,
 } from '@ship-ui/core';
 import { PasswordGeneratorService } from '../../core/services/password-generator.service';
 import { SysinfoState } from '../../core/states/sysinfo.state';
@@ -46,7 +46,7 @@ export const createGeneralForm = (
     repeatPassword: fb.control<string>(defaults.repeatPassword, [
       validateWhen((t) => t?.value.encryption !== '', [Validators.required]),
     ]),
-    compression: fb.control<string>(defaults.compression)
+    compression: fb.control<string>(defaults.compression),
   });
 };
 
@@ -59,14 +59,14 @@ export const NONE_OPTION = {
   selector: 'app-general',
   imports: [
     ReactiveFormsModule,
-    ShipFormFieldComponent,
-    ShipSelectComponent,
-    ShipButtonComponent,
-    ShipIconComponent,
-    ShipProgressBarComponent,
-    ShipAlertComponent,
-    ShipTooltipDirective,
-    ShipAlertComponent,
+    ShipFormField,
+    ShipSelect,
+    ShipButton,
+    ShipIcon,
+    ShipProgressBar,
+    ShipAlert,
+    ShipTooltip,
+    ShipAlert,
   ],
   templateUrl: './general.component.html',
   styleUrl: './general.component.scss',

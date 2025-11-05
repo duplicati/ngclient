@@ -45,7 +45,7 @@
     </sh-select>
   </div>
 
-  <app-toggle-card [disallowToggle]="true">
+  <sh-toggle-card [disallowToggle]="true">
     <ng-container title i18n>Allowed days</ng-container>
 
     <div class="days-wrap">
@@ -84,7 +84,7 @@
         <input type="checkbox" [(ngModel)]="scheduleFields.runAgain().allowedDays.sun" />
       </sh-toggle>
     </div>
-  </app-toggle-card>
+  </sh-toggle-card>
 }
 
 <div class="form-actions">

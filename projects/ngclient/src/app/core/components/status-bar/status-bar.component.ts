@@ -1,12 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import {
-  ShipButtonComponent,
-  ShipDialogService,
-  ShipIconComponent,
-  ShipProgressBarComponent,
-  ShipSpinnerComponent,
-} from '@ship-ui/core';
+import { ShipButton, ShipDialogService, ShipIcon, ShipProgressBar, ShipSpinner } from '@ship-ui/core';
 import { DuplicatiServer } from '../../openapi';
 import { RelativeTimePipe } from '../../pipes/relative-time.pipe';
 import { ServerStateService } from '../../services/server-state.service';
@@ -22,17 +16,7 @@ const date = new Date();
 
 @Component({
   selector: 'app-status-bar',
-  imports: [
-    RemoteConnectivityStatus,
-
-    RelativeTimePipe,
-    DatePipe,
-
-    ShipIconComponent,
-    ShipButtonComponent,
-    ShipSpinnerComponent,
-    ShipProgressBarComponent,
-  ],
+  imports: [RemoteConnectivityStatus, RelativeTimePipe, DatePipe, ShipIcon, ShipButton, ShipSpinner, ShipProgressBar],
   templateUrl: './status-bar.component.html',
   styleUrl: './status-bar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

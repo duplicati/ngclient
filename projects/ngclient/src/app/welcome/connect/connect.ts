@@ -1,32 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import {
-  ShipAlertComponent,
-  ShipButtonComponent,
-  ShipCardComponent,
-  ShipChipComponent,
-  ShipFormFieldComponent,
-  ShipIconComponent,
-  ShipProgressBarComponent,
-} from '@ship-ui/core';
+import { ShipAlert, ShipButton, ShipCard, ShipChip, ShipFormField, ShipIcon, ShipProgressBar } from '@ship-ui/core';
 import { WINDOW } from '../../core/providers/window';
 import { RemoteControlState } from '../../settings/remote-control/remote-control.state';
 import { ServerSettingsService } from '../../settings/server-settings.service';
 
 @Component({
   selector: 'app-connect',
-  imports: [
-    FormsModule,
-
-    ShipFormFieldComponent,
-    ShipButtonComponent,
-    ShipChipComponent,
-    ShipProgressBarComponent,
-    ShipCardComponent,
-    ShipAlertComponent,
-    ShipIconComponent,
-  ],
+  imports: [FormsModule, ShipFormField, ShipButton, ShipChip, ShipProgressBar, ShipCard, ShipAlert, ShipIcon],
   templateUrl: './connect.html',
   styleUrl: './connect.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ShipButtonComponent, ShipIconComponent, ShipProgressBarComponent, ShipSelectComponent } from '@ship-ui/core';
+import { ShipButton, ShipIcon, ShipProgressBar, ShipSelect } from '@ship-ui/core';
 import { finalize, Subject, take, takeUntil } from 'rxjs';
 import FileTreeComponent, { BackupSettings } from '../../core/components/file-tree/file-tree.component';
 import { DuplicatiServer, GetApiV1BackupByIdFilesData, TreeNodeDto } from '../../core/openapi';
@@ -28,10 +28,10 @@ export const createRestoreSelectFilesForm = () => {
     DatePipe,
     BytesPipe,
     FileTreeComponent,
-    ShipButtonComponent,
-    ShipIconComponent,
-    ShipSelectComponent,
-    ShipProgressBarComponent,
+    ShipButton,
+    ShipIcon,
+    ShipSelect,
+    ShipProgressBar,
   ],
   templateUrl: './select-files.component.html',
   styleUrl: './select-files.component.scss',

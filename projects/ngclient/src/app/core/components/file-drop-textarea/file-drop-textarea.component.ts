@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, effect, ElementRef, input, signal, viewChild } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { ShipButtonComponent, ShipIconComponent } from '@ship-ui/core';
+import { ShipButton, ShipIcon } from '@ship-ui/core';
 
 @Component({
   selector: 'app-file-drop-textarea',
   templateUrl: './file-drop-textarea.component.html',
   styleUrls: ['./file-drop-textarea.component.scss'],
   standalone: true,
-  imports: [FormsModule, ShipIconComponent, ShipButtonComponent],
+  imports: [FormsModule, ShipIcon, ShipButton],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {

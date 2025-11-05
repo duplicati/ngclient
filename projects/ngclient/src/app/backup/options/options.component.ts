@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ShipButtonComponent, ShipFormFieldComponent, ShipIconComponent, ShipSelectComponent } from '@ship-ui/core';
+import { ShipButton, ShipFormField, ShipIcon, ShipSelect } from '@ship-ui/core';
 import { SIZE_OPTIONS, SizeComponent, splitSize } from '../../core/components/size/size.component';
 import { TimespanComponent } from '../../core/components/timespan/timespan.component';
 import { BackupState } from '../backup.state';
@@ -44,10 +44,10 @@ const MinVolumeSize = 1024 * 1024 * 5; // 5MiB
     SizeComponent,
     TimespanComponent,
 
-    ShipButtonComponent,
-    ShipIconComponent,
-    ShipSelectComponent,
-    ShipFormFieldComponent,
+    ShipButton,
+    ShipIcon,
+    ShipSelect,
+    ShipFormField,
   ],
   templateUrl: './options.component.html',
   styleUrl: './options.component.scss',

@@ -1,23 +1,17 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    ElementRef,
-    WritableSignal,
-    computed,
-    effect,
-    inject,
-    model,
-    signal,
-    viewChild,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  WritableSignal,
+  computed,
+  effect,
+  inject,
+  model,
+  signal,
+  viewChild,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import {
-    ShipAlertComponent,
-    ShipAlertItemInternal,
-    ShipAlertService,
-    ShipButtonComponent,
-    ShipIconComponent,
-} from '@ship-ui/core';
+import { ShipAlert, ShipAlertItemInternal, ShipAlertService, ShipButton, ShipIcon } from '@ship-ui/core';
 import { NotificationComponent } from '../../../notifications/notification/notification.component';
 import { NotificationsComponent } from '../../../notifications/notifications.component';
 import { NotificationsState } from '../../../notifications/notifications.state';
@@ -42,10 +36,10 @@ type Interval = ReturnType<typeof setInterval>;
   selector: 'app-service-hub',
   imports: [
     ReactiveFormsModule,
-    ShipAlertComponent,
-    ShipIconComponent,
-    ShipButtonComponent,
-    ShipAlertComponent,
+    ShipAlert,
+    ShipIcon,
+    ShipButton,
+    ShipAlert,
     NotificationsComponent,
     NotificationComponent,
   ],

@@ -1,15 +1,15 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    effect,
-    input,
-    output,
-    signal,
-    WritableSignal,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  input,
+  output,
+  signal,
+  WritableSignal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ShipFormFieldComponent, ShipIconComponent, ShipSelectComponent } from '@ship-ui/core';
+import { ShipFormField, ShipIcon, ShipSelect } from '@ship-ui/core';
 
 type ExpressionDirection = '-' | '+';
 type _ExpressionType =
@@ -114,7 +114,7 @@ const FILE_GROUP_OPTIONS: FileGroupTypeMap[] = [
 
 @Component({
   selector: 'app-filter',
-  imports: [FormsModule, ShipIconComponent, ShipFormFieldComponent, ShipSelectComponent],
+  imports: [FormsModule, ShipIcon, ShipFormField, ShipSelect],
   templateUrl: './filter.component.html',
   styleUrl: './filter.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

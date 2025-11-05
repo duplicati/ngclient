@@ -2,12 +2,7 @@ import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import {
-    ShipButtonComponent,
-    ShipChipComponent,
-    ShipIconComponent,
-    ShipTabsComponent,
-} from '@ship-ui/core';
+import { ShipButton, ShipChip, ShipIcon, ShipTabs } from '@ship-ui/core';
 import { map } from 'rxjs';
 import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
 import { BytesPipe } from '../../core/pipes/byte.pipe';
@@ -19,7 +14,7 @@ import { RemoteLogComponent } from './remote-log/remote-log.component';
 @Component({
   selector: 'app-log',
   imports: [
-    ShipTabsComponent,
+    ShipTabs,
     GeneralLogComponent,
     RemoteLogComponent,
     RouterLink,
@@ -27,9 +22,9 @@ import { RemoteLogComponent } from './remote-log/remote-log.component';
     DurationFormatPipe,
     DatePipe,
     StatusBarComponent,
-    ShipIconComponent,
-    ShipButtonComponent,
-    ShipChipComponent,
+    ShipIcon,
+    ShipButton,
+    ShipChip,
   ],
   templateUrl: './log.component.html',
   styleUrl: './log.component.scss',

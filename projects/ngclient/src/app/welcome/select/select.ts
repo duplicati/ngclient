@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { ShipButtonComponent, ShipDividerComponent } from '@ship-ui/core';
+import { ShipButton, ShipDivider } from '@ship-ui/core';
 
 @Component({
   selector: 'app-select',
-  imports: [RouterLink, ShipDividerComponent, ShipButtonComponent],
+  imports: [RouterLink, ShipDivider, ShipButton],
   templateUrl: './select.html',
   styleUrl: './select.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

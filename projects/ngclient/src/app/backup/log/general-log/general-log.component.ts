@@ -1,9 +1,8 @@
 import { DatePipe, JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, input, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { ShipButtonComponent, ShipDividerComponent, ShipIconComponent, ShipProgressBarComponent } from '@ship-ui/core';
+import { ShipButton, ShipDivider, ShipIcon, ShipProgressBar, ShipToggleCard } from '@ship-ui/core';
 import { map } from 'rxjs';
-import ToggleCardComponent from '../../../core/components/toggle-card/toggle-card.component';
 import { DuplicatiServer } from '../../../core/openapi';
 import { BytesPipe } from '../../../core/pipes/byte.pipe';
 import { DurationFormatPipe } from '../../../core/pipes/duration.pipe';
@@ -30,11 +29,11 @@ type LogEntryEvaluated = {
 @Component({
   selector: 'app-general-log',
   imports: [
-    ToggleCardComponent,
-    ShipDividerComponent,
-    ShipProgressBarComponent,
-    ShipButtonComponent,
-    ShipIconComponent,
+    ShipToggleCard,
+    ShipDivider,
+    ShipProgressBar,
+    ShipButton,
+    ShipIcon,
     BytesPipe,
     DatePipe,
     DurationFormatPipe,

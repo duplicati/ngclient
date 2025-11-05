@@ -1,13 +1,7 @@
 import { ChangeDetectionStrategy, Component, effect, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import {
-  ShipAlertComponent,
-  ShipButtonComponent,
-  ShipCheckboxComponent,
-  ShipFormFieldComponent,
-  ShipIconComponent,
-} from '@ship-ui/core';
+import { ShipAlert, ShipButton, ShipCheckbox, ShipFormField, ShipIcon } from '@ship-ui/core';
 import { finalize } from 'rxjs';
 import LogoComponent from '../core/components/logo/logo.component';
 import { localStorageSignal } from '../core/functions/localstorage-signal';
@@ -17,15 +11,7 @@ const fb = new FormBuilder();
 
 @Component({
   selector: 'app-login',
-  imports: [
-    ReactiveFormsModule,
-    LogoComponent,
-    ShipFormFieldComponent,
-    ShipIconComponent,
-    ShipButtonComponent,
-    ShipAlertComponent,
-    ShipCheckboxComponent,
-  ],
+  imports: [ReactiveFormsModule, LogoComponent, ShipFormField, ShipIcon, ShipButton, ShipAlert, ShipCheckbox],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
