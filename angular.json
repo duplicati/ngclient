@@ -142,7 +142,12 @@
             "assets": [
               "projects/ngclient/src/assets",
               {
-                "glob": "messages.{en_US,en_GB,cs,da,de,es,fi,fr,hu,it,ja_JP,nl_NL,pl,pt_BR,pt,ru,sr_RS,sv_SE,zh_CN,zh_TW,zh-Hans}.json",
+                "glob": "messages.{en,en_US,en_GB,cs,da,de,es,fi,fr,hu,it,ja_JP,nl_NL,pl,pt_BR,pt,ru,sr_RS,sv_SE,zh_CN,zh_TW,zh-Hans}.json",
+                "input": "./projects/ngclient/src/locale",
+                "output": "./locale/"
+              },
+              {
+                "glob": "messages.json",
                 "input": "./projects/ngclient/src/locale",
                 "output": "./locale/"
               },
