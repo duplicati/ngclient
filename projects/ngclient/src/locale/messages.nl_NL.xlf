@@ -753,9 +753,9 @@
           <context context-type="linenumber">46,48</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="6475665368083852944" datatype="html">
-        <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>clock-counter-clockwise<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Restore (delete and repair) </source>
-        <target><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>clock-counter-clockwise<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Herstellen (verwijderen en repareren) </target>
+      <trans-unit id="3813130786624249218" datatype="html">
+        <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>clock-counter-clockwise<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Recreate (delete and repair) </source>
+        <target><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>clock-counter-clockwise<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Opnieuw aanmaken (verwijderen en repareren) </target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/database/database.component.html</context>
           <context context-type="linenumber">51,53</context>
@@ -965,12 +965,56 @@
           <context context-type="linenumber">9,12</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="2816305537933540084" datatype="html">
-        <source> Backup destination <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (hasDestination) {"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button             shButton             type=&quot;button&quot;             class=&quot;small&quot;             [class.loader]=&quot;testSignal() == 'testing'&quot;             [disabled]=&quot;testSignal() == 'testing'&quot;             (click)=&quot;testDestination(0, true)&quot;&gt;"/> Test destination <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_IF_1" equiv-text="@if (!hasDestination) {"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;openTargetUrlDialog()&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>link<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Set target URL <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SH_MENU" ctype="x-sh_menu" equiv-text="&lt;sh-menu&gt;"/><x id="START_TAG_BUTTON_2" ctype="x-button_2" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>dots-three-vertical<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;openTargetUrlDialog()&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>link<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Edit target URL <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (hasDestination) {"/><x id="START_TAG_BUTTON_3" ctype="x-button_3" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;copyTargetUrl()&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>copy<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Copy URL to clipboard <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SH_MENU" ctype="x-sh_menu" equiv-text="&lt;/sh-menu&gt;"/><x id="CLOSE_BLOCK_ELSE" equiv-text="}"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
-        <target> Back-upbestemming <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (hasDestination) {"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button             shButton             type=&quot;button&quot;             class=&quot;small&quot;             [class.loader]=&quot;testSignal() == 'testing'&quot;             [disabled]=&quot;testSignal() == 'testing'&quot;             (click)=&quot;testDestination(0, true)&quot;&gt;"/> Bestemming testen <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_IF_1" equiv-text="@if (!hasDestination) {"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;openTargetUrlDialog()&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>link<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Doel-URL instellen <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SH_MENU" ctype="x-sh_menu" equiv-text="&lt;sh-menu&gt;"/><x id="START_TAG_BUTTON_2" ctype="x-button_2" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>dots-three-vertical<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;openTargetUrlDialog()&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>link<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Doel-URL bewerken <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (hasDestination) {"/><x id="START_TAG_BUTTON_3" ctype="x-button_3" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;copyTargetUrl()&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>copy<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Kopieer URL naar klembord <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SH_MENU" ctype="x-sh_menu" equiv-text="&lt;/sh-menu&gt;"/><x id="CLOSE_BLOCK_ELSE" equiv-text="}"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></target>
+      <trans-unit id="5372819034004399822" datatype="html">
+        <source>Backup destination</source>
+        <target>Back-updoel</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">6,49</context>
+          <context context-type="linenumber">6,8</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
+          <context context-type="linenumber">6,8</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6543822564615717644" datatype="html">
+        <source> Test destination </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7074196907221626123" datatype="html">
+        <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>link<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Set target URL </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
+          <context context-type="linenumber">24,26</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4147540953484125341" datatype="html">
+        <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>link<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Edit target URL </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
+          <context context-type="linenumber">35,37</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
+          <context context-type="linenumber">29,31</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1420301301617054166" datatype="html">
+        <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>copy<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Copy URL to clipboard </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
+          <context context-type="linenumber">40,42</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
+          <context context-type="linenumber">34,36</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1976693045677246434" datatype="html">
@@ -978,11 +1022,11 @@
         <target><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon icon&gt;"/>spinner<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Verbinding testen... </target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">51,53</context>
+          <context context-type="linenumber">52,54</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">44,46</context>
+          <context context-type="linenumber">45,47</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8102509306620431414" datatype="html">
@@ -990,11 +1034,11 @@
         <target><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon icon&gt;"/>check<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Verbinding succesvol getest. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">56,58</context>
+          <context context-type="linenumber">57,59</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">49,51</context>
+          <context context-type="linenumber">50,52</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1633404336323592843" datatype="html">
@@ -1002,19 +1046,19 @@
         <target><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon icon&gt;"/>warning<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> <x id="INTERPOLATION" equiv-text="{{ testErrorMessage() }}"/> </target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">61,63</context>
+          <context context-type="linenumber">62,64</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">66,68</context>
+          <context context-type="linenumber">67,69</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">54,56</context>
+          <context context-type="linenumber">55,57</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">59,61</context>
+          <context context-type="linenumber">60,62</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1230154438678955604" datatype="html">
@@ -1022,7 +1066,7 @@
         <target>Aanpassen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">75,76</context>
+          <context context-type="linenumber">76,77</context>
         </context-group>
       </trans-unit>
       <trans-unit id="551770870891460365" datatype="html">
@@ -1030,7 +1074,7 @@
         <target><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>arrow-left<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Ga terug</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">90,94</context>
+          <context context-type="linenumber">91,95</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/options/options.component.html</context>
@@ -1050,7 +1094,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">104,108</context>
+          <context context-type="linenumber">105,109</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8116690924687567659" datatype="html">
@@ -1058,11 +1102,11 @@
         <target><x id="START_BLOCK_IF" equiv-text="@if (testSignal() == 'testing') {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon class=&quot;loader&quot;&gt;"/>spinner<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SH_ICON_1" ctype="x-sh_icon_1" equiv-text="&lt;sh-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_BLOCK_ELSE" equiv-text="}"/> Ga verder </target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">100,107</context>
+          <context context-type="linenumber">101,108</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">114,121</context>
+          <context context-type="linenumber">115,122</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2384816432961124423" datatype="html">
@@ -1070,7 +1114,7 @@
         <target>Doel-URL instellen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">115,116</context>
+          <context context-type="linenumber">116,117</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7962953130203958368" datatype="html">
@@ -1078,11 +1122,11 @@
         <target>Bewerk doel-URL</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">117,118</context>
+          <context context-type="linenumber">118,119</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">128,129</context>
+          <context context-type="linenumber">129,130</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5101542792933660276" datatype="html">
@@ -1090,11 +1134,11 @@
         <target>Let op: hiermee worden alle gegevens in uw bestemming overschreven.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">119</context>
+          <context context-type="linenumber">120</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">129</context>
+          <context context-type="linenumber">130</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8146449293672505760" datatype="html">
@@ -1102,11 +1146,11 @@
         <target> Doel-URL overschrijven <x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>swap<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">133,136</context>
+          <context context-type="linenumber">134,137</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">143,146</context>
+          <context context-type="linenumber">144,147</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6515463725820941423" datatype="html">
@@ -4387,6 +4431,7 @@
       </trans-unit>
       <trans-unit id="2360692925775229401" datatype="html">
         <source><x id="START_BLOCK_IF" equiv-text="@if (resetting()) {"/> Resetting <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;status blinking&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/> Click to register <x id="START_TAG_DIV_1" ctype="x-div_1" equiv-text="&lt;div class=&quot;status&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/><x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
+        <target><x id="START_BLOCK_IF" equiv-text="@if (resetting()) {"/> Resetting <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;status blinking&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/> Klik om te registreren <x id="START_TAG_DIV_1" ctype="x-div_1" equiv-text="&lt;div class=&quot;status&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/><x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/status-bar/remote-connectivity-status/remote-connectivity-status.html</context>
           <context context-type="linenumber">10,18</context>
@@ -4410,6 +4455,7 @@
       </trans-unit>
       <trans-unit id="592331477006871464" datatype="html">
         <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon i18n-shTooltip shTooltip=&quot;Cancel registration&quot; (click)=&quot;cancel()&quot;&gt;"/>x-circle<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;claim&quot; (click)=&quot;claim()&quot;&gt;"/>Click to claim<x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/><x id="START_TAG_DIV_1" ctype="x-div_1" equiv-text="&lt;div class=&quot;status success blinking&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
+        <target><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon i18n-shTooltip shTooltip=&quot;Cancel registration&quot; (click)=&quot;cancel()&quot;&gt;"/>x-circle<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;claim&quot; (click)=&quot;claim()&quot;&gt;"/>Klik om te claimen<x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/><x id="START_TAG_DIV_1" ctype="x-div_1" equiv-text="&lt;div class=&quot;status success blinking&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/status-bar/remote-connectivity-status/remote-connectivity-status.html</context>
           <context context-type="linenumber">30,34</context>
@@ -4437,6 +4483,7 @@
       </trans-unit>
       <trans-unit id="5605877476441016463" datatype="html">
         <source> <x id="INTERPOLATION" equiv-text="{{ nextBackup().backup?.Backup?.Name }}"/> - <x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>clock<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> <x id="INTERPOLATION_1" equiv-text="{{ nextBackup().time | relativeTime }}"/> at <x id="INTERPOLATION_2" equiv-text="{{ nextBackup().time | date: 'shortTime' }}"/> </source>
+        <target> <x id="INTERPOLATION" equiv-text="{{ nextBackup().backup?.Backup?.Name }}"/> - <x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>clock<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> <x id="INTERPOLATION_1" equiv-text="{{ nextBackup().time | relativeTime }}"/> om <x id="INTERPOLATION_2" equiv-text="{{ nextBackup().time | date: 'shortTime' }}"/> </target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/status-bar/status-bar.component.html</context>
           <context context-type="linenumber">8,13</context>
@@ -5214,7 +5261,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
       </trans-unit>
       <trans-unit id="683771787570008506" datatype="html">
         <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>rows<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> List </source>
-        <target><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>rows<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Weergeven </target>
+        <target><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>rows<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Lijst </target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
           <context context-type="linenumber">37,39</context>
@@ -5312,16 +5359,12 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
           <context context-type="linenumber">147,148</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="3839108367953461894" datatype="html">
-        <source>No backups founds</source>
+      <trans-unit id="1941601607032420166" datatype="html">
+        <source>No backups found</source>
         <target>Geen back-ups gevonden</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
           <context context-type="linenumber">157</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
-          <context context-type="linenumber">27</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2737753982083076672" datatype="html">
@@ -5405,7 +5448,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
-          <context context-type="linenumber">34,35</context>
+          <context context-type="linenumber">32,33</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5538720651556504926" datatype="html">
@@ -5912,20 +5955,12 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
           <context context-type="linenumber">53</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="5802723289508144474" datatype="html">
-        <source> Backup destination <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (hasDestination) {"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button             shButton             type=&quot;button&quot;             class=&quot;small&quot;             [disabled]=&quot;testSignal() == 'testing'&quot;             [class.loader]=&quot;testSignal() == 'testing'&quot;             (click)=&quot;testDestination(0, true)&quot;&gt;"/> Test destination <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_TAG_SH_MENU" ctype="x-sh_menu" equiv-text="&lt;sh-menu&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>dots-three-vertical<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_TAG_BUTTON_2" ctype="x-button_2" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;openTargetUrlDialog()&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>link<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Edit target URL <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (hasDestination) {"/><x id="START_TAG_BUTTON_3" ctype="x-button_3" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;copyTargetUrl()&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>copy<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Copy URL to clipboard <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SH_MENU" ctype="x-sh_menu" equiv-text="&lt;/sh-menu&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
-        <target> Back-upbestemming <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (hasDestination) {"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button             shButton             type=&quot;button&quot;             class=&quot;small&quot;             [disabled]=&quot;testSignal() == 'testing'&quot;             [class.loader]=&quot;testSignal() == 'testing'&quot;             (click)=&quot;testDestination(0, true)&quot;&gt;"/> Test bestemming <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_TAG_SH_MENU" ctype="x-sh_menu" equiv-text="&lt;sh-menu&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>dots-three-vertical<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_TAG_BUTTON_2" ctype="x-button_2" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;openTargetUrlDialog()&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>link<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Doel-URL bewerken <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (hasDestination) {"/><x id="START_TAG_BUTTON_3" ctype="x-button_3" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;copyTargetUrl()&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>copy<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Kopieer URL naar clipboard <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SH_MENU" ctype="x-sh_menu" equiv-text="&lt;/sh-menu&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">6,42</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="297083673179540834" datatype="html">
         <source> Current destination type <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/><x id="INTERPOLATION" equiv-text="{{ selectedDestinationType()?.displayName }}"/>.<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/><x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> Want to select another? <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;sh-primary&quot;&gt;"/>Click here<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
         <target>Huidig bestemmingstype <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/><x id="INTERPOLATION" equiv-text="{{ selectedDestinationType()?.displayName }}"/>.<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/><x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> Andere selecteren? <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;sh-primary&quot;&gt;"/>Klik hier<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">66,73</context>
+          <context context-type="linenumber">67,74</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4776685509889010215" datatype="html">
@@ -5933,7 +5968,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Alle bestemmingen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">86,88</context>
+          <context context-type="linenumber">87,89</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8375589255950676550" datatype="html">
@@ -6193,7 +6228,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Direct herstellen vanuit back-upbestanden</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
-          <context context-type="linenumber">46,47</context>
+          <context context-type="linenumber">44,45</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7023189360364716784" datatype="html">
@@ -6201,7 +6236,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Verwijs naar uw back-upbestanden en herstel vanaf daar.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
-          <context context-type="linenumber">47,48</context>
+          <context context-type="linenumber">45,46</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5038258894648830056" datatype="html">
@@ -6209,11 +6244,11 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target> Start <x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>play-circle<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
-          <context context-type="linenumber">50,53</context>
+          <context context-type="linenumber">48,51</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
-          <context context-type="linenumber">62,65</context>
+          <context context-type="linenumber">60,63</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5030677124323180354" datatype="html">
@@ -6221,7 +6256,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Herstellen vanuit configuratie</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
-          <context context-type="linenumber">58,59</context>
+          <context context-type="linenumber">56,57</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7267392067545204384" datatype="html">
@@ -6229,7 +6264,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
         <target>Bestemming laden vanuit een geëxporteerde taak</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
-          <context context-type="linenumber">59,60</context>
+          <context context-type="linenumber">57,58</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3891152409365583719" datatype="html">
@@ -6822,6 +6857,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
       </trans-unit>
       <trans-unit id="7871748507288120896" datatype="html">
         <source>We're now connecting you to the console</source>
+        <target>U wordt nu verbonden met de console</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/welcome/connect/connect.html</context>
           <context context-type="linenumber">56,58</context>
@@ -6829,6 +6865,7 @@ door de GEMELDE hostsleutel: <x id="PH_1" equiv-text="reportedhostkey"/>?</targe
       </trans-unit>
       <trans-unit id="4643938448268414021" datatype="html">
         <source>Something failed during registration we're missing claimUrl, please try again</source>
+        <target>Er is iets misgegaan tijdens de registratie, claimUrl ontbreekt, probeer het opnieuw.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/welcome/connect/connect.html</context>
           <context context-type="linenumber">62,63</context>
