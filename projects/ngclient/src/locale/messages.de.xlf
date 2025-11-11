@@ -503,7 +503,7 @@ Während des Imports können Parameter angepasst werden.</target>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/options/options.component.ts</context>
-          <context context-type="linenumber">68</context>
+          <context context-type="linenumber">54</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-flow.state.ts</context>
@@ -519,11 +519,11 @@ Während des Imports können Parameter angepasst werden.</target>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/database/database.component.ts</context>
-          <context context-type="linenumber">114</context>
+          <context context-type="linenumber">100</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/database/database.component.ts</context>
-          <context context-type="linenumber">172</context>
+          <context context-type="linenumber">158</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/delete-backup/delete-backup.component.html</context>
@@ -535,7 +535,7 @@ Während des Imports können Parameter angepasst werden.</target>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">284</context>
+          <context context-type="linenumber">278</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/confirm-dialog/confirm-dialog.component.ts</context>
@@ -559,19 +559,19 @@ Während des Imports können Parameter angepasst werden.</target>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">362</context>
+          <context context-type="linenumber">363</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">391</context>
+          <context context-type="linenumber">392</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/options/options.component.ts</context>
-          <context context-type="linenumber">69</context>
+          <context context-type="linenumber">55</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">236</context>
+          <context context-type="linenumber">230</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-flow.state.ts</context>
@@ -814,7 +814,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Löschen bestätigen?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/database/database.component.ts</context>
-          <context context-type="linenumber">111</context>
+          <context context-type="linenumber">97</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8107426596525492464" datatype="html">
@@ -822,7 +822,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Wollen Sie wirklich die Datenbank für <x id="PH" equiv-text="this.activeBackup()?.Backup?.Name"/> löschen?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/database/database.component.ts</context>
-          <context context-type="linenumber">112</context>
+          <context context-type="linenumber">98</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4575941789207096693" datatype="html">
@@ -830,7 +830,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Datenbank löschen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/database/database.component.ts</context>
-          <context context-type="linenumber">113</context>
+          <context context-type="linenumber">99</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4413149424136914535" datatype="html">
@@ -838,7 +838,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Neuzuordnung bestätigen?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/database/database.component.ts</context>
-          <context context-type="linenumber">169</context>
+          <context context-type="linenumber">155</context>
         </context-group>
       </trans-unit>
       <trans-unit id="874638284344241379" datatype="html">
@@ -846,7 +846,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Die Ziel-Datenbank existiert bereits und gehört möglicherweise zu einer anderen Sicherung. Sind Sie sicher, dass Sie diese Sicherung einer existierenden Datenbank zuordnen wollen?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/database/database.component.ts</context>
-          <context context-type="linenumber">170</context>
+          <context context-type="linenumber">156</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4007514142718714117" datatype="html">
@@ -854,7 +854,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Zuordnung zu existierender Datenbank</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/database/database.component.ts</context>
-          <context context-type="linenumber">171</context>
+          <context context-type="linenumber">157</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8559052935367429367" datatype="html">
@@ -1113,7 +1113,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Das Ziel-Verzeichnis enthält bereits eine Sicherung. Bitte benutzen Sie für jede Sicherung einen anderen Ordner.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">165</context>
+          <context context-type="linenumber">159</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1409527397857081529" datatype="html">
@@ -1121,7 +1121,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Der Ordner enthält eine Sicherung</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">170</context>
+          <context context-type="linenumber">164</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8037546150888700711" datatype="html">
@@ -1129,7 +1129,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Das Ziel-Verzeichnis enthält bereits eine Sicherung. Sie müssen für jede Sicherung einen anderen Ordner benutzen.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">171</context>
+          <context context-type="linenumber">165</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8998179362936748717" datatype="html">
@@ -1137,19 +1137,19 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>OK</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">172</context>
+          <context context-type="linenumber">166</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">184</context>
+          <context context-type="linenumber">178</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">264</context>
+          <context context-type="linenumber">258</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/import/import.component.ts</context>
-          <context context-type="linenumber">149</context>
+          <context context-type="linenumber">141</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/file-tree/file-tree.component.ts</context>
@@ -1165,7 +1165,7 @@ Während des Imports können Parameter angepasst werden.</target>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">440</context>
+          <context context-type="linenumber">441</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/notifications/notification/notification.component.ts</context>
@@ -1177,15 +1177,15 @@ Während des Imports können Parameter angepasst werden.</target>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">129</context>
+          <context context-type="linenumber">123</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">144</context>
+          <context context-type="linenumber">138</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">216</context>
+          <context context-type="linenumber">210</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-flow.state.ts</context>
@@ -1205,7 +1205,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Der Zielordner enthält unbekannte Dateien.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">178</context>
+          <context context-type="linenumber">172</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6105401799842765682" datatype="html">
@@ -1213,7 +1213,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Der Ordner ist nicht leer</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">182</context>
+          <context context-type="linenumber">176</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3017607400660862943" datatype="html">
@@ -1221,7 +1221,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Das Ziel-Verzeichnis ist nicht leer. Es wird empfohlen, einen leeren Ordner für die Sicherung zu verwenden.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">183</context>
+          <context context-type="linenumber">177</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1972243131321755929" datatype="html">
@@ -1229,11 +1229,11 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Beim Testen des Ziels trat ein Fehler auf.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">198</context>
+          <context context-type="linenumber">192</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">157</context>
+          <context context-type="linenumber">151</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4242811395702198211" datatype="html">
@@ -1241,19 +1241,19 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Teste Ziel</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">249</context>
+          <context context-type="linenumber">243</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">281</context>
+          <context context-type="linenumber">275</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">201</context>
+          <context context-type="linenumber">195</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">233</context>
+          <context context-type="linenumber">227</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7172730963053009398" datatype="html">
@@ -1261,11 +1261,11 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Sie haben das Ziel noch nicht getestet. Möchten Sie es jetzt testen?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">250</context>
+          <context context-type="linenumber">244</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">202</context>
+          <context context-type="linenumber">196</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4206907006786602213" datatype="html">
@@ -1273,11 +1273,11 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Teste jetzt</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">251</context>
+          <context context-type="linenumber">245</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">203</context>
+          <context context-type="linenumber">197</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7896499136113414870" datatype="html">
@@ -1285,11 +1285,11 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Überspringe Test und fahre fort</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">252</context>
+          <context context-type="linenumber">246</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">204</context>
+          <context context-type="linenumber">198</context>
         </context-group>
       </trans-unit>
       <trans-unit id="455447489361080104" datatype="html">
@@ -1297,11 +1297,11 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Test war nicht erfolgreich</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">262</context>
+          <context context-type="linenumber">256</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">214</context>
+          <context context-type="linenumber">208</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2084996286795174816" datatype="html">
@@ -1309,11 +1309,11 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Fehler beim Test des Ziels.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">263</context>
+          <context context-type="linenumber">257</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">215</context>
+          <context context-type="linenumber">209</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4072519016821448506" datatype="html">
@@ -1321,11 +1321,11 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Das Ziel wurde nicht erfolgreich getestet. Sind Sie sicher, dass Sie fortfahren wollen?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">282</context>
+          <context context-type="linenumber">276</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">234</context>
+          <context context-type="linenumber">228</context>
         </context-group>
       </trans-unit>
       <trans-unit id="963687369569950686" datatype="html">
@@ -1333,11 +1333,11 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Ja, fortfahren</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">283</context>
+          <context context-type="linenumber">277</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">235</context>
+          <context context-type="linenumber">229</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3863996906560165957" datatype="html">
@@ -3034,6 +3034,7 @@ Während des Imports können Parameter angepasst werden.</target>
       </trans-unit>
       <trans-unit id="1247733053324535649" datatype="html">
         <source><x id="START_BLOCK_IF" equiv-text="@if (showPassword()) {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>eye-slash<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Hide <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>eye<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Show <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
+        <target><x id="START_BLOCK_IF" equiv-text="@if (showPassword()) {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>eye-slash<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Verbergen <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>eye<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Anzeigen <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/export/export.component.html</context>
           <context context-type="linenumber">119,128</context>
@@ -3220,7 +3221,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Unbekannter Fehler</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/import/import.component.ts</context>
-          <context context-type="linenumber">144</context>
+          <context context-type="linenumber">136</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
@@ -3240,7 +3241,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Import der Sicherung fehlgeschlagen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/import/import.component.ts</context>
-          <context context-type="linenumber">147</context>
+          <context context-type="linenumber">139</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8497528947328199741" datatype="html">
@@ -3472,7 +3473,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>dauerte <x id="PH" equiv-text="durationString"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/log/general-log/general-log.component.ts</context>
-          <context context-type="linenumber">91</context>
+          <context context-type="linenumber">90</context>
         </context-group>
       </trans-unit>
       <trans-unit id="581899245209188161" datatype="html">
@@ -3480,7 +3481,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Hochgeladen <x id="PH" equiv-text="this.#sizePipe.transform(item.data?.BackendStatistics?.BytesUploaded)"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/log/general-log/general-log.component.ts</context>
-          <context context-type="linenumber">94</context>
+          <context context-type="linenumber">93</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8248629668799578905" datatype="html">
@@ -3488,7 +3489,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Sicherungs-Größe <x id="PH" equiv-text="this.#sizePipe.transform(item.data?.BackendStatistics?.KnownFileSize)"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/log/general-log/general-log.component.ts</context>
-          <context context-type="linenumber">96</context>
+          <context context-type="linenumber">95</context>
         </context-group>
       </trans-unit>
       <trans-unit id="errorCount" datatype="html">
@@ -3496,7 +3497,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target><x id="PH" equiv-text="errorCount"/> Fehler<x id="PH_1" equiv-text="errorCount === 1 ? '' : 's'"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/log/general-log/general-log.component.ts</context>
-          <context context-type="linenumber">99</context>
+          <context context-type="linenumber">98</context>
         </context-group>
       </trans-unit>
       <trans-unit id="warningCount" datatype="html">
@@ -3504,7 +3505,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target><x id="PH" equiv-text="warningCount"/> Warnung<x id="PH_1" equiv-text="warningCount === 1 ? '' : 's'"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/log/general-log/general-log.component.ts</context>
-          <context context-type="linenumber">102</context>
+          <context context-type="linenumber">101</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6520003959216971027" datatype="html">
@@ -3604,7 +3605,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Sicherungsname fehlt</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/log/log.component.ts</context>
-          <context context-type="linenumber">42</context>
+          <context context-type="linenumber">37</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.ts</context>
@@ -3624,7 +3625,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>pen<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Neue Benutzer-Option </target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/options/options-list/options-list.component.html</context>
-          <context context-type="linenumber">43,45</context>
+          <context context-type="linenumber">46,48</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4141282812307802268" datatype="html">
@@ -3632,7 +3633,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Das Hinzufügen dieser Option wird die entsprechende globale Option überschreiben</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/options/options-list/options-list.component.html</context>
-          <context context-type="linenumber">80,81</context>
+          <context context-type="linenumber">83,84</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8432562579042371182" datatype="html">
@@ -3924,7 +3925,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Sekunden</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/schedule/schedule.component.ts</context>
-          <context context-type="linenumber">17</context>
+          <context context-type="linenumber">10</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/timespan/timespan.component.ts</context>
@@ -3940,7 +3941,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Minuten</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/schedule/schedule.component.ts</context>
-          <context context-type="linenumber">21</context>
+          <context context-type="linenumber">14</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/timespan/timespan.component.ts</context>
@@ -3956,7 +3957,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Stunden</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/schedule/schedule.component.ts</context>
-          <context context-type="linenumber">25</context>
+          <context context-type="linenumber">18</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/timespan/timespan.component.ts</context>
@@ -3972,7 +3973,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Tage</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/schedule/schedule.component.ts</context>
-          <context context-type="linenumber">29</context>
+          <context context-type="linenumber">22</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/timespan/timespan.component.ts</context>
@@ -3984,7 +3985,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Wochen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/schedule/schedule.component.ts</context>
-          <context context-type="linenumber">33</context>
+          <context context-type="linenumber">26</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/timespan/timespan.component.ts</context>
@@ -3996,7 +3997,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Monate</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/schedule/schedule.component.ts</context>
-          <context context-type="linenumber">37</context>
+          <context context-type="linenumber">30</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/timespan/timespan.component.ts</context>
@@ -4008,7 +4009,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Jahre</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/schedule/schedule.component.ts</context>
-          <context context-type="linenumber">41</context>
+          <context context-type="linenumber">34</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/timespan/timespan.component.ts</context>
@@ -4383,36 +4384,61 @@ Während des Imports können Parameter angepasst werden.</target>
           <context context-type="linenumber">16</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="2882790181541329307" datatype="html">
-        <source> Click to register <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;status&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
+      <trans-unit id="2360692925775229401" datatype="html">
+        <source><x id="START_BLOCK_IF" equiv-text="@if (resetting()) {"/> Resetting <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;status blinking&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/> Click to register <x id="START_TAG_DIV_1" ctype="x-div_1" equiv-text="&lt;div class=&quot;status&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/><x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/status-bar/remote-connectivity-status/remote-connectivity-status.html</context>
-          <context context-type="linenumber">10,13</context>
+          <context context-type="linenumber">10,18</context>
         </context-group>
+      </trans-unit>
+      <trans-unit id="5573241799856770061" datatype="html">
+        <source> Registering <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;status warning blinking&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
+        <target> Registrierung <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;status warning blinking&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/status-bar/remote-connectivity-status/remote-connectivity-status.html</context>
           <context context-type="linenumber">20,23</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="5573241799856770061" datatype="html">
-        <source> Registering <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;status warning blinking&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/ngclient/src/app/core/components/status-bar/remote-connectivity-status/remote-connectivity-status.html</context>
-          <context context-type="linenumber">15,18</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3456984930452222126" datatype="html">
-        <source> Click to claim <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;status success blinking&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
+      <trans-unit id="2882790181541329307" datatype="html">
+        <source> Click to register <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;status&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
+        <target> Klicken zur Registrierung <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;status&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/status-bar/remote-connectivity-status/remote-connectivity-status.html</context>
           <context context-type="linenumber">25,28</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="1838540954753437718" datatype="html">
-        <source> Connected <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;status success&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
+      <trans-unit id="592331477006871464" datatype="html">
+        <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon i18n-shTooltip shTooltip=&quot;Cancel registration&quot; (click)=&quot;cancel()&quot;&gt;"/>x-circle<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;claim&quot; (click)=&quot;claim()&quot;&gt;"/>Click to claim<x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/><x id="START_TAG_DIV_1" ctype="x-div_1" equiv-text="&lt;div class=&quot;status success blinking&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/status-bar/remote-connectivity-status/remote-connectivity-status.html</context>
           <context context-type="linenumber">30,34</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1112525418959962254" datatype="html">
+        <source>Cancel registration</source>
+        <target>Registrierung abbrechen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/core/components/status-bar/remote-connectivity-status/remote-connectivity-status.html</context>
+          <context context-type="linenumber">30</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.component.html</context>
+          <context context-type="linenumber">30,31</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1838540954753437718" datatype="html">
+        <source> Connected <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;status success&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
+        <target> Verbunden <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;status success&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/core/components/status-bar/remote-connectivity-status/remote-connectivity-status.html</context>
+          <context context-type="linenumber">36,40</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5605877476441016463" datatype="html">
+        <source> <x id="INTERPOLATION" equiv-text="{{ nextBackup().backup?.Backup?.Name }}"/> - <x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>clock<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> <x id="INTERPOLATION_1" equiv-text="{{ nextBackup().time | relativeTime }}"/> at <x id="INTERPOLATION_2" equiv-text="{{ nextBackup().time | date: 'shortTime' }}"/> </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/core/components/status-bar/status-bar.component.html</context>
+          <context context-type="linenumber">8,13</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8863666082945976589" datatype="html">
@@ -4449,6 +4475,7 @@ Während des Imports können Parameter angepasst werden.</target>
       </trans-unit>
       <trans-unit id="7513388682755268547" datatype="html">
         <source><x id="START_BLOCK_IF" equiv-text="@if (clientIsRunning()) {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>pause<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Pause <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>play<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Resume <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
+        <target><x id="START_BLOCK_IF" equiv-text="@if (clientIsRunning()) {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>pause<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Pause <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>play<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Fortsetzen <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/status-bar/status-bar.component.html</context>
           <context context-type="linenumber">43,52</context>
@@ -4827,7 +4854,7 @@ Während des Imports können Parameter angepasst werden.</target>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">461</context>
+          <context context-type="linenumber">462</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1976412017985703383" datatype="html">
@@ -4927,7 +4954,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Host-Schlüssel zulassen?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">359</context>
+          <context context-type="linenumber">360</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2770164445878213401" datatype="html">
@@ -4935,7 +4962,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Es wurde kein Zertifikat angegeben, bitte überprüfen Sie, ob der Schlüssel korrekt ist: <x id="PH" equiv-text="reportedhostkey"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">360</context>
+          <context context-type="linenumber">361</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3821661153451769620" datatype="html">
@@ -4943,11 +4970,11 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Zulassen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">361</context>
+          <context context-type="linenumber">362</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">390</context>
+          <context context-type="linenumber">391</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2088971677149285522" datatype="html">
@@ -4955,11 +4982,11 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Der Host-Schlüssel wurde nicht anerkannt.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">366</context>
+          <context context-type="linenumber">367</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">395</context>
+          <context context-type="linenumber">396</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2406602216329132117" datatype="html">
@@ -4967,7 +4994,7 @@ Während des Imports können Parameter angepasst werden.</target>
         <target>Der Host-Schlüssel wurde geändert</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">385</context>
+          <context context-type="linenumber">386</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2525519874157700262" datatype="html">
@@ -4980,7 +5007,7 @@ Möchten Sie Ihren AKTUELLEN Host-Schüssel <x id="PH" equiv-text="suppliedhostk
 durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/> ersetzen?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">386,389</context>
+          <context context-type="linenumber">387,390</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6621852573972124185" datatype="html">
@@ -4988,7 +5015,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
         <target>Test-Verbindung fehlgeschlagen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">438</context>
+          <context context-type="linenumber">439</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1882908083458651251" datatype="html">
@@ -5627,6 +5654,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="2676308716533799662" datatype="html">
         <source> Login <x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
+        <target> Login <x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/login/login.component.html</context>
           <context context-type="linenumber">42,45</context>
@@ -5634,6 +5662,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="2351615913393564557" datatype="html">
         <source> Keep me logged in <x id="TAG_INPUT" ctype="x-input" equiv-text="&lt;input type=&quot;checkbox&quot; id=&quot;rememberMe&quot; tabindex=&quot;2&quot; formControlName=&quot;rememberMe&quot; /&gt;"/></source>
+        <target> Angemeldet bleiben <x id="TAG_INPUT" ctype="x-input" equiv-text="&lt;input type=&quot;checkbox&quot; id=&quot;rememberMe&quot; tabindex=&quot;2&quot; formControlName=&quot;rememberMe&quot; /&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/login/login.component.html</context>
           <context context-type="linenumber">48,50</context>
@@ -5797,6 +5826,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="7798761934951318578" datatype="html">
         <source> Original location <x id="TAG_INPUT" ctype="x-input" equiv-text="&lt;input type=&quot;radio&quot; name=&quot;restoreFrom&quot; value=&quot;original&quot; formControlName=&quot;restoreFrom&quot; /&gt;"/></source>
+        <target> Ursprünglicher Ort <x id="TAG_INPUT" ctype="x-input" equiv-text="&lt;input type=&quot;radio&quot; name=&quot;restoreFrom&quot; value=&quot;original&quot; formControlName=&quot;restoreFrom&quot; /&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/options/options.component.html</context>
           <context context-type="linenumber">8,10</context>
@@ -5860,9 +5890,10 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="4509720553956381291" datatype="html">
         <source>Confirm target folder</source>
+        <target>Zielordner bestätigen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/options/options.component.ts</context>
-          <context context-type="linenumber">66</context>
+          <context context-type="linenumber">52</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1253156499530942296" datatype="html">
@@ -5870,7 +5901,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
         <target>Dieses Backup wurde mit einem anderen Betriebssystem erstellt. Die Wiederherstellung von Dateien ohne Angabe eines Zielordners kann dazu führen, dass Dateien an unerwarteten Stellen wiederhergestellt werden. Sind Sie sicher, dass Sie fortfahren möchten, ohne ein Zielverzeichnis zu wählen?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/options/options.component.ts</context>
-          <context context-type="linenumber">67</context>
+          <context context-type="linenumber">53</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5802723289508144474" datatype="html">
@@ -5902,11 +5933,11 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
         <target>Das Ziel-Verzeichnis enthält keine Sicherungen. Bitte prüfen Sie, ob die Ziel-Details richtig sind.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">122</context>
+          <context context-type="linenumber">116</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">128</context>
+          <context context-type="linenumber">122</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6867872438242299616" datatype="html">
@@ -5914,7 +5945,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
         <target>Der Ordner enthält keine Sicherung</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">127</context>
+          <context context-type="linenumber">121</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4215258942370951684" datatype="html">
@@ -5922,11 +5953,11 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
         <target>Das Ziel-Verzeichnis ist leer. Bitte prüfen Sie, ob die Ziel-Details richtig sind.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">137</context>
+          <context context-type="linenumber">131</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">143</context>
+          <context context-type="linenumber">137</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2612838071660502685" datatype="html">
@@ -5934,7 +5965,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
         <target>Der Ordner ist leer</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">142</context>
+          <context context-type="linenumber">136</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7272784983659933714" datatype="html">
@@ -6151,6 +6182,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="4541630487586031467" datatype="html">
         <source>Direct restore from backup files</source>
+        <target>Direkte Wiederherstellung aus Sicherungsdateien</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
           <context context-type="linenumber">46,47</context>
@@ -6158,6 +6190,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="7023189360364716784" datatype="html">
         <source>Point to your backup files and restore from there.</source>
+        <target>Sicherungsdateien auswählen und von dort wiederherstellen.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
           <context context-type="linenumber">47,48</context>
@@ -6165,6 +6198,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="5038258894648830056" datatype="html">
         <source> Start <x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>play-circle<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
+        <target> Start <x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>play-circle<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
           <context context-type="linenumber">50,53</context>
@@ -6176,6 +6210,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="5030677124323180354" datatype="html">
         <source>Restore from configuration</source>
+        <target>Aus Konfiguration wiederherstellen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
           <context context-type="linenumber">58,59</context>
@@ -6183,6 +6218,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="7267392067545204384" datatype="html">
         <source>Load destination from an exported job</source>
+        <target>Ziel aus einem exportierten Job laden</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
           <context context-type="linenumber">59,60</context>
@@ -6206,6 +6242,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="3256567343129957987" datatype="html">
         <source>Register on console</source>
+        <target>Auf Konsole registrieren</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.component.html</context>
           <context context-type="linenumber">13,14</context>
@@ -6227,16 +6264,9 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
           <context context-type="linenumber">25,26</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="1112525418959962254" datatype="html">
-        <source>Cancel registration</source>
-        <target>Registrierung abbrechen</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.component.html</context>
-          <context context-type="linenumber">30,31</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="2421917420516328621" datatype="html">
         <source>Disable console connection</source>
+        <target>Konsolenverbindung deaktivieren</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.component.html</context>
           <context context-type="linenumber">34,35</context>
@@ -6244,6 +6274,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="4766396747475517086" datatype="html">
         <source>Enable console connection</source>
+        <target>Konsolenverbindung aktivieren</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.component.html</context>
           <context context-type="linenumber">38,40</context>
@@ -6251,6 +6282,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="3586607267950000790" datatype="html">
         <source> Delete console connection setup </source>
+        <target>Einstellungen der Konsolenverbindung löschen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.component.html</context>
           <context context-type="linenumber">41,42</context>
@@ -6265,6 +6297,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="8689646276511932056" datatype="html">
         <source>Console connection is enabled but not connected</source>
+        <target>Konsolenverbindung ist aktiviert aber nicht verbunden</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.state.ts</context>
           <context context-type="linenumber">36</context>
@@ -6272,6 +6305,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="8371604506479051501" datatype="html">
         <source>Connected to console</source>
+        <target>Mit der Konsole verbunden</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.state.ts</context>
           <context context-type="linenumber">37</context>
@@ -6303,6 +6337,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="7776042610659838873" datatype="html">
         <source>Console connection is configured but not enabled</source>
+        <target>Konsolenverbindung ist konfiguriert aber nicht aktiviert</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.state.ts</context>
           <context context-type="linenumber">41</context>
@@ -6318,6 +6353,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="4866386105421592521" datatype="html">
         <source>Console connection is not set up</source>
+        <target>Konsolenverbindung ist nicht eingerichtet</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.state.ts</context>
           <context context-type="linenumber">44</context>
@@ -6325,6 +6361,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="2683638822020403602" datatype="html">
         <source>Are you sure you want to delete the console registration?</source>
+        <target>Möchten Sie die Registrierung der Konsolenverbindung wirklich löschen?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.state.ts</context>
           <context context-type="linenumber">177</context>
@@ -6356,6 +6393,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="1993678332419607044" datatype="html">
         <source>Connect to console</source>
+        <target>Verbinde mit Konsole</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
           <context context-type="linenumber">14,15</context>
@@ -6381,6 +6419,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="5333744884563668373" datatype="html">
         <source>Remote control disabled</source>
+        <target>Fernzugriff Kontrolle deaktiviert</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
           <context context-type="linenumber">36,37</context>
@@ -6388,6 +6427,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="1466040687319812391" datatype="html">
         <source>Remote control enabled</source>
+        <target>Fernzugriff Kontrolle aktiviert</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
           <context context-type="linenumber">38,39</context>
@@ -6553,6 +6593,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="3174422874176771933" datatype="html">
         <source>Installed version: <x id="INTERPOLATION" equiv-text="{{ sysinfo()?.ServerVersionName }}"/></source>
+        <target>Installierte Version: <x id="INTERPOLATION" equiv-text="{{ sysinfo()?.ServerVersionName }}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
           <context context-type="linenumber">243,246</context>
@@ -6680,6 +6721,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="6939005683702161102" datatype="html">
         <source>System default ($value)</source>
+        <target>System Standard ($value)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
           <context context-type="linenumber">83</context>
@@ -6727,6 +6769,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="4931861490722469250" datatype="html">
         <source>System default (<x id="PH" equiv-text="value"/>)</source>
+        <target>System Standard (<x id="PH" equiv-text="value"/>)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
           <context context-type="linenumber">165</context>
@@ -6742,6 +6785,7 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
       </trans-unit>
       <trans-unit id="3568815022803741004" datatype="html">
         <source><x id="START_BLOCK_IF" equiv-text="@if (state() === 'unknown') {"/> Loading... <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/> Connecting to console <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
+        <target><x id="START_BLOCK_IF" equiv-text="@if (state() === 'unknown') {"/> Lade... <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/> Verbinde zur Konsole <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/welcome/connect/connect.html</context>
           <context context-type="linenumber">19,25</context>
@@ -6761,11 +6805,25 @@ durch den GEMELDETEN Host-Schüssel: <x id="PH_1" equiv-text="reportedhostkey"/>
           <context context-type="linenumber">50,51</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="7871748507288120896" datatype="html">
+        <source>We're now connecting you to the console</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/welcome/connect/connect.html</context>
+          <context context-type="linenumber">56,58</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4643938448268414021" datatype="html">
+        <source>Something failed during registration we're missing claimUrl, please try again</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/welcome/connect/connect.html</context>
+          <context context-type="linenumber">62,63</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="737772204931716568" datatype="html">
         <source> Failed to register <x id="START_BLOCK_IF" equiv-text="@if (typeParam() === 'link') {"/><x id="START_PARAGRAPH" ctype="x-p" equiv-text="&lt;p&gt;"/> Check if the connection link are correct, alternatively it could be your internet connection or the service might be down <x id="CLOSE_PARAGRAPH" ctype="x-p" equiv-text="&lt;/p&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_PARAGRAPH" ctype="x-p" equiv-text="&lt;p&gt;"/> There might be a problem with your internet connection or the service might be down, please try again later <x id="CLOSE_PARAGRAPH" ctype="x-p" equiv-text="&lt;/p&gt;"/><x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/welcome/connect/connect.html</context>
-          <context context-type="linenumber">67,81</context>
+          <context context-type="linenumber">69,83</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2345528476369109922" datatype="html">
