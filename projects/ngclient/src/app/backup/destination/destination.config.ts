@@ -1127,12 +1127,12 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
       from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         const { advanced, dynamic } = fromSearchParams(destinationType, urlObj);
-        const { server, path } = fromUrlObj(urlObj);
+        const { bucket, path } = fromUrlObj(urlObj);
 
         return <ValueOfDestinationFormGroup>{
           destinationType,
           dynamic: {
-            'rclone-remote-repository': server,
+            'rclone-remote-repository': bucket,
             'rclone-remote-path': path,
             ...dynamic,
           },
