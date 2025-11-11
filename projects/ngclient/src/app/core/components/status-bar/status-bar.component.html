@@ -4,7 +4,7 @@
       <div>{{ statusData()!.actionText }} - {{ statusData()!.statusText }}</div>
       <sh-progress-bar class="raised primary" [value]="statusData()!.progress * 100" />
     } @else if (nextBackup().backup || nextBackup().time) {
-      <div class="label">
+      <div class="label" i18n>
         {{ nextBackup().backup?.Backup?.Name }} -
         <sh-icon>clock</sh-icon>
         {{ nextBackup().time | relativeTime }} at
