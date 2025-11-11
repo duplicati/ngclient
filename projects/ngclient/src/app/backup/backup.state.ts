@@ -16,12 +16,17 @@ import {
   SettingInputDto,
 } from '../core/openapi';
 import { TimespanLiteralsService } from '../core/services/timespan-literals.service';
+import { parseRecursiveObjectOfSignals } from '../core/signals/parse-recursive-signals-object';
 import { SysinfoState } from '../core/states/sysinfo.state';
 import { ServerSettingsService } from '../settings/server-settings.service';
 import { FormView } from './destination/destination.config-utilities';
 import { createGeneralForm, NONE_OPTION } from './general/general.component';
 import { RetentionType } from './options/options.component';
-import { Days, SCHEDULE_FIELD_DEFAULTS } from './schedule/schedule.component';
+import {
+  SCHEDULE_DEFAULT_OPTIONS,
+  SCHEDULE_FIELD_DEFAULTS,
+  scheduleOptionToSchedule,
+} from './schedule-v2/schedule.component';
 import { createSourceDataForm } from './source-data/source-data.component';
 
 const SMART_RETENTION = '1W:1D,4W:1W,12M:1M';
@@ -41,11 +46,9 @@ export class BackupState {
 
   generalForm = createGeneralForm();
   sourceDataForm = createSourceDataForm();
-  scheduleFields = {
-    autoRun: signal(SCHEDULE_FIELD_DEFAULTS.autoRun),
-    nextTime: signal<Partial<typeof SCHEDULE_FIELD_DEFAULTS.nextTime>>(SCHEDULE_FIELD_DEFAULTS.nextTime),
-    runAgain: signal(SCHEDULE_FIELD_DEFAULTS.runAgain),
-  };
+  scheduleFields = SCHEDULE_FIELD_DEFAULTS();
+  scheduleType = signal<string>('daily');
+  scheduleHasLoaded = signal(false);
   settings = signal<SettingInputDto[]>([]);
   optionsFields = {
     remoteVolumeSize: signal('50MB'),
@@ -244,8 +247,9 @@ export class BackupState {
     this.generalForm.patchValue(baseUpdate);
   }
 
-  mapScheduleToForm(schedule: ScheduleDto | null) {
+  mapScheduleToForm(schedule: ScheduleDto | null, setLoaded = false) {
     if (!schedule) {
+      this.scheduleType.set('manual');
       this.scheduleFields.autoRun.set(false);
 
       return;
@@ -255,20 +259,31 @@ export class BackupState {
     const nextTime = this.#evaluateTimeString(schedule.Time);
 
     this.scheduleFields.autoRun.set(true);
-    this.scheduleFields.nextTime.update((x) => ({ ...x, ...nextTime }));
-    this.scheduleFields.runAgain.set({
-      repeatValue: res?.value ?? 1,
-      repeatUnit: res?.unit ?? 'D',
-      allowedDays: {
-        mon: schedule.AllowedDays?.includes('mon') ?? false,
-        tue: schedule.AllowedDays?.includes('tue') ?? false,
-        wed: schedule.AllowedDays?.includes('wed') ?? false,
-        thu: schedule.AllowedDays?.includes('thu') ?? false,
-        fri: schedule.AllowedDays?.includes('fri') ?? false,
-        sat: schedule.AllowedDays?.includes('sat') ?? false,
-        sun: schedule.AllowedDays?.includes('sun') ?? false,
-      },
-    });
+
+    nextTime.date && this.scheduleFields.nextTime.date.set(nextTime.date);
+    this.scheduleFields.nextTime.time.set(nextTime.time);
+    this.scheduleFields.runAgain.repeatUnit.set(res?.unit ?? 'D');
+    this.scheduleFields.runAgain.repeatValue.set(res?.value ?? 1);
+    this.scheduleFields.runAgain.allowedDays.mon.set(schedule.AllowedDays?.includes('mon') ?? false);
+    this.scheduleFields.runAgain.allowedDays.tue.set(schedule.AllowedDays?.includes('tue') ?? false);
+    this.scheduleFields.runAgain.allowedDays.wed.set(schedule.AllowedDays?.includes('wed') ?? false);
+    this.scheduleFields.runAgain.allowedDays.thu.set(schedule.AllowedDays?.includes('thu') ?? false);
+    this.scheduleFields.runAgain.allowedDays.fri.set(schedule.AllowedDays?.includes('fri') ?? false);
+    this.scheduleFields.runAgain.allowedDays.sat.set(schedule.AllowedDays?.includes('sat') ?? false);
+    this.scheduleFields.runAgain.allowedDays.sun.set(schedule.AllowedDays?.includes('sun') ?? false);
+
+    const test = parseRecursiveObjectOfSignals(this.scheduleFields);
+    const matchPredefined = SCHEDULE_DEFAULT_OPTIONS.find((x) => JSON.stringify(x.data) === JSON.stringify(test));
+
+    if (matchPredefined) {
+      this.scheduleType.set(matchPredefined.value);
+    } else {
+      this.scheduleType.set('manual');
+    }
+
+    if (setLoaded) {
+      setTimeout(() => this.scheduleHasLoaded.set(true));
+    }
   }
 
   mapOptionsToForms(backup: BackupDto, includeGlobalOptions: boolean = false) {
@@ -357,11 +372,10 @@ export class BackupState {
   }
 
   getScheduleFormValue() {
-    return {
-      autoRun: this.scheduleFields.autoRun(),
-      nextTime: this.scheduleFields.nextTime(),
-      runAgain: this.scheduleFields.runAgain(),
-    };
+    const schedule = parseRecursiveObjectOfSignals(this.scheduleFields);
+    const parsedSchedule = scheduleOptionToSchedule(schedule);
+
+    return parsedSchedule;
   }
 
   #mapFormsToBackup() {
@@ -370,21 +384,6 @@ export class BackupState {
     const sourceDataFormValue = this.sourceDataForm.value;
 
     const targetUrl = this.targetUrlModel();
-
-    let scheduleRepeat: string | null = null;
-
-    if (scheduleFormValue.runAgain?.repeatUnit && scheduleFormValue.runAgain?.repeatValue) {
-      scheduleRepeat = this.#timespanLiteralService.toString(
-        scheduleFormValue.runAgain.repeatValue,
-        scheduleFormValue.runAgain.repeatUnit
-      );
-    }
-
-    const allowedDays = scheduleFormValue.runAgain?.allowedDays
-      ? Object.entries(scheduleFormValue.runAgain?.allowedDays)
-          .filter(([_, status]) => status)
-          .map(([day, _]) => day as Days)
-      : [];
 
     const pathFilters = sourceDataFormValue.path?.split('\0') ?? [];
     const settings = this.mapFormsToSettings();
@@ -423,21 +422,7 @@ export class BackupState {
             Expression: x.slice(1),
           })),
       },
-      Schedule: scheduleFormValue.autoRun
-        ? {
-            Repeat: scheduleRepeat,
-            Time: scheduleFormValue.nextTime?.date
-              ? new Date(
-                  `${scheduleFormValue.nextTime.date}T${scheduleFormValue.nextTime?.time || '00:00:00'}`
-                ).toISOString()
-              : null,
-            AllowedDays: allowedDays,
-          }
-        : null,
-      // ExtraOptions: {
-      //   BackupID: this.backupId(),
-      //   Operation: this.backupId() ? 'Update' : 'Create',
-      // },
+      Schedule: scheduleFormValue,
     };
   }
 
@@ -569,9 +554,7 @@ export class BackupState {
   #resetAllForms() {
     this.generalForm.reset();
     this.sourceDataForm.reset();
-    this.scheduleFields.autoRun.set(SCHEDULE_FIELD_DEFAULTS.autoRun);
-    this.scheduleFields.nextTime.set(SCHEDULE_FIELD_DEFAULTS.nextTime);
-    this.scheduleFields.runAgain.set(SCHEDULE_FIELD_DEFAULTS.runAgain);
+    this.scheduleFields = SCHEDULE_FIELD_DEFAULTS();
     this.optionsFields.remoteVolumeSize.set('50MB');
     this.optionsFields.backupRetention.set('all');
     this.settings.set([]);
