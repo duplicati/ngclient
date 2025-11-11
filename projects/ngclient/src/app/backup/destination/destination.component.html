@@ -2,8 +2,8 @@
 
 <form #formRef (submit)="next()">
   <header>
-    <h3 class="title-30" i18n>
-      Backup destination
+    <h3 class="title-30">
+      <span i18n>Backup destination</span>
 
       <div class="actions">
         @if (hasDestination) {
@@ -13,13 +13,14 @@
             class="small"
             [class.loader]="testSignal() == 'testing'"
             [disabled]="testSignal() == 'testing'"
-            (click)="testDestination(0, true)">
+            (click)="testDestination(0, true)"
+            i18n>
             Test destination
           </button>
         }
 
         @if (!hasDestination) {
-          <button shButton type="button" class="small" (click)="openTargetUrlDialog()">
+          <button shButton type="button" class="small" (click)="openTargetUrlDialog()" i18n>
             <sh-icon>link</sh-icon>
             Set target URL
           </button>
@@ -30,12 +31,12 @@
             </button>
 
             <ng-container menu>
-              <button shButton type="button" class="small" (click)="openTargetUrlDialog()">
+              <button shButton type="button" class="small" (click)="openTargetUrlDialog()" i18n>
                 <sh-icon>link</sh-icon>
                 Edit target URL
               </button>
               @if (hasDestination) {
-                <button shButton type="button" class="small" (click)="copyTargetUrl()">
+                <button shButton type="button" class="small" (click)="copyTargetUrl()" i18n>
                   <sh-icon>copy</sh-icon>
                   Copy URL to clipboard
                 </button>

@@ -502,7 +502,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/options/options.component.ts</context>
-          <context context-type="linenumber">68</context>
+          <context context-type="linenumber">54</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-flow.state.ts</context>
@@ -518,11 +518,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/database/database.component.ts</context>
-          <context context-type="linenumber">114</context>
+          <context context-type="linenumber">100</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/database/database.component.ts</context>
-          <context context-type="linenumber">172</context>
+          <context context-type="linenumber">158</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/delete-backup/delete-backup.component.html</context>
@@ -534,7 +534,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">284</context>
+          <context context-type="linenumber">278</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/confirm-dialog/confirm-dialog.component.ts</context>
@@ -558,19 +558,19 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">362</context>
+          <context context-type="linenumber">363</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">391</context>
+          <context context-type="linenumber">392</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/options/options.component.ts</context>
-          <context context-type="linenumber">69</context>
+          <context context-type="linenumber">55</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">236</context>
+          <context context-type="linenumber">230</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-flow.state.ts</context>
@@ -753,9 +753,8 @@
           <context context-type="linenumber">46,48</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="6475665368083852944" datatype="html">
-        <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>clock-counter-clockwise<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Restore (delete and repair) </source>
-        <target><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>clock-counter-clockwise<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> 恢复（删除和修复） </target>
+      <trans-unit id="3813130786624249218" datatype="html">
+        <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>clock-counter-clockwise<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Recreate (delete and repair) </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/database/database.component.html</context>
           <context context-type="linenumber">51,53</context>
@@ -814,7 +813,7 @@
         <target>确认删除？</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/database/database.component.ts</context>
-          <context context-type="linenumber">111</context>
+          <context context-type="linenumber">97</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8107426596525492464" datatype="html">
@@ -822,7 +821,7 @@
         <target>你确定想删除数据库<x id="PH" equiv-text="this.activeBackup()?.Backup?.Name"/>吗？</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/database/database.component.ts</context>
-          <context context-type="linenumber">112</context>
+          <context context-type="linenumber">98</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4575941789207096693" datatype="html">
@@ -830,7 +829,7 @@
         <target>删除数据库</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/database/database.component.ts</context>
-          <context context-type="linenumber">113</context>
+          <context context-type="linenumber">99</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4413149424136914535" datatype="html">
@@ -838,7 +837,7 @@
         <target>确认重新分配？</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/database/database.component.ts</context>
-          <context context-type="linenumber">169</context>
+          <context context-type="linenumber">155</context>
         </context-group>
       </trans-unit>
       <trans-unit id="874638284344241379" datatype="html">
@@ -846,7 +845,7 @@
         <target>目标数据库路径已存在，可能属于另一个备份。您确定要将此备份分配给现有数据库吗？</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/database/database.component.ts</context>
-          <context context-type="linenumber">170</context>
+          <context context-type="linenumber">156</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4007514142718714117" datatype="html">
@@ -854,7 +853,7 @@
         <target>分配现有数据库</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/database/database.component.ts</context>
-          <context context-type="linenumber">171</context>
+          <context context-type="linenumber">157</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8559052935367429367" datatype="html">
@@ -965,12 +964,56 @@
           <context context-type="linenumber">9,12</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="2816305537933540084" datatype="html">
-        <source> Backup destination <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (hasDestination) {"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button             shButton             type=&quot;button&quot;             class=&quot;small&quot;             [class.loader]=&quot;testSignal() == 'testing'&quot;             [disabled]=&quot;testSignal() == 'testing'&quot;             (click)=&quot;testDestination(0, true)&quot;&gt;"/> Test destination <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_IF_1" equiv-text="@if (!hasDestination) {"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;openTargetUrlDialog()&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>link<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Set target URL <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SH_MENU" ctype="x-sh_menu" equiv-text="&lt;sh-menu&gt;"/><x id="START_TAG_BUTTON_2" ctype="x-button_2" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>dots-three-vertical<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;openTargetUrlDialog()&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>link<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Edit target URL <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (hasDestination) {"/><x id="START_TAG_BUTTON_3" ctype="x-button_3" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;copyTargetUrl()&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>copy<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Copy URL to clipboard <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SH_MENU" ctype="x-sh_menu" equiv-text="&lt;/sh-menu&gt;"/><x id="CLOSE_BLOCK_ELSE" equiv-text="}"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
-        <target> 备份目标位置 <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (hasDestination) {"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button             shButton             type=&quot;button&quot;             class=&quot;small&quot;             [class.loader]=&quot;testSignal() == 'testing'&quot;             [disabled]=&quot;testSignal() == 'testing'&quot;             (click)=&quot;testDestination(0, true)&quot;&gt;"/> 测试目标位置 <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_IF_1" equiv-text="@if (!hasDestination) {"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;openTargetUrlDialog()&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>link<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> 设置目标URL <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SH_MENU" ctype="x-sh_menu" equiv-text="&lt;sh-menu&gt;"/><x id="START_TAG_BUTTON_2" ctype="x-button_2" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>dots-three-vertical<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;openTargetUrlDialog()&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>link<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/>编辑目标URL <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (hasDestination) {"/><x id="START_TAG_BUTTON_3" ctype="x-button_3" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;copyTargetUrl()&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>copy<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> 复制URL到剪贴板 <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SH_MENU" ctype="x-sh_menu" equiv-text="&lt;/sh-menu&gt;"/><x id="CLOSE_BLOCK_ELSE" equiv-text="}"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></target>
+      <trans-unit id="5372819034004399822" datatype="html">
+        <source>Backup destination</source>
+        <target>备份保存位置</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">6,49</context>
+          <context context-type="linenumber">6,8</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
+          <context context-type="linenumber">6,8</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6543822564615717644" datatype="html">
+        <source> Test destination </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7074196907221626123" datatype="html">
+        <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>link<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Set target URL </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
+          <context context-type="linenumber">24,26</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4147540953484125341" datatype="html">
+        <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>link<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Edit target URL </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
+          <context context-type="linenumber">35,37</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
+          <context context-type="linenumber">29,31</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1420301301617054166" datatype="html">
+        <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>copy<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Copy URL to clipboard </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
+          <context context-type="linenumber">40,42</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
+          <context context-type="linenumber">34,36</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1976693045677246434" datatype="html">
@@ -978,11 +1021,11 @@
         <target><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon icon&gt;"/>spinner<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> 测试链接... </target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">51,53</context>
+          <context context-type="linenumber">52,54</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">44,46</context>
+          <context context-type="linenumber">45,47</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8102509306620431414" datatype="html">
@@ -990,11 +1033,11 @@
         <target><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon icon&gt;"/>check<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> 测试链接成功 </target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">56,58</context>
+          <context context-type="linenumber">57,59</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">49,51</context>
+          <context context-type="linenumber">50,52</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1633404336323592843" datatype="html">
@@ -1002,19 +1045,19 @@
         <target><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon icon&gt;"/>warning<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> <x id="INTERPOLATION" equiv-text="{{ testErrorMessage() }}"/> </target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">61,63</context>
+          <context context-type="linenumber">62,64</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">66,68</context>
+          <context context-type="linenumber">67,69</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">54,56</context>
+          <context context-type="linenumber">55,57</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">59,61</context>
+          <context context-type="linenumber">60,62</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1230154438678955604" datatype="html">
@@ -1022,7 +1065,7 @@
         <target>选择其他</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">75,76</context>
+          <context context-type="linenumber">76,77</context>
         </context-group>
       </trans-unit>
       <trans-unit id="551770870891460365" datatype="html">
@@ -1030,7 +1073,7 @@
         <target><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>arrow-left<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> 返回 </target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">90,94</context>
+          <context context-type="linenumber">91,95</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/options/options.component.html</context>
@@ -1050,7 +1093,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">104,108</context>
+          <context context-type="linenumber">105,109</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8116690924687567659" datatype="html">
@@ -1058,11 +1101,11 @@
         <target><x id="START_BLOCK_IF" equiv-text="@if (testSignal() == 'testing') {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon class=&quot;loader&quot;&gt;"/>spinner<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SH_ICON_1" ctype="x-sh_icon_1" equiv-text="&lt;sh-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_BLOCK_ELSE" equiv-text="}"/> 继续 </target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">100,107</context>
+          <context context-type="linenumber">101,108</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">114,121</context>
+          <context context-type="linenumber">115,122</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2384816432961124423" datatype="html">
@@ -1070,7 +1113,7 @@
         <target>设置目标URL</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">115,116</context>
+          <context context-type="linenumber">116,117</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7962953130203958368" datatype="html">
@@ -1078,11 +1121,11 @@
         <target>编辑目标地址</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">117,118</context>
+          <context context-type="linenumber">118,119</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">128,129</context>
+          <context context-type="linenumber">129,130</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5101542792933660276" datatype="html">
@@ -1090,11 +1133,11 @@
         <target>小心，这将会覆盖你目标位置中的所有内容。</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">119</context>
+          <context context-type="linenumber">120</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">129</context>
+          <context context-type="linenumber">130</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8146449293672505760" datatype="html">
@@ -1102,11 +1145,11 @@
         <target> 覆盖目标URL <x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>swap<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">133,136</context>
+          <context context-type="linenumber">134,137</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">143,146</context>
+          <context context-type="linenumber">144,147</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6515463725820941423" datatype="html">
@@ -1114,7 +1157,7 @@
         <target>远程目标已经包含了一个备份。请为每个备份使用不同的文件夹。</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">165</context>
+          <context context-type="linenumber">159</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1409527397857081529" datatype="html">
@@ -1122,7 +1165,7 @@
         <target>文件夹中包含备份数据</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">170</context>
+          <context context-type="linenumber">164</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8037546150888700711" datatype="html">
@@ -1130,7 +1173,7 @@
         <target>此远程后端中已经存在一个备份数据了。你必须为每一个备份选择不同的备份后端位置。</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">171</context>
+          <context context-type="linenumber">165</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8998179362936748717" datatype="html">
@@ -1138,19 +1181,19 @@
         <target>确定</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">172</context>
+          <context context-type="linenumber">166</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">184</context>
+          <context context-type="linenumber">178</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">264</context>
+          <context context-type="linenumber">258</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/import/import.component.ts</context>
-          <context context-type="linenumber">149</context>
+          <context context-type="linenumber">141</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/file-tree/file-tree.component.ts</context>
@@ -1166,7 +1209,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">440</context>
+          <context context-type="linenumber">441</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/notifications/notification/notification.component.ts</context>
@@ -1178,15 +1221,15 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">129</context>
+          <context context-type="linenumber">123</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">144</context>
+          <context context-type="linenumber">138</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">216</context>
+          <context context-type="linenumber">210</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-flow.state.ts</context>
@@ -1206,7 +1249,7 @@
         <target>远程目的地包含未知文件。</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">178</context>
+          <context context-type="linenumber">172</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6105401799842765682" datatype="html">
@@ -1214,7 +1257,7 @@
         <target>文件夹不为空</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">182</context>
+          <context context-type="linenumber">176</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3017607400660862943" datatype="html">
@@ -1222,7 +1265,7 @@
         <target>远程后端地址不为空。强烈建议选择一个空文件夹储存备份数据。</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">183</context>
+          <context context-type="linenumber">177</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1972243131321755929" datatype="html">
@@ -1230,11 +1273,11 @@
         <target>测试目标位置时发生了错误。</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">198</context>
+          <context context-type="linenumber">192</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">157</context>
+          <context context-type="linenumber">151</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4242811395702198211" datatype="html">
@@ -1242,19 +1285,19 @@
         <target>测试目标位置</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">249</context>
+          <context context-type="linenumber">243</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">281</context>
+          <context context-type="linenumber">275</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">201</context>
+          <context context-type="linenumber">195</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">233</context>
+          <context context-type="linenumber">227</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7172730963053009398" datatype="html">
@@ -1262,11 +1305,11 @@
         <target>您还没有测试目标位置。现在要测试吗？</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">250</context>
+          <context context-type="linenumber">244</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">202</context>
+          <context context-type="linenumber">196</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4206907006786602213" datatype="html">
@@ -1274,11 +1317,11 @@
         <target>立即测试</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">251</context>
+          <context context-type="linenumber">245</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">203</context>
+          <context context-type="linenumber">197</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7896499136113414870" datatype="html">
@@ -1286,11 +1329,11 @@
         <target>跳过测试继续</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">252</context>
+          <context context-type="linenumber">246</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">204</context>
+          <context context-type="linenumber">198</context>
         </context-group>
       </trans-unit>
       <trans-unit id="455447489361080104" datatype="html">
@@ -1298,11 +1341,11 @@
         <target>测试没有成功</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">262</context>
+          <context context-type="linenumber">256</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">214</context>
+          <context context-type="linenumber">208</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2084996286795174816" datatype="html">
@@ -1310,11 +1353,11 @@
         <target>测试目标位置失败。</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">263</context>
+          <context context-type="linenumber">257</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">215</context>
+          <context context-type="linenumber">209</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4072519016821448506" datatype="html">
@@ -1322,11 +1365,11 @@
         <target>目标位置尚未成功测试。您确定要继续吗？</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">282</context>
+          <context context-type="linenumber">276</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">234</context>
+          <context context-type="linenumber">228</context>
         </context-group>
       </trans-unit>
       <trans-unit id="963687369569950686" datatype="html">
@@ -1334,11 +1377,11 @@
         <target>是的，继续</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.ts</context>
-          <context context-type="linenumber">283</context>
+          <context context-type="linenumber">277</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">235</context>
+          <context context-type="linenumber">229</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3863996906560165957" datatype="html">
@@ -3221,7 +3264,7 @@
         <target>未知错误</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/import/import.component.ts</context>
-          <context context-type="linenumber">144</context>
+          <context context-type="linenumber">136</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
@@ -3241,7 +3284,7 @@
         <target>导入备份失败</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/import/import.component.ts</context>
-          <context context-type="linenumber">147</context>
+          <context context-type="linenumber">139</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8497528947328199741" datatype="html">
@@ -3473,7 +3516,7 @@
         <target>花费 <x id="PH" equiv-text="durationString"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/log/general-log/general-log.component.ts</context>
-          <context context-type="linenumber">91</context>
+          <context context-type="linenumber">90</context>
         </context-group>
       </trans-unit>
       <trans-unit id="581899245209188161" datatype="html">
@@ -3481,7 +3524,7 @@
         <target>已上传 <x id="PH" equiv-text="this.#sizePipe.transform(item.data?.BackendStatistics?.BytesUploaded)"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/log/general-log/general-log.component.ts</context>
-          <context context-type="linenumber">94</context>
+          <context context-type="linenumber">93</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8248629668799578905" datatype="html">
@@ -3489,7 +3532,7 @@
         <target>备份大小 <x id="PH" equiv-text="this.#sizePipe.transform(item.data?.BackendStatistics?.KnownFileSize)"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/log/general-log/general-log.component.ts</context>
-          <context context-type="linenumber">96</context>
+          <context context-type="linenumber">95</context>
         </context-group>
       </trans-unit>
       <trans-unit id="errorCount" datatype="html">
@@ -3497,7 +3540,7 @@
         <target><x id="PH" equiv-text="errorCount"/> 错误<x id="PH_1" equiv-text="errorCount === 1 ? '' : 's'"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/log/general-log/general-log.component.ts</context>
-          <context context-type="linenumber">99</context>
+          <context context-type="linenumber">98</context>
         </context-group>
       </trans-unit>
       <trans-unit id="warningCount" datatype="html">
@@ -3505,7 +3548,7 @@
         <target><x id="PH" equiv-text="warningCount"/> 警告<x id="PH_1" equiv-text="warningCount === 1 ? '' : 's'"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/log/general-log/general-log.component.ts</context>
-          <context context-type="linenumber">102</context>
+          <context context-type="linenumber">101</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6520003959216971027" datatype="html">
@@ -3605,7 +3648,7 @@
         <target>缺失备份名称</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/log/log.component.ts</context>
-          <context context-type="linenumber">42</context>
+          <context context-type="linenumber">37</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.ts</context>
@@ -3625,7 +3668,7 @@
         <target><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>pen<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> 新自定义选项 </target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/options/options-list/options-list.component.html</context>
-          <context context-type="linenumber">43,45</context>
+          <context context-type="linenumber">46,48</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4141282812307802268" datatype="html">
@@ -3633,7 +3676,7 @@
         <target>通过添加此选项，它将覆盖匹配的全局选项</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/options/options-list/options-list.component.html</context>
-          <context context-type="linenumber">80,81</context>
+          <context context-type="linenumber">83,84</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8432562579042371182" datatype="html">
@@ -3925,7 +3968,7 @@
         <target>秒</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/schedule/schedule.component.ts</context>
-          <context context-type="linenumber">17</context>
+          <context context-type="linenumber">10</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/timespan/timespan.component.ts</context>
@@ -3941,7 +3984,7 @@
         <target>分钟</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/schedule/schedule.component.ts</context>
-          <context context-type="linenumber">21</context>
+          <context context-type="linenumber">14</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/timespan/timespan.component.ts</context>
@@ -3957,7 +4000,7 @@
         <target>小时</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/schedule/schedule.component.ts</context>
-          <context context-type="linenumber">25</context>
+          <context context-type="linenumber">18</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/timespan/timespan.component.ts</context>
@@ -3973,7 +4016,7 @@
         <target>天</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/schedule/schedule.component.ts</context>
-          <context context-type="linenumber">29</context>
+          <context context-type="linenumber">22</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/timespan/timespan.component.ts</context>
@@ -3985,7 +4028,7 @@
         <target>周</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/schedule/schedule.component.ts</context>
-          <context context-type="linenumber">33</context>
+          <context context-type="linenumber">26</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/timespan/timespan.component.ts</context>
@@ -3997,7 +4040,7 @@
         <target>月</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/schedule/schedule.component.ts</context>
-          <context context-type="linenumber">37</context>
+          <context context-type="linenumber">30</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/timespan/timespan.component.ts</context>
@@ -4009,7 +4052,7 @@
         <target>年</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/schedule/schedule.component.ts</context>
-          <context context-type="linenumber">41</context>
+          <context context-type="linenumber">34</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/timespan/timespan.component.ts</context>
@@ -4384,36 +4427,58 @@
           <context context-type="linenumber">16</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="2882790181541329307" datatype="html">
-        <source> Click to register <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;status&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
+      <trans-unit id="2360692925775229401" datatype="html">
+        <source><x id="START_BLOCK_IF" equiv-text="@if (resetting()) {"/> Resetting <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;status blinking&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/> Click to register <x id="START_TAG_DIV_1" ctype="x-div_1" equiv-text="&lt;div class=&quot;status&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/><x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/status-bar/remote-connectivity-status/remote-connectivity-status.html</context>
-          <context context-type="linenumber">10,13</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/ngclient/src/app/core/components/status-bar/remote-connectivity-status/remote-connectivity-status.html</context>
-          <context context-type="linenumber">20,23</context>
+          <context context-type="linenumber">10,18</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5573241799856770061" datatype="html">
         <source> Registering <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;status warning blinking&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/status-bar/remote-connectivity-status/remote-connectivity-status.html</context>
-          <context context-type="linenumber">15,18</context>
+          <context context-type="linenumber">20,23</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="3456984930452222126" datatype="html">
-        <source> Click to claim <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;status success blinking&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
+      <trans-unit id="2882790181541329307" datatype="html">
+        <source> Click to register <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;status&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/status-bar/remote-connectivity-status/remote-connectivity-status.html</context>
           <context context-type="linenumber">25,28</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="592331477006871464" datatype="html">
+        <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon i18n-shTooltip shTooltip=&quot;Cancel registration&quot; (click)=&quot;cancel()&quot;&gt;"/>x-circle<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;claim&quot; (click)=&quot;claim()&quot;&gt;"/>Click to claim<x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/><x id="START_TAG_DIV_1" ctype="x-div_1" equiv-text="&lt;div class=&quot;status success blinking&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/core/components/status-bar/remote-connectivity-status/remote-connectivity-status.html</context>
+          <context context-type="linenumber">30,34</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1112525418959962254" datatype="html">
+        <source>Cancel registration</source>
+        <target>取消注册</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/core/components/status-bar/remote-connectivity-status/remote-connectivity-status.html</context>
+          <context context-type="linenumber">30</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.component.html</context>
+          <context context-type="linenumber">30,31</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1838540954753437718" datatype="html">
         <source> Connected <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;status success&quot;&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/components/status-bar/remote-connectivity-status/remote-connectivity-status.html</context>
-          <context context-type="linenumber">30,34</context>
+          <context context-type="linenumber">36,40</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5605877476441016463" datatype="html">
+        <source> <x id="INTERPOLATION" equiv-text="{{ nextBackup().backup?.Backup?.Name }}"/> - <x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>clock<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> <x id="INTERPOLATION_1" equiv-text="{{ nextBackup().time | relativeTime }}"/> at <x id="INTERPOLATION_2" equiv-text="{{ nextBackup().time | date: 'shortTime' }}"/> </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/core/components/status-bar/status-bar.component.html</context>
+          <context context-type="linenumber">8,13</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8863666082945976589" datatype="html">
@@ -4828,7 +4893,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">461</context>
+          <context context-type="linenumber">462</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1976412017985703383" datatype="html">
@@ -4928,7 +4993,7 @@
         <target>批准主机密钥？</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">359</context>
+          <context context-type="linenumber">360</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2770164445878213401" datatype="html">
@@ -4936,7 +5001,7 @@
         <target>未指定证书，请验证报告的主机密钥是否正确: <x id="PH" equiv-text="reportedhostkey"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">360</context>
+          <context context-type="linenumber">361</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3821661153451769620" datatype="html">
@@ -4944,11 +5009,11 @@
         <target>批准</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">361</context>
+          <context context-type="linenumber">362</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">390</context>
+          <context context-type="linenumber">391</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2088971677149285522" datatype="html">
@@ -4956,11 +5021,11 @@
         <target>主机密钥未被认可。</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">366</context>
+          <context context-type="linenumber">367</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">395</context>
+          <context context-type="linenumber">396</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2406602216329132117" datatype="html">
@@ -4968,7 +5033,7 @@
         <target>主机密码发生变化</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">385</context>
+          <context context-type="linenumber">386</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2525519874157700262" datatype="html">
@@ -4982,7 +5047,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
 替换为: <x id="PH_1" equiv-text="reportedhostkey"/> 吗？</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">386,389</context>
+          <context context-type="linenumber">387,390</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6621852573972124185" datatype="html">
@@ -4990,7 +5055,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <target>测试连接失败</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/core/services/test-destination.service.ts</context>
-          <context context-type="linenumber">438</context>
+          <context context-type="linenumber">439</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1882908083458651251" datatype="html">
@@ -5283,16 +5348,11 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
           <context context-type="linenumber">147,148</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="3839108367953461894" datatype="html">
-        <source>No backups founds</source>
-        <target>未找到备份</target>
+      <trans-unit id="1941601607032420166" datatype="html">
+        <source>No backups found</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
           <context context-type="linenumber">157</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
-          <context context-type="linenumber">27</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2737753982083076672" datatype="html">
@@ -5376,7 +5436,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
-          <context context-type="linenumber">34,35</context>
+          <context context-type="linenumber">32,33</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5538720651556504926" datatype="html">
@@ -5864,7 +5924,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <source>Confirm target folder</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/options/options.component.ts</context>
-          <context context-type="linenumber">66</context>
+          <context context-type="linenumber">52</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1253156499530942296" datatype="html">
@@ -5872,15 +5932,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <target>该备份创建于其他操作系统上。恢复时不指定目标文件夹可能会使文件恢复到未知的位置。您确定不指定目标文件夹继续吗？</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/options/options.component.ts</context>
-          <context context-type="linenumber">67</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5802723289508144474" datatype="html">
-        <source> Backup destination <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (hasDestination) {"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button             shButton             type=&quot;button&quot;             class=&quot;small&quot;             [disabled]=&quot;testSignal() == 'testing'&quot;             [class.loader]=&quot;testSignal() == 'testing'&quot;             (click)=&quot;testDestination(0, true)&quot;&gt;"/> Test destination <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_TAG_SH_MENU" ctype="x-sh_menu" equiv-text="&lt;sh-menu&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>dots-three-vertical<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_TAG_BUTTON_2" ctype="x-button_2" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;openTargetUrlDialog()&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>link<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Edit target URL <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (hasDestination) {"/><x id="START_TAG_BUTTON_3" ctype="x-button_3" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;copyTargetUrl()&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>copy<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Copy URL to clipboard <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SH_MENU" ctype="x-sh_menu" equiv-text="&lt;/sh-menu&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></source>
-        <target> 备份目标位置 <x id="START_TAG_DIV" ctype="x-div" equiv-text="&lt;div class=&quot;actions&quot;&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (hasDestination) {"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button             shButton             type=&quot;button&quot;             class=&quot;small&quot;             [disabled]=&quot;testSignal() == 'testing'&quot;             [class.loader]=&quot;testSignal() == 'testing'&quot;             (click)=&quot;testDestination(0, true)&quot;&gt;"/> 测试目标位置 <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_TAG_SH_MENU" ctype="x-sh_menu" equiv-text="&lt;sh-menu&gt;"/><x id="START_TAG_BUTTON_1" ctype="x-button_1" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>dots-three-vertical<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container menu&gt;"/><x id="START_TAG_BUTTON_2" ctype="x-button_2" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;openTargetUrlDialog()&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>link<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> 编辑目标URL <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (hasDestination) {"/><x id="START_TAG_BUTTON_3" ctype="x-button_3" equiv-text="&lt;button shButton type=&quot;button&quot; class=&quot;small&quot; (click)=&quot;copyTargetUrl()&quot;&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>copy<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> 拷贝URL到剪贴板 <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="CLOSE_TAG_SH_MENU" ctype="x-sh_menu" equiv-text="&lt;/sh-menu&gt;"/><x id="CLOSE_TAG_DIV" ctype="x-div" equiv-text="&lt;/div&gt;"/></target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">6,42</context>
+          <context context-type="linenumber">53</context>
         </context-group>
       </trans-unit>
       <trans-unit id="297083673179540834" datatype="html">
@@ -5888,7 +5940,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <target> 当前目标位置类型 <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/><x id="INTERPOLATION" equiv-text="{{ selectedDestinationType()?.displayName }}"/>.<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/><x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> 是否想选择另一个？ <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;sh-primary&quot;&gt;"/>点击这里<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">66,73</context>
+          <context context-type="linenumber">67,74</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4776685509889010215" datatype="html">
@@ -5896,7 +5948,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <target>所有目标位置</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">86,88</context>
+          <context context-type="linenumber">87,89</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8375589255950676550" datatype="html">
@@ -5904,11 +5956,11 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <target>远程目标不包含任何备份。请检查目标详情是否正确。</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">122</context>
+          <context context-type="linenumber">116</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">128</context>
+          <context context-type="linenumber">122</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6867872438242299616" datatype="html">
@@ -5916,7 +5968,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <target>文件夹不包含备份</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">127</context>
+          <context context-type="linenumber">121</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4215258942370951684" datatype="html">
@@ -5924,11 +5976,11 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <target>远程目标位置为空。请检查目标位置详情是否正确。</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">137</context>
+          <context context-type="linenumber">131</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">143</context>
+          <context context-type="linenumber">137</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2612838071660502685" datatype="html">
@@ -5936,7 +5988,7 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <target>文件夹为空</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.ts</context>
-          <context context-type="linenumber">142</context>
+          <context context-type="linenumber">136</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7272784983659933714" datatype="html">
@@ -6155,39 +6207,39 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <source>Direct restore from backup files</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
-          <context context-type="linenumber">46,47</context>
+          <context context-type="linenumber">44,45</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7023189360364716784" datatype="html">
         <source>Point to your backup files and restore from there.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
-          <context context-type="linenumber">47,48</context>
+          <context context-type="linenumber">45,46</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5038258894648830056" datatype="html">
         <source> Start <x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>play-circle<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
-          <context context-type="linenumber">50,53</context>
+          <context context-type="linenumber">48,51</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
-          <context context-type="linenumber">62,65</context>
+          <context context-type="linenumber">60,63</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5030677124323180354" datatype="html">
         <source>Restore from configuration</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
-          <context context-type="linenumber">58,59</context>
+          <context context-type="linenumber">56,57</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7267392067545204384" datatype="html">
         <source>Load destination from an exported job</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
-          <context context-type="linenumber">59,60</context>
+          <context context-type="linenumber">57,58</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3891152409365583719" datatype="html">
@@ -6227,14 +6279,6 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.component.html</context>
           <context context-type="linenumber">25,26</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1112525418959962254" datatype="html">
-        <source>Cancel registration</source>
-        <target>取消注册</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/ngclient/src/app/settings/remote-control/remote-control.component.html</context>
-          <context context-type="linenumber">30,31</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2421917420516328621" datatype="html">
@@ -6763,11 +6807,25 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
           <context context-type="linenumber">50,51</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="7871748507288120896" datatype="html">
+        <source>We're now connecting you to the console</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/welcome/connect/connect.html</context>
+          <context context-type="linenumber">56,58</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4643938448268414021" datatype="html">
+        <source>Something failed during registration we're missing claimUrl, please try again</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/welcome/connect/connect.html</context>
+          <context context-type="linenumber">62,63</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="737772204931716568" datatype="html">
         <source> Failed to register <x id="START_BLOCK_IF" equiv-text="@if (typeParam() === 'link') {"/><x id="START_PARAGRAPH" ctype="x-p" equiv-text="&lt;p&gt;"/> Check if the connection link are correct, alternatively it could be your internet connection or the service might be down <x id="CLOSE_PARAGRAPH" ctype="x-p" equiv-text="&lt;/p&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_PARAGRAPH" ctype="x-p" equiv-text="&lt;p&gt;"/> There might be a problem with your internet connection or the service might be down, please try again later <x id="CLOSE_PARAGRAPH" ctype="x-p" equiv-text="&lt;/p&gt;"/><x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/welcome/connect/connect.html</context>
-          <context context-type="linenumber">67,81</context>
+          <context context-type="linenumber">69,83</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2345528476369109922" datatype="html">
