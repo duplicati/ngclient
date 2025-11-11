@@ -20,7 +20,7 @@ export default <Routes>[
   },
   {
     path: 'schedule',
-    loadComponent: () => import('./schedule/schedule.component'),
+    loadComponent: () => import('./schedule-v2/schedule.component'),
   },
   {
     path: 'options',
