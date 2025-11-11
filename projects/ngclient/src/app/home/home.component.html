@@ -47,7 +47,15 @@
         <sh-menu class="table-overview">
           <button type="button" class="small" shButton i18n>
             Time:
-            <strong>{{ timeType() }}</strong>
+            <strong>
+              @if (timeType() == 'relative') {
+                Relative
+              } @else if (timeType() == 'actual') {
+                Actual
+              } @else {
+                {{ timeType() }}
+              }
+            </strong>
             <sh-icon>clock</sh-icon>
           </button>
 
