@@ -25,7 +25,10 @@
                   type="button"
                   [class.deprecated]="option.deprecatedDescription"
                   (click)="addSetting(option)">
-                  {{ option.name }}
+                  <div class="option-col">
+                    <p>{{ option.shortDescription }}</p>
+                    {{ option.name }}
+                  </div>
                 </button>
               }
             }

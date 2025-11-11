@@ -327,7 +327,7 @@ export class TestDestinationService {
         confirmText: $localize`Trust the certificate`,
         cancelText: $localize`Cancel`,
       },
-      closed: (res: boolean) => {
+      closed: (res) => {
         if (!res) {
           this.reportNoAction(observer, targetUrl, destinationIndex, $localize`The server certificate is not trusted.`);
           return;
@@ -340,6 +340,7 @@ export class TestDestinationService {
           certData,
           destinationIndex,
         });
+
         observer.complete();
       },
     });

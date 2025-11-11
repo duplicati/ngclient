@@ -7,8 +7,13 @@
 <!-- <pre>state: {{ state() }}</pre> -->
 @if (registeringFaulted) {
   <div i18n class="connectivity-status" (click)="resetAndRetry()">
-    Click to register
-    <div class="status"></div>
+    @if (resetting()) {
+      Resetting
+      <div class="status blinking"></div>
+    } @else {
+      Click to register
+      <div class="status"></div>
+    }
   </div>
 } @else if (isLoading) {
   <div i18n class="connectivity-status" [routerLink]="['/connect/logon']">
@@ -21,8 +26,9 @@
     <div class="status"></div>
   </div>
 } @else if (registered) {
-  <div i18n class="connectivity-status" (click)="claim()">
-    Click to claim
+  <div i18n class="connectivity-status claim">
+    <sh-icon i18n-shTooltip shTooltip="Cancel registration" (click)="cancel()">x-circle</sh-icon>
+    <div class="claim" (click)="claim()">Click to claim</div>
     <div class="status success blinking"></div>
   </div>
 } @else if (isConnected) {

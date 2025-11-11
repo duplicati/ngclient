@@ -1,7 +1,7 @@
 @let _logs = logs();
 
 <sh-table class="type-b" [data]="_logs" [loading]="logsIsLoading()" [style.grid-template-columns]="'1fr 1fr 1fr auto'">
-  <tr table-header>
+  <tr thead>
     <th i18n>Timestamp</th>
     <th i18n>Backup ID</th>
     <th i18n>Message</th>

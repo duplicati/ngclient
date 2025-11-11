@@ -5,7 +5,7 @@ export type ConfirmDialogData = {
   title: string;
   message?: string;
   confirmText?: string | null;
-  cancelText?: string;
+  cancelText?: string | null;
 };
 
 const DEFAULT_DATA: ConfirmDialogData = {

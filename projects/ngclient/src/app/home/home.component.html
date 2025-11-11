@@ -159,7 +159,7 @@
         </div>
       } @else if (viewMode() === 'details') {
         <sh-table class="type-b" [data]="backups()" [loading]="backupsLoading()" [(sortByColumn)]="sortByColumn">
-          <tr table-header>
+          <tr thead>
             <th i18n shSort="name">
               Backup
               <ng-container *ngTemplateOutlet="sortIcons" />

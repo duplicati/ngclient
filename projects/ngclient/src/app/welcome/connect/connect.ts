@@ -44,7 +44,8 @@ export default class Connect {
   });
 
   registeringCounter = signal<number | null>(null);
-  didTry = signal(false);
+  didTry = false;
+  triedFinishConnection = false;
   stateEffect = effect(() => {
     const registerUrl = this.#remoteControlState.registerUrl();
     const state = this.state();
@@ -52,9 +53,16 @@ export default class Connect {
     const counter = this.registeringCounter();
 
     if (state === 'inactive' && typeParam === 'logon' && registerUrl !== '') {
-      if (!this.didTry()) {
+      if (!this.didTry) {
         this.#remoteControlState.beginRemoteRegistration();
-        this.didTry.set(true);
+        this.didTry = true;
+      }
+    }
+
+    if (state === 'registered' && this.claimUrl() !== null) {
+      if (!this.triedFinishConnection) {
+        this.triedFinishConnection = true;
+        this.#finishConnection();
       }
     }
 
@@ -79,10 +87,10 @@ export default class Connect {
     this.#remoteControlState.refreshRemoteControlStatus();
   }
 
-  finishConnection() {
+  #finishConnection() {
     const claimUrl = this.#remoteControlState.claimUrl()!;
 
-    this.#window.open(claimUrl, '_blank');
+    this.#window.open(`${claimUrl}?closeAfterConnection=true`, '_blank');
   }
 
   registerViaCustomUrl() {
@@ -92,6 +100,8 @@ export default class Connect {
   retryWhenFaulted() {
     this.#remoteControlState.cancelRemoteRegistration();
     this.customRegisterUrl.set('');
+    this.didTry = false;
+    this.triedFinishConnection = false;
 
     if (this.typeParam() === 'logon') {
       this.#router.navigate(['/welcome/select']);

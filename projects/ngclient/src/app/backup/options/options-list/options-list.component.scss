@@ -33,6 +33,11 @@ sh-toggle {
   }
 }
 
+.option-col {
+  display: flex;
+  flex-direction: column;
+}
+
 .form-column {
   display: flex;
   gap: 0.25rem;

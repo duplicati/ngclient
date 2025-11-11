@@ -15,6 +15,25 @@
   &:hover {
     color: var(--primary-8);
   }
+
+  &.claim {
+    display: flex;
+    gap: p2r(8);
+
+    cursor: pointer;
+
+    &:hover {
+      color: inherit;
+    }
+
+    .claim:hover {
+      color: var(--primary-8);
+    }
+
+    sh-icon:hover {
+      color: var(--error-8);
+    }
+  }
 }
 
 .status {

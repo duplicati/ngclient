@@ -53,11 +53,13 @@
 
   @if (state() === 'registered') {
     @if (claimUrl() !== null) {
-      <p>Visit console to finish connection</p>
+      <p i18n>We're now connecting you to the console</p>
 
-      <button shButton (click)="finishConnection()">Finish connection</button>
+      <sh-progress-bar class="primary indeterminate" />
+
+      <button shButton (click)="retryWhenFaulted()">Cancel</button>
     } @else {
-      <p>Something failed during registration we're missing claimUrl, please try again</p>
+      <p i18n>Something failed during registration we're missing claimUrl, please try again</p>
       <button shButton (click)="retryWhenFaulted()">Retry</button>
     }
   }
