@@ -48,7 +48,6 @@ export class BackupState {
   sourceDataForm = createSourceDataForm();
   scheduleFields = SCHEDULE_FIELD_DEFAULTS();
   scheduleType = signal<string>('daily');
-  scheduleHasLoaded = signal(false);
   settings = signal<SettingInputDto[]>([]);
   optionsFields = {
     remoteVolumeSize: signal('50MB'),
@@ -247,7 +246,7 @@ export class BackupState {
     this.generalForm.patchValue(baseUpdate);
   }
 
-  mapScheduleToForm(schedule: ScheduleDto | null, setLoaded = false) {
+  mapScheduleToForm(schedule: ScheduleDto | null) {
     if (!schedule) {
       this.scheduleType.set('manual');
       this.scheduleFields.autoRun.set(false);
@@ -279,10 +278,6 @@ export class BackupState {
       this.scheduleType.set(matchPredefined.value);
     } else {
       this.scheduleType.set('manual');
-    }
-
-    if (setLoaded) {
-      setTimeout(() => this.scheduleHasLoaded.set(true));
     }
   }
 

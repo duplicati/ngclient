@@ -240,24 +240,28 @@ export default class ScheduleComponent {
   scheduleOptions = SCHEDULE_DEFAULT_OPTIONS;
 
   updateScheduleType(newType: string) {
-    if (!this.#backupState.scheduleHasLoaded()) return;
+    const predefinedType = SCHEDULE_DEFAULT_OPTIONS.find((x) => x.value === newType);
 
-    this.scheduleType.set(newType);
+    if (predefinedType && predefinedType?.value !== 'manual') {
+      this.scheduleType.set(predefinedType.value);
 
-    const data = this.scheduleOptions.find((x) => x.value === newType)?.data;
+      const data = predefinedType.data;
 
-    this.scheduleFields.autoRun.set(data?.autoRun ?? false);
-    this.scheduleFields.nextTime.time.set(data?.nextTime?.time ?? '13:00');
-    this.scheduleFields.nextTime.date.set(data?.nextTime?.date ?? new Date().toISOString().split('T')[0]);
-    this.scheduleFields.runAgain.repeatValue.set(data?.runAgain?.repeatValue ?? 1);
-    this.scheduleFields.runAgain.repeatUnit.set(data?.runAgain?.repeatUnit ?? 'D');
-    this.scheduleFields.runAgain.allowedDays.mon.set(data?.runAgain?.allowedDays?.mon ?? true);
-    this.scheduleFields.runAgain.allowedDays.tue.set(data?.runAgain?.allowedDays?.tue ?? true);
-    this.scheduleFields.runAgain.allowedDays.wed.set(data?.runAgain?.allowedDays?.wed ?? true);
-    this.scheduleFields.runAgain.allowedDays.thu.set(data?.runAgain?.allowedDays?.thu ?? true);
-    this.scheduleFields.runAgain.allowedDays.fri.set(data?.runAgain?.allowedDays?.fri ?? true);
-    this.scheduleFields.runAgain.allowedDays.sat.set(data?.runAgain?.allowedDays?.sat ?? true);
-    this.scheduleFields.runAgain.allowedDays.sun.set(data?.runAgain?.allowedDays?.sun ?? true);
+      this.scheduleFields.autoRun.set(data.autoRun ?? false);
+      this.scheduleFields.nextTime.time.set(data.nextTime?.time ?? '13:00');
+      this.scheduleFields.nextTime.date.set(data.nextTime?.date ?? new Date().toISOString().split('T')[0]);
+      this.scheduleFields.runAgain.repeatValue.set(data.runAgain?.repeatValue ?? 1);
+      this.scheduleFields.runAgain.repeatUnit.set(data.runAgain?.repeatUnit ?? 'D');
+      this.scheduleFields.runAgain.allowedDays.mon.set(data.runAgain?.allowedDays?.mon ?? true);
+      this.scheduleFields.runAgain.allowedDays.tue.set(data.runAgain?.allowedDays?.tue ?? true);
+      this.scheduleFields.runAgain.allowedDays.wed.set(data.runAgain?.allowedDays?.wed ?? true);
+      this.scheduleFields.runAgain.allowedDays.thu.set(data.runAgain?.allowedDays?.thu ?? true);
+      this.scheduleFields.runAgain.allowedDays.fri.set(data.runAgain?.allowedDays?.fri ?? true);
+      this.scheduleFields.runAgain.allowedDays.sat.set(data.runAgain?.allowedDays?.sat ?? true);
+      this.scheduleFields.runAgain.allowedDays.sun.set(data.runAgain?.allowedDays?.sun ?? true);
+    } else {
+      this.scheduleType.set('manual');
+    }
   }
 
   goBack() {

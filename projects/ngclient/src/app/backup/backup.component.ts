@@ -37,8 +37,6 @@ export default class BackupComponent {
 
     this.#backupState.backupId.set(backupId);
 
-    console.log('backupId', backupId);
-
     if (backupId !== 'new') {
       this.getBackup(backupId, isDraft);
     } else {
@@ -69,7 +67,7 @@ export default class BackupComponent {
 
   getBackup(id: string, isDraft = false) {
     const onBackup = (res: GetBackupResultDto) => {
-      this.#backupState.mapScheduleToForm(res.Schedule ?? null, true);
+      this.#backupState.mapScheduleToForm(res.Schedule ?? null);
 
       if (res.Backup) {
         this.#backupState.mapGeneralToForm(res.Backup);
