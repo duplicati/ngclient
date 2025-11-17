@@ -9,7 +9,7 @@
         <p i18n>Keep your data safe at your chosen destination.</p>
       </div>
       <button type="button" shButton i18n>
-        Add
+        Create
         <sh-icon>plus</sh-icon>
       </button>
     </sh-card>
@@ -31,59 +31,61 @@
     <h2>
       <ng-container i18n>My backups</ng-container>
 
-      <div class="actions">
-        <sh-button-group class="small">
-          <button type="button" [class.active]="viewMode() === 'list'" i18n (click)="viewMode.set('list')">
-            <sh-icon>rows</sh-icon>
-            List
-          </button>
+      @if (backups().length > 0) {
+        <div class="actions">
+          <sh-button-group class="small">
+            <button type="button" [class.active]="viewMode() === 'list'" i18n (click)="viewMode.set('list')">
+              <sh-icon>rows</sh-icon>
+              List
+            </button>
 
-          <button type="button" [class.active]="viewMode() === 'details'" i18n (click)="viewMode.set('details')">
-            <sh-icon>list</sh-icon>
-            Details
-          </button>
-        </sh-button-group>
+            <button type="button" [class.active]="viewMode() === 'details'" i18n (click)="viewMode.set('details')">
+              <sh-icon>list</sh-icon>
+              Details
+            </button>
+          </sh-button-group>
 
-        <sh-menu class="table-overview">
-          <button type="button" class="small" shButton i18n>
-            Time:
-            <strong>{{ timeType() }}</strong>
-            <sh-icon>clock</sh-icon>
-          </button>
-
-          <ng-container menu>
-            <button type="button" (click)="setTimeType('relative')" i18n>Relative time</button>
-            <button type="button" (click)="setTimeType('actual')" i18n>Actual time</button>
-          </ng-container>
-        </sh-menu>
-
-        @if (viewMode() === 'list') {
           <sh-menu class="table-overview">
             <button type="button" class="small" shButton i18n>
-              Order by:
-              <strong>{{ orderBy() }}</strong>
-              <sh-icon>arrows-down-up</sh-icon>
+              Time:
+              <strong>{{ timeType() }}</strong>
+              <sh-icon>clock</sh-icon>
             </button>
 
             <ng-container menu>
-              @for (order of sortOrderOptions(); track $index) {
-                <button
-                  type="button"
-                  [class.active]="orderBy() === order.value"
-                  (click)="sortByColumn.set(order.value)"
-                  i18n>
-                  {{ order.label }}
-                </button>
-              }
+              <button type="button" (click)="setTimeType('relative')" i18n>Relative time</button>
+              <button type="button" (click)="setTimeType('actual')" i18n>Actual time</button>
             </ng-container>
           </sh-menu>
-        }
-      </div>
+
+          @if (viewMode() === 'list') {
+            <sh-menu class="table-overview">
+              <button type="button" class="small" shButton i18n>
+                Order by:
+                <strong>{{ orderBy() }}</strong>
+                <sh-icon>arrows-down-up</sh-icon>
+              </button>
+
+              <ng-container menu>
+                @for (order of sortOrderOptions(); track $index) {
+                  <button
+                    type="button"
+                    [class.active]="orderBy() === order.value"
+                    (click)="sortByColumn.set(order.value)"
+                    i18n>
+                    {{ order.label }}
+                  </button>
+                }
+              </ng-container>
+            </sh-menu>
+          }
+        </div>
+      }
     </h2>
 
     @defer (when !backupsLoading()) {
       @if (viewMode() === 'list') {
-        <div class="backups">
+        <div class="backups" [class.fallback]="backups().length === 0">
           @if (backups().length) {
             @for (backup of backups(); track $index) {
               <div class="backup">
@@ -154,7 +156,14 @@
               </div>
             }
           } @else {
-            <ng-container i18n>No backups found</ng-container>
+            <div class="no-backups" i18n>
+              No backups found
+
+              <button shButton class="primary raised" [routerLink]="['/backup/new']">
+                Click to create one now
+                <sh-icon>plus</sh-icon>
+              </button>
+            </div>
           }
         </div>
       } @else if (viewMode() === 'details') {

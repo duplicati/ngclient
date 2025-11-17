@@ -46,12 +46,12 @@ const UNIT_OPTIONS = [
 
 export const SCHEDULE_DEFAULT_OPTIONS = [
   {
-    key: $localize`Daily 12:00`,
+    key: $localize`Daily 13:00`,
     value: 'daily',
     data: {
       autoRun: true,
       nextTime: {
-        time: '12:00',
+        time: '13:00:00',
         date: new Date().toISOString().split('T')[0],
       },
       runAgain: {
@@ -70,12 +70,12 @@ export const SCHEDULE_DEFAULT_OPTIONS = [
     },
   },
   {
-    key: $localize`Weekdays 12:00`,
+    key: $localize`Weekdays 13:00`,
     value: 'weekdays',
     data: {
       autoRun: true,
       nextTime: {
-        time: '12:00',
+        time: '13:00:00',
         date: new Date().toISOString().split('T')[0],
       },
       runAgain: {
@@ -94,12 +94,12 @@ export const SCHEDULE_DEFAULT_OPTIONS = [
     },
   },
   {
-    key: $localize`Weekly monday 12:00`,
+    key: $localize`Weekly monday 13:00`,
     value: 'weekly',
     data: {
       autoRun: true,
       nextTime: {
-        time: '12:00',
+        time: '13:00:00',
         date: getNextMondayAt12PM().toISOString().split('T')[0],
       },
       runAgain: {
@@ -123,7 +123,7 @@ export const SCHEDULE_DEFAULT_OPTIONS = [
     data: {
       autoRun: true,
       nextTime: {
-        time: '13:00',
+        time: '13:00:00',
         date: new Date().toISOString().split('T')[0],
       },
       runAgain: {
@@ -193,7 +193,7 @@ export const SCHEDULE_FIELD_DEFAULTS = () => {
   return {
     autoRun: signal(true),
     nextTime: {
-      time: signal<string>('12:00'),
+      time: signal<string>('13:00'),
       date: signal<string>(new Date().toISOString().split('T')[0]),
     },
     runAgain: {

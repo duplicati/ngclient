@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ShipButton, ShipFormField, ShipIcon, ShipSelect, ShipToggle, ShipToggleCard } from '@ship-ui/core';
 import { BackupState } from '../backup.state';
 
 const UNIT_OPTIONS = [
@@ -57,7 +56,7 @@ export const SCHEDULE_FIELD_DEFAULTS = {
 
 @Component({
   selector: 'app-schedule',
-  imports: [FormsModule, ShipFormField, ShipToggle, ShipIcon, ShipButton, ShipSelect, ShipToggleCard],
+  imports: [FormsModule],
   templateUrl: './schedule.component.html',
   styleUrl: './schedule.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

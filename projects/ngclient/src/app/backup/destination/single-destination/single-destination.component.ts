@@ -93,6 +93,7 @@ export class SingleDestinationComponent {
     return this.#destType;
   });
 
+  refreshView = signal(false);
   destinationForm = signal({
     custom: {} as Record<string, any>,
     dynamic: {} as Record<string, any>,
@@ -245,6 +246,7 @@ export class SingleDestinationComponent {
   destinationFormEffect = effect(() => {
     const key = this.#destType;
     const form = this.destinationForm();
+    const _ = this.refreshView();
 
     if (!form || !key) return;
 
@@ -458,8 +460,9 @@ export class SingleDestinationComponent {
           y[fieldGroup][fieldName] = authId;
           return y;
         });
-        this.#oauthInProgress.set(false);
 
+        this.#oauthInProgress.set(false);
+        this.refreshView.set(!this.refreshView());
         wnd?.close();
       } else {
         // TODO some error handling

@@ -201,6 +201,7 @@
             [type]="item.formView.type === 'Email' ? 'email' : 'text'"
             [id]="formFieldId"
             [ngModel]="formInput"
+            autocomplete="off"
             (keydown)="onKeyDown(item.fieldGroup, item.formView.name, item.formView.type, $event)"
             (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
 

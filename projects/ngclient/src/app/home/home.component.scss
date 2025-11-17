@@ -47,11 +47,33 @@ sh-card {
   }
 }
 
+sh-menu {
+  color: red;
+}
+
 .backups {
   display: flex;
   flex-direction: column;
   padding: p2r(0 32);
   gap: p2r(8);
+
+  &.fallback {
+    justify-content: center;
+    align-items: center;
+    padding: p2r(64);
+    border: 1px solid var(--base-4);
+    background: var(--base-2);
+    border-radius: var(--shape-2);
+    width: calc(100% - #{p2r(64)});
+    margin: 0 auto;
+  }
+}
+
+.no-backups {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(16);
+  align-items: center;
 }
 
 .backup {

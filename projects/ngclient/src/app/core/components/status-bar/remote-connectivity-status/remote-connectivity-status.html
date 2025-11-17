@@ -32,7 +32,7 @@
     <div class="status success blinking"></div>
   </div>
 } @else if (isConnected) {
-  <div i18n class="connectivity-status" [routerLink]="['/settings']">
+  <div i18n class="connectivity-status" (click)="openConsole()">
     Connected
     <div class="status success"></div>
   </div>
