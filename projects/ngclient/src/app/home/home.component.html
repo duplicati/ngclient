@@ -33,7 +33,7 @@
 
       @if (backups().length > 0) {
         <div class="actions">
-          <sh-button-group class="small">
+          <sh-button-group class="small type-b">
             <button type="button" [class.active]="viewMode() === 'list'" i18n (click)="viewMode.set('list')">
               <sh-icon>rows</sh-icon>
               List
@@ -48,7 +48,15 @@
           <sh-menu class="table-overview">
             <button type="button" class="small" shButton i18n>
               Time:
-              <strong>{{ timeType() }}</strong>
+              <strong>
+                @if (timeType() == 'relative') {
+                  Relative
+                } @else if (timeType() == 'actual') {
+                  Actual
+                } @else {
+                  {{ timeType() }}
+                }
+              </strong>
               <sh-icon>clock</sh-icon>
             </button>
 
