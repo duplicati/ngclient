@@ -45,28 +45,21 @@
         Settings
       </button>
 
-      <sh-divider />
-
-      <div action class="machine-name" title="{{ machineName() }}">
-        <sh-icon>desktop</sh-icon>
-        {{ machineName() }}
-      </div>
+      <!-- <sh-divider /> -->
     </sh-list>
 
     <div class="spacer"></div>
 
     <sh-list class="base-1l primary">
-      @if (!relayIsEnabled()) {
-        <button action (click)="changeDefaultClientTo('ngax')" i18n>
+      <!-- <button action (click)="changeDefaultClientTo('ngax')" i18n>
           <sh-icon>skip-back</sh-icon>
           Use old UI
-        </button>
+        </button> -->
 
-        <button action (click)="logout()" i18n>
-          <sh-icon>sign-out</sh-icon>
-          Log out
-        </button>
-      }
+      <div action class="machine-name" title="{{ machineName() }}">
+        <sh-icon>desktop</sh-icon>
+        {{ machineName() }}
+      </div>
 
       <sh-divider />
 
@@ -88,6 +81,13 @@
 
         <sh-icon suffix>arrow-square-out</sh-icon>
       </a>
+
+      @if (!relayIsEnabled()) {
+        <button action (click)="logout()" i18n>
+          <sh-icon>sign-out</sh-icon>
+          Log out
+        </button>
+      }
     </sh-list>
   </div>
 

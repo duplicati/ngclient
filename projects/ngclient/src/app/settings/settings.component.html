@@ -158,6 +158,20 @@
 
   <section>
     <div class="left">
+      <h3 i18n>Use legacy interface</h3>
+      <p i18n>Use the old user interface, not recommended unless you have a specific reason.</p>
+    </div>
+
+    <div class="right">
+      <button shButton class="primary" (click)="changeDefaultClientTo('ngclient')" i18n>
+        <sh-icon>swap</sh-icon>
+        Use legacy UI
+      </button>
+    </div>
+  </section>
+
+  <section>
+    <div class="left">
       <h3 i18n>Allow remote access (requires restart)</h3>
       <p i18n>
         By allowing remote access, the server listens to requests from any machine on your network. If you enable this

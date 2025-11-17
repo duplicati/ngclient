@@ -3,6 +3,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   ShipAlert,
   ShipButton,
+  ShipDialogService,
   ShipDivider,
   ShipFormField,
   ShipIcon,
@@ -28,6 +29,7 @@ import { ServerSettingsService } from './server-settings.service';
 import { CreateSignalOptions, WritableSignal } from '@angular/core';
 import { SIGNAL, SignalGetter, signalSetFn, signalUpdateFn } from '@angular/core/primitives/signals';
 import { createSignal } from 'ngxtension/create-signal';
+import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import { RelayconfigState } from '../core/states/relayconfig.state';
 
 export function debounceSignal<T>(initialValue: T, time: number, options?: CreateSignalOptions<T>): WritableSignal<T> {
@@ -131,6 +133,7 @@ type UsageStatisticsType = (typeof USAGE_STATISTICS_OPTIONS)[number];
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class SettingsComponent {
+  #dialog = inject(ShipDialogService);
   #layoutState = inject(LayoutState);
   #sysinfo = inject(SysinfoState);
   #dupServer = inject(DuplicatiServer);
@@ -478,5 +481,28 @@ export default class SettingsComponent {
 
   setLightMode() {
     this.#layoutState.setLightMode();
+  }
+
+  changeDefaultClientTo(client: 'ngclient' | 'ngax') {
+    this.#dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: $localize`Use legacy UI`,
+        message: $localize`Are you sure you want to use the legacy user interface, not recommended unless you have a specific reason?`,
+        confirmText: $localize`Use legacy`,
+        cancelText: $localize`Cancel`,
+      },
+      closed: (res) => {
+        if (!res) return;
+        this.#setClientDefault(client);
+        window.location.replace(`/${client}`);
+      },
+    });
+  }
+
+  #setClientDefault(client: 'ngclient' | 'ngax') {
+    var d = new Date();
+    d.setTime(d.getTime() + 90 * 24 * 60 * 60 * 1000);
+
+    document.cookie = 'default-client=' + client + '; expires=' + d.toUTCString() + '; path=/';
   }
 }
