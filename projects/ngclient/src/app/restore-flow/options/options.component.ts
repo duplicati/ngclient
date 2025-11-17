@@ -14,7 +14,7 @@ export const createRestoreOptionsForm = () => {
   return fb.group({
     restoreFrom: fb.control<'original' | 'pickLocation'>('original'),
     restoreFromPath: fb.control<string>(''),
-    handleExisting: fb.control<'overwrite' | 'saveTimestamp'>('overwrite'),
+    handleExisting: fb.control<'overwrite' | 'saveTimestamp'>('saveTimestamp'),
     permissions: fb.control<boolean>(false),
     includeMetadata: fb.control<boolean>(true),
   });
