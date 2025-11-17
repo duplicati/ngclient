@@ -21,15 +21,27 @@ sh-toggle {
 }
 
 .field-row {
-  display: grid;
+  display: flex;
   align-items: center;
-  grid-template-columns: 1fr p2r(40);
   gap: p2r(8);
   position: relative;
   z-index: 1;
+  max-width: p2r(520);
+  width: 100%;
 
   .remove-btn {
     align-self: flex-end;
+  }
+
+  > *:first-child {
+    max-width: p2r(448);
+    width: 100%;
+  }
+
+  &.align-remove-start {
+    .remove-btn {
+      align-self: flex-start;
+    }
   }
 }
 
