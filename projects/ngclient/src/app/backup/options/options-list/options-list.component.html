@@ -93,7 +93,11 @@
         }
       </ng-template>
 
-      <div class="field-row">
+      <div
+        class="field-row"
+        [class.align-remove-start]="
+          item.FormView.type === 'FolderTree' || item.FormView.type === 'FileTree' || item.FormView.type === 'Boolean'
+        ">
         @if (item.FormView.type === 'FreeText') {
           <div class="form-column">
             <label>
@@ -272,7 +276,7 @@
           </app-timespan>
         }
 
-        <button shButton class="outlined remove-btn" type="button" (click)="removeSetting(item)">
+        <button shButton class="outlined small remove-btn" type="button" (click)="removeSetting(item)">
           <sh-icon>x-bold</sh-icon>
         </button>
       </div>
