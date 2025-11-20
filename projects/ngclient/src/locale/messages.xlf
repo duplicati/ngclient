@@ -530,6 +530,10 @@
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
           <context context-type="linenumber">110,112</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
+          <context context-type="linenumber">492</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="4021893317334181281" datatype="html">
         <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>arrow-left<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Back </source>
@@ -613,7 +617,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">366,367</context>
+          <context context-type="linenumber">377,378</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8132372096187045707" datatype="html">
@@ -873,36 +877,32 @@
         <source>Backup destination</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">6,8</context>
+          <context context-type="linenumber">10,12</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
           <context context-type="linenumber">6,8</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="6543822564615717644" datatype="html">
-        <source> Test destination </source>
+      <trans-unit id="567423706965777775" datatype="html">
+        <source><x id="START_BLOCK_IF" equiv-text="@if (testSignal() == &apos;testing&apos;) {"/> Testing... <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/> Test destination <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">18</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
-          <context context-type="linenumber">18</context>
+          <context context-type="linenumber">21,26</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7074196907221626123" datatype="html">
         <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>link<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Set target URL </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">24,26</context>
+          <context context-type="linenumber">31,33</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4147540953484125341" datatype="html">
         <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>link<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Edit target URL </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">35,37</context>
+          <context context-type="linenumber">42,44</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
@@ -913,7 +913,7 @@
         <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>copy<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Copy URL to clipboard </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">40,42</context>
+          <context context-type="linenumber">47,49</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
@@ -924,7 +924,7 @@
         <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon icon&gt;"/>spinner<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Testing connection... </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">52,54</context>
+          <context context-type="linenumber">59,61</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
@@ -935,7 +935,7 @@
         <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon icon&gt;"/>check<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Connection tested successfully. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">57,59</context>
+          <context context-type="linenumber">64,66</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
@@ -946,11 +946,11 @@
         <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon icon&gt;"/>warning<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> <x id="INTERPOLATION" equiv-text="{{ testErrorMessage() }}"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">62,64</context>
+          <context context-type="linenumber">69,71</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">67,69</context>
+          <context context-type="linenumber">74,76</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
@@ -965,14 +965,14 @@
         <source>Change</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">76,77</context>
+          <context context-type="linenumber">83,84</context>
         </context-group>
       </trans-unit>
       <trans-unit id="551770870891460365" datatype="html">
         <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>arrow-left<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Go back </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">91,95</context>
+          <context context-type="linenumber">98,102</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/options/options.component.html</context>
@@ -999,7 +999,7 @@
         <source><x id="START_BLOCK_IF" equiv-text="@if (testSignal() == &apos;testing&apos;) {"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon class=&quot;loader&quot;&gt;"/>spinner<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_TAG_SH_ICON_1" ctype="x-sh_icon_1" equiv-text="&lt;sh-icon&gt;"/>arrow-right<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_BLOCK_ELSE" equiv-text="}"/> Continue </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">101,108</context>
+          <context context-type="linenumber">108,115</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
@@ -1010,14 +1010,14 @@
         <source>Set target URL</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">116,117</context>
+          <context context-type="linenumber">123,124</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7962953130203958368" datatype="html">
         <source>Edit target URL</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">118,119</context>
+          <context context-type="linenumber">125,126</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
@@ -1028,7 +1028,7 @@
         <source>Be careful, this will overwrite everything you have in your destination.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">120</context>
+          <context context-type="linenumber">127</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
@@ -1039,7 +1039,7 @@
         <source> Override target URL <x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>swap<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/destination.component.html</context>
-          <context context-type="linenumber">134,137</context>
+          <context context-type="linenumber">141,144</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
@@ -2287,7 +2287,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">199,200</context>
+          <context context-type="linenumber">208,209</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4242845413151034495" datatype="html">
@@ -2654,35 +2654,35 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/single-destination/single-destination.component.html</context>
-          <context context-type="linenumber">234,235</context>
+          <context context-type="linenumber">235,236</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/single-destination/single-destination.component.html</context>
-          <context context-type="linenumber">293,294</context>
+          <context context-type="linenumber">294,295</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/single-destination/single-destination.component.html</context>
-          <context context-type="linenumber">324,325</context>
+          <context context-type="linenumber">325,326</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/single-destination/single-destination.component.html</context>
-          <context context-type="linenumber">353,354</context>
+          <context context-type="linenumber">354,355</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/single-destination/single-destination.component.html</context>
-          <context context-type="linenumber">365,366</context>
+          <context context-type="linenumber">366,367</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/single-destination/single-destination.component.html</context>
-          <context context-type="linenumber">404,405</context>
+          <context context-type="linenumber">405,406</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/single-destination/single-destination.component.html</context>
-          <context context-type="linenumber">430,431</context>
+          <context context-type="linenumber">431,432</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/single-destination/single-destination.component.html</context>
-          <context context-type="linenumber">446,447</context>
+          <context context-type="linenumber">447,448</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6017971563558877057" datatype="html">
@@ -2710,7 +2710,7 @@
         <source>This is an undocumented option.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/destination/single-destination/single-destination.component.ts</context>
-          <context context-type="linenumber">286</context>
+          <context context-type="linenumber">288</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5746563779633850987" datatype="html">
@@ -2721,7 +2721,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">315,317</context>
+          <context context-type="linenumber">324,326</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1704760277951717266" datatype="html">
@@ -3261,7 +3261,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">109,110</context>
+          <context context-type="linenumber">111,112</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3425407769043382371" datatype="html">
@@ -3302,7 +3302,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">131,132</context>
+          <context context-type="linenumber">133,134</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5646035883377382015" datatype="html">
@@ -3313,7 +3313,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">140,141</context>
+          <context context-type="linenumber">142,143</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4758656702002650001" datatype="html">
@@ -3517,18 +3517,6 @@
           <context context-type="linenumber">1,3</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="8937443382042319765" datatype="html">
-        <source><x id="TAG_INPUT" ctype="x-input" equiv-text="&lt;input
-    type=&quot;text&quot;
-    [ngModel]=&quot;scheduleType()&quot;
-    (ngModelChange)=&quot;updateScheduleType($event)&quot;
-    i18n-placeholder
-    placeholder=&quot;Select an option...&quot; /&gt;"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/ngclient/src/app/backup/schedule-v2/schedule.component.html</context>
-          <context context-type="linenumber">5,10</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="1139915548010258315" datatype="html">
         <source>Select an option...</source>
         <context-group purpose="location">
@@ -3659,7 +3647,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
-          <context context-type="linenumber">66</context>
+          <context context-type="linenumber">68</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5531237363767747080" datatype="html">
@@ -3674,7 +3662,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
-          <context context-type="linenumber">70</context>
+          <context context-type="linenumber">72</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8070396816726827304" datatype="html">
@@ -3689,7 +3677,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
-          <context context-type="linenumber">74</context>
+          <context context-type="linenumber">76</context>
         </context-group>
       </trans-unit>
       <trans-unit id="840951359074313455" datatype="html">
@@ -3736,32 +3724,39 @@
           <context context-type="linenumber">23</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="8486183487336409396" datatype="html">
-        <source>Daily 12:00</source>
+      <trans-unit id="7106385269083940375" datatype="html">
+        <source>Daily 13:00</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/schedule-v2/schedule.component.ts</context>
           <context context-type="linenumber">49</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="5198920853321351177" datatype="html">
-        <source>Weekdays 12:00</source>
+      <trans-unit id="7659025206564884735" datatype="html">
+        <source>Weekdays 13:00</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/schedule-v2/schedule.component.ts</context>
           <context context-type="linenumber">73</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="6793558533778825464" datatype="html">
-        <source>Weekly monday 12:00</source>
+      <trans-unit id="5524255217311120993" datatype="html">
+        <source>Weekly monday 13:00</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/schedule-v2/schedule.component.ts</context>
           <context context-type="linenumber">97</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="2233560223291461480" datatype="html">
-        <source>Manual</source>
+      <trans-unit id="7920644946496779525" datatype="html">
+        <source>Don&apos;t run automatically</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/schedule-v2/schedule.component.ts</context>
           <context context-type="linenumber">121</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7590013429208346303" datatype="html">
+        <source>Custom</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/backup/schedule-v2/schedule.component.ts</context>
+          <context context-type="linenumber">145</context>
         </context-group>
       </trans-unit>
       <trans-unit id="224973670174608722" datatype="html">
@@ -4769,8 +4764,8 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
           <context context-type="linenumber">9,10</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="1927421236918525990" datatype="html">
-        <source> Add <x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>plus<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
+      <trans-unit id="4998366809306393152" datatype="html">
+        <source> Create <x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>plus<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
           <context context-type="linenumber">12,15</context>
@@ -4808,165 +4803,165 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>rows<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> List </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">37,39</context>
+          <context context-type="linenumber">38,40</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4065644497478312884" datatype="html">
         <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>list<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Details </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">42,44</context>
+          <context context-type="linenumber">43,45</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4875655685822096690" datatype="html">
         <source> Time: <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (timeType() == &apos;relative&apos;) {"/> Relative <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE_IF" equiv-text="@else if (timeType() == &apos;actual&apos;) {"/> Actual <x id="CLOSE_BLOCK_ELSE_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/> <x id="INTERPOLATION" equiv-text="{{ timeType() }}"/> <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/><x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>clock<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">49,61</context>
+          <context context-type="linenumber">50,61</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5139724972778583243" datatype="html">
         <source>Relative time</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">63,64</context>
+          <context context-type="linenumber">64,65</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7459785994766804203" datatype="html">
         <source>Actual time</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">64,65</context>
+          <context context-type="linenumber">65,66</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5968742786475166951" datatype="html">
         <source> Order by: <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/><x id="INTERPOLATION" equiv-text="{{ orderBy() }}"/><x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>arrows-down-up<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">71,74</context>
+          <context context-type="linenumber">72,75</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7708270344948043036" datatype="html">
         <source> <x id="INTERPOLATION" equiv-text="{{ order.label }}"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">83,84</context>
+          <context context-type="linenumber">84,85</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5195907025136652253" datatype="html">
         <source>Next scheduled run:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">116,117</context>
+          <context context-type="linenumber">118,119</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4220765745195024064" datatype="html">
         <source>Duration:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">122,123</context>
+          <context context-type="linenumber">124,125</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8856905278208146821" datatype="html">
         <source> <x id="ICU" equiv-text="{versions, plural, =0 {No version yet} =1 {1 Version} other {{{ versions }} Versions}}" xid="6502601490918455200"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">151,152</context>
+          <context context-type="linenumber">153,154</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">254,256</context>
+          <context context-type="linenumber">263,265</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4301968594246501194" datatype="html">
         <source>{VAR_PLURAL, plural, =0 {No version yet} =1 {1 Version} other {<x id="INTERPOLATION"/> Versions}}</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">151,152</context>
+          <context context-type="linenumber">153,154</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1124571293447475738" datatype="html">
         <source>Externally managed</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">155,156</context>
+          <context context-type="linenumber">157,158</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="1941601607032420166" datatype="html">
-        <source>No backups found</source>
+      <trans-unit id="4833523116462449893" datatype="html">
+        <source> No backups found <x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button shButton class=&quot;primary raised&quot; [routerLink]=&quot;[&apos;/backup/new&apos;]&quot;&gt;"/> Click to create one now <x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>plus<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">165</context>
+          <context context-type="linenumber">168,175</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2737753982083076672" datatype="html">
         <source> Backup <x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">172,175</context>
+          <context context-type="linenumber">181,184</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8239510835983979014" datatype="html">
         <source> Type <x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">176,179</context>
+          <context context-type="linenumber">185,188</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4031685509248518357" datatype="html">
         <source> Last backup <x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">180,183</context>
+          <context context-type="linenumber">189,192</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6221598791249318435" datatype="html">
         <source> Next run <x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">184,187</context>
+          <context context-type="linenumber">193,196</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6061597570084022535" datatype="html">
         <source> Duration <x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">188,191</context>
+          <context context-type="linenumber">197,200</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2200211643890848273" datatype="html">
         <source> Source <x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">192,195</context>
+          <context context-type="linenumber">201,204</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1887705198379537678" datatype="html">
         <source> Destination <x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">196,199</context>
+          <context context-type="linenumber">205,208</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3193976279273491157" datatype="html">
         <source>Actions</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">200,201</context>
+          <context context-type="linenumber">209,210</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2033393708907751806" datatype="html">
         <source>{VAR_PLURAL, plural, =0 {No versions} =1 {1 Version} other {<x id="INTERPOLATION"/> Versions}}</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">254,255</context>
+          <context context-type="linenumber">263,264</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8187139875840700893" datatype="html">
         <source>Loading backups...</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">270,271</context>
+          <context context-type="linenumber">279,280</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
@@ -4977,14 +4972,14 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>play-circle<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (viewMode() === &apos;list&apos;) {"/> Start <x id="CLOSE_BLOCK_IF" equiv-text="}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">283,289</context>
+          <context context-type="linenumber">292,298</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6370106640591740243" datatype="html">
         <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>clock-counter-clockwise<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Restore </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">310,312</context>
+          <context context-type="linenumber">319,321</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/layout/layout.component.html</context>
@@ -4995,56 +4990,56 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>x-circle<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Delete </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">320,322</context>
+          <context context-type="linenumber">329,331</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6201638315245239510" datatype="html">
         <source>Advanced</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">326,328</context>
+          <context context-type="linenumber">335,337</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3774821360524815607" datatype="html">
         <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>database<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Database </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">329,331</context>
+          <context context-type="linenumber">338,340</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6760351587885289921" datatype="html">
         <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>check-square-offset<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Verify files </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">334,336</context>
+          <context context-type="linenumber">343,345</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8122955396445434605" datatype="html">
         <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>file-archive<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Compress now </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">339,341</context>
+          <context context-type="linenumber">348,350</context>
         </context-group>
       </trans-unit>
       <trans-unit id="566215919641077686" datatype="html">
         <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>terminal-window<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Commandline </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">344,346</context>
+          <context context-type="linenumber">353,355</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4273460998206847730" datatype="html">
         <source>Reporting</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">350,352</context>
+          <context context-type="linenumber">359,361</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6438251515449676895" datatype="html">
         <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>notepad<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Log </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">353,355</context>
+          <context context-type="linenumber">362,364</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2906587845957718064" datatype="html">
@@ -5140,39 +5135,32 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
           <context context-type="linenumber">44,46</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="2741656091226715981" datatype="html">
-        <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>skip-back<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Use old UI </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/ngclient/src/app/layout/layout.component.html</context>
-          <context context-type="linenumber">61,63</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3227513892966692029" datatype="html">
-        <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>sign-out<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Log out </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">projects/ngclient/src/app/layout/layout.component.html</context>
-          <context context-type="linenumber">66,68</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="2386974033021349187" datatype="html">
         <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>info<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> About Duplicati </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/layout/layout.component.html</context>
-          <context context-type="linenumber">74,76</context>
+          <context context-type="linenumber">67,69</context>
         </context-group>
       </trans-unit>
       <trans-unit id="463793077135403842" datatype="html">
         <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>files<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Documentation <x id="START_TAG_SH_ICON_1" ctype="x-sh_icon_1" equiv-text="&lt;sh-icon suffix&gt;"/>arrow-square-out<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/layout/layout.component.html</context>
-          <context context-type="linenumber">79,85</context>
+          <context context-type="linenumber">72,78</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3100478220554156697" datatype="html">
         <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>chats-circle<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Visit forum <x id="START_TAG_SH_ICON_1" ctype="x-sh_icon_1" equiv-text="&lt;sh-icon suffix&gt;"/>arrow-square-out<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/layout/layout.component.html</context>
-          <context context-type="linenumber">86,91</context>
+          <context context-type="linenumber">79,85</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3227513892966692029" datatype="html">
+        <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>sign-out<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Log out </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/layout/layout.component.html</context>
+          <context context-type="linenumber">87,89</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6508575097595619745" datatype="html">
@@ -5418,6 +5406,13 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/options/options.component.ts</context>
           <context context-type="linenumber">53</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6543822564615717644" datatype="html">
+        <source> Test destination </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/restore-flow/restore-destination/restore-destination.component.html</context>
+          <context context-type="linenumber">18</context>
         </context-group>
       </trans-unit>
       <trans-unit id="297083673179540834" datatype="html">
@@ -5947,253 +5942,295 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
           <context context-type="linenumber">145,146</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="4439503393082532842" datatype="html">
+        <source>Use legacy interface</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
+          <context context-type="linenumber">161,162</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="922842047528131702" datatype="html">
+        <source>Use the old user interface, not recommended unless you have a specific reason.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
+          <context context-type="linenumber">162,163</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4750476432940269412" datatype="html">
+        <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>swap<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Use legacy UI </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
+          <context context-type="linenumber">167,169</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="4546151690452416671" datatype="html">
         <source>Allow remote access (requires restart)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">161,162</context>
+          <context context-type="linenumber">175,176</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6897429313181532546" datatype="html">
         <source> By allowing remote access, the server listens to requests from any machine on your network. If you enable this option, make sure you are always using the computer on a secure firewall protected network. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">163,164</context>
+          <context context-type="linenumber">177,178</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2221284880137781133" datatype="html">
         <source>Allow remote access</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">170,171</context>
+          <context context-type="linenumber">184,185</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3225509872245812272" datatype="html">
         <source>Allowed hostnames</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">175,176</context>
+          <context context-type="linenumber">189,190</context>
         </context-group>
       </trans-unit>
       <trans-unit id="155020144989998859" datatype="html">
         <source> To prevent various DNS based attacks, Duplicati limits the allowed hostnames to the ones listed here. Direct IP access and localhost is always allowed. Multiple hostnames can be supplied with a semicolon separator. If any of the allowed hostnames is an asterisk (*), all hostnames are allowed and this feature is disabled. If the field is empty, only IP address and localhost access is allowed. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">180,183</context>
+          <context context-type="linenumber">194,197</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1878510219157274954" datatype="html">
         <source> Update allowed hostnames </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">192,193</context>
+          <context context-type="linenumber">206,207</context>
         </context-group>
       </trans-unit>
       <trans-unit id="918395176653023621" datatype="html">
         <source>Prevent tray icon automatic log-in</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">200,201</context>
+          <context context-type="linenumber">214,215</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">211,212</context>
+          <context context-type="linenumber">225,226</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8394223023612196059" datatype="html">
         <source> By default, the tray icon will open the user interface with a token that unlocks the user interface. This ensures that you can access the user interface from the tray icon, while requiring others to enter a password. If you prefer having to type in the password, even when accessing the user interface from the tray icon, enable this option. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">202,205</context>
+          <context context-type="linenumber">216,219</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7612216379046551796" datatype="html">
         <source>Power mode provider</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">219,220</context>
+          <context context-type="linenumber">233,234</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3158625479714022328" datatype="html">
         <source> The power mode provider monitors the system for when it enters a low power state and pauses Duplicati. When the system resumes, Duplicati will resume as well. Choosing the None option disables detection of low power states and Duplicati will run all the time. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">221,223</context>
+          <context context-type="linenumber">235,237</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2919975008248285707" datatype="html">
         <source>Update channel</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">241,242</context>
+          <context context-type="linenumber">255,256</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3174422874176771933" datatype="html">
         <source>Installed version: <x id="INTERPOLATION" equiv-text="{{ sysinfo()?.ServerVersionName }}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">243,246</context>
+          <context context-type="linenumber">257,260</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3226311709119731062" datatype="html">
         <source> Default (<x id="INTERPOLATION" equiv-text="{{ sysinfo()?.DefaultUpdateChannel }}"/>) </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">254,255</context>
+          <context context-type="linenumber">268,269</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8713738462167694622" datatype="html">
         <source>Same as the base install version: <x id="INTERPOLATION" equiv-text="{{ sysinfo()?.ServerVersionType }}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">257,258</context>
+          <context context-type="linenumber">271,272</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3905239345805877394" datatype="html">
         <source>Stable</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">261</context>
+          <context context-type="linenumber">275</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6693055238157597591" datatype="html">
         <source>Official stable release.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">263,264</context>
+          <context context-type="linenumber">277,278</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8289732336438690874" datatype="html">
         <source>Beta</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">267</context>
+          <context context-type="linenumber">281</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1917818376626138583" datatype="html">
         <source> Try out the new features that we are working on. Test a backup and restore before using this in production environments. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">270,271</context>
+          <context context-type="linenumber">284,285</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4284966588441859260" datatype="html">
         <source> Experimental </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">277,278</context>
+          <context context-type="linenumber">291,292</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3874113050656942505" datatype="html">
         <source>Early previews of new features. Not for use with important data.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">280,281</context>
+          <context context-type="linenumber">294,295</context>
         </context-group>
       </trans-unit>
       <trans-unit id="401382195676192367" datatype="html">
         <source>Canary</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">284</context>
+          <context context-type="linenumber">298</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8365837297204989044" datatype="html">
         <source>Builds for developers and testers only. Not for use with important data.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">286,287</context>
+          <context context-type="linenumber">300,301</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5320543668849212821" datatype="html">
         <source>Pause after startup or hibernation</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">297,298</context>
+          <context context-type="linenumber">306,307</context>
         </context-group>
       </trans-unit>
       <trans-unit id="271659419607184663" datatype="html">
         <source> Duplicati will run when started, but will remain in paused state for the duration. Duplicati will occupy minimal system resources and no backups will be run. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">299,300</context>
+          <context context-type="linenumber">308,309</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7350523198476594805" datatype="html">
         <source>Usage statistics</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">330,331</context>
+          <context context-type="linenumber">339,340</context>
         </context-group>
       </trans-unit>
       <trans-unit id="241597370095584269" datatype="html">
         <source> Usage reports help us improve the user experience and evaluate impact of new features. We use them to generate <x id="START_LINK" ctype="x-a" equiv-text="&lt;a href=&quot;#&quot;&gt;"/>public usage statistics.<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a&gt;"/><x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/><x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> All usage reports are sent anonymously and do not contain any personal information. They contain information about hardware and operating system, the type of backend, backup duration, overall size of source data and similar data. They do not contain paths, filenames, usernames, passwords or similar sensitive information. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.html</context>
-          <context context-type="linenumber">332,338</context>
+          <context context-type="linenumber">341,347</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6252070156626006029" datatype="html">
         <source>None</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
-          <context context-type="linenumber">62</context>
+          <context context-type="linenumber">64</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6939005683702161102" datatype="html">
         <source>System default ($value)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
-          <context context-type="linenumber">83</context>
+          <context context-type="linenumber">85</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4531976006614415538" datatype="html">
         <source>Usage statistics, warnings, errors, and crashes</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
-          <context context-type="linenumber">87</context>
+          <context context-type="linenumber">89</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4007307614127429452" datatype="html">
         <source>Warnings, errors and crashes</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
-          <context context-type="linenumber">91</context>
+          <context context-type="linenumber">93</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7003237362536687306" datatype="html">
         <source>Errors and crashes</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
-          <context context-type="linenumber">95</context>
+          <context context-type="linenumber">97</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7931989065782446584" datatype="html">
         <source>Crashes only</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
-          <context context-type="linenumber">99</context>
+          <context context-type="linenumber">101</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6546722977616384568" datatype="html">
         <source>None / disabled</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
-          <context context-type="linenumber">103</context>
+          <context context-type="linenumber">105</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4931861490722469250" datatype="html">
         <source>System default (<x id="PH" equiv-text="value"/>)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
-          <context context-type="linenumber">165</context>
+          <context context-type="linenumber">168</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5607669932062416162" datatype="html">
         <source>Default</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
-          <context context-type="linenumber">342</context>
+          <context context-type="linenumber">345</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7207514283977656639" datatype="html">
+        <source>Use legacy UI</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
+          <context context-type="linenumber">489</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5308457179710531498" datatype="html">
+        <source>Are you sure you want to use the legacy user interface, not recommended unless you have a specific reason?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
+          <context context-type="linenumber">490</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6586002048052607718" datatype="html">
+        <source>Use legacy</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/settings/settings.component.ts</context>
+          <context context-type="linenumber">491</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3568815022803741004" datatype="html">
@@ -6214,28 +6251,28 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
         <source> Connect machine to console </source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/welcome/connect/connect.html</context>
-          <context context-type="linenumber">50,51</context>
+          <context context-type="linenumber">53,54</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7871748507288120896" datatype="html">
         <source>We&apos;re now connecting you to the console</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/welcome/connect/connect.html</context>
-          <context context-type="linenumber">56,58</context>
+          <context context-type="linenumber">60,62</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4643938448268414021" datatype="html">
         <source>Something failed during registration we&apos;re missing claimUrl, please try again</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/welcome/connect/connect.html</context>
-          <context context-type="linenumber">62,63</context>
+          <context context-type="linenumber">66,67</context>
         </context-group>
       </trans-unit>
       <trans-unit id="737772204931716568" datatype="html">
         <source> Failed to register <x id="START_BLOCK_IF" equiv-text="@if (typeParam() === &apos;link&apos;) {"/><x id="START_PARAGRAPH" ctype="x-p" equiv-text="&lt;p&gt;"/> Check if the connection link are correct, alternatively it could be your internet connection or the service might be down <x id="CLOSE_PARAGRAPH" ctype="x-p" equiv-text="&lt;/p&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/><x id="START_PARAGRAPH" ctype="x-p" equiv-text="&lt;p&gt;"/> There might be a problem with your internet connection or the service might be down, please try again later <x id="CLOSE_PARAGRAPH" ctype="x-p" equiv-text="&lt;/p&gt;"/><x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/welcome/connect/connect.html</context>
-          <context context-type="linenumber">69,83</context>
+          <context context-type="linenumber">73,87</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2345528476369109922" datatype="html">
@@ -6245,8 +6282,8 @@ with the REPORTED host key: <x id="PH_1" equiv-text="reportedhostkey"/>?</source
           <context context-type="linenumber">11,12</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="394343232364110649" datatype="html">
-        <source>Easy connect link to console</source>
+      <trans-unit id="1943617742862985637" datatype="html">
+        <source>Connection link</source>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/welcome/select/select.html</context>
           <context context-type="linenumber">24,25</context>
