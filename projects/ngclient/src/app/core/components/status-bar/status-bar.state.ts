@@ -282,6 +282,10 @@ export class StatusBarState {
     if (status.task && status) {
       text = status.Phase ? STATUS_STATES[status.Phase] : 'Running …';
 
+      // If there is nothing to process, just return the base text
+      // This happens during the initial phases of a backup/restore
+      if (status.TotalFileCount === 0) return text;
+
       if (status.Phase === 'Backup_ProcessingFiles' || status.Phase === 'Restore_DownloadingRemoteFiles') {
         if (status.StillCounting) {
           text = `Counting (${status.TotalFileCount} files found, ${this.#bytesPipe.transform(status.TotalFileSize)})`;
