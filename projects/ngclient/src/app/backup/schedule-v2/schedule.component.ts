@@ -118,8 +118,32 @@ export const SCHEDULE_DEFAULT_OPTIONS = [
     },
   },
   {
-    key: $localize`Manual`,
-    value: 'manual',
+    key: $localize`Don't run automatically`,
+    value: 'disabled',
+    data: {
+      autoRun: false,
+      nextTime: {
+        time: '13:00:00',
+        date: new Date().toISOString().split('T')[0],
+      },
+      runAgain: {
+        repeatValue: 1,
+        repeatUnit: 'D',
+        allowedDays: {
+          mon: true,
+          tue: true,
+          wed: true,
+          thu: true,
+          fri: true,
+          sat: true,
+          sun: true,
+        },
+      },
+    },
+  },
+  {
+    key: $localize`Custom`,
+    value: 'custom',
     data: {
       autoRun: true,
       nextTime: {
@@ -242,7 +266,7 @@ export default class ScheduleComponent {
   updateScheduleType(newType: string) {
     const predefinedType = SCHEDULE_DEFAULT_OPTIONS.find((x) => x.value === newType);
 
-    if (predefinedType && predefinedType?.value !== 'manual') {
+    if (predefinedType && predefinedType?.value !== 'custom') {
       this.scheduleType.set(predefinedType.value);
 
       const data = predefinedType.data;
@@ -260,7 +284,7 @@ export default class ScheduleComponent {
       this.scheduleFields.runAgain.allowedDays.sat.set(data.runAgain?.allowedDays?.sat ?? true);
       this.scheduleFields.runAgain.allowedDays.sun.set(data.runAgain?.allowedDays?.sun ?? true);
     } else {
-      this.scheduleType.set('manual');
+      this.scheduleType.set('custom');
     }
   }
 
