@@ -38,10 +38,10 @@ export default class AdvancedOptionsSettingsComponent {
         const name = key.substring(2);
 
         this.settings.update((x) => {
-          if (x.some((option) => option.Name === name)) return x;
+          if (x.some((option) => option.Name === name || option.Name === key)) return x;
 
           x.push({
-            Name: name,
+            Name: key,
             Value: value,
           } as any);
 
@@ -60,9 +60,9 @@ export default class AdvancedOptionsSettingsComponent {
 
     const settings = this.settings();
     const lastRecievedServerSettings = this.lastRecievedServerSettings();
-    const currentSettingNames = settings.map((s) => s.Name!);
+    const currentSettingNames = settings.map((s) => (s.Name?.startsWith('--') ? s.Name : `--${s.Name}`));
     const lastSettingKeys = Object.keys(lastRecievedServerSettings).filter((key) => key.startsWith('--'));
-    const removedSettings = lastSettingKeys.filter((key) => !currentSettingNames.includes(key.replace('--', '')));
+    const removedSettings = lastSettingKeys.filter((key) => !currentSettingNames.includes(key));
     const reduced = settings.reduce(
       (acc, curr) => {
         const name = curr.Name?.startsWith('--') ? curr.Name : `--${curr.Name}`;
