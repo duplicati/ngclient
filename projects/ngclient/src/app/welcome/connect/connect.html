@@ -40,15 +40,19 @@
         [(ngModel)]="customRegisterUrl" />
     </sh-form-field>
 
-    <button
-      type="button"
-      shButton
-      [disabled]="!customRegisterUrlValid()"
-      class="raised primary"
-      (click)="registerViaCustomUrl()"
-      i18n>
-      Connect machine to console
-    </button>
+    <div class="nav-buttons">
+      <button type="button" shButton class="raised" routerLink="/welcome">Go back</button>
+
+      <button
+        type="button"
+        shButton
+        [disabled]="!customRegisterUrlValid()"
+        class="raised primary"
+        (click)="registerViaCustomUrl()"
+        i18n>
+        Connect machine to console
+      </button>
+    </div>
   }
 
   @if (state() === 'registered') {
