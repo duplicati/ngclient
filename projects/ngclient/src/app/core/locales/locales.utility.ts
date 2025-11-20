@@ -8,6 +8,8 @@ import localeDe from '@angular/common/locales/de';
 import localeEn from '@angular/common/locales/en';
 import localeEnGb from '@angular/common/locales/en-GB';
 import localeEs from '@angular/common/locales/es';
+import localeZhHansExtra from '@angular/common/locales/extra/zh-Hans';
+import localeZhHantExtra from '@angular/common/locales/extra/zh-Hant';
 import localeFi from '@angular/common/locales/fi';
 import localeFr from '@angular/common/locales/fr';
 import localeHu from '@angular/common/locales/hu';
@@ -24,26 +26,33 @@ import localeZhHant from '@angular/common/locales/zh-Hant';
 
 // Mapping locale codes to their imported Angular locale data
 const ANGULAR_LOCALE_DATA: Record<string, any> = {
-  'en': localeEn,
+  en: localeEn,
   'en-GB': localeEnGb,
-  'nl': localeNl,
-  'fr': localeFr,
-  'de': localeDe,
-  'cs': localeCs,
-  'da': localeDa,
-  'es': localeEs,
-  'fi': localeFi,
-  'hu': localeHu,
-  'it': localeIt,
-  'ja': localeJa,
-  'pl': localePl,
-  'pt': localePt,
+  nl: localeNl,
+  fr: localeFr,
+  de: localeDe,
+  cs: localeCs,
+  da: localeDa,
+  es: localeEs,
+  fi: localeFi,
+  hu: localeHu,
+  it: localeIt,
+  ja: localeJa,
+  pl: localePl,
+  pt: localePt,
   'pt-BR': localePt,
-  'ru': localeRu,
-  'sr': localeSr,
-  'sv': localeSv,
+  ru: localeRu,
+  sr: localeSr,
+  sv: localeSv,
+  'zh-CN': localeZhHans,
+  'zh-TW': localeZhHant,
   'zh-Hans': localeZhHans,
   'zh-Hant': localeZhHant,
+};
+
+const ANGULAR_LOCALE_EXTRA_DATA: Record<string, any> = {
+  'zh-Hans': localeZhHansExtra,
+  'zh-Hant': localeZhHantExtra,
 };
 
 export const DEFAULT_LOCALE = 'en-US';
@@ -68,91 +77,92 @@ export const LANGUAGES = [
   { value: 'sr-RS', label: 'Serbian (sr-RS)' },
   { value: 'sv-SE', label: 'Swedish (sv-SE)' },
   { value: 'zh-CN', label: 'Chinese (zh-CN)' },
-  { value: 'zh-Hans', label: 'Chinese (Simplified, zh-Hans)' },
   { value: 'zh-TW', label: 'Chinese (zh-TW)' },
 ];
 
 // We map various browser-reported locales to our supported locales
 const LOCALE_MAP: Record<string, string> = {
   // English variants
-  'en': 'en',
+  en: 'en',
   'en-US': 'en',
   'en-GB': 'en-GB',
   'en-AU': 'en',
   'en-CA': 'en',
 
   // Czech
-  'cs': 'cs',
+  cs: 'cs',
   'cs-CZ': 'cs',
 
   // Danish
-  'da': 'da',
+  da: 'da',
   'da-DK': 'da',
 
   // German
-  'de': 'de',
+  de: 'de',
   'de-DE': 'de',
   'de-AT': 'de',
 
   // Spanish
-  'es': 'es',
+  es: 'es',
   'es-ES': 'es',
   'es-MX': 'es',
 
   // Finnish
-  'fi': 'fi',
+  fi: 'fi',
   'fi-FI': 'fi',
 
   // French
-  'fr': 'fr',
+  fr: 'fr',
   'fr-FR': 'fr',
   'fr-CA': 'fr',
 
   // Hungarian
-  'hu': 'hu',
+  hu: 'hu',
   'hu-HU': 'hu',
 
   // Italian
-  'it': 'it',
+  it: 'it',
   'it-IT': 'it',
 
   // Japanese
-  'ja': 'ja-JP',
+  ja: 'ja-JP',
   'ja-JP': 'ja-JP',
 
   // Dutch
-  'nl': 'nl-NL',
+  nl: 'nl-NL',
   'nl-NL': 'nl-NL',
   'nl-BE': 'nl-NL',
 
   // Polish
-  'pl': 'pl',
+  pl: 'pl',
   'pl-PL': 'pl',
 
   // Portuguese
-  'pt': 'pt',
+  pt: 'pt',
   'pt-BR': 'pt-BR',
   'pt-PT': 'pt',
 
   // Russian
-  'ru': 'ru',
+  ru: 'ru',
   'ru-RU': 'ru',
 
   // Serbian
-  'sr': 'sr-RS',
+  sr: 'sr-RS',
   'sr-RS': 'sr-RS',
 
   // Swedish
-  'sv': 'sv-SE',
+  sv: 'sv-SE',
   'sv-SE': 'sv-SE',
   'sv-FI': 'sv-SE',
 
   // Chinese
-  'zh': 'zh-CN',
+  zh: 'zh-CN',
   'zh-CN': 'zh-CN',
   'zh-SG': 'zh-CN',
   'zh-TW': 'zh-TW',
   'zh-HK': 'zh-TW',
+  'zh-Hans': 'zh-CN',
+  'zh-Hant': 'zh-TW',
 };
 
 export const ANGULAR_MJS_LOCALE_MAP: Record<string, string> = {
@@ -162,6 +172,7 @@ export const ANGULAR_MJS_LOCALE_MAP: Record<string, string> = {
   'sv-SE': 'sv',
   'zh-CN': 'zh-Hans',
   'zh-TW': 'zh-Hant',
+  'zh-HK': 'zh-Hant',
 };
 
 const SUPPORTED_LOCALES = Array.from(new Set(Object.values(LOCALE_MAP)));
@@ -178,18 +189,22 @@ export function getLocale(): Locales {
   const locale = SUPPORTED_LOCALES.find((x) => x === appLang) ?? DEFAULT_LOCALE;
 
   // Try to resolve the mapped locale, falling back to base language
-  const mappedLocale = LOCALE_MAP[locale]
-    ?? LOCALE_MAP[locale.split('-')[0]] // Map unknown specific locales to base language
-    ?? DEFAULT_LOCALE;
+  const mappedLocale =
+    LOCALE_MAP[locale] ??
+    LOCALE_MAP[locale.split('-')[0]] ?? // Map unknown specific locales to base language
+    DEFAULT_LOCALE;
 
-    if (locale === DEFAULT_LOCALE) return locale;
+  if (locale === DEFAULT_LOCALE) return locale;
 
-    // Angular mjs locales are different from the standard locales
-    const mjsLocale = ANGULAR_MJS_LOCALE_MAP[mappedLocale] ?? mappedLocale;
-    const localeData = ANGULAR_LOCALE_DATA[mjsLocale];
-    if (localeData)
-      registerLocaleData(localeData);
-  
+  // Angular mjs locales are different from the standard locales
+  const mjsLocale = ANGULAR_MJS_LOCALE_MAP[mappedLocale] ?? mappedLocale;
+  const localeData = ANGULAR_LOCALE_DATA[mjsLocale];
+  const extraLocaleData = ANGULAR_LOCALE_EXTRA_DATA[mjsLocale];
+  if (localeData) {
+    registerLocaleData(localeData, mjsLocale, extraLocaleData);
+    // Register under the mapped locale as well, if different from mjs locale
+    if (mjsLocale !== mappedLocale) registerLocaleData(localeData, mappedLocale, extraLocaleData);
+  }
 
   // We need to load the message translations manually, as Angular only supports static translations
   const mappedFileLocale = mappedLocale.replace(/-/g, '_');
