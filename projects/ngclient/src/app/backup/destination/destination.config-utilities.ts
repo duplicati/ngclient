@@ -69,7 +69,8 @@ export type FormView = {
     | 'Email'
     | 'FreeText'
     | 'Hostname'
-    | 'Bucketname';
+    | 'Bucketname'
+    | 'BucketnameB2';
   accepts?: string;
   shortDescription?: string;
   longDescription?: string;

@@ -328,6 +328,32 @@ export class SingleDestinationComponent {
     return true;
   }
 
+  isValidBucketnameB2(name: string): boolean {
+    if (!name) return false;
+
+    const length = name.length;
+
+    // Length between 3 and 63 characters
+    if (length < 6 || length > 63) return false;
+
+    // Must be letters, numbers, dots, or hyphens
+    if (!/^[a-zA-Z0-9.-]+$/.test(name)) return false;
+
+    // Must start and end with a letter or number
+    if (!/^[a-zA-Z0-9]/.test(name) || !/[a-zA-Z0-9]$/.test(name)) return false;
+
+    // Cannot be formatted like an IP address
+    if (/^\d{1,3}(\.\d{1,3}){3}$/.test(name)) return false;
+
+    // Cannot contain adjacent periods or dashes next to periods
+    if (/(\.\.)|(\.-)|(-\.)/.test(name)) return false;
+
+    // Cannot start with "b2-"
+    if (name.toLowerCase().startsWith('b2-')) return false;
+
+    return true;
+  }
+
   isValidHostname(hostname: string): boolean {
     if (!hostname || hostname.length > 253) return false;
 
@@ -363,7 +389,7 @@ export class SingleDestinationComponent {
     type: FormView['type'],
     event: KeyboardEvent
   ) {
-    if (type === 'Hostname' || type === 'Bucketname') {
+    if (type === 'Hostname' || type === 'Bucketname' || type === 'BucketnameB2') {
       const controlKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Home', 'End'];
       if (controlKeys.includes(event.key)) return;
       if (event.key == '/' || event.key == '\\' || event.key == ':') {

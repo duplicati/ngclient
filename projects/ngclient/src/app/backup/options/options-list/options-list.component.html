@@ -150,7 +150,8 @@
           item.FormView.type === 'Decimal' ||
           item.FormView.type === 'Email' ||
           item.FormView.type === 'Hostname' ||
-          item.FormView.type === 'Bucketname'
+          item.FormView.type === 'Bucketname' ||
+          item.FormView.type === 'BucketnameB2'
         ) {
           <sh-form-field>
             <label [for]="formId">
@@ -167,7 +168,7 @@
               <sh-icon prefix>link</sh-icon>
             } @else if (item.FormView.type === 'Hostname') {
               <sh-icon prefix>hard-drives</sh-icon>
-            } @else if (item.FormView.type === 'Bucketname') {
+            } @else if (item.FormView.type === 'Bucketname' || item.FormView.type === 'BucketnameB2') {
               <sh-icon prefix>jar</sh-icon>
             } @else if (item.FormView.type === 'Email') {
               <sh-icon prefix>envelope</sh-icon>

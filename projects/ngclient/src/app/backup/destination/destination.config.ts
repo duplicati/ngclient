@@ -838,7 +838,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     searchTerms: 'backblaze',
     customFields: {
       bucket: {
-        type: 'Bucketname',
+        type: 'BucketnameB2',
         name: 'bucket',
         shortDescription: $localize`Bucket name`,
         longDescription: $localize`Bucket name`,
