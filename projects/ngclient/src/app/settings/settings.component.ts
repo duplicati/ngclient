@@ -197,6 +197,7 @@ export default class SettingsComponent {
   updatingAllowedHosts = signal(false);
   updatingConsoleControl = signal(false);
   consoleControlDisabled = signal(false);
+  hideConsoleConnectionStatus = this.#serverSettingsService.isConsoleConnectionStatusHidden;
 
   updateRemoteAccess() {
     const prevValue = this.allowRemoteAccess();
@@ -288,6 +289,20 @@ export default class SettingsComponent {
           return of(null);
         })
       )
+      .subscribe();
+  }
+
+  updatingHideConsoleConnectionStatus = signal(false);
+
+  saveHideConsoleConnectionStatus() {
+    const prevValue = this.hideConsoleConnectionStatus();
+    const newValue = !prevValue;
+
+    this.updatingHideConsoleConnectionStatus.set(true);
+
+    this.#serverSettingsService
+      .setHideConsoleConnectionStatus(newValue)
+      .pipe(finalize(() => this.updatingHideConsoleConnectionStatus.set(false)))
       .subscribe();
   }
 

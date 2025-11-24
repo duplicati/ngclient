@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ShipButton, ShipDialogService, ShipIcon, ShipProgressBar, ShipSpinner } from '@ship-ui/core';
+import { ServerSettingsService } from '../../../settings/server-settings.service';
 import { DuplicatiServer } from '../../openapi';
 import { RelativeTimePipe } from '../../pipes/relative-time.pipe';
 import { ServerStateService } from '../../services/server-state.service';
@@ -29,6 +30,7 @@ export default class StatusBarComponent {
   #relayconfigState = inject(RelayconfigState);
   #sysinfo = inject(SysinfoState);
   #serverState = inject(ServerStateService);
+  #serverSettings = inject(ServerSettingsService);
 
   minsAgo = date.setMinutes(date.getMinutes() - 1);
 
@@ -41,6 +43,7 @@ export default class StatusBarComponent {
   #taskStopRequested = signal(-1);
   pgState = computed(() => this.#serverState.serverState());
   isUsingRelay = this.#relayconfigState.relayIsEnabled;
+  hideConsoleConnectionStatus = this.#serverSettings.isConsoleConnectionStatusHidden;
 
   nextBackup = computed(() => {
     // Trigger if the backup list changes

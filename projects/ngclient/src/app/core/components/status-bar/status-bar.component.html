@@ -21,7 +21,7 @@
   </div>
 
   <div class="current-backup-actions">
-    @if (!isUsingRelay()) {
+    @if (!isUsingRelay() && !hideConsoleConnectionStatus()) {
       <app-remote-connectivity-status />
     }
 
