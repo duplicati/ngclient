@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import { ShipButton, ShipDivider } from '@ship-ui/core';
+import { ServerSettingsService } from '../../settings/server-settings.service';
 
 @Component({
   selector: 'app-select',
@@ -10,5 +11,13 @@ import { ShipButton, ShipDivider } from '@ship-ui/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class Select {
+  #serverSettingsService = inject(ServerSettingsService);
+  #router = inject(Router);
   hoveringConnect = signal(false);
+
+  setWelcomeShown() {
+    this.#serverSettingsService.setShownWelcomePage().subscribe(() => {
+      this.#router.navigate(['']);
+    });
+  }
 }

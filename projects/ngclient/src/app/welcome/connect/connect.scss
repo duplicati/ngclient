@@ -132,3 +132,9 @@
     }
   }
 }
+
+.nav-buttons {
+  display: flex;
+  gap: p2r(8);
+  flex-direction: row;
+}

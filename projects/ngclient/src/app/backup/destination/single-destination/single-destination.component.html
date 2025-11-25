@@ -170,7 +170,8 @@
         item.formView.type === 'Path' ||
         item.formView.type === 'Email' ||
         item.formView.type === 'Hostname' ||
-        item.formView.type === 'Bucketname'
+        item.formView.type === 'Bucketname' ||
+        item.formView.type === 'BucketnameB2'
       ) {
         <sh-form-field>
           <label [for]="formFieldId">
@@ -193,6 +194,9 @@
               <sh-icon class="error" i18n-shTooltip shTooltip="Hostname is invalid">x-circle</sh-icon>
             }
             @if (item.formView.type == 'Bucketname' && !isFieldEmpty && !isValidBucketname(fieldValue)) {
+              <sh-icon class="warn" i18n-shTooltip shTooltip="Bucket name is invalid">warning</sh-icon>
+            }
+            @if (item.formView.type == 'BucketnameB2' && !isFieldEmpty && !isValidBucketnameB2(fieldValue)) {
               <sh-icon class="warn" i18n-shTooltip shTooltip="Bucket name is invalid">warning</sh-icon>
             }
           </label>
@@ -222,7 +226,7 @@
             <sh-icon prefix>envelope</sh-icon>
           } @else if (item.formView.type === 'Hostname') {
             <sh-icon prefix>hard-drives</sh-icon>
-          } @else if (item.formView.type === 'Bucketname') {
+          } @else if (item.formView.type === 'Bucketname' || item.formView.type === 'BucketnameB2') {
             <sh-icon prefix>jar</sh-icon>
           } @else {
             <sh-icon prefix>textbox</sh-icon>

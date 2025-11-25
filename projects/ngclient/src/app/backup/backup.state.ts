@@ -248,7 +248,7 @@ export class BackupState {
 
   mapScheduleToForm(schedule: ScheduleDto | null) {
     if (!schedule) {
-      this.scheduleType.set('manual');
+      this.scheduleType.set('disabled');
       this.scheduleFields.autoRun.set(false);
 
       return;
@@ -277,7 +277,7 @@ export class BackupState {
     if (matchPredefined) {
       this.scheduleType.set(matchPredefined.value);
     } else {
-      this.scheduleType.set('manual');
+      this.scheduleType.set('custom');
     }
   }
 
