@@ -4,20 +4,19 @@
 @let registered = state() === 'registered';
 @let isConnected = state() === 'connected' || state() === 'disabled' || state() === 'connecting';
 
-<!-- <pre>state: {{ state() }}</pre> -->
 @if (registeringFaulted) {
   <div i18n class="connectivity-status" (click)="resetAndRetry()">
     @if (resetting()) {
       Resetting
       <div class="status blinking"></div>
     } @else {
-      Click to register
+      Click to connect
       <div class="status"></div>
     }
   </div>
 } @else if (isLoading) {
   <div i18n class="connectivity-status" [routerLink]="['/connect/logon']">
-    Registering
+    Connecting
     <div class="status warning blinking"></div>
   </div>
 } @else if (clickToRegister) {
