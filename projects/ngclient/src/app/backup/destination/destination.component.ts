@@ -217,6 +217,12 @@ export default class DestinationComponent {
   }
 
   setDestination(key: IDynamicModule['Key']) {
+    if (key === 'duplicati') {
+      const backupName = this.#backupState.backupName();
+      const transformedName = this.#transformBackupName(backupName);
+      this.#backupState.setTargetUrl(`duplicati://?duplicati-backup-id=${transformedName}`, true);
+      return;
+    }
     this.#backupState.setTargetUrl(`${key}://`, true);
   }
 
@@ -294,5 +300,42 @@ export default class DestinationComponent {
     }
 
     this.#router.navigate(['source-data'], { relativeTo: this.#route.parent });
+  }
+
+  #transformBackupName(name: string | null | undefined): string {
+    const MAX_LENGTH = 100;
+    const RANDOM_PART_LENGTH = 6;
+    const RANDOM_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+    let base = (name ?? '').toString();
+
+    // Replace any disallowed characters with '-'
+    base = base.replace(/[^A-Za-z0-9_-]/g, '-');
+
+    // Collapse multiple '-' into a single '-'
+    base = base.replace(/-+/g, '-');
+
+    // Trim '-' from start and end
+    base = base.replace(/^-|-$/g, '');
+
+    // Fallback if everything was stripped
+    if (!base) {
+      base = 'backup';
+    }
+
+    // Ensure total length including '-' and random suffix is at most MAX_LENGTH
+    const maxBaseLength = MAX_LENGTH - (RANDOM_PART_LENGTH + 1);
+    if (base.length > maxBaseLength) {
+      base = base.slice(0, maxBaseLength);
+    }
+
+    // Generate random alphanumeric suffix
+    let randomPart = '';
+    for (let i = 0; i < RANDOM_PART_LENGTH; i++) {
+      const idx = Math.floor(Math.random() * RANDOM_CHARS.length);
+      randomPart += RANDOM_CHARS[idx];
+    }
+
+    return `${base}-${randomPart}`;
   }
 }
