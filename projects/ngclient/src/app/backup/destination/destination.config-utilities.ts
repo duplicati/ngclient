@@ -261,7 +261,7 @@ export function fromTargetPath(targetPath: string) {
     destinationType === 'file'
       ? 'http://dummy'
       : path == '' || path.startsWith('?')
-        ? `${destinationType}://`
+        ? `${destinationType}://` + path
         : 'http://' + path;
 
   if (!path) return null;
@@ -298,7 +298,7 @@ export function fromTargetPath(targetPath: string) {
     if (urlObj.host === 'undefined') return null;
 
     const pathWithoutParams = path.split('?')[0].split('/')[0];
-    const hostAsNumber = !isNaN(Number(urlObj.host.replaceAll('.', '')));
+    const hostAsNumber = urlObj.host != '' && !isNaN(Number(urlObj.host.replaceAll('.', '')));
     const pathSplit = pathWithoutParams.split('.');
     const hostAsIpAddress =
       pathSplit.length === 4 &&
