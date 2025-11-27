@@ -23,27 +23,48 @@
     @if (remoteControlState() != 'inactive') {
       <section>
         <div class="left">
-          <h3 i18n>Disable console control</h3>
+          <h3 i18n>Configure console control</h3>
           <p i18n>
-            Disabling console control will disable remote access to this machine from the console, but will keep the
-            registration intact and allow pushing settings from the console.
+            You can control various settings for the remote console connection. If you are not using the console, you
+            can also hide the connection status indicator.
           </p>
         </div>
 
-        <div class="right">
+        <div class="right multiple">
           <sh-toggle class="primary raised" [class.active]="!consoleControlDisabled()" (click)="toggleConsoleControl()">
             @if (consoleControlDisabled()) {
-              <label i18n>Remote control disabled</label>
+              <label i18n>
+                Remote control disabled
+                <sh-icon suffix [shTooltip]="remoteControlTooltip()">info</sh-icon>
+              </label>
             } @else {
-              <label i18n>Remote control enabled</label>
+              <label i18n>
+                Remote control enabled
+                <sh-icon suffix [shTooltip]="remoteControlTooltip()">info</sh-icon>
+              </label>
+            }
+          </sh-toggle>
+
+          <sh-toggle
+            class="primary raised"
+            [class.active]="!hideConsoleConnectionStatus()"
+            (click)="saveHideConsoleConnectionStatus()">
+            @if (hideConsoleConnectionStatus()) {
+              <label i18n>
+                Console connection status is hidden
+                <sh-icon suffix [shTooltip]="connectionStatusIndicatorTooltip()">info</sh-icon>
+              </label>
+            } @else {
+              <label i18n>
+                Console connection status is visible
+                <sh-icon suffix [shTooltip]="connectionStatusIndicatorTooltip()">info</sh-icon>
+              </label>
             }
           </sh-toggle>
         </div>
       </section>
     }
-  }
 
-  @if (!isUsingRelay()) {
     <section>
       <div class="left">
         <h3 i18n>Show console connection status</h3>
@@ -52,18 +73,7 @@
           status.
         </p>
       </div>
-      <div class="right">
-        <sh-toggle
-          class="primary raised"
-          [class.active]="!hideConsoleConnectionStatus()"
-          (click)="saveHideConsoleConnectionStatus()">
-          @if (hideConsoleConnectionStatus()) {
-            <label i18n>Console connection status is hidden</label>
-          } @else {
-            <label i18n>Console connection status is visible</label>
-          }
-        </sh-toggle>
-      </div>
+      <div class="right"></div>
     </section>
   }
 

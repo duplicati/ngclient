@@ -14,7 +14,7 @@ import {
   ShipToggle,
   ShipTooltip,
 } from '@ship-ui/core';
-import { catchError, finalize, of } from 'rxjs';
+import { finalize } from 'rxjs';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { LANGUAGES } from '../core/locales/locales.utility';
 import { DuplicatiServer } from '../core/openapi';
@@ -169,24 +169,22 @@ export default class SettingsComponent {
     this.usageStatisticsOptions.set(opts);
   });
 
+  remoteControlTooltip =
+    signal<string>($localize`Disabling console control will disable remote access to this machine from the console, but will keep the
+            registration intact and allow pushing settings from the console.`);
+
+  connectionStatusIndicatorTooltip = signal<string>(
+    $localize`Hides the connection status indicator in the status bar. Useful if you are not using the remote console.`
+  );
+
   setNewChannel(channel: UpdateChannel) {
     const prevChannel = this.updateChannel();
 
     this.updateChannel.set(channel);
 
-    this.#dupServer
-      .patchApiV1Serversettings({
-        requestBody: {
-          'update-channel': channel,
-        },
-      })
-      .pipe(
-        finalize(() => this.updatingChannel.set(false)),
-        catchError(() => {
-          this.updateChannel.set(prevChannel);
-          return of(null);
-        })
-      )
+    this.#serverSettingsService
+      .setUpdateChannel(channel)
+      .pipe(finalize(() => this.updatingChannel.set(false)))
       .subscribe();
   }
 
@@ -205,42 +203,20 @@ export default class SettingsComponent {
 
     this.allowRemoteAccess.set(newValue);
 
-    this.#dupServer
-      .patchApiV1Serversettings({
-        requestBody: {
-          'server-listen-interface': newValue ? 'any' : 'loopback',
-        },
-      })
-      .pipe(
-        finalize(() => this.updatingRemoteAccess.set(false)),
-        catchError(() => {
-          this.allowRemoteAccess.set(prevValue);
-          return of(null);
-        })
-      )
+    this.#serverSettingsService
+      .setRemoteAccessInterface(newValue ? 'any' : 'loopback')
+      .pipe(finalize(() => this.updatingRemoteAccess.set(false)))
       .subscribe();
   }
 
   updateAllowedHostnames() {
-    const loadedAllowedHostnames = this.loadedAllowedHostnames();
     const allowedHostnames = this.allowedHostnames();
 
     this.updatingAllowedHosts.set(true);
 
-    this.#dupServer
-      .patchApiV1Serversettings({
-        requestBody: {
-          'server-listen-interface': 'any',
-          'allowed-hostnames': allowedHostnames,
-        },
-      })
-      .pipe(
-        finalize(() => this.updatingAllowedHosts.set(false)),
-        catchError(() => {
-          this.allowedHostnames.set(loadedAllowedHostnames);
-          return of(null);
-        })
-      )
+    this.#serverSettingsService
+      .setRemoteAccessAllowedHostnames(allowedHostnames)
+      .pipe(finalize(() => this.updatingAllowedHosts.set(false)))
       .subscribe();
   }
 
@@ -248,21 +224,10 @@ export default class SettingsComponent {
     const prevValue = this.consoleControlDisabled();
     const newValue = !prevValue;
     this.updatingConsoleControl.set(true);
-    this.consoleControlDisabled.set(newValue);
 
-    this.#dupServer
-      .patchApiV1Serversettings({
-        requestBody: {
-          'disable-console-control': newValue ? 'True' : 'False',
-        },
-      })
-      .pipe(
-        finalize(() => this.updatingConsoleControl.set(false)),
-        catchError(() => {
-          this.consoleControlDisabled.set(prevValue);
-          return of(null);
-        })
-      )
+    this.#serverSettingsService
+      .setDisableConsoleControl(newValue)
+      .pipe(finalize(() => this.updatingConsoleControl.set(false)))
       .subscribe();
   }
 
@@ -274,21 +239,9 @@ export default class SettingsComponent {
     const newValue = !prevValue;
 
     this.updatingDisableTrayIconLogin.set(true);
-    this.disableTrayIconLogin.set(newValue);
-
-    this.#dupServer
-      .patchApiV1Serversettings({
-        requestBody: {
-          'disable-tray-icon-login': newValue ? 'True' : 'False',
-        },
-      })
-      .pipe(
-        finalize(() => this.updatingDisableTrayIconLogin.set(false)),
-        catchError(() => {
-          this.disableTrayIconLogin.set(prevValue);
-          return of(null);
-        })
-      )
+    this.#serverSettingsService
+      .setDisableTrayIconLogin(newValue)
+      .pipe(finalize(() => this.updatingDisableTrayIconLogin.set(false)))
       .subscribe();
   }
 
@@ -317,12 +270,8 @@ export default class SettingsComponent {
 
     this.isUpdating.set(true);
 
-    this.#dupServer
-      .patchApiV1Serversettings({
-        requestBody: {
-          'server-passphrase': this.passphrase(),
-        },
-      })
+    this.#serverSettingsService
+      .setRemoteAccessPassword(this.passphrase())
       .pipe(finalize(() => this.isUpdating.set(false)))
       .subscribe({
         next: () => {
@@ -398,13 +347,7 @@ export default class SettingsComponent {
       startupDelay = `${timeValue}${timeType}`;
     }
 
-    this.#dupServer
-      .patchApiV1Serversettings({
-        requestBody: {
-          'startup-delay': startupDelay,
-        },
-      })
-      .subscribe();
+    this.#serverSettingsService.setStartupDelay(startupDelay).subscribe();
   }
 
   updateTimeType(newTimeType: string) {
@@ -425,20 +368,7 @@ export default class SettingsComponent {
     this.usageStatistics.set(newUsageStatistics);
     this.updatingUsageStatistics.set(true);
 
-    this.#dupServer
-      .patchApiV1Serversettings({
-        requestBody: {
-          'usage-reporter-level': this.usageStatistics() === 'none' ? '' : this.usageStatistics(),
-        },
-      })
-      .pipe(
-        finalize(() => this.updatingUsageStatistics.set(false)),
-        catchError(() => {
-          this.usageStatistics.set(previousUsageStatistics);
-          return of(null);
-        })
-      )
-      .subscribe();
+    this.#serverSettingsService.setUsageReporterLevel(newUsageStatistics).subscribe();
   }
 
   updatePowerMode(newPowerMode: string) {
@@ -446,19 +376,7 @@ export default class SettingsComponent {
     if (previousPowerMode === newPowerMode) return;
     if (newPowerMode === 'default') newPowerMode = '';
 
-    this.#dupServer
-      .patchApiV1Serversettings({
-        requestBody: {
-          'power-mode-provider': newPowerMode || '',
-        },
-      })
-      .pipe(
-        catchError(() => {
-          this.powerModeCtrl.set(previousPowerMode);
-          return of(null);
-        })
-      )
-      .subscribe();
+    this.#serverSettingsService.setPowerModeProvider(newPowerMode).subscribe();
   }
 
   serverSettingsEffect = effect(() => {
