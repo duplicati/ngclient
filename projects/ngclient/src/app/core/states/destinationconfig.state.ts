@@ -1,5 +1,8 @@
 import { computed, inject, Injectable, Signal } from '@angular/core';
-import { getConfigurationByKey } from '../../backup/destination/destination.config-utilities';
+import {
+  getAllConfigurationsByKey,
+  getConfigurationByKey,
+} from '../../backup/destination/destination.config-utilities';
 import { SysinfoState } from './sysinfo.state';
 
 export type DestinationTypeOption = {
@@ -21,19 +24,26 @@ export class DestinationConfigState {
   supportedDestinationTypes = computed(() => {
     return this.#sysinfo
       .backendModules()
-      .map((m) => {
+      .flatMap((m) => {
         if (!m?.Key) {
           return null;
         }
-        const entry = getConfigurationByKey(m.Key);
-        const defaultEntry = (<any>entry).isDefaultEntry === true;
-        if (!defaultEntry) return entry;
+        const entries = getAllConfigurationsByKey(m.Key);
+        if (entries.length <= 1) {
+          const entry = getConfigurationByKey(m.Key);
+          const defaultEntry = (<any>entry).isDefaultEntry === true;
+          if (!defaultEntry) return entry;
 
-        return {
-          ...entry,
-          displayName: m.DisplayName || entry.displayName || m.Key,
-          description: m.Description || entry.description || '',
-        };
+          return [
+            {
+              ...entry,
+              displayName: m.DisplayName || entry.displayName || m.Key,
+              description: m.Description || entry.description || '',
+            },
+          ];
+        } else {
+          return entries;
+        }
       })
       .filter((x) => x !== null);
   });

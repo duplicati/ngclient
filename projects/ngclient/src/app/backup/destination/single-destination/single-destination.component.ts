@@ -35,7 +35,7 @@ import {
   CustomFormView,
   FormView,
   fromTargetPath,
-  getConfigurationByKey,
+  getConfigurationByUrl,
   parseKeyValueTextToObject,
   toTargetPath,
 } from '../destination.config-utilities';
@@ -88,7 +88,7 @@ export class SingleDestinationComponent {
 
     if (!targetUrl) return null;
 
-    const config = getConfigurationByKey(targetUrl.split('://')[0]);
+    const config = getConfigurationByUrl(targetUrl);
     this.#destType = config?.customKey ?? config?.key;
     return this.#destType;
   });
@@ -118,18 +118,20 @@ export class SingleDestinationComponent {
   });
 
   destinationTypeEffect = effect(() => {
-    const key = this.destinationType() ?? '';
+    const targetUrl = this.targetUrl();
 
-    const destinationConfig = getConfigurationByKey(key);
-    const _key = destinationConfig?.key;
-    const item = this.#destinationState.backendModules().find((x) => x.Key === _key) ?? {
-      Key: key,
-      DisplayName: key,
-      Description: getConfigurationByKey(key).description,
+    const destinationConfig = getConfigurationByUrl(targetUrl ?? '');
+    const protocolKey = destinationConfig.key;
+    const visualKey = destinationConfig.customKey ?? protocolKey;
+
+    const backendModuleItem = this.#destinationState.backendModules().find((x) => x.Key === protocolKey) ?? {
+      Key: protocolKey,
+      DisplayName: destinationConfig.displayName,
+      Description: destinationConfig.description,
       Options: [],
     };
 
-    if (!item || !item.Options || !key) return;
+    if (!backendModuleItem || !backendModuleItem.Options || !protocolKey) return;
 
     const oauthField = destinationConfig && destinationConfig.oauthField ? destinationConfig.oauthField : null;
     const customFields = destinationConfig && destinationConfig.customFields ? destinationConfig.customFields : {};
@@ -140,7 +142,7 @@ export class SingleDestinationComponent {
       destinationConfig && destinationConfig.ignoredAdvancedFields ? destinationConfig.ignoredAdvancedFields : [];
 
     const destinationFormConfig = {
-      destinationType: key,
+      destinationType: visualKey,
       oauthField,
       custom: [] as FormView[],
       dynamic: [] as FormView[],
@@ -154,8 +156,8 @@ export class SingleDestinationComponent {
       });
     }
 
-    for (let index = 0; index < item.Options.length; index++) {
-      const element = item.Options[index] as ICommandLineArgument;
+    for (let index = 0; index < backendModuleItem.Options.length; index++) {
+      const element = backendModuleItem.Options[index] as ICommandLineArgument;
 
       if (element.Deprecated) continue;
 
@@ -227,8 +229,6 @@ export class SingleDestinationComponent {
     destinationFormConfig.advanced.sort((a, b) => a.order! - b.order!);
 
     this.destinationFormConfig.set(destinationFormConfig);
-
-    const targetUrl = this.targetUrl();
 
     if (!targetUrl) return;
 

@@ -18,7 +18,7 @@ import { DestinationTypeOption } from '../../core/states/destinationconfig.state
 import { BackupState } from '../backup.state';
 import { DestinationListItemComponent } from './destination-list-item/destination-list-item.component';
 import { DestinationListComponent } from './destination-list/destination-list.component';
-import { getConfigurationByKey } from './destination.config-utilities';
+import { getConfigurationByKey, getConfigurationByUrl } from './destination.config-utilities';
 import { SingleDestinationComponent } from './single-destination/single-destination.component';
 
 const fb = new FormBuilder();
@@ -98,9 +98,7 @@ export default class DestinationComponent {
 
     if (!targetUrl) return null;
 
-    const destinationType = targetUrl.split('://')[0];
-
-    return getConfigurationByKey(destinationType) ?? null;
+    return getConfigurationByUrl(targetUrl) ?? null;
   });
 
   selectedDestinationTypeOption = computed(() => {
@@ -217,6 +215,15 @@ export default class DestinationComponent {
   }
 
   setDestination(key: IDynamicModule['Key']) {
+    const config = getConfigurationByKey(key ?? '');
+    if (!config) return;
+
+    if (config.mapper.default) {
+      const defaultUrl = config.mapper.default(this.#backupState.backupName() ?? '');
+      this.#backupState.setTargetUrl(defaultUrl, true);
+      return;
+    }
+
     this.#backupState.setTargetUrl(`${key}://`, true);
   }
 

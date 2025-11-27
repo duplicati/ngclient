@@ -91,6 +91,8 @@ export type CustomFormView = FormView & {
 export type Mapping = {
   to: (fields: ValueOfDestinationFormGroup) => string;
   from: (destinationType: string, urlObj: UrlLike, plainPath: string) => ValueOfDestinationFormGroup;
+  intercept?: (urlObj: UrlLike) => boolean | null;
+  default?: (backupName: string) => string;
 };
 
 export type DestinationConfigEntry = {
@@ -188,6 +190,17 @@ export function addPort(port: string | number | null | undefined) {
   return ':' + port.toString();
 }
 
+export function getConfigurationByUrl(targetUrl: string): DestinationConfigEntry {
+  try {
+    const urlObj = new UrlLike(targetUrl);
+    const config = DESTINATION_CONFIG.find((x) => x.mapper.intercept?.(urlObj));
+    if (config) return config;
+  } catch {}
+
+  const key = targetUrl.split('://')[0];
+  return getConfigurationByKey(key);
+}
+
 export function getConfigurationByKey(key: string): DestinationConfigEntry {
   const config =
     DESTINATION_CONFIG.find((x) => x.key === key || x.customKey === key) ??
@@ -202,6 +215,10 @@ export function getConfigurationByKey(key: string): DestinationConfigEntry {
       ...DESTINATION_CONFIG_DEFAULT,
     }
   );
+}
+
+export function getAllConfigurationsByKey(key: string): DestinationConfigEntry[] {
+  return DESTINATION_CONFIG.filter((x) => x.key === key || x.customKey === key);
 }
 
 export function fromUrlObj(urlObj: UrlLike) {
@@ -275,7 +292,7 @@ export function fromTargetPath(targetPath: string) {
     );
   }
 
-  const config = getConfigurationByKey(destinationType);
+  const config = getConfigurationByUrl(targetPath);
 
   // Previous versions used 's' postfix as shorthand for enabling SSL (e.g. ftps, webdavs, etc.)
   // If this is the case, we fix the url to use the correct protocol, and add the use-ssl query parameter

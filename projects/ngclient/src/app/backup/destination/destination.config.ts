@@ -1766,7 +1766,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       {
         name: 'storj-satellite',
         shortDescription: $localize`Satellite`,
-        type: 'Enumeration',
+        type: 'NonValidatedSelectableString',
         loadOptions: (injector) => injector.get(WebModulesService).getStorjSatellites(),
         isMandatory: true,
       },
@@ -1789,6 +1789,17 @@ export const DESTINATION_CONFIG: DestinationConfig = [
           ...fields,
         };
       },
+
+      intercept: (urlObj: UrlLike): boolean => {
+        if (urlObj.protocol !== 'storj:') return false;
+
+        if (urlObj.searchParams.get('storj-shared-access')) return true;
+        if (urlObj.searchParams.get('storj-auth-method') === 'Acccess grant') return true;
+
+        return false;
+      },
+
+      default: () => 'storj://?storj-shared-access=&storj-auth-method=Acccess+grant',
     },
   },
 
@@ -1803,7 +1814,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       {
         name: 'storj-satellite',
         shortDescription: $localize`Satellite`,
-        type: 'Enumeration',
+        type: 'NonValidatedSelectableString',
         loadOptions: (injector) => injector.get(WebModulesService).getStorjSatellites(),
         isMandatory: true,
       },
@@ -1842,13 +1853,25 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return `storj://storj.io/config${urlParams}`;
       },
       from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
-        const fields = fromSearchParams(destinationType, urlObj);
+        const fields = fromSearchParams('storjApiKey', urlObj);
         delete fields.advanced['storj-auth-method'];
         return <ValueOfDestinationFormGroup>{
           destinationType,
           ...fields,
         };
       },
+
+      intercept: (urlObj: UrlLike): boolean => {
+        if (urlObj.protocol !== 'storj:') return false;
+
+        if (urlObj.searchParams.get('storj-api-key')) return true;
+        if (urlObj.searchParams.get('storj-secret')) return true;
+        if (urlObj.searchParams.get('storj-auth-method') === 'API key') return true;
+
+        return false;
+      },
+
+      default: () => 'storj://?storj-api-key=&storj-secret=&storj-auth-method=API+key',
     },
   },
 

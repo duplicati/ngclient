@@ -12,13 +12,13 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipAlert, ShipButton, ShipDialog, ShipDialogService, ShipFormField, ShipIcon, ShipMenu } from '@ship-ui/core';
 import { BackupState } from '../../backup/backup.state';
-import { getConfigurationByKey } from '../../backup/destination/destination.config-utilities';
 import { SingleDestinationComponent } from '../../backup/destination/single-destination/single-destination.component';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { IDynamicModule } from '../../core/openapi';
 import { TestDestinationService } from '../../core/services/test-destination.service';
 import { DestinationConfigState } from '../../core/states/destinationconfig.state';
 import { RestoreFlowState } from '../restore-flow.state';
+import { getConfigurationByUrl } from '../../backup/destination/destination.config-utilities';
 
 @Component({
   selector: 'app-restore-destination',
@@ -71,9 +71,7 @@ export default class RestoreDestinationComponent {
 
     if (!targetUrl) return null;
 
-    const destinationType = targetUrl.split('://')[0];
-
-    return getConfigurationByKey(destinationType);
+    return getConfigurationByUrl(targetUrl);
   });
 
   copyTargetUrl() {
