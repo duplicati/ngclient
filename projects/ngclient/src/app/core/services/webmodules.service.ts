@@ -42,6 +42,10 @@ export class WebModulesService {
     return this.#s3AllProviders;
   }
 
+  getS3ProvidersFiltered(predicate: (option: WebModuleOption) => boolean) {
+    return computed(() => this.getS3AllProviders()().filter(predicate));
+  }
+
   getS3Providers() {
     return this.#s3Providers.load();
   }
