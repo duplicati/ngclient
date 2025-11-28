@@ -168,35 +168,6 @@ export const S3_BASE: DestinationConfigEntry = {
 
 export const DESTINATION_CONFIG: DestinationConfig = [
   {
-    key: 'duplicati',
-    displayName: $localize`Duplicati Storage`,
-    description: $localize`Store backups with Duplicati Storage.`,
-    icon: 'assets/dest-icons/duplicati.png',
-    searchTerms: 'duplicati internal built-in',
-    sortOrder: 110,
-    dynamicFields: [
-      {
-        name: 'duplicati-backup-id',
-        isMandatory: true,
-        shortDescription: $localize`Unique Backup ID`,
-        longDescription: $localize`A unique identifier for the backup job. It is recommended to not change this value.`,
-      },
-    ],
-    mapper: {
-      to: (fields: ValueOfDestinationFormGroup): string => {
-        console.log('to duplicati fields', fields);
-        return buildUrlFromFields(fields, null, null, null);
-      },
-      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
-        console.log('from duplicati urlObj', urlObj);
-        return <ValueOfDestinationFormGroup>{
-          destinationType,
-          ...fromSearchParams(destinationType, urlObj),
-        };
-      },
-    },
-  },
-  {
     key: 'file',
     displayName: $localize`File system`,
     description: $localize`Store backups on your local file system.`,
@@ -233,6 +204,35 @@ export const DESTINATION_CONFIG: DestinationConfig = [
           custom: {
             path: path.split('?')[0],
           },
+          ...fromSearchParams(destinationType, urlObj),
+        };
+      },
+    },
+  },
+  {
+    key: 'duplicati',
+    displayName: $localize`Duplicati Storage`,
+    description: $localize`Store backups with Duplicati Storage.`,
+    icon: 'assets/dest-icons/duplicati.png',
+    searchTerms: 'duplicati internal built-in',
+    sortOrder: 99,
+    dynamicFields: [
+      {
+        name: 'duplicati-backup-id',
+        isMandatory: true,
+        shortDescription: $localize`Unique Backup ID`,
+        longDescription: $localize`A unique identifier for the backup job. It is recommended to not change this value.`,
+      },
+    ],
+    mapper: {
+      to: (fields: ValueOfDestinationFormGroup): string => {
+        console.log('to duplicati fields', fields);
+        return buildUrlFromFields(fields, null, null, null);
+      },
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
+        console.log('from duplicati urlObj', urlObj);
+        return <ValueOfDestinationFormGroup>{
+          destinationType,
           ...fromSearchParams(destinationType, urlObj),
         };
       },
@@ -457,7 +457,6 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in Amazon S3.`,
     icon: 'assets/dest-icons/aws.png',
     searchTerms: 'amazon aws',
-    sortOrder: 90,
     customFields: {
       bucket: {
         type: 'Bucketname',
