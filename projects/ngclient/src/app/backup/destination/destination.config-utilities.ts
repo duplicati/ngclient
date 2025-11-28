@@ -354,32 +354,6 @@ export function parseKeyValueTextToObject(text: string): Record<string, string> 
   return Object.fromEntries(parseKeyValueText(text));
 }
 
-export function isValidBucketnameB2(name: string): boolean {
-  if (!name) return false;
-
-  const length = name.length;
-
-  // Length between 3 and 63 characters
-  if (length < 6 || length > 63) return false;
-
-  // Must be letters, numbers, dots, or hyphens
-  if (!/^[a-zA-Z0-9.-]+$/.test(name)) return false;
-
-  // Must start and end with a letter or number
-  if (!/^[a-zA-Z0-9]/.test(name) || !/[a-zA-Z0-9]$/.test(name)) return false;
-
-  // Cannot be formatted like an IP address
-  if (/^\d{1,3}(\.\d{1,3}){3}$/.test(name)) return false;
-
-  // Cannot contain adjacent periods or dashes next to periods
-  if (/(\.\.)|(\.-)|(-\.)/.test(name)) return false;
-
-  // Cannot start with "b2-"
-  if (name.toLowerCase().startsWith('b2-')) return false;
-
-  return true;
-}
-
 export function isValidBucketname(name: string): boolean {
   if (!name) return false;
 
