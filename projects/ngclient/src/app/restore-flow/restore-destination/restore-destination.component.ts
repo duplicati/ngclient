@@ -12,18 +12,22 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipAlert, ShipButton, ShipDialog, ShipDialogService, ShipFormField, ShipIcon, ShipMenu } from '@ship-ui/core';
 import { BackupState } from '../../backup/backup.state';
-import { getConfigurationByKey } from '../../backup/destination/destination.config-utilities';
+import { DestinationListItemComponent } from '../../backup/destination/destination-list-item/destination-list-item.component';
+import { DestinationListComponent } from '../../backup/destination/destination-list/destination-list.component';
+import { getConfigurationByKey, getConfigurationByUrl } from '../../backup/destination/destination.config-utilities';
 import { SingleDestinationComponent } from '../../backup/destination/single-destination/single-destination.component';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { IDynamicModule } from '../../core/openapi';
 import { TestDestinationService } from '../../core/services/test-destination.service';
-import { DestinationConfigState } from '../../core/states/destinationconfig.state';
+import { DestinationConfigState, DestinationTypeOption } from '../../core/states/destinationconfig.state';
 import { RestoreFlowState } from '../restore-flow.state';
 
 @Component({
   selector: 'app-restore-destination',
   imports: [
     SingleDestinationComponent,
+    DestinationListComponent,
+    DestinationListItemComponent,
 
     FormsModule,
     ShipButton,
@@ -71,9 +75,20 @@ export default class RestoreDestinationComponent {
 
     if (!targetUrl) return null;
 
-    const destinationType = targetUrl.split('://')[0];
+    return getConfigurationByUrl(targetUrl);
+  });
 
-    return getConfigurationByKey(destinationType);
+  selectedDestinationTypeOption = computed(() => {
+    const x = this.selectedDestinationType();
+    return x
+      ? ({
+          key: x.customKey ?? x.key,
+          customKey: x.customKey ?? null,
+          displayName: x.displayName,
+          description: x.description,
+          icon: x.icon,
+        } as DestinationTypeOption)
+      : null;
   });
 
   copyTargetUrl() {
@@ -176,6 +191,15 @@ export default class RestoreDestinationComponent {
   }
 
   setDestination(key: IDynamicModule['Key']) {
+    const config = getConfigurationByKey(key ?? '');
+    if (!config) return;
+
+    if (config.mapper.default) {
+      const defaultUrl = config.mapper.default('');
+      this.#restoreFlowState.updateTargetUrl(defaultUrl);
+      return;
+    }
+
     this.#restoreFlowState.updateTargetUrl(`${key}://`);
   }
 

@@ -12,31 +12,37 @@
             type="button"
             class="small"
             [disabled]="testSignal() == 'testing'"
-            [class.loader]="testSignal() == 'testing'"
             (click)="testDestination(0, true)"
             i18n>
             Test destination
           </button>
         }
 
-        <sh-menu>
-          <button shButton type="button" class="small">
-            <sh-icon>dots-three-vertical</sh-icon>
+        @if (!hasDestination) {
+          <button shButton type="button" class="small" (click)="openTargetUrlDialog()" i18n>
+            <sh-icon>link</sh-icon>
+            Set target URL
           </button>
-
-          <ng-container menu>
-            <button shButton type="button" class="small" (click)="openTargetUrlDialog()" i18n>
-              <sh-icon>link</sh-icon>
-              Edit target URL
+        } @else {
+          <sh-menu>
+            <button shButton type="button" class="small">
+              <sh-icon>dots-three-vertical</sh-icon>
             </button>
-            @if (hasDestination) {
-              <button shButton type="button" class="small" (click)="copyTargetUrl()" i18n>
-                <sh-icon>copy</sh-icon>
-                Copy URL to clipboard
+
+            <ng-container menu>
+              <button shButton type="button" class="small" (click)="openTargetUrlDialog()" i18n>
+                <sh-icon>link</sh-icon>
+                Edit target URL
               </button>
-            }
-          </ng-container>
-        </sh-menu>
+              @if (hasDestination) {
+                <button shButton type="button" class="small" (click)="copyTargetUrl()" i18n>
+                  <sh-icon>copy</sh-icon>
+                  Copy URL to clipboard
+                </button>
+              }
+            </ng-container>
+          </sh-menu>
+        }
       </div>
     </h3>
 
@@ -61,39 +67,17 @@
         {{ testErrorMessage() }}
       </sh-alert>
     }
+    @let option = selectedDestinationTypeOption();
 
-    @if (hasDestination) {
-      <p (click)="removeDestination()" i18n>
-        Current destination type
-        <strong>{{ selectedDestinationType()?.displayName }}.</strong>
-        <br />
-        Want to select another?
-        <span class="sh-primary">Click here</span>
-      </p>
+    @if (option) {
+      <app-destination-list-item [destination]="option" class="current-destination">
+        <button shButton i18n (click)="removeDestination()" type="button">Change</button>
+      </app-destination-list-item>
     }
   </header>
 
   @if (!hasDestination) {
-    <div class="most-common-destinations">
-      @for (option of destinationTypeOptionsFocused(); track $index) {
-        <div class="tile" (click)="setDestination(option.key)">
-          <h3>{{ option.displayName }}</h3>
-          <p>{{ option.description }}</p>
-        </div>
-      }
-    </div>
-
-    <sh-menu [searchable]="true">
-      <button shButton type="button" class="outlined" i18n>All destinations</button>
-
-      <ng-container menu>
-        @for (destination of destinationTypeOptions(); track $index) {
-          <button #option type="button" (click)="setDestination(destination.key)">
-            {{ destination.displayName }}
-          </button>
-        }
-      </ng-container>
-    </sh-menu>
+    <app-destination-list (setDestination)="setDestination($event)" />
   }
 
   @if (hasDestination) {

@@ -18,7 +18,7 @@ import { DestinationTypeOption } from '../../core/states/destinationconfig.state
 import { BackupState } from '../backup.state';
 import { DestinationListItemComponent } from './destination-list-item/destination-list-item.component';
 import { DestinationListComponent } from './destination-list/destination-list.component';
-import { getConfigurationByKey } from './destination.config-utilities';
+import { getConfigurationByKey, getConfigurationByUrl } from './destination.config-utilities';
 import { SingleDestinationComponent } from './single-destination/single-destination.component';
 
 const fb = new FormBuilder();
@@ -98,9 +98,7 @@ export default class DestinationComponent {
 
     if (!targetUrl) return null;
 
-    const destinationType = targetUrl.split('://')[0];
-
-    return getConfigurationByKey(destinationType) ?? null;
+    return getConfigurationByUrl(targetUrl) ?? null;
   });
 
   selectedDestinationTypeOption = computed(() => {
@@ -217,12 +215,15 @@ export default class DestinationComponent {
   }
 
   setDestination(key: IDynamicModule['Key']) {
-    if (key === 'duplicati') {
-      const backupName = this.#backupState.backupName();
-      const transformedName = this.#transformBackupName(backupName);
-      this.#backupState.setTargetUrl(`duplicati://?duplicati-backup-id=${transformedName}`, true);
+    const config = getConfigurationByKey(key ?? '');
+    if (!config) return;
+
+    if (config.mapper.default) {
+      const defaultUrl = config.mapper.default(this.#backupState.backupName() ?? '');
+      this.#backupState.setTargetUrl(defaultUrl, true);
       return;
     }
+
     this.#backupState.setTargetUrl(`${key}://`, true);
   }
 
@@ -300,42 +301,5 @@ export default class DestinationComponent {
     }
 
     this.#router.navigate(['source-data'], { relativeTo: this.#route.parent });
-  }
-
-  #transformBackupName(name: string | null | undefined): string {
-    const MAX_LENGTH = 100;
-    const RANDOM_PART_LENGTH = 6;
-    const RANDOM_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-    let base = (name ?? '').toString();
-
-    // Replace any disallowed characters with '-'
-    base = base.replace(/[^A-Za-z0-9_-]/g, '-');
-
-    // Collapse multiple '-' into a single '-'
-    base = base.replace(/-+/g, '-');
-
-    // Trim '-' from start and end
-    base = base.replace(/^-|-$/g, '');
-
-    // Fallback if everything was stripped
-    if (!base) {
-      base = 'backup';
-    }
-
-    // Ensure total length including '-' and random suffix is at most MAX_LENGTH
-    const maxBaseLength = MAX_LENGTH - (RANDOM_PART_LENGTH + 1);
-    if (base.length > maxBaseLength) {
-      base = base.slice(0, maxBaseLength);
-    }
-
-    // Generate random alphanumeric suffix
-    let randomPart = '';
-    for (let i = 0; i < RANDOM_PART_LENGTH; i++) {
-      const idx = Math.floor(Math.random() * RANDOM_CHARS.length);
-      randomPart += RANDOM_CHARS[idx];
-    }
-
-    return `${base}-${randomPart}`;
   }
 }

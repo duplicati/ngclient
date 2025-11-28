@@ -190,15 +190,17 @@
                 warning
               </sh-icon>
             }
-            @if (item.formView.type == 'Hostname' && !isFieldEmpty && !isValidHostname(fieldValue)) {
-              <sh-icon class="error" i18n-shTooltip shTooltip="Hostname is invalid">x-circle</sh-icon>
-            }
-            @if (item.formView.type == 'Bucketname' && !isFieldEmpty && !isValidBucketname(fieldValue)) {
-              <sh-icon class="warn" i18n-shTooltip shTooltip="Bucket name is invalid">warning</sh-icon>
-            }
-            @if (item.formView.type == 'BucketnameB2' && !isFieldEmpty && !isValidBucketnameB2(fieldValue)) {
-              <sh-icon class="warn" i18n-shTooltip shTooltip="Bucket name is invalid">warning</sh-icon>
-            }
+
+            <ng-container
+              *ngTemplateOutlet="
+                validateTemplate;
+                context: {
+                  $implicit: {
+                    fieldGroup: item.fieldGroup,
+                    formView: item.formView,
+                  },
+                }
+              "></ng-container>
           </label>
 
           <input
@@ -242,6 +244,16 @@
             @if (item.formView.longDescription) {
               <sh-icon class="primary" [shTooltip]="item.formView.longDescription">question</sh-icon>
             }
+            <ng-container
+              *ngTemplateOutlet="
+                validateTemplate;
+                context: {
+                  $implicit: {
+                    fieldGroup: item.fieldGroup,
+                    formView: item.formView,
+                  },
+                }
+              "></ng-container>
           </label>
           <input
             [type]="$any(item.formView).showPassword ? 'text' : 'password'"
@@ -301,6 +313,16 @@
               @if (item.formView.longDescription) {
                 <sh-icon class="primary" [shTooltip]="item.formView.longDescription">question</sh-icon>
               }
+              <ng-container
+                *ngTemplateOutlet="
+                  validateTemplate;
+                  context: {
+                    $implicit: {
+                      fieldGroup: item.fieldGroup,
+                      formView: item.formView,
+                    },
+                  }
+                "></ng-container>
             </label>
             <input
               type="text"
@@ -332,6 +354,16 @@
               @if (item.formView.longDescription) {
                 <sh-icon class="primary" [shTooltip]="item.formView.longDescription">question</sh-icon>
               }
+              <ng-container
+                *ngTemplateOutlet="
+                  validateTemplate;
+                  context: {
+                    $implicit: {
+                      fieldGroup: item.fieldGroup,
+                      formView: item.formView,
+                    },
+                  }
+                "></ng-container>
             </label>
 
             <input
@@ -361,6 +393,16 @@
             @if (item.formView.longDescription) {
               <sh-icon class="primary" [shTooltip]="item.formView.longDescription">question</sh-icon>
             }
+            <ng-container
+              *ngTemplateOutlet="
+                validateTemplate;
+                context: {
+                  $implicit: {
+                    fieldGroup: item.fieldGroup,
+                    formView: item.formView,
+                  },
+                }
+              "></ng-container>
           </label>
         </app-size>
       } @else if (item.formView.type === 'Integer') {
@@ -373,6 +415,16 @@
             @if (item.formView.longDescription) {
               <sh-icon class="primary" [shTooltip]="item.formView.longDescription">question</sh-icon>
             }
+            <ng-container
+              *ngTemplateOutlet="
+                validateTemplate;
+                context: {
+                  $implicit: {
+                    fieldGroup: item.fieldGroup,
+                    formView: item.formView,
+                  },
+                }
+              "></ng-container>
           </label>
           <input
             type="number"
@@ -391,6 +443,16 @@
             @if (item.formView.longDescription) {
               <sh-icon class="primary" [shTooltip]="item.formView.longDescription">question</sh-icon>
             }
+            <ng-container
+              *ngTemplateOutlet="
+                validateTemplate;
+                context: {
+                  $implicit: {
+                    fieldGroup: item.fieldGroup,
+                    formView: item.formView,
+                  },
+                }
+              "></ng-container>
           </label>
         </sh-toggle>
       } @else if (item.formView.type === 'Flags') {
@@ -412,6 +474,16 @@
               @if (item.formView.longDescription) {
                 <sh-icon class="primary" [shTooltip]="item.formView.longDescription">question</sh-icon>
               }
+              <ng-container
+                *ngTemplateOutlet="
+                  validateTemplate;
+                  context: {
+                    $implicit: {
+                      fieldGroup: item.fieldGroup,
+                      formView: item.formView,
+                    },
+                  }
+                "></ng-container>
             </label>
             <input
               type="text"
@@ -438,6 +510,16 @@
             @if (item.formView.longDescription) {
               <sh-icon class="primary" [shTooltip]="item.formView.longDescription">question</sh-icon>
             }
+            <ng-container
+              *ngTemplateOutlet="
+                validateTemplate;
+                context: {
+                  $implicit: {
+                    fieldGroup: item.fieldGroup,
+                    formView: item.formView,
+                  },
+                }
+              "></ng-container>
           </label>
         </app-timespan>
       } @else if (item.formView.type === 'FreeText') {
@@ -454,6 +536,16 @@
             @if (item.formView.longDescription) {
               <sh-icon class="primary" [shTooltip]="item.formView.longDescription">question</sh-icon>
             }
+            <ng-container
+              *ngTemplateOutlet="
+                validateTemplate;
+                context: {
+                  $implicit: {
+                    fieldGroup: item.fieldGroup,
+                    formView: item.formView,
+                  },
+                }
+              "></ng-container>
           </label>
         </app-file-drop-textarea>
       }
@@ -464,5 +556,18 @@
         </button>
       }
     </div>
+  </ng-template>
+
+  <ng-template #validateTemplate let-item>
+    @let fieldValue = getFieldValue(item.fieldGroup, item.formView.name);
+    @let isFieldEmpty = (fieldValue ?? '').toString().trim() === '';
+    @if (!isFieldEmpty && item.formView.validate) {
+      @let validationResult = item.formView.validate(fieldValue);
+      @if (validationResult?.type === 'error') {
+        <sh-icon class="error" [shTooltip]="validationResult?.message ?? 'Invalid value'">x-circle</sh-icon>
+      } @else if (validationResult?.type === 'warning') {
+        <sh-icon class="warn" [shTooltip]="validationResult?.message ?? 'Invalid value'">warning</sh-icon>
+      }
+    }
   </ng-template>
 }

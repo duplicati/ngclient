@@ -6,11 +6,14 @@ import {
   buildUrl,
   buildUrlFromFields,
   concatPaths,
+  CreateCustomS3ProviderEntry,
   DestinationConfig,
+  DestinationConfigEntry,
   DoubleSlashConfig,
   fromSearchParams,
   fromUrlObj,
   getSimplePath,
+  isValidBucketnameB2,
   toSearchParams,
   UrlLike,
   ValueOfDestinationFormGroup,
@@ -71,6 +74,92 @@ export const DESTINATION_CONFIG_DEFAULT = {
         destinationType,
         custom: {
           path: path.split('?')[0],
+        },
+        ...fromSearchParams(destinationType, urlObj),
+      };
+    },
+  },
+};
+
+export const S3_BASE: DestinationConfigEntry = {
+  key: 's3',
+  displayName: $localize`S3 Compatible`,
+  description: $localize`Store backups in any S3 compatible bucket.`,
+  icon: 'assets/dest-icons/s3compat.png',
+  customFields: {
+    bucket: {
+      type: 'Bucketname',
+      name: 'bucket',
+      shortDescription: $localize`Bucket name`,
+      longDescription: $localize`Bucket name`,
+      formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      isMandatory: true,
+    },
+    path: {
+      type: 'Path',
+      name: 'path',
+      doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
+      shortDescription: $localize`Folder path`,
+      longDescription: $localize`Folder path`,
+      formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+    },
+  },
+  dynamicFields: [
+    {
+      name: 's3-server-name',
+      order: 1,
+      shortDescription: $localize`Server`,
+      longDescription: $localize`The hostname of the S3 compatible server to connect to`,
+      type: 'NonValidatedSelectableString', // Convert to string before submitting
+      loadOptions: (injector) => injector.get(WebModulesService).getS3AllProviders(),
+      isMandatory: true,
+      formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+    },
+    {
+      name: 'auth-username',
+      isMandatory: true,
+    },
+    {
+      name: 'auth-password',
+      isMandatory: true,
+    },
+    {
+      name: 'use-ssl',
+    },
+  ],
+  advancedFields: [
+    {
+      name: 's3-client',
+      type: 'Enumeration', // Convert to string before submitting
+      loadOptions: () => {
+        return signal([
+          {
+            key: 'AWS Library',
+            value: 'aws',
+          },
+          {
+            key: 'MinIO Library',
+            value: 'minio',
+          },
+        ]);
+      },
+      validate: (value: string) => {
+        return { type: 'warning', message: $localize`Invalid client selected` };
+      },
+    },
+  ],
+  mapper: {
+    to: (fields: ValueOfDestinationFormGroup): string => {
+      const { bucket, path } = fields.custom;
+      return buildUrlFromFields(fields, bucket, null, path);
+    },
+    from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
+      const { bucket, path } = fromUrlObj(urlObj);
+      return <ValueOfDestinationFormGroup>{
+        destinationType,
+        custom: {
+          path: path,
+          bucket: bucket,
         },
         ...fromSearchParams(destinationType, urlObj),
       };
@@ -147,6 +236,46 @@ export const DESTINATION_CONFIG: DestinationConfig = [
           },
           ...fromSearchParams(destinationType, urlObj),
         };
+      },
+      default: (backupName: string): string => {
+        function transformBackupName(name: string | null | undefined): string {
+          const MAX_LENGTH = 100;
+          const RANDOM_PART_LENGTH = 6;
+          const RANDOM_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+          let base = (name ?? '').toString();
+
+          // Replace any disallowed characters with '-'
+          base = base.replace(/[^A-Za-z0-9_-]/g, '-');
+
+          // Collapse multiple '-' into a single '-'
+          base = base.replace(/-+/g, '-');
+
+          // Trim '-' from start and end
+          base = base.replace(/^-|-$/g, '');
+
+          // Fallback if everything was stripped
+          if (!base) {
+            base = 'backup';
+          }
+
+          // Ensure total length including '-' and random suffix is at most MAX_LENGTH
+          const maxBaseLength = MAX_LENGTH - (RANDOM_PART_LENGTH + 1);
+          if (base.length > maxBaseLength) {
+            base = base.slice(0, maxBaseLength);
+          }
+
+          // Generate random alphanumeric suffix
+          let randomPart = '';
+          for (let i = 0; i < RANDOM_PART_LENGTH; i++) {
+            const idx = Math.floor(Math.random() * RANDOM_CHARS.length);
+            randomPart += RANDOM_CHARS[idx];
+          }
+
+          return `${base}-${randomPart}`;
+        }
+
+        return `duplicati://?duplicati-backup-id=${transformBackupName(backupName)}`;
       },
     },
   },
@@ -232,7 +361,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in any S3 compatible bucket.`,
     icon: 'assets/dest-icons/s3compat.png',
     searchTerms:
-      'amazon aws spaces cloud mycloudyplace impossible scaleway hosteurope dunkel dreamhost dincloud poli systems ibm cos storadera wasabi infomaniak infomaniak さくらのクラウド seagate lyve digitalocean backblaze b2 cloudian minio linode bunnycdn microsoft azure google storage ibm oracle cloudflare alibaba huawei tencent baidu jd ucloud qiniu aliyun tcloud tencent ',
+      'spaces cloud digitalocean cloudian minio linode bunnycdn oracle cloudflare alibaba huawei tencent baidu jd ucloud qiniu aliyun tcloud tencent ',
     sortOrder: 90,
     customFields: {
       bucket: {
@@ -319,6 +448,110 @@ export const DESTINATION_CONFIG: DestinationConfig = [
           },
           ...fromSearchParams(destinationType, urlObj),
         };
+      },
+    },
+  },
+  {
+    key: 's3',
+    customKey: 's3-aws',
+    displayName: $localize`Amazon S3`,
+    description: $localize`Store backups in Amazon S3.`,
+    icon: 'assets/dest-icons/aws.png',
+    searchTerms: 'amazon aws',
+    sortOrder: 90,
+    customFields: {
+      bucket: {
+        type: 'Bucketname',
+        name: 'bucket',
+        shortDescription: $localize`Bucket name`,
+        longDescription: $localize`Bucket name`,
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+        isMandatory: true,
+      },
+      path: {
+        type: 'Path',
+        name: 'path',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
+        shortDescription: $localize`Folder path`,
+        longDescription: $localize`Folder path`,
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+    },
+    dynamicFields: [
+      {
+        name: 's3-server-name',
+        order: 1,
+        shortDescription: $localize`Server`,
+        longDescription: $localize`The hostname of the S3 compatible server to connect to`,
+        type: 'NonValidatedSelectableString', // Convert to string before submitting
+        loadOptions: (injector) =>
+          injector.get(WebModulesService).getS3ProvidersFiltered((x) => x.value.endsWith('.amazonaws.com')),
+        isMandatory: true,
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+      {
+        name: 'use-ssl',
+        order: 2,
+      },
+      {
+        name: 'auth-username',
+        isMandatory: true,
+      },
+      {
+        name: 'auth-password',
+        isMandatory: true,
+      },
+    ],
+    advancedFields: [
+      {
+        name: 's3-client',
+        type: 'Enumeration', // Convert to string before submitting
+        loadOptions: () => {
+          return signal([
+            {
+              key: 'AWS Library',
+              value: 'aws',
+            },
+            {
+              key: 'MinIO Library',
+              value: 'minio',
+            },
+          ]);
+        },
+      },
+      {
+        name: 's3-storage-class',
+        type: 'NonValidatedSelectableString', // Convert to string before submitting
+        loadOptions: (injector) => injector.get(WebModulesService).getS3StorageClasses(),
+      },
+      {
+        name: 's3-location-constraint',
+        type: 'NonValidatedSelectableString', // Convert to string before submitting
+        loadOptions: (injector) => injector.get(WebModulesService).getS3Regions(),
+      },
+    ],
+    mapper: {
+      to: (fields: ValueOfDestinationFormGroup): string => {
+        const { bucket, path } = fields.custom;
+        if (fields.dynamic['s3-server-name']?.endsWith('.amazonaws.com')) fields.destinationType = `s3`;
+        return buildUrlFromFields(fields, bucket, null, path);
+      },
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
+        const { bucket, path } = fromUrlObj(urlObj);
+        return <ValueOfDestinationFormGroup>{
+          destinationType,
+          custom: {
+            path: path,
+            bucket: bucket,
+          },
+          ...fromSearchParams(destinationType, urlObj),
+        };
+      },
+      default: (backupName: string): string => {
+        return `s3-aws://?use-ssl=true`;
+      },
+      intercept: (urlObj: UrlLike): boolean => {
+        return urlObj.searchParams.get('s3-server-name')?.endsWith('.amazonaws.com') ?? false;
       },
     },
   },
@@ -867,12 +1100,14 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     searchTerms: 'backblaze',
     customFields: {
       bucket: {
-        type: 'BucketnameB2',
+        type: 'Bucketname',
         name: 'bucket',
         shortDescription: $localize`Bucket name`,
         longDescription: $localize`Bucket name`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
         isMandatory: true,
+        validate: (value: string) =>
+          isValidBucketnameB2(value) ? null : { type: 'error', message: $localize`Invalid bucket name.` },
       },
       path: {
         type: 'Path',
@@ -1795,7 +2030,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       {
         name: 'storj-satellite',
         shortDescription: $localize`Satellite`,
-        type: 'Enumeration',
+        type: 'NonValidatedSelectableString',
         loadOptions: (injector) => injector.get(WebModulesService).getStorjSatellites(),
         isMandatory: true,
       },
@@ -1818,6 +2053,17 @@ export const DESTINATION_CONFIG: DestinationConfig = [
           ...fields,
         };
       },
+
+      intercept: (urlObj: UrlLike): boolean => {
+        if (urlObj.protocol !== 'storj:') return false;
+
+        if (urlObj.searchParams.get('storj-shared-access')) return true;
+        if (urlObj.searchParams.get('storj-auth-method') === 'Acccess grant') return true;
+
+        return false;
+      },
+
+      default: () => 'storj://?storj-shared-access=&storj-auth-method=Acccess+grant',
     },
   },
 
@@ -1832,7 +2078,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       {
         name: 'storj-satellite',
         shortDescription: $localize`Satellite`,
-        type: 'Enumeration',
+        type: 'NonValidatedSelectableString',
         loadOptions: (injector) => injector.get(WebModulesService).getStorjSatellites(),
         isMandatory: true,
       },
@@ -1871,13 +2117,25 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return `storj://storj.io/config${urlParams}`;
       },
       from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
-        const fields = fromSearchParams(destinationType, urlObj);
+        const fields = fromSearchParams('storjApiKey', urlObj);
         delete fields.advanced['storj-auth-method'];
         return <ValueOfDestinationFormGroup>{
           destinationType,
           ...fields,
         };
       },
+
+      intercept: (urlObj: UrlLike): boolean => {
+        if (urlObj.protocol !== 'storj:') return false;
+
+        if (urlObj.searchParams.get('storj-api-key')) return true;
+        if (urlObj.searchParams.get('storj-secret')) return true;
+        if (urlObj.searchParams.get('storj-auth-method') === 'API key') return true;
+
+        return false;
+      },
+
+      default: () => 'storj://?storj-api-key=&storj-secret=&storj-auth-method=API+key',
     },
   },
 
@@ -1947,11 +2205,35 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
     },
   },
+  CreateCustomS3ProviderEntry('rabata', 'Rabata.io', null, 'assets/dest-icons/rabata.png', ['.rabata.io']),
+  CreateCustomS3ProviderEntry('wasabi', 'Wasabi Hot Storage', null, 'assets/dest-icons/wasabi.png', ['.wasabisys.com']),
+  CreateCustomS3ProviderEntry('impossiblecloud', 'Impossible Cloud', null, 'assets/dest-icons/impossiblecloud.png', [
+    '.impossibleapi.net',
+  ]),
+  CreateCustomS3ProviderEntry('scaleway', 'Scaleway', null, 'assets/dest-icons/scaleway.png', ['.scw.cloud']),
+  CreateCustomS3ProviderEntry('hosteurope', 'Hosteurope', null, 'assets/dest-icons/hosteurope.png', ['.hosteurope.de']),
+  CreateCustomS3ProviderEntry('dunkel', 'Dunkel', null, 'assets/dest-icons/dunkel.png', ['.dunkel.de']),
+  CreateCustomS3ProviderEntry('dreamhost', 'DreamHost', null, 'assets/dest-icons/dreamhost.png', ['.dreamhost.com']),
+  CreateCustomS3ProviderEntry('dincloud', 'dinCloud', null, 'assets/dest-icons/dincloud.png', ['.dincloud.com']),
+  CreateCustomS3ProviderEntry('polisystems', 'Poli Systems', null, 'assets/dest-icons/polisystems.png', [
+    '.polisystems.ch',
+  ]),
+  CreateCustomS3ProviderEntry('ibmcos', 'IBM COS', null, 'assets/dest-icons/ibmcos.png', ['.softlayer.net']),
+  CreateCustomS3ProviderEntry('storadera', 'Storadera', null, 'assets/dest-icons/storadera.png', ['.storadera.com']),
+  CreateCustomS3ProviderEntry('infomaniak', 'Infomaniak', null, 'assets/dest-icons/infomaniak.png', [
+    '.infomaniak.com',
+    '.infomaniak.cloud',
+  ]),
+  CreateCustomS3ProviderEntry('sakuracloud', 'さくらのクラウド', null, 'assets/dest-icons/sakuracloud.png', [
+    '.sakurastorage.jp',
+  ]),
+  CreateCustomS3ProviderEntry('seagatelyve', 'Seagate Lyve', null, 'assets/dest-icons/seagatelyve.png', [
+    '.lyvecloud.seagate.com',
+  ]),
 ];
 
 export const S3_HOST_SUFFIX_MAP: Record<string, string> = {
   '.amazonaws.com': 'Amazon S3',
-  '.mycloudyplace.com': 'MyCloudyPlace S3',
   '.impossibleapi.net': 'Impossible Cloud S3',
   '.scw.cloud': 'Scaleway S3',
   '.hosteurope.de': 'Hosteurope S3',
@@ -1987,4 +2269,5 @@ export const S3_HOST_SUFFIX_MAP: Record<string, string> = {
   '.aliyuncs.com': 'Aliyun S3',
   '.tcloud.com': 'TCloud S3',
   '.tencentcloudapi.com': 'Tencent Cloud S3',
+  '.rabata.io': 'Rabata S3',
 };

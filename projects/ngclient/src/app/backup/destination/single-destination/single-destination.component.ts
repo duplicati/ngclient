@@ -35,7 +35,9 @@ import {
   CustomFormView,
   FormView,
   fromTargetPath,
-  getConfigurationByKey,
+  getConfigurationByUrl,
+  isValidBucketname,
+  isValidHostname,
   parseKeyValueTextToObject,
   toTargetPath,
 } from '../destination.config-utilities';
@@ -88,7 +90,7 @@ export class SingleDestinationComponent {
 
     if (!targetUrl) return null;
 
-    const config = getConfigurationByKey(targetUrl.split('://')[0]);
+    const config = getConfigurationByUrl(targetUrl);
     this.#destType = config?.customKey ?? config?.key;
     return this.#destType;
   });
@@ -118,18 +120,20 @@ export class SingleDestinationComponent {
   });
 
   destinationTypeEffect = effect(() => {
-    const key = this.destinationType() ?? '';
+    const targetUrl = this.targetUrl();
 
-    const destinationConfig = getConfigurationByKey(key);
-    const _key = destinationConfig?.key;
-    const item = this.#destinationState.backendModules().find((x) => x.Key === _key) ?? {
-      Key: key,
-      DisplayName: key,
-      Description: getConfigurationByKey(key).description,
+    const destinationConfig = getConfigurationByUrl(targetUrl ?? '');
+    const protocolKey = destinationConfig.key;
+    const visualKey = destinationConfig.customKey ?? protocolKey;
+
+    const backendModuleItem = this.#destinationState.backendModules().find((x) => x.Key === protocolKey) ?? {
+      Key: protocolKey,
+      DisplayName: destinationConfig.displayName,
+      Description: destinationConfig.description,
       Options: [],
     };
 
-    if (!item || !item.Options || !key) return;
+    if (!backendModuleItem || !backendModuleItem.Options || !protocolKey) return;
 
     const oauthField = destinationConfig && destinationConfig.oauthField ? destinationConfig.oauthField : null;
     const customFields = destinationConfig && destinationConfig.customFields ? destinationConfig.customFields : {};
@@ -140,7 +144,7 @@ export class SingleDestinationComponent {
       destinationConfig && destinationConfig.ignoredAdvancedFields ? destinationConfig.ignoredAdvancedFields : [];
 
     const destinationFormConfig = {
-      destinationType: key,
+      destinationType: visualKey,
       oauthField,
       custom: [] as FormView[],
       dynamic: [] as FormView[],
@@ -150,12 +154,21 @@ export class SingleDestinationComponent {
     if (customFields) {
       Object.entries(customFields).forEach(([key, value], index) => {
         const order = value.order ?? index;
-        destinationFormConfig.custom.push({ order: 900 + order, ...value });
+        let validation = value.validate;
+        if (!validation && value.type === 'Bucketname') {
+          validation = (val: string) =>
+            isValidBucketname(val) ? null : { type: 'error', message: $localize`Invalid bucket name.` };
+        }
+        if (validation && value.type === 'Hostname') {
+          validation = (val: string) =>
+            isValidHostname(val) ? null : { type: 'error', message: $localize`Invalid hostname.` };
+        }
+        destinationFormConfig.custom.push({ order: 900 + order, validate: validation, ...value });
       });
     }
 
-    for (let index = 0; index < item.Options.length; index++) {
-      const element = item.Options[index] as ICommandLineArgument;
+    for (let index = 0; index < backendModuleItem.Options.length; index++) {
+      const element = backendModuleItem.Options[index] as ICommandLineArgument;
 
       if (element.Deprecated) continue;
 
@@ -227,8 +240,6 @@ export class SingleDestinationComponent {
     destinationFormConfig.advanced.sort((a, b) => a.order! - b.order!);
 
     this.destinationFormConfig.set(destinationFormConfig);
-
-    const targetUrl = this.targetUrl();
 
     if (!targetUrl) return;
 
@@ -305,73 +316,6 @@ export class SingleDestinationComponent {
     this.destinationForm.set({ ...form });
   }
 
-  isValidBucketname(name: string): boolean {
-    if (!name) return false;
-
-    const length = name.length;
-
-    // Length between 3 and 63 characters
-    if (length < 3 || length > 63) return false;
-
-    // Must be lowercase letters, numbers, dots, or hyphens
-    if (!/^[a-z0-9.-]+$/.test(name)) return false;
-
-    // Must start and end with a letter or number
-    if (!/^[a-z0-9]/.test(name) || !/[a-z0-9]$/.test(name)) return false;
-
-    // Cannot be formatted like an IP address
-    if (/^\d{1,3}(\.\d{1,3}){3}$/.test(name)) return false;
-
-    // Cannot contain adjacent periods or dashes next to periods
-    if (/(\.\.)|(\.-)|(-\.)/.test(name)) return false;
-
-    return true;
-  }
-
-  isValidBucketnameB2(name: string): boolean {
-    if (!name) return false;
-
-    const length = name.length;
-
-    // Length between 3 and 63 characters
-    if (length < 6 || length > 63) return false;
-
-    // Must be letters, numbers, dots, or hyphens
-    if (!/^[a-zA-Z0-9.-]+$/.test(name)) return false;
-
-    // Must start and end with a letter or number
-    if (!/^[a-zA-Z0-9]/.test(name) || !/[a-zA-Z0-9]$/.test(name)) return false;
-
-    // Cannot be formatted like an IP address
-    if (/^\d{1,3}(\.\d{1,3}){3}$/.test(name)) return false;
-
-    // Cannot contain adjacent periods or dashes next to periods
-    if (/(\.\.)|(\.-)|(-\.)/.test(name)) return false;
-
-    // Cannot start with "b2-"
-    if (name.toLowerCase().startsWith('b2-')) return false;
-
-    return true;
-  }
-
-  isValidHostname(hostname: string): boolean {
-    if (!hostname || hostname.length > 253) return false;
-
-    const labels = hostname.split('.');
-
-    for (const label of labels) {
-      // Each label must be 1–63 characters
-      if (!label || label.length > 63) return false;
-
-      // Must start and end with alphanumeric characters
-      if (!/^[a-zA-Z0-9]([-a-zA-Z0-9]*[a-zA-Z0-9])?$/.test(label)) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
   isTrue(value: any): boolean {
     if (typeof value === 'boolean') {
       return value;
@@ -389,7 +333,7 @@ export class SingleDestinationComponent {
     type: FormView['type'],
     event: KeyboardEvent
   ) {
-    if (type === 'Hostname' || type === 'Bucketname' || type === 'BucketnameB2') {
+    if (type === 'Hostname' || type === 'Bucketname') {
       const controlKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Home', 'End'];
       if (controlKeys.includes(event.key)) return;
       if (event.key == '/' || event.key == '\\' || event.key == ':') {

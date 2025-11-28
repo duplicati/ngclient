@@ -15,7 +15,7 @@ import {
 } from '@ship-ui/core';
 import { finalize } from 'rxjs';
 import { S3_HOST_SUFFIX_MAP } from '../backup/destination/destination.config';
-import { getConfigurationByKey } from '../backup/destination/destination.config-utilities';
+import { getConfigurationByUrl } from '../backup/destination/destination.config-utilities';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { StatusBarState } from '../core/components/status-bar/status-bar.state';
 import { localStorageSignal } from '../core/functions/localstorage-signal';
@@ -94,15 +94,13 @@ export default class HomeComponent {
 
   getBackendIcon(targetUrl: string | null | undefined) {
     if (!targetUrl) return '';
-    const backend = targetUrl.split('://')[0];
-    const match = getConfigurationByKey(backend);
+    const match = getConfigurationByUrl(targetUrl);
     return match.icon ?? 'database';
   }
 
   getBackendType(targetUrl: string | null | undefined) {
     if (!targetUrl) return '';
-    const backend = targetUrl.split('://')[0];
-    const match = getConfigurationByKey(backend);
+    const match = getConfigurationByUrl(targetUrl);
     if (!match) return '';
 
     const override = DestinationOverrides[match.key];
