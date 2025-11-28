@@ -1,9 +1,11 @@
 import { Injector, Signal } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ArgumentType, ICommandLineArgument, SettingInputDto } from '../../core/openapi';
-import { WebModuleOption } from '../../core/services/webmodules.service';
+import { WebModuleOption, WebModulesService } from '../../core/services/webmodules.service';
 import { DestinationFormGroupValue } from './destination.component';
-import { DESTINATION_CONFIG, DESTINATION_CONFIG_DEFAULT } from './destination.config';
+import { DESTINATION_CONFIG, DESTINATION_CONFIG_DEFAULT, S3_BASE } from './destination.config';
+
+const fb = new FormBuilder();
 
 export type ValueOfDestinationFormGroup = DestinationFormGroup['value'];
 export type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] };
@@ -69,8 +71,7 @@ export type FormView = {
     | 'Email'
     | 'FreeText'
     | 'Hostname'
-    | 'Bucketname'
-    | 'BucketnameB2';
+    | 'Bucketname';
   accepts?: string;
   shortDescription?: string;
   longDescription?: string;
@@ -82,6 +83,7 @@ export type FormView = {
   oauthVersion?: OAuthVersion;
   order?: number;
   isMandatory?: boolean;
+  validate?: (value: string) => { type: 'error' | 'warning'; message: string } | null;
 };
 
 export type CustomFormView = FormView & {
@@ -350,4 +352,118 @@ export function parseKeyValueTextToSettings(text: string): SettingInputDto[] {
 
 export function parseKeyValueTextToObject(text: string): Record<string, string> {
   return Object.fromEntries(parseKeyValueText(text));
+}
+
+export function isValidBucketnameB2(name: string): boolean {
+  if (!name) return false;
+
+  const length = name.length;
+
+  // Length between 3 and 63 characters
+  if (length < 6 || length > 63) return false;
+
+  // Must be letters, numbers, dots, or hyphens
+  if (!/^[a-zA-Z0-9.-]+$/.test(name)) return false;
+
+  // Must start and end with a letter or number
+  if (!/^[a-zA-Z0-9]/.test(name) || !/[a-zA-Z0-9]$/.test(name)) return false;
+
+  // Cannot be formatted like an IP address
+  if (/^\d{1,3}(\.\d{1,3}){3}$/.test(name)) return false;
+
+  // Cannot contain adjacent periods or dashes next to periods
+  if (/(\.\.)|(\.-)|(-\.)/.test(name)) return false;
+
+  // Cannot start with "b2-"
+  if (name.toLowerCase().startsWith('b2-')) return false;
+
+  return true;
+}
+
+export function isValidBucketname(name: string): boolean {
+  if (!name) return false;
+
+  const length = name.length;
+
+  // Length between 3 and 63 characters
+  if (length < 3 || length > 63) return false;
+
+  // Must be lowercase letters, numbers, dots, or hyphens
+  if (!/^[a-z0-9.-]+$/.test(name)) return false;
+
+  // Must start and end with a letter or number
+  if (!/^[a-z0-9]/.test(name) || !/[a-z0-9]$/.test(name)) return false;
+
+  // Cannot be formatted like an IP address
+  if (/^\d{1,3}(\.\d{1,3}){3}$/.test(name)) return false;
+
+  // Cannot contain adjacent periods or dashes next to periods
+  if (/(\.\.)|(\.-)|(-\.)/.test(name)) return false;
+
+  return true;
+}
+
+export function isValidHostname(hostname: string): boolean {
+  if (!hostname || hostname.length > 253) return false;
+
+  const labels = hostname.split('.');
+
+  for (const label of labels) {
+    // Each label must be 1–63 characters
+    if (!label || label.length > 63) return false;
+
+    // Must start and end with alphanumeric characters
+    if (!/^[a-zA-Z0-9]([-a-zA-Z0-9]*[a-zA-Z0-9])?$/.test(label)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+export function CreateCustomS3ProviderEntry(
+  customKey: string,
+  displayName: string,
+  description: string | null,
+  icon: string | null,
+  hostnameEndsWith: string[]
+): DestinationConfigEntry {
+  return {
+    ...S3_BASE,
+    customKey: `s3-${customKey}`,
+    icon: icon ?? S3_BASE.icon,
+    displayName: $localize`${displayName} (S3)`,
+    description: description ?? $localize`Store backups in ${displayName} storage.`,
+    dynamicFields: [
+      ...(S3_BASE.dynamicFields ?? []).filter((f) => (<CustomFormView>f)?.name !== 's3-server-name'),
+      {
+        name: 's3-server-name',
+        order: 1,
+        shortDescription: $localize`Server`,
+        longDescription: $localize`The hostname of the ${displayName} endpoint`,
+        type: 'NonValidatedSelectableString', // Convert to string before submitting
+        loadOptions: (injector) =>
+          injector
+            .get(WebModulesService)
+            .getS3ProvidersFiltered((option) => hostnameEndsWith.some((suffix) => option.value.endsWith(suffix))),
+        isMandatory: true,
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+    ],
+    mapper: {
+      ...S3_BASE.mapper,
+      to: (fields: ValueOfDestinationFormGroup): string => {
+        const { bucket, path } = fields.custom;
+        if (hostnameEndsWith.some((suffix) => fields.dynamic['s3-server-name']?.endsWith(suffix)))
+          fields.destinationType = `s3`;
+        return buildUrlFromFields(fields, bucket, null, path);
+      },
+      default: (backupName: string): string => {
+        return `s3-${customKey}://?use-ssl=true`;
+      },
+      intercept: (urlObj: UrlLike): boolean => {
+        return hostnameEndsWith.some((suffix) => urlObj.searchParams.get('s3-server-name')?.endsWith(suffix)) ?? false;
+      },
+    },
+  };
 }

@@ -6,13 +6,14 @@ import {
   buildUrl,
   buildUrlFromFields,
   concatPaths,
-  CustomFormView,
+  CreateCustomS3ProviderEntry,
   DestinationConfig,
   DestinationConfigEntry,
   DoubleSlashConfig,
   fromSearchParams,
   fromUrlObj,
   getSimplePath,
+  isValidBucketnameB2,
   toSearchParams,
   UrlLike,
   ValueOfDestinationFormGroup,
@@ -80,7 +81,7 @@ export const DESTINATION_CONFIG_DEFAULT = {
   },
 };
 
-const S3_BASE: DestinationConfigEntry = {
+export const S3_BASE: DestinationConfigEntry = {
   key: 's3',
   displayName: $localize`S3 Compatible`,
   description: $localize`Store backups in any S3 compatible bucket.`,
@@ -142,6 +143,9 @@ const S3_BASE: DestinationConfigEntry = {
           },
         ]);
       },
+      validate: (value: string) => {
+        return { type: 'warning', message: $localize`Invalid client selected` };
+      },
     },
   ],
   mapper: {
@@ -162,53 +166,6 @@ const S3_BASE: DestinationConfigEntry = {
     },
   },
 };
-
-function CreateCustomS3ProviderEntry(
-  customKey: string,
-  displayName: string,
-  description: string | null,
-  icon: string | null,
-  hostnameEndsWith: string[]
-): DestinationConfigEntry {
-  return {
-    ...S3_BASE,
-    customKey: `s3-${customKey}`,
-    icon: icon ?? S3_BASE.icon,
-    displayName: $localize`${displayName} (S3)`,
-    description: description ?? $localize`Store backups in ${displayName} storage.`,
-    dynamicFields: [
-      ...(S3_BASE.dynamicFields ?? []).filter((f) => (<CustomFormView>f)?.name !== 's3-server-name'),
-      {
-        name: 's3-server-name',
-        order: 1,
-        shortDescription: $localize`Server`,
-        longDescription: $localize`The hostname of the ${displayName} endpoint`,
-        type: 'NonValidatedSelectableString', // Convert to string before submitting
-        loadOptions: (injector) =>
-          injector
-            .get(WebModulesService)
-            .getS3ProvidersFiltered((option) => hostnameEndsWith.some((suffix) => option.value.endsWith(suffix))),
-        isMandatory: true,
-        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
-      },
-    ],
-    mapper: {
-      ...S3_BASE.mapper,
-      to: (fields: ValueOfDestinationFormGroup): string => {
-        const { bucket, path } = fields.custom;
-        if (hostnameEndsWith.some((suffix) => fields.dynamic['s3-server-name']?.endsWith(suffix)))
-          fields.destinationType = `s3`;
-        return buildUrlFromFields(fields, bucket, null, path);
-      },
-      default: (backupName: string): string => {
-        return `s3-${customKey}://?use-ssl=true`;
-      },
-      intercept: (urlObj: UrlLike): boolean => {
-        return hostnameEndsWith.some((suffix) => urlObj.searchParams.get('s3-server-name')?.endsWith(suffix)) ?? false;
-      },
-    },
-  };
-}
 
 export const DESTINATION_CONFIG: DestinationConfig = [
   {
@@ -1074,12 +1031,14 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     searchTerms: 'backblaze',
     customFields: {
       bucket: {
-        type: 'BucketnameB2',
+        type: 'Bucketname',
         name: 'bucket',
         shortDescription: $localize`Bucket name`,
         longDescription: $localize`Bucket name`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
         isMandatory: true,
+        validate: (value: string) =>
+          isValidBucketnameB2(value) ? null : { type: 'error', message: $localize`Invalid bucket name.` },
       },
       path: {
         type: 'Path',

@@ -150,12 +150,20 @@
           item.FormView.type === 'Decimal' ||
           item.FormView.type === 'Email' ||
           item.FormView.type === 'Hostname' ||
-          item.FormView.type === 'Bucketname' ||
-          item.FormView.type === 'BucketnameB2'
+          item.FormView.type === 'Bucketname'
         ) {
           <sh-form-field>
             <label [for]="formId">
               <ng-container *ngTemplateOutlet="defaultLabel" />
+              <ng-container
+                *ngTemplateOutlet="
+                  validateTemplate;
+                  context: {
+                    $implicit: {
+                      formView: item.FormView,
+                    },
+                  }
+                "></ng-container>
             </label>
 
             <input
@@ -168,7 +176,7 @@
               <sh-icon prefix>link</sh-icon>
             } @else if (item.FormView.type === 'Hostname') {
               <sh-icon prefix>hard-drives</sh-icon>
-            } @else if (item.FormView.type === 'Bucketname' || item.FormView.type === 'BucketnameB2') {
+            } @else if (item.FormView.type === 'Bucketname') {
               <sh-icon prefix>jar</sh-icon>
             } @else if (item.FormView.type === 'Email') {
               <sh-icon prefix>envelope</sh-icon>
@@ -180,6 +188,15 @@
           <sh-form-field>
             <label [for]="formId">
               <ng-container *ngTemplateOutlet="defaultLabel" />
+              <ng-container
+                *ngTemplateOutlet="
+                  validateTemplate;
+                  context: {
+                    $implicit: {
+                      formView: item.FormView,
+                    },
+                  }
+                "></ng-container>
             </label>
 
             <input
@@ -204,6 +221,15 @@
           <sh-select [options]="item.FormView.options!" [isClearable]="false" [optionTemplate]="enumOptionTemplate">
             <label [for]="formId">
               <ng-container *ngTemplateOutlet="defaultLabel" />
+              <ng-container
+                *ngTemplateOutlet="
+                  validateTemplate;
+                  context: {
+                    $implicit: {
+                      formView: item.FormView,
+                    },
+                  }
+                "></ng-container>
             </label>
 
             <input
@@ -224,12 +250,30 @@
             [customId]="formId">
             <label [for]="formId">
               <ng-container *ngTemplateOutlet="defaultLabel" />
+              <ng-container
+                *ngTemplateOutlet="
+                  validateTemplate;
+                  context: {
+                    $implicit: {
+                      formView: item.FormView,
+                    },
+                  }
+                "></ng-container>
             </label>
           </app-size>
         } @else if (item.FormView.type === 'Integer') {
           <sh-form-field>
             <label [for]="formId">
               <ng-container *ngTemplateOutlet="defaultLabel" />
+              <ng-container
+                *ngTemplateOutlet="
+                  validateTemplate;
+                  context: {
+                    $implicit: {
+                      formView: item.FormView,
+                    },
+                  }
+                "></ng-container>
             </label>
             <input
               type="number"
@@ -242,6 +286,15 @@
           <sh-toggle class="primary raised">
             <label [for]="formId">
               <ng-container *ngTemplateOutlet="defaultLabel" />
+              <ng-container
+                *ngTemplateOutlet="
+                  validateTemplate;
+                  context: {
+                    $implicit: {
+                      formView: item.FormView,
+                    },
+                  }
+                "></ng-container>
             </label>
 
             <input
@@ -258,6 +311,15 @@
             [optionTemplate]="optionTemplate">
             <label [for]="formId">
               <ng-container *ngTemplateOutlet="defaultLabel" />
+              <ng-container
+                *ngTemplateOutlet="
+                  validateTemplate;
+                  context: {
+                    $implicit: {
+                      formView: item.FormView,
+                    },
+                  }
+                "></ng-container>
             </label>
             <input type="text" id="text" [ngModel]="item.Value()" (ngModelChange)="updateSettingValue(item, $event)" />
           </sh-select>
@@ -273,6 +335,15 @@
             [customId]="formId">
             <label [for]="formId">
               <ng-container *ngTemplateOutlet="defaultLabel" />
+              <ng-container
+                *ngTemplateOutlet="
+                  validateTemplate;
+                  context: {
+                    $implicit: {
+                      formView: item.FormView,
+                    },
+                  }
+                "></ng-container>
             </label>
           </app-timespan>
         }
@@ -284,3 +355,17 @@
     }
   }
 </sh-toggle-card>
+
+<ng-template #validateTemplate let-item>
+  @let fieldValue = item.Value();
+  @let isFieldEmpty = (fieldValue ?? '').toString().trim() === '';
+  - {{ fieldValue }}
+  @if (!isFieldEmpty && item.formView.validate) {
+    @let validationResult = item.formView.validate(fieldValue);
+    @if (validationResult?.type === 'error') {
+      <sh-icon class="error" [shTooltip]="validationResult?.message ?? 'Invalid value'">x-circle</sh-icon>
+    } @else if (validationResult?.type === 'warning') {
+      <sh-icon class="warn" [shTooltip]="validationResult?.message ?? 'Invalid value'">warning</sh-icon>
+    }
+  }
+</ng-template>
