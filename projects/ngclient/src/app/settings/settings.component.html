@@ -196,10 +196,23 @@
       <p i18n>Use the old user interface, not recommended unless you have a specific reason.</p>
     </div>
 
-    <div class="right">
-      <button shButton class="primary" (click)="changeDefaultClientTo('ngclient')" i18n>
+    <div class="right buttons">
+      <button shButton class="primary" (click)="openLegacyUI()" i18n>
+        <sh-icon>arrow-square-right</sh-icon>
+        Open legacy UI
+      </button>
+
+      <button
+        shButton
+        class="primary"
+        (click)="changeDefaultClientTo(defaultClient() === 'ngclient' ? 'ngax' : 'ngclient')"
+        i18n>
         <sh-icon>swap</sh-icon>
-        Use legacy UI
+        @if (defaultClient() === 'ngax') {
+          <span>Default is legacy UI</span>
+        } @else {
+          <span>Default is current UI</span>
+        }
       </button>
     </div>
   </section>

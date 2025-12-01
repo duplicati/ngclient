@@ -131,6 +131,12 @@ section {
   gap: p2r(16);
 }
 
+.right.buttons {
+  display: flex;
+  flex-direction: row;
+  gap: p2r(16);
+}
+
 .right.multiple {
   display: flex;
   flex-direction: column;
