@@ -366,6 +366,7 @@
             [max]="timeRange()[1]"
             [disabled]="timeType() === 'none'"
             [(ngModel)]="timeValue"
+            (ngModelChange)="updateTimeValue($event)"
             [ngModelOptions]="{ standalone: true }" />
         </sh-range-slider>
 
