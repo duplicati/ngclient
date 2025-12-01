@@ -17,7 +17,6 @@ import {
 import { finalize } from 'rxjs';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { LANGUAGES } from '../core/locales/locales.utility';
-import { DuplicatiServer } from '../core/openapi';
 import { LOCALSTORAGE } from '../core/services/localstorage.token';
 import { SysinfoState } from '../core/states/sysinfo.state';
 import { LayoutState } from '../layout/layout.state';
@@ -136,7 +135,6 @@ export default class SettingsComponent {
   #dialog = inject(ShipDialogService);
   #layoutState = inject(LayoutState);
   #sysinfo = inject(SysinfoState);
-  #dupServer = inject(DuplicatiServer);
   #serverSettingsService = inject(ServerSettingsService);
   #remoteControlState = inject(RemoteControlState);
   #relayConfigState = inject(RelayconfigState);
@@ -157,6 +155,7 @@ export default class SettingsComponent {
   updatingChannel = signal(false);
   updateChannel = signal<UpdateChannel>('');
   isUsingRelay = this.#relayConfigState.relayIsEnabled;
+  defaultClient = signal(this.#getDefaultClient());
   usageStatisticsDisabled = computed(() => {
     const value = this.#sysinfo.systemInfo()?.DefaultUsageReportLevel ?? '';
     return value.toLowerCase() === 'disabled';
@@ -417,17 +416,38 @@ export default class SettingsComponent {
   }
 
   changeDefaultClientTo(client: 'ngclient' | 'ngax') {
+    if (this.defaultClient() === client) return;
+
+    if (client === 'ngax') {
+      this.#dialog.open(ConfirmDialogComponent, {
+        data: {
+          title: $localize`Use legacy UI by default`,
+          message: $localize`Are you sure you want to use the legacy user interface by default? This is not recommended unless you have a specific reason.`,
+          confirmText: $localize`Use legacy UI by default`,
+          cancelText: $localize`Cancel`,
+        },
+        closed: (res) => {
+          if (!res) return;
+          window.location.href = '/ngax';
+          this.#setClientDefault(client);
+        },
+      });
+    } else {
+      this.#setClientDefault(client);
+    }
+  }
+
+  openLegacyUI() {
     this.#dialog.open(ConfirmDialogComponent, {
       data: {
-        title: $localize`Use legacy UI`,
-        message: $localize`Are you sure you want to use the legacy user interface, not recommended unless you have a specific reason?`,
-        confirmText: $localize`Use legacy`,
+        title: $localize`Open legacy UI`,
+        message: $localize`Are you sure you want to open the legacy user interface? This is not recommended unless you have a specific reason.`,
+        confirmText: $localize`Open legacy UI`,
         cancelText: $localize`Cancel`,
       },
       closed: (res) => {
         if (!res) return;
-        this.#setClientDefault(client);
-        window.location.replace(`/${client}`);
+        window.open('/ngax', '_blank');
       },
     });
   }
@@ -437,5 +457,17 @@ export default class SettingsComponent {
     d.setTime(d.getTime() + 90 * 24 * 60 * 60 * 1000);
 
     document.cookie = 'default-client=' + client + '; expires=' + d.toUTCString() + '; path=/';
+    this.defaultClient.set(client);
+  }
+
+  #getDefaultClient(): 'ngclient' | 'ngax' {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.startsWith('default-client=')) {
+        return cookie.substring('default-client='.length) as 'ngclient' | 'ngax';
+      }
+    }
+    return 'ngclient';
   }
 }
