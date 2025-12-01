@@ -317,16 +317,27 @@ export default class SettingsComponent {
   timeRange = computed(() => {
     const timeType = this.timeType();
 
-    return timeType === 'h' ? [0, 24] : [0, 60];
+    return timeType === 'h' ? [1, 24] : [1, 60];
   });
 
-  timeValueEffect = effect(() => {
-    const _ = this.timeValue();
-    // Prevent triggering a patch request when the component is initializing
-    const loaded = this.#serverSettingsService.serverSettings();
-    if (!loaded || (loaded['startup-delay'] === '' && this.timeType() === 'none')) return;
+  startupDelayString = computed(() => {
+    const timeValue = this.timeValue();
+    const timeType = this.timeType();
 
-    this.updateStartupDelay();
+    if (timeType === 'none' || timeValue === 0) return '';
+
+    return `${timeValue}${timeType}`;
+  });
+
+  startupDelayEffect = effect(() => {
+    const delay = this.startupDelayString();
+    const loaded = this.#serverSettingsService.serverSettings();
+    if (!loaded) return;
+
+    const currentDelay = loaded['startup-delay'] as string;
+    if (delay === currentDelay) return;
+
+    this.#serverSettingsService.setStartupDelay(delay).subscribe();
   });
 
   updateLocale(newLocale: string) {
@@ -336,24 +347,11 @@ export default class SettingsComponent {
     window.location.reload();
   }
 
-  updateStartupDelay() {
-    const timeValue = this.timeValue();
-    const timeType = this.timeType();
-
-    let startupDelay = '';
-
-    if (timeType !== 'none' && timeValue !== 0) {
-      startupDelay = `${timeValue}${timeType}`;
-    }
-
-    this.#serverSettingsService.setStartupDelay(startupDelay).subscribe();
-  }
-
   updateTimeType(newTimeType: string) {
     const prevTimeType = this.timeType();
 
     if (prevTimeType === 'none') {
-      this.timeValue.set(0);
+      this.timeValue.set(1);
     }
 
     this.timeType.set(newTimeType);
