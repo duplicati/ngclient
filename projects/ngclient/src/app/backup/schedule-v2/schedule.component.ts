@@ -289,7 +289,7 @@ export default class ScheduleComponent {
   }
 
   goBack() {
-    this.#router.navigate(['source'], { relativeTo: this.#route.parent });
+    this.#router.navigate(['source-data'], { relativeTo: this.#route.parent });
   }
 
   next() {
