@@ -1,6 +1,7 @@
 import { effect, inject, Injectable, signal } from '@angular/core';
 import { ENVIRONMENT_TOKEN } from '../../../environments/environment-token';
 import { randomUUID } from '../functions/crypto';
+import { ConnectingScreenService } from './connecting-screen.service';
 
 type SocketProtocolState = 'disconnected' | 'connecting' | 'connect' | 'welcome' | 'authenticated' | 'error';
 
@@ -59,11 +60,13 @@ const ProtocolVersion = 1;
 export class RelayWebsocketService {
   #MIN_POLL_INTERVAL = 1000;
   #env = inject(ENVIRONMENT_TOKEN);
+  #connectingScreen = inject(ConnectingScreenService);
   #wsState = signal<SocketProtocolState>('disconnected');
   #reconnectInterval = signal<number | null>(this.#MIN_POLL_INTERVAL);
   #isReconnecting = signal(false);
   #isConnectedToMachineServer = signal(false);
   #reconnectToken = signal<string | null>(null);
+  #hasHandledFirstCommandResponse = false;
 
   isConnectedToMachineServer = this.#isConnectedToMachineServer.asReadonly();
   wsState = this.#wsState.asReadonly();
@@ -89,6 +92,17 @@ export class RelayWebsocketService {
     }, reconnectInterval);
   });
 
+  #showInitialCommandError(message: string) {
+    if (this.#hasHandledFirstCommandResponse) return;
+
+    this.#hasHandledFirstCommandResponse = true;
+    this.#connectingScreen.showError(message || 'Unable to connect to the server.');
+  }
+
+  #markInitialCommandHandled() {
+    if (!this.#hasHandledFirstCommandResponse) this.#hasHandledFirstCommandResponse = true;
+  }
+
   utf8Atob(str: string) {
     const decodedData = Uint8Array.from(atob(str), (c) => c.charCodeAt(0));
 
@@ -108,6 +122,7 @@ export class RelayWebsocketService {
 
     if (this.#ws) return;
 
+    this.#hasHandledFirstCommandResponse = false;
     this.#ws = new WebSocket(this.#env.machineServerUrl);
     this.#wsState.set('connecting');
 
@@ -156,6 +171,7 @@ export class RelayWebsocketService {
 
         var payload = JSON.parse(data.payload ?? '') as AuthResponseMessage;
         if (payload.accepted === false) {
+          this.#showInitialCommandError('Authentication failed');
           this.disconnectFromMachineServer('Authentication failed');
           return;
         }
@@ -178,11 +194,18 @@ export class RelayWebsocketService {
         const f = this.#pendingCommands[data.messageId];
         if (f) {
           if (data.errorMessage) {
+            this.#showInitialCommandError(data.errorMessage);
             f.reject(data.errorMessage);
-            return;
           } else {
             const payload = JSON.parse(data.payload ?? '') as CommandResponse;
             payload.body = payload?.body == null ? null : this.utf8Atob(payload.body);
+            if (payload.code >= 400) {
+              this.#showInitialCommandError(
+                payload.body || `Initial request failed with status code ${payload.code}`
+              );
+            } else {
+              this.#markInitialCommandHandled();
+            }
             f.resolve(payload);
           }
 
@@ -253,6 +276,7 @@ export class RelayWebsocketService {
           const f = this.#pendingCommands[messageId];
           if (f) {
             delete this.#pendingCommands[messageId];
+            this.#showInitialCommandError('The request timed out before receiving a response.');
             f.reject('Timeout');
           }
         }, timeout),
