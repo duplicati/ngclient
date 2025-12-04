@@ -45,7 +45,7 @@ type PromiseResolver = {
 };
 
 export type CommandResponse = {
-  code: number;
+  statusCode: number;
   body: string | null;
   headers: { [key: string]: string } | null;
 };
@@ -198,14 +198,14 @@ export class RelayWebsocketService {
             f.reject(data.errorMessage);
           } else {
             const payload = JSON.parse(data.payload ?? '') as CommandResponse;
-            payload.body = payload?.body == null ? null : this.utf8Atob(payload.body);
-            if (payload.code >= 400) {
+            if (payload.statusCode >= 400) {
               this.#showInitialCommandError(
-                payload.body || `Initial request failed with status code ${payload.code}`
+                payload.body || `Initial request failed with status code ${payload.statusCode}`
               );
             } else {
               this.#markInitialCommandHandled();
             }
+            payload.body = payload?.body == null ? null : this.utf8Atob(payload.body);
             f.resolve(payload);
           }
 
