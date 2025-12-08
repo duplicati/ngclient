@@ -357,15 +357,16 @@
 </sh-toggle-card>
 
 <ng-template #validateTemplate let-item>
-  @let fieldValue = item.Value();
-  @let isFieldEmpty = (fieldValue ?? '').toString().trim() === '';
-  - {{ fieldValue }}
-  @if (!isFieldEmpty && item.formView.validate) {
-    @let validationResult = item.formView.validate(fieldValue);
-    @if (validationResult?.type === 'error') {
-      <sh-icon class="error" [shTooltip]="validationResult?.message ?? 'Invalid value'">x-circle</sh-icon>
-    } @else if (validationResult?.type === 'warning') {
-      <sh-icon class="warn" [shTooltip]="validationResult?.message ?? 'Invalid value'">warning</sh-icon>
+  @if (item.Value) {
+    @let fieldValue = item.Value();
+    @let isFieldEmpty = (fieldValue ?? '').toString().trim() === '';
+    @if (!isFieldEmpty && item.formView.validate) {
+      @let validationResult = item.formView.validate(fieldValue);
+      @if (validationResult?.type === 'error') {
+        <sh-icon class="error" [shTooltip]="validationResult?.message ?? 'Invalid value'">x-circle</sh-icon>
+      } @else if (validationResult?.type === 'warning') {
+        <sh-icon class="warn" [shTooltip]="validationResult?.message ?? 'Invalid value'">warning</sh-icon>
+      }
     }
   }
 </ng-template>

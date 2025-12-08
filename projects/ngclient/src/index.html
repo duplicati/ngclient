@@ -51,6 +51,14 @@
       body:not(:has(app-root router-outlet ~ *)) > .loading {
         display: flex;
       }
+      body > .loading.has-error {
+        display: flex !important;
+        flex-direction: column;
+        gap: 12px;
+        padding: 24px;
+        text-align: center;
+        align-items: center;
+      }
       .loading::after {
         content: '...';
         display: inline-block;
@@ -60,6 +68,39 @@
 
       .loading::after {
         animation: loadingDots 1.5s infinite;
+      }
+
+      body > .loading.has-error::after {
+        content: '';
+        animation: none;
+      }
+
+      body > .loading .loading-title {
+        font-size: 26px;
+        font-weight: 600;
+      }
+
+      body > .loading .loading-error {
+        font-size: 18px;
+        max-width: 520px;
+      }
+
+      body > .loading .retry-button {
+        padding: 10px 18px;
+        border-radius: 12px;
+        border: 1px solid var(--startingColor);
+        background: transparent;
+        color: var(--startingColor);
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      body > .loading .retry-button:hover {
+        background: rgba(0, 0, 0, 0.05);
+      }
+
+      html.dark body > .loading .retry-button:hover {
+        background: rgba(255, 255, 255, 0.08);
       }
 
       @keyframes loadingDots {

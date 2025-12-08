@@ -70,20 +70,21 @@ function handleRequest(state: CallState, req: HttpRequest<unknown>, next: HttpHa
 
       const httpResponse = new HttpResponse({
         body: response.body,
-        status: response.code,
+        status: response.statusCode,
         statusText: 'OK',
         headers: httpHeaders,
       });
 
       observer.next(httpResponse);
       observer.complete();
-    })
-    .catch((err) => {
-      observer.error(new HttpErrorResponse({
-        error: err ?? 'Unknown error',
-        status: 0,
-        statusText: err ?? 'Unknown error',
-      }));
+    }).catch((err) => {
+      observer.error(
+        new HttpErrorResponse({
+          error: err ?? 'Unknown error',
+          status: 0,
+          statusText: err ?? 'Unknown error',
+        })
+      );
     });
   });
 }

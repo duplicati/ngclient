@@ -317,16 +317,7 @@ export default class SettingsComponent {
   timeRange = computed(() => {
     const timeType = this.timeType();
 
-    return timeType === 'h' ? [0, 24] : [0, 60];
-  });
-
-  timeValueEffect = effect(() => {
-    const _ = this.timeValue();
-    // Prevent triggering a patch request when the component is initializing
-    const loaded = this.#serverSettingsService.serverSettings();
-    if (!loaded || (loaded['startup-delay'] === '' && this.timeType() === 'none')) return;
-
-    this.updateStartupDelay();
+    return timeType === 'h' ? [1, 24] : [1, 60];
   });
 
   updateLocale(newLocale: string) {
@@ -336,27 +327,39 @@ export default class SettingsComponent {
     window.location.reload();
   }
 
-  updateStartupDelay() {
-    const timeValue = this.timeValue();
-    const timeType = this.timeType();
-
-    let startupDelay = '';
-
-    if (timeType !== 'none' && timeValue !== 0) {
-      startupDelay = `${timeValue}${timeType}`;
-    }
-
-    this.#serverSettingsService.setStartupDelay(startupDelay).subscribe();
+  updateTimeValue(newTimeValue: number) {
+    this.timeValue.set(newTimeValue);
+    this.#setStartupDelay();
   }
 
   updateTimeType(newTimeType: string) {
     const prevTimeType = this.timeType();
 
     if (prevTimeType === 'none') {
-      this.timeValue.set(0);
+      this.timeValue.set(1);
     }
 
     this.timeType.set(newTimeType);
+    this.#setStartupDelay();
+  }
+
+  #setStartupDelayTimeoutId?: ReturnType<typeof setTimeout>;
+
+  #setStartupDelay() {
+    if (this.#setStartupDelayTimeoutId) {
+      clearTimeout(this.#setStartupDelayTimeoutId);
+    }
+
+    // Debounce the setting to avoid rapid updates
+    this.#setStartupDelayTimeoutId = setTimeout(() => {
+      const timeValue = this.timeValue();
+      const timeType = this.timeType();
+
+      const startupDelay = timeType === 'none' || timeValue === 0 ? '' : `${timeValue}${timeType}`;
+      if (startupDelay === this.#serverSettingsService.serverSettings()?.['startup-delay']) return;
+
+      this.#serverSettingsService.setStartupDelay(startupDelay).subscribe();
+    }, 1000);
   }
 
   updateUsageStatistics(newUsageStatistics: string) {
