@@ -124,7 +124,12 @@ export class SingleDestinationComponent {
     toObservable(this.targetUrl).pipe(
       map((url) => {
         if (!url) {
-          return { authKey: null as string | null, url: null as string | null, isRestore: this.isRestoreFlow() };
+          return {
+            authKey: null as string | null,
+            url: null as string | null,
+            isRestore: this.isRestoreFlow(),
+            hasKey: this.hasStorageApiKey(),
+          };
         }
 
         const queryStart = url.indexOf('?');
@@ -143,7 +148,7 @@ export class SingleDestinationComponent {
         (this as any).lastRestoreAuthQueryUrl = url;
       }),
       switchMap(({ url }) => {
-        if (url && url.startsWith('duplicati://') && this.isRestoreFlow()) {
+        if (url && url.startsWith('duplicati://') && this.hasStorageApiKey() && this.isRestoreFlow()) {
           this.isLoadingRestoreBackupIdOptions.set(true);
           return this.#webmoduleService
             .getDuplicatiStorageBackups(url)
