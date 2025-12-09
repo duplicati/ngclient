@@ -71,7 +71,8 @@ export type FormView = {
     | 'Email'
     | 'FreeText'
     | 'Hostname'
-    | 'Bucketname';
+    | 'Bucketname'
+    | 'DuplicatiBackupId';
   accepts?: string;
   shortDescription?: string;
   longDescription?: string;

@@ -3,7 +3,9 @@ import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { ShipDialogService } from '@ship-ui/core';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer, RemoteControlStatusOutput } from '../../core/openapi';
+import { WINDOW } from '../../core/providers/window';
 import { SysinfoState } from '../../core/states/sysinfo.state';
+import { ServerSettingsService } from '../server-settings.service';
 
 type State =
   | 'connected'
@@ -21,9 +23,11 @@ type Timeout = ReturnType<typeof setTimeout>;
   providedIn: 'root',
 })
 export class RemoteControlState {
+  #window = inject(WINDOW);
   #dialog = inject(ShipDialogService);
   #dupServer = inject(DuplicatiServer);
   #sysinfo = inject(SysinfoState);
+  #serverSettings = inject(ServerSettingsService);
 
   repeatRegisterTimer: Timeout | null = null;
   state = signal<State>('unknown');
@@ -186,5 +190,18 @@ export class RemoteControlState {
         });
       },
     });
+  }
+
+  openConsole() {
+    const settings = this.#serverSettings.serverSettings();
+    const systemInfo = this.#sysinfo.systemInfo();
+
+    let url = 'https://app.duplicati.com/app/machines';
+    let sysInfoDefault = systemInfo?.RemoteControlDashboardUrl ?? '';
+
+    if (sysInfoDefault.length > 0) url = sysInfoDefault;
+    if (settings && settings['remote-control-dashboard-url']) url = settings['remote-control-dashboard-url'];
+
+    this.#window.open(url, '_blank');
   }
 }

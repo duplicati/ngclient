@@ -548,6 +548,92 @@
               "></ng-container>
           </label>
         </app-file-drop-textarea>
+      } @else if (item.formView.type === 'DuplicatiBackupId') {
+        @if (isConnectedToConsole() && hasStorageApiKey()) {
+          <div class="duplicati-backup-id">
+            @if (isRestoreFlow()) {
+              @if (isLoadingRestoreBackupIdOptions()) {
+                <sh-spinner [style.--spinner-size]="'16px'" [style.--spinner-thickness]="'2px'"></sh-spinner>
+                <span i18n>Loading available backups...</span>
+              } @else if (restoreBackupIdOptions().length == 0) {
+                <div class="no-backups-found" i18n>No backups found from this machine, contact support</div>
+              } @else {
+                <sh-select [options]="restoreBackupIdOptions()" [isClearable]="false">
+                  <label [for]="formFieldId">
+                    <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
+                    <span i18n>Pick the backup to restore from</span>
+                  </label>
+                  <input
+                    type="text"
+                    [id]="formFieldId"
+                    [ngModel]="formInput"
+                    (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
+                </sh-select>
+
+                <ng-template let-option #backupIdOptionTemplate>
+                  {{ option.key }} {{ option.value && option.value != option.key ? '(' + option.value + ')' : '' }}
+                </ng-template>
+              }
+            } @else {
+              <sh-form-field>
+                <label [for]="formFieldId">
+                  @if (item.formView.isMandatory && isFieldEmpty) {
+                    <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
+                  }
+                  {{ labelContent }}
+                  @if (item.formView.longDescription) {
+                    <sh-icon class="primary" [shTooltip]="item.formView.longDescription">question</sh-icon>
+                  }
+
+                  <ng-container
+                    *ngTemplateOutlet="
+                      validateTemplate;
+                      context: {
+                        $implicit: {
+                          fieldGroup: item.fieldGroup,
+                          formView: item.formView,
+                        },
+                      }
+                    "></ng-container>
+                </label>
+                <input
+                  [type]="'text'"
+                  [id]="formFieldId"
+                  [ngModel]="formInput"
+                  autocomplete="off"
+                  [placeholder]="item.formView.longDescription"
+                  [disabled]="true"
+                  (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
+
+                <sh-icon prefix>textbox</sh-icon>
+              </sh-form-field>
+              @if (getIsDisabled(formFieldId)) {
+                <button shButton type="button" class="outlined" (click)="toggleDisabled(formFieldId)" i18n>
+                  <sh-icon>pencil</sh-icon>
+                </button>
+              }
+            }
+          </div>
+        } @else {
+          <div class="duplicati-backup-id-console">
+            @if (isConnectedToConsole()) {
+              <div class="info" i18n>
+                <div>An API key with storage access is required to use Duplicati storage.</div>
+                <div>Visit the console and assign an API key to this machine.</div>
+              </div>
+              <button shButton type="button" class="outlined" (click)="openConsole()" i18n>
+                Visit&nbsp;console
+                <sh-icon>arrow-right</sh-icon>
+              </button>
+            } @else {
+              <div class="info" i18n>Connect to the console to use Duplicati storage.</div>
+              <button shButton type="button" class="outlined" [routerLink]="['/connect/logon']" i18n>
+                Connect&nbsp;now
+                <sh-icon>arrow-right</sh-icon>
+              </button>
+            }
+          </div>
+        }
       }
 
       @if (item.fieldGroup === 'advanced') {

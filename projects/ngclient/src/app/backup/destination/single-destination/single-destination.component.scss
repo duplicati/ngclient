@@ -61,3 +61,24 @@ label {
   min-height: 12rem;
   white-space: pre;
 }
+.duplicati-backup-id {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: flex-end;
+  sh-select {
+    width: 100%;
+  }
+}
+.duplicati-backup-id-console {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+  .info {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+}

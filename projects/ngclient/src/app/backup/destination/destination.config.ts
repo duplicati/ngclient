@@ -219,6 +219,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     dynamicFields: [
       {
         name: 'duplicati-backup-id',
+        type: 'DuplicatiBackupId',
         isMandatory: true,
         shortDescription: $localize`Unique Backup ID`,
         longDescription: $localize`A unique identifier for the backup job. It is recommended to not change this value.`,
