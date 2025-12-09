@@ -1,7 +1,9 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError } from 'rxjs';
 import { DuplicatiServer, GetApiV1ServersettingsResponse } from '../core/openapi';
+import { ServerStateService } from '../core/services/server-state.service';
+import { ServerStatusWebSocketService } from '../core/services/server-status-websocket.service';
 
 const SHOWN_WELCOME_PAGE_KEY = 'shown-welcome-page-v1';
 const HIDE_CONSOLE_CONNECTION_STATUS_KEY = 'hide-console-connection-status';
@@ -20,10 +22,22 @@ const POWER_MODE_PROVIDER_KEY = 'power-mode-provider';
 })
 export class ServerSettingsService {
   #dupServer = inject(DuplicatiServer);
+  #wsService = inject(ServerStatusWebSocketService);
+  #serverState = inject(ServerStateService);
 
   #initialServerSettings = toSignal(this.#dupServer.getApiV1Serversettings());
   #serverSettings = signal<GetApiV1ServersettingsResponse | undefined>(undefined);
+
   serverSettings = computed(() => this.#serverSettings() || this.#initialServerSettings());
+
+  #updateFromWs = effect(() => {
+    const settings = this.#wsService.serverSettings();
+    if (settings) this.#serverSettings.set(settings);
+  });
+
+  constructor() {
+    this.#wsService.subscribe('serversettings');
+  }
 
   isConsoleConnectionStatusHidden = computed(() => {
     const settings = this.serverSettings();
@@ -32,6 +46,9 @@ export class ServerSettingsService {
   });
 
   refreshServerSettings() {
+    // If we have websocket connection, do not refresh via REST
+    if (this.#serverState.getConnectionMethod() === 'websocket') return;
+
     this.#dupServer.getApiV1Serversettings().subscribe({
       next: (res) => {
         this.#serverSettings.set(res);
