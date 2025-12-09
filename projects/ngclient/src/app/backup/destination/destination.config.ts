@@ -236,7 +236,10 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         };
       },
       default: (backupName: string): string => {
-        return `duplicati://?duplicati-backup-id=${encodeURIComponent(backupName)}`;
+        if (backupName && backupName.length > 0)
+          return `duplicati://?duplicati-backup-id=${encodeURIComponent(backupName)}`;
+
+        return 'duplicati://';
       },
     },
   },
