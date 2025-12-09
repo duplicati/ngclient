@@ -2,7 +2,13 @@ import { inject, Injectable, signal } from '@angular/core';
 import { ShipDialogService } from '@ship-ui/core';
 import { Observable, Subscriber } from 'rxjs';
 import { DisconnectedDialogComponent } from '../components/disconnected-dialog/disconnected-dialog.component';
-import { GetApiV1BackupsResponse, GetTaskStateDto, IProgressEventData, ServerStatusDto } from '../openapi';
+import {
+  GetApiV1BackupsResponse,
+  GetApiV1ServersettingsResponse,
+  GetTaskStateDto,
+  IProgressEventData,
+  ServerStatusDto,
+} from '../openapi';
 import { AppAuthState } from '../states/app-auth.state';
 import { SysinfoState } from '../states/sysinfo.state';
 
@@ -15,7 +21,8 @@ export type SubscriptionService =
   | 'taskqueue'
   | 'taskcompleted'
   | 'notification'
-  | 'legacystatus';
+  | 'legacystatus'
+  | 'serversettings';
 type RequestAction = 'sub' | 'unsub';
 type ResponseAction = 'reply';
 type ResponseType = SubscriptionService | ResponseAction;
@@ -78,6 +85,7 @@ export class ServerStatusWebSocketService {
   #connectionStatus = signal<ConnectionStatus>('disconnected');
   #serverState = signal<ServerStatusDto | null>(null);
   #serverProgress = signal<IProgressEventData | null>(null);
+  #serverSettings = signal<GetApiV1ServersettingsResponse | null>(null);
   #serverTaskQueue = signal<GetTaskStateDto[] | null>(null);
   #backupListState = signal<GetApiV1BackupsResponse | null>(null);
   #disconnectedDialog: ReturnType<typeof this.dialog.open<DisconnectedDialogComponent>> | undefined = undefined;
@@ -87,6 +95,7 @@ export class ServerStatusWebSocketService {
   connectionStatus = this.#connectionStatus.asReadonly();
   serverState = this.#serverState.asReadonly();
   serverProgress = this.#serverProgress.asReadonly();
+  serverSettings = this.#serverSettings.asReadonly();
   subscriptions = this.#subscriptions.asReadonly();
   serverTaskQueue = this.#serverTaskQueue.asReadonly();
   backupListState = this.#backupListState.asReadonly();
@@ -175,6 +184,10 @@ export class ServerStatusWebSocketService {
           const evobj = respobj as WebsocketEventMessage<IProgressEventData>;
           if (LOGGING_ENABLED) console.log('Received progress update:', evobj.Data);
           this.#serverProgress.set(evobj.Data);
+        } else if (type === 'serversettings') {
+          const evobj = respobj as WebsocketEventMessage<GetApiV1ServersettingsResponse>;
+          if (LOGGING_ENABLED) console.log('Received server settings update:', evobj.Data);
+          this.#serverSettings.set(evobj.Data);
         } else if (type === 'taskqueue') {
           const evobj = respobj as WebsocketEventMessage<GetTaskStateDto[]>;
           if (LOGGING_ENABLED) console.log('Received task update:', evobj.Data);
