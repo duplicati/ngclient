@@ -167,4 +167,20 @@ export class WebModulesService {
         map((folders) => JSON.parse(folders) as string[])
       );
   }
+
+  getFilenApiKey(url: string, backupId?: string | null) {
+    return this.#dupServer
+      .postApiV1WebmoduleByModulekey({
+        modulekey: 'filen-get-api-key',
+        requestBody: {
+          'filen-operation': 'GetApiKey',
+          'backup-id': backupId ?? '',
+          url,
+        },
+      })
+      .pipe(
+        map((x) => this.#defaultMapResultObjToArray(x)),
+        map((res) => res.find((r) => r.key === 'api-key')?.value as string)
+      );
+  }
 }

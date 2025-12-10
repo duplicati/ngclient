@@ -634,6 +634,52 @@
             }
           </div>
         }
+      } @else if (item.formView.type === 'Filen2FACode') {
+        @if (!hasFilenApiKey()) {
+          <div class="filen-2fa-setup">
+            <sh-form-field>
+              <label [for]="formFieldId">
+                @if (item.formView.isMandatory && isFieldEmpty) {
+                  <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
+                }
+                {{ labelContent }}
+                @if (item.formView.longDescription) {
+                  <sh-icon class="primary" [shTooltip]="item.formView.longDescription">question</sh-icon>
+                }
+
+                <ng-container
+                  *ngTemplateOutlet="
+                    validateTemplate;
+                    context: {
+                      $implicit: {
+                        fieldGroup: item.fieldGroup,
+                        formView: item.formView,
+                      },
+                    }
+                  "></ng-container>
+              </label>
+
+              <input
+                type="text"
+                [id]="formFieldId"
+                [ngModel]="formInput"
+                autocomplete="off"
+                (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
+
+              <sh-icon prefix>textbox</sh-icon>
+            </sh-form-field>
+            <button
+              shButton
+              type="button"
+              class="outlined"
+              (click)="authenticateFilen()"
+              [disabled]="isAuthenticatingFilen()"
+              i18n>
+              Authenticate&nbsp;now
+              <sh-icon>arrow-right</sh-icon>
+            </button>
+          </div>
+        }
       }
 
       @if (item.fieldGroup === 'advanced') {
