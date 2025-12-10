@@ -61,3 +61,10 @@ label {
   min-height: 12rem;
   white-space: pre;
 }
+
+.filen-2fa-setup {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: flex-end;
+}

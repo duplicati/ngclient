@@ -1896,6 +1896,10 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         name: 'auth-password',
         isMandatory: true,
       },
+      {
+        name: 'two-factor-code',
+        type: 'Filen2FACode',
+      },
     ],
     mapper: {
       to: (fields: ValueOfDestinationFormGroup): string => {
