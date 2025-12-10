@@ -15,6 +15,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import {
   ShipButton,
+  ShipDialogService,
   ShipFormField,
   ShipIcon,
   ShipMenu,
@@ -26,6 +27,7 @@ import {
   ShipTooltip,
 } from '@ship-ui/core';
 import { distinctUntilChanged, finalize, map, of, switchMap, tap } from 'rxjs';
+import { ConfirmDialogComponent } from '../../../core/components/confirm-dialog/confirm-dialog.component';
 import { FileDropTextareaComponent } from '../../../core/components/file-drop-textarea/file-drop-textarea.component';
 import FileTreeComponent from '../../../core/components/file-tree/file-tree.component';
 import { SizeComponent } from '../../../core/components/size/size.component';
@@ -91,6 +93,7 @@ export class SingleDestinationComponent {
   #destinationState = inject(DestinationConfigState);
   #remoteControlState = inject(RemoteControlState);
   #webmoduleService = inject(WebModulesService);
+  #dialogService = inject(ShipDialogService);
   injector = inject(Injector);
   targetUrl = model.required<string | null>();
   useBackupState = input(false);
@@ -168,6 +171,13 @@ export class SingleDestinationComponent {
 
   hasStorageApiKey = computed(() => {
     return (this.#serverSettings.serverSettings()?.['remote-control-storage-api-id'] ?? '').length > 0;
+  });
+
+  isAuthenticatingFilen = signal(false);
+  hasFilenApiKey = computed(() => {
+    const form = this.destinationForm();
+    const apiKey = form.advanced['api-key'];
+    return apiKey && apiKey.length > 0;
   });
 
   nonSelectedAdvancedFormViews = computed(() => {
@@ -548,5 +558,74 @@ export class SingleDestinationComponent {
 
   openConsole() {
     this.#remoteControlState.openConsole();
+  }
+
+  #performFilenAuth(url: string) {
+    var backupId = this.useBackupState() ? this.#backupState.backupId() : null;
+    this.isAuthenticatingFilen.set(true);
+    this.#webmoduleService
+      .getFilenApiKey(url, backupId)
+      .pipe(finalize(() => this.isAuthenticatingFilen.set(false)))
+      .subscribe({
+        next: (apiKey) => {
+          if (apiKey.length === 0) {
+            this.#dialogService.open(ConfirmDialogComponent, {
+              data: {
+                title: $localize`Authentication failed`,
+                message: $localize`No API key was returned from the Filen server.`,
+                confirmText: $localize`OK`,
+              },
+            });
+            return;
+          }
+
+          this.destinationForm.update((y) => {
+            y.advanced['api-key'] = apiKey;
+            y.dynamic['two-factor-code'] = null;
+            return y;
+          });
+          this.refreshView.set(!this.refreshView());
+        },
+        error: (error) => {
+          console.error('Error authenticating Filen', error);
+          this.#dialogService.open(ConfirmDialogComponent, {
+            data: {
+              title: $localize`Authentication failed`,
+              message: $localize`An error occurred while requesting the Filen API key: ${error.message}`,
+              confirmText: $localize`OK`,
+            },
+          });
+        },
+      });
+  }
+
+  authenticateFilen() {
+    const url = this.targetUrl();
+    if (!url) return;
+
+    const form = this.destinationForm();
+    const apiKey = form.advanced['api-key'];
+
+    if (apiKey && apiKey.length > 0) {
+      this.#dialogService.open(ConfirmDialogComponent, {
+        data: {
+          title: $localize`Confirm re-authenticate?`,
+          message: $localize`You already have an API key. Are you sure you want to re-authenticate?`,
+          confirmText: $localize`Yes`,
+          cancelText: $localize`Cancel`,
+        },
+        closed: (res) => {
+          if (!res) return;
+
+          // Remove 'api-key' temporarily to force re-authentication
+          var u = new URL(url);
+          u.searchParams.delete('api-key');
+          this.#performFilenAuth(u.toString());
+        },
+      });
+      return;
+    }
+
+    this.#performFilenAuth(url);
   }
 }
