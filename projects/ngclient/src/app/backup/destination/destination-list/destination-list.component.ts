@@ -35,7 +35,17 @@ export class DestinationListComponent {
         return a.displayName.localeCompare(b.displayName);
       })
       // Remove hidden options
-      .filter((option) => (option.sortOrder ?? 0) >= 0);
+      .filter((option) => {
+        const sortOrder = option.sortOrder ?? 0;
+        // Show on direct match even if hidden
+        if (sortOrder < 0 && searchTerm?.length) {
+          if (option.key.toLocaleLowerCase() === searchTerm.toLocaleLowerCase()) return true;
+          if (option.customKey?.toLocaleLowerCase() === searchTerm.toLocaleLowerCase()) return true;
+        }
+        return sortOrder >= 0;
+      });
+
+    // const sortedOptions = options.filter((option) => (option.sortOrder ?? 0) >= 0);
 
     if (searchTerm) {
       return sortedOptions.filter((option) => option.searchTerms.toLowerCase().includes(searchTerm));
