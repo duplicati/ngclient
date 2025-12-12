@@ -2223,6 +2223,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   CreateCustomS3ProviderEntry('seagatelyve', 'Seagate Lyve', null, 'assets/dest-icons/seagatelyve.png', [
     '.lyvecloud.seagate.com',
   ]),
+  CreateCustomS3ProviderEntry('internxt', 'Internxt', null, 'assets/dest-icons/internxt.png', ['.internxt.com']),
 ];
 
 export const S3_HOST_SUFFIX_MAP: Record<string, string> = {
@@ -2263,4 +2264,5 @@ export const S3_HOST_SUFFIX_MAP: Record<string, string> = {
   '.tcloud.com': 'TCloud S3',
   '.tencentcloudapi.com': 'Tencent Cloud S3',
   '.rabata.io': 'Rabata S3',
+  '.internxt.com': 'Internxt S3',
 };
