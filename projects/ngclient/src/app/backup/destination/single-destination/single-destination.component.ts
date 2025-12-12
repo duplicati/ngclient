@@ -10,7 +10,9 @@ import {
   model,
   signal,
 } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import {
   ShipButton,
   ShipDialogService,
@@ -19,11 +21,12 @@ import {
   ShipMenu,
   ShipProgressBar,
   ShipSelect,
+  ShipSpinner,
   ShipToggle,
   ShipToggleCard,
   ShipTooltip,
 } from '@ship-ui/core';
-import { finalize } from 'rxjs';
+import { distinctUntilChanged, finalize, map, of, switchMap, tap } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../core/components/confirm-dialog/confirm-dialog.component';
 import { FileDropTextareaComponent } from '../../../core/components/file-drop-textarea/file-drop-textarea.component';
 import FileTreeComponent from '../../../core/components/file-tree/file-tree.component';
@@ -33,6 +36,7 @@ import { ArgumentType, ICommandLineArgument } from '../../../core/openapi';
 import { WebModulesService } from '../../../core/services/webmodules.service';
 import { DestinationConfigState } from '../../../core/states/destinationconfig.state';
 import { SysinfoState } from '../../../core/states/sysinfo.state';
+import { RemoteControlState } from '../../../settings/remote-control/remote-control.state';
 import { ServerSettingsService } from '../../../settings/server-settings.service';
 import { BackupState } from '../../backup.state';
 import {
@@ -53,12 +57,14 @@ type DestinationConfig = {
   dynamic: FormView[];
   advanced: FormView[];
 };
+
 @Component({
   selector: 'app-single-destination',
   imports: [
     ReactiveFormsModule,
     FormsModule,
     NgTemplateOutlet,
+    RouterLink,
 
     FileTreeComponent,
     SizeComponent,
@@ -74,6 +80,7 @@ type DestinationConfig = {
     ShipTooltip,
     ShipToggle,
     ShipProgressBar,
+    ShipSpinner,
   ],
   templateUrl: './single-destination.component.html',
   styleUrl: './single-destination.component.scss',
@@ -84,6 +91,7 @@ export class SingleDestinationComponent {
   #sysinfo = inject(SysinfoState);
   #serverSettings = inject(ServerSettingsService);
   #destinationState = inject(DestinationConfigState);
+  #remoteControlState = inject(RemoteControlState);
   #webmoduleService = inject(WebModulesService);
   #dialogService = inject(ShipDialogService);
   injector = inject(Injector);
@@ -112,6 +120,58 @@ export class SingleDestinationComponent {
   destinationFormConfig = signal<DestinationConfig | null>(null);
 
   showTextArea = signal(false);
+
+  isLoadingRestoreBackupIdOptions = signal(false);
+  isRestoreFlow = computed(() => !this.useBackupState());
+  restoreBackupIdOptions = toSignal(
+    toObservable(this.targetUrl).pipe(
+      map((url) => {
+        if (!url) {
+          return {
+            authKey: null as string | null,
+            url: null as string | null,
+            isRestore: this.isRestoreFlow(),
+            hasKey: this.hasStorageApiKey(),
+          };
+        }
+
+        const queryStart = url.indexOf('?');
+        const query = queryStart >= 0 ? url.substring(queryStart + 1) : '';
+        const params = new URLSearchParams(query);
+
+        const apiId = params.get('duplicati-auth-apiid') ?? '';
+        const apiKey = params.get('duplicati-auth-apikey') ?? '';
+
+        const authKey = `${apiId}|${apiKey}`;
+
+        return { authKey, url };
+      }),
+      distinctUntilChanged((a, b) => a.authKey === b.authKey),
+      tap(({ url }) => {
+        (this as any).lastRestoreAuthQueryUrl = url;
+      }),
+      switchMap(({ url }) => {
+        if (url && url.startsWith('duplicati://') && this.hasStorageApiKey() && this.isRestoreFlow()) {
+          this.isLoadingRestoreBackupIdOptions.set(true);
+          return this.#webmoduleService
+            .getDuplicatiStorageBackups(url)
+            .pipe(finalize(() => this.isLoadingRestoreBackupIdOptions.set(false)));
+        } else {
+          return of<string[]>([]);
+        }
+      })
+    ),
+    {
+      initialValue: [] as string[],
+    }
+  );
+  isConnectedToConsole = computed(() => {
+    return this.#remoteControlState.state() === 'connected';
+  });
+
+  hasStorageApiKey = computed(() => {
+    return (this.#serverSettings.serverSettings()?.['remote-control-storage-api-id'] ?? '').length > 0;
+  });
 
   isAuthenticatingFilen = signal(false);
   hasFilenApiKey = computed(() => {
@@ -483,6 +543,23 @@ export class SingleDestinationComponent {
       advanced: newSettings,
     }));
   }
+
+  getIsDisabled(formFieldId: string): boolean {
+    const inputElement = document.getElementById(formFieldId) as HTMLInputElement | null;
+    return inputElement?.disabled ?? true;
+  }
+
+  toggleDisabled(formFieldId: string) {
+    const inputElement = document.getElementById(formFieldId) as HTMLInputElement | null;
+    if (inputElement) {
+      inputElement.disabled = !inputElement.disabled;
+    }
+  }
+
+  openConsole() {
+    this.#remoteControlState.openConsole();
+  }
+
   #performFilenAuth(url: string) {
     var backupId = this.useBackupState() ? this.#backupState.backupId() : null;
     this.isAuthenticatingFilen.set(true);

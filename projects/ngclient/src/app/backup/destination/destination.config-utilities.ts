@@ -72,6 +72,7 @@ export type FormView = {
     | 'FreeText'
     | 'Hostname'
     | 'Bucketname'
+    | 'DuplicatiBackupId'
     | 'Filen2FACode';
   accepts?: string;
   shortDescription?: string;

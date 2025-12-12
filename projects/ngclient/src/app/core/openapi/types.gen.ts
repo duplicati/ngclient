@@ -91,7 +91,7 @@ export type CreateBackupDto = {
     Temporary?: boolean;
 };
 
-export type DayOfWeek = string;
+export type DayOfWeek = 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat';
 
 export type DeleteBackupOutputDto = {
     Status?: (string) | null;
@@ -219,6 +219,10 @@ export type ImportBackupInputDto = {
     import_metadata?: (boolean) | null;
     direct?: (boolean) | null;
     passphrase?: (string) | null;
+    temporary?: (boolean) | null;
+    replace_settings?: {
+        [key: string]: string;
+    } | null;
 };
 
 export type ImportBackupOutputDto = {
@@ -553,6 +557,7 @@ export type SystemInfoDto = {
     ServerVersionName: (string) | null;
     ServerVersionType: (string) | null;
     RemoteControlRegistrationUrl: (string) | null;
+    RemoteControlDashboardUrl: (string) | null;
     StartedBy: (string) | null;
     DefaultUpdateChannel: (string) | null;
     DefaultUsageReportLevel: (string) | null;

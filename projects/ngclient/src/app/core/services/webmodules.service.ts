@@ -152,6 +152,22 @@ export class WebModulesService {
       []) as WebModuleOption[];
   }
 
+  getDuplicatiStorageBackups(url: string) {
+    return this.#dupServer
+      .postApiV1WebmoduleByModulekey({
+        modulekey: 'duplicati-list-backups',
+        requestBody: {
+          action: 'ListBackups',
+          url,
+        },
+      })
+      .pipe(
+        map((x) => this.#defaultMapResultObjToArray(x)),
+        map((res) => res.find((r) => r.key === 'folders')?.value as string),
+        map((folders) => JSON.parse(folders) as string[])
+      );
+  }
+
   getFilenApiKey(url: string, backupId?: string | null) {
     return this.#dupServer
       .postApiV1WebmoduleByModulekey({

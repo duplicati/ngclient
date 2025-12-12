@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@ang
 import { RouterLink } from '@angular/router';
 import { ShipIcon, ShipTooltip } from '@ship-ui/core';
 import { RemoteControlState } from '../../../../settings/remote-control/remote-control.state';
-import { WINDOW } from '../../../providers/window';
 
 @Component({
   selector: 'app-remote-connectivity-status',
@@ -12,7 +11,6 @@ import { WINDOW } from '../../../providers/window';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class RemoteConnectivityStatus {
-  #window = inject(WINDOW);
   #remoteControlState = inject(RemoteControlState);
 
   state = this.#remoteControlState.state;
@@ -51,6 +49,6 @@ export default class RemoteConnectivityStatus {
   }
 
   openConsole() {
-    this.#window.open('https://app.duplicati.com/app/machines', '_blank');
+    this.#remoteControlState.openConsole();
   }
 }

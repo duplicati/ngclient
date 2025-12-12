@@ -210,6 +210,40 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     },
   },
   {
+    key: 'duplicati',
+    displayName: $localize`Duplicati Storage`,
+    description: $localize`Store backups with Duplicati Storage.`,
+    icon: 'assets/dest-icons/duplicati.png',
+    searchTerms: 'duplicati internal built-in',
+    sortOrder: -2,
+    dynamicFields: [
+      {
+        name: 'duplicati-backup-id',
+        type: 'DuplicatiBackupId',
+        isMandatory: true,
+        shortDescription: $localize`Unique Backup ID`,
+        longDescription: $localize`A unique identifier for the backup job. It is recommended to not change this value.`,
+      },
+    ],
+    mapper: {
+      to: (fields: ValueOfDestinationFormGroup): string => {
+        return buildUrlFromFields(fields, null, null, null);
+      },
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
+        return <ValueOfDestinationFormGroup>{
+          destinationType,
+          ...fromSearchParams(destinationType, urlObj),
+        };
+      },
+      default: (backupName: string): string => {
+        if (backupName && backupName.length > 0)
+          return `duplicati://?duplicati-backup-id=${encodeURIComponent(backupName)}`;
+
+        return 'duplicati://';
+      },
+    },
+  },
+  {
     key: 'ssh',
     displayName: $localize`SSH`,
     description: $localize`Store backups with SSH.`,
@@ -388,7 +422,6 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups in Amazon S3.`,
     icon: 'assets/dest-icons/aws.png',
     searchTerms: 'amazon aws',
-    sortOrder: 90,
     customFields: {
       bucket: {
         type: 'Bucketname',
