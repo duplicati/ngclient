@@ -215,7 +215,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups with Duplicati Storage.`,
     icon: 'assets/dest-icons/duplicati.png',
     searchTerms: 'duplicati internal built-in',
-    sortOrder: 99,
+    sortOrder: -2,
     dynamicFields: [
       {
         name: 'duplicati-backup-id',
