@@ -25,8 +25,8 @@
   },
   "dependencies": {
     "@angular/animations": "^21.0.0",
-    "@angular/common": "^21.0.0",
-    "@angular/compiler": "^21.0.0",
+    "@angular/common": "^21.0.1",
+    "@angular/compiler": "^21.0.2",
     "@angular/core": "^21.0.0",
     "@angular/forms": "^21.0.0",
     "@angular/platform-browser": "^21.0.0",
@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "@angular/build": "^21.0.0",
-    "@angular/cli": "^21.0.0",
+    "@angular/cli": "^21.0.3",
     "@angular/compiler-cli": "^21.0.0",
     "@hey-api/openapi-ts": "^0.83.1",
     "ng-packagr": "^21.0.0",
