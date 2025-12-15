@@ -7,6 +7,7 @@ import {
   GetApiV1ServersettingsResponse,
   GetTaskStateDto,
   IProgressEventData,
+  OpenAPI,
   ServerStatusDto,
 } from '../openapi';
 import { AppAuthState } from '../states/app-auth.state';
@@ -127,9 +128,10 @@ export class ServerStatusWebSocketService {
     }
 
     const hostname = window.location.hostname;
+    const prefix = OpenAPI.BASE || '';
     const url = this.#sysinfo.hasWebSocketAuth()
-      ? `${protocol}//${hostname}${port}/notifications`
-      : `${protocol}//${hostname}${port}/notifications?token=${token}`;
+      ? `${protocol}//${hostname}${port}${prefix}/notifications`
+      : `${protocol}//${hostname}${port}${prefix}/notifications?token=${token}`;
 
     this.#connectionStatus.set('connecting');
 
