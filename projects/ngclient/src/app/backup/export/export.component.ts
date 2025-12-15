@@ -15,6 +15,7 @@ import {
 } from '@ship-ui/core';
 import { finalize, switchMap } from 'rxjs';
 import { DuplicatiServer } from '../../core/openapi';
+import { OpenAPI } from '../../core/openapi/core/OpenAPI';
 import { PasswordGeneratorService } from '../../core/services/password-generator.service';
 import { BackupsState } from '../../core/states/backups.state';
 import { validateIf, watchField } from '../../core/validators/custom.validators';
@@ -112,8 +113,9 @@ export default class ExportComponent {
               ? this.exportFormSignal()?.password
               : undefined;
 
+            const prefix = OpenAPI.BASE || '';
             return this.#httpClient.get(
-              `/api/v1/backup/${this.#route.snapshot.params['id']}/export${objToQueryString({
+              `${prefix}/api/v1/backup/${this.#route.snapshot.params['id']}/export${objToQueryString({
                 'export-passwords': this.exportFormSignal()?.exportPasswords ?? undefined,
                 passphrase: passphrase,
                 token: x.Token as string,

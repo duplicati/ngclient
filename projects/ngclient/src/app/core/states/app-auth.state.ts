@@ -3,6 +3,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, finalize, map, Observable, of, take, tap } from 'rxjs';
 import { AccessTokenOutputDto, DuplicatiServer, PostApiV1AuthRefreshData } from '../openapi';
+import { OpenAPI } from '../openapi/core/OpenAPI';
 import { RelayconfigState } from './relayconfig.state';
 
 export const dummytoken = 'PROXY_AUTHED_FAKE_TOKEN';
@@ -95,8 +96,10 @@ export class AppAuthState {
       'custom-proxy-check': 'true',
     });
 
+    const prefix = OpenAPI.BASE || '';
+
     return this.#http
-      .get('/api/v1/systeminfo', {
+      .get(`${prefix}/api/v1/systeminfo`, {
         headers,
       })
       .pipe(

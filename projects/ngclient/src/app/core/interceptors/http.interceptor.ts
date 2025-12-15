@@ -6,6 +6,7 @@ import { catchError, finalize, map, Observable, shareReplay, switchMap, throwErr
 import { ENVIRONMENT_TOKEN } from '../../../environments/environment-token';
 import { mapLocale } from '../locales/locales.utility';
 import { AccessTokenOutputDto } from '../openapi';
+import { OpenAPI } from '../openapi/core/OpenAPI';
 import { LOCALSTORAGE } from '../services/localstorage.token';
 import { AppAuthState, dummytoken } from '../states/app-auth.state';
 
@@ -19,12 +20,13 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   const locale = ls.getItem('locale');
   const shipAlertService = inject(ShipAlertService);
   const mappedLocale = mapLocale(locale);
-  const isLoginRequest = req.url === '/api/v1/auth/login';
-  const isRefreshRequest = req.url === '/api/v1/auth/refresh';
-  const isProgressStateRequest = req.url === '/api/v1/progressstate';
-  const isConnectionTestRequest = req.url === '/api/v1/remoteoperation/test';
-  const isValidateFsTestRequest = req.url === '/api/v1/filesystem/validate';
-  const isV2Request = req.url.startsWith('/api/v2/');
+  const prefix = OpenAPI.BASE || '';
+  const isLoginRequest = req.url === `${prefix}/api/v1/auth/login`;
+  const isRefreshRequest = req.url === `${prefix}/api/v1/auth/refresh`;
+  const isProgressStateRequest = req.url === `${prefix}/api/v1/progressstate`;
+  const isConnectionTestRequest = req.url === `${prefix}/api/v1/remoteoperation/test`;
+  const isValidateFsTestRequest = req.url === `${prefix}/api/v1/filesystem/validate`;
+  const isV2Request = req.url.startsWith(`${prefix}/api/v2/`);
   const token = auth.token();
 
   let modifiedRequest = req;
@@ -32,7 +34,7 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   const hasCustomProxyHeader = req.headers.has('custom-proxy-check');
   const IS_PROXY_DETECT_REQUEST = hasCustomProxyHeader || token === dummytoken;
 
-  if (token && req.url.startsWith(env.baseUrl) && !IS_PROXY_DETECT_REQUEST) {
+  if (token && req.url.startsWith(prefix + env.baseUrl) && !IS_PROXY_DETECT_REQUEST) {
     let newHeaders = req.headers.set('Authorization', `Bearer ${token}`);
 
     if (locale && locale !== 'en-US') {

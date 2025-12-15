@@ -10,6 +10,7 @@ import {
 } from '@ship-ui/core';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer, NotificationType } from '../../core/openapi';
+import { OpenAPI } from '../../core/openapi/core/OpenAPI';
 import { ExtendedNotificationDto } from '../notifications.component';
 import { NotificationsState } from '../notifications.state';
 
@@ -127,7 +128,8 @@ export class NotificationComponent {
             return;
           }
 
-          const link = `${location.origin}/api/v1/bugreport/${id}?token=${res.Token}`;
+          const prefix = OpenAPI.BASE || '';
+          const link = `${location.origin}${prefix}/api/v1/bugreport/${id}?token=${res.Token}`;
 
           item.DownloadLink = link;
           this.#generatedDownloadLink.set(link);
