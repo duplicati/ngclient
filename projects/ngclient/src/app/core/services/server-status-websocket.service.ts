@@ -214,6 +214,18 @@ export class ServerStatusWebSocketService {
       if (LOGGING_ENABLED) console.log('WebSocket connection closed', event);
       this.#connectionStatus.set('disconnected');
 
+      var shouldReAuthenticate = event.code === 4401;
+      if (shouldReAuthenticate) {
+        this.#auth.refreshToken().subscribe({
+          next: () => {
+            this.reconnect();
+          },
+          error: (error) => {
+            console.error('Error refreshing token', error);
+          },
+        });
+      }
+
       // Attempt reconnection
       if (this.shouldConnect()) {
         if (!this.#disconnectedDialog) {

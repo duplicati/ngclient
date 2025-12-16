@@ -10,6 +10,12 @@ export const dummytoken = 'PROXY_AUTHED_FAKE_TOKEN';
 const SESSION_STORAGE_REFRESH_NONCE_KEY = 'refreshNonce';
 const LOCAL_STORAGE_REFRESH_NONCE_KEY = 'v1:persist:duplicati:refreshNonce';
 
+type AuthResponse = {
+  authorized: boolean;
+  message?: string;
+  socketToken?: string;
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -20,6 +26,7 @@ export class AppAuthState {
   #relayConfigState = inject(RelayconfigState);
   #token = signal<string | null>(null);
   #isLoggingOut = signal(false);
+  #isProxyAuthed = signal(false);
 
   token = this.#token.asReadonly();
   isLoggingOut = this.#isLoggingOut.asReadonly();
@@ -79,6 +86,25 @@ export class AppAuthState {
       });
     }
 
+    // If we are authenticated via proxy, we just need a websocket token
+    if (this.#isProxyAuthed()) {
+      return this.#dupServer
+        .postApiV1AuthIssuetokenByOperation({
+          operation: 'websocket',
+        })
+        .pipe(
+          take(1),
+          tap((res) => {
+            if (res.Token) {
+              this.#token.set(res.Token);
+            }
+          }),
+          map((res) => {
+            return <AccessTokenOutputDto>{ AccessToken: res.Token };
+          })
+        );
+    }
+
     const { requestBody, local } = this.getRefreshNonceBody();
     return this.#dupServer.postApiV1AuthRefresh(requestBody).pipe(
       take(1),
@@ -99,14 +125,19 @@ export class AppAuthState {
     const prefix = OpenAPI.BASE || '';
 
     return this.#http
-      .get(`${prefix}/api/v1/systeminfo`, {
+      .post(`${prefix}/api/v1/auth/status`, {
         headers,
       })
       .pipe(
-        map(() => {
-          this.#token.set(dummytoken);
+        map((_res) => {
+          const res = _res as AuthResponse;
+          if (res?.authorized && res?.socketToken) {
+            this.#token.set(res.socketToken);
+            this.#isProxyAuthed.set(true);
+            return true;
+          }
 
-          return true;
+          return false;
         }),
         catchError(() => {
           return of(false);
