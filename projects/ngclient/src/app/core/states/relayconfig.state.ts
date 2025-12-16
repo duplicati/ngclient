@@ -1,6 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { ReplaySubject } from 'rxjs';
 import { LOCALSTORAGE } from '../services/localstorage.token';
+import { isRelaySupportEnabled } from '../utils/proxy-config.util';
 
 export type Relayconfig = {
   accessToken: string;
@@ -14,13 +15,13 @@ export type Relayconfig = {
 export class RelayconfigState {
   #ls = inject(LOCALSTORAGE);
   #config = signal<Relayconfig | null>(null);
-  #isInIframe = window.self !== window.top;
-  #relayIsEnabled = signal(this.#isInIframe);
+  #useRelay = window.self !== window.top && isRelaySupportEnabled();
+  #relayIsEnabled = signal(this.#useRelay);
 
   relayIsEnabled = this.#relayIsEnabled.asReadonly();
   config = this.#config.asReadonly();
-  configLoaded = this.#isInIframe ? new ReplaySubject<boolean>() : null;
-  isLoading = signal(this.#isInIframe);
+  configLoaded = this.#useRelay ? new ReplaySubject<boolean>() : null;
+  isLoading = signal(this.#useRelay);
 
   parentIframeListner: AbortController | null = null;
   parentOrigin = '*';
@@ -28,7 +29,7 @@ export class RelayconfigState {
   fetchConfig(): void {
     this.#killListener();
 
-    if (!this.#isInIframe) return;
+    if (!this.#useRelay) return;
 
     this.#relayIsEnabled.set(true);
     this.parentIframeListner = new AbortController();

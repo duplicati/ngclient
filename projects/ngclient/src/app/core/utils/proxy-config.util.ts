@@ -30,6 +30,33 @@ export function getProxyConfigFromMetaTag(): string | null {
 }
 
 /**
+ * Reads disable frame buster configuration from meta tags in the HTML.
+ *
+ * Expected format:
+ *   <meta name="duplicati-relay-support-disabled" content="true" />
+ *
+ * If the content is not "true", the relay support is enabled.
+ */
+export function isRelaySupportEnabled(): boolean {
+  try {
+    const metaTag = document.querySelector('meta[name="duplicati-enable-iframe-hosting"]');
+
+    if (metaTag) {
+      const raw = (metaTag.getAttribute('content') || '').trim();
+
+      if (raw && raw.length > 0) {
+        return raw.toLowerCase() !== 'true';
+      }
+    }
+  } catch (error) {
+    console.warn('Failed to read disable relay support configuration from meta tag:', error);
+  }
+
+  // Default keep relay support enabled
+  return true;
+}
+
+/**
  * Configures OpenAPI to use the proxy path from meta tag configuration.
  * This is safe to call multiple times; it simply overwrites OpenAPI.BASE.
  */
