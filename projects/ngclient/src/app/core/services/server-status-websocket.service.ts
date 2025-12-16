@@ -160,11 +160,16 @@ export class ServerStatusWebSocketService {
           if (authReply.Success) {
             if (LOGGING_ENABLED) console.log('WebSocket authentication successful');
             this.#onconnectionEstablished();
+            // Check if the request was pre-authenticated, and this message is just a status update
+            const messageType = (authReply as any)?.Type;
+            // If this was a real auth response, we are done
+            if (messageType === 'auth' || !messageType) return;
+            // If this was not an auth response, continue processing the message below
           } else {
             console.error('WebSocket authentication failed:', authReply.Message);
             this.#connectionStatus.set('disconnected');
+            return;
           }
-          return;
         } catch (error) {
           console.error('Error parsing WebSocket authentication reply', error);
           this.#connectionStatus.set('disconnected');
