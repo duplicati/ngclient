@@ -166,7 +166,11 @@ export class ServerStatusWebSocketService {
             const messageType = (authReply as any)?.Type;
             // If this was not an authenticated message, treat as failure
             // If this is wrong, the server will close the connection anyway
-            if (messageType !== 'legacystatus') {
+            if (messageType === 'legacystatus') {
+              if (LOGGING_ENABLED) console.log('WebSocket authentication successful');
+              this.#onconnectionEstablished();
+              // Continue processing this message as normal below
+            } else {
               console.error('WebSocket authentication failed:', authReply.Message);
               this.#connectionStatus.set('disconnected');
               return;
