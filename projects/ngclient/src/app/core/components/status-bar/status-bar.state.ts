@@ -38,6 +38,7 @@ const STATUS_STATES: Record<string, string> = {
   Backup_Compact: $localize`Compacting remote data …`,
   Backup_VerificationUpload: $localize`Uploading verification file …`,
   Backup_PostBackupVerify: $localize`Verifying backend data …`,
+  Backup_Lock: $localize`Locking remote data …`,
   Backup_Complete: $localize`Backup complete!`,
   Restore_Begin: $localize`Starting restore …`,
   Restore_RecreateDatabase: $localize`Rebuilding local database …`,
@@ -61,6 +62,7 @@ const STATUS_STATES: Record<string, string> = {
   PurgeFiles_Process: $localize`Purging files …`,
   PurgeFiles_Compact: $localize`Compacting remote data …`,
   PurgeFiles_Complete: $localize`Purging files complete!`,
+  ReadLockInfo_Running: $localize`Reading lock info …`,
   Error: $localize`Error!`,
 };
 
@@ -280,7 +282,7 @@ export class StatusBarState {
     let text = 'Running …';
 
     if (status.task && status) {
-      text = status.Phase ? STATUS_STATES[status.Phase] : 'Running …';
+      text = status.Phase ? (STATUS_STATES[status.Phase] ?? status.Phase) : 'Running …';
 
       // If there is nothing to process, just return the base text
       // This happens during the initial phases of a backup/restore

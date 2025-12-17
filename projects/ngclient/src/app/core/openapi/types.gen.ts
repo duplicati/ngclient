@@ -430,6 +430,7 @@ export type RepairInputDto = {
     time?: (string) | null;
     version?: (string) | null;
     paths?: Array<string> | null;
+    refresh_lock_info?: (boolean) | null;
 };
 
 export type RestoreInputDto = {
