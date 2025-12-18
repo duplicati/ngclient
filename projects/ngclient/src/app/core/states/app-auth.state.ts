@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { catchError, finalize, map, Observable, of, take, tap } from 'rxjs';
 import { AccessTokenOutputDto, DuplicatiServer, PostApiV1AuthRefreshData } from '../openapi';
 import { OpenAPI } from '../openapi/core/OpenAPI';
+import { getXsrfQueryParam } from '../utils/proxy-config.util';
 import { RelayconfigState } from './relayconfig.state';
 
 export const dummytoken = 'PROXY_AUTHED_FAKE_TOKEN';
@@ -27,7 +28,9 @@ export class AppAuthState {
   #token = signal<string | null>(null);
   #isLoggingOut = signal(false);
   #isProxyAuthed = signal(false);
+  #xsrfQuery = signal<string | null>(getXsrfQueryParam());
 
+  xsrfQueryParam = this.#xsrfQuery.asReadonly();
   token = this.#token.asReadonly();
   isLoggingOut = this.#isLoggingOut.asReadonly();
 
@@ -120,12 +123,13 @@ export class AppAuthState {
   checkProxyAuthed() {
     const headers = new HttpHeaders({
       'custom-proxy-check': 'true',
+      ...(OpenAPI.HEADERS ?? {}),
     });
 
     const prefix = OpenAPI.BASE || '';
 
     return this.#http
-      .post(`${prefix}/api/v1/auth/status`, {
+      .post<AuthResponse>(`${prefix}/api/v1/auth/status`, null, {
         headers,
       })
       .pipe(

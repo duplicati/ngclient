@@ -13,6 +13,7 @@ import { DuplicatiServer, NotificationType } from '../../core/openapi';
 import { OpenAPI } from '../../core/openapi/core/OpenAPI';
 import { ExtendedNotificationDto } from '../notifications.component';
 import { NotificationsState } from '../notifications.state';
+import { AppAuthState } from '../../core/states/app-auth.state';
 
 const NOTIFICATION_TYPE_MAP: Record<string, ShipAlertType> = {
   Error: 'error',
@@ -34,6 +35,7 @@ export class NotificationComponent {
   #snackbar = inject(ShipAlertService);
   #notificationState = inject(NotificationsState);
   #dupServer = inject(DuplicatiServer);
+  #auth = inject(AppAuthState);
   #generatedDownloadLink = signal<string | null>(null);
 
   serverState = this.#notificationState.serverState;
@@ -129,7 +131,8 @@ export class NotificationComponent {
           }
 
           const prefix = OpenAPI.BASE || '';
-          const link = `${location.origin}${prefix}/api/v1/bugreport/${id}?token=${res.Token}`;
+          const xsrfQuery = this.#auth.xsrfQueryParam();
+          const link = `${location.origin}${prefix}/api/v1/bugreport/${id}?token=${res.Token}${xsrfQuery ? `&${xsrfQuery}` : ''}`;
 
           item.DownloadLink = link;
           this.#generatedDownloadLink.set(link);

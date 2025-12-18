@@ -9,7 +9,7 @@ import { OpenAPI } from '../openapi/core/OpenAPI';
  * Where {prefix} is the proxy prefix, e.g. "/duplicati" or "/some/prefix".
  * If the content is empty or does not start with "/", no proxy prefix is applied.
  */
-export function getProxyConfigFromMetaTag(): string | null {
+function getProxyConfigFromMetaTag(): string | null {
   try {
     const metaTag = document.querySelector('meta[name="duplicati-proxy-config"]');
 
@@ -57,10 +57,63 @@ export function isRelaySupportEnabled(): boolean {
 }
 
 /**
+ * Reads XSRF configuration from meta tags in the HTML.
+ *
+ * Expected format:
+ *   <meta name="duplicati-xsrf-config" data-header-name="{headerName}" data-query-name="{queryName}" />
+ *
+ * Where {headerName} is the name of the header to send, and {queryName} is the name of the query parameter to read.
+ * If the header name or query name is empty, no XSRF is applied.
+ */
+function getXsrfConfigFromMetaTag(): { headerName: string; queryName: string; headerValue: string } | null {
+  try {
+    const metaConfig = document.querySelector('meta[name="duplicati-xsrf-config"]');
+
+    if (metaConfig) {
+      const headerName = (metaConfig.getAttribute('data-header-name') || '').trim();
+      const queryName = (metaConfig.getAttribute('data-query-name') || '').trim();
+
+      if (headerName && queryName && headerName.length > 0 && queryName.length > 0) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const headerValue = urlParams.get(queryName);
+
+        if (headerValue) {
+          return { headerName, queryName, headerValue };
+        }
+      }
+    }
+  } catch (error) {
+    console.warn('Failed to read XSRF configuration from meta tags:', error);
+  }
+
+  return null;
+}
+
+/**
+ * Returns the XSRF query parameter from the URL, if present.
+ */
+export function getXsrfQueryParam(): string | null {
+  const config = getXsrfConfigFromMetaTag();
+
+  if (config) return `${config.queryName}=${encodeURIComponent(config.headerValue)}`;
+  return null;
+}
+
+/**
+ * Returns the XSRF header to send, if present.
+ */
+export function getXsrfHeaders(): { [header: string]: string } {
+  const config = getXsrfConfigFromMetaTag();
+
+  if (config) return { [config.headerName]: config.headerValue };
+  return {};
+}
+
+/**
  * Configures OpenAPI to use the proxy path from meta tag configuration.
  * This is safe to call multiple times; it simply overwrites OpenAPI.BASE.
  */
-export function configureOpenApiProxyPath(): void {
+export function configureProxySupport(): void {
   const prefix = getProxyConfigFromMetaTag();
 
   if (prefix && prefix.length > 0) {
@@ -76,5 +129,12 @@ export function configureOpenApiProxyPath(): void {
     OpenAPI.BASE = normalizedPath;
   } else {
     OpenAPI.BASE = '';
+  }
+
+  const headerConfig = getXsrfConfigFromMetaTag();
+  if (headerConfig) {
+    OpenAPI.HEADERS = {
+      [headerConfig.headerName]: headerConfig.headerValue,
+    };
   }
 }
