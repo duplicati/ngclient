@@ -22,6 +22,7 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   const mappedLocale = mapLocale(locale);
   const prefix = OpenAPI.BASE || '';
   const isLoginRequest = req.url === `${prefix}/api/v1/auth/login`;
+  const isLogoutRequest = req.url === `${prefix}/api/v1/auth/logout`;
   const isRefreshRequest = req.url === `${prefix}/api/v1/auth/refresh`;
   const isProgressStateRequest = req.url === `${prefix}/api/v1/progressstate`;
   const isConnectionTestRequest = req.url === `${prefix}/api/v1/remoteoperation/test`;
@@ -69,22 +70,27 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
 
       // Suppress error handling for proxy detection requests
       if (!IS_PROXY_DETECT_REQUEST) {
+        // Default to notifying the user
+        let notifyUser = true;
+
         if (isProgressStateRequest && error.status === 404) {
           // Suppress 404 errors for progressstate requests, API needs to change
+          notifyUser = false;
         } else if (isConnectionTestRequest || isValidateFsTestRequest) {
           // Suppress errors for test requests, API needs to change
-        } else {
-          shipAlertService.error(errorMsg);
+          notifyUser = false;
         }
 
         // Don't error handle refresh requests
         if (isRefreshRequest && error.status === 401) {
+          notifyUser = false;
           auth.logout();
           router.navigate(['/logout']);
         }
 
-        if (!isLoginRequest && !isRefreshRequest) {
+        if (!isLoginRequest && !isRefreshRequest && !isLogoutRequest) {
           if (error.status === 401) {
+            notifyUser = false;
             refreshRequest ??= auth.refreshToken().pipe(shareReplay());
 
             return refreshRequest!.pipe(
@@ -98,6 +104,10 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
               finalize(() => (refreshRequest = null))
             );
           }
+        }
+
+        if (notifyUser) {
+          shipAlertService.error(errorMsg);
         }
       }
 
