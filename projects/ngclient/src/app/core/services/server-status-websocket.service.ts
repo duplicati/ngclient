@@ -32,6 +32,7 @@ type ResponseType = SubscriptionService | ResponseAction;
 export type WebSocketAuthRequest = {
   Version: number;
   Token: string;
+  Type: 'auth';
 };
 
 // WebSocketAuthReply
@@ -147,6 +148,7 @@ export class ServerStatusWebSocketService {
           JSON.stringify({
             Version: 1,
             Token: token,
+            Type: 'auth',
           } as WebSocketAuthRequest)
         );
       } else {
