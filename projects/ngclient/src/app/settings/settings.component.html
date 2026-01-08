@@ -63,6 +63,26 @@
           </sh-toggle>
         </div>
       </section>
+    } @else {
+      <section>
+        <div class="left">
+          <h3 i18n>Toggle console connection status</h3>
+          <p i18n>Toggle the visibility of the console connection status indicator.</p>
+        </div>
+
+        <div class="right">
+          <sh-toggle
+            class="primary raised"
+            [class.active]="!hideConsoleConnectionStatus()"
+            (click)="saveHideConsoleConnectionStatus()">
+            @if (hideConsoleConnectionStatus()) {
+              <label i18n>Console connection status is hidden</label>
+            } @else {
+              <label i18n>Console connection status is visible</label>
+            }
+          </sh-toggle>
+        </div>
+      </section>
     }
   }
 
