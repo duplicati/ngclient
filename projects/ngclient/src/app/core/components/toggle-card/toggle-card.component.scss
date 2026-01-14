@@ -9,6 +9,7 @@
   &.active {
     .content {
       max-height: 1000px;
+      overflow: auto;
       transition: max-height 1s linear;
       padding: p2r(0 16 16);
     }
