@@ -1389,7 +1389,9 @@ export const DESTINATION_CONFIG: DestinationConfig = [
             'rclone-remote-path': path,
             ...dynamic,
           },
-          ...advanced,
+          advanced: {
+            ...advanced,
+          },
         };
       },
     },

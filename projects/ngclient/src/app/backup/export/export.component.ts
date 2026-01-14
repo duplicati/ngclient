@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -122,6 +122,9 @@ export default class ExportComponent {
               })}`,
               {
                 responseType: 'blob',
+                headers: new HttpHeaders({
+                  ...(OpenAPI.HEADERS ?? {}),
+                }),
               }
             );
           }),

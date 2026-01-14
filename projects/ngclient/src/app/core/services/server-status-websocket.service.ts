@@ -32,6 +32,7 @@ type ResponseType = SubscriptionService | ResponseAction;
 export type WebSocketAuthRequest = {
   Version: number;
   Token: string;
+  Action: 'auth';
 };
 
 // WebSocketAuthReply
@@ -129,9 +130,10 @@ export class ServerStatusWebSocketService {
 
     const hostname = window.location.hostname;
     const prefix = OpenAPI.BASE || '';
+    const xsrfQuery = this.#auth.xsrfQueryParam();
     const url = this.#sysinfo.hasWebSocketAuth()
-      ? `${protocol}//${hostname}${port}${prefix}/notifications`
-      : `${protocol}//${hostname}${port}${prefix}/notifications?token=${token}`;
+      ? `${protocol}//${hostname}${port}${prefix}/notifications${xsrfQuery ? `?${xsrfQuery}` : ''}`
+      : `${protocol}//${hostname}${port}${prefix}/notifications?token=${token}${xsrfQuery ? `&${xsrfQuery}` : ''}`;
 
     this.#connectionStatus.set('connecting');
 
@@ -146,6 +148,7 @@ export class ServerStatusWebSocketService {
           JSON.stringify({
             Version: 1,
             Token: token,
+            Action: 'auth',
           } as WebSocketAuthRequest)
         );
       } else {
