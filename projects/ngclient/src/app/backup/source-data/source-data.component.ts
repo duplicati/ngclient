@@ -2,12 +2,13 @@ import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signa
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ShipButton, ShipFormField, ShipIcon, ShipToggle } from '@ship-ui/core';
+import { ShipButton, ShipDialogService, ShipFormField, ShipIcon, ShipToggle } from '@ship-ui/core';
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
 import { SizeComponent, splitSize } from '../../core/components/size/size.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { BackupState } from '../backup.state';
 import { NewFilterComponent } from './new-filter/new-filter.component';
+import { TargetUrlDialog } from './target-url-dialog/target-url-dialog';
 
 const fb = new FormBuilder();
 
@@ -57,6 +58,7 @@ export const createSourceDataForm = (
 })
 export default class SourceDataComponent {
   #backupState = inject(BackupState);
+  #dialog = inject(ShipDialogService);
   #router = inject(Router);
   #route = inject(ActivatedRoute);
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
@@ -86,6 +88,27 @@ export default class SourceDataComponent {
   oldPath = signal<string | null>(null);
   editingPath = signal<string | null>(null);
   addingNewPath = signal(false);
+
+  openRemoteDestinationDialog() {
+    const dialogRef = this.#dialog.open(TargetUrlDialog, {
+      maxWidth: '700px',
+      maxHeight: '80vh',
+      width: '100%',
+      closeOnOutsideClick: false,
+    });
+
+    dialogRef.closed.subscribe((targetUrl) => {
+      if (!targetUrl) return;
+
+      const shortId = Math.random().toString(36).substring(2, 10);
+
+      const newRemotePath = `@${shortId}|${targetUrl}`;
+
+      console.log('targetUrl', newRemotePath);
+
+      this.addPath(newRemotePath);
+    });
+  }
 
   editPath(oldPath: string) {
     this.oldPath.set(oldPath);
@@ -134,6 +157,13 @@ export default class SourceDataComponent {
     const nonFilterPath = paths.filter((x) => x && x !== '').join('\0');
 
     this.sourceDataForm.controls.path.setValue(nonFilterPath);
+  }
+
+  addPath(path: string) {
+    const currentPath = this.sourceDataForm.controls.path.value;
+    const combined = [currentPath, path].filter((x) => x && x !== '').join('\0');
+
+    this.sourceDataForm.controls.path.setValue(combined);
   }
 
   addFilter(newPath = '-*') {
@@ -197,6 +227,7 @@ export default class SourceDataComponent {
 
     // TODO - Add path validation
     const existing = currentPath?.split('\0') || [];
+
     if (newPath && !existing.includes(newPath)) existing.push(newPath);
 
     const updatedPath = existing.filter((x) => x && x !== '').join('\0');

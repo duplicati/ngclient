@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ShipButton, ShipFormField, ShipIcon } from '@ship-ui/core';
 import { DestinationConfigState } from '../../../core/states/destinationconfig.state';
@@ -14,6 +14,7 @@ import { DestinationListItemComponent } from '../destination-list-item/destinati
 export class DestinationListComponent {
   #destinationState = inject(DestinationConfigState);
 
+  showAsSources = input<boolean>(false);
   setDestination = output<string>();
 
   destinationSearchTerm = signal('');

@@ -5,6 +5,7 @@
     <input type="text" name="fake_email" tabindex="-1" />
     <input type="password" name="fake_password" tabindex="-1" />
   </div>
+
   <header>
     <h3 class="title-30">
       <span i18n>Backup destination</span>
@@ -76,13 +77,9 @@
       </sh-alert>
     }
 
-    @let option = selectedDestinationTypeOption();
-
-    @if (option) {
-      <app-destination-list-item [destination]="option" class="current-destination">
-        <button shButton i18n (click)="removeDestination()" type="button">Change</button>
-      </app-destination-list-item>
-    }
+    <app-destination-list-item [targetUrl]="targetUrlModel()" class="current-destination">
+      <button shButton i18n (click)="removeDestination()" type="button">Change</button>
+    </app-destination-list-item>
   </header>
 
   @if (!hasDestination) {
@@ -102,14 +99,11 @@
     <button
       shButton
       class="raised primary"
+      [class.loading]="testSignal() == 'testing'"
       type="submit"
       [disabled]="testSignal() == 'testing' || !hasDestination"
       i18n>
-      @if (testSignal() == 'testing') {
-        <sh-icon class="loader">spinner</sh-icon>
-      } @else {
-        <sh-icon>arrow-right</sh-icon>
-      }
+      <sh-icon>arrow-right</sh-icon>
       Continue
     </button>
   </div>

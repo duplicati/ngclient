@@ -23,7 +23,8 @@ import { BackupAndScheduleOutputDto, DuplicatiServer } from '../core/openapi';
 import { BytesPipe } from '../core/pipes/byte.pipe';
 import { DurationFormatPipe } from '../core/pipes/duration.pipe';
 import { RelativeTimePipe } from '../core/pipes/relative-time.pipe';
-import { BackupsState, OrderBy, TimeType } from '../core/states/backups.state';
+import { Backup, BackupsState, OrderBy, TimeType } from '../core/states/backups.state';
+import { RemoteControlState } from '../settings/remote-control/remote-control.state';
 
 const DestinationOverrides: Record<string, { Display: string | null; Icon: string | null }> = {
   file: { Display: $localize`Local`, Icon: null },
@@ -57,6 +58,7 @@ export default class HomeComponent {
   #dupServer = inject(DuplicatiServer);
   #statusBarState = inject(StatusBarState);
   #backupsState = inject(BackupsState);
+  #remoteControlState = inject(RemoteControlState);
 
   MISSING_BACKUP_NAME = $localize`Backup name missing`;
   sortOrderOptions = this.#backupsState.orderByOptions;
@@ -78,6 +80,18 @@ export default class HomeComponent {
 
   ngOnInit() {
     this.#backupsState.getBackups(true);
+  }
+
+  openInConsole(backup: Backup) {
+    console.log(backup);
+    const externalId = backup.Backup.ExternalID?.split(':')[1];
+
+    if (!externalId) {
+      console.error('Backup does not have an external ID');
+      return;
+    }
+
+    this.#remoteControlState.openConsole('/app/machines/configurations/' + externalId);
   }
 
   setOrderBy(orderBy: OrderBy) {

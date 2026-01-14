@@ -24,7 +24,14 @@
 
   <div class="right">
     <app-toggle-card [disallowToggle]="true">
-      <ng-container title i18n>Paths</ng-container>
+      <ng-container title i18n>
+        Paths
+        <div class="spacer"></div>
+        <button shButton type="button" class="small" (click)="openRemoteDestinationDialog()">
+          <sh-icon>cloud-arrow-down</sh-icon>
+          Add remote path
+        </button>
+      </ng-container>
       <p description i18n>Add a path directly from your machine.</p>
 
       <div class="paths">

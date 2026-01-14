@@ -1,21 +1,23 @@
-@let item = destination();
+@let item = destinationItem();
 
-<sh-card class="type-b">
-  <div class="icon">
-    <img src="{{ item.icon }}" alt="{{ item.displayName }}" />
-  </div>
+@if (item) {
+  <sh-card class="type-b">
+    <div class="icon">
+      <img src="{{ item.icon }}" alt="{{ item.displayName }}" />
+    </div>
 
-  <div class="name">
-    {{ item.displayName }}
-    @if ((item.sortOrder ?? 0) == -2) {
-      <sh-chip class="small simple primary">Special</sh-chip>
-    } @else if ((item.sortOrder ?? 0) < 0) {
-      <sh-chip class="small simple warn">Deprecated</sh-chip>
-    }
-  </div>
-  <div class="description">{{ item.description }}</div>
+    <div class="name">
+      {{ item.displayName }}
+      @if ((item.sortOrder ?? 0) == -2) {
+        <sh-chip class="small simple primary">Special</sh-chip>
+      } @else if ((item.sortOrder ?? 0) < 0) {
+        <sh-chip class="small simple warn">Deprecated</sh-chip>
+      }
+    </div>
+    <div class="description">{{ item.description }}</div>
 
-  <div class="actions">
-    <ng-content></ng-content>
-  </div>
-</sh-card>
+    <div class="actions">
+      <ng-content></ng-content>
+    </div>
+  </sh-card>
+}

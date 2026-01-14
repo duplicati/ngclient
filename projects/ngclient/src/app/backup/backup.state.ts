@@ -31,7 +31,7 @@ import { createSourceDataForm } from './source-data/source-data.component';
 
 const SMART_RETENTION = '1W:1D,4W:1W,12M:1M';
 
-export type TestState = '' | 'testing' | 'success' | 'warning' | 'error';
+export type TestState = '' | 'testing' | 'success' | 'containsBackup' | 'destinationNotEmpty' | 'warning' | 'error';
 
 @Injectable({
   providedIn: 'root',

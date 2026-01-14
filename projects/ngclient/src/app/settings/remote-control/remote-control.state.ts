@@ -95,7 +95,7 @@ export class RemoteControlState {
     // If we are registering, we need to keep checking until the registration is claimed
     if (currentState === 'registering') {
       this.repeatRegisterTimer = setTimeout(() => {
-        this.#dupServer.postApiV1RemotecontrolRegister({ requestBody: { RegistrationUrl: '' } }).subscribe({
+        this.#dupServer.postApiV1RemotecontrolRegisterWait().subscribe({
           next: (res) => this.#mapRemoteControlStatus(res),
           error: (err) => this.#mapRemoteControlError(err),
         });
@@ -192,15 +192,27 @@ export class RemoteControlState {
     });
   }
 
-  openConsole() {
+  openConsole(defaultPath = '/app/machines', queryParams?: Record<string, string>) {
     const settings = this.#serverSettings.serverSettings();
     const systemInfo = this.#sysinfo.systemInfo();
 
-    let url = 'https://app.duplicati.com/app/machines';
+    let url = 'https://app.duplicati.com';
     let sysInfoDefault = systemInfo?.RemoteControlDashboardUrl ?? '';
+
+    console.log('sysinfo', sysInfoDefault);
+    console.log('settings', settings);
 
     if (sysInfoDefault.length > 0) url = sysInfoDefault;
     if (settings && settings['remote-control-dashboard-url']) url = settings['remote-control-dashboard-url'];
+
+    const urlObj = new URL(url);
+
+    url = urlObj.origin + defaultPath;
+
+    if (queryParams) {
+      const query = new URLSearchParams(queryParams);
+      url += `?${query.toString()}`;
+    }
 
     this.#window.open(url, '_blank');
   }

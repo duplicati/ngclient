@@ -38,7 +38,7 @@
         <sh-icon suffix (click)="showPassword.set(!showPassword())">{{ showPassword() ? 'eye' : 'eye-slash' }}</sh-icon>
       </sh-form-field>
 
-      <button shButton class="raised primary login-button" [class.loader]="isLoading()" type="submit" i18n>
+      <button shButton class="raised primary login-button" [class.loading]="isLoading()" type="submit" i18n>
         Login
         <sh-icon>arrow-right</sh-icon>
       </button>

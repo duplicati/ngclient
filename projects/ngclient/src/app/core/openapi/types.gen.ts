@@ -430,6 +430,7 @@ export type RepairInputDto = {
     time?: (string) | null;
     version?: (string) | null;
     paths?: Array<string> | null;
+    refresh_lock_info?: (boolean) | null;
 };
 
 export type RestoreInputDto = {
@@ -687,6 +688,8 @@ export type PostApiV1AuthIssuetokenByOperationData = {
 export type PostApiV1AuthIssuetokenByOperationResponse = (SingleOperationTokenOutputDto);
 
 export type PostApiV1AuthIssueForeverTokenResponse = (AccessTokenOutputDto);
+
+export type PostApiV1AuthStatusResponse = (unknown);
 
 export type GetApiV1BackupdefaultsResponse = (string);
 
@@ -1115,6 +1118,8 @@ export type PostApiV1RemotecontrolRegisterData = {
 export type PostApiV1RemotecontrolRegisterResponse = (RemoteControlStatusOutput);
 
 export type DeleteApiV1RemotecontrolRegisterResponse = (RemoteControlStatusOutput);
+
+export type PostApiV1RemotecontrolRegisterWaitResponse = (RemoteControlStatusOutput);
 
 export type PostApiV2BackupListFilesetsData = {
     requestBody: ListFilesetsRequestDto;

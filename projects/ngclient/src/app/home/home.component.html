@@ -96,72 +96,98 @@
         <div class="backups" [class.fallback]="backups().length === 0">
           @if (backups().length) {
             @for (backup of backups(); track $index) {
-              <div class="backup">
-                <div class="text">
-                  <h3>
-                    {{ backup.Backup.Name ?? MISSING_BACKUP_NAME }}
-                    <sh-chip>
-                      <img class="provider-icon" [src]="getBackendIcon(backup.Backup.TargetURL)" alt="" />
-                      <!-- <sh-icon>{{ getBackendIcon(backup.Backup.TargetURL) }}</sh-icon> -->
-                      {{ getBackendType(backup.Backup.TargetURL) }}
-                    </sh-chip>
-                  </h3>
+              @if (backup.Backup.ExternalID) {
+                <div class="backup externaly-managed">
+                  <div class="text">
+                    <h3>
+                      {{ backup.Backup.Name ?? MISSING_BACKUP_NAME }}
+                      <sh-chip>
+                        <img class="provider-icon" [src]="getBackendIcon(backup.Backup.TargetURL)" alt="" />
+                        <!-- <sh-icon>{{ getBackendIcon(backup.Backup.TargetURL) }}</sh-icon> -->
+                        {{ getBackendType(backup.Backup.TargetURL) }}
+                      </sh-chip>
+                    </h3>
+                  </div>
 
-                  <p>
-                    <span i18n>Last successful backup:</span>
-                    {{ backup.Backup.Metadata?.['LastBackupFinished'] | relativeTime: timeType() === 'actual' }}
-                  </p>
-
-                  <!-- Warning: Model says Schedule cannot be null, but it can, so dont remove the short-circuit operator -->
-                  @if (backup?.Schedule?.Time) {
-                    <p>
-                      <span i18n>Next scheduled run:</span>
-                      {{ backup.Schedule.Time | relativeTime: timeType() === 'actual' }}
-                    </p>
-                  }
-
-                  <p>
-                    <span i18n>Duration:</span>
-                    @if (backup.Backup.Metadata?.['LastBackupDuration']) {
-                      {{ backup.Backup.Metadata?.['LastBackupDuration'] | durationFormat: timeType() === 'actual' }}
-                    } @else {
-                      <ng-container>-</ng-container>
-                    }
-                  </p>
-
-                  <p>
-                    <span i18n>Source:</span>
-                    @if (backup.Backup.Metadata?.['SourceFilesSize']) {
-                      {{ backup.Backup.Metadata?.['SourceFilesSize'] | bytes }}
-                    } @else {
-                      <ng-container>-</ng-container>
-                    }
-                  </p>
-
-                  <p>
-                    <span i18n>Destination:</span>
-                    @if (backup.Backup.Metadata?.['TargetFilesSize']) {
-                      {{ backup.Backup.Metadata?.['TargetFilesSize'] | bytes }}
-                    } @else {
-                      <ng-container>-</ng-container>
-                    }
-                  </p>
-                </div>
-                <div class="tags">
-                  @let versions = getBackupVersionCount(backup);
-                  <sh-chip class="simple success" i18n>
-                    {versions, plural, =0 {No version yet} =1 {1 Version} other {{{ versions }} Versions}}
-                  </sh-chip>
-
-                  @if (backup.Backup.ExternalID) {
+                  <div class="tags">
                     <sh-chip class="simple primary" i18n>Externally managed</sh-chip>
-                  }
-                </div>
+                  </div>
 
-                <div class="actions">
-                  <ng-container *ngTemplateOutlet="actions; context: { $implicit: backup }"></ng-container>
+                  <div class="actions">
+                    <button type="button" shButton i18n (click)="openInConsole(backup)">
+                      Edit in console
+                      <sh-icon>arrow-up-right</sh-icon>
+                    </button>
+                  </div>
                 </div>
-              </div>
+              } @else {
+                <div class="backup">
+                  <div class="text">
+                    <h3>
+                      {{ backup.Backup.Name ?? MISSING_BACKUP_NAME }}
+                      <sh-chip>
+                        <img class="provider-icon" [src]="getBackendIcon(backup.Backup.TargetURL)" alt="" />
+                        <!-- <sh-icon>{{ getBackendIcon(backup.Backup.TargetURL) }}</sh-icon> -->
+                        {{ getBackendType(backup.Backup.TargetURL) }}
+                      </sh-chip>
+                    </h3>
+
+                    <p>
+                      <span i18n>Last successful backup:</span>
+                      {{ backup.Backup.Metadata?.['LastBackupFinished'] | relativeTime: timeType() === 'actual' }}
+                    </p>
+
+                    <!-- Warning: Model says Schedule cannot be null, but it can, so dont remove the short-circuit operator -->
+                    @if (backup?.Schedule?.Time) {
+                      <p>
+                        <span i18n>Next scheduled run:</span>
+                        {{ backup.Schedule.Time | relativeTime: timeType() === 'actual' }}
+                      </p>
+                    }
+
+                    <p>
+                      <span i18n>Duration:</span>
+                      @if (backup.Backup.Metadata?.['LastBackupDuration']) {
+                        {{ backup.Backup.Metadata?.['LastBackupDuration'] | durationFormat: timeType() === 'actual' }}
+                      } @else {
+                        <ng-container>-</ng-container>
+                      }
+                    </p>
+
+                    <p>
+                      <span i18n>Source:</span>
+                      @if (backup.Backup.Metadata?.['SourceFilesSize']) {
+                        {{ backup.Backup.Metadata?.['SourceFilesSize'] | bytes }}
+                      } @else {
+                        <ng-container>-</ng-container>
+                      }
+                    </p>
+
+                    <p>
+                      <span i18n>Destination:</span>
+                      @if (backup.Backup.Metadata?.['TargetFilesSize']) {
+                        {{ backup.Backup.Metadata?.['TargetFilesSize'] | bytes }}
+                      } @else {
+                        <ng-container>-</ng-container>
+                      }
+                    </p>
+                  </div>
+                  <div class="tags">
+                    @let versions = getBackupVersionCount(backup);
+                    <sh-chip class="simple success" i18n>
+                      {versions, plural, =0 {No version yet} =1 {1 Version} other {{{ versions }} Versions}}
+                    </sh-chip>
+
+                    @if (backup.Backup.ExternalID) {
+                      <sh-chip class="simple primary" i18n>Externally managed</sh-chip>
+                    }
+                  </div>
+
+                  <div class="actions">
+                    <ng-container *ngTemplateOutlet="actions; context: { $implicit: backup }"></ng-container>
+                  </div>
+                </div>
+              }
             }
           } @else {
             <div class="no-backups" i18n>

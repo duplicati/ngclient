@@ -1,0 +1,29 @@
+@if (isExpectedValidTargetUrl()) {
+  @if (testSignal() === '') {
+    <sh-alert class="simple primary">
+      Make sure to test the configuration
+      <button shButton class="primary small" (click)="testDestination()">Test now</button>
+    </sh-alert>
+  } @else if (testSignal() === 'testing') {
+    <sh-alert class="simple primary">Testing connection...</sh-alert>
+  } @else if (testSignal() === 'containsBackup' || testSignal() === 'success') {
+    <sh-alert class="simple success">Connection tested successfully.</sh-alert>
+    <!-- } @else if (testSignal() === 'success' && responseType() !== 'containsBackup') {
+  <sh-alert class="simple warn">No backups found in the remote destination.</sh-alert> -->
+  } @else if (testSignal() === 'warning' || testSignal() === 'error') {
+    <sh-alert class="simple warn">
+      {{ testErrorMessage() }}
+    </sh-alert>
+  }
+}
+
+<!-- Ignore these for source data -->
+<!-- @else if (testSignal() === 'containsBackup') {
+  <sh-alert class="simple error">
+    The remote destination already contains a backup. Please use a different folder for each backup.
+  </sh-alert>
+} @else if (testSignal() === 'destinationNotEmpty') {
+  <sh-alert class="simple error">
+    The remote destination is not empty. It is recommended to use an empty folder for the backup.
+  </sh-alert>
+} -->
