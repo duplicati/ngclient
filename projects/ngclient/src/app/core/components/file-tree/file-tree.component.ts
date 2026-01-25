@@ -116,8 +116,11 @@ export default class FileTreeComponent {
   showHiddenNodes = input(false);
   enableCreateFolder = input(false);
   hideShortcuts = input(false);
-  includes = output<string[]>();
-  excludes = output<string[]>();
+  office365Mode = input(false);
+  backupId = input<string | null | undefined>('');
+  destinationUrl = input<string | null | undefined>('');
+  loadExtendedData = input(true);
+  hasExtendedData = output<string>();
 
   _showHiddenNodes = signal(false);
   createFolderDialogOpen = signal(false);
@@ -528,7 +531,7 @@ export default class FileTreeComponent {
                 id: x.id,
                 leaf: x.leaf,
                 cls: x.cls,
-                text: x.text,
+                text: this.#getDisplayName(x.text, (x as any)?.Metadata),
                 iconCls: x.iconCls,
                 fileSize: x.fileSize,
                 resolvedpath: x.resolvedpath,
@@ -722,6 +725,32 @@ export default class FileTreeComponent {
     });
   }
 
+  #getOffice365Files(path: string | null) {
+    return this.#dupServer
+      .postApiV1WebmoduleByModulekey({
+        modulekey: 'office365',
+        requestBody: {
+          'backup-id': this.backupId() ?? '',
+          operation: 'ListDestinationRestoreTargets',
+          url: this.destinationUrl() ?? '',
+          path: path ?? '/',
+        },
+      })
+      .pipe(
+        map((res) => {
+          const d = res.Result as {
+            [key: string]: string;
+          };
+          return Object.keys(d).map((key) => {
+            return {
+              Path: key,
+              Metadata: JSON.parse(d[key]),
+            };
+          });
+        })
+      );
+  }
+
   #getBackupFiles(path: string | null) {
     const backupSettings = this.backupSettings()!;
     if (this.#sysInfo.hasV2ListOperations()) {
@@ -733,6 +762,7 @@ export default class FileTreeComponent {
             Paths: path ? [path] : null,
             PageSize: 0, // TODO: Add pagination support
             Page: 0,
+            ReturnExtended: this.office365Mode() || this.loadExtendedData(),
           },
         })
         .pipe(map((res) => res.Data ?? []));
@@ -750,7 +780,15 @@ export default class FileTreeComponent {
   }
 
   #getFilePath(path: string) {
-    return this.isByBackupSettings() ? this.#getBackupFiles(path) : this.#getFilesystemPath(path);
+    if (this.office365Mode()) {
+      return this.#getOffice365Files(path);
+    }
+
+    if (this.isByBackupSettings()) {
+      return this.#getBackupFiles(path);
+    }
+
+    return this.#getFilesystemPath(path);
   }
 
   #fetchPathSegmentsRecursively(path: string) {
@@ -833,6 +871,21 @@ export default class FileTreeComponent {
       });
   }
 
+  #getDisplayName(text?: string | null, metadata?: { [key: string]: string | null } | null): string | undefined | null {
+    if (metadata) {
+      const name = metadata['o365:Name'] || metadata['o365:DisplayName'];
+      if (name) return name;
+    }
+    return text;
+  }
+
+  #detectExtendData(metadata: { [key: string]: string | null } | null) {
+    // Detect extended data in backup
+    if (metadata && metadata['ExtType'] && metadata['ExtType'].length > 0) {
+      this.hasExtendedData.emit(metadata['ExtType']);
+    }
+  }
+
   #isFolder(path: string, pathDelimiter: string): boolean {
     return (path.startsWith('%') && path.endsWith('%')) || path.endsWith(pathDelimiter);
   }
@@ -843,20 +896,26 @@ export default class FileTreeComponent {
 
     (this.#getFilePath(newPath) as Observable<any>).pipe(finalize(() => this.isLoading.set(false))).subscribe({
       next: (x) => {
-        let alignDataArray = this.isByBackupSettings()
-          ? x.map((y: { Path: string; Size: number }) => {
-              return {
-                text: y.Path.split(pathDelimiter)
-                  .filter((part) => part !== '')
-                  .pop(),
-                id: y.Path,
-                cls: this.#isFolder(y.Path, pathDelimiter) ? 'folder' : 'file',
-                leaf: node !== null,
-                resolvedpath: y.Path,
-                hidden: false,
-              };
-            })
-          : x;
+        let alignDataArray =
+          this.isByBackupSettings() || this.office365Mode()
+            ? x.map((y: { Path: string; Size: number; Metadata: { [key: string]: string | null } | null }) => {
+                this.#detectExtendData(y.Metadata);
+                const text = this.#getDisplayName(
+                  y.Path.split(pathDelimiter)
+                    .filter((part) => part !== '')
+                    .pop(),
+                  y.Metadata
+                );
+                return {
+                  text: text,
+                  id: y.Path,
+                  cls: this.#isFolder(y.Path, pathDelimiter) ? 'folder' : 'file',
+                  leaf: node !== null,
+                  resolvedpath: y.Path,
+                  hidden: false,
+                };
+              })
+            : x;
 
         this.treeNodes.update((y) => {
           const newArray = alignDataArray.map((z: any) => {

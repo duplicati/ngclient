@@ -1,6 +1,5 @@
 <form [formGroup]="selectFilesForm" #formRef (submit)="next()">
   <h3 class="title-30" i18n>Select files</h3>
-
   @if (versionOptionsLoading()) {
     <sh-progress-bar class="indeterminate primary"></sh-progress-bar>
   } @else {
@@ -36,7 +35,9 @@
         [initialNodes]="initialNodes()"
         [backupSettings]="backupSettings()"
         [multiSelect]="true"
-        [showFiles]="true">
+        [showFiles]="true"
+        [loadExtendedData]="true"
+        (hasExtendedData)="extendedDataType.set($event)">
         <label for="path" i18n>Path</label>
         <input type="text" id="path" formControlName="filesToRestore" />
       </app-file-tree>

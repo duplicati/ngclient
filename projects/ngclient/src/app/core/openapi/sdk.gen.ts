@@ -487,6 +487,7 @@ export class DuplicatiServer {
      * @param data The data for the request.
      * @param data.requestBody
      * @param data.autocreate
+     * @param data.type
      * @returns unknown OK
      * @throws ApiError
      */
@@ -495,7 +496,8 @@ export class DuplicatiServer {
             method: 'POST',
             url: '/api/v1/remoteoperation/test',
             query: {
-                autocreate: data.autocreate
+                autocreate: data.autocreate,
+                type: data.type
             },
             body: data.requestBody,
             mediaType: 'application/json'

@@ -4,49 +4,96 @@
   <app-toggle-card [disallowToggle]="true">
     <ng-container title i18n>Where do you want to restore files to?</ng-container>
 
-    <sh-radio class="raised primary" i18n>
-      Original location
-      <input type="radio" name="restoreFrom" value="original" formControlName="restoreFrom" />
-    </sh-radio>
+    @if (hasOffice365Data()) {
+      <sh-radio class="raised primary" i18n>
+        Same Office 365 Tenant
+        <input type="radio" name="restoreFrom" value="same-o365" formControlName="restoreFrom" />
+      </sh-radio>
 
-    <sh-radio class="raised primary" i18n>
-      Pick location
-      <input type="radio" name="restoreFrom" value="pickLocation" formControlName="restoreFrom" />
-    </sh-radio>
+      <sh-radio class="raised primary" i18n>
+        Different Office 365 Tenant
+        <input
+          type="radio"
+          name="restoreFrom"
+          value="other-o365"
+          formControlName="restoreFrom"
+          (click)="chooseOfficeTenant()" />
+      </sh-radio>
 
-    <app-file-tree [disabled]="optionsFormSignal()?.restoreFrom !== 'pickLocation'" [enableCreateFolder]="true">
-      <label for="path">Path</label>
-      <input type="text" id="path" formControlName="restoreFromPath" />
-    </app-file-tree>
+      <sh-radio class="raised primary" i18n>
+        Local file system
+        <input type="radio" name="restoreFrom" value="pickLocation" formControlName="restoreFrom" />
+      </sh-radio>
+
+      @if (optionsFormSignal()?.restoreFrom === 'pickLocation') {
+        <app-file-tree [disabled]="optionsFormSignal()?.restoreFrom !== 'pickLocation'" [enableCreateFolder]="true">
+          <label for="path">Path</label>
+          <input type="text" id="path" formControlName="restoreFromPath" />
+        </app-file-tree>
+      }
+
+      @if (showOffice365RestoreTree()) {
+        <app-file-tree [office365Mode]="true" [backupId]="backupId()" [destinationUrl]="office365destinationUrl()">
+          <label for="path">Path</label>
+          <input type="text" id="path" formControlName="restoreFromPath" />
+        </app-file-tree>
+      }
+    } @else {
+      <sh-radio class="raised primary" i18n>
+        Original location
+        <input type="radio" name="restoreFrom" value="original" formControlName="restoreFrom" />
+      </sh-radio>
+
+      <sh-radio class="raised primary" i18n>
+        Pick location
+        <input type="radio" name="restoreFrom" value="pickLocation" formControlName="restoreFrom" />
+      </sh-radio>
+
+      <app-file-tree [disabled]="optionsFormSignal()?.restoreFrom !== 'pickLocation'" [enableCreateFolder]="true">
+        <label for="path">Path</label>
+        <input type="text" id="path" formControlName="restoreFromPath" />
+      </app-file-tree>
+    }
   </app-toggle-card>
 
-  <app-toggle-card [disallowToggle]="true">
-    <ng-container title i18n>How do you want to handle existing files?</ng-container>
+  @if (isOffice365Restore()) {
+    <app-toggle-card [disallowToggle]="true">
+      <ng-container title i18n>Restore settings</ng-container>
 
-    <sh-radio class="raised primary" i18n>
-      Overwrite
-      <input type="radio" name="handleExisting" value="overwrite" formControlName="handleExisting" />
-    </sh-radio>
+      <sh-toggle class="raised primary" i18n>
+        Ignore existing resources in the destination
+        <input type="checkbox" formControlName="officeIgnoreExisting" />
+      </sh-toggle>
+    </app-toggle-card>
+  } @else {
+    <app-toggle-card [disallowToggle]="true">
+      <ng-container title i18n>How do you want to handle existing files?</ng-container>
 
-    <sh-radio class="raised primary" i18n>
-      Save different versions with timestamp in file name
-      <input type="radio" name="handleExisting" value="saveTimestamp" formControlName="handleExisting" />
-    </sh-radio>
-  </app-toggle-card>
+      <sh-radio class="raised primary" i18n>
+        Overwrite
+        <input type="radio" name="handleExisting" value="overwrite" formControlName="handleExisting" />
+      </sh-radio>
 
-  <app-toggle-card>
-    <ng-container title i18n>Metadata settings</ng-container>
+      <sh-radio class="raised primary" i18n>
+        Save different versions with timestamp in file name
+        <input type="radio" name="handleExisting" value="saveTimestamp" formControlName="handleExisting" />
+      </sh-radio>
+    </app-toggle-card>
 
-    <sh-toggle class="primary raised" i18n>
-      Restore file metadata
-      <input type="checkbox" formControlName="includeMetadata" />
-    </sh-toggle>
+    <app-toggle-card>
+      <ng-container title i18n>Metadata settings</ng-container>
 
-    <sh-toggle class="primary raised" i18n>
-      Restore read/write permissions
-      <input type="checkbox" formControlName="permissions" />
-    </sh-toggle>
-  </app-toggle-card>
+      <sh-toggle class="primary raised" i18n>
+        Restore file metadata
+        <input type="checkbox" formControlName="includeMetadata" />
+      </sh-toggle>
+
+      <sh-toggle class="primary raised" i18n>
+        Restore read/write permissions
+        <input type="checkbox" formControlName="permissions" />
+      </sh-toggle>
+    </app-toggle-card>
+  }
 
   <div class="form-actions">
     <button shButton type="button" (click)="goBack()" i18n>

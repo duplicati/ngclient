@@ -60,6 +60,7 @@ export default class SelectFilesComponent {
   versionOptionsLoading = this.#restoreFlowState.versionOptionsLoading;
   versionOptions = this.#restoreFlowState.versionOptions;
   isFileRestore = this.#restoreFlowState.isFileRestore;
+  extendedDataType = this.#restoreFlowState.extendedDataType;
 
   needsDatabaseRepair = computed(() => this.#restoreFlowState.backup()?.Backup?.IsTemporary ?? true);
   showFileTree = signal<boolean>(false);

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ShipButton, ShipFormField, ShipIcon } from '@ship-ui/core';
+import { RemoteDestinationType } from '../../../core/openapi';
 import { DestinationConfigState } from '../../../core/states/destinationconfig.state';
 import { DestinationListItemComponent } from '../destination-list-item/destination-list-item.component';
 
@@ -15,10 +16,23 @@ export class DestinationListComponent {
   #destinationState = inject(DestinationConfigState);
 
   showAsSources = input<boolean>(false);
+  moduleType = input<RemoteDestinationType>('Backend');
   setDestination = output<string>();
 
   destinationSearchTerm = signal('');
-  destinationTypeOptions = this.#destinationState.destinationTypeOptions;
+
+  destinationTypeOptions = computed(() => {
+    const type = this.moduleType();
+    switch (type) {
+      case 'SourceProvider':
+        return this.#destinationState.sourceProviderOptions();
+      case 'RestoreDestinationProvider':
+        return this.#destinationState.restoreDestinationOptions();
+      case 'Backend':
+      default:
+        return this.#destinationState.backendDestinationOptions();
+    }
+  });
 
   destinationTypeOptionsFocused = computed(() => {
     const options = this.destinationTypeOptions();

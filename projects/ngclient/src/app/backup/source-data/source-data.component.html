@@ -55,9 +55,16 @@
                 <sh-icon>x-bold</sh-icon>
               </button>
             } @else {
-              <sh-form-field class="small" [attr.readonly]="true">
-                <input type="text" [ngModel]="path" [ngModelOptions]="{ standalone: true }" />
-              </sh-form-field>
+              @if (path.startsWith('@')) {
+                <sh-chip>
+                  <img class="provider-icon" [src]="getBackendIcon(path)" alt="" />
+                  {{ getRemotePathDisplayName(path) }}
+                </sh-chip>
+              } @else {
+                <sh-form-field class="small" [attr.readonly]="true">
+                  <input type="text" [ngModel]="path" [ngModelOptions]="{ standalone: true }" />
+                </sh-form-field>
+              }
 
               <button shButton type="button" class="small" (click)="editPath(path)">
                 <sh-icon>pen</sh-icon>

@@ -2133,8 +2133,6 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       default: () => 'storj://?storj-api-key=&storj-secret=&storj-auth-method=API+key',
     },
   },
-
-  // Validated against the old destination test url
   {
     key: 'aliyunoss',
     displayName: $localize`Aliyun OSS`,
@@ -2196,6 +2194,55 @@ export const DESTINATION_CONFIG: DestinationConfig = [
             bucket: bucket,
           },
           ...searchParams,
+        };
+      },
+    },
+  },
+  {
+    key: 'office365',
+    displayName: $localize`Microsoft Office 365`,
+    description: $localize`Create backups of Microsoft Office 365 data.`,
+    icon: 'assets/dest-icons/office365.png',
+    dynamicFields: [
+      {
+        name: 'auth-username',
+        shortDescription: $localize`Client ID`,
+        longDescription: $localize`Application (client) ID from your Azure AD app registration.`,
+        isMandatory: true,
+      },
+      {
+        name: 'auth-password',
+        shortDescription: $localize`Client Secret`,
+        longDescription: $localize`Client Secret from your Azure AD app registration.`,
+        isMandatory: true,
+      },
+      {
+        name: 'office365-tenant-id',
+        shortDescription: $localize`Tenant ID`,
+        isMandatory: true,
+      },
+    ],
+    advancedFields: [
+      {
+        name: 'office365-certificate-path',
+        type: 'FileTree',
+      },
+    ],
+    mapper: {
+      to: (fields: ValueOfDestinationFormGroup): string => {
+        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
+        return `office365://${urlParams}`;
+      },
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
+        const { advanced, dynamic } = fromSearchParams(destinationType, urlObj);
+        return <ValueOfDestinationFormGroup>{
+          destinationType,
+          advanced: {
+            ...advanced,
+          },
+          dynamic: {
+            ...dynamic,
+          },
         };
       },
     },

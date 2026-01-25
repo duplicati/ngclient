@@ -62,3 +62,8 @@ sh-divider {
   grid-template-columns: 1fr min-content min-content;
   gap: p2r(4);
 }
+
+.provider-icon {
+  width: p2r(20);
+  height: p2r(20);
+}

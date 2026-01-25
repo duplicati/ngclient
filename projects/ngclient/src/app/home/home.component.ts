@@ -83,7 +83,6 @@ export default class HomeComponent {
   }
 
   openInConsole(backup: Backup) {
-    console.log(backup);
     const externalId = backup.Backup.ExternalID?.split(':')[1];
 
     if (!externalId) {
