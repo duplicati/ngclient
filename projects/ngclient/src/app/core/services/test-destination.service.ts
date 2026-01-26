@@ -82,7 +82,7 @@ export class TestDestinationService {
           error: (err) => {
             const res = (err?.error?.body ?? err?.error?.requestBody) as PostApiV2DestinationTestResponse;
             if (res?.Data?.FolderExists === false || res?.StatusCode === 'missing-folder') {
-              if (askToCreate) this.handleMissingFolder(observer, targetUrl, destinationIndex);
+              if (askToCreate) this.handleMissingFolder(observer, targetUrl, backupId, destinationIndex);
               else
                 this.handleGenericError(
                   observer,
@@ -153,6 +153,7 @@ export class TestDestinationService {
             this.handleDestinationErrorv1(
               err.message,
               targetUrl,
+              backupId,
               destinationIndex,
               askToCreate,
               suppressErrorDialogs
@@ -167,6 +168,7 @@ export class TestDestinationService {
   private handleMissingFolder(
     observer: Subscriber<TestDestinationResult>,
     targetUrl: string,
+    backupId: string | null,
     destinationIndex: number
   ) {
     this.#dialog.open(ConfirmDialogComponent, {
@@ -189,6 +191,7 @@ export class TestDestinationService {
                 DestinationUrl: targetUrl,
                 AutoCreate: true,
                 Options: null,
+                BackupId: backupId == 'new' ? null : backupId,
               },
             })
             .subscribe({
@@ -219,6 +222,7 @@ export class TestDestinationService {
             .postApiV1RemoteoperationCreate({
               requestBody: {
                 path: targetUrl,
+                backupId: backupId == 'new' ? null : backupId,
               },
             })
             .subscribe({
@@ -458,13 +462,14 @@ with the REPORTED host key: ${reportedhostkey}?`,
   private handleDestinationErrorv1(
     errorMessage: string,
     targetUrl: string,
+    backupId: string | null,
     destinationIndex: number,
     askToCreate: boolean,
     suppressErrorDialogs: boolean
   ) {
     return new Observable<TestDestinationResult>((observer) => {
       if (errorMessage === 'missing-folder') {
-        if (askToCreate) this.handleMissingFolder(observer, targetUrl, destinationIndex);
+        if (askToCreate) this.handleMissingFolder(observer, targetUrl, backupId, destinationIndex);
         else
           this.handleGenericError(
             observer,
