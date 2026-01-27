@@ -245,8 +245,8 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   },
   {
     key: 'ssh',
-    displayName: $localize`SSH`,
-    description: $localize`Store backups with SSH.`,
+    displayName: $localize`SFTP (SSH)`,
+    description: $localize`Store backups with SFTP (SSH).`,
     icon: 'assets/dest-icons/ssh.png',
     searchTerms: 'sftp scp secure shell',
     sortOrder: 80,
