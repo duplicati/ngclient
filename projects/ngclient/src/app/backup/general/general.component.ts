@@ -41,10 +41,10 @@ export const createGeneralForm = (
     description: fb.control<string>(defaults.description),
     encryption: fb.control<string>(defaults.encryption, [watchField()]),
     password: fb.control<string>(defaults.password, [
-      validateWhen((t) => t?.value.encryption !== '', [Validators.required]),
+      validateWhen((t) => t?.value.encryption !== '-', [Validators.required]),
     ]),
     repeatPassword: fb.control<string>(defaults.repeatPassword, [
-      validateWhen((t) => t?.value.encryption !== '', [Validators.required]),
+      validateWhen((t) => t?.value.encryption !== '-', [Validators.required]),
     ]),
     compression: fb.control<string>(defaults.compression),
   });

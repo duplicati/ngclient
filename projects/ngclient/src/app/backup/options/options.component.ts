@@ -86,6 +86,19 @@ export default class OptionsComponent {
   }
 
   submit() {
+    const validation = this.#backupState.validateBeforeSubmit();
+    switch (validation) {
+      case 'general':
+        this.#router.navigate(['general'], { relativeTo: this.#route.parent });
+        return;
+      case 'destination':
+        this.#router.navigate(['destination'], { relativeTo: this.#route.parent });
+        return;
+      case 'source':
+        this.#router.navigate(['source-data'], { relativeTo: this.#route.parent });
+        return;
+    }
+
     this.#backupState.submit();
   }
 }
