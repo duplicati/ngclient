@@ -120,10 +120,12 @@
       <ng-container title>
         <span i18n>Filters</span>
         <div class="spacer"></div>
-        <button type="button" shButton (click)="addFilter()" i18n>
-          <sh-icon>plus</sh-icon>
-          Add filter
-        </button>
+        @if (!bulkFilterEditMode()) {
+          <button type="button" shButton (click)="addFilter()" i18n>
+            <sh-icon>plus</sh-icon>
+            Add filter
+          </button>
+        }
         <sh-menu>
           <button shButton type="button">
             <sh-icon>dots-three-vertical</sh-icon>
