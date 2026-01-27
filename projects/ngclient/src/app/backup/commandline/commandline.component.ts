@@ -2,7 +2,15 @@ import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@ang
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { ShipButton, ShipDivider, ShipFormField, ShipIcon, ShipProgressBar, ShipSelect } from '@ship-ui/core';
+import {
+  ShipButton,
+  ShipDivider,
+  ShipFormField,
+  ShipIcon,
+  ShipProgressBar,
+  ShipSelect,
+  ShipTooltip,
+} from '@ship-ui/core';
 import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
 import { StatusBarState } from '../../core/components/status-bar/status-bar.state';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
@@ -27,6 +35,7 @@ const fb = new FormBuilder();
     ShipSelect,
     ShipProgressBar,
     ShipIcon,
+    ShipTooltip,
   ],
   templateUrl: './commandline.component.html',
   styleUrl: './commandline.component.scss',

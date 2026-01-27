@@ -13,18 +13,33 @@
   } @else {
     <form [formGroup]="baseCmdForm">
       <sh-select [options]="commandOptions() ?? ['backup']" [inlineSearch]="true" placeholder="Select a command...">
-        <label for="command" i18n>Command</label>
+        <label for="command" i18n>
+          Command
+          <sh-icon shTooltip="Choose the command to execute">question</sh-icon>
+        </label>
         <input type="text" id="command" formControlName="command" />
       </sh-select>
 
       <sh-form-field>
-        <label for="targetUrl" i18n>TargetUrl</label>
+        <label for="targetUrl" i18n>
+          TargetUrl
+          <sh-icon shTooltip="Enter the URL of the backup target">question</sh-icon>
+        </label>
         <textarea id="targetUrl" autocomplete="off" formControlName="targetUrl"></textarea>
       </sh-form-field>
 
       <sh-form-field>
-        <label for="arguments" i18n>Commandline Arguments</label>
-        <textarea id="arguments" autocomplete="off" formControlName="arguments"></textarea>
+        <label for="arguments" i18n>
+          Commandline Arguments
+          <sh-icon shTooltip="Enter one argument per line without quotes (e.g., *.txt)">question</sh-icon>
+        </label>
+        <textarea
+          class="arguments"
+          id="arguments"
+          autocomplete="off"
+          rows="5"
+          formControlName="arguments"
+          placeholder="Enter one argument per line without quotes (e.g., *.txt)"></textarea>
       </sh-form-field>
     </form>
 
@@ -32,12 +47,18 @@
 
     <form [formGroup]="standardFields">
       <sh-form-field>
-        <label for="backup-id" i18n>Backup ID</label>
+        <label for="backup-id" i18n>
+          Backup ID
+          <sh-icon shTooltip="The ID of the backup configuration this run belongs to (can be empty)">question</sh-icon>
+        </label>
         <input id="backup-id" formControlName="backup-id" />
       </sh-form-field>
 
       <sh-form-field>
-        <label for="backup-name" i18n>Backup Name</label>
+        <label for="backup-name" i18n>
+          Backup Name
+          <sh-icon shTooltip="The optional name of the backup">question</sh-icon>
+        </label>
         <input id="backup-name" formControlName="backup-name" />
       </sh-form-field>
 
