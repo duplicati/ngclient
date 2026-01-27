@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signa
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ShipButton, ShipChip, ShipDialogService, ShipFormField, ShipIcon, ShipToggle } from '@ship-ui/core';
+import { ShipButton, ShipChip, ShipDialogService, ShipFormField, ShipIcon, ShipMenu, ShipToggle } from '@ship-ui/core';
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
 import { SizeComponent, splitSize } from '../../core/components/size/size.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
@@ -50,6 +50,7 @@ export const createSourceDataForm = (
     ShipIcon,
     ShipButton,
     ShipToggle,
+    ShipMenu,
     NewFilterComponent,
     FileTreeComponent,
     ToggleCardComponent,
@@ -94,6 +95,10 @@ export default class SourceDataComponent {
   oldPath = signal<string | null>(null);
   editingPath = signal<string | null>(null);
   addingNewPath = signal(false);
+  bulkPathEditMode = signal(false);
+  bulkPaths = signal('');
+  bulkFilterEditMode = signal(false);
+  bulkFilters = signal('');
 
   openRemoteDestinationDialog() {
     const dialogRef = this.#dialog.open(TargetUrlDialog, {
@@ -117,6 +122,50 @@ export default class SourceDataComponent {
 
       this.addPath(newRemotePath);
     });
+  }
+
+  togglePathBulkEdit() {
+    if (this.bulkPathEditMode()) {
+      this.bulkPathEditMode.set(false);
+    } else {
+      const paths = this.nonFilterPaths()?.join('\n') ?? '';
+      this.bulkPaths.set(paths);
+      this.bulkPathEditMode.set(true);
+    }
+  }
+
+  savePathBulkEdit() {
+    const newPaths =
+      this.bulkPaths()
+        .split('\n')
+        .filter((p) => p.trim() !== '') ?? [];
+    const filters = this.pathArray();
+    const combined = [...newPaths, ...filters];
+    const distinct = [...new Set(combined)].join('\0');
+    this.sourceDataForm.controls.path.setValue(distinct);
+  }
+
+  toggleBulkFilterEdit() {
+    if (this.bulkFilterEditMode()) {
+      this.bulkFilterEditMode.set(false);
+    } else {
+      const filters = this.pathArray()
+        .filter((x) => x !== '___none___' && (x.startsWith('-') || x.startsWith('+')))
+        .join('\n');
+      this.bulkFilters.set(filters);
+      this.bulkFilterEditMode.set(true);
+    }
+  }
+
+  saveBulkFilterEdit() {
+    const newFilters =
+      this.bulkFilters()
+        .split('\n')
+        .filter((p) => p.trim() !== '' && (p.startsWith('-') || p.startsWith('+'))) ?? [];
+    const paths = this.nonFilterPaths() ?? [];
+    const combined = [...paths, ...newFilters];
+    const distinct = [...new Set(combined)].join('\0');
+    this.sourceDataForm.controls.path.setValue(distinct);
   }
 
   editPath(oldPath: string) {

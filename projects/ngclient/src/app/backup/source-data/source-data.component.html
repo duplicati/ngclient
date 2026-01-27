@@ -24,84 +24,147 @@
 
   <div class="right">
     <app-toggle-card [disallowToggle]="true">
-      <ng-container title i18n>
-        Paths
+      <ng-container title>
+        <span i18n>Paths</span>
         <div class="spacer"></div>
-        <button shButton type="button" class="small" (click)="openRemoteDestinationDialog()">
+        <button shButton type="button" (click)="openRemoteDestinationDialog()" i18n>
           <sh-icon>cloud-arrow-down</sh-icon>
           Add remote path
         </button>
+        <sh-menu>
+          <button shButton type="button">
+            <sh-icon>dots-three-vertical</sh-icon>
+          </button>
+
+          <ng-container menu>
+            <button shButton type="button" class="small" (click)="togglePathBulkEdit()" i18n>
+              <sh-icon>link</sh-icon>
+              @if (bulkPathEditMode()) {
+                Edit contents as list
+              } @else {
+                Edit contents as text
+              }
+            </button>
+          </ng-container>
+        </sh-menu>
       </ng-container>
       <p description i18n>Add a path directly from your machine.</p>
 
       <div class="paths">
-        @for (path of nonFilterPaths(); track $index) {
-          <div class="path">
-            @if (oldPath() === path) {
-              <sh-form-field class="small">
-                <input
-                  type="text"
-                  i18n-placeholder
-                  placeholder="Edit path"
-                  [(ngModel)]="editingPath"
-                  [ngModelOptions]="{ standalone: true }" />
-              </sh-form-field>
-
-              <button shButton type="button" class="small" (click)="updatePath()">
-                <sh-icon>floppy-disk</sh-icon>
-              </button>
-
-              <button shButton type="button" class="small" (click)="cancelEditPath()">
-                <sh-icon>x-bold</sh-icon>
-              </button>
-            } @else {
-              @if (path.startsWith('@')) {
-                <sh-chip>
-                  <img class="provider-icon" [src]="getBackendIcon(path)" alt="" />
-                  {{ getRemotePathDisplayName(path) }}
-                </sh-chip>
-              } @else {
-                <sh-form-field class="small" [attr.readonly]="true">
-                  <input type="text" [ngModel]="path" [ngModelOptions]="{ standalone: true }" />
+        @if (bulkPathEditMode()) {
+          <sh-form-field>
+            <textarea
+              wrap="off"
+              class="bulk-textarea"
+              [(ngModel)]="bulkPaths"
+              [ngModelOptions]="{ updateOn: 'blur', standalone: true }"
+              rows="10"
+              (ngModelChange)="savePathBulkEdit()"></textarea>
+          </sh-form-field>
+        } @else {
+          @for (path of nonFilterPaths(); track $index) {
+            <div class="path">
+              @if (oldPath() === path) {
+                <sh-form-field class="small">
+                  <input
+                    type="text"
+                    i18n-placeholder
+                    placeholder="Edit path"
+                    [(ngModel)]="editingPath"
+                    [ngModelOptions]="{ standalone: true }" />
                 </sh-form-field>
-              }
 
-              <button shButton type="button" class="small" (click)="editPath(path)">
-                <sh-icon>pen</sh-icon>
-              </button>
-              <button shButton type="button" class="small" (click)="removePath(path)">
-                <sh-icon>trash-simple</sh-icon>
-              </button>
-            }
+                <button shButton type="button" class="small" (click)="updatePath()">
+                  <sh-icon>floppy-disk</sh-icon>
+                </button>
+
+                <button shButton type="button" class="small" (click)="cancelEditPath()">
+                  <sh-icon>x-bold</sh-icon>
+                </button>
+              } @else {
+                @if (path.startsWith('@')) {
+                  <sh-chip>
+                    <img class="provider-icon" [src]="getBackendIcon(path)" alt="" />
+                    {{ getRemotePathDisplayName(path) }}
+                  </sh-chip>
+                } @else {
+                  <sh-form-field class="small" [attr.readonly]="true">
+                    <input type="text" [ngModel]="path" [ngModelOptions]="{ standalone: true }" />
+                  </sh-form-field>
+                }
+
+                <button shButton type="button" class="small" (click)="editPath(path)">
+                  <sh-icon>pen</sh-icon>
+                </button>
+                <button shButton type="button" class="small" (click)="removePath(path)">
+                  <sh-icon>trash-simple</sh-icon>
+                </button>
+              }
+            </div>
+          }
+
+          <div class="row-inputs">
+            <sh-form-field>
+              <input type="text" i18n-placeholder placeholder="Add a direct path" [formControl]="newPathCtrl" />
+            </sh-form-field>
+
+            <button shButton class="raised primary" type="button" (click)="addNewPath()">
+              <sh-icon>plus</sh-icon>
+            </button>
           </div>
         }
-
-        <div class="row-inputs">
-          <sh-form-field>
-            <input type="text" i18n-placeholder placeholder="Add a direct path" [formControl]="newPathCtrl" />
-          </sh-form-field>
-
-          <button shButton class="raised primary" type="button" (click)="addNewPath()">
-            <sh-icon>plus</sh-icon>
-          </button>
-        </div>
       </div>
     </app-toggle-card>
 
     <app-toggle-card [disallowToggle]="true">
-      <ng-container title i18n>Filters</ng-container>
+      <ng-container title>
+        <span i18n>Filters</span>
+        <div class="spacer"></div>
+        <button type="button" shButton (click)="addFilter()" i18n>
+          <sh-icon>plus</sh-icon>
+          Add filter
+        </button>
+        <sh-menu>
+          <button shButton type="button">
+            <sh-icon>dots-three-vertical</sh-icon>
+          </button>
+
+          <ng-container menu>
+            <button shButton type="button" class="small" (click)="toggleBulkFilterEdit()" i18n>
+              <sh-icon>link</sh-icon>
+              @if (bulkFilterEditMode()) {
+                Edit contents as list
+              } @else {
+                Edit contents as text
+              }
+            </button>
+          </ng-container>
+        </sh-menu>
+      </ng-container>
       <p description i18n>Customize your filters.</p>
 
-      <button type="button" shButton action (click)="addFilter()" i18n>Add filter</button>
-
-      @if (pathSignal()?.length) {
-        @for (path of pathArray(); track $index) {
-          <app-new-filter
-            [path]="path"
-            [osType]="osType() ?? ''"
-            (pathChange)="patchPathAt($event, $index)"
-            (remove)="removePathAt($index)"></app-new-filter>
-        }
+      @if (bulkFilterEditMode()) {
+        <sh-form-field>
+          <textarea
+            class="bulk-textarea"
+            wrap="off"
+            [(ngModel)]="bulkFilters"
+            [ngModelOptions]="{ updateOn: 'blur', standalone: true }"
+            rows="10"
+            (ngModelChange)="saveBulkFilterEdit()"></textarea>
+        </sh-form-field>
+      } @else {
+        <div class="filters">
+          @if (pathSignal()?.length) {
+            @for (path of pathArray(); track $index) {
+              <app-new-filter
+                [path]="path"
+                [osType]="osType() ?? ''"
+                (pathChange)="patchPathAt($event, $index)"
+                (remove)="removePathAt($index)"></app-new-filter>
+            }
+          }
+        </div>
       }
     </app-toggle-card>
 
