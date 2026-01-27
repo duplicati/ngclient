@@ -126,6 +126,50 @@
           "zh-TW": {
             "translation": "projects/ngclient/src/locale/messages.zh_TW.xlf",
             "baseHref": "zh-TW"
+          },
+          "de-CH": {
+            "translation": "projects/ngclient/src/locale/messages.de_CH.xlf",
+            "baseHref": "de-CH"
+          },
+          "de-DE": {
+            "translation": "projects/ngclient/src/locale/messages.de_DE.xlf",
+            "baseHref": "de-DE"
+          },
+          "es-AR": {
+            "translation": "projects/ngclient/src/locale/messages.es_AR.xlf",
+            "baseHref": "es-AR"
+          },
+          "fr-CA": {
+            "translation": "projects/ngclient/src/locale/messages.fr_CA.xlf",
+            "baseHref": "fr-CA"
+          },
+          "fr-FR": {
+            "translation": "projects/ngclient/src/locale/messages.fr_FR.xlf",
+            "baseHref": "fr-FR"
+          },
+          "it-IT": {
+            "translation": "projects/ngclient/src/locale/messages.it_IT.xlf",
+            "baseHref": "it-IT"
+          },
+          "ja": {
+            "translation": "projects/ngclient/src/locale/messages.ja.xlf",
+            "baseHref": "ja"
+          },
+          "nl-BE": {
+            "translation": "projects/ngclient/src/locale/messages.nl_BE.xlf",
+            "baseHref": "nl-BE"
+          },
+          "zh-Hant": {
+            "translation": "projects/ngclient/src/locale/messages.zh-Hant.xlf",
+            "baseHref": "zh-Hant"
+          },
+          "zh": {
+            "translation": "projects/ngclient/src/locale/messages.zh.xlf",
+            "baseHref": "zh"
+          },
+          "zh-HK": {
+            "translation": "projects/ngclient/src/locale/messages.zh_HK.xlf",
+            "baseHref": "zh-HK"
           }
         }
       },
@@ -142,7 +186,7 @@
             "assets": [
               "projects/ngclient/src/assets",
               {
-                "glob": "messages.{en,en_US,en_GB,cs,da,de,es,fi,fr,hu,it,ja_JP,nl_NL,pl,pt_BR,pt,ru,sr_RS,sv_SE,zh_CN,zh_TW,zh-Hans}.json",
+                "glob": "messages.{en,en_US,en_GB,cs,da,de,es,fi,fr,hu,it,ja_JP,nl_NL,pl,pt_BR,pt,ru,sr_RS,sv_SE,zh_CN,zh_TW,zh-Hans,de_CH,de_DE,es_AR,fr_CA,fr_FR,it_IT,ja,nl_BE,zh-Hant,zh,zh_HK}.json",
                 "input": "./projects/ngclient/src/locale",
                 "output": "./locale/"
               },

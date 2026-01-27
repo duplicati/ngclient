@@ -5,6 +5,7 @@ import { loadTranslations } from '@angular/localize';
 import localeCs from '@angular/common/locales/cs';
 import localeDa from '@angular/common/locales/da';
 import localeDe from '@angular/common/locales/de';
+import localeDeCh from '@angular/common/locales/de-CH';
 import localeEn from '@angular/common/locales/en';
 import localeEnGb from '@angular/common/locales/en-GB';
 import localeEs from '@angular/common/locales/es';
@@ -12,10 +13,12 @@ import localeZhHansExtra from '@angular/common/locales/extra/zh-Hans';
 import localeZhHantExtra from '@angular/common/locales/extra/zh-Hant';
 import localeFi from '@angular/common/locales/fi';
 import localeFr from '@angular/common/locales/fr';
+import localeFrCa from '@angular/common/locales/fr-CA';
 import localeHu from '@angular/common/locales/hu';
 import localeIt from '@angular/common/locales/it';
 import localeJa from '@angular/common/locales/ja';
 import localeNl from '@angular/common/locales/nl';
+import localeNlBe from '@angular/common/locales/nl-BE';
 import localePl from '@angular/common/locales/pl';
 import localePt from '@angular/common/locales/pt';
 import localeRu from '@angular/common/locales/ru';
@@ -23,6 +26,7 @@ import localeSr from '@angular/common/locales/sr';
 import localeSv from '@angular/common/locales/sv';
 import localeZhHans from '@angular/common/locales/zh-Hans';
 import localeZhHant from '@angular/common/locales/zh-Hant';
+import localeZhHantHk from '@angular/common/locales/zh-Hant-HK';
 
 // Mapping locale codes to their imported Angular locale data
 const ANGULAR_LOCALE_DATA: Record<string, any> = {
@@ -48,6 +52,15 @@ const ANGULAR_LOCALE_DATA: Record<string, any> = {
   'zh-TW': localeZhHant,
   'zh-Hans': localeZhHans,
   'zh-Hant': localeZhHant,
+  'de-CH': localeDeCh,
+  'fr-CA': localeFrCa,
+  'nl-BE': localeNlBe,
+  'zh-HK': localeZhHantHk,
+  'de-DE': localeDe,
+  'fr-FR': localeFr,
+  'it-IT': localeIt,
+  'es-AR': localeEs,
+  zh: localeZhHans,
 };
 
 const ANGULAR_LOCALE_EXTRA_DATA: Record<string, any> = {
@@ -78,6 +91,17 @@ export const LANGUAGES = [
   { value: 'sv-SE', label: 'Swedish (sv-SE)' },
   { value: 'zh-CN', label: 'Chinese (zh-CN)' },
   { value: 'zh-TW', label: 'Chinese (zh-TW)' },
+  { value: 'de-CH', label: 'German (de-CH)' },
+  { value: 'de-DE', label: 'German (de-DE)' },
+  { value: 'es-AR', label: 'Spanish (es-AR)' },
+  { value: 'fr-CA', label: 'French (fr-CA)' },
+  { value: 'fr-FR', label: 'French (fr-FR)' },
+  { value: 'it-IT', label: 'Italian (it-IT)' },
+  { value: 'ja', label: 'Japanese (ja)' },
+  { value: 'nl-BE', label: 'Dutch (nl-BE)' },
+  { value: 'zh-Hant', label: 'Chinese (zh-Hant)' },
+  { value: 'zh', label: 'Chinese (zh)' },
+  { value: 'zh-HK', label: 'Chinese (zh-HK)' },
 ];
 
 // We map various browser-reported locales to our supported locales
@@ -99,13 +123,15 @@ const LOCALE_MAP: Record<string, string> = {
 
   // German
   de: 'de',
-  'de-DE': 'de',
+  'de-DE': 'de-DE',
   'de-AT': 'de',
+  'de-CH': 'de-CH',
 
   // Spanish
   es: 'es',
   'es-ES': 'es',
   'es-MX': 'es',
+  'es-AR': 'es-AR',
 
   // Finnish
   fi: 'fi',
@@ -113,8 +139,8 @@ const LOCALE_MAP: Record<string, string> = {
 
   // French
   fr: 'fr',
-  'fr-FR': 'fr',
-  'fr-CA': 'fr',
+  'fr-FR': 'fr-FR',
+  'fr-CA': 'fr-CA',
 
   // Hungarian
   hu: 'hu',
@@ -122,16 +148,16 @@ const LOCALE_MAP: Record<string, string> = {
 
   // Italian
   it: 'it',
-  'it-IT': 'it',
+  'it-IT': 'it-IT',
 
   // Japanese
-  ja: 'ja-JP',
-  'ja-JP': 'ja-JP',
+  ja: 'ja',
+  'ja-JP': 'ja',
 
   // Dutch
   nl: 'nl-NL',
   'nl-NL': 'nl-NL',
-  'nl-BE': 'nl-NL',
+  'nl-BE': 'nl-BE',
 
   // Polish
   pl: 'pl',
@@ -156,13 +182,13 @@ const LOCALE_MAP: Record<string, string> = {
   'sv-FI': 'sv-SE',
 
   // Chinese
-  zh: 'zh-CN',
-  'zh-CN': 'zh-CN',
-  'zh-SG': 'zh-CN',
+  zh: 'zh',
+  'zh-CN': 'zh',
+  'zh-SG': 'zh',
   'zh-TW': 'zh-TW',
-  'zh-HK': 'zh-TW',
-  'zh-Hans': 'zh-CN',
-  'zh-Hant': 'zh-TW',
+  'zh-HK': 'zh-HK',
+  'zh-Hans': 'zh',
+  'zh-Hant': 'zh-Hant',
 };
 
 export const ANGULAR_MJS_LOCALE_MAP: Record<string, string> = {
@@ -207,7 +233,7 @@ export function getLocale(): Locales {
   }
 
   // We need to load the message translations manually, as Angular only supports static translations
-  const mappedFileLocale = mappedLocale.replace(/-/g, '_');
+  const mappedFileLocale = mappedLocale == 'zh-Hant' ? 'zh-Hant' : mappedLocale.replace(/-/g, '_');
   const tempLocale = locale === 'en' ? '' : '.' + mappedFileLocale;
 
   fetch(`locale/messages${tempLocale}.json`)
