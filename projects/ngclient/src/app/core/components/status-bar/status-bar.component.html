@@ -1,7 +1,7 @@
 <div class="current-backup">
   <div class="current-backup-progress">
     @if (serverState()?.ActiveTask && statusData()?.task?.Status && statusData()?.task?.Status !== 'Completed') {
-      <div>{{ statusData()!.actionText }} - {{ statusData()!.statusText }}</div>
+      <div [shTooltip]="tooltipText()">{{ statusData()!.actionText }} - {{ statusData()!.statusText }}</div>
       <sh-progress-bar class="raised primary" [value]="statusData()!.progress * 100" />
     } @else if (nextBackup().backup || nextBackup().time) {
       <div class="label" i18n>

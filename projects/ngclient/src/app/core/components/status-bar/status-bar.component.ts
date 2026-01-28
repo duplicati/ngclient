@@ -1,8 +1,9 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { ShipButton, ShipDialogService, ShipIcon, ShipProgressBar, ShipSpinner } from '@ship-ui/core';
+import { ShipButton, ShipDialogService, ShipIcon, ShipProgressBar, ShipSpinner, ShipTooltip } from '@ship-ui/core';
 import { ServerSettingsService } from '../../../settings/server-settings.service';
 import { DuplicatiServer } from '../../openapi';
+import { BytesPipe } from '../../pipes/byte.pipe';
 import { RelativeTimePipe } from '../../pipes/relative-time.pipe';
 import { ServerStateService } from '../../services/server-state.service';
 import { BackupsState } from '../../states/backups.state';
@@ -17,10 +18,20 @@ const date = new Date();
 
 @Component({
   selector: 'app-status-bar',
-  imports: [RemoteConnectivityStatus, RelativeTimePipe, DatePipe, ShipIcon, ShipButton, ShipSpinner, ShipProgressBar],
+  imports: [
+    RemoteConnectivityStatus,
+    RelativeTimePipe,
+    DatePipe,
+    ShipIcon,
+    ShipButton,
+    ShipSpinner,
+    ShipProgressBar,
+    ShipTooltip,
+  ],
   templateUrl: './status-bar.component.html',
   styleUrl: './status-bar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [BytesPipe],
 })
 export default class StatusBarComponent {
   #dupServer = inject(DuplicatiServer);
@@ -31,6 +42,7 @@ export default class StatusBarComponent {
   #sysinfo = inject(SysinfoState);
   #serverState = inject(ServerStateService);
   #serverSettings = inject(ServerSettingsService);
+  #bytesPipe = inject(BytesPipe);
 
   minsAgo = date.setMinutes(date.getMinutes() - 1);
 
@@ -44,6 +56,14 @@ export default class StatusBarComponent {
   pgState = computed(() => this.#serverState.serverState());
   isUsingRelay = this.#relayconfigState.relayIsEnabled;
   hideConsoleConnectionStatus = this.#serverSettings.isConsoleConnectionStatusHidden;
+
+  tooltipText = computed(() => {
+    const data = this.statusData();
+
+    if (!data?.CurrentFilename) return '';
+
+    return `${data.CurrentFilename} (${this.#bytesPipe.transform(data.CurrentFilesize, false, true)})`;
+  });
 
   nextBackup = computed(() => {
     // Trigger if the backup list changes
