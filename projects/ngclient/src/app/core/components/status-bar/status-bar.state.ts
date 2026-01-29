@@ -1,6 +1,7 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { ShipDialogService } from '@ship-ui/core';
 import { finalize, map, of, switchMap } from 'rxjs';
+import { STATUS_STATES } from '../../constants/status-states.constant';
 import {
   DuplicatiServer,
   GetApiV1ProgressstateResponse,
@@ -23,47 +24,6 @@ export type StatusWithContent = Status & {
   progress: number;
   statusText: string;
   actionText: string;
-};
-
-const STATUS_STATES: Record<string, string> = {
-  Starting_Operation: $localize`Starting operation …`,
-  Backup_Begin: $localize`Starting backup …`,
-  Backup_PreBackupVerify: $localize`Verifying backend data …`,
-  Backup_PostBackupTest: $localize`Verifying remote data …`,
-  Backup_PreviousBackupFinalize: $localize`Completing previous backup …`,
-  Backup_ProcessingFiles: $localize`Processing files to backup …`,
-  Backup_Finalize: $localize`Completing backup …`,
-  Backup_WaitForUpload: $localize`Waiting for upload to finish …`,
-  Backup_Delete: $localize`Deleting unwanted files …`,
-  Backup_Compact: $localize`Compacting remote data …`,
-  Backup_VerificationUpload: $localize`Uploading verification file …`,
-  Backup_PostBackupVerify: $localize`Verifying backend data …`,
-  Backup_Lock: $localize`Locking remote data …`,
-  Backup_Complete: $localize`Backup complete!`,
-  Restore_Begin: $localize`Starting restore …`,
-  Restore_RecreateDatabase: $localize`Rebuilding local database …`,
-  Restore_PreRestoreVerify: $localize`Verifying remote data …`,
-  Restore_CreateFileList: $localize`Building list of files to restore …`,
-  Restore_CreateTargetFolders: $localize`Creating target folders …`,
-  Restore_ScanForExistingFiles: $localize`Scanning existing files …`,
-  Restore_ScanForLocalBlocks: $localize`Scanning for local blocks …`,
-  Restore_PatchWithLocalBlocks: $localize`Patching files with local blocks …`,
-  Restore_DownloadingRemoteFiles: $localize`Downloading files …`,
-  Restore_PostRestoreVerify: $localize`Verifying restored files …`,
-  Restore_Complete: $localize`Restore complete!`,
-  Recreate_Running: $localize`Recreating database …`,
-  Vacuum_Running: $localize`Vacuuming database …`,
-  Repair_Running: $localize`Repairing database …`,
-  Verify_Running: $localize`Verifying files …`,
-  BugReport_Running: $localize`Creating bug report …`,
-  Delete_Listing: $localize`Listing remote files …`,
-  Delete_Deleting: $localize`Deleting remote files …`,
-  PurgeFiles_Begin: $localize`Listing remote files for purge …`,
-  PurgeFiles_Process: $localize`Purging files …`,
-  PurgeFiles_Compact: $localize`Compacting remote data …`,
-  PurgeFiles_Complete: $localize`Purging files complete!`,
-  ReadLockInfo_Running: $localize`Reading lock info …`,
-  Error: $localize`Error!`,
 };
 
 @Injectable({
