@@ -116,9 +116,10 @@ export default class SourceDataComponent {
       if (!targetUrl) return;
 
       const shortId = Math.random().toString(36).substring(2, 10);
+      const protcolName = targetUrl.split('://')[0];
       const prefix = this.#sysInfo.systemInfo()?.PathSeparator === '\\' ? 'X:\\' : '/';
 
-      const newRemotePath = `@${prefix}dupl-${shortId}|${targetUrl}`;
+      const newRemotePath = `@${prefix}dupl-${protcolName}-${shortId}|${targetUrl}`;
 
       this.addPath(newRemotePath);
     });
