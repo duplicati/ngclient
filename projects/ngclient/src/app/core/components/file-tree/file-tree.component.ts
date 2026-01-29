@@ -800,7 +800,7 @@ export default class FileTreeComponent {
 
     let pathArr = path
       .split('\0')
-      .filter((x) => !x.startsWith('-'))
+      .filter((x) => !x.startsWith('-') && !x.startsWith('+') && !x.startsWith('@'))
       .filter(Boolean);
 
     const segmentArr = pathArr.map((x) => {
