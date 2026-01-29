@@ -5,6 +5,10 @@ on:
     branches:
       - main # Or your main branch name
 
+permissions:
+  id-token: write # Required for OIDC
+  contents: read
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -53,7 +57,4 @@ jobs:
         if: env.changed == 'true' && github.ref == 'refs/heads/main'
         working-directory: ./dist/ngclient/browser
         run: |
-          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
           npm publish --access public
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }} # Your NPM token from secrets
