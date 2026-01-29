@@ -1,0 +1,133 @@
+<div class="status-page">
+  <!-- Progress Section -->
+  <sh-card>
+    <div class="progress-section">
+      <h2>{{ statusText() }}</h2>
+      <sh-progress-bar [value]="progress()"></sh-progress-bar>
+
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="label">Files</span>
+          <span class="value">{{ statusData()?.ProcessedFileCount }} / {{ statusData()?.TotalFileCount }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="label">Size</span>
+          <span class="value">
+            {{ statusData()?.ProcessedFileSize | bytes }} / {{ statusData()?.TotalFileSize | bytes }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </sh-card>
+
+  <!-- Current File & Recent Files -->
+  <sh-card>
+    <div class="files-section">
+      <h3>Current File</h3>
+      <div class="current-file" *ngIf="statusData()?.CurrentFilename">
+        <div class="filename">{{ statusData()?.CurrentFilename }}</div>
+        <div class="filesize">{{ statusData()?.CurrentFilesize | bytes }}</div>
+      </div>
+
+      <h3>Recent Files</h3>
+      <div class="recent-files">
+        <div class="recent-file" *ngFor="let file of recentFiles()">
+          <span class="filename">{{ file.filename }}</span>
+          <span class="filesize">{{ file.filesize | bytes }}</span>
+        </div>
+      </div>
+    </div>
+  </sh-card>
+
+  <!-- Transfer Speed & ETA -->
+  <sh-card>
+    <div class="speed-section">
+      <div class="speed-header">
+        <h3>Transfer Speed</h3>
+        <div class="aggregate-speed">{{ statusData()?.BackendSpeed | bytes }}/s</div>
+      </div>
+
+      <div class="eta-info" *ngIf="etaData()">
+        <div class="eta-time">
+          ETA: {{ etaData()?.estimatedCompletion | date: 'mediumTime' }} ({{
+            etaData()?.estimatedCompletion | relativeTime
+          }})
+        </div>
+        <div class="speed-metrics">
+          <div>{{ etaData()?.currentFilesPerSecond | number: '1.1-1' }} files/s</div>
+          <div>{{ etaData()?.currentBytesPerSecond | bytes }}/s</div>
+        </div>
+      </div>
+
+      <div class="transfers-toggle">
+        <button shButton (click)="toggleTransfers()">
+          {{ transfersExpanded() ? 'Hide Details' : 'Show Details' }}
+        </button>
+      </div>
+
+      <div class="transfer-details" *ngIf="transfersExpanded()">
+        <div class="transfer-item" *ngFor="let transfer of statusData()?.ActiveTransfers">
+          <div class="transfer-info">
+            <span class="path">{{ transfer.BackendPath }}</span>
+            <span class="speed">{{ transfer.BackendSpeed | bytes }}/s</span>
+          </div>
+          <sh-progress-bar
+            [value]="((transfer.BackendFileProgress || 0) / (transfer.BackendFileSize || 1)) * 100"></sh-progress-bar>
+        </div>
+      </div>
+    </div>
+  </sh-card>
+
+  <!-- Live Logs -->
+  <sh-card>
+    <div class="logs-section">
+      <h3>Live Logs</h3>
+      <app-logs-live
+        [asSimpleList]="true"
+        [polling]="isTaskRunning()"
+        [whenFilter]="taskStartTime()?.getTime()"
+        [backupIdFilter]="currentBackupId()"></app-logs-live>
+    </div>
+  </sh-card>
+
+  <!-- Server Status -->
+  <sh-card>
+    <div class="server-status-section">
+      <h3>Server Status</h3>
+
+      <div class="status-row">
+        <span class="label">State:</span>
+        <span class="value">{{ serverState()?.ProgramState }}</span>
+      </div>
+
+      <div class="status-row" *ngIf="nextBackup()">
+        <span class="label">Next Task:</span>
+        <div class="value">
+          <div>{{ nextBackup().backup?.Name }}</div>
+          <div class="sub-text">
+            {{ nextBackup().time | date: 'medium' }}
+            ({{ nextBackup().time | relativeTime }})
+          </div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button shButton (click)="pauseResume()">
+          <sh-icon>{{ clientIsRunning() ? 'pause' : 'play_arrow' }}</sh-icon>
+          {{ clientIsRunning() ? 'Pause' : 'Resume' }}
+        </button>
+
+        <ng-container *ngIf="isTaskRunning()">
+          <button shButton color="warn" (click)="stop()">
+            <sh-icon>stop</sh-icon>
+            Stop
+          </button>
+          <button shButton color="warn" (click)="abort()">
+            <sh-icon>close</sh-icon>
+            Abort
+          </button>
+        </ng-container>
+      </div>
+    </div>
+  </sh-card>
+</div>

@@ -200,6 +200,10 @@ export const routes: Routes = [
                     loadChildren: () => import('./restore-flow/restore-flow.routes'),
                   },
                   {
+                    path: 'status',
+                    loadComponent: () => import('./status/status.component'),
+                  },
+                  {
                     path: 'settings',
                     loadComponent: () => import('./settings/settings.component'),
                   },

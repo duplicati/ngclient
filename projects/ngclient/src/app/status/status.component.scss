@@ -1,0 +1,240 @@
+:host {
+  display: block;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.status-page {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+sh-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.progress-section {
+  h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    color: var(--text-primary);
+  }
+
+  sh-progress-bar {
+    margin-bottom: 15px;
+    height: 20px;
+    --progress-bar-color: var(--primary-color);
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+
+      .label {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+      }
+
+      .value {
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+.files-section {
+  h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    color: var(--text-secondary);
+  }
+
+  .current-file {
+    margin-bottom: 20px;
+    padding: 10px;
+    background: var(--bg-secondary);
+    border-radius: 4px;
+
+    .filename {
+      font-weight: 500;
+      word-break: break-all;
+      margin-bottom: 5px;
+    }
+
+    .filesize {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+  }
+
+  .recent-files {
+    .recent-file {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.9rem;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .filename {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-right: 10px;
+      }
+
+      .filesize {
+        color: var(--text-secondary);
+        white-space: nowrap;
+      }
+    }
+  }
+}
+
+.speed-section {
+  .speed-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+
+    h3 {
+      margin: 0;
+      font-size: 1rem;
+      color: var(--text-secondary);
+    }
+
+    .aggregate-speed {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+  }
+
+  .eta-info {
+    margin-bottom: 15px;
+    padding: 10px;
+    background: var(--bg-secondary);
+    border-radius: 4px;
+
+    .eta-time {
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+
+    .speed-metrics {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+  }
+
+  .transfers-toggle {
+    margin-bottom: 10px;
+    text-align: right;
+  }
+
+  .transfer-details {
+    max-height: 200px;
+    overflow-y: auto;
+
+    .transfer-item {
+      margin-bottom: 10px;
+
+      .transfer-info {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        margin-bottom: 2px;
+
+        .path {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          margin-right: 10px;
+        }
+      }
+
+      sh-progress-bar {
+        height: 4px;
+      }
+    }
+  }
+}
+
+.logs-section {
+  grid-column: 1 / -1;
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    color: var(--text-secondary);
+  }
+
+  app-logs-live {
+    height: 300px;
+    display: block;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+  }
+}
+
+.server-status-section {
+  h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1rem;
+    color: var(--text-secondary);
+  }
+
+  .status-row {
+    display: flex;
+    margin-bottom: 10px;
+
+    .label {
+      width: 100px;
+      color: var(--text-secondary);
+    }
+
+    .value {
+      flex: 1;
+      font-weight: 500;
+
+      .sub-text {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+      }
+    }
+  }
+
+  .actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+}
