@@ -48,7 +48,7 @@ export const PreloadGuard = () => {
 export const WelcomeGuard = () => {
   // TODO
   // - check if the user has visited the welcome wizard before
-  // - and if redirect to the welcome wizard
+  // - and if not, redirect to the welcome wizard
 
   return true;
 };
