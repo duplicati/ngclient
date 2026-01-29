@@ -1,4 +1,4 @@
-@if (!multiSelect()) {
+@if (!multiSelect() && !office365Mode()) {
   <sh-button-group class="type-b small">
     <button
       type="button"
@@ -85,7 +85,7 @@
   </div>
 
   <div class="footer">
-    @if (!accepts() && !isByBackupSettings()) {
+    @if (!accepts() && !isByBackupSettings() && !office365Mode()) {
       <sh-toggle
         [class.active]="_showHiddenNodes()"
         class="primary raised browse-files-toggle"
@@ -95,7 +95,7 @@
       </sh-toggle>
     }
 
-    @if (enableCreateFolder()) {
+    @if (enableCreateFolder() && !office365Mode()) {
       <button
         shButton
         type="button"

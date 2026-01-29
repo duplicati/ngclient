@@ -2,7 +2,7 @@
 
 <section>
   <div class="back">
-    <button type="button" class="small" shButton routerLink="../" i18n>
+    <button type="button" class="small" shButton routerLink="../" [queryParams]="{ state: stateId() }" i18n>
       <sh-icon>arrow-left</sh-icon>
       Back
     </button>

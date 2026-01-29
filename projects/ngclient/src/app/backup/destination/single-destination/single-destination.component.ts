@@ -199,7 +199,7 @@ export class SingleDestinationComponent {
     const protocolKey = destinationConfig.key;
     const visualKey = destinationConfig.customKey ?? protocolKey;
 
-    const backendModuleItem = this.#destinationState.backendModules().find((x) => x.Key === protocolKey) ?? {
+    const backendModuleItem = this.#destinationState.allModules().find((x) => x.Key === protocolKey) ?? {
       Key: protocolKey,
       DisplayName: destinationConfig.displayName,
       Description: destinationConfig.description,

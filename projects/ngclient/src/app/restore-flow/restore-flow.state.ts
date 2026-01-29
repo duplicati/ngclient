@@ -43,6 +43,8 @@ export class RestoreFlowState {
   isSubmitting = signal(false);
   isFileRestore = signal(false);
   isFullWidthPage = signal(false);
+  extendedDataType = signal<string | null>(null);
+  alternateRestorePath = signal<string | null>(null);
 
   #testSignal = signal<TestState>('');
   #testErrorMessage = signal<string | null>(null);
@@ -66,6 +68,8 @@ export class RestoreFlowState {
     this.backupId.set(id);
 
     this.isFileRestore.set(isFileRestore);
+    this.alternateRestorePath.set(null);
+    this.extendedDataType.set(null);
 
     if (isFileRestore) {
       this.#router.navigate(['/restore-from-files/destination']);
@@ -83,6 +87,10 @@ export class RestoreFlowState {
 
   updateTargetUrl(targetUrl: string | null) {
     this.destinationTargetUrl.set(targetUrl);
+  }
+
+  setAlternateRestorePath(path: string | null) {
+    this.alternateRestorePath.set(path);
   }
 
   submit() {
@@ -141,7 +149,7 @@ export class RestoreFlowState {
               .map((x) => (x.endsWith('/') || x.endsWith('\\') ? `${x}*` : x)) ?? [],
           passphrase: selectFilesFormValue.passphrase ?? null,
           time: selectedOption?.Time,
-          restore_path: optionsValue.restoreFromPath,
+          restore_path: this.alternateRestorePath() ?? optionsValue.restoreFromPath,
           overwrite: optionsValue.handleExisting === 'overwrite',
           permissions: optionsValue.permissions,
           skip_metadata: !optionsValue.includeMetadata,

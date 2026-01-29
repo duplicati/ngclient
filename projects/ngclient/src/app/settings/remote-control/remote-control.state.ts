@@ -125,7 +125,6 @@ export class RemoteControlState {
 
     this.#dupServer.getApiV1RemotecontrolStatus().subscribe({
       next: (res) => {
-        console.log('next', res);
         this.#mapRemoteControlStatus(res);
       },
     });
@@ -198,9 +197,6 @@ export class RemoteControlState {
 
     let url = 'https://app.duplicati.com';
     let sysInfoDefault = systemInfo?.RemoteControlDashboardUrl ?? '';
-
-    console.log('sysinfo', sysInfoDefault);
-    console.log('settings', settings);
 
     if (sysInfoDefault.length > 0) url = sysInfoDefault;
     if (settings && settings['remote-control-dashboard-url']) url = settings['remote-control-dashboard-url'];

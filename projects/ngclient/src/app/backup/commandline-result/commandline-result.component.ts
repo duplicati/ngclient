@@ -18,7 +18,9 @@ export default class CommandlineResultComponent {
   #dupServer = inject(DuplicatiServer);
   #route = inject(ActivatedRoute);
   #routeParamsSignal = toSignal(this.#route.params);
+  #queryParamsSignal = toSignal(this.#route.queryParams);
   runId = computed(() => this.#routeParamsSignal()?.['runId']);
+  stateId = computed(() => this.#queryParamsSignal()?.['state']);
 
   offset = signal<number>(0);
   status = signal<Status>('starting');

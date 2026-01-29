@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, effect, input, output, signal } from '@angular/core';
 import { ShipButton } from '@ship-ui/core';
-import { IDynamicModule } from '../../../core/openapi';
+import { IDynamicModule, RemoteDestinationType } from '../../../core/openapi';
 import { TestState } from '../../backup.state';
 import { DestinationListItemComponent } from '../../destination/destination-list-item/destination-list-item.component';
 import { DestinationListComponent } from '../../destination/destination-list/destination-list.component';
@@ -16,15 +16,17 @@ import { TestUrl } from './test-url/test-url';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TargetUrlDialog {
-  data = input<{ targetUrlModel: string | null }>();
+  data = input<{ targetUrlModel: string | null; moduleType: RemoteDestinationType }>();
   closed = output<string | null>();
 
   targetUrlModel = signal<string | null>(null);
+  moduleType = signal<RemoteDestinationType>('Backend');
 
   dataEffect = effect(() => {
     const data = this.data();
 
     data?.targetUrlModel && this.targetUrlModel.set(data.targetUrlModel);
+    data?.moduleType && this.moduleType.set(data.moduleType);
   });
 
   testSignal = signal<TestState>('');

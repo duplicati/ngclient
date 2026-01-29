@@ -10,46 +10,55 @@ function extractTextFromTarget(target: any): string {
   const isPlural = /^\{[\w\d_]+,\s*plural,/.test(fullText);
 
   return target.$$.map((node: any) => {
-      if (node['#name'] === 'x') {
-          const id = node.$?.id;
-          if (!id) return '';
-          return isPlural ? `{{${id}}}` : `{$${id}}`;
-      }
-      if (node['#name'] === 'g') {
-          const id = node.$?.id;
-          const inner = extractTextFromTarget(node);
-          return `{$${id}}${inner}{$CLOSE_${id}}`;
-      }
-      if ('_' in node) {
-          return node._;
-      }
-      return '';
-  }).join('').trim();
+    if (node['#name'] === 'x') {
+      const id = node.$?.id;
+      if (!id) return '';
+      return isPlural ? `{{${id}}}` : `{$${id}}`;
+    }
+    if (node['#name'] === 'g') {
+      const id = node.$?.id;
+      const inner = extractTextFromTarget(node);
+      return `{$${id}}${inner}{$CLOSE_${id}}`;
+    }
+    if ('_' in node) {
+      return node._;
+    }
+    return '';
+  })
+    .join('')
+    .trim();
 }
 
 async function convertFile(inputPath: string, outputPath: string) {
   const xml = fs.readFileSync(inputPath, 'utf8');
   const parsed = await parseStringPromise(xml, {
-      preserveChildrenOrder: true,
-      explicitChildren: true,
-      charsAsChildren: true
+    preserveChildrenOrder: true,
+    explicitChildren: true,
+    charsAsChildren: true,
   });
 
   const result: Record<string, string> = {};
   const units = parsed.xliff.file[0].body[0]['trans-unit'];
+  const isSourceFile =
+    path.basename(inputPath) === 'messages.xlf' || path.basename(inputPath).startsWith('messages.en');
 
   for (const unit of units) {
-      const id = unit.$.id;
-      const target = unit.target?.[0];
+    const id = unit.$.id;
+    const target = unit.target?.[0];
 
-      const content = extractTextFromTarget(target);
+    let content = extractTextFromTarget(target);
 
-      if (!content || content.trim() === '') {
-          // Skip untranslated strings
-          continue;
-      }
+    if ((!content || content.trim() === '') && isSourceFile) {
+      const source = unit.source?.[0];
+      content = extractTextFromTarget(source);
+    }
 
-      result[id] = content;
+    if (!content || content.trim() === '') {
+      // Skip untranslated strings
+      continue;
+    }
+
+    result[id] = content;
   }
 
   fs.writeFileSync(outputPath, JSON.stringify({ translations: result }, null, 2), 'utf8');
@@ -57,16 +66,16 @@ async function convertFile(inputPath: string, outputPath: string) {
 }
 
 async function run() {
-    const folder = path.resolve('projects/ngclient/src/locale');
-    const files = fs.readdirSync(folder).filter(f => f.endsWith('.xlf'));
+  const folder = path.resolve('projects/ngclient/src/locale');
+  const files = fs.readdirSync(folder).filter((f) => f.endsWith('.xlf'));
 
-    for (const file of files) {
-        const inputPath = path.join(folder, file);
-        const outputPath = path.join(folder, file.replace(/\.xlf$/, '.json'));
-        await convertFile(inputPath, outputPath);
-    }
+  for (const file of files) {
+    const inputPath = path.join(folder, file);
+    const outputPath = path.join(folder, file.replace(/\.xlf$/, '.json'));
+    await convertFile(inputPath, outputPath);
+  }
 }
 
-run().catch(err => {
-    console.error('❌ Conversion error:', err);
+run().catch((err) => {
+  console.error('❌ Conversion error:', err);
 });

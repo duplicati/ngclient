@@ -159,6 +159,62 @@ export class BackupState {
     }
   }
 
+  validateBeforeSubmit() {
+    this.generalForm.markAllAsTouched();
+    this.sourceDataForm.markAllAsTouched();
+
+    var backup = this.#mapFormsToBackup();
+
+    var isNameValid = (backup.Backup.Name ?? '').trim() !== '';
+    var isPasswordValid =
+      this.generalForm.controls.encryption.value === '-' ||
+      (this.generalForm.controls.password.value === this.generalForm.controls.repeatPassword.value &&
+        this.generalForm.controls.password.value !== '');
+
+    if (!isNameValid || !isPasswordValid || this.generalForm.invalid) {
+      this.#dialog.open(ConfirmDialogComponent, {
+        data: {
+          title: $localize`Validation Error`,
+          message: this.isNew()
+            ? $localize`Please fix the errors indicated before creating the backup.`
+            : $localize`Please fix the errors indicated before saving.`,
+          confirmText: $localize`OK`,
+        },
+      });
+      return 'general';
+    }
+
+    const targetUrl = this.targetUrlModel() ?? '';
+    if (targetUrl.trim() === '') {
+      this.#dialog.open(ConfirmDialogComponent, {
+        data: {
+          title: $localize`Destination required`,
+          message: this.isNew()
+            ? $localize`You must setup a destination before creating the backup.`
+            : $localize`Please setup a destination before saving.`,
+          confirmText: $localize`OK`,
+        },
+      });
+      return 'destination';
+    }
+
+    var isSourceValid = (backup.Backup.Sources ?? []).filter((x) => x.trim() !== '').length > 0;
+    if (!isSourceValid || !this.sourceDataForm.valid) {
+      this.#dialog.open(ConfirmDialogComponent, {
+        data: {
+          title: $localize`Source data required`,
+          message: this.isNew()
+            ? $localize`You must setup source data before creating the backup.`
+            : $localize`Please add at least one source path before saving.`,
+          confirmText: $localize`OK`,
+        },
+      });
+      return 'source';
+    }
+
+    return '';
+  }
+
   exit(confirm: boolean) {
     if (!confirm) {
       this.#resetAllForms();

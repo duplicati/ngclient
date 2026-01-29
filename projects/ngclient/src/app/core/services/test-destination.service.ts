@@ -2,7 +2,12 @@ import { inject, Injectable } from '@angular/core';
 import { ShipDialogService } from '@ship-ui/core';
 import { Observable, Subscriber } from 'rxjs';
 import { ConfirmDialogComponent } from '../components/confirm-dialog/confirm-dialog.component';
-import { DestinationTestResponseDto, DuplicatiServer, PostApiV2DestinationTestResponse } from '../openapi';
+import {
+  DestinationTestResponseDto,
+  DuplicatiServer,
+  PostApiV2DestinationTestResponse,
+  RemoteDestinationType,
+} from '../openapi';
 import { SysinfoState } from '../states/sysinfo.state';
 
 export type TestDestinationResult = {
@@ -31,11 +36,13 @@ export class TestDestinationService {
     backupId: string | null,
     destinationIndex: number,
     askToCreate: boolean,
+    urlType: RemoteDestinationType,
     suppressErrorDialogs: boolean
   ) {
     if (this.#sysinfo.hasV2TestOperations())
-      return this.testDestinationv2(targetUrl, backupId, destinationIndex, askToCreate, suppressErrorDialogs);
-    else return this.testDestinationv1(targetUrl, backupId, destinationIndex, askToCreate, suppressErrorDialogs);
+      return this.testDestinationv2(targetUrl, backupId, destinationIndex, askToCreate, urlType, suppressErrorDialogs);
+    else
+      return this.testDestinationv1(targetUrl, backupId, destinationIndex, askToCreate, urlType, suppressErrorDialogs);
   }
 
   private testDestinationv2(
@@ -43,6 +50,7 @@ export class TestDestinationService {
     backupId: string | null,
     destinationIndex: number,
     askToCreate: boolean,
+    urlType: RemoteDestinationType,
     suppressErrorDialogs: boolean
   ) {
     return new Observable<TestDestinationResult>((observer) => {
@@ -53,6 +61,7 @@ export class TestDestinationService {
             BackupId: backupId == 'new' ? null : backupId,
             AutoCreate: false,
             Options: null,
+            DestinationType: urlType,
           },
         })
         .subscribe({
@@ -73,7 +82,7 @@ export class TestDestinationService {
           error: (err) => {
             const res = (err?.error?.body ?? err?.error?.requestBody) as PostApiV2DestinationTestResponse;
             if (res?.Data?.FolderExists === false || res?.StatusCode === 'missing-folder') {
-              if (askToCreate) this.handleMissingFolder(observer, targetUrl, destinationIndex);
+              if (askToCreate) this.handleMissingFolder(observer, targetUrl, backupId, destinationIndex);
               else
                 this.handleGenericError(
                   observer,
@@ -118,6 +127,7 @@ export class TestDestinationService {
     backupId: string | null,
     destinationIndex: number,
     askToCreate: boolean,
+    urlType: RemoteDestinationType,
     suppressErrorDialogs: boolean
   ) {
     return new Observable<TestDestinationResult>((observer) => {
@@ -127,6 +137,7 @@ export class TestDestinationService {
             path: targetUrl,
             backupId: backupId == 'new' ? null : backupId,
           },
+          type: urlType,
         })
         .subscribe({
           next: (_) => {
@@ -142,6 +153,7 @@ export class TestDestinationService {
             this.handleDestinationErrorv1(
               err.message,
               targetUrl,
+              backupId,
               destinationIndex,
               askToCreate,
               suppressErrorDialogs
@@ -156,6 +168,7 @@ export class TestDestinationService {
   private handleMissingFolder(
     observer: Subscriber<TestDestinationResult>,
     targetUrl: string,
+    backupId: string | null,
     destinationIndex: number
   ) {
     this.#dialog.open(ConfirmDialogComponent, {
@@ -178,6 +191,7 @@ export class TestDestinationService {
                 DestinationUrl: targetUrl,
                 AutoCreate: true,
                 Options: null,
+                BackupId: backupId == 'new' ? null : backupId,
               },
             })
             .subscribe({
@@ -208,6 +222,7 @@ export class TestDestinationService {
             .postApiV1RemoteoperationCreate({
               requestBody: {
                 path: targetUrl,
+                backupId: backupId == 'new' ? null : backupId,
               },
             })
             .subscribe({
@@ -447,13 +462,14 @@ with the REPORTED host key: ${reportedhostkey}?`,
   private handleDestinationErrorv1(
     errorMessage: string,
     targetUrl: string,
+    backupId: string | null,
     destinationIndex: number,
     askToCreate: boolean,
     suppressErrorDialogs: boolean
   ) {
     return new Observable<TestDestinationResult>((observer) => {
       if (errorMessage === 'missing-folder') {
-        if (askToCreate) this.handleMissingFolder(observer, targetUrl, destinationIndex);
+        if (askToCreate) this.handleMissingFolder(observer, targetUrl, backupId, destinationIndex);
         else
           this.handleGenericError(
             observer,

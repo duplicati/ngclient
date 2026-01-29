@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, model, signal } from '@angular/core';
 import { ShipAlert, ShipButton } from '@ship-ui/core';
+import { RemoteDestinationType } from '../../../../core/openapi';
 import { TestDestinationService } from '../../../../core/services/test-destination.service';
 import { TestState } from '../../../backup.state';
 import { fromTargetPath } from '../../../destination/destination.config-utilities';
@@ -16,6 +17,7 @@ export class TestUrl {
 
   targetUrl = model.required<string | null>();
   testSignal = model.required<string>();
+  moduleType = model.required<RemoteDestinationType>();
 
   testErrorMessage = signal<string | null>(null);
 
@@ -60,58 +62,19 @@ export class TestUrl {
 
     this.setTestState('testing');
 
-    this.#testDestination.testDestination(targetUrl, null, 0, true, true).subscribe({
+    this.#testDestination.testDestination(targetUrl, null, 0, true, this.moduleType(), true).subscribe({
       next: (res) => {
         if (res.action === 'success' && res.containsBackup === true) {
           this.setTestState('containsBackup');
-          // } else if (res.action === 'success' && res.anyFilesFound === true) {
-          //   this.setTestState('destinationNotEmpty');
+          return;
         } else if (res.action === 'success') {
           this.setTestState('success');
+          return;
         }
-        // this.setTestState('success');
-
-        // if () {
-        //   this.setTestState(
-        //     'warning',
-        //     $localize`The remote destination already contains a backup. Please use a different folder for each backup.`
-        //   );
-
-        //   this.responseType.set('containsBackup');
-        //   // if (!suppressErrorDialogs) {
-        //   // this.#dialog.open(ConfirmDialogComponent, {
-        //   //   data: {
-        //   //     title: $localize`Folder contains backup`,
-        //   //     message: $localize`The remote destination already contains a backup. You must use a different folder for each backup.`,
-        //   //     confirmText: $localize`OK`,
-        //   //     cancelText: undefined,
-        //   //   },
-        //   // });
-        //   // }
-        // } else if (res.anyFilesFound === true) {
-        //   this.setTestState('warning', $localize`The remote destination contains unknown files.`);
-
-        //   this.responseType.set('destinationNotEmpty');
-        //   // if (!suppressErrorDialogs) {
-        //   // this.#dialog.open(ConfirmDialogComponent, {
-        //   //   data: {
-        //   //     title: $localize`Folder is not empty`,
-        //   //     message: $localize`The remote destination is not empty. It is recommended to use an empty folder for the backup.`,
-        //   //     confirmText: $localize`OK`,
-        //   //     cancelText: undefined,
-        //   //   },
-        //   // });
-        //   // }
-        // }
-
-        //   callback?.();
-        //   return;
-        // }
 
         this.setTestState('error', res.errorMessage ?? $localize`An error occurred while testing the destination.`);
 
         if (res.action === 'generic-error') {
-          // callback?.();
           return;
         }
 
@@ -126,7 +89,6 @@ export class TestUrl {
         }
 
         if (res.testAgain) this.testDestination();
-        // else callback?.();
       },
     });
   }

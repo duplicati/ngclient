@@ -8,7 +8,7 @@ import { ServerStatusWebSocketService } from '../core/services/server-status-web
 const SHOWN_WELCOME_PAGE_KEY = 'shown-welcome-page-v1';
 const HIDE_CONSOLE_CONNECTION_STATUS_KEY = 'hide-console-connection-status';
 const DISABLE_CONSOLE_CONTROL_KEY = 'disable-console-control';
-const DISABLE_TRAYICON_LOGIN_KEY = 'disable-trayicon-login';
+const DISABLE_TRAYICON_LOGIN_KEY = 'disable-tray-icon-login';
 const REMOTE_ACCESS_INTERFACE_KEY = 'server-listen-interface';
 const REMOTE_ACCESS_ALLOWED_HOSTNAMES_KEY = 'allowed-hostnames';
 const REMOTE_ACCESS_PASSWORD = 'server-passphrase';

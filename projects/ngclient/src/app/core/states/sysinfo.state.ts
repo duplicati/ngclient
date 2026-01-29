@@ -35,6 +35,14 @@ export class SysinfoState {
     return this.systemInfo()?.BackendModules ?? [];
   });
 
+  sourceProviderModules = computed(() => {
+    return this.systemInfo()?.SourceProviderModules ?? [];
+  });
+
+  restoreDestinationProviderModules = computed(() => {
+    return this.systemInfo()?.RestoreDestinationProviderModules ?? [];
+  });
+
   allOptionsGrouped = computed(() => {
     const defaultOptions = {
       displayName: 'Default',

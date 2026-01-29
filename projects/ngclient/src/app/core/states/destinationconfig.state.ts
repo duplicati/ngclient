@@ -1,8 +1,9 @@
-import { computed, inject, Injectable, Signal } from '@angular/core';
+import { computed, inject, Injectable } from '@angular/core';
 import {
   getAllConfigurationsByKey,
   getConfigurationByKey,
 } from '../../backup/destination/destination.config-utilities';
+import { IDynamicModule } from '../openapi';
 import { SysinfoState } from './sysinfo.state';
 
 export type DestinationTypeOption = {
@@ -21,9 +22,8 @@ export type DestinationTypeOption = {
 export class DestinationConfigState {
   #sysinfo = inject(SysinfoState);
 
-  supportedDestinationTypes = computed(() => {
-    return this.#sysinfo
-      .backendModules()
+  #mapModulesToConfigEntries(modules: IDynamicModule[]) {
+    return modules
       .flatMap((m) => {
         if (!m?.Key) {
           return null;
@@ -46,10 +46,10 @@ export class DestinationConfigState {
         }
       })
       .filter((x) => x !== null);
-  });
+  }
 
-  destinationTypeOptions = computed(() =>
-    this.supportedDestinationTypes().map((x) => ({
+  #mapConfigEntriesToOptions(entries: any[]): DestinationTypeOption[] {
+    return entries.map((x) => ({
       key: x.customKey ?? x.key,
       customKey: x.customKey ?? null,
       displayName: x.displayName,
@@ -57,8 +57,39 @@ export class DestinationConfigState {
       icon: x.icon,
       searchTerms: [x.displayName, x.description, x.key, x.searchTerms ?? '', x.customKey ?? ''].join(' '),
       sortOrder: x.sortOrder ?? 0,
-    }))
-  ) as Signal<DestinationTypeOption[]>;
+    }));
+  }
 
-  backendModules = computed(() => this.#sysinfo.backendModules() ?? []);
+  backendDestinationOptions = computed(() => {
+    const modules = this.#sysinfo.backendModules();
+    const entries = this.#mapModulesToConfigEntries(modules);
+    return this.#mapConfigEntriesToOptions(entries);
+  });
+
+  sourceProviderOptions = computed(() => {
+    const modules = this.#sysinfo.sourceProviderModules();
+    const entries = this.#mapModulesToConfigEntries(modules.length ? modules : this.#sysinfo.backendModules());
+    return this.#mapConfigEntriesToOptions(entries);
+  });
+
+  restoreDestinationOptions = computed(() => {
+    const modules = this.#sysinfo.restoreDestinationProviderModules();
+    const entries = this.#mapModulesToConfigEntries(modules.length ? modules : this.#sysinfo.backendModules());
+    return this.#mapConfigEntriesToOptions(entries);
+  });
+
+  destinationTypeOptions = this.backendDestinationOptions;
+
+  allModules = computed(() =>
+    [
+      ...this.#sysinfo.backendModules(),
+      ...this.#sysinfo.sourceProviderModules(),
+      ...this.#sysinfo.restoreDestinationProviderModules(),
+    ].reduce((acc, curr) => {
+      if (!acc.find((x) => x.Key === curr.Key)) {
+        acc.push(curr);
+      }
+      return acc;
+    }, [] as IDynamicModule[])
+  );
 }

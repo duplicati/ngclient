@@ -106,6 +106,7 @@ export type DestinationTestRequestDto = {
         [key: string]: string;
     } | null;
     AutoCreate: boolean;
+    DestinationType?: RemoteDestinationType;
 };
 
 export type DestinationTestResponseDto = {
@@ -337,6 +338,9 @@ export type ListFolderContentItemDto = {
     IsDirectory: boolean;
     IsSymlink: boolean;
     LastModified: string;
+    Metadata: {
+        [key: string]: (string) | null;
+    } | null;
 };
 
 export type ListFolderContentRequestDto = {
@@ -345,6 +349,7 @@ export type ListFolderContentRequestDto = {
     BackupId: (string) | null;
     Paths: Array<string> | null;
     Time: (string) | null;
+    ReturnExtended?: (boolean) | null;
 };
 
 export type ListFolderContentResponseDto = {
@@ -420,6 +425,8 @@ export type RemoteControlStatusOutput = {
     RegistrationUrl?: (string) | null;
 };
 
+export type RemoteDestinationType = 'Backend' | 'SourceProvider' | 'RestoreDestinationProvider';
+
 export type RemoteOperationInput = {
     path?: (string) | null;
     backupId?: (string) | null;
@@ -471,6 +478,9 @@ export type SearchEntriesItemDto = {
     IsDirectory: boolean;
     IsSymlink: boolean;
     LastModified: string;
+    Metadata: {
+        [key: string]: (string) | null;
+    } | null;
 };
 
 export type SearchEntriesRequestDto = {
@@ -480,6 +490,7 @@ export type SearchEntriesRequestDto = {
     Paths: Array<string> | null;
     Filters: Array<string> | null;
     Time: (string) | null;
+    ReturnExtended?: (boolean) | null;
 };
 
 export type SearchEntriesResponseDto = {
@@ -581,6 +592,8 @@ export type SystemInfoDto = {
     GenericModules: Array<IDynamicModule> | null;
     WebModules: Array<IDynamicModule> | null;
     ConnectionModules: Array<IDynamicModule> | null;
+    SourceProviderModules: Array<IDynamicModule> | null;
+    RestoreDestinationProviderModules: Array<IDynamicModule> | null;
     ServerModules: Array<unknown> | null;
     SecretProviderModules: Array<IDynamicModule> | null;
     UsingAlternateUpdateURLs: boolean;
@@ -802,6 +815,7 @@ export type PostApiV1RemoteoperationDbpathResponse = (GetDbPathDto);
 export type PostApiV1RemoteoperationTestData = {
     autocreate?: boolean;
     requestBody: RemoteOperationInput;
+    type?: RemoteDestinationType;
 };
 
 export type PostApiV1RemoteoperationTestResponse = (unknown);

@@ -53,12 +53,37 @@ sh-divider {
   display: flex;
   flex-direction: column;
   gap: p2r(8);
-  overflow: auto;
 }
 
 .path {
   display: grid;
-  align-items: center;
   grid-template-columns: 1fr min-content min-content;
   gap: p2r(4);
+  align-items: center;
+
+  sh-chip {
+    width: 100%;
+  }
+
+  .provider-icon {
+    width: p2r(16);
+    height: p2r(16);
+    margin-right: p2r(8);
+  }
+}
+
+.bulk-textarea {
+  width: 100%;
+  font-family: monospace;
+  min-height: p2r(200);
+}
+
+sh-menu {
+  margin-left: p2r(4);
+}
+
+.paths,
+.filters {
+  max-height: 200px;
+  overflow-y: auto;
 }

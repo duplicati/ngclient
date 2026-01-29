@@ -28,7 +28,10 @@
   @let hasDestination = !!targetUrlModel();
 
   @if (!hasDestination) {
-    <app-destination-list [showAsSources]="true" (setDestination)="setDestination($event)"></app-destination-list>
+    <app-destination-list
+      [showAsSources]="true"
+      [moduleType]="moduleType()"
+      (setDestination)="setDestination($event)"></app-destination-list>
   }
 
   @if (hasDestination) {
@@ -36,7 +39,7 @@
       <button shButton i18n (click)="removeDestination()" type="button">Change</button>
     </app-destination-list-item>
 
-    <app-test-url [(targetUrl)]="targetUrlModel" [(testSignal)]="testSignal"></app-test-url>
+    <app-test-url [(targetUrl)]="targetUrlModel" [(testSignal)]="testSignal" [moduleType]="moduleType()"></app-test-url>
 
     <app-single-destination [(targetUrl)]="targetUrlModel" />
   }

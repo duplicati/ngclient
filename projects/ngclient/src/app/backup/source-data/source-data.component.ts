@@ -2,11 +2,14 @@ import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signa
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ShipButton, ShipDialogService, ShipFormField, ShipIcon, ShipToggle } from '@ship-ui/core';
+import { ShipButton, ShipChip, ShipDialogService, ShipFormField, ShipIcon, ShipMenu, ShipToggle } from '@ship-ui/core';
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
 import { SizeComponent, splitSize } from '../../core/components/size/size.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
+import { DestinationConfigState } from '../../core/states/destinationconfig.state';
+import { SysinfoState } from '../../core/states/sysinfo.state';
 import { BackupState } from '../backup.state';
+import { getConfigurationByUrl } from '../destination/destination.config-utilities';
 import { NewFilterComponent } from './new-filter/new-filter.component';
 import { TargetUrlDialog } from './target-url-dialog/target-url-dialog';
 
@@ -47,10 +50,12 @@ export const createSourceDataForm = (
     ShipIcon,
     ShipButton,
     ShipToggle,
+    ShipMenu,
     NewFilterComponent,
     FileTreeComponent,
     ToggleCardComponent,
     SizeComponent,
+    ShipChip,
   ],
   templateUrl: './source-data.component.html',
   styleUrl: './source-data.component.scss',
@@ -61,6 +66,8 @@ export default class SourceDataComponent {
   #dialog = inject(ShipDialogService);
   #router = inject(Router);
   #route = inject(ActivatedRoute);
+  #sysInfo = inject(SysinfoState);
+  #destinationConfigState = inject(DestinationConfigState);
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
   sourceDataForm = this.#backupState.sourceDataForm;
   sourceDataFormSignal = this.#backupState.sourceDataFormSignal;
@@ -88,6 +95,10 @@ export default class SourceDataComponent {
   oldPath = signal<string | null>(null);
   editingPath = signal<string | null>(null);
   addingNewPath = signal(false);
+  bulkPathEditMode = signal(false);
+  bulkPaths = signal('');
+  bulkFilterEditMode = signal(false);
+  bulkFilters = signal('');
 
   openRemoteDestinationDialog() {
     const dialogRef = this.#dialog.open(TargetUrlDialog, {
@@ -95,22 +106,92 @@ export default class SourceDataComponent {
       maxHeight: '80vh',
       width: '100%',
       closeOnOutsideClick: false,
+      data: {
+        targetUrlModel: null,
+        moduleType: 'SourceProvider',
+      },
     });
 
     dialogRef.closed.subscribe((targetUrl) => {
       if (!targetUrl) return;
 
       const shortId = Math.random().toString(36).substring(2, 10);
+      const prefix = this.#sysInfo.systemInfo()?.PathSeparator === '\\' ? 'X:\\' : '/';
 
-      const newRemotePath = `@${shortId}|${targetUrl}`;
-
-      console.log('targetUrl', newRemotePath);
+      const newRemotePath = `@${prefix}dupl-${shortId}|${targetUrl}`;
 
       this.addPath(newRemotePath);
     });
   }
 
+  togglePathBulkEdit() {
+    if (this.bulkPathEditMode()) {
+      this.bulkPathEditMode.set(false);
+    } else {
+      const paths = this.nonFilterPaths()?.join('\n') ?? '';
+      this.bulkPaths.set(paths);
+      this.bulkPathEditMode.set(true);
+    }
+  }
+
+  savePathBulkEdit() {
+    const newPaths =
+      this.bulkPaths()
+        .split('\n')
+        .filter((p) => p.trim() !== '') ?? [];
+    const filters = this.pathArray();
+    const combined = [...newPaths, ...filters];
+    const distinct = [...new Set(combined)].join('\0');
+    this.sourceDataForm.controls.path.setValue(distinct);
+  }
+
+  toggleBulkFilterEdit() {
+    if (this.bulkFilterEditMode()) {
+      this.bulkFilterEditMode.set(false);
+    } else {
+      const filters = this.pathArray()
+        .filter((x) => x !== '___none___' && (x.startsWith('-') || x.startsWith('+')))
+        .join('\n');
+      this.bulkFilters.set(filters);
+      this.bulkFilterEditMode.set(true);
+    }
+  }
+
+  saveBulkFilterEdit() {
+    const newFilters =
+      this.bulkFilters()
+        .split('\n')
+        .filter((p) => p.trim() !== '' && (p.startsWith('-') || p.startsWith('+'))) ?? [];
+    const paths = this.nonFilterPaths() ?? [];
+    const combined = [...paths, ...newFilters];
+    const distinct = [...new Set(combined)].join('\0');
+    this.sourceDataForm.controls.path.setValue(distinct);
+  }
+
   editPath(oldPath: string) {
+    if (oldPath && oldPath.startsWith('@')) {
+      const dialogRef = this.#dialog.open(TargetUrlDialog, {
+        maxWidth: '700px',
+        maxHeight: '80vh',
+        width: '100%',
+        closeOnOutsideClick: false,
+        data: {
+          targetUrlModel: oldPath.split('|')[1] || null,
+          moduleType: 'SourceProvider',
+        },
+      });
+
+      dialogRef.closed.subscribe((targetUrl) => {
+        if (!targetUrl) return;
+
+        const prefix = oldPath.split('|')[0];
+        const newPath = `${prefix}|${targetUrl}`;
+
+        const currentPath = this.sourceDataForm.controls.path.value;
+        this.sourceDataForm.controls.path.setValue(currentPath?.replace(oldPath, newPath) ?? '');
+      });
+      return;
+    }
     this.oldPath.set(oldPath);
     this.editingPath.set(oldPath);
   }
@@ -205,6 +286,21 @@ export default class SourceDataComponent {
 
   getPath() {
     return this.sourceDataForm.value.path ?? null;
+  }
+
+  getBackendIcon(path: string | null | undefined) {
+    if (!path) return '';
+    const url = path.split('|')[1];
+    const match = getConfigurationByUrl(url);
+    return match.icon ?? 'database';
+  }
+
+  getRemotePathDisplayName(path: string | null | undefined) {
+    if (!path) return '';
+    const url = path.split('|')[1];
+    const match = getConfigurationByUrl(url);
+    const name = match ? match.displayName : 'Unknown';
+    return name;
   }
 
   toggleFilesLargerThan() {
