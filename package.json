@@ -6,6 +6,10 @@
     "sp90",
     "kenkendk"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/duplicati/ngclient.git"
+  },
   "scripts": {
     "gen:package-json": "bun scripts/generate-package-json.ts",
     "gen:font": "ship-fg --src='./projects/ngclient/src' --out='./projects/ngclient/src/assets' --rootPath='./'",
