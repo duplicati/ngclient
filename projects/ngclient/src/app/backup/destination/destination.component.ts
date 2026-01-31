@@ -296,7 +296,7 @@ export default class DestinationComponent {
   }
 
   #navigateToNext() {
-    if (!this.#backupState.isNew()) {
+    if (this.#backupState.shouldAutoSave()) {
       this.#backupState.submit(true);
     }
 

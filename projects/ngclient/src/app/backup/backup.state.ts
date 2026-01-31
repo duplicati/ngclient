@@ -68,6 +68,7 @@ export class BackupState {
   backupDefaults = signal<Record<string, string> | null>(null);
   applicationOptions = signal<SettingDto[] | null>(null);
   isNew = computed(() => this.backupId() === 'new');
+  shouldAutoSave = computed(() => !this.isDraft() && !this.isNew());
   osType = computed(() => this.#sysinfo.systemInfo()?.OSType);
 
   selectedOptions = signal<FormView[]>([]);
