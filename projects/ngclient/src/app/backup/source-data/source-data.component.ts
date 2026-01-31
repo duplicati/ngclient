@@ -6,7 +6,6 @@ import { ShipButton, ShipChip, ShipDialogService, ShipFormField, ShipIcon, ShipM
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
 import { SizeComponent, splitSize } from '../../core/components/size/size.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
-import { DestinationConfigState } from '../../core/states/destinationconfig.state';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 import { BackupState } from '../backup.state';
 import { getConfigurationByUrl } from '../destination/destination.config-utilities';
@@ -67,7 +66,6 @@ export default class SourceDataComponent {
   #router = inject(Router);
   #route = inject(ActivatedRoute);
   #sysInfo = inject(SysinfoState);
-  #destinationConfigState = inject(DestinationConfigState);
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
   sourceDataForm = this.#backupState.sourceDataForm;
   sourceDataFormSignal = this.#backupState.sourceDataFormSignal;
@@ -117,7 +115,7 @@ export default class SourceDataComponent {
 
       const shortId = Math.random().toString(36).substring(2, 10);
       const protcolName = targetUrl.split('://')[0];
-      const prefix = this.#sysInfo.systemInfo()?.PathSeparator === '\\' ? 'X:\\' : '/';
+      const prefix = this.#sysInfo.systemInfo()?.DirectorySeparator === '\\' ? 'X:\\' : '/';
 
       const newRemotePath = `@${prefix}dupl-${protcolName}-${shortId}|${targetUrl}`;
 
