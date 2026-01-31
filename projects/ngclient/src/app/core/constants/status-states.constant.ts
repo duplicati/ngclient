@@ -24,6 +24,7 @@ export const STATUS_STATES: Record<string, string> = {
   Restore_Download: $localize`Downloading files …`,
   Restore_PatchWithRemoteFiles: $localize`Patching files with remote data …`,
   Restore_VerifyRestoredFiles: $localize`Verifying restored files …`,
+  Restore_Finaluze: $localize`Finalizing restore …`,
   Restore_Complete: $localize`Restore complete!`,
   Recreate_Begin: $localize`Starting database recreate …`,
   Recreate_Delete: $localize`Deleting old database …`,
