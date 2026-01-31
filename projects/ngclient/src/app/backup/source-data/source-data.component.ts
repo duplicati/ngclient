@@ -107,6 +107,7 @@ export default class SourceDataComponent {
       data: {
         targetUrlModel: null,
         moduleType: 'SourceProvider',
+        askToCreate: false,
       },
     });
 
@@ -177,6 +178,7 @@ export default class SourceDataComponent {
         data: {
           targetUrlModel: oldPath.split('|')[1] || null,
           moduleType: 'SourceProvider',
+          askToCreate: false,
         },
       });
 

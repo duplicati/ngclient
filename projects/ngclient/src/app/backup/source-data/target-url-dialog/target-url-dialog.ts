@@ -16,17 +16,19 @@ import { TestUrl } from './test-url/test-url';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TargetUrlDialog {
-  data = input<{ targetUrlModel: string | null; moduleType: RemoteDestinationType }>();
+  data = input<{ targetUrlModel: string | null; moduleType: RemoteDestinationType; askToCreate: boolean }>();
   closed = output<string | null>();
 
   targetUrlModel = signal<string | null>(null);
   moduleType = signal<RemoteDestinationType>('Backend');
+  askToCreate = signal<boolean>(false);
 
   dataEffect = effect(() => {
     const data = this.data();
 
     data?.targetUrlModel && this.targetUrlModel.set(data.targetUrlModel);
     data?.moduleType && this.moduleType.set(data.moduleType);
+    data?.askToCreate !== null && data?.askToCreate !== undefined && this.askToCreate.set(data.askToCreate);
   });
 
   testSignal = signal<TestState>('');

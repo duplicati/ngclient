@@ -39,7 +39,11 @@
       <button shButton i18n (click)="removeDestination()" type="button">Change</button>
     </app-destination-list-item>
 
-    <app-test-url [(targetUrl)]="targetUrlModel" [(testSignal)]="testSignal" [moduleType]="moduleType()"></app-test-url>
+    <app-test-url
+      [(targetUrl)]="targetUrlModel"
+      [(testSignal)]="testSignal"
+      [askToCreate]="askToCreate()"
+      [moduleType]="moduleType()"></app-test-url>
 
     <app-single-destination [(targetUrl)]="targetUrlModel" />
   }
@@ -55,6 +59,14 @@
     [class.loading]="testSignal() === 'testing'"
     (click)="submit()"
     i18n>
-    Use remote source
+    @if (moduleType() === 'Backend') {
+      Use storage destination
+    } @else if (moduleType() === 'SourceProvider') {
+      Use remote source
+    } @else if (moduleType() === 'RestoreDestinationProvider') {
+      Use remote destination
+    } @else {
+      Use remote URL
+    }
   </button>
 </footer>

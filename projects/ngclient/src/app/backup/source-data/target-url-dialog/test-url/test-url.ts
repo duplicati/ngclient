@@ -16,6 +16,7 @@ export class TestUrl {
   #testDestination = inject(TestDestinationService);
 
   targetUrl = model.required<string | null>();
+  askToCreate = model.required<boolean>();
   testSignal = model.required<string>();
   moduleType = model.required<RemoteDestinationType>();
 
@@ -62,7 +63,7 @@ export class TestUrl {
 
     this.setTestState('testing');
 
-    this.#testDestination.testDestination(targetUrl, null, 0, true, this.moduleType(), true).subscribe({
+    this.#testDestination.testDestination(targetUrl, null, 0, this.askToCreate(), this.moduleType(), true).subscribe({
       next: (res) => {
         if (res.action === 'success' && res.containsBackup === true) {
           this.setTestState('containsBackup');
