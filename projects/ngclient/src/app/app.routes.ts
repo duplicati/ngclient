@@ -130,6 +130,10 @@ export const routes: Routes = [
                   },
                   connectToConsoleRoute,
                   {
+                    path: 'destinations',
+                    loadComponent: () => import('./destinations/destinations'),
+                  },
+                  {
                     path: 'add-backup',
                     loadComponent: () => import('./add-backup/add-backup.component'),
                   },

@@ -37,6 +37,7 @@ export type BackupDto = {
     Description: (string) | null;
     Tags: Array<string> | null;
     TargetURL: (string) | null;
+    ConnectionStringID?: number;
     DBPath: (string) | null;
     DBPathExists: boolean;
     Sources: Array<string> | null;
@@ -55,12 +56,28 @@ export type BackupInputDto = {
     DBPath?: (string) | null;
     Tags?: Array<string> | null;
     TargetURL?: (string) | null;
+    ConnectionStringID?: number;
     Sources?: Array<string> | null;
     Settings?: Array<SettingInputDto> | null;
     Filters?: Array<FilterInputDto> | null;
     Metadata?: {
         [key: string]: string;
     } | null;
+};
+
+export type BulkUpdateBackupsRequestDto = {
+    BackupIDs: Array<string> | null;
+};
+
+export type BulkUpdateBackupsResponseDto = {
+    UpdatedBackupIDs: Array<string> | null;
+};
+
+export type BulkUpdateBackupsResponseDtoResponseEnvelope = {
+    Success: boolean;
+    Error: (string) | null;
+    StatusCode: (string) | null;
+    Data?: BulkUpdateBackupsResponseDto;
 };
 
 export type ChangelogDto = {
@@ -82,6 +99,35 @@ export type CommandlineTaskStartedDto = {
     ID?: (string) | null;
 };
 
+export type ConnectedBackupDto = {
+    ID: (string) | null;
+    Name: (string) | null;
+};
+
+export type ConnectionStringDto = {
+    ID: number;
+    Name: (string) | null;
+    Description: (string) | null;
+    BaseUrl: (string) | null;
+    CreatedAt: string;
+    UpdatedAt: string;
+    Backups: Array<ConnectedBackupDto> | null;
+};
+
+export type ConnectionStringDtoArrayResponseEnvelope = {
+    Success: boolean;
+    Error: (string) | null;
+    StatusCode: (string) | null;
+    Data?: Array<ConnectionStringDto> | null;
+};
+
+export type ConnectionStringDtoResponseEnvelope = {
+    Success: boolean;
+    Error: (string) | null;
+    StatusCode: (string) | null;
+    Data?: ConnectionStringDto;
+};
+
 export type CrashLogOutputDto = {
     Logdata?: (string) | null;
 };
@@ -89,6 +135,12 @@ export type CrashLogOutputDto = {
 export type CreateBackupDto = {
     ID?: (string) | null;
     Temporary?: boolean;
+};
+
+export type CreateConnectionStringDto = {
+    Name: (string) | null;
+    Description: (string) | null;
+    BaseUrl: (string) | null;
 };
 
 export type DayOfWeek = 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat';
@@ -404,6 +456,13 @@ export type NotificationDto = {
 
 export type NotificationType = 'Information' | 'Warning' | 'Error';
 
+export type ObjectResponseEnvelope = {
+    Success: boolean;
+    Error: (string) | null;
+    StatusCode: (string) | null;
+    Data?: unknown;
+};
+
 export type PageInfo = {
     Page?: number;
     PageSize?: number;
@@ -641,6 +700,12 @@ export type UpdateCertificateInputDto = {
     Password?: (string) | null;
 };
 
+export type UpdateConnectionStringDto = {
+    Name: (string) | null;
+    Description: (string) | null;
+    BaseUrl: (string) | null;
+};
+
 export type UpdateDbPathInputDto = {
     path?: (string) | null;
 };
@@ -655,6 +720,40 @@ export type WebModuleOutputDto = {
 };
 
 export type GetApiV1CommandlineResponse = (Array<string>);
+
+export type GetApiV2ConnectionStringsResponse = (ConnectionStringDtoArrayResponseEnvelope);
+
+export type PostApiV2ConnectionStringsData = {
+    requestBody: CreateConnectionStringDto;
+};
+
+export type PostApiV2ConnectionStringsResponse = (ConnectionStringDtoResponseEnvelope);
+
+export type GetApiV2ConnectionStringByIdData = {
+    id: number;
+};
+
+export type GetApiV2ConnectionStringByIdResponse = (ConnectionStringDtoResponseEnvelope);
+
+export type PutApiV2ConnectionStringByIdData = {
+    id: number;
+    requestBody: UpdateConnectionStringDto;
+};
+
+export type PutApiV2ConnectionStringByIdResponse = (ConnectionStringDtoResponseEnvelope);
+
+export type DeleteApiV2ConnectionStringByIdData = {
+    id: number;
+};
+
+export type DeleteApiV2ConnectionStringByIdResponse = (ObjectResponseEnvelope);
+
+export type PostApiV2ConnectionStringByIdUpdateBackupsData = {
+    id: number;
+    requestBody: BulkUpdateBackupsRequestDto;
+};
+
+export type PostApiV2ConnectionStringByIdUpdateBackupsResponse = (BulkUpdateBackupsResponseDtoResponseEnvelope);
 
 export type PostApiV1CommandlineData = {
     requestBody: Array<string>;

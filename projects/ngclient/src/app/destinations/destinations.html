@@ -1,0 +1,8 @@
+@for (option of destinations(); track $index) {
+  <app-destination-list-item [targetUrl]="option.BaseUrl">
+    <!-- <button shButton i18n (click)="setDestination.emit(option.customKey ?? option.key)" type="button">
+        Choose
+        <sh-icon>arrow-right</sh-icon>
+      </button> -->
+  </app-destination-list-item>
+}
