@@ -460,7 +460,10 @@ export default class FileTreeComponent {
     const input = this.#inputRef();
 
     if (discoveryMethod === 'browse' && input) {
-      this.currentPath.set(input.value);
+      const value = input.value;
+      // Avoid firing the event when the input is empty on startup
+      if (value === null || value === undefined || value === '') return;
+      this.currentPath.set(value);
     }
   });
 
