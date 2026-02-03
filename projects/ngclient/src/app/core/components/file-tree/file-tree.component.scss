@@ -130,6 +130,10 @@
         }
       }
 
+      &.loading {
+        opacity: 0.7;
+      }
+
       .text {
         flex: 1 0;
         height: 100%;
