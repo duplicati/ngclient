@@ -13,7 +13,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ShipAlert, ShipButton, ShipDialog, ShipDialogService, ShipFormField, ShipIcon, ShipMenu } from '@ship-ui/core';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { IDynamicModule } from '../../core/openapi';
-import { TestDestinationService } from '../../core/services/test-destination.service';
 import { DestinationTypeOption } from '../../core/states/destinationconfig.state';
 import { BackupState } from '../backup.state';
 import { TestUrl } from '../source-data/target-url-dialog/test-url/test-url';
@@ -81,7 +80,6 @@ export default class DestinationComponent {
   #route = inject(ActivatedRoute);
   #backupState = inject(BackupState);
   #dialog = inject(ShipDialogService);
-  #testDestination = inject(TestDestinationService);
   injector = inject(Injector);
 
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
