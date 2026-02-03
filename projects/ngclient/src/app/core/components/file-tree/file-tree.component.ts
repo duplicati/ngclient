@@ -796,11 +796,6 @@ export default class FileTreeComponent {
 
   #fetchPathSegmentsRecursively(path: string) {
     const pathDelimiter = this.pathDelimiter();
-    const deselectedPaths = path
-      .split('\0')
-      .filter((x) => x.startsWith('-'))
-      .map((x) => x.slice(1, -1));
-
     let pathArr = path
       .split('\0')
       .filter((x) => !x.startsWith('-') && !x.startsWith('+') && !x.startsWith('@'))
@@ -819,9 +814,9 @@ export default class FileTreeComponent {
     let urlPieces: string[] = [ROOTPATH];
     segmentArr.forEach((segments) => {
       segments.forEach((_, index) => {
-        const urlCombined = segments.slice(0, index + 1).join(pathDelimiter);
+        const urlCombined = segments.slice(0, index + 1).join(pathDelimiter) + pathDelimiter;
 
-        if (urlCombined === '') return;
+        if (urlCombined === '' || urlCombined === pathDelimiter) return;
 
         if (!urlPieces.includes(urlCombined)) {
           urlPieces.push(urlCombined);
