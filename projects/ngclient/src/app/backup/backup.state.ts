@@ -160,15 +160,17 @@ export class BackupState {
     this.generalForm.markAllAsTouched();
     this.sourceDataForm.markAllAsTouched();
 
-    var backup = this.#mapFormsToBackup();
+    const backup = this.#mapFormsToBackup();
 
-    var isNameValid = (backup.Backup.Name ?? '').trim() !== '';
-    var isPasswordValid =
-      this.generalForm.controls.encryption.value === '-' ||
+    const isNameValid = (backup.Backup.Name ?? '').trim() !== '';
+    const isUsingEncryption =
+      this.generalForm.controls.encryption.value !== '' && this.generalForm.controls.encryption.value !== '-';
+    const isPasswordValid =
+      isUsingEncryption === false ||
       (this.generalForm.controls.password.value === this.generalForm.controls.repeatPassword.value &&
         this.generalForm.controls.password.value !== '');
 
-    if (!isNameValid || !isPasswordValid || this.generalForm.invalid) {
+    if (!isNameValid || !isPasswordValid /*|| this.generalForm.invalid*/) {
       this.#dialog.open(ConfirmDialogComponent, {
         data: {
           title: $localize`Validation Error`,
