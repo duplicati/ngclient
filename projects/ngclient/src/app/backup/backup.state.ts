@@ -28,10 +28,9 @@ import {
   scheduleOptionToSchedule,
 } from './schedule-v2/schedule.component';
 import { createSourceDataForm } from './source-data/source-data.component';
+import { TestState } from './source-data/target-url-dialog/test-url/test-url';
 
 const SMART_RETENTION = '1W:1D,4W:1W,12M:1M';
-
-export type TestState = '' | 'testing' | 'success' | 'containsBackup' | 'destinationNotEmpty' | 'warning' | 'error';
 
 @Injectable({
   providedIn: 'root',
@@ -58,6 +57,7 @@ export class BackupState {
   };
 
   targetUrlModel = signal<string | null>(null);
+  targetUrlTestSignal = signal<TestState>(null);
   backupMetadata = signal<Record<string, string> | null>(null);
 
   isDraft = signal(false);
@@ -81,12 +81,10 @@ export class BackupState {
     return this.#sysinfo.systemInfo()?.Options?.map(this.#mapCommandLineArgumentsToFormViews) ?? [];
   });
 
-  #testSignal = signal<TestState>('');
-  #testErrorMessage = signal<string | null>(null);
+  #testSignal = signal<TestState>(null);
   #lastTargetUrl: string | null = null;
 
   testSignal = this.#testSignal.asReadonly();
-  testErrorMessage = this.#testErrorMessage.asReadonly();
 
   #clearTestSignalEffect = effect(() => {
     const newUrl = this.targetUrlModel();
@@ -95,13 +93,11 @@ export class BackupState {
     this.#lastTargetUrl = newUrl;
 
     if (testSignalValue === 'testing' || lastTargetUrl === null || lastTargetUrl === newUrl) return;
-    this.#testSignal.set('');
-    this.#testErrorMessage.set(null);
+    this.#testSignal.set(null);
   });
 
-  setTestState(state: TestState, errorMessage?: string | null) {
+  setTestState(state: TestState) {
     this.#testSignal.set(state);
-    this.#testErrorMessage.set(errorMessage ?? null);
   }
 
   #mapCommandLineArgumentsToFormViews(x: ICommandLineArgument) {

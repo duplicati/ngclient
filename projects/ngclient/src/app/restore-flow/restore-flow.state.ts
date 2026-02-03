@@ -1,4 +1,4 @@
-import { effect, inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipDialogService } from '@ship-ui/core';
@@ -9,6 +9,7 @@ import { SysinfoState } from '../core/states/sysinfo.state';
 import { createRestoreOptionsForm } from './options/options.component';
 import { createEncryptionForm } from './restore-encryption/restore-encryption.component';
 import { createRestoreSelectFilesForm } from './select-files/select-files.component';
+import { TestState } from '../backup/source-data/target-url-dialog/test-url/test-url';
 
 type ListResultFileset = {
   readonly Version: number;
@@ -18,7 +19,6 @@ type ListResultFileset = {
   readonly FileSizes?: number | undefined;
 };
 
-export type TestState = '' | 'testing' | 'success' | 'warning' | 'error';
 @Injectable({
   providedIn: 'root',
 })
@@ -32,6 +32,7 @@ export class RestoreFlowState {
   backupId = signal<string | null>(null);
   backup = signal<GetBackupResultDto | null>(null);
   destinationTargetUrl = signal<string | null>(null);
+  destinationTestSignal = signal<TestState>(null);
   selectFilesForm = createRestoreSelectFilesForm();
   optionsForm = createRestoreOptionsForm();
   encryptionForm = createEncryptionForm();
@@ -45,24 +46,6 @@ export class RestoreFlowState {
   isFullWidthPage = signal(false);
   extendedDataType = signal<string | null>(null);
   alternateRestorePath = signal<string | null>(null);
-
-  #testSignal = signal<TestState>('');
-  #testErrorMessage = signal<string | null>(null);
-  #lastTargetUrl: string | null = null;
-
-  testSignal = this.#testSignal.asReadonly();
-  testErrorMessage = this.#testErrorMessage.asReadonly();
-
-  #clearTestSignalEffect = effect(() => {
-    const newUrl = this.destinationTargetUrl();
-    const testSignalValue = this.#testSignal();
-    const lastTargetUrl = this.#lastTargetUrl;
-    this.#lastTargetUrl = newUrl;
-
-    if (testSignalValue === 'testing' || lastTargetUrl === null || lastTargetUrl === newUrl) return;
-    this.#testSignal.set('');
-    this.#testErrorMessage.set(null);
-  });
 
   init(id: 'string', isFileRestore = false) {
     this.backupId.set(id);
@@ -78,11 +61,6 @@ export class RestoreFlowState {
     if (!isFileRestore) {
       this.getBackup();
     }
-  }
-
-  setTestState(state: TestState, errorMessage?: string | null) {
-    this.#testSignal.set(state);
-    this.#testErrorMessage.set(errorMessage ?? null);
   }
 
   updateTargetUrl(targetUrl: string | null) {

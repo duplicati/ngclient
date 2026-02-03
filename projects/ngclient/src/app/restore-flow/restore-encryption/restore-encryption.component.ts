@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipButton, ShipFormField, ShipIcon, ShipToggleCard } from '@ship-ui/core';
@@ -31,6 +31,14 @@ export default class RestoreEncryptionComponent {
   encryptionForm = this.#restoreFlowState.encryptionForm;
   creatingTemporaryBackup = signal(false);
   settings = signal<SettingInputDto[]>([]);
+  hasEncryptedBackup = computed(() => {
+    const testSignal = this.#restoreFlowState.destinationTestSignal();
+    if (testSignal === 'testing' || typeof testSignal === 'string') return true;
+
+    return testSignal?.containsEncryptedBackupFiles ?? true;
+  });
+
+  showEncryptionField = signal(false);
 
   next() {
     const currentTargetUrl = this.#restoreFlowState.destinationTargetUrl();

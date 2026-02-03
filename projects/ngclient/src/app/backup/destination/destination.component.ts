@@ -16,6 +16,7 @@ import { IDynamicModule } from '../../core/openapi';
 import { TestDestinationService } from '../../core/services/test-destination.service';
 import { DestinationTypeOption } from '../../core/states/destinationconfig.state';
 import { BackupState } from '../backup.state';
+import { TestUrl } from '../source-data/target-url-dialog/test-url/test-url';
 import { DestinationListItemComponent } from './destination-list-item/destination-list-item.component';
 import { DestinationListComponent } from './destination-list/destination-list.component';
 import { getConfigurationByKey, getConfigurationByUrl } from './destination.config-utilities';
@@ -61,6 +62,7 @@ export type DestinationFormGroupValue = ReturnType<typeof createDestinationFormG
     SingleDestinationComponent,
     DestinationListComponent,
     DestinationListItemComponent,
+    TestUrl,
 
     FormsModule,
     ShipButton,
@@ -83,15 +85,16 @@ export default class DestinationComponent {
   injector = inject(Injector);
 
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
+  testUrlComponent = viewChild.required<TestUrl>('testUrl');
 
+  testSignal = this.#backupState.targetUrlTestSignal;
   targetUrlModel = this.#backupState.targetUrlModel;
   targetUrlCtrl = signal<string | null>(null);
   targetUrlInitial = signal<string | null>(null);
   targetUrlDialogOpen = signal(false);
   toggleNewDestination = signal(true);
 
-  testSignal = this.#backupState.testSignal;
-  testErrorMessage = this.#backupState.testErrorMessage;
+  isNew = this.#backupState.isNew;
 
   selectedDestinationType = computed(() => {
     const targetUrl = this.targetUrlModel();
@@ -136,84 +139,6 @@ export default class DestinationComponent {
     this.#backupState.setTargetUrl(targetUrl);
   }
 
-  testDestination(destinationIndex: number, suppressErrorDialogs: boolean, callback?: () => void) {
-    const targetUrl = this.targetUrlModel();
-
-    if (!targetUrl) return;
-
-    this.#backupState.setTestState('testing');
-
-    this.#testDestination
-      .testDestination(targetUrl, this.#backupState.backupId(), destinationIndex, true, 'Backend', true)
-      .subscribe({
-        next: (res) => {
-          if (res.action === 'success') {
-            this.#backupState.setTestState('success');
-
-            if (this.#backupState.isNew()) {
-              if (res.containsBackup === true) {
-                this.#backupState.setTestState(
-                  'warning',
-                  $localize`The remote destination already contains a backup. Please use a different folder for each backup.`
-                );
-                if (!suppressErrorDialogs) {
-                  this.#dialog.open(ConfirmDialogComponent, {
-                    data: {
-                      title: $localize`Folder contains backup`,
-                      message: $localize`The remote destination already contains a backup. You must use a different folder for each backup.`,
-                      confirmText: $localize`OK`,
-                      cancelText: undefined,
-                    },
-                  });
-                }
-              } else if (res.anyFilesFound === true) {
-                this.#backupState.setTestState('warning', $localize`The remote destination contains unknown files.`);
-                if (!suppressErrorDialogs) {
-                  this.#dialog.open(ConfirmDialogComponent, {
-                    data: {
-                      title: $localize`Folder is not empty`,
-                      message: $localize`The remote destination is not empty. It is recommended to use an empty folder for the backup.`,
-                      confirmText: $localize`OK`,
-                      cancelText: undefined,
-                    },
-                  });
-                }
-              }
-            }
-
-            callback?.();
-            return;
-          }
-
-          this.#backupState.setTestState(
-            'error',
-            res.errorMessage ?? $localize`An error occurred while testing the destination.`
-          );
-
-          if (res.action === 'generic-error') {
-            callback?.();
-            return;
-          }
-
-          const targetUrlHasParams = targetUrl.includes('?');
-          if (res.action === 'trust-cert') {
-            this.#backupState.setTargetUrl(
-              targetUrl + `${targetUrlHasParams ? '&' : '?'}accept-specified-ssl-hash=${res.certData}`
-            );
-          }
-
-          if (res.action === 'approve-host-key') {
-            this.#backupState.setTargetUrl(
-              targetUrl + `${targetUrlHasParams ? '&' : '?'}ssh-fingerprint=${res.reportedHostKey}`
-            );
-          }
-
-          if (res.testAgain) this.testDestination(res.destinationIndex, suppressErrorDialogs);
-          else callback?.();
-        },
-      });
-  }
-
   setDestination(key: IDynamicModule['Key']) {
     const config = getConfigurationByKey(key ?? '');
     if (!config) return;
@@ -244,7 +169,7 @@ export default class DestinationComponent {
       return;
     }
 
-    if (testSignalValue === '') {
+    if (testSignalValue === null) {
       this.#dialog.open(ConfirmDialogComponent, {
         data: {
           title: $localize`Test destination`,
@@ -254,20 +179,22 @@ export default class DestinationComponent {
         },
         closed: (res) => {
           if (res) {
-            this.testDestination(0, false, () => {
-              if (this.testSignal() === 'success') {
-                this.#navigateToNext();
-              } else {
-                this.#dialog.open(ConfirmDialogComponent, {
-                  data: {
-                    title: $localize`Test did not succeed`,
-                    message: this.testErrorMessage() ?? $localize`Failed to test the destination.`,
-                    confirmText: $localize`OK`,
-                    cancelText: undefined,
-                  },
-                });
-              }
-            });
+            this.testUrlComponent()
+              ?.testDestination(false)
+              ?.then((res) => {
+                if (res.action === 'success' && !res.containsBackup && !res.anyFilesFound) {
+                  this.#navigateToNext();
+                } else {
+                  this.#dialog.open(ConfirmDialogComponent, {
+                    data: {
+                      title: $localize`Test did not succeed`,
+                      message: res.errorMessage ?? $localize`Failed to test the destination.`,
+                      confirmText: $localize`OK`,
+                      cancelText: undefined,
+                    },
+                  });
+                }
+              });
           } else {
             this.#navigateToNext();
           }
@@ -276,7 +203,9 @@ export default class DestinationComponent {
       return;
     }
 
-    if (testSignalValue !== 'success') {
+    const testResult = typeof testSignalValue === 'string' ? null : testSignalValue;
+
+    if (testResult?.action !== 'success' || testResult.containsBackup || testResult.anyFilesFound) {
       this.#dialog.open(ConfirmDialogComponent, {
         data: {
           title: $localize`Test destination`,

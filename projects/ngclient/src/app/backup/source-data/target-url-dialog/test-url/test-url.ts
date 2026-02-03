@@ -1,13 +1,15 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, model, signal } from '@angular/core';
-import { ShipAlert, ShipButton } from '@ship-ui/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, model } from '@angular/core';
+import { ShipAlert, ShipButton, ShipIcon, ShipSpinner } from '@ship-ui/core';
 import { RemoteDestinationType } from '../../../../core/openapi';
-import { TestDestinationService } from '../../../../core/services/test-destination.service';
-import { TestState } from '../../../backup.state';
+import { TestDestinationResult, TestDestinationService } from '../../../../core/services/test-destination.service';
 import { fromTargetPath } from '../../../destination/destination.config-utilities';
+
+export type TestExpectation = 'containsBackup' | 'destinationEmpty' | 'destinationNotEmpty' | 'any';
+export type TestState = 'testing' | TestDestinationResult | null;
 
 @Component({
   selector: 'app-test-url',
-  imports: [ShipAlert, ShipButton],
+  imports: [ShipAlert, ShipButton, ShipIcon, ShipSpinner],
   templateUrl: './test-url.html',
   styleUrl: './test-url.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -16,13 +18,23 @@ export class TestUrl {
   #testDestination = inject(TestDestinationService);
 
   targetUrl = model.required<string | null>();
-  askToCreate = model.required<boolean>();
-  testSignal = model.required<string>();
-  moduleType = model.required<RemoteDestinationType>();
+  testSignal = model.required<TestState>();
 
-  testErrorMessage = signal<string | null>(null);
+  suppressErrorDialogs = input.required<boolean>();
+  askToCreate = input.required<boolean>();
+  testExpectation = input.required<TestExpectation>();
+  moduleType = input.required<RemoteDestinationType>();
 
-  // responseType = signal<'containsBackup' | 'destinationNotEmpty' | null>(null);
+  // Filter out the testing state for easier use in template
+  testResponse = computed(() => {
+    const testState = this.testSignal();
+
+    if (testState && typeof testState !== 'string') {
+      return testState;
+    }
+
+    return null;
+  });
 
   isExpectedValidTargetUrl = computed(() => {
     const url = this.targetUrl();
@@ -39,58 +51,85 @@ export class TestUrl {
   prevTargetUrl: string | null = null;
   targetUrlEffect = effect(() => {
     const url = this.targetUrl();
+    const prevUrl = this.prevTargetUrl;
 
-    if (url === this.prevTargetUrl) return;
+    if (url === prevUrl) return;
 
     this.prevTargetUrl = url;
-    this.resetTestState();
+
+    // If we change the target url during testing, don't reset the test state
+    if (this.testSignal() === 'testing') return;
+    // If we are just loading for the first time, don't reset the test state
+    if (prevUrl === null) return;
+
+    this.testSignal.set(null);
   });
 
-  setTestState(state: TestState, errorMessage?: string | null) {
-    this.testSignal.set(state);
-    this.testErrorMessage.set(errorMessage ?? null);
+  useSuggestedUrl() {
+    const targetUrl = this.targetUrl();
+    const testResult = this.testSignal();
+    const originalUrl = testResult && typeof testResult !== 'string' ? testResult?.targetUrl : null;
+    const suggestedUrl = testResult && typeof testResult !== 'string' ? testResult?.suggestedUrl : null;
+
+    if (!targetUrl || !suggestedUrl || originalUrl !== targetUrl) return false;
+
+    this.targetUrl.set(suggestedUrl);
+    this.testDestinationClick();
+    return false;
   }
 
-  resetTestState() {
-    this.testSignal.set('');
-    this.testErrorMessage.set(null);
+  createFolder() {
+    this.testDestination(true);
+    return false;
   }
 
-  testDestination() {
+  testDestinationClick() {
+    this.testDestination(false);
+    return false;
+  }
+
+  testDestination(autoCreateFolders: boolean) {
     const targetUrl = this.targetUrl();
 
     if (!targetUrl) return;
 
-    this.setTestState('testing');
+    this.testSignal.set('testing');
 
-    this.#testDestination.testDestination(targetUrl, null, 0, this.askToCreate(), this.moduleType(), true).subscribe({
-      next: (res) => {
-        if (res.action === 'success' && res.containsBackup === true) {
-          this.setTestState('containsBackup');
-          return;
-        } else if (res.action === 'success') {
-          this.setTestState('success');
-          return;
-        }
+    const folderHandling = autoCreateFolders ? 'create' : this.askToCreate() ? 'prompt' : 'error';
 
-        this.setTestState('error', res.errorMessage ?? $localize`An error occurred while testing the destination.`);
+    return new Promise<TestDestinationResult>((resolve) => {
+      this.#testDestination
+        .testDestination(targetUrl, null, 0, this.moduleType(), this.suppressErrorDialogs(), folderHandling)
+        ?.subscribe({
+          next: (res) => {
+            if (!this.suppressErrorDialogs() && res.testAgain) {
+              const suggestedUrl = res.suggestedUrl;
+              if (suggestedUrl) this.targetUrl.set(suggestedUrl);
 
-        if (res.action === 'generic-error') {
-          return;
-        }
+              this.testSignal.set('testing');
 
-        const targetUrlHasParams = targetUrl.includes('?');
-
-        if (res.action === 'trust-cert') {
-          this.targetUrl.set(targetUrl + `${targetUrlHasParams ? '&' : '?'}accept-specified-ssl-hash=${res.certData}`);
-        }
-
-        if (res.action === 'approve-host-key') {
-          this.targetUrl.set(targetUrl + `${targetUrlHasParams ? '&' : '?'}ssh-fingerprint=${res.reportedHostKey}`);
-        }
-
-        if (res.testAgain) this.testDestination();
-      },
+              this.#testDestination
+                .testDestination(
+                  suggestedUrl ?? targetUrl,
+                  null,
+                  0,
+                  this.moduleType(),
+                  this.suppressErrorDialogs(),
+                  folderHandling
+                )
+                ?.subscribe({
+                  // We only support one level of re-test for now
+                  next: (res) => {
+                    this.testSignal.set(res);
+                    resolve(res);
+                  },
+                });
+            } else {
+              this.testSignal.set(res);
+              resolve(res);
+            }
+          },
+        });
     });
   }
 }

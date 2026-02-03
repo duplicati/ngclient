@@ -108,6 +108,8 @@ export default class SourceDataComponent {
         targetUrlModel: null,
         moduleType: 'SourceProvider',
         askToCreate: false,
+        expectedResult: 'destinationNotEmpty',
+        suppressErrorDialogs: true,
       },
     });
 
@@ -179,6 +181,8 @@ export default class SourceDataComponent {
           targetUrlModel: oldPath.split('|')[1] || null,
           moduleType: 'SourceProvider',
           askToCreate: false,
+          expectedResult: 'destinationNotEmpty',
+          suppressErrorDialogs: true,
         },
       });
 

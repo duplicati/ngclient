@@ -1,12 +1,11 @@
 import { ChangeDetectionStrategy, Component, effect, input, output, signal } from '@angular/core';
 import { ShipButton } from '@ship-ui/core';
 import { IDynamicModule, RemoteDestinationType } from '../../../core/openapi';
-import { TestState } from '../../backup.state';
 import { DestinationListItemComponent } from '../../destination/destination-list-item/destination-list-item.component';
 import { DestinationListComponent } from '../../destination/destination-list/destination-list.component';
 import { getConfigurationByKey } from '../../destination/destination.config-utilities';
 import { SingleDestinationComponent } from '../../destination/single-destination/single-destination.component';
-import { TestUrl } from './test-url/test-url';
+import { TestExpectation, TestState, TestUrl } from './test-url/test-url';
 
 @Component({
   selector: 'app-target-url-dialog',
@@ -16,12 +15,20 @@ import { TestUrl } from './test-url/test-url';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TargetUrlDialog {
-  data = input<{ targetUrlModel: string | null; moduleType: RemoteDestinationType; askToCreate: boolean }>();
+  data = input<{
+    targetUrlModel: string | null;
+    moduleType: RemoteDestinationType;
+    askToCreate: boolean;
+    expectedResult: TestExpectation;
+    suppressErrorDialogs: boolean;
+  }>();
   closed = output<string | null>();
 
   targetUrlModel = signal<string | null>(null);
   moduleType = signal<RemoteDestinationType>('Backend');
   askToCreate = signal<boolean>(false);
+  expectedResult = signal<TestExpectation>('any');
+  suppressErrorDialogs = signal<boolean>(false);
 
   dataEffect = effect(() => {
     const data = this.data();
@@ -29,9 +36,13 @@ export class TargetUrlDialog {
     data?.targetUrlModel && this.targetUrlModel.set(data.targetUrlModel);
     data?.moduleType && this.moduleType.set(data.moduleType);
     data?.askToCreate !== null && data?.askToCreate !== undefined && this.askToCreate.set(data.askToCreate);
+    data?.expectedResult && this.expectedResult.set(data.expectedResult);
+    data?.suppressErrorDialogs !== null &&
+      data?.suppressErrorDialogs !== undefined &&
+      this.suppressErrorDialogs.set(data.suppressErrorDialogs);
   });
 
-  testSignal = signal<TestState>('');
+  testSignal = signal<TestState>(null);
 
   setTargetUrl(targetUrl: string | null, resetLastTargetUrl = false) {
     this.targetUrlModel.set(targetUrl);

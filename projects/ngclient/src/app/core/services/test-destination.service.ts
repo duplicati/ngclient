@@ -10,9 +10,12 @@ import {
 } from '../openapi';
 import { SysinfoState } from '../states/sysinfo.state';
 
+export type FolderHandlingOption = 'prompt' | 'create' | 'error';
+
 export type TestDestinationResult = {
-  action: 'success' | 'generic-error' | 'test-again' | 'trust-cert' | 'approve-host-key';
+  action: 'success' | 'generic-error' | 'missing-folder' | 'test-again' | 'trust-cert' | 'approve-host-key';
   targetUrl: string;
+  suggestedUrl?: string;
   testAgain: boolean;
   certData?: string;
   reportedHostKey?: string;
@@ -35,23 +38,37 @@ export class TestDestinationService {
     targetUrl: string,
     backupId: string | null,
     destinationIndex: number,
-    askToCreate: boolean,
     urlType: RemoteDestinationType,
-    suppressErrorDialogs: boolean
+    suppressErrorDialogs: boolean,
+    folderHandling: FolderHandlingOption
   ) {
     if (this.#sysinfo.hasV2TestOperations())
-      return this.testDestinationv2(targetUrl, backupId, destinationIndex, askToCreate, urlType, suppressErrorDialogs);
+      return this.testDestinationv2(
+        targetUrl,
+        backupId,
+        destinationIndex,
+        urlType,
+        suppressErrorDialogs,
+        folderHandling
+      );
     else
-      return this.testDestinationv1(targetUrl, backupId, destinationIndex, askToCreate, urlType, suppressErrorDialogs);
+      return this.testDestinationv1(
+        targetUrl,
+        backupId,
+        destinationIndex,
+        urlType,
+        suppressErrorDialogs,
+        folderHandling
+      );
   }
 
   private testDestinationv2(
     targetUrl: string,
     backupId: string | null,
     destinationIndex: number,
-    askToCreate: boolean,
     urlType: RemoteDestinationType,
-    suppressErrorDialogs: boolean
+    suppressErrorDialogs: boolean,
+    folderHandling: FolderHandlingOption
   ) {
     return new Observable<TestDestinationResult>((observer) => {
       this.#dupServer
@@ -59,7 +76,7 @@ export class TestDestinationService {
           requestBody: {
             DestinationUrl: targetUrl,
             BackupId: backupId == 'new' ? null : backupId,
-            AutoCreate: false,
+            AutoCreate: folderHandling === 'create',
             Options: null,
             DestinationType: urlType,
           },
@@ -82,20 +99,25 @@ export class TestDestinationService {
           error: (err) => {
             const res = (err?.error?.body ?? err?.error?.requestBody) as PostApiV2DestinationTestResponse;
             if (res?.Data?.FolderExists === false || res?.StatusCode === 'missing-folder') {
-              if (askToCreate) this.handleMissingFolder(observer, targetUrl, backupId, destinationIndex);
-              else
-                this.handleGenericError(
-                  observer,
-                  targetUrl,
-                  destinationIndex,
-                  $localize`The remote destination folder does not exist.`,
-                  suppressErrorDialogs
-                );
+              this.handleMissingFolder(
+                observer,
+                targetUrl,
+                backupId,
+                destinationIndex,
+                suppressErrorDialogs,
+                folderHandling
+              );
               return;
             }
 
             if (res?.Data?.HostCertificate) {
-              this.handleMissingCertificate(observer, targetUrl, destinationIndex, res.Data?.HostCertificate);
+              this.handleMissingCertificate(
+                observer,
+                targetUrl,
+                destinationIndex,
+                res.Data?.HostCertificate,
+                suppressErrorDialogs
+              );
               return;
             }
 
@@ -105,7 +127,8 @@ export class TestDestinationService {
                 targetUrl,
                 destinationIndex,
                 res.Data.ReportedHostKey,
-                res.Data.AcceptedHostKey ?? null
+                res.Data.AcceptedHostKey ?? null,
+                suppressErrorDialogs
               );
               return;
             }
@@ -126,10 +149,11 @@ export class TestDestinationService {
     targetUrl: string,
     backupId: string | null,
     destinationIndex: number,
-    askToCreate: boolean,
     urlType: RemoteDestinationType,
-    suppressErrorDialogs: boolean
+    suppressErrorDialogs: boolean,
+    folderHandling: FolderHandlingOption
   ) {
+    // V1 does not support auto-create folders, but we should retire the use of V1 anyway
     return new Observable<TestDestinationResult>((observer) => {
       this.#dupServer
         .postApiV1RemoteoperationTest({
@@ -155,8 +179,8 @@ export class TestDestinationService {
               targetUrl,
               backupId,
               destinationIndex,
-              askToCreate,
-              suppressErrorDialogs
+              suppressErrorDialogs,
+              folderHandling
             ).subscribe((res) => {
               observer.next(res);
             });
@@ -169,8 +193,26 @@ export class TestDestinationService {
     observer: Subscriber<TestDestinationResult>,
     targetUrl: string,
     backupId: string | null,
-    destinationIndex: number
+    destinationIndex: number,
+    suppressErrorDialogs: boolean,
+    folderHandling: FolderHandlingOption
   ) {
+    function sendError() {
+      observer.next({
+        action: 'missing-folder',
+        targetUrl,
+        testAgain: false,
+        destinationIndex,
+        errorMessage: $localize`The remote destination folder does not exist.`,
+      });
+      observer.complete();
+    }
+
+    if (suppressErrorDialogs || folderHandling === 'error') {
+      sendError();
+      return;
+    }
+
     this.#dialog.open(ConfirmDialogComponent, {
       data: {
         title: $localize`Create folder`,
@@ -330,15 +372,39 @@ export class TestDestinationService {
     observer: Subscriber<TestDestinationResult>,
     targetUrl: string,
     destinationIndex: number,
-    certData: string
+    certData: string,
+    suppressErrorDialogs: boolean
   ) {
+    const msg = $localize`The server is using a certificate that is not trusted.
+  If this is a self-signed certificate, you can choose to trust this certificate.
+  The server reported the certificate hash: ${certData}`;
+
+    const targetUrlHasParams = targetUrl.includes('?');
+
+    function sendError() {
+      observer.next({
+        action: 'trust-cert',
+        targetUrl,
+        suggestedUrl: targetUrl + `${targetUrlHasParams ? '&' : '?'}accept-specified-ssl-hash=${certData}`,
+        testAgain: true,
+        certData,
+        errorMessage: msg,
+        destinationIndex,
+      });
+
+      observer.complete();
+    }
+
+    if (suppressErrorDialogs) {
+      sendError();
+      return;
+    }
+
     this.#dialog.open(ConfirmDialogComponent, {
       maxWidth: '500px',
       data: {
         title: $localize`Trust the certificate`,
-        message: $localize`The server is using a certificate that is not trusted.
-  If this is a self-signed certificate, you can choose to trust this certificate.
-  The server reported the certificate hash: ${certData}`,
+        message: msg,
         confirmText: $localize`Trust the certificate`,
         cancelText: $localize`Cancel`,
       },
@@ -347,16 +413,7 @@ export class TestDestinationService {
           this.reportNoAction(observer, targetUrl, destinationIndex, $localize`The server certificate is not trusted.`);
           return;
         }
-
-        observer.next({
-          action: 'trust-cert',
-          targetUrl,
-          testAgain: true,
-          certData,
-          destinationIndex,
-        });
-
-        observer.complete();
+        sendError();
       },
     });
   }
@@ -366,14 +423,36 @@ export class TestDestinationService {
     targetUrl: string,
     destinationIndex: number,
     reportedhostkey: string,
-    suppliedhostkey: string | null
+    suppliedhostkey: string | null,
+    suppressErrorDialogs: boolean
   ) {
     if (!suppliedhostkey) {
+      const msg = $localize`No certificate was specified, please verify that the reported host key is correct: ${reportedhostkey}`;
+      const targetUrlHasParams = targetUrl.includes('?');
+
+      function sendError() {
+        observer.next({
+          action: 'approve-host-key',
+          targetUrl,
+          suggestedUrl: targetUrl + `${targetUrlHasParams ? '&' : '?'}ssh-fingerprint=${reportedhostkey}`,
+          testAgain: true,
+          reportedHostKey: reportedhostkey,
+          errorMessage: msg,
+          destinationIndex,
+        });
+        observer.complete();
+      }
+
+      if (suppressErrorDialogs) {
+        sendError();
+        return;
+      }
+
       this.#dialog.open(ConfirmDialogComponent, {
         maxWidth: '500px',
         data: {
           title: $localize`Approve host key?`,
-          message: $localize`No certificate was specified, please verify that the reported host key is correct: ${reportedhostkey}`,
+          message: msg,
           confirmText: $localize`Approve`,
           cancelText: $localize`Cancel`,
         },
@@ -383,26 +462,52 @@ export class TestDestinationService {
             return;
           }
 
-          observer.next({
-            action: 'approve-host-key',
-            targetUrl,
-            testAgain: true,
-            reportedHostKey: reportedhostkey,
-            destinationIndex,
-          });
-          observer.complete();
+          sendError();
         },
       });
     } else {
       // MITM dialog
+      const msg = $localize`The host key has changed, please check with the server administrator if this is correct,
+otherwise you could be the victim of a MAN-IN-THE-MIDDLE attack.
+Do you want to REPLACE your CURRENT host key ${suppliedhostkey}
+with the REPORTED host key: ${reportedhostkey}?`;
+
+      let suggestedUrl = targetUrl;
+      try {
+        // Use URL class to safely set/replace the parameter
+        const url = new URL(targetUrl);
+        url.searchParams.set('ssh-fingerprint', reportedhostkey);
+        suggestedUrl = url.toString();
+      } catch {
+        // Fallback for invalid URLs: remove existing param via regex and append new one
+        const cleanUrl = targetUrl.replace(/([?&])ssh-fingerprint=[^&]*/, '');
+        const hasParams = cleanUrl.includes('?');
+        suggestedUrl = cleanUrl + `${hasParams ? '&' : '?'}ssh-fingerprint=${reportedhostkey}`;
+      }
+
+      function sendError() {
+        observer.next({
+          action: 'approve-host-key',
+          targetUrl,
+          suggestedUrl,
+          testAgain: true,
+          reportedHostKey: reportedhostkey,
+          errorMessage: msg,
+          destinationIndex,
+        });
+        observer.complete();
+      }
+
+      if (suppressErrorDialogs) {
+        sendError();
+        return;
+      }
+
       this.#dialog.open(ConfirmDialogComponent, {
         maxWidth: '500px',
         data: {
           title: $localize`The host key has changed`,
-          message: $localize`The host key has changed, please check with the server administrator if this is correct,
-otherwise you could be the victim of a MAN-IN-THE-MIDDLE attack.
-Do you want to REPLACE your CURRENT host key ${suppliedhostkey}
-with the REPORTED host key: ${reportedhostkey}?`,
+          message: msg,
           confirmText: $localize`Approve`,
           cancelText: $localize`Cancel`,
         },
@@ -412,14 +517,7 @@ with the REPORTED host key: ${reportedhostkey}?`,
             return;
           }
 
-          observer.next({
-            action: 'approve-host-key',
-            targetUrl,
-            testAgain: true,
-            reportedHostKey: reportedhostkey,
-            destinationIndex,
-          });
-          observer.complete();
+          sendError();
         },
       });
     }
@@ -464,33 +562,32 @@ with the REPORTED host key: ${reportedhostkey}?`,
     targetUrl: string,
     backupId: string | null,
     destinationIndex: number,
-    askToCreate: boolean,
-    suppressErrorDialogs: boolean
+    suppressErrorDialogs: boolean,
+    folderHandling: FolderHandlingOption
   ) {
     return new Observable<TestDestinationResult>((observer) => {
       if (errorMessage === 'missing-folder') {
-        if (askToCreate) this.handleMissingFolder(observer, targetUrl, backupId, destinationIndex);
-        else
-          this.handleGenericError(
-            observer,
-            targetUrl,
-            destinationIndex,
-            $localize`The remote destination folder does not exist.`,
-            suppressErrorDialogs
-          );
+        this.handleMissingFolder(observer, targetUrl, backupId, destinationIndex, suppressErrorDialogs, folderHandling);
         return;
       }
 
       if (errorMessage.startsWith('incorrect-cert:')) {
         const certData = errorMessage.split('incorrect-cert:')[1];
-        this.handleMissingCertificate(observer, targetUrl, destinationIndex, certData);
+        this.handleMissingCertificate(observer, targetUrl, destinationIndex, certData, suppressErrorDialogs);
         return;
       }
 
       if (errorMessage.startsWith('incorrect-host-key:')) {
         const reportedhostkey = errorMessage.split('incorrect-host-key:"')[1].split('",')[0];
         const suppliedhostkey = errorMessage.split('accepted-host-key:"')[1].split('",')[0];
-        this.handleIncorrectKey(observer, targetUrl, destinationIndex, reportedhostkey, suppliedhostkey);
+        this.handleIncorrectKey(
+          observer,
+          targetUrl,
+          destinationIndex,
+          reportedhostkey,
+          suppliedhostkey,
+          suppressErrorDialogs
+        );
         return;
       }
 
