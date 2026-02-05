@@ -1,7 +1,7 @@
 @let item = destinationItem();
 
 @if (item) {
-  <sh-card class="type-b">
+  <sh-card [variant]="variant()">
     <div class="icon">
       <img src="{{ item.icon }}" alt="{{ item.displayName }}" />
     </div>

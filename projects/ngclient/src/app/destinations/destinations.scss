@@ -1,3 +1,133 @@
+@use '@ship-ui/core/styles/helpers' as *;
+
 :host {
   display: block;
+}
+
+section {
+  max-width: p2r(700);
+  margin: 0 auto;
+  padding: p2r(32 16);
+  display: flex;
+  flex-direction: column;
+  gap: p2r(16);
+}
+
+h2 {
+  font: var(--title-30);
+  text-align: center;
+  padding: p2r(32);
+}
+
+h3 {
+  font: var(--paragraph-10);
+}
+
+.actionable {
+  cursor: pointer;
+
+  &:after {
+    transition: inset 100ms linear;
+  }
+
+  &:hover {
+    --card-shp: 0;
+  }
+}
+
+.custom-info {
+  flex: 1;
+  p {
+    font: var(--body-10);
+    color: var(--base-7);
+    margin: p2r(4 0 0);
+  }
+}
+
+.manage-actions {
+  display: flex;
+  gap: p2r(8);
+  align-items: center;
+
+  .manage-btn {
+    @media (max-width: 600px) {
+      display: none;
+    }
+  }
+}
+
+.add-new {
+  display: flex;
+  align-items: center;
+  gap: p2r(24);
+  padding: p2r(24);
+  background: var(--base-1);
+  color: var(--primary-8);
+
+  sh-icon {
+    font-size: p2r(40);
+    opacity: 0.8;
+  }
+}
+
+.edit-header {
+  display: flex;
+  align-items: center;
+  gap: p2r(16);
+  margin-bottom: p2r(8);
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(24);
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: p2r(16);
+    margin-bottom: p2r(24);
+
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .config-section {
+    display: flex;
+    flex-direction: column;
+    gap: p2r(24);
+    padding: p2r(24);
+
+    .dest-config-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+
+  .form-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: p2r(16);
+    margin-top: p2r(16);
+    padding-top: p2r(24);
+    border-top: 1px solid var(--base-3);
+  }
+}
+
+.selected-backend {
+  margin-bottom: p2r(8);
+}
+
+.loading-list {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(16);
+  align-items: center;
+  padding: p2r(64);
+
+  .text {
+    text-align: center;
+  }
 }

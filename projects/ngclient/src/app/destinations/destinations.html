@@ -1,8 +1,147 @@
-@for (option of destinations(); track $index) {
-  <app-destination-list-item [targetUrl]="option.BaseUrl">
-    <!-- <button shButton i18n (click)="setDestination.emit(option.customKey ?? option.key)" type="button">
-        Choose
-        <sh-icon>arrow-right</sh-icon>
-      </button> -->
-  </app-destination-list-item>
-}
+<app-status-bar />
+
+<section>
+  @if (selectedDestination() === null) {
+    <h2 i18n>Destinations</h2>
+
+    @if (isLoading()) {
+      <div class="loading-list">
+        <sh-progress-bar class="indeterminate primary"></sh-progress-bar>
+        <div class="text">
+          <h3 i18n>Loading destinations...</h3>
+        </div>
+      </div>
+    } @else {
+      @for (option of destinations(); track $index) {
+        <app-destination-list-item
+          class="actionable"
+          variant="type-a"
+          [targetUrl]="option.BaseUrl"
+          (click)="selectDestination(option)">
+          <div class="custom-info">
+            <h3>{{ option.Name || option.BaseUrl }}</h3>
+            @if (option.Description) {
+              <p>{{ option.Description }}</p>
+            }
+          </div>
+          <div class="manage-actions">
+            <button shButton iconOnly variant="ghost" (click)="deleteDestination(option.ID, $event)" type="button">
+              <sh-icon>trash</sh-icon>
+            </button>
+            <button shButton i18n type="button" class="manage-btn">
+              Manage
+              <sh-icon>arrow-right</sh-icon>
+            </button>
+          </div>
+        </app-destination-list-item>
+      }
+
+      <sh-card class="type-a actionable add-new" (click)="selectDestination('new')">
+        <sh-icon>plus-circle</sh-icon>
+        <div class="text">
+          <h3 i18n>Add new destination</h3>
+          <p i18n>Configure a new storage location.</p>
+        </div>
+      </sh-card>
+    }
+  } @else {
+    <header class="edit-header">
+      <button shButton iconOnly variant="ghost" (click)="cancelEdit()" type="button">
+        <sh-icon>arrow-left</sh-icon>
+      </button>
+    </header>
+
+    <div class="edit-form">
+      <sh-card class="config-section type-c">
+        <header class="dest-config-header">
+          <h3 i18n>{{ selectedDestination() === 'new' ? 'New Destination' : 'Edit Destination' }}</h3>
+          <div class="actions">
+            @if (editBaseUrl()) {
+              <button
+                shButton
+                type="button"
+                variant="ghost"
+                class="small"
+                [disabled]="testSignal() == 'testing'"
+                (click)="testDestination()"
+                i18n>
+                @if (testSignal() == 'testing') {
+                  Testing...
+                } @else if (testSignal() == 'success') {
+                  Retry test
+                } @else {
+                  Test destination
+                }
+              </button>
+            }
+          </div>
+        </header>
+
+        @if (testSignal() == 'testing') {
+          <sh-alert i18n>
+            <sh-icon icon>spinner</sh-icon>
+            Testing connection...
+          </sh-alert>
+        } @else if (testSignal() == 'success') {
+          <sh-alert class="success" i18n>
+            <sh-icon icon>check</sh-icon>
+            Connection tested successfully.
+          </sh-alert>
+        } @else if (testSignal() == 'error') {
+          <sh-alert class="error" i18n>
+            <sh-icon icon>warning</sh-icon>
+            {{ testErrorMessage() }}
+          </sh-alert>
+        }
+
+        @if (selectedDestination() !== 'new') {
+          <div class="form-row">
+            <sh-form-field>
+              <label i18n>Name</label>
+              <input [(ngModel)]="editName" i18n-placeholder placeholder="Name" />
+            </sh-form-field>
+            <sh-form-field>
+              <label i18n>Description</label>
+              <input [(ngModel)]="editDescription" i18n-placeholder placeholder="Description (optional)" />
+            </sh-form-field>
+          </div>
+        }
+
+        @if (editBaseUrl()) {
+          <app-destination-list-item [targetUrl]="editBaseUrl()" class="selected-backend">
+            <button shButton i18n (click)="removeDestination()" type="button" variant="ghost">Change</button>
+          </app-destination-list-item>
+
+          <app-single-destination [(targetUrl)]="editBaseUrl" />
+        } @else {
+          <app-destination-list (setDestination)="setDestination($event)"></app-destination-list>
+        }
+      </sh-card>
+
+      <div class="form-footer">
+        <button shButton type="button" (click)="cancelEdit()" i18n>Cancel</button>
+
+        <button
+          shButton
+          class="raised"
+          [class.primary]="testSignal() === 'success'"
+          [class.warn]="testSignal() === '' || testSignal() === 'testing'"
+          [class.error]="testSignal() === 'error'"
+          [disabled]="!editBaseUrl() || isSaving() || testSignal() === 'testing'"
+          type="button"
+          (click)="testSignal() === 'success' ? save() : testDestination()"
+          i18n>
+          @if (isSaving()) {
+            Saving...
+          } @else if (testSignal() === 'testing') {
+            Testing...
+          } @else if (testSignal() === 'success') {
+            Save Destination
+          } @else {
+            Test & Save
+          }
+        </button>
+      </div>
+    </div>
+  }
+</section>

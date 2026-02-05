@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { ShipCard, ShipChip } from '@ship-ui/core';
+import { ShipCard, ShipCardVariant, ShipChip } from '@ship-ui/core';
 import { DestinationTypeOption } from '../../../core/states/destinationconfig.state';
 import { getConfigurationByUrl } from '../destination.config-utilities';
 
@@ -13,6 +13,7 @@ import { getConfigurationByUrl } from '../destination.config-utilities';
 export class DestinationListItemComponent {
   destination = input<DestinationTypeOption>();
   targetUrl = input<string | null>();
+  variant = input<ShipCardVariant>('type-b');
 
   selectedDestinationType = computed(() => {
     const targetUrl = this.targetUrl();
