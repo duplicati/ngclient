@@ -91,6 +91,9 @@ export default class OptionsComponent {
       data: {
         targetUrlModel: this.office365CustomTargetUrl() || this.office365SourceUrl() || 'office365://',
         moduleType: 'RestoreDestinationProvider',
+        askToCreate: true,
+        expectedResult: 'any',
+        suppressErrorDialogs: true,
       },
     });
 

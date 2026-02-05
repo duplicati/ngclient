@@ -22,7 +22,7 @@
   <ng-content select="label" ngProjectAs="label"></ng-content>
 
   <div class="browse-files" [class.visualize-accepted]="accepts()" #treeContainer>
-    @if (isLoading()) {
+    @if (isLoading() != null) {
       <sh-progress-bar class="indeterminate primary" />
     }
 
@@ -39,6 +39,7 @@
               [class.open]="node.children.length"
               [class.usually-hidden]="node.hidden"
               [class.root]="data.level === 0"
+              [class.loading]="isLoading() === node.id"
               (click)="toggleNode(node.id, node)">
               <div class="icon" [class.file]="node.cls === 'file'">
                 @if (node.id !== '/') {
@@ -46,6 +47,8 @@
                     <sh-icon class="small">caret-down</sh-icon>
                   } @else if (node.cls === 'file') {
                     <sh-icon class="small"></sh-icon>
+                  } @else if (node.id === isLoading()) {
+                    <sh-icon class="small">spinner</sh-icon>
                   } @else {
                     <sh-icon class="small">caret-right</sh-icon>
                   }

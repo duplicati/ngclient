@@ -129,7 +129,7 @@ export default class FileTreeComponent {
   treeContainerRef = viewChild<ElementRef<HTMLDivElement>>('treeContainer');
   formRef = viewChild<ElementRef<HTMLFormElement>>('formRef');
   pathDiscoveryMethod = signal<'browse' | 'path'>('browse');
-  isLoading = signal(false);
+  isLoading = signal<string | null>(null);
   currentPath = signal<string>('/');
   #inputRef = signal<HTMLInputElement | null>(null);
   treeSearchQuery = signal<string>('');
@@ -460,7 +460,10 @@ export default class FileTreeComponent {
     const input = this.#inputRef();
 
     if (discoveryMethod === 'browse' && input) {
-      this.currentPath.set(input.value);
+      const value = input.value;
+      // Avoid firing the event when the input is empty on startup
+      if (value === null || value === undefined || value === '') return;
+      this.currentPath.set(value);
     }
   });
 
@@ -793,14 +796,9 @@ export default class FileTreeComponent {
 
   #fetchPathSegmentsRecursively(path: string) {
     const pathDelimiter = this.pathDelimiter();
-    const deselectedPaths = path
-      .split('\0')
-      .filter((x) => x.startsWith('-'))
-      .map((x) => x.slice(1, -1));
-
     let pathArr = path
       .split('\0')
-      .filter((x) => !x.startsWith('-'))
+      .filter((x) => !x.startsWith('-') && !x.startsWith('+') && !x.startsWith('@'))
       .filter(Boolean);
 
     const segmentArr = pathArr.map((x) => {
@@ -816,17 +814,15 @@ export default class FileTreeComponent {
     let urlPieces: string[] = [ROOTPATH];
     segmentArr.forEach((segments) => {
       segments.forEach((_, index) => {
-        const urlCombined = segments.slice(0, index + 1).join(pathDelimiter);
+        const urlCombined = segments.slice(0, index + 1).join(pathDelimiter) + pathDelimiter;
 
-        if (urlCombined === '') return;
+        if (urlCombined === '' || urlCombined === pathDelimiter) return;
 
         if (!urlPieces.includes(urlCombined)) {
           urlPieces.push(urlCombined);
         }
       });
     });
-
-    this.isLoading.set(true);
 
     type ResultType<T> = {
       status: 'success' | 'error';
@@ -837,6 +833,7 @@ export default class FileTreeComponent {
     type FilePathResult = ResultType<GetApiV1BackupByIdFilesResponse | PostApiV1FilesystemResponse>;
 
     const observables: Observable<FilePathResult>[] = urlPieces.map((urlPiece) => {
+      this.isLoading.set(urlPiece);
       return (this.#getFilePath(urlPiece) as any).pipe(
         map((data) => ({ status: 'success', value: data, url: urlPiece }) as FilePathResult),
         catchError((err) => of({ status: 'error', value: err, url: urlPiece } as FilePathResult))
@@ -844,7 +841,7 @@ export default class FileTreeComponent {
     });
 
     forkJoin(observables)
-      .pipe(finalize(() => this.isLoading.set(false)))
+      .pipe(finalize(() => this.isLoading.set(null)))
       .subscribe({
         next: (res) => {
           const results = res.filter((x) => x.status === 'success') as FilePathResult[];
@@ -873,7 +870,11 @@ export default class FileTreeComponent {
 
   #getDisplayName(text?: string | null, metadata?: { [key: string]: string | null } | null): string | undefined | null {
     if (metadata) {
-      const name = metadata['o365:Name'] || metadata['o365:DisplayName'];
+      const name =
+        metadata['o365:Name'] ||
+        metadata['o365:DisplayName'] ||
+        metadata['gsuite:Name'] ||
+        metadata['gsuite:DisplayName'];
       if (name) return name;
     }
     return text;
@@ -892,9 +893,9 @@ export default class FileTreeComponent {
 
   #getPath(node: FileTreeNode | null = null, newPath = ROOTPATH) {
     const pathDelimiter = this.pathDelimiter();
-    this.isLoading.set(true);
+    this.isLoading.set(newPath);
 
-    (this.#getFilePath(newPath) as Observable<any>).pipe(finalize(() => this.isLoading.set(false))).subscribe({
+    (this.#getFilePath(newPath) as Observable<any>).pipe(finalize(() => this.isLoading.set(null))).subscribe({
       next: (x) => {
         let alignDataArray =
           this.isByBackupSettings() || this.office365Mode()

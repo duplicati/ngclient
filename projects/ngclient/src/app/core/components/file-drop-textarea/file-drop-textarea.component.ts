@@ -21,7 +21,7 @@ export class FileDropTextareaComponent implements ControlValueAccessor {
   customId = input<string>();
   content = signal('');
   readonly = signal(false);
-  placeholder = input<string | null>('Drop a file here or use the browse button');
+  placeholder = input<string | null>($localize`Drop a file here or use the browse button`);
 
   fileInputRef = viewChild<ElementRef<HTMLInputElement>>('fileInput');
 
@@ -64,7 +64,7 @@ export class FileDropTextareaComponent implements ControlValueAccessor {
   });
 
   writeValue(value: string): void {
-    this.content.set(value);
+    this.content.set(value ?? '');
   }
 
   registerOnChange(fn: (value: string) => void): void {

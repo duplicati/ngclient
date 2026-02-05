@@ -11,22 +11,6 @@
       <span i18n>Backup destination</span>
 
       <div class="actions">
-        @if (hasDestination) {
-          <button
-            shButton
-            type="button"
-            class="small"
-            [disabled]="testSignal() == 'testing'"
-            (click)="testDestination(0, true)"
-            i18n>
-            @if (testSignal() == 'testing') {
-              Testing...
-            } @else {
-              Test destination
-            }
-          </button>
-        }
-
         @if (!hasDestination) {
           <button shButton type="button" class="small" (click)="openTargetUrlDialog()" i18n>
             <sh-icon>link</sh-icon>
@@ -55,27 +39,14 @@
       </div>
     </h3>
 
-    @if (testSignal() == 'testing') {
-      <sh-alert i18n>
-        <sh-icon icon>spinner</sh-icon>
-        Testing connection...
-      </sh-alert>
-    } @else if (testSignal() == 'success') {
-      <sh-alert class="success" i18n>
-        <sh-icon icon>check</sh-icon>
-        Connection tested successfully.
-      </sh-alert>
-    } @else if (testSignal() == 'warning') {
-      <sh-alert class="warn" i18n>
-        <sh-icon icon>warning</sh-icon>
-        {{ testErrorMessage() }}
-      </sh-alert>
-    } @else if (testSignal() == 'error') {
-      <sh-alert class="error" i18n>
-        <sh-icon icon>warning</sh-icon>
-        {{ testErrorMessage() }}
-      </sh-alert>
-    }
+    <app-test-url
+      #testUrl
+      [(targetUrl)]="targetUrlModel"
+      [(testSignal)]="testSignal"
+      [suppressErrorDialogs]="false"
+      [askToCreate]="true"
+      [testExpectation]="isNew() ? 'destinationEmpty' : 'any'"
+      [moduleType]="'Backend'"></app-test-url>
 
     <app-destination-list-item [targetUrl]="targetUrlModel()" class="current-destination">
       <button shButton i18n (click)="removeDestination()" type="button">Change</button>

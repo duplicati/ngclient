@@ -6,7 +6,6 @@ import { ShipButton, ShipChip, ShipDialogService, ShipFormField, ShipIcon, ShipM
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
 import { SizeComponent, splitSize } from '../../core/components/size/size.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
-import { DestinationConfigState } from '../../core/states/destinationconfig.state';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 import { BackupState } from '../backup.state';
 import { getConfigurationByUrl } from '../destination/destination.config-utilities';
@@ -67,7 +66,6 @@ export default class SourceDataComponent {
   #router = inject(Router);
   #route = inject(ActivatedRoute);
   #sysInfo = inject(SysinfoState);
-  #destinationConfigState = inject(DestinationConfigState);
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
   sourceDataForm = this.#backupState.sourceDataForm;
   sourceDataFormSignal = this.#backupState.sourceDataFormSignal;
@@ -109,6 +107,9 @@ export default class SourceDataComponent {
       data: {
         targetUrlModel: null,
         moduleType: 'SourceProvider',
+        askToCreate: false,
+        expectedResult: 'destinationNotEmpty',
+        suppressErrorDialogs: true,
       },
     });
 
@@ -116,9 +117,10 @@ export default class SourceDataComponent {
       if (!targetUrl) return;
 
       const shortId = Math.random().toString(36).substring(2, 10);
-      const prefix = this.#sysInfo.systemInfo()?.PathSeparator === '\\' ? 'X:\\' : '/';
+      const protcolName = targetUrl.split('://')[0];
+      const prefix = this.#sysInfo.systemInfo()?.DirectorySeparator === '\\' ? 'X:\\' : '/';
 
-      const newRemotePath = `@${prefix}dupl-${shortId}|${targetUrl}`;
+      const newRemotePath = `@${prefix}dupl-${protcolName}-${shortId}|${targetUrl}`;
 
       this.addPath(newRemotePath);
     });
@@ -178,6 +180,9 @@ export default class SourceDataComponent {
         data: {
           targetUrlModel: oldPath.split('|')[1] || null,
           moduleType: 'SourceProvider',
+          askToCreate: false,
+          expectedResult: 'destinationNotEmpty',
+          suppressErrorDialogs: true,
         },
       });
 
@@ -336,7 +341,7 @@ export default class SourceDataComponent {
   }
 
   next() {
-    if (!this.#backupState.isNew()) {
+    if (this.#backupState.shouldAutoSave()) {
       this.#backupState.submit(true);
     }
 

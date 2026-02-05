@@ -1,11 +1,19 @@
 {
   "name": "@duplicati/ngclient",
-  "version": "0.0.197",
+  "version": "0.0.202",
   "license": "MIT",
   "contributors": [
     "sp90",
     "kenkendk"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/duplicati/ngclient.git"
+  },
+  "homepage": "https://github.com/duplicati/ngclient",
+  "bugs": {
+    "url": "https://github.com/duplicati/ngclient/issues"
+  },
   "scripts": {
     "gen:package-json": "bun scripts/generate-package-json.ts",
     "gen:font": "ship-fg --src='./projects/ngclient/src' --out='./projects/ngclient/src/assets' --rootPath='./'",

@@ -27,10 +27,12 @@
       <ng-container title>
         <span i18n>Paths</span>
         <div class="spacer"></div>
-        <button shButton type="button" (click)="openRemoteDestinationDialog()" i18n>
-          <sh-icon>cloud-arrow-down</sh-icon>
-          Add remote path
-        </button>
+        @if (!bulkPathEditMode()) {
+          <button shButton type="button" (click)="openRemoteDestinationDialog()" i18n>
+            <sh-icon>cloud-arrow-down</sh-icon>
+            Add remote path
+          </button>
+        }
         <sh-menu>
           <button shButton type="button">
             <sh-icon>dots-three-vertical</sh-icon>
@@ -48,7 +50,11 @@
           </ng-container>
         </sh-menu>
       </ng-container>
-      <p description i18n>Add a path directly from your machine.</p>
+      @if (!bulkPathEditMode()) {
+        <p description i18n>Manually add a path.</p>
+      } @else {
+        <p description i18n>Edit paths as text, one per line.</p>
+      }
 
       <div class="paths">
         @if (bulkPathEditMode()) {
@@ -143,7 +149,11 @@
           </ng-container>
         </sh-menu>
       </ng-container>
-      <p description i18n>Customize your filters.</p>
+      @if (!bulkFilterEditMode()) {
+        <p description i18n>Customize your filters.</p>
+      } @else {
+        <p description i18n>Edit filters as text, one per line.</p>
+      }
 
       @if (bulkFilterEditMode()) {
         <sh-form-field>

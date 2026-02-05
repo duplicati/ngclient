@@ -160,7 +160,7 @@ export default class GeneralComponent {
   }
 
   next() {
-    if (!this.#backupState.isNew()) {
+    if (this.#backupState.shouldAutoSave()) {
       this.#backupState.submit(true);
     }
     this.#router.navigate(['destination'], { relativeTo: this.#route.parent });

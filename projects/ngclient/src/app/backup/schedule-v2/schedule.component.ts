@@ -293,7 +293,7 @@ export default class ScheduleComponent {
   }
 
   next() {
-    if (!this.#backupState.isNew()) {
+    if (this.#backupState.shouldAutoSave()) {
       this.#backupState.submit(true);
     }
 

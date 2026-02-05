@@ -1,13 +1,19 @@
 <form [formGroup]="encryptionForm" (submit)="next()">
-  <sh-form-field>
-    <label for="password" i18n>Password</label>
-    <input
-      type="password"
-      id="password"
-      i18n-placeholder
-      placeholder="Enter backup passphrase if defined."
-      formControlName="passphrase" />
-  </sh-form-field>
+  @if (!hasEncryptedBackup()) {
+    <p i18n>The backup does not contain encrypted files.</p>
+  }
+
+  @if (hasEncryptedBackup() || showEncryptionField()) {
+    <sh-form-field>
+      <label for="password" i18n>Password</label>
+      <input
+        type="password"
+        id="password"
+        i18n-placeholder
+        placeholder="Enter backup passphrase if defined."
+        formControlName="passphrase" />
+    </sh-form-field>
+  }
 
   <sh-toggle-card>
     <ng-container title i18n>Advanced options</ng-container>

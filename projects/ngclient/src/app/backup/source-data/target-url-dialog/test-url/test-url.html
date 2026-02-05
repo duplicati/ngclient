@@ -1,29 +1,77 @@
 @if (isExpectedValidTargetUrl()) {
-  @if (testSignal() === '') {
-    <sh-alert class="simple primary">
+  @if (testSignal() === null) {
+    <sh-alert class="simple primary" i18n>
       Make sure to test the configuration
-      <button shButton class="primary small" (click)="testDestination()">Test now</button>
+      <button shButton class="primary small" (click)="testDestinationClick()">Test now</button>
     </sh-alert>
   } @else if (testSignal() === 'testing') {
-    <sh-alert class="simple primary">Testing connection...</sh-alert>
-  } @else if (testSignal() === 'containsBackup' || testSignal() === 'success') {
-    <sh-alert class="simple success">Connection tested successfully.</sh-alert>
-    <!-- } @else if (testSignal() === 'success' && responseType() !== 'containsBackup') {
-  <sh-alert class="simple warn">No backups found in the remote destination.</sh-alert> -->
-  } @else if (testSignal() === 'warning' || testSignal() === 'error') {
-    <sh-alert class="simple warn">
-      {{ testErrorMessage() }}
+    <sh-alert class="simple primary" i18n>
+      <sh-icon>spinner</sh-icon>
+      <div class="testing">
+        Testing connection...
+        <sh-spinner [style.--spinner-size]="'16px'" [style.--spinner-thickness]="'2px'"></sh-spinner>
+      </div>
     </sh-alert>
+  } @else {
+    @if (testResponse()?.action === 'success') {
+      @if (testExpectation() === 'containsBackup') {
+        @if (testResponse()?.containsBackup) {
+          <sh-alert class="simple success" i18n>Success! Test completed, backup found.</sh-alert>
+        } @else {
+          <sh-alert class="simple warn" i18n>No backup found at the specified destination.</sh-alert>
+        }
+      } @else if (testExpectation() === 'destinationEmpty') {
+        @if (testResponse()?.containsBackup) {
+          <sh-alert class="simple error" i18n>
+            The remote destination already contains a backup. Please use a different folder for each backup.
+          </sh-alert>
+        } @else if (testResponse()?.anyFilesFound) {
+          <sh-alert class="simple warn" i18n>
+            The remote destination is not empty. It is recommended to use an empty folder for the backup.
+          </sh-alert>
+        } @else {
+          <sh-alert class="simple success" i18n>Success! Test completed, destination is empty.</sh-alert>
+        }
+      } @else if (testExpectation() === 'destinationNotEmpty') {
+        @if (testResponse()?.anyFilesFound) {
+          <sh-alert class="simple success" i18n>Success! Test completed, destination contains files.</sh-alert>
+        } @else {
+          <sh-alert class="simple warn" i18n>The remote destination is empty.</sh-alert>
+        }
+      } @else {
+        <!-- testExpectation() === 'any' -->
+        @if (testResponse()?.containsBackup) {
+          <sh-alert class="simple success" i18n>Success! Test completed, backup found.</sh-alert>
+        } @else if (testResponse()?.anyFilesFound) {
+          <sh-alert class="simple success" i18n>
+            Success! Test completed, destination contains non-backup files.
+          </sh-alert>
+        } @else {
+          <sh-alert class="simple success" i18n>Success! Test completed, destination is empty.</sh-alert>
+        }
+      }
+    } @else if (testResponse()?.action === 'missing-folder') {
+      <sh-alert class="simple warn" i18n>
+        The specified folder does not exist.
+        @if (askToCreate()) {
+          <button shButton class="primary small" (click)="createFolder()">Create now</button>
+        }
+      </sh-alert>
+    } @else if (testResponse()?.action === 'trust-cert') {
+      <sh-alert class="simple warn">
+        {{ testResponse()?.errorMessage }}
+        <button shButton class="primary small" (click)="useSuggestedUrl()">Approve</button>
+      </sh-alert>
+    } @else if (testResponse()?.action === 'approve-host-key') {
+      <sh-alert class="simple warn">
+        {{ testResponse()?.errorMessage }}
+        <button shButton class="primary small" (click)="useSuggestedUrl()">Approve</button>
+      </sh-alert>
+    } @else if (testResponse()?.action === 'generic-error') {
+      <sh-alert class="simple warn">
+        {{ testResponse()?.errorMessage }}
+        <button shButton class="primary small" (click)="testDestinationClick()">Test again</button>
+      </sh-alert>
+    }
   }
 }
-
-<!-- Ignore these for source data -->
-<!-- @else if (testSignal() === 'containsBackup') {
-  <sh-alert class="simple error">
-    The remote destination already contains a backup. Please use a different folder for each backup.
-  </sh-alert>
-} @else if (testSignal() === 'destinationNotEmpty') {
-  <sh-alert class="simple error">
-    The remote destination is not empty. It is recommended to use an empty folder for the backup.
-  </sh-alert>
-} -->
