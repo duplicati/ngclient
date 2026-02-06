@@ -2273,6 +2273,11 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     '.lyvecloud.seagate.com',
   ]),
   CreateCustomS3ProviderEntry('internxt', 'Internxt', null, 'assets/dest-icons/internxt.png', ['.internxt.com']),
+  CreateCustomS3ProviderEntry('selectel', 'Selectel', null, 'assets/dest-icons/selectel.png', [
+    '.storage.selcloud.ru',
+    '.srvstorage.uz',
+    '.srvstorage.kz',
+  ]),
 ];
 
 export const S3_HOST_SUFFIX_MAP: Record<string, string> = {
@@ -2314,4 +2319,7 @@ export const S3_HOST_SUFFIX_MAP: Record<string, string> = {
   '.tencentcloudapi.com': 'Tencent Cloud S3',
   '.rabata.io': 'Rabata S3',
   '.internxt.com': 'Internxt S3',
+  '.storage.selcloud.ru': 'Selectel S3',
+  '.srvstorage.uz': 'Selectel S3',
+  '.srvstorage.kz': 'Selectel S3',
 };
