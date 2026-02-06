@@ -110,6 +110,8 @@ export default class SourceDataComponent {
         askToCreate: false,
         expectedResult: 'destinationNotEmpty',
         suppressErrorDialogs: true,
+        backupId: null,
+        sourcePrefix: null,
       },
     });
 
@@ -178,11 +180,13 @@ export default class SourceDataComponent {
         width: '100%',
         closeOnOutsideClick: false,
         data: {
-          targetUrlModel: oldPath.split('|')[1] || null,
+          targetUrlModel: oldPath.split('|')[1] ?? null,
           moduleType: 'SourceProvider',
           askToCreate: false,
           expectedResult: 'destinationNotEmpty',
           suppressErrorDialogs: true,
+          backupId: this.#backupState.backupId(),
+          sourcePrefix: oldPath.split('|')[0] ?? null,
         },
       });
 

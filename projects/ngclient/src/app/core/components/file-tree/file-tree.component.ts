@@ -118,6 +118,7 @@ export default class FileTreeComponent {
   hideShortcuts = input(false);
   office365Mode = input(false);
   backupId = input<string | null | undefined>('');
+  sourcePrefix = input<string | null | undefined>('');
   destinationUrl = input<string | null | undefined>('');
   loadExtendedData = input(true);
   hasExtendedData = output<string>();
@@ -734,6 +735,7 @@ export default class FileTreeComponent {
         modulekey: 'office365',
         requestBody: {
           'backup-id': this.backupId() ?? '',
+          'source-prefix': this.sourcePrefix() ?? '',
           operation: 'ListDestinationRestoreTargets',
           url: this.destinationUrl() ?? '',
           path: path ?? '/',

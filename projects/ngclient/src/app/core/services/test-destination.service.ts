@@ -37,6 +37,7 @@ export class TestDestinationService {
   testDestination(
     targetUrl: string,
     backupId: string | null,
+    sourcePrefix: string | null,
     destinationIndex: number,
     urlType: RemoteDestinationType,
     suppressErrorDialogs: boolean,
@@ -46,6 +47,7 @@ export class TestDestinationService {
       return this.testDestinationv2(
         targetUrl,
         backupId,
+        sourcePrefix,
         destinationIndex,
         urlType,
         suppressErrorDialogs,
@@ -55,6 +57,7 @@ export class TestDestinationService {
       return this.testDestinationv1(
         targetUrl,
         backupId,
+        sourcePrefix,
         destinationIndex,
         urlType,
         suppressErrorDialogs,
@@ -65,6 +68,7 @@ export class TestDestinationService {
   private testDestinationv2(
     targetUrl: string,
     backupId: string | null,
+    sourcePrefix: string | null,
     destinationIndex: number,
     urlType: RemoteDestinationType,
     suppressErrorDialogs: boolean,
@@ -79,6 +83,7 @@ export class TestDestinationService {
             AutoCreate: folderHandling === 'create',
             Options: null,
             DestinationType: urlType,
+            SourcePrefix: backupId == 'new' ? null : sourcePrefix,
           },
         })
         .subscribe({
@@ -148,6 +153,7 @@ export class TestDestinationService {
   private testDestinationv1(
     targetUrl: string,
     backupId: string | null,
+    sourcePrefix: string | null,
     destinationIndex: number,
     urlType: RemoteDestinationType,
     suppressErrorDialogs: boolean,
@@ -160,6 +166,7 @@ export class TestDestinationService {
           requestBody: {
             path: targetUrl,
             backupId: backupId == 'new' ? null : backupId,
+            sourcePrefix: backupId == 'new' ? null : sourcePrefix,
           },
           type: urlType,
         })

@@ -43,9 +43,7 @@
         @if (testResponse()?.containsBackup) {
           <sh-alert class="simple success" i18n>Success! Test completed, backup found.</sh-alert>
         } @else if (testResponse()?.anyFilesFound) {
-          <sh-alert class="simple success" i18n>
-            Success! Test completed, destination contains non-backup files.
-          </sh-alert>
+          <sh-alert class="simple success" i18n>Success! Test completed, destination contains files.</sh-alert>
         } @else {
           <sh-alert class="simple success" i18n>Success! Test completed, destination is empty.</sh-alert>
         }

@@ -17,6 +17,8 @@ import { TestExpectation, TestState, TestUrl } from './test-url/test-url';
 export class TargetUrlDialog {
   data = input<{
     targetUrlModel: string | null;
+    backupId: string | null;
+    sourcePrefix: string | null;
     moduleType: RemoteDestinationType;
     askToCreate: boolean;
     expectedResult: TestExpectation;
@@ -29,6 +31,8 @@ export class TargetUrlDialog {
   askToCreate = signal<boolean>(false);
   expectedResult = signal<TestExpectation>('any');
   suppressErrorDialogs = signal<boolean>(false);
+  backupId = signal<string | null>(null);
+  sourcePrefix = signal<string | null>(null);
 
   dataEffect = effect(() => {
     const data = this.data();
@@ -40,6 +44,8 @@ export class TargetUrlDialog {
     data?.suppressErrorDialogs !== null &&
       data?.suppressErrorDialogs !== undefined &&
       this.suppressErrorDialogs.set(data.suppressErrorDialogs);
+    data?.backupId && this.backupId.set(data.backupId);
+    data?.sourcePrefix && this.sourcePrefix.set(data.sourcePrefix);
   });
 
   testSignal = signal<TestState>(null);

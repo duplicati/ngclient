@@ -43,6 +43,8 @@
       #testUrl
       [(targetUrl)]="targetUrlModel"
       [(testSignal)]="testSignal"
+      [backupId]="backupId()"
+      [sourcePrefix]="null"
       [suppressErrorDialogs]="false"
       [askToCreate]="true"
       [testExpectation]="isNew() ? 'destinationEmpty' : 'any'"

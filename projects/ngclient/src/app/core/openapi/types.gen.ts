@@ -107,6 +107,7 @@ export type DestinationTestRequestDto = {
     } | null;
     AutoCreate: boolean;
     DestinationType?: RemoteDestinationType;
+    SourcePrefix?: (string) | null;
 };
 
 export type DestinationTestResponseDto = {
@@ -430,6 +431,7 @@ export type RemoteDestinationType = 'Backend' | 'SourceProvider' | 'RestoreDesti
 export type RemoteOperationInput = {
     path?: (string) | null;
     backupId?: (string) | null;
+    sourcePrefix?: (string) | null;
 };
 
 export type RepairInputDto = {

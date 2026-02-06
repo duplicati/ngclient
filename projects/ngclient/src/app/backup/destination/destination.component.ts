@@ -93,6 +93,7 @@ export default class DestinationComponent {
   toggleNewDestination = signal(true);
 
   isNew = this.#backupState.isNew;
+  backupId = this.#backupState.backupId;
 
   selectedDestinationType = computed(() => {
     const targetUrl = this.targetUrlModel();

@@ -45,14 +45,15 @@ export default class OptionsComponent {
   backupId = computed(() => this.#restoreFlowState.backup()?.Backup?.ID ?? null);
   hasOffice365Data = computed(() => this.extendedData() === 'o365');
 
-  office365SourceUrl = computed(() => {
-    const source = this.#restoreFlowState
-      .backup()
-      ?.Backup?.Sources?.filter((x) => x.startsWith('@') && x.includes('|office365'))[0];
-    if (!source) return null;
-    const parts = source.split('|');
-    return parts.length >= 2 ? parts[1] : null;
-  });
+  office365SourceEntry = computed(
+    () =>
+      this.#restoreFlowState
+        .backup()
+        ?.Backup?.Sources?.filter((x) => x.startsWith('@') && x.includes('|office365'))[0] ?? null
+  );
+
+  office365SourceUrl = computed(() => this.office365SourceEntry()?.split('|')[1] ?? null);
+  office365SourcePrefix = computed(() => this.office365SourceEntry()?.split('|')[0] ?? null);
 
   office365destinationUrl = computed(() => {
     const mode = this.optionsFormSignal()?.restoreFrom;
@@ -94,6 +95,8 @@ export default class OptionsComponent {
         askToCreate: true,
         expectedResult: 'any',
         suppressErrorDialogs: true,
+        backupId: this.backupId(),
+        sourcePrefix: this.office365SourcePrefix(),
       },
     });
 

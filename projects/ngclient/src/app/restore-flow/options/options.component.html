@@ -33,7 +33,11 @@
       }
 
       @if (showOffice365RestoreTree()) {
-        <app-file-tree [office365Mode]="true" [backupId]="backupId()" [destinationUrl]="office365destinationUrl()">
+        <app-file-tree
+          [office365Mode]="true"
+          [backupId]="backupId()"
+          [sourcePrefix]="office365SourcePrefix()"
+          [destinationUrl]="office365destinationUrl()">
           <label for="path">Path</label>
           <input type="text" id="path" formControlName="restoreFromPath" />
         </app-file-tree>
