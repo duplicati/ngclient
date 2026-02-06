@@ -130,7 +130,7 @@ export default class FileTreeComponent {
   formRef = viewChild<ElementRef<HTMLFormElement>>('formRef');
   pathDiscoveryMethod = signal<'browse' | 'path'>('browse');
   isLoading = signal<string | null>(null);
-  currentPath = signal<string>('/');
+  currentPath = signal<string>('');
   #inputRef = signal<HTMLInputElement | null>(null);
   treeSearchQuery = signal<string>('');
   treeNodes = signal<TreeNode[]>([]);
