@@ -213,10 +213,13 @@ export class NewFilterComponent {
   });
 
   updateFilter() {
-    const newPath = this.internalPath();
+    let newPath = this.internalPath();
     const expressionOption = this.currentExpressionOption();
 
     if (newPath === '') return;
+    if (newPath === '*') {
+      newPath = '';
+    }
 
     this.pathChange.emit(
       `${expressionOption?.value.slice(0, 1)}${expressionOption?.startsWith ?? ''}${newPath}${expressionOption?.endsWith ?? ''}`

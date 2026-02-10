@@ -154,6 +154,7 @@ export type DeleteBackupOutputDto = {
 export type DestinationTestRequestDto = {
     DestinationUrl: (string) | null;
     BackupId?: (string) | null;
+    ConnectionStringId?: (number) | null;
     Options: {
         [key: string]: string;
     } | null;
@@ -489,6 +490,7 @@ export type RemoteDestinationType = 'Backend' | 'SourceProvider' | 'RestoreDesti
 export type RemoteOperationInput = {
     path?: (string) | null;
     backupId?: (string) | null;
+    connectionStringId?: (number) | null;
 };
 
 export type RepairInputDto = {

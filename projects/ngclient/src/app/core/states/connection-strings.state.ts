@@ -32,6 +32,7 @@ export class ConnectionStringsState {
   save(selected: ConnectionStringDto | 'new', data: CreateConnectionStringDto | UpdateConnectionStringDto) {
     this.isSaving.set(true);
 
+    data.Description = '';
     const obs =
       selected === 'new'
         ? this.#connectionStrings.postApiV2ConnectionStrings({ requestBody: data as CreateConnectionStringDto })
@@ -45,6 +46,10 @@ export class ConnectionStringsState {
         this.isSaving.set(false);
       })
     );
+  }
+
+  getById(id: number) {
+    return this.#connectionStrings.getApiV2ConnectionStringById({ id });
   }
 
   delete(id: number) {

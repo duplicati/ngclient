@@ -19,6 +19,7 @@ export class TestUrl {
 
   targetUrl = model.required<string | null>();
   testSignal = model.required<TestState>();
+  connectionStringId = input<number | null>(null);
 
   suppressErrorDialogs = input.required<boolean>();
   askToCreate = input.required<boolean>();
@@ -99,7 +100,15 @@ export class TestUrl {
 
     return new Promise<TestDestinationResult>((resolve) => {
       this.#testDestination
-        .testDestination(targetUrl, null, 0, this.moduleType(), this.suppressErrorDialogs(), folderHandling)
+        .testDestination(
+          targetUrl,
+          null,
+          this.connectionStringId(),
+          0,
+          this.moduleType(),
+          this.suppressErrorDialogs(),
+          folderHandling
+        )
         ?.subscribe({
           next: (res) => {
             if (!this.suppressErrorDialogs() && res.testAgain) {
@@ -112,6 +121,7 @@ export class TestUrl {
                 .testDestination(
                   suggestedUrl ?? targetUrl,
                   null,
+                  this.connectionStringId(),
                   0,
                   this.moduleType(),
                   this.suppressErrorDialogs(),

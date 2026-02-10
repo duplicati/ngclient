@@ -12,18 +12,29 @@
         </div>
       </div>
     } @else {
+      <sh-card class="type-a actionable add-new" (click)="selectDestination('new')">
+        <sh-icon>plus-circle</sh-icon>
+        <div class="text">
+          <h3 i18n>Add new destination</h3>
+          <p i18n>Configure a new storage location.</p>
+        </div>
+      </sh-card>
+
+      @if (destinations().length > 0) {
+        <sh-divider i18n>Or manage your saved destinations</sh-divider>
+      }
+
       @for (option of destinations(); track $index) {
         <app-destination-list-item
           class="actionable"
           variant="type-a"
           [targetUrl]="option.BaseUrl"
           (click)="selectDestination(option)">
-          <div class="custom-info">
-            <h3>{{ option.Name || option.BaseUrl }}</h3>
-            @if (option.Description) {
-              <p>{{ option.Description }}</p>
-            }
-          </div>
+          <h3 displayName>{{ option.Name || option.BaseUrl }}</h3>
+          @if (option.Description) {
+            <p description>{{ option.Description }}</p>
+          }
+
           <div class="manage-actions">
             <button shButton iconOnly variant="ghost" (click)="deleteDestination(option.ID, $event)" type="button">
               <sh-icon>trash</sh-icon>
@@ -35,14 +46,6 @@
           </div>
         </app-destination-list-item>
       }
-
-      <sh-card class="type-a actionable add-new" (click)="selectDestination('new')">
-        <sh-icon>plus-circle</sh-icon>
-        <div class="text">
-          <h3 i18n>Add new destination</h3>
-          <p i18n>Configure a new storage location.</p>
-        </div>
-      </sh-card>
     }
   } @else {
     <header class="edit-header">
@@ -67,7 +70,7 @@
                 i18n>
                 @if (testSignal() == 'testing') {
                   Testing...
-                } @else if (testSignal() == 'success') {
+                } @else if (testResponse()?.action === 'success') {
                   Retry test
                 } @else {
                   Test destination
@@ -77,21 +80,16 @@
           </div>
         </header>
 
-        @if (testSignal() == 'testing') {
-          <sh-alert i18n>
-            <sh-icon icon>spinner</sh-icon>
-            Testing connection...
-          </sh-alert>
-        } @else if (testSignal() == 'success') {
-          <sh-alert class="success" i18n>
-            <sh-icon icon>check</sh-icon>
-            Connection tested successfully.
-          </sh-alert>
-        } @else if (testSignal() == 'error') {
-          <sh-alert class="error" i18n>
-            <sh-icon icon>warning</sh-icon>
-            {{ testErrorMessage() }}
-          </sh-alert>
+        @if (editBaseUrl()) {
+          <app-test-url
+            #testUrl
+            [(targetUrl)]="editBaseUrl"
+            [(testSignal)]="testSignal"
+            [connectionStringId]="selectedDestinationId()"
+            [suppressErrorDialogs]="true"
+            [askToCreate]="true"
+            [testExpectation]="'any'"
+            [moduleType]="'Backend'"></app-test-url>
         }
 
         @if (selectedDestination() !== 'new') {
@@ -124,18 +122,26 @@
         <button
           shButton
           class="raised"
-          [class.primary]="testSignal() === 'success'"
-          [class.warn]="testSignal() === '' || testSignal() === 'testing'"
-          [class.error]="testSignal() === 'error'"
+          [class.primary]="testResponse()?.action === 'success'"
+          [class.warn]="
+            testSignal() === null || testSignal() === 'testing' || testResponse()?.action === 'missing-folder'
+          "
+          [class.error]="
+            testResponse() && testResponse()?.action !== 'success' && testResponse()?.action !== 'missing-folder'
+          "
           [disabled]="!editBaseUrl() || isSaving() || testSignal() === 'testing'"
           type="button"
-          (click)="testSignal() === 'success' ? save() : testDestination()"
+          (click)="
+            testResponse()?.action === 'success' || testResponse()?.action === 'missing-folder'
+              ? save()
+              : testDestination()
+          "
           i18n>
           @if (isSaving()) {
             Saving...
           } @else if (testSignal() === 'testing') {
             Testing...
-          } @else if (testSignal() === 'success') {
+          } @else if (testResponse()?.action === 'success' || testResponse()?.action === 'missing-folder') {
             Save Destination
           } @else {
             Test & Save

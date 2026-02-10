@@ -3,18 +3,24 @@
 @if (item) {
   <sh-card [variant]="variant()">
     <div class="icon">
-      <img src="{{ item.icon }}" alt="{{ item.displayName }}" />
+      <img [src]="item.icon" [attr.alt]="item.displayName" />
     </div>
 
     <div class="name">
-      {{ item.displayName }}
+      <div class="projected"><ng-content select="[displayName]"></ng-content></div>
+      <div class="default">{{ item.displayName }}</div>
+
       @if ((item.sortOrder ?? 0) == -2) {
         <sh-chip class="small simple primary">Special</sh-chip>
       } @else if ((item.sortOrder ?? 0) < 0) {
         <sh-chip class="small simple warn">Deprecated</sh-chip>
       }
     </div>
-    <div class="description">{{ item.description }}</div>
+
+    <div class="description">
+      <div class="projected"><ng-content select="[description]"></ng-content></div>
+      <div class="default">{{ item.description }}</div>
+    </div>
 
     <div class="actions">
       <ng-content></ng-content>

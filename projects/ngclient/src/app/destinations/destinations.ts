@@ -1,11 +1,20 @@
-import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ShipAlert, ShipButton, ShipCard, ShipFormField, ShipIcon, ShipList, ShipProgressBar } from '@ship-ui/core';
-import { TestState } from '../backup/backup.state';
+import {
+  ShipButton,
+  ShipCard,
+  ShipDialogService,
+  ShipDivider,
+  ShipFormField,
+  ShipIcon,
+  ShipProgressBar,
+} from '@ship-ui/core';
 import { DestinationListItemComponent } from '../backup/destination/destination-list-item/destination-list-item.component';
 import { DestinationListComponent } from '../backup/destination/destination-list/destination-list.component';
 import { getConfigurationByKey, getConfigurationByUrl } from '../backup/destination/destination.config-utilities';
 import { SingleDestinationComponent } from '../backup/destination/single-destination/single-destination.component';
+import { TestState, TestUrl } from '../backup/source-data/target-url-dialog/test-url/test-url';
+import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { ConnectionStringDto } from '../core/openapi';
 import { TestDestinationService } from '../core/services/test-destination.service';
@@ -22,9 +31,9 @@ import { ConnectionStringsState } from '../core/states/connection-strings.state'
     ShipButton,
     ShipIcon,
     ShipCard,
-    ShipAlert,
-    ShipList,
     ShipFormField,
+    ShipDivider,
+    TestUrl,
     FormsModule,
   ],
   templateUrl: './destinations.html',
@@ -34,30 +43,41 @@ import { ConnectionStringsState } from '../core/states/connection-strings.state'
 export default class Destinations {
   #connectionStringsState = inject(ConnectionStringsState);
   #testDestination = inject(TestDestinationService);
+  #dialog = inject(ShipDialogService);
 
   isSaving = this.#connectionStringsState.isSaving;
   destinations = this.#connectionStringsState.destinations;
   isLoading = this.#connectionStringsState.resourceDestinations.isLoading;
+  testUrl = viewChild(TestUrl);
 
   selectedDestination = signal<ConnectionStringDto | 'new' | null>(null);
+  selectedDestinationId = computed(() =>
+    this.selectedDestination() !== 'new' ? (this.selectedDestination() as ConnectionStringDto).ID : null
+  );
 
   editName = signal<string | null>(null);
   editDescription = signal<string | null>(null);
   editBaseUrl = signal<string | null>(null);
 
-  testSignal = signal<TestState>('');
-  testErrorMessage = signal<string | null>(null);
+  testSignal = signal<TestState | null>(null);
+  testResponse = computed(() => {
+    const testState = this.testSignal();
+
+    if (testState && typeof testState !== 'string') {
+      return testState;
+    }
+
+    return null;
+  });
 
   #resetTestOnUrlChange = effect(() => {
     this.editBaseUrl();
-    this.testSignal.set('');
-    this.testErrorMessage.set(null);
+    this.testSignal.set(null);
   });
 
   selectDestination(dest: ConnectionStringDto | 'new') {
     this.selectedDestination.set(dest);
-    this.testSignal.set('');
-    this.testErrorMessage.set(null);
+    this.testSignal.set(null);
 
     if (dest === 'new') {
       this.editName.set(null);
@@ -67,6 +87,14 @@ export default class Destinations {
       this.editName.set(dest.Name);
       this.editDescription.set(dest.Description);
       this.editBaseUrl.set(dest.BaseUrl);
+
+      this.#connectionStringsState.getById(dest.ID).subscribe((res) => {
+        if (res.Data) {
+          this.editName.set(res.Data.Name);
+          this.editDescription.set(res.Data.Description);
+          this.editBaseUrl.set(res.Data.BaseUrl ?? null);
+        }
+      });
     }
   }
 
@@ -91,34 +119,25 @@ export default class Destinations {
     this.editBaseUrl.set(null);
   }
 
-  testDestination() {
-    const targetUrl = this.editBaseUrl();
-    if (!targetUrl) return;
+  async testDestination() {
+    const res = await this.testUrl()?.testDestination(false);
+    if (res?.action === 'missing-folder') {
+      this.promptCreateFolder();
+    }
+  }
 
-    this.testSignal.set('testing');
-
-    this.#testDestination.testDestination(targetUrl, null, 0, true, 'Backend', true).subscribe({
-      next: (res) => {
-        if (res.action === 'success') {
-          this.testSignal.set('success');
-          return;
+  promptCreateFolder() {
+    this.#dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: $localize`Folder missing`,
+        message: $localize`The specified folder does not exist. Would you like to create it now?`,
+        confirmText: $localize`Create Folder`,
+        cancelText: $localize`Dismiss`,
+      },
+      closed: (res) => {
+        if (res) {
+          this.testUrl()?.createFolder();
         }
-
-        this.testSignal.set('error');
-        this.testErrorMessage.set(res.errorMessage ?? $localize`An error occurred while testing the destination.`);
-
-        const targetUrlHasParams = targetUrl.includes('?');
-        if (res.action === 'trust-cert') {
-          this.editBaseUrl.set(
-            targetUrl + `${targetUrlHasParams ? '&' : '?'}accept-specified-ssl-hash=${res.certData}`
-          );
-        }
-
-        if (res.action === 'approve-host-key') {
-          this.editBaseUrl.set(targetUrl + `${targetUrlHasParams ? '&' : '?'}ssh-fingerprint=${res.reportedHostKey}`);
-        }
-
-        if (res.testAgain) this.testDestination();
       },
     });
   }
@@ -127,6 +146,10 @@ export default class Destinations {
     const selected = this.selectedDestination();
     if (!selected) return;
 
+    this.performSave(selected);
+  }
+
+  private performSave(selected: ConnectionStringDto | 'new') {
     let name = this.editName();
     let description = this.editDescription();
     const baseUrl = this.editBaseUrl();
@@ -155,10 +178,21 @@ export default class Destinations {
   deleteDestination(id: number, event: Event) {
     event.stopPropagation();
 
-    if (!confirm($localize`Are you sure you want to delete this destination?`)) return;
-
-    this.#connectionStringsState.delete(id).subscribe(() => {
-      this.#connectionStringsState.reload();
+    this.#dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: $localize`Delete destination`,
+        message: $localize`Are you sure you want to delete this destination?`,
+        confirmText: $localize`Delete`,
+        confirmVariant: 'error',
+        cancelText: $localize`Cancel`,
+      },
+      closed: (res) => {
+        if (res) {
+          this.#connectionStringsState.delete(id).subscribe(() => {
+            this.#connectionStringsState.reload();
+          });
+        }
+      },
     });
   }
 }

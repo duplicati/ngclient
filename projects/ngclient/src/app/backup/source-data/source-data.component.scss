@@ -49,12 +49,6 @@ sh-divider {
   gap: p2r(4);
 }
 
-.paths {
-  display: flex;
-  flex-direction: column;
-  gap: p2r(8);
-}
-
 .path {
   display: grid;
   grid-template-columns: 1fr min-content min-content;
@@ -86,4 +80,7 @@ sh-menu {
 .filters {
   max-height: 200px;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: p2r(8);
 }

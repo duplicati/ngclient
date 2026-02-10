@@ -37,6 +37,7 @@ export class TestDestinationService {
   testDestination(
     targetUrl: string,
     backupId: string | null,
+    connectionStringId: number | null,
     destinationIndex: number,
     urlType: RemoteDestinationType,
     suppressErrorDialogs: boolean,
@@ -46,6 +47,7 @@ export class TestDestinationService {
       return this.testDestinationv2(
         targetUrl,
         backupId,
+        connectionStringId,
         destinationIndex,
         urlType,
         suppressErrorDialogs,
@@ -55,6 +57,7 @@ export class TestDestinationService {
       return this.testDestinationv1(
         targetUrl,
         backupId,
+        connectionStringId,
         destinationIndex,
         urlType,
         suppressErrorDialogs,
@@ -65,6 +68,7 @@ export class TestDestinationService {
   private testDestinationv2(
     targetUrl: string,
     backupId: string | null,
+    connectionStringId: number | null,
     destinationIndex: number,
     urlType: RemoteDestinationType,
     suppressErrorDialogs: boolean,
@@ -75,6 +79,7 @@ export class TestDestinationService {
         .postApiV2DestinationTest({
           requestBody: {
             DestinationUrl: targetUrl,
+            ConnectionStringId: connectionStringId ?? null,
             BackupId: backupId == 'new' ? null : backupId,
             AutoCreate: folderHandling === 'create',
             Options: null,
@@ -148,6 +153,7 @@ export class TestDestinationService {
   private testDestinationv1(
     targetUrl: string,
     backupId: string | null,
+    connectionStringId: number | null,
     destinationIndex: number,
     urlType: RemoteDestinationType,
     suppressErrorDialogs: boolean,
@@ -160,6 +166,7 @@ export class TestDestinationService {
           requestBody: {
             path: targetUrl,
             backupId: backupId == 'new' ? null : backupId,
+            connectionStringId: connectionStringId ?? null,
           },
           type: urlType,
         })

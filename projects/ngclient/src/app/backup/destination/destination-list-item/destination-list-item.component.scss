@@ -34,11 +34,27 @@ sh-card {
   .name {
     grid-area: name;
     font: var(--paragraph-10);
+
+    .projected:empty {
+      display: none;
+    }
+
+    .projected:not(:empty) + .default {
+      display: none;
+    }
   }
 
   .description {
     grid-area: description;
     color: var(--base-8);
+
+    .projected:empty {
+      display: none;
+    }
+
+    .projected:not(:empty) + .default {
+      display: none;
+    }
   }
 
   .actions {
