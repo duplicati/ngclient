@@ -51,6 +51,7 @@ export class GeneralLogComponent {
   backupId = input.required<string>();
 
   openEntry = signal<number | null>(null);
+  openSection = signal<'errors' | 'warnings' | null>(null);
   pagination = signal({
     offset: 0,
     pagesize: 100,
@@ -105,10 +106,24 @@ export class GeneralLogComponent {
     return `(${summary.join(', ')})`;
   }
 
-  toggleOpenEntry(id: number) {
+  toggleOpenEntry(item: Partial<LogEntryEvaluated>) {
+    const id = item.id!;
     if (this.openEntry() === id) {
       this.openEntry.set(null);
+      this.openSection.set(null);
       return;
+    }
+
+    // Determine which section to auto-open based on errors/warnings
+    const errorCount = item.data?.ErrorsActualLength ?? 0;
+    const warningCount = item.data?.WarningsActualLength ?? 0;
+
+    if (errorCount > 0) {
+      this.openSection.set('errors');
+    } else if (warningCount > 0) {
+      this.openSection.set('warnings');
+    } else {
+      this.openSection.set(null);
     }
 
     this.openEntry.set(id);

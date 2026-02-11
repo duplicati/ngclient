@@ -6,7 +6,7 @@
   @let result = item.data?.ParsedResult || 'Unknown';
 
   <article class="log-entry">
-    <header (click)="toggleOpenEntry(item.id!)">
+    <header (click)="toggleOpenEntry(item)">
       @if (result == 'Fatal') {
         <div class="status error"></div>
       } @else if (result == 'Error') {
@@ -145,7 +145,7 @@
             </details>
           }
 
-          <details name="details">
+          <details name="details" [open]="item.id === openEntry() && openSection() === 'warnings'">
             <summary i18n>
               <sh-icon>warning-circle</sh-icon>
               Warnings {{ item.data?.WarningsActualLength }}
@@ -162,7 +162,7 @@
             </div>
           </details>
 
-          <details name="details">
+          <details name="details" [open]="item.id === openEntry() && openSection() === 'errors'">
             <summary i18n>
               <sh-icon>warning</sh-icon>
               Errors {{ item.data?.ErrorsActualLength }}
