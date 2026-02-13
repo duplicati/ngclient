@@ -84,7 +84,8 @@ h3 {
 
   .form-row {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
+    // grid-template-columns: 1fr 1fr;
     gap: p2r(16);
     margin-bottom: p2r(24);
 

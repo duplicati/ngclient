@@ -33,9 +33,21 @@
           <h3 displayName>{{ option.Name || option.BaseUrl }}</h3>
           @if (option.Description) {
             <p description>{{ option.Description }}</p>
+          } @else {
+            <p description>{{ getSimplePath(option.BaseUrl) }}</p>
           }
 
           <div class="manage-actions">
+            @if (isOutOfSync(option)) {
+              <button
+                shButton
+                class="small raised primary"
+                (click)="updateBackupsSync(option, $event)"
+                type="button"
+                [disabled]="isSaving()">
+                Update backups
+              </button>
+            }
             <button shButton iconOnly variant="ghost" (click)="deleteDestination(option.ID, $event)" type="button">
               <sh-icon>trash</sh-icon>
             </button>
@@ -80,6 +92,19 @@
           </div>
         </header>
 
+        @if (selectedDestination() !== 'new') {
+          <div class="form-row">
+            <sh-form-field>
+              <label i18n>Name</label>
+              <input [(ngModel)]="editName" i18n-placeholder placeholder="Name" />
+            </sh-form-field>
+            <!-- <sh-form-field>
+              <label i18n>Description</label>
+              <input [(ngModel)]="editDescription" i18n-placeholder placeholder="Description (optional)" />
+            </sh-form-field> -->
+          </div>
+        }
+
         @if (editBaseUrl()) {
           <app-test-url
             #testUrl
@@ -90,19 +115,6 @@
             [askToCreate]="true"
             [testExpectation]="'any'"
             [moduleType]="'Backend'"></app-test-url>
-        }
-
-        @if (selectedDestination() !== 'new') {
-          <div class="form-row">
-            <sh-form-field>
-              <label i18n>Name</label>
-              <input [(ngModel)]="editName" i18n-placeholder placeholder="Name" />
-            </sh-form-field>
-            <sh-form-field>
-              <label i18n>Description</label>
-              <input [(ngModel)]="editDescription" i18n-placeholder placeholder="Description (optional)" />
-            </sh-form-field>
-          </div>
         }
 
         @if (editBaseUrl()) {
@@ -122,9 +134,11 @@
         <button
           shButton
           class="raised"
-          [class.primary]="testResponse()?.action === 'success'"
+          [class.primary]="testResponse()?.action === 'success' || !isUrlChanged()"
           [class.warn]="
-            testSignal() === null || testSignal() === 'testing' || testResponse()?.action === 'missing-folder'
+            (isUrlChanged() && testSignal() === null) ||
+            testSignal() === 'testing' ||
+            testResponse()?.action === 'missing-folder'
           "
           [class.error]="
             testResponse() && testResponse()?.action !== 'success' && testResponse()?.action !== 'missing-folder'
@@ -132,7 +146,7 @@
           [disabled]="!editBaseUrl() || isSaving() || testSignal() === 'testing'"
           type="button"
           (click)="
-            testResponse()?.action === 'success' || testResponse()?.action === 'missing-folder'
+            testResponse()?.action === 'success' || testResponse()?.action === 'missing-folder' || !isUrlChanged()
               ? save()
               : testDestination()
           "
@@ -141,7 +155,9 @@
             Saving...
           } @else if (testSignal() === 'testing') {
             Testing...
-          } @else if (testResponse()?.action === 'success' || testResponse()?.action === 'missing-folder') {
+          } @else if (
+            testResponse()?.action === 'success' || testResponse()?.action === 'missing-folder' || !isUrlChanged()
+          ) {
             Save Destination
           } @else {
             Test & Save

@@ -10,15 +10,27 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ShipAlert, ShipButton, ShipDialog, ShipDialogService, ShipFormField, ShipIcon, ShipMenu } from '@ship-ui/core';
+import {
+  ShipAlert,
+  ShipButton,
+  ShipCard,
+  ShipDialog,
+  ShipDialogService,
+  ShipDivider,
+  ShipFormField,
+  ShipIcon,
+  ShipMenu,
+  ShipProgressBar,
+} from '@ship-ui/core';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { IDynamicModule } from '../../core/openapi';
+import { ConnectionStringsState } from '../../core/states/connection-strings.state';
 import { DestinationTypeOption } from '../../core/states/destinationconfig.state';
 import { BackupState } from '../backup.state';
 import { TestUrl } from '../source-data/target-url-dialog/test-url/test-url';
 import { DestinationListItemComponent } from './destination-list-item/destination-list-item.component';
 import { DestinationListComponent } from './destination-list/destination-list.component';
-import { getConfigurationByKey, getConfigurationByUrl } from './destination.config-utilities';
+import { getConfigurationByKey, getConfigurationByUrl, getSimplePath } from './destination.config-utilities';
 import { SingleDestinationComponent } from './single-destination/single-destination.component';
 
 const fb = new FormBuilder();
@@ -70,6 +82,9 @@ export type DestinationFormGroupValue = ReturnType<typeof createDestinationFormG
     ShipIcon,
     ShipDialog,
     ShipAlert,
+    ShipCard,
+    ShipDivider,
+    ShipProgressBar,
   ],
   templateUrl: './destination.component.html',
   styleUrl: './destination.component.scss',
@@ -80,7 +95,9 @@ export default class DestinationComponent {
   #route = inject(ActivatedRoute);
   #backupState = inject(BackupState);
   #dialog = inject(ShipDialogService);
+  #connectionStringsState = inject(ConnectionStringsState);
   injector = inject(Injector);
+  getSimplePath = getSimplePath;
 
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
   testUrlComponent = viewChild.required<TestUrl>('testUrl');
@@ -90,7 +107,12 @@ export default class DestinationComponent {
   targetUrlCtrl = signal<string | null>(null);
   targetUrlInitial = signal<string | null>(null);
   targetUrlDialogOpen = signal(false);
-  toggleNewDestination = signal(true);
+  showCustomList = signal(false);
+  saveConnectionString = this.#backupState.saveConnectionString;
+  isConnectionStringSaved = this.#backupState.isConnectionStringSaved;
+
+  destinations = this.#connectionStringsState.destinations;
+  isLoadingDestinations = this.#connectionStringsState.resourceDestinations.isLoading;
 
   isNew = this.#backupState.isNew;
 
@@ -150,8 +172,18 @@ export default class DestinationComponent {
     this.#backupState.setTargetUrl(`${key}://`, true);
   }
 
+  selectSavedDestination(option: any) {
+    if (!option.BaseUrl) return;
+    this.#backupState.setTargetUrl(option.BaseUrl, true, option.ID);
+  }
+
+  toggleCustomList() {
+    this.showCustomList.set(true);
+  }
+
   removeDestination() {
     this.#backupState.setTargetUrl(null, true);
+    this.showCustomList.set(false);
   }
 
   goBack() {

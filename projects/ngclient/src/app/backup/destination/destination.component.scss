@@ -84,3 +84,49 @@ form {
   justify-content: space-between;
   gap: p2r(8);
 }
+
+.loading-list {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(16);
+  align-items: center;
+  padding: p2r(64);
+
+  .text {
+    text-align: center;
+  }
+}
+
+.add-new {
+  display: flex;
+  align-items: center;
+  gap: p2r(24);
+  padding: p2r(24);
+  background: var(--base-1);
+  color: var(--primary-8);
+  cursor: pointer;
+
+  sh-icon {
+    font-size: p2r(40);
+    opacity: 0.8;
+  }
+}
+
+.actionable {
+  cursor: pointer;
+
+  &:hover {
+    --card-shp: 0;
+  }
+}
+
+.custom-list-header {
+  display: flex;
+  align-items: center;
+  gap: p2r(16);
+  margin-bottom: p2r(8);
+}
+
+.save-connection-string {
+  margin: p2r(16 0);
+}

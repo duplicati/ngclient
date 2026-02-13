@@ -1,6 +1,6 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
-import { ShipButton, ShipCard, ShipDialogService, ShipIcon, ShipProgressBar } from '@ship-ui/core';
+import { ShipButton, ShipCard, ShipDialogService, ShipIcon, ShipList, ShipProgressBar } from '@ship-ui/core';
 import LogsLiveComponent from '../about/logs/logs-live/logs-live.component';
 import { PauseDialogComponent } from '../core/components/status-bar/pause-dialog/pause-dialog.component';
 import { StatusBarState } from '../core/components/status-bar/status-bar.state';
@@ -23,6 +23,7 @@ import { StatusPageState } from './status.state';
     RelativeTimePipe,
     DatePipe,
     LogsLiveComponent,
+    ShipList,
   ],
   templateUrl: './status.component.html',
   styleUrl: './status.component.scss',

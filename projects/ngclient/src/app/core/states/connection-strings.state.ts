@@ -59,4 +59,11 @@ export class ConnectionStringsState {
   reload() {
     this.resourceDestinations.reload();
   }
+
+  updateBackups(id: number, backupIds: string[]) {
+    return this.#connectionStrings.postApiV2ConnectionStringByIdUpdateBackups({
+      id,
+      requestBody: { BackupIDs: backupIds },
+    });
+  }
 }

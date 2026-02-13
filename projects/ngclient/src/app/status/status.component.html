@@ -1,133 +1,223 @@
-<div class="status-page">
-  <!-- Progress Section -->
-  <sh-card>
-    <div class="progress-section">
-      <h2>{{ statusText() }}</h2>
-      <sh-progress-bar [value]="progress()"></sh-progress-bar>
-
-      <div class="stats-grid">
-        <div class="stat-item">
-          <span class="label">Files</span>
-          <span class="value">{{ statusData()?.ProcessedFileCount }} / {{ statusData()?.TotalFileCount }}</span>
-        </div>
-        <div class="stat-item">
-          <span class="label">Size</span>
-          <span class="value">
-            {{ statusData()?.ProcessedFileSize | bytes }} / {{ statusData()?.TotalFileSize | bytes }}
-          </span>
+<div class="status-page" [class.idle]="!isTaskRunning()">
+  @if (isTaskRunning()) {
+    <!-- Active Task Progress -->
+    <sh-card>
+      <div class="card-header">
+        <div class="header-titl-group">
+          <sh-icon class="header-icon">clock</sh-icon>
+          <h2>{{ statusText() }}</h2>
         </div>
       </div>
-    </div>
-  </sh-card>
 
-  <!-- Current File & Recent Files -->
-  <sh-card>
-    <div class="files-section">
-      <h3>Current File</h3>
-      <div class="current-file" *ngIf="statusData()?.CurrentFilename">
-        <div class="filename">{{ statusData()?.CurrentFilename }}</div>
-        <div class="filesize">{{ statusData()?.CurrentFilesize | bytes }}</div>
+      <div class="progress-content">
+        <div class="percentage-display">
+          <span class="percentage-value">{{ progress() | number: '1.0-0' }}%</span>
+        </div>
+
+        <sh-progress-bar [value]="progress()"></sh-progress-bar>
+
+        <sh-list>
+          <div item class="stat-item">
+            <span class="label">Files</span>
+            <span class="value">{{ statusData()?.ProcessedFileCount }} / {{ statusData()?.TotalFileCount }}</span>
+          </div>
+          <div item class="stat-item">
+            <span class="label">Size</span>
+            <span class="value">
+              {{ statusData()?.ProcessedFileSize | bytes }} / {{ statusData()?.TotalFileSize | bytes }}
+            </span>
+          </div>
+        </sh-list>
       </div>
+    </sh-card>
 
-      <h3>Recent Files</h3>
-      <div class="recent-files">
-        <div class="recent-file" *ngFor="let file of recentFiles()">
-          <span class="filename">{{ file.filename }}</span>
-          <span class="filesize">{{ file.filesize | bytes }}</span>
+    <!-- Activity & Files -->
+    <sh-card>
+      <div class="card-header">
+        <div class="header-titl-group">
+          <sh-icon class="header-icon">file</sh-icon>
+          <h3>Activity</h3>
         </div>
       </div>
-    </div>
-  </sh-card>
 
-  <!-- Transfer Speed & ETA -->
-  <sh-card>
-    <div class="speed-section">
-      <div class="speed-header">
-        <h3>Transfer Speed</h3>
+      <div class="files-content">
+        <div class="current-file-section" *ngIf="statusData()?.CurrentFilename">
+          <span class="label">Processing</span>
+          <sh-list class="current-file-list">
+            <div item class="file-item current">
+              <sh-icon>document</sh-icon>
+              <div class="file-details">
+                <span class="filename" [title]="statusData()?.CurrentFilename">
+                  {{ statusData()?.CurrentFilename }}
+                </span>
+                <span class="filesize">{{ statusData()?.CurrentFilesize | bytes }}</span>
+              </div>
+            </div>
+          </sh-list>
+        </div>
+
+        <div class="recent-files-section">
+          <span class="label" i18n>Recently Processed</span>
+
+          <sh-list class="recent-files-list">
+            @for (file of recentFiles(); track $index) {
+              <div class="file-item" item>
+                <span class="filename" [title]="file.filename">{{ file.filename }}</span>
+                <span class="filesize">{{ file.filesize | bytes }}</span>
+              </div>
+            }
+
+            @if (recentFiles().length === 0) {
+              <div class="empty-state" item i18n>No recent files</div>
+            }
+          </sh-list>
+        </div>
+      </div>
+    </sh-card>
+
+    <!-- Performance -->
+    <sh-card>
+      <div class="card-header">
+        <div class="header-titl-group">
+          <sh-icon class="header-icon">activity</sh-icon>
+          <h3>Performance</h3>
+        </div>
         <div class="aggregate-speed">{{ statusData()?.BackendSpeed | bytes }}/s</div>
       </div>
 
-      <div class="eta-info" *ngIf="etaData()">
-        <div class="eta-time">
-          ETA: {{ etaData()?.estimatedCompletion | date: 'mediumTime' }} ({{
-            etaData()?.estimatedCompletion | relativeTime
-          }})
-        </div>
-        <div class="speed-metrics">
-          <div>{{ etaData()?.currentFilesPerSecond | number: '1.1-1' }} files/s</div>
-          <div>{{ etaData()?.currentBytesPerSecond | bytes }}/s</div>
-        </div>
-      </div>
-
-      <div class="transfers-toggle">
-        <button shButton (click)="toggleTransfers()">
-          {{ transfersExpanded() ? 'Hide Details' : 'Show Details' }}
-        </button>
-      </div>
-
-      <div class="transfer-details" *ngIf="transfersExpanded()">
-        <div class="transfer-item" *ngFor="let transfer of statusData()?.ActiveTransfers">
-          <div class="transfer-info">
-            <span class="path">{{ transfer.BackendPath }}</span>
-            <span class="speed">{{ transfer.BackendSpeed | bytes }}/s</span>
+      <div class="performance-content">
+        <sh-list *ngIf="etaData()">
+          <div item class="eta-item">
+            <span class="label">ETA</span>
+            <span class="value">
+              {{ etaData()?.estimatedCompletion | date: 'mediumTime' }}
+              <span class="sub-text">({{ etaData()?.estimatedCompletion | relativeTime }})</span>
+            </span>
           </div>
-          <sh-progress-bar
-            [value]="((transfer.BackendFileProgress || 0) / (transfer.BackendFileSize || 1)) * 100"></sh-progress-bar>
+          <div item class="metric-item">
+            <span class="label">Files/s</span>
+            <span class="value">{{ etaData()?.currentFilesPerSecond | number: '1.1-1' }}</span>
+          </div>
+          <div item class="metric-item">
+            <span class="label">Upload Speed</span>
+            <span class="value">{{ etaData()?.currentBytesPerSecond | bytes }}/s</span>
+          </div>
+        </sh-list>
+
+        <div class="transfers-section">
+          <button shButton (click)="toggleTransfers()" class="toggle-btn" size="small" variant="ghost">
+            {{ transfersExpanded() ? 'Hide Details' : 'Show Details' }}
+          </button>
+
+          <div class="transfer-details" *ngIf="transfersExpanded()">
+            <sh-list>
+              <div class="transfer-item" *ngFor="let transfer of statusData()?.ActiveTransfers" item>
+                <div class="transfer-header">
+                  <span class="path" [title]="transfer.BackendPath">{{ transfer.BackendPath }}</span>
+                  <span class="speed">{{ transfer.BackendSpeed | bytes }}/s</span>
+                </div>
+                <sh-progress-bar
+                  class="mini-progress"
+                  [value]="
+                    ((transfer.BackendFileProgress || 0) / (transfer.BackendFileSize || 1)) * 100
+                  "></sh-progress-bar>
+              </div>
+            </sh-list>
+          </div>
         </div>
+      </div>
+    </sh-card>
+  } @else {
+    <!-- Idle / Ready State -->
+    <sh-card class="idle-hero-card">
+      <div class="idle-content">
+        <div class="status-visual">
+          <div class="complete-status">
+            <svg class="border-svg">
+              <circle class="border-circle" cx="50" cy="50" r="45" />
+            </svg>
+            <sh-icon class="status-icon" i18n>check-bold</sh-icon>
+          </div>
+        </div>
+
+        <div class="status-info">
+          <h2 i18n>System Ready</h2>
+          <p class="status-description" i18n>Waiting for the next scheduled backup task.</p>
+        </div>
+
+        <div class="idle-actions">
+          <button shButton (click)="pauseResume()" [variant]="clientIsRunning() ? 'primary' : 'secondary'">
+            <sh-icon>{{ clientIsRunning() ? 'pause' : 'play' }}</sh-icon>
+            {{ clientIsRunning() ? 'Pause Execution' : 'Resume Execution' }}
+          </button>
+        </div>
+      </div>
+    </sh-card>
+
+    <!-- Next Task Highlight (only in idle) -->
+    <sh-card class="next-task-hero" *ngIf="nextBackup()">
+      <div class="card-header">
+        <div class="header-titl-group">
+          <sh-icon class="header-icon">calendar</sh-icon>
+          <h3 i18n>Next Scheduled Task</h3>
+        </div>
+      </div>
+      <div class="next-task-content">
+        <div class="task-main">
+          <span class="task-name">{{ nextBackup().backup?.Name }}</span>
+          <div class="task-time-group">
+            <span class="task-time">{{ nextBackup().time | date: 'medium' }}</span>
+            <span class="task-relative">({{ nextBackup().time | relativeTime }})</span>
+          </div>
+        </div>
+        <sh-icon class="chevron">chevron-right</sh-icon>
+      </div>
+    </sh-card>
+
+    <!-- Server State Badge Card (only in idle) -->
+    <sh-card class="server-state-card">
+      <div class="state-content">
+        <span class="label" i18n>Server State</span>
+        <div class="state-line">
+          <span class="status-badge" [class.running]="clientIsRunning()">{{ serverState()?.ProgramState }}</span>
+          @if (!clientIsRunning()) {
+            <span class="warning-text" i18n>Backups are currently paused</span>
+          }
+        </div>
+      </div>
+    </sh-card>
+  }
+
+  <!-- Recent Activity (visible in both states but layout shifts) -->
+  <sh-card class="activity-card" *ngIf="!isTaskRunning() && recentFiles().length > 0">
+    <div class="card-header">
+      <div class="header-titl-group">
+        <sh-icon class="header-icon">history</sh-icon>
+        <h3 i18n>Recent Activity</h3>
       </div>
     </div>
+    <sh-list>
+      <div class="file-item" *ngFor="let file of recentFiles()" item>
+        <span class="filename" [title]="file.filename">{{ file.filename }}</span>
+        <span class="filesize">{{ file.filesize | bytes }}</span>
+      </div>
+    </sh-list>
   </sh-card>
 
-  <!-- Live Logs -->
-  <sh-card>
-    <div class="logs-section">
-      <h3>Live Logs</h3>
+  <!-- Logs (always visible) -->
+  <sh-card class="logs-card">
+    <div class="card-header">
+      <div class="header-titl-group">
+        <sh-icon class="header-icon">list</sh-icon>
+        <h3 i18n>Live Logs</h3>
+      </div>
+    </div>
+    <div class="logs-content">
       <app-logs-live
         [asSimpleList]="true"
         [polling]="isTaskRunning()"
         [whenFilter]="taskStartTime()?.getTime()"
         [backupIdFilter]="currentBackupId()"></app-logs-live>
-    </div>
-  </sh-card>
-
-  <!-- Server Status -->
-  <sh-card>
-    <div class="server-status-section">
-      <h3>Server Status</h3>
-
-      <div class="status-row">
-        <span class="label">State:</span>
-        <span class="value">{{ serverState()?.ProgramState }}</span>
-      </div>
-
-      <div class="status-row" *ngIf="nextBackup()">
-        <span class="label">Next Task:</span>
-        <div class="value">
-          <div>{{ nextBackup().backup?.Name }}</div>
-          <div class="sub-text">
-            {{ nextBackup().time | date: 'medium' }}
-            ({{ nextBackup().time | relativeTime }})
-          </div>
-        </div>
-      </div>
-
-      <div class="actions">
-        <button shButton (click)="pauseResume()">
-          <sh-icon>{{ clientIsRunning() ? 'pause' : 'play_arrow' }}</sh-icon>
-          {{ clientIsRunning() ? 'Pause' : 'Resume' }}
-        </button>
-
-        <ng-container *ngIf="isTaskRunning()">
-          <button shButton color="warn" (click)="stop()">
-            <sh-icon>stop</sh-icon>
-            Stop
-          </button>
-          <button shButton color="warn" (click)="abort()">
-            <sh-icon>close</sh-icon>
-            Abort
-          </button>
-        </ng-container>
-      </div>
     </div>
   </sh-card>
 </div>

@@ -54,7 +54,51 @@
   </header>
 
   @if (!hasDestination) {
-    <app-destination-list (setDestination)="setDestination($event)"></app-destination-list>
+    @if (!showCustomList()) {
+      @if (isLoadingDestinations()) {
+        <div class="loading-list">
+          <sh-progress-bar class="indeterminate primary"></sh-progress-bar>
+          <div class="text">
+            <h3 i18n>Loading destinations...</h3>
+          </div>
+        </div>
+      } @else {
+        <sh-card class="type-a actionable add-new" (click)="toggleCustomList()">
+          <sh-icon>plus-circle</sh-icon>
+          <div class="text">
+            <h3 i18n>Configure a new destination</h3>
+            <p i18n>Configure a one-off or new storage location.</p>
+          </div>
+        </sh-card>
+
+        @if (destinations().length > 0) {
+          <sh-divider i18n>Or select a saved destination</sh-divider>
+        }
+
+        @for (option of destinations(); track $index) {
+          <app-destination-list-item
+            class="actionable"
+            variant="type-a"
+            [targetUrl]="option.BaseUrl"
+            (click)="selectSavedDestination(option)">
+            <h3 displayName>{{ option.Name || option.BaseUrl }}</h3>
+            @if (option.Description) {
+              <p description>{{ option.Description }}</p>
+            } @else {
+              <p description>{{ getSimplePath(option.BaseUrl) }}</p>
+            }
+          </app-destination-list-item>
+        }
+      }
+    } @else {
+      <div class="custom-list-header">
+        <button shButton iconOnly variant="ghost" (click)="showCustomList.set(false)" type="button">
+          <sh-icon>arrow-left</sh-icon>
+        </button>
+        <h3 i18n>Select storage type</h3>
+      </div>
+      <app-destination-list (setDestination)="setDestination($event)"></app-destination-list>
+    }
   }
 
   @if (hasDestination) {

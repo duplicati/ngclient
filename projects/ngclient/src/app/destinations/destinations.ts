@@ -11,13 +11,18 @@ import {
 } from '@ship-ui/core';
 import { DestinationListItemComponent } from '../backup/destination/destination-list-item/destination-list-item.component';
 import { DestinationListComponent } from '../backup/destination/destination-list/destination-list.component';
-import { getConfigurationByKey, getConfigurationByUrl } from '../backup/destination/destination.config-utilities';
+import {
+  getConfigurationByKey,
+  getConfigurationByUrl,
+  getSimplePath,
+} from '../backup/destination/destination.config-utilities';
 import { SingleDestinationComponent } from '../backup/destination/single-destination/single-destination.component';
 import { TestState, TestUrl } from '../backup/source-data/target-url-dialog/test-url/test-url';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { ConnectionStringDto } from '../core/openapi';
 import { TestDestinationService } from '../core/services/test-destination.service';
+import { BackupsState } from '../core/states/backups.state';
 import { ConnectionStringsState } from '../core/states/connection-strings.state';
 
 @Component({
@@ -42,8 +47,15 @@ import { ConnectionStringsState } from '../core/states/connection-strings.state'
 })
 export default class Destinations {
   #connectionStringsState = inject(ConnectionStringsState);
+  #backupsState = inject(BackupsState);
   #testDestination = inject(TestDestinationService);
   #dialog = inject(ShipDialogService);
+  getSimplePath = getSimplePath;
+  backups = this.#backupsState.backups;
+
+  constructor() {
+    this.#backupsState.getBackups();
+  }
 
   isSaving = this.#connectionStringsState.isSaving;
   destinations = this.#connectionStringsState.destinations;
@@ -58,6 +70,15 @@ export default class Destinations {
   editName = signal<string | null>(null);
   editDescription = signal<string | null>(null);
   editBaseUrl = signal<string | null>(null);
+  initialBaseUrl = signal<string | null>(null);
+
+  isUrlChanged = computed(() => {
+    const editUrl = this.editBaseUrl();
+    const initialUrl = this.initialBaseUrl();
+
+    if (this.selectedDestination() === 'new') return true;
+    return editUrl !== initialUrl;
+  });
 
   testSignal = signal<TestState | null>(null);
   testResponse = computed(() => {
@@ -69,6 +90,22 @@ export default class Destinations {
 
     return null;
   });
+
+  getOutOfSyncBackupIds(option: ConnectionStringDto) {
+    if (!option.Backups) return [];
+
+    const backupsMap = new Map(this.backups().map((b) => [b.Backup?.ID, b.Backup]));
+    return option.Backups.filter((cb) => {
+      const backup = backupsMap.get(cb.ID);
+      return backup && backup.TargetURL !== option.BaseUrl;
+    })
+      .map((cb) => cb.ID)
+      .filter((id): id is string => !!id);
+  }
+
+  isOutOfSync(option: ConnectionStringDto) {
+    return this.getOutOfSyncBackupIds(option).length > 0;
+  }
 
   #resetTestOnUrlChange = effect(() => {
     this.editBaseUrl();
@@ -83,16 +120,19 @@ export default class Destinations {
       this.editName.set(null);
       this.editDescription.set(null);
       this.editBaseUrl.set(null);
+      this.initialBaseUrl.set(null);
     } else {
       this.editName.set(dest.Name);
       this.editDescription.set(dest.Description);
       this.editBaseUrl.set(dest.BaseUrl);
+      this.initialBaseUrl.set(dest.BaseUrl);
 
       this.#connectionStringsState.getById(dest.ID).subscribe((res) => {
         if (res.Data) {
           this.editName.set(res.Data.Name);
           this.editDescription.set(res.Data.Description);
           this.editBaseUrl.set(res.Data.BaseUrl ?? null);
+          this.initialBaseUrl.set(res.Data.BaseUrl ?? null);
         }
       });
     }
@@ -172,6 +212,30 @@ export default class Destinations {
     this.#connectionStringsState.save(selected, requestBody).subscribe(() => {
       this.selectedDestination.set(null);
       this.#connectionStringsState.reload();
+      this.#backupsState.getBackups(true);
+    });
+  }
+
+  updateBackupsSync(option: ConnectionStringDto, event: Event) {
+    event.stopPropagation();
+
+    const outOfSyncIds = this.getOutOfSyncBackupIds(option);
+
+    this.#dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: $localize`Update backups`,
+        message: $localize`Are you sure you want to update ${outOfSyncIds.length} backup(s) to use the current connection string?`,
+        confirmText: $localize`Update`,
+        cancelText: $localize`Cancel`,
+      },
+      closed: (res) => {
+        if (res) {
+          this.#connectionStringsState.updateBackups(option.ID, outOfSyncIds).subscribe(() => {
+            this.#connectionStringsState.reload();
+            this.#backupsState.getBackups(true);
+          });
+        }
+      },
     });
   }
 
