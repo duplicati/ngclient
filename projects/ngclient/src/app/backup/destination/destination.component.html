@@ -1,4 +1,5 @@
-@let hasDestination = !!targetUrlModel();
+@let currentTargets = targetUrls();
+@let hasDestination = currentTargets.length > 0;
 
 <form #formRef autocomplete="off" (submit)="next()">
   <div style="position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden">
@@ -7,54 +8,72 @@
   </div>
 
   <header>
-    <h3 class="title-30">
-      <span i18n>Backup destination</span>
-
-      <div class="actions">
-        @if (!hasDestination) {
-          <button shButton type="button" class="small" (click)="openTargetUrlDialog()" i18n>
-            <sh-icon>link</sh-icon>
-            Set target URL
-          </button>
-        } @else {
-          <sh-menu>
-            <button shButton type="button" class="small">
-              <sh-icon>dots-three-vertical</sh-icon>
-            </button>
-
-            <ng-container menu>
-              <button shButton type="button" class="small" (click)="openTargetUrlDialog()" i18n>
-                <sh-icon>link</sh-icon>
-                Edit target URL
+    @if (currentEditingIndex() !== null || (!showCustomList() && !isAddingNew())) {
+      @for (dest of currentTargets; track $index) {
+        @if (showCustomList() && currentEditingIndex() === $index) {
+          <sh-card class="destination-card type-c editing">
+            <div class="editing-header">
+              <h3 i18n>Change destination type</h3>
+              <button shButton class="small" (click)="closeCustomList()" type="button">
+                Cancel
+                <sh-icon>x-bold</sh-icon>
               </button>
-              @if (hasDestination) {
-                <button shButton type="button" class="small" (click)="copyTargetUrl()" i18n>
-                  <sh-icon>copy</sh-icon>
-                  Copy URL to clipboard
-                </button>
-              }
+            </div>
+            <app-destination-list (setDestination)="setDestination($event)"></app-destination-list>
+          </sh-card>
+        } @else {
+          <sh-toggle-card class="destination-card type-a" [disableToggle]="true" [isActive]="true">
+            <ng-container title>
+              <app-destination-list-item [targetUrl]="dest.url" [connectionStringId]="dest.connectionStringId">
+                <button shButton class="small" (click)="changeDestination($index)" type="button">Change</button>
+
+                <sh-menu class="actions" (click)="$event.stopPropagation()">
+                  <button shButton type="button" class="small icon-only">
+                    <sh-icon>dots-three-vertical</sh-icon>
+                  </button>
+
+                  <ng-container menu>
+                    <button shButton type="button" class="small" (click)="openTargetUrlDialog($index)" i18n>
+                      <sh-icon>link</sh-icon>
+                      Edit target URL
+                    </button>
+                    <button shButton type="button" class="small" (click)="copyTargetUrl($index)" i18n>
+                      <sh-icon>copy</sh-icon>
+                      Copy URL to clipboard
+                    </button>
+                    <button shButton type="button" class="small" (click)="removeDestination($index)" i18n>
+                      <sh-icon>trash</sh-icon>
+                      Remove
+                    </button>
+                  </ng-container>
+                </sh-menu>
+              </app-destination-list-item>
             </ng-container>
-          </sh-menu>
+
+            <app-test-url
+              #testUrl
+              [targetUrl]="dest.url"
+              (targetUrlChange)="updateTargetUrl($index, $event)"
+              [testSignal]="testStates()[$index] || null"
+              (testSignalChange)="updateTestState($index, $event)"
+              [connectionStringId]="dest.connectionStringId"
+              [suppressErrorDialogs]="false"
+              [askToCreate]="true"
+              [testExpectation]="isNew() ? 'destinationEmpty' : 'any'"
+              [moduleType]="'Backend'" />
+
+            <app-single-destination
+              [targetUrl]="dest.url"
+              (targetUrlChange)="updateTargetUrl($index, $event)"
+              [useBackupState]="true" />
+          </sh-toggle-card>
         }
-      </div>
-    </h3>
-
-    <app-test-url
-      #testUrl
-      [(targetUrl)]="targetUrlModel"
-      [(testSignal)]="testSignal"
-      [suppressErrorDialogs]="false"
-      [askToCreate]="true"
-      [testExpectation]="isNew() ? 'destinationEmpty' : 'any'"
-      [moduleType]="'Backend'"></app-test-url>
-
-    <app-destination-list-item [targetUrl]="targetUrlModel()" class="current-destination">
-      <button shButton i18n (click)="removeDestination()" type="button">Change</button>
-    </app-destination-list-item>
+      }
+    }
   </header>
 
-  @if (!hasDestination) {
-    @if (!showCustomList()) {
+  @if ((!hasDestination || showCustomList() || isAddingNew()) && currentEditingIndex() === null) {
+    @if (!showCustomList() && !hasDestination && !isAddingNew()) {
       @if (isLoadingDestinations()) {
         <div class="loading-list">
           <sh-progress-bar class="indeterminate primary"></sh-progress-bar>
@@ -90,9 +109,43 @@
           </app-destination-list-item>
         }
       }
+    } @else if (isAddingNew() && !showCustomList()) {
+      <div class="custom-list-header">
+        <button shButton iconOnly variant="ghost" (click)="closeCustomList()" type="button">
+          <sh-icon>arrow-left</sh-icon>
+          Back
+        </button>
+      </div>
+
+      <sh-card class="type-a actionable add-new" (click)="toggleCustomList()">
+        <sh-icon>plus-circle</sh-icon>
+        <div class="text">
+          <h3 i18n>Configure a new destination</h3>
+          <p i18n>Configure a one-off or new storage location.</p>
+        </div>
+      </sh-card>
+
+      @if (destinations().length > 0) {
+        <sh-divider i18n>Or select a saved destination</sh-divider>
+      }
+
+      @for (option of destinations(); track $index) {
+        <app-destination-list-item
+          class="actionable"
+          variant="type-a"
+          [targetUrl]="option.BaseUrl"
+          (click)="selectSavedDestination(option)">
+          <h3 displayName>{{ option.Name || option.BaseUrl }}</h3>
+          @if (option.Description) {
+            <p description>{{ option.Description }}</p>
+          } @else {
+            <p description>{{ getSimplePath(option.BaseUrl) }}</p>
+          }
+        </app-destination-list-item>
+      }
     } @else {
       <div class="custom-list-header">
-        <button shButton iconOnly variant="ghost" (click)="showCustomList.set(false)" type="button">
+        <button shButton iconOnly variant="ghost" (click)="closeCustomList()" type="button">
           <sh-icon>arrow-left</sh-icon>
         </button>
         <h3 i18n>Select storage type</h3>
@@ -101,8 +154,13 @@
     }
   }
 
-  @if (hasDestination) {
-    <app-single-destination [(targetUrl)]="targetUrlModel" [useBackupState]="true" />
+  @if (hasDestination && !showCustomList() && !isAddingNew()) {
+    <div class="add-destination-container">
+      <button shButton class="secondary" (click)="startAddingNew()" type="button">
+        <sh-icon>plus</sh-icon>
+        Add another destination
+      </button>
+    </div>
   }
 
   <div class="form-actions">
@@ -114,9 +172,9 @@
     <button
       shButton
       class="raised primary"
-      [class.loading]="testSignal() == 'testing'"
+      [class.loading]="isNew() && testStates().length > 0 && testStates()[0] === 'testing'"
       type="submit"
-      [disabled]="testSignal() == 'testing' || !hasDestination"
+      [disabled]="!hasDestination"
       i18n>
       <sh-icon>arrow-right</sh-icon>
       Continue

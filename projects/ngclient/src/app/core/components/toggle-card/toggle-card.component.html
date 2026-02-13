@@ -1,9 +1,9 @@
 <header>
   <div class="title">
-    <h3 (click)="disallowToggle() || toggle()">
+    <h3 (click)="disableToggle() || toggle()">
       <ng-content select="[title]">Title</ng-content>
 
-      @if (!disallowToggle()) {
+      @if (!disableToggle()) {
         <sh-icon>caret-down</sh-icon>
       }
     </h3>

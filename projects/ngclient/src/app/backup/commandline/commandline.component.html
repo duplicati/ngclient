@@ -62,7 +62,7 @@
         <input id="backup-name" formControlName="backup-name" />
       </sh-form-field>
 
-      <app-toggle-card [disallowToggle]="true">
+      <app-toggle-card [disableToggle]="true">
         <ng-container title i18n>Filters</ng-container>
         <ng-container content formGroupName="filters">
           @for (filterCtrl of standardFields.controls.filters.controls; track $index) {

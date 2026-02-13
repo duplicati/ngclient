@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { ShipCard, ShipCardVariant, ShipChip } from '@ship-ui/core';
+import { ConnectionStringsState } from '../../../core/states/connection-strings.state';
 import { DestinationTypeOption } from '../../../core/states/destinationconfig.state';
-import { getConfigurationByUrl } from '../destination.config-utilities';
+import { getConfigurationByUrl, getSimplePath } from '../destination.config-utilities';
 
 @Component({
   selector: 'app-destination-list-item',
@@ -14,6 +15,15 @@ export class DestinationListItemComponent {
   destination = input<DestinationTypeOption>();
   targetUrl = input<string | null>();
   variant = input<ShipCardVariant>('type-b');
+  connectionStringId = input<number | null>();
+
+  #connectionStringState = inject(ConnectionStringsState);
+
+  connectionString = computed(() => {
+    const id = this.connectionStringId();
+    if (id === null || id === undefined) return null;
+    return this.#connectionStringState.destinations().find((x) => x.ID === id);
+  });
 
   selectedDestinationType = computed(() => {
     const targetUrl = this.targetUrl();
@@ -41,4 +51,9 @@ export class DestinationListItemComponent {
     const destinationFromTargetUrl = this.destinationFromTargetUrl();
     return destination || destinationFromTargetUrl || null;
   });
+
+  getSimplePath(url: string | null | undefined) {
+    if (!url) return '';
+    return getSimplePath(url);
+  }
 }

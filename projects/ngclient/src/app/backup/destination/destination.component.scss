@@ -10,7 +10,7 @@
 header {
   display: flex;
   flex-direction: column;
-  gap: p2r(8);
+  gap: p2r(16);
 
   h2,
   sh-alert {
@@ -52,6 +52,7 @@ form {
 .form-actions {
   display: flex;
   justify-content: space-between;
+  padding-bottom: p2r(24);
 }
 
 .most-common-destinations {
@@ -129,4 +130,60 @@ form {
 
 .save-connection-string {
   margin: p2r(16 0);
+}
+
+sh-card.destination-card {
+  padding: p2r(24);
+}
+
+.destination-card {
+  position: relative;
+  overflow: visible;
+
+  app-destination-list-item {
+    width: 100%;
+  }
+
+  .card-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+    h3 {
+      font: var(--title-30);
+      margin: 0;
+    }
+
+    .actions {
+      // Reset position from absolute since we are inside header content now
+      position: static;
+      transform: none;
+    }
+  }
+
+  .editing-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: p2r(16);
+
+    h3 {
+      font: var(--paragraph-10);
+      margin: 0;
+    }
+  }
+
+  sh-toggle-card {
+    ::ng-deep .header {
+      // Ensure header content takes full width
+      width: 100%;
+    }
+  }
+}
+
+.actions {
+  // Legacy actions style removal or update if needed
+  display: flex;
+  gap: p2r(8);
 }

@@ -2,7 +2,7 @@ import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { ShipDialogService } from '@ship-ui/core';
-import { finalize } from 'rxjs';
+import { finalize, map, Observable, of, switchMap, tap } from 'rxjs';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import { splitSize } from '../core/components/size/size.component';
 import {
@@ -17,9 +17,10 @@ import {
 } from '../core/openapi';
 import { TimespanLiteralsService } from '../core/services/timespan-literals.service';
 import { parseRecursiveObjectOfSignals } from '../core/signals/parse-recursive-signals-object';
+import { ConnectionStringsState } from '../core/states/connection-strings.state';
 import { SysinfoState } from '../core/states/sysinfo.state';
 import { ServerSettingsService } from '../settings/server-settings.service';
-import { FormView } from './destination/destination.config-utilities';
+import { FormView, getConfigurationByUrl } from './destination/destination.config-utilities';
 import { createGeneralForm, NONE_OPTION } from './general/general.component';
 import { RetentionType } from './options/options.component';
 import {
@@ -42,6 +43,7 @@ export class BackupState {
   #dupServer = inject(DuplicatiServer);
   #serverSettings = inject(ServerSettingsService);
   #timespanLiteralService = inject(TimespanLiteralsService);
+  #connectionStringsState = inject(ConnectionStringsState);
 
   generalForm = createGeneralForm();
   sourceDataForm = createSourceDataForm();
@@ -56,9 +58,13 @@ export class BackupState {
     backupRetentionCustom: signal(''),
   };
 
-  targetUrlModel = signal<string | null>(null);
+  targetUrls = signal<{ url: string; connectionStringId: number | null }[]>([]);
+  targetUrlModel = computed(() => this.targetUrls()[0]?.url ?? null);
+  connectionStringId = computed(() => this.targetUrls()[0]?.connectionStringId ?? null);
+
   targetUrlTestSignal = signal<TestState>(null);
   backupMetadata = signal<Record<string, string> | null>(null);
+  saveConnectionString = signal(true);
 
   isDraft = signal(false);
   backupId = signal<'new' | 'string' | null>(null);
@@ -70,6 +76,12 @@ export class BackupState {
   isNew = computed(() => this.backupId() === 'new');
   shouldAutoSave = computed(() => !this.isDraft() && !this.isNew());
   osType = computed(() => this.#sysinfo.systemInfo()?.OSType);
+
+  isConnectionStringSaved = computed(() => {
+    const targetUrl = this.targetUrlModel();
+    if (!targetUrl) return false;
+    return this.#connectionStringsState.destinations().some((d) => d.BaseUrl === targetUrl);
+  });
 
   selectedOptions = signal<FormView[]>([]);
 
@@ -94,6 +106,22 @@ export class BackupState {
 
     if (testSignalValue === 'testing' || lastTargetUrl === null || lastTargetUrl === newUrl) return;
     this.#testSignal.set(null);
+  });
+
+  #clearConnectionStringIdEffect = effect(() => {
+    const targetUrl = this.targetUrlModel();
+    const existingId = this.connectionStringId();
+
+    if (existingId) {
+      const destinations = this.#connectionStringsState.destinations();
+      if (destinations.length === 0) return;
+
+      const match = destinations.find((d) => d.ID === existingId);
+      if (!match || match.BaseUrl !== targetUrl) {
+        // This effect might need rethinking or we just handle it via the update methods now
+        // avoiding side-effects on the signal array for now to prevent infinite loops if not careful
+      }
+    }
   });
 
   setTestState(state: TestState) {
@@ -123,37 +151,61 @@ export class BackupState {
   submit(withoutExit = false) {
     this.isSubmitting.set(true);
 
-    const backup = this.#mapFormsToBackup();
-    const backupId = this.backupId();
+    this.#saveConnectionStringIfNeeded()
+      .pipe(
+        switchMap((csId) => {
+          const backup = this.#mapFormsToBackup();
+          const backupId = this.backupId();
 
-    if (this.isDraft() && backup.Backup) backup.Backup.Metadata = this.backupMetadata();
+          // We don't set ConnectionStringID directly on the first anymore, as we have the array now
+          // Validation/Mapping should handle the structure
 
-    if (backupId === 'new' || !backupId || this.isDraft()) {
-      this.#dupServer
-        .postApiV1Backups({
-          requestBody: backup,
-        })
-        .pipe(finalize(() => this.isSubmitting.set(false)))
-        .subscribe({
-          next: () => {
-            if (!withoutExit) this.exit(false);
-          },
-          error: () => {},
-        });
-    } else {
-      this.#dupServer
-        .putApiV1BackupById({
-          id: backupId,
-          requestBody: backup,
-        })
-        .pipe(finalize(() => this.isSubmitting.set(false)))
-        .subscribe({
-          next: () => {
-            if (!withoutExit) this.exit(false);
-          },
-          error: () => {},
-        });
-    }
+          const anyBackup = backup as any;
+          if (anyBackup.Backup) {
+            // Ensure TargetURLs is set
+            anyBackup.Backup.TargetURLs = this.targetUrls();
+
+            // Backwards compatibility for the first one for API that might still look at it?
+            // But usually we just sent the array.
+            // Assuming backend handles TargetURLs taking precedence if present.
+
+            // Also need to handle connection string ID saving logic for *all* of them?
+            // The #saveConnectionStringIfNeeded only handles the FIRST one currently (legacy)
+            // For now keeping it simple as per plan.
+            if (csId) {
+              if (anyBackup.Backup.TargetURLs.length > 0) {
+                anyBackup.Backup.TargetURLs[0].connectionStringId = csId;
+              }
+              backup.Backup.ConnectionStringID = csId;
+            } else if (!this.saveConnectionString()) {
+              backup.Backup.ConnectionStringID = undefined;
+              if (anyBackup.Backup.TargetURLs.length > 0) {
+                anyBackup.Backup.TargetURLs[0].connectionStringId = null;
+              }
+            }
+          }
+
+          if (this.isDraft() && backup.Backup) backup.Backup.Metadata = this.backupMetadata();
+
+          if (backupId === 'new' || !backupId || this.isDraft()) {
+            return this.#dupServer.postApiV1Backups({
+              requestBody: backup,
+            });
+          } else {
+            return this.#dupServer.putApiV1BackupById({
+              id: backupId,
+              requestBody: backup,
+            });
+          }
+        }),
+        finalize(() => this.isSubmitting.set(false))
+      )
+      .subscribe({
+        next: () => {
+          if (!withoutExit) this.exit(false);
+        },
+        error: () => {},
+      });
   }
 
   validateBeforeSubmit() {
@@ -183,8 +235,11 @@ export class BackupState {
       return 'general';
     }
 
-    const targetUrl = this.targetUrlModel() ?? '';
-    if (targetUrl.trim() === '') {
+    const targetUrls = this.targetUrls();
+    // Validate that at least one target URL exists and is not empty
+    const hasValidDestination = targetUrls.length > 0 && targetUrls.some((t) => t.url.trim() !== '');
+
+    if (!hasValidDestination) {
       this.#dialog.open(ConfirmDialogComponent, {
         data: {
           title: $localize`Destination required`,
@@ -261,7 +316,23 @@ export class BackupState {
   }
 
   mapDestinationToForm(backup: BackupDto) {
-    this.targetUrlModel.set(backup.TargetURL ?? '');
+    const anyBackup = backup as any;
+    const targetUrls = anyBackup.TargetURLs as { url: string; connectionStringId: number | null }[];
+
+    if (targetUrls && targetUrls.length > 0) {
+      this.targetUrls.set(targetUrls);
+    } else {
+      // Legacy or empty
+      const url = backup.TargetURL ?? '';
+      const csId = backup.ConnectionStringID ?? null;
+      if (url) {
+        this.targetUrls.set([{ url, connectionStringId: csId }]);
+      } else {
+        this.targetUrls.set([]);
+      }
+    }
+
+    if (backup.ConnectionStringID) this.saveConnectionString.set(false);
   }
 
   mapGeneralToForm(backup: BackupDto) {
@@ -433,7 +504,9 @@ export class BackupState {
     const scheduleFormValue = this.getScheduleFormValue();
     const sourceDataFormValue = this.sourceDataForm.value;
 
-    const targetUrl = this.targetUrlModel();
+    const targetUrls = this.targetUrls();
+    const firstTarget = targetUrls[0]; // Legacy support for TargetURL field
+    const targetUrl = firstTarget?.url ?? null;
 
     const pathFilters = sourceDataFormValue.path?.split('\0') ?? [];
     const settings = this.mapFormsToSettings();
@@ -462,6 +535,7 @@ export class BackupState {
         Name: generalFormValue.name,
         Description: generalFormValue.description,
         TargetURL: targetUrl ?? null,
+        ConnectionStringID: firstTarget?.connectionStringId ?? null,
         Sources: pathFilters.filter((x) => !(x.startsWith('-') || x.startsWith('+'))),
         Settings: settings,
         Filters: pathFilters
@@ -580,6 +654,41 @@ export class BackupState {
     return [...encryption, ...compression, ...optionFields, ...settings];
   }
 
+  #saveConnectionStringIfNeeded(): Observable<number | null> {
+    const targetUrl = this.targetUrlModel();
+    if (!targetUrl) return of(null);
+
+    const match = this.#connectionStringsState.destinations().find((d) => d.BaseUrl === targetUrl);
+    if (match) {
+      this.updateTargetUrl(0, targetUrl, match.ID);
+      return of(match.ID);
+    }
+
+    if (!this.saveConnectionString()) return of(null);
+
+    const existingDestinations = this.#connectionStringsState.destinations();
+    const config = getConfigurationByUrl(targetUrl);
+    const typeName = config?.displayName ?? 'Destination';
+    const existingCount = existingDestinations.filter((d) => d.Name?.startsWith(typeName)).length;
+    const name = `${typeName} #${existingCount + 1}`;
+
+    const requestBody = {
+      Name: name,
+      Description: null,
+      BaseUrl: targetUrl,
+    };
+
+    return this.#connectionStringsState.save('new', requestBody).pipe(
+      map((res) => res.Data?.ID ?? null),
+      tap((id) => {
+        if (id) {
+          this.updateTargetUrl(0, targetUrl, id);
+          this.#connectionStringsState.reload();
+        }
+      })
+    );
+  }
+
   #evaluateTimeString(t: string | undefined) {
     if (!t || t?.indexOf('T') === -1) {
       return {
@@ -595,10 +704,41 @@ export class BackupState {
     };
   }
 
-  setTargetUrl(targetUrl: string | null, resetLastTargetUrl = false) {
+  setTargetUrl(targetUrl: string | null, resetLastTargetUrl = false, connectionStringId: number | null = null) {
     if (resetLastTargetUrl) this.#lastTargetUrl = null;
 
-    this.targetUrlModel.set(targetUrl);
+    if (targetUrl === null) {
+      this.targetUrls.set([]);
+      return;
+    }
+
+    this.targetUrls.update((urls) => {
+      const newUrls = [...urls];
+      if (newUrls.length === 0) {
+        newUrls.push({ url: targetUrl, connectionStringId });
+      } else {
+        newUrls[0] = { url: targetUrl, connectionStringId };
+      }
+      return newUrls;
+    });
+  }
+
+  // Helpers for array manipulation
+  addTargetUrl(url: string, connectionStringId: number | null) {
+    this.targetUrls.update((urls) => [...urls, { url, connectionStringId }]);
+  }
+
+  updateTargetUrl(index: number, url: string, connectionStringId: number | null) {
+    this.targetUrls.update((urls) => {
+      if (index < 0 || index >= urls.length) return urls;
+      const newUrls = [...urls];
+      newUrls[index] = { url, connectionStringId };
+      return newUrls;
+    });
+  }
+
+  removeTargetUrl(index: number) {
+    this.targetUrls.update((urls) => urls.filter((_, i) => i !== index));
   }
 
   #resetAllForms() {
@@ -608,6 +748,6 @@ export class BackupState {
     this.optionsFields.remoteVolumeSize.set('50MB');
     this.optionsFields.backupRetention.set('all');
     this.settings.set([]);
-    this.targetUrlModel.set(null);
+    this.targetUrls.set([]);
   }
 }

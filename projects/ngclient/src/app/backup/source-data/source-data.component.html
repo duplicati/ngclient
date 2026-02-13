@@ -23,7 +23,7 @@
   </div>
 
   <div class="right">
-    <app-toggle-card [disallowToggle]="true">
+    <app-toggle-card [disableToggle]="true">
       <ng-container title>
         <span i18n>Paths</span>
         <div class="spacer"></div>
@@ -122,7 +122,7 @@
       </div>
     </app-toggle-card>
 
-    <app-toggle-card [disallowToggle]="true">
+    <app-toggle-card [disableToggle]="true">
       <ng-container title>
         <span i18n>Filters</span>
         <div class="spacer"></div>
@@ -180,7 +180,7 @@
       }
     </app-toggle-card>
 
-    <app-toggle-card formGroupName="excludes" [disallowToggle]="true">
+    <app-toggle-card formGroupName="excludes" [disableToggle]="true">
       <ng-container title i18n>Exclude</ng-container>
       <p description i18n>Choose if there’s any files you want to exclude.</p>
 

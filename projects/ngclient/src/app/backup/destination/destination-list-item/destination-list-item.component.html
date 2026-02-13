@@ -1,4 +1,5 @@
 @let item = destinationItem();
+@let connectionStringItem = connectionString();
 
 @if (item) {
   <sh-card [variant]="variant()">
@@ -8,7 +9,13 @@
 
     <div class="name">
       <div class="projected"><ng-content select="[displayName]"></ng-content></div>
-      <div class="default">{{ item.displayName }}</div>
+      <div class="default">
+        @if (connectionStringItem && connectionStringItem.Name) {
+          {{ connectionStringItem.Name }}
+        } @else {
+          {{ item.displayName }}
+        }
+      </div>
 
       @if ((item.sortOrder ?? 0) == -2) {
         <sh-chip class="small simple primary">Special</sh-chip>
@@ -19,7 +26,15 @@
 
     <div class="description">
       <div class="projected"><ng-content select="[description]"></ng-content></div>
-      <div class="default">{{ item.description }}</div>
+      <div class="default">
+        @let path = getSimplePath(connectionStringItem?.BaseUrl);
+
+        @if (path && path.length > 0) {
+          {{ path }}
+        } @else {
+          {{ item.description }}
+        }
+      </div>
     </div>
 
     <div class="actions">
