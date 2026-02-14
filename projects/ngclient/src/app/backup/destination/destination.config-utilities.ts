@@ -287,15 +287,6 @@ export function fromTargetPath(targetPath: string) {
 
   if (!path) return null;
 
-  // Only local files allow the shortcut file paths like file://%MUSIC%/music.mp3 to music folder
-  if (path.startsWith('%') && destinationType === 'file') {
-    return getConfigurationByKey(destinationType).mapper.from(
-      destinationType,
-      new UrlLike('http://localhost'),
-      targetPath
-    );
-  }
-
   const config = getConfigurationByUrl(targetPath);
 
   // Previous versions used 's' postfix as shorthand for enabling SSL (e.g. ftps, webdavs, etc.)
@@ -311,6 +302,16 @@ export function fromTargetPath(targetPath: string) {
   if (destinationType === 'file' && path.indexOf('?') !== -1) {
     extraQuery += extraQuery.indexOf('?') === -1 ? '?' : '&';
     extraQuery += path.split('?')[1] ?? '';
+  }
+
+  // Only local files allow the shortcut file paths like file://%MUSIC%/music.mp3 to music folder
+  // Avoid hitting UNC paths that encode \\ as %5C%5C
+  if (destinationType === 'file' && path.startsWith('%') && !path.startsWith('%5C')) {
+    return getConfigurationByKey(destinationType).mapper.from(
+      destinationType,
+      new UrlLike('http://localhost' + extraQuery),
+      targetPath
+    );
   }
 
   try {

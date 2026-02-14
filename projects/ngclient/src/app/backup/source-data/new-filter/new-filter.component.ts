@@ -230,7 +230,6 @@ export class NewFilterComponent {
       this.pathType.set(`${direction}Expression`);
       this.internalPath.set(x);
     }
-    console.log('Path effect ran', { newPath, pathType: this.pathType(), internalPath: this.internalPath() });
   });
 
   updateFilter() {
