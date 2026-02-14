@@ -65,16 +65,32 @@ const EXPRESSION_OPTIONS: ExpressionTypeMap[] = [
     value: '-FolderName',
   },
   {
+    key: 'Includes folders where name contains',
+    value: '+FolderName',
+  },
+  {
     key: 'Excludes folder',
     value: '-Folder',
+  },
+  {
+    key: 'Includes folder',
+    value: '+Folder',
   },
   {
     key: 'Excludes files where name contains',
     value: '-FileName',
   },
   {
+    key: 'Includes files where name contains',
+    value: '+FileName',
+  },
+  {
     key: 'Excludes file extension',
     value: '-Extension',
+  },
+  {
+    key: 'Include file extension',
+    value: '+Extension',
   },
   {
     key: 'Excludes files where name matches regex',
@@ -87,6 +103,10 @@ const EXPRESSION_OPTIONS: ExpressionTypeMap[] = [
   {
     key: 'Exclude file groups',
     value: '-FileGroup',
+  },
+  {
+    key: 'Include file groups',
+    value: '+FileGroup',
   },
   {
     key: 'Includes expression',
@@ -210,6 +230,7 @@ export class NewFilterComponent {
       this.pathType.set(`${direction}Expression`);
       this.internalPath.set(x);
     }
+    console.log('Path effect ran', { newPath, pathType: this.pathType(), internalPath: this.internalPath() });
   });
 
   updateFilter() {
