@@ -104,6 +104,7 @@ export type DestinationConfigEntry = {
   displayName: string;
   description: string;
   icon: string;
+  isNonFree?: boolean;
   customKey?: string;
   oauthField?: string;
   searchTerms?: string;

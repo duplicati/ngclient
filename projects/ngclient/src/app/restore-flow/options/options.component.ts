@@ -13,12 +13,12 @@ const fb = new FormBuilder();
 
 export const createRestoreOptionsForm = () => {
   return fb.group({
-    restoreFrom: fb.control<'original' | 'pickLocation' | 'same-o365' | 'other-o365'>('original'),
+    restoreFrom: fb.control<'original' | 'pickLocation' | 'same-custom' | 'other-custom'>('original'),
     restoreFromPath: fb.control<string>(''),
     handleExisting: fb.control<'overwrite' | 'saveTimestamp'>('saveTimestamp'),
     permissions: fb.control<boolean>(false),
     includeMetadata: fb.control<boolean>(true),
-    officeIgnoreExisting: fb.control<boolean>(false),
+    customRemoteIgnoreExisting: fb.control<boolean>(false),
   });
 };
 
@@ -41,70 +41,82 @@ export default class OptionsComponent {
   isSubmitting = this.#restoreFlowState.isSubmitting;
   extendedData = this.#restoreFlowState.extendedDataType;
 
-  office365CustomTargetUrl = signal<string | null>(null);
+  remoteCustomTargetUrl = signal<string | null>(null);
   backupId = computed(() => this.#restoreFlowState.backup()?.Backup?.ID ?? null);
-  hasOffice365Data = computed(() => this.extendedData() === 'o365');
+  extendedDataType = computed(() => {
+    const type = this.#restoreFlowState.extendedDataType();
+    if (type === 'o365') {
+      return 'o365';
+    } else if (type === 'gsuite') {
+      return 'gsuite';
+    }
+    return null;
+  });
 
-  office365SourceEntry = computed(
+  remoteCustomSourceEntry = computed(
     () =>
       this.#restoreFlowState
         .backup()
-        ?.Backup?.Sources?.filter((x) => x.startsWith('@') && x.includes('|office365'))[0] ?? null
+        ?.Backup?.Sources?.filter(
+          (x) => x.startsWith('@') && (x.includes('|office365://') || x.includes('|googleworkspace://'))
+        )[0] ?? null
   );
 
-  office365SourceUrl = computed(() => this.office365SourceEntry()?.split('|')[1] ?? null);
-  office365SourcePrefix = computed(() => this.office365SourceEntry()?.split('|')[0] ?? null);
+  remoteCustomSourceUrl = computed(() => this.remoteCustomSourceEntry()?.split('|')[1] ?? null);
+  remoteCustomSourcePrefix = computed(() => this.remoteCustomSourceEntry()?.split('|')[0] ?? null);
 
-  office365destinationUrl = computed(() => {
+  customDestinationUrl = computed(() => {
     const mode = this.optionsFormSignal()?.restoreFrom;
-    const hasO365Data = this.hasOffice365Data();
+    const hasExtendedData = this.extendedDataType() !== null;
 
-    if (mode === 'same-o365' && hasO365Data) {
-      return this.office365SourceUrl();
-    } else if (mode === 'other-o365' && hasO365Data) {
-      return this.office365CustomTargetUrl();
+    if (mode === 'same-custom' && hasExtendedData) {
+      return this.remoteCustomSourceUrl();
+    } else if (mode === 'other-custom' && hasExtendedData) {
+      return this.remoteCustomTargetUrl();
     }
 
     return null;
   });
 
-  showOffice365RestoreTree = computed(() => {
-    if (this.optionsFormSignal()?.restoreFrom === 'same-o365' && this.office365destinationUrl() && this.backupId()) {
+  showCustomRemoteRestoreTree = computed(() => {
+    if (this.optionsFormSignal()?.restoreFrom === 'same-custom' && this.customDestinationUrl() && this.backupId()) {
       return true;
     }
-    if (this.optionsFormSignal()?.restoreFrom === 'other-o365' && this.office365destinationUrl()) {
+    if (this.optionsFormSignal()?.restoreFrom === 'other-custom' && this.customDestinationUrl()) {
       return true;
     }
     return false;
   });
 
-  isOffice365Restore = computed(() => {
+  isCustomRemoteRestore = computed(() => {
     const mode = this.optionsFormSignal()?.restoreFrom;
-    return mode === 'same-o365' || mode === 'other-o365';
+    return mode === 'same-custom' || mode === 'other-custom';
   });
 
-  chooseOfficeTenant() {
+  chooseCustomRemoteDestination() {
+    const defaultUrlPrefix = this.extendedDataType() === 'o365' ? 'office365://' : 'googleworkspace://';
+
     const dialogRef = this.#dialog.open(TargetUrlDialog, {
       maxWidth: '700px',
       maxHeight: '80vh',
       width: '100%',
       closeOnOutsideClick: false,
       data: {
-        targetUrlModel: this.office365CustomTargetUrl() || this.office365SourceUrl() || 'office365://',
+        targetUrlModel: this.remoteCustomTargetUrl() || this.remoteCustomSourceUrl() || defaultUrlPrefix,
         moduleType: 'RestoreDestinationProvider',
         askToCreate: true,
         expectedResult: 'any',
         suppressErrorDialogs: true,
         backupId: this.backupId(),
-        sourcePrefix: this.office365SourcePrefix(),
+        sourcePrefix: this.remoteCustomSourcePrefix(),
       },
     });
 
     dialogRef.closed.subscribe((targetUrl) => {
       if (!targetUrl) return;
 
-      this.office365CustomTargetUrl.set(targetUrl);
-      this.optionsForm.controls.restoreFrom.setValue('other-o365');
+      this.remoteCustomTargetUrl.set(targetUrl);
+      this.optionsForm.controls.restoreFrom.setValue('other-custom');
     });
     return false;
   }
@@ -112,12 +124,12 @@ export default class OptionsComponent {
   // Handle default selection changes based on data type
   #selectDefaultRestoreModeEffect = effect(() => {
     const mode = this.optionsFormSignal()?.restoreFrom;
-    if (this.hasOffice365Data() && (mode === 'original' || mode === undefined)) {
+    if (this.extendedDataType() != null && (mode === 'original' || mode === undefined)) {
       this.optionsForm.controls.restoreFrom.setValue('pickLocation');
       this.optionsForm.controls.handleExisting.setValue('overwrite');
     }
 
-    if (!this.hasOffice365Data() && (mode === 'same-o365' || mode === 'other-o365')) {
+    if (this.extendedDataType() == null && (mode === 'same-custom' || mode === 'other-custom')) {
       this.optionsForm.controls.restoreFrom.setValue('original');
       this.optionsForm.controls.handleExisting.setValue('saveTimestamp');
     }
@@ -148,10 +160,11 @@ export default class OptionsComponent {
       }
     }
 
-    const restoreToOffice365 =
-      this.optionsFormSignal()?.restoreFrom === 'same-o365' || this.optionsFormSignal()?.restoreFrom === 'other-o365';
+    const restoreToCustomRemote =
+      this.optionsFormSignal()?.restoreFrom === 'same-custom' ||
+      this.optionsFormSignal()?.restoreFrom === 'other-custom';
 
-    if (restoreToOffice365) {
+    if (restoreToCustomRemote) {
       let path = this.optionsFormSignal()?.restoreFromPath;
       if (path && path.startsWith('/')) {
         path = path.substring(1);
@@ -161,7 +174,10 @@ export default class OptionsComponent {
         this.#dialog.open(ConfirmDialogComponent, {
           data: {
             title: $localize`No path specified`,
-            message: $localize`Please choose a path to restore to in the Office 365 tenant.`,
+            message:
+              this.extendedDataType() === 'gsuite'
+                ? $localize`Please choose a path to restore to in the Google Workspace account.`
+                : $localize`Please choose a path to restore to in the Office 365 tenant.`,
             confirmText: $localize`OK`,
             cancelText: undefined,
           },
@@ -169,10 +185,13 @@ export default class OptionsComponent {
         return;
       }
 
-      const checkForExisting = this.optionsFormSignal()?.officeIgnoreExisting;
+      const checkForExisting = this.optionsFormSignal()?.customRemoteIgnoreExisting;
 
-      const queryParams = this.office365destinationUrl()?.substring(this.office365destinationUrl()!.indexOf('?'));
-      const restorePath = `@office365://${path}${queryParams}&office365-ignore-existing=${checkForExisting ? 'true' : 'false'}`;
+      const queryParams = this.customDestinationUrl()?.substring(this.customDestinationUrl()!.indexOf('?'));
+      const restorePath =
+        this.extendedDataType() === 'gsuite'
+          ? `@googleworkspace://${path}${queryParams}&google-ignore-existing=${checkForExisting ? 'true' : 'false'}`
+          : `@office365://${path}${queryParams}&office365-ignore-existing=${checkForExisting ? 'true' : 'false'}`;
       this.#restoreFlowState.setAlternateRestorePath(restorePath);
       this.optionsForm.controls.includeMetadata.setValue(true);
       this.optionsForm.controls.permissions.setValue(true);

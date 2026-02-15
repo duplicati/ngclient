@@ -2203,6 +2203,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     displayName: $localize`Microsoft Office 365`,
     description: $localize`Create backups of Microsoft Office 365 data.`,
     icon: 'assets/dest-icons/office365.png',
+    isNonFree: true,
     dynamicFields: [
       {
         name: 'auth-username',
@@ -2232,6 +2233,56 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       to: (fields: ValueOfDestinationFormGroup): string => {
         const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
         return `office365://${urlParams}`;
+      },
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
+        const { advanced, dynamic } = fromSearchParams(destinationType, urlObj);
+        return <ValueOfDestinationFormGroup>{
+          destinationType,
+          advanced: {
+            ...advanced,
+          },
+          dynamic: {
+            ...dynamic,
+          },
+        };
+      },
+    },
+  },
+  {
+    key: 'googleworkspace',
+    displayName: $localize`Google Workspace`,
+    description: $localize`Create backups of Google Workspace data.`,
+    icon: 'assets/dest-icons/googleworkspace.png',
+    isNonFree: true,
+    dynamicFields: [
+      {
+        name: 'google-admin-email',
+        type: 'Email',
+        shortDescription: $localize`Admin Email`,
+        longDescription: $localize`Email address of the Google Workspace admin user.`,
+        isMandatory: true,
+      },
+      {
+        name: 'google-service-account-json',
+        type: 'FreeText',
+        shortDescription: $localize`Service account JSON`,
+        longDescription: $localize`Paste the service account JSON here.`,
+        isMandatory: true,
+      },
+    ],
+    advancedFields: [
+      {
+        name: 'google-service-account-file',
+        type: 'FileTree',
+        accepts: '.json,',
+        shortDescription: $localize`Service account JSON file`,
+        longDescription: $localize`Pick the path to a file with service account JSON.`,
+      },
+    ],
+    mapper: {
+      to: (fields: ValueOfDestinationFormGroup): string => {
+        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
+        return `googleworkspace://${urlParams}`;
       },
       from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         const { advanced, dynamic } = fromSearchParams(destinationType, urlObj);

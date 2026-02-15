@@ -1,4 +1,4 @@
-@if (!multiSelect() && !office365Mode()) {
+@if (!multiSelect() && customRemoteMode() === null) {
   <sh-button-group class="type-b small">
     <button
       type="button"
@@ -88,7 +88,7 @@
   </div>
 
   <div class="footer">
-    @if (!accepts() && !isByBackupSettings() && !office365Mode()) {
+    @if (!accepts() && !isByBackupSettings() && customRemoteMode() === null) {
       <sh-toggle
         [class.active]="_showHiddenNodes()"
         class="primary raised browse-files-toggle"
@@ -98,7 +98,7 @@
       </sh-toggle>
     }
 
-    @if (enableCreateFolder() && !office365Mode()) {
+    @if (enableCreateFolder() && customRemoteMode() === null) {
       <button
         shButton
         type="button"

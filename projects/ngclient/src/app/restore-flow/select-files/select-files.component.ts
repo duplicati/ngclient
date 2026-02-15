@@ -189,6 +189,7 @@ export default class SelectFilesComponent {
             Paths: null,
             PageSize: 0, // TODO: Add pagination support
             Page: 0,
+            ReturnExtended: true,
           },
         })
         .pipe(
@@ -201,6 +202,11 @@ export default class SelectFilesComponent {
         )
         .subscribe({
           next: (res) => {
+            const extType = (res.Data ?? []).find(
+              (x) => x.Metadata && x.Metadata['ExtType'] && x.Metadata['ExtType'].length > 0
+            );
+            if (extType) this.extendedDataType.set(extType.Metadata!['ExtType']);
+
             const paths = (res.Data ?? []).map((x) => x.Path ?? '');
             if (paths.length > 0) {
               this.initialNodes.set([]);
