@@ -190,13 +190,13 @@ export default class OptionsComponent {
       const queryParams = this.customDestinationUrl()?.substring(this.customDestinationUrl()!.indexOf('?'));
       const restorePath =
         this.extendedDataType() === 'gsuite'
-          ? `@googleworkspace://${path}${queryParams}&google-ignore-existing=${checkForExisting ? 'true' : 'false'}`
-          : `@office365://${path}${queryParams}&office365-ignore-existing=${checkForExisting ? 'true' : 'false'}`;
-      this.#restoreFlowState.setAlternateRestorePath(restorePath);
+          ? `@googleworkspace://${encodeURIComponent(path)}${queryParams}&google-ignore-existing=${checkForExisting ? 'true' : 'false'}`
+          : `@office365://${encodeURIComponent(path)}${queryParams}&office365-ignore-existing=${checkForExisting ? 'true' : 'false'}`;
+      this.#restoreFlowState.setAlternateRestorePath(restorePath, this.remoteCustomSourcePrefix());
       this.optionsForm.controls.includeMetadata.setValue(true);
       this.optionsForm.controls.permissions.setValue(true);
     } else {
-      this.#restoreFlowState.setAlternateRestorePath(null);
+      this.#restoreFlowState.setAlternateRestorePath(null, null);
     }
 
     this.#restoreFlowState.submit();

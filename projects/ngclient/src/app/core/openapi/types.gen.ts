@@ -450,6 +450,7 @@ export type RestoreInputDto = {
     overwrite?: (boolean) | null;
     permissions?: (boolean) | null;
     skip_metadata?: (boolean) | null;
+    source_prefix?: (string) | null;
 };
 
 export type ScheduleDto = {
