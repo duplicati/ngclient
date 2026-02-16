@@ -45,7 +45,7 @@
           <span class="label">Processing</span>
           <sh-list class="current-file-list">
             <div item class="file-item current">
-              <sh-icon>document</sh-icon>
+              <sh-icon>file</sh-icon>
               <div class="file-details">
                 <span class="filename" [title]="statusData()?.CurrentFilename">
                   {{ statusData()?.CurrentFilename }}
@@ -79,7 +79,7 @@
     <sh-card>
       <div class="card-header">
         <div class="header-titl-group">
-          <sh-icon class="header-icon">activity</sh-icon>
+          <sh-icon class="header-icon">gauge</sh-icon>
           <h3>Performance</h3>
         </div>
         <div class="aggregate-speed">{{ statusData()?.BackendSpeed | bytes }}/s</div>
@@ -170,7 +170,7 @@
             <span class="task-relative">({{ nextBackup().time | relativeTime }})</span>
           </div>
         </div>
-        <sh-icon class="chevron">chevron-right</sh-icon>
+        <sh-icon class="chevron">caret-right</sh-icon>
       </div>
     </sh-card>
 
@@ -192,7 +192,7 @@
   <sh-card class="activity-card" *ngIf="!isTaskRunning() && recentFiles().length > 0">
     <div class="card-header">
       <div class="header-titl-group">
-        <sh-icon class="header-icon">history</sh-icon>
+        <sh-icon class="header-icon">clock-counter-clockwise</sh-icon>
         <h3 i18n>Recent Activity</h3>
       </div>
     </div>
