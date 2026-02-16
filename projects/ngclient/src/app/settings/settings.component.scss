@@ -32,6 +32,10 @@ section {
   padding: p2r(32 0);
   border-top: 1px solid var(--base-4);
 
+  @include breakpoint(-milli) {
+    grid-template-columns: 1fr;
+  }
+
   &:first-of-type {
     border-top: 0;
   }

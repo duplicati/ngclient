@@ -10,12 +10,17 @@
 
 sh-stepper {
   max-width: p2r(500);
-  margin: p2r(40) auto;
+  margin: p2r(40 32);
+  width: calc(100% - #{p2r(64)});
 }
 
 section {
   max-width: p2r(500);
   margin: 0 auto p2r(40);
+
+  @include breakpoint(-milli) {
+    padding: p2r(0 32);
+  }
 }
 
 .inactive {
