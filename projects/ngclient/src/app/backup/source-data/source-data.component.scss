@@ -13,6 +13,11 @@ form {
   grid-template-columns: 1fr 1fr;
   flex: 1 0;
   overflow: hidden;
+
+  @include breakpoint(-milli) {
+    display: block;
+    position: relative;
+  }
 }
 
 .right,
@@ -23,15 +28,64 @@ form {
   gap: p2r(24);
 }
 
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mobile-header {
+  display: none;
+
+  @include breakpoint(-milli) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: p2r(24);
+  }
+}
+
+.mobile-menu-toggle {
+  display: none;
+
+  @include breakpoint(-milli) {
+    display: inline-flex;
+  }
+}
+
 .left {
   padding: p2r(40);
   overflow: hidden;
   border-right: 1px solid var(--base-4);
+
+  @include breakpoint(-milli) {
+    border-right: none;
+    padding: p2r(24 24 72);
+    height: 100%;
+    width: 100%;
+  }
 }
 
 .right {
   padding: p2r(40 24);
   overflow: auto;
+
+  @include breakpoint(-milli) {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+    background: var(--base-1);
+    padding: p2r(24);
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &.open {
+      transform: translateX(0);
+    }
+  }
 }
 
 .form-actions {

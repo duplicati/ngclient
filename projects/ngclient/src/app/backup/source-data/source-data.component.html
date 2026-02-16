@@ -2,7 +2,12 @@
 
 <form [formGroup]="sourceDataForm" #formRef (submit)="next()">
   <div class="left">
-    <h3 class="title-30" i18n>Source Data</h3>
+    <div class="header-row">
+      <h3 class="title-30" i18n>Source Data</h3>
+      <button shButton class="small ghost mobile-menu-toggle" type="button" (click)="mobileMenuOpen.set(true)">
+        <sh-icon>sliders</sh-icon>
+      </button>
+    </div>
 
     <app-file-tree class="fill" [multiSelect]="true" [startingPath]="getPath()" [showFiles]="true">
       <label for="path" i18n>Folder path</label>
@@ -10,31 +15,37 @@
     </app-file-tree>
 
     <div class="form-actions">
-      <button shButton type="button" (click)="goBack()" i18n>
+      <button shButton class="small" type="button" (click)="goBack()" i18n>
         <sh-icon>arrow-left</sh-icon>
         Go back
       </button>
 
-      <button shButton class="raised primary" type="submit" i18n>
+      <button shButton class="raised primary small" type="submit" i18n>
         <sh-icon>arrow-right</sh-icon>
         Continue
       </button>
     </div>
   </div>
 
-  <div class="right">
+  <div class="right" [class.open]="mobileMenuOpen()">
+    <div class="mobile-header">
+      <span class="title-30" i18n>Options</span>
+      <button shButton class="small ghost" type="button" (click)="mobileMenuOpen.set(false)">
+        <sh-icon>x-bold</sh-icon>
+      </button>
+    </div>
     <app-toggle-card [disableToggle]="true">
       <ng-container title>
         <span i18n>Paths</span>
         <div class="spacer"></div>
         @if (!bulkPathEditMode()) {
-          <button shButton type="button" (click)="openRemoteDestinationDialog()" i18n>
+          <button shButton class="small" type="button" (click)="openRemoteDestinationDialog()" i18n>
             <sh-icon>cloud-arrow-down</sh-icon>
             Add remote path
           </button>
         }
         <sh-menu>
-          <button shButton type="button">
+          <button shButton class="small" type="button">
             <sh-icon>dots-three-vertical</sh-icon>
           </button>
 
@@ -127,13 +138,13 @@
         <span i18n>Filters</span>
         <div class="spacer"></div>
         @if (!bulkFilterEditMode()) {
-          <button type="button" shButton (click)="addFilter()" i18n>
+          <button type="button" shButton class="small" (click)="addFilter()" i18n>
             <sh-icon>plus</sh-icon>
             Add filter
           </button>
         }
         <sh-menu>
-          <button shButton type="button">
+          <button shButton class="small" type="button">
             <sh-icon>dots-three-vertical</sh-icon>
           </button>
 

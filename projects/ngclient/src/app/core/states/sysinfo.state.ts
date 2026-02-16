@@ -135,6 +135,28 @@ export class SysinfoState {
     return url;
   });
 
+  resolveShorthandPath(path: string) {
+    console.log('path', path);
+
+    if (!path.startsWith('%') || !path.endsWith('%')) {
+      return path;
+    }
+
+    const specialFolders = this.systemInfo()?.SpecialFolders;
+
+    console.log('specialFolders', specialFolders);
+
+    if (!specialFolders) {
+      return path;
+    }
+
+    const found = specialFolders.find((x) => x.ID?.startsWith(path));
+
+    console.log('found', found);
+
+    return found?.Path ?? path;
+  }
+
   preload(returnObservable = false): Observable<SystemInfoDto> | void {
     const obs = (this.#dupServer.getApiV1Systeminfo() as Observable<SystemInfoDto>).pipe(
       tap((systemInfo) => {

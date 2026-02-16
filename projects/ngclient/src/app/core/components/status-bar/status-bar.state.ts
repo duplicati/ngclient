@@ -23,6 +23,8 @@ export type Status = GetApiV1ProgressstateResponse & {
 export type StatusWithContent = Status & {
   progress: number;
   statusText: string;
+  fileStatusText: string;
+  fileCountProgressText: string;
   actionText: string;
 };
 
@@ -67,8 +69,8 @@ export class StatusBarState {
   isResuming = signal<boolean>(false);
   isFetching = this.#isFetching.asReadonly();
   connectionStatus = this.#serverState.connectionStatus;
-
   pollingInterval: number | undefined;
+
   #serverStateEffect = effect(() => {
     const serverState = this.#serverState.serverState();
     if (!serverState?.ActiveTask) this.#backupState.getBackups(true);
@@ -190,6 +192,8 @@ export class StatusBarState {
       ...status,
       progress: this.#calculateProgress(status),
       statusText: this.#constructStatusText(status),
+      fileStatusText: this.#constructFileStatus(status),
+      fileCountProgressText: this.#constructFileCountProgress(status),
       actionText: status.backup?.Backup?.Name ?? $localize`Running task`,
     });
   }
@@ -236,6 +240,23 @@ export class StatusBarState {
 
     const speed = aggregateSpeed <= 0 ? status.BackendSpeed : aggregateSpeed;
     return (speed ?? -1) < 0 ? '' : ` at ${this.#bytesPipe.transform(speed)}/s`;
+  }
+
+  #constructFileStatus(status: Status): string {
+    const fileOffset = status?.BackendFileProgress ?? 0;
+    const fileSize = status?.BackendFileSize ?? 0;
+
+    if (!status.CurrentFilename) return '';
+    const fileName =
+      status.CurrentFilename.length > 42 ? '...' + status.CurrentFilename.slice(-42) : status.CurrentFilename;
+
+    const percentage = ((fileOffset / fileSize) * 100).toFixed(1);
+
+    return $localize`${fileName} | File processed: ${this.#bytesPipe.transform(fileOffset)}/${this.#bytesPipe.transform(fileSize)} - ${percentage}%`;
+  }
+
+  #constructFileCountProgress(status: Status): string {
+    return $localize`Files processed ${status.ProcessedFileCount}/${status.TotalFileCount}`;
   }
 
   #constructStatusText(status: Status): string {

@@ -97,6 +97,7 @@ export default class SourceDataComponent {
   bulkPaths = signal('');
   bulkFilterEditMode = signal(false);
   bulkFilters = signal('');
+  mobileMenuOpen = signal(false);
 
   openRemoteDestinationDialog() {
     const dialogRef = this.#dialog.open(TargetUrlDialog, {

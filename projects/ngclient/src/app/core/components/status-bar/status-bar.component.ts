@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { ShipButton, ShipDialogService, ShipIcon, ShipProgressBar, ShipSpinner, ShipTooltip } from '@ship-ui/core';
 import { ServerSettingsService } from '../../../settings/server-settings.service';
 import { DuplicatiServer } from '../../openapi';
@@ -9,12 +9,15 @@ import { ServerStateService } from '../../services/server-state.service';
 import { BackupsState } from '../../states/backups.state';
 import { RelayconfigState } from '../../states/relayconfig.state';
 import { SysinfoState } from '../../states/sysinfo.state';
+import { MobileMenuToggleComponent } from '../mobile-menu-toggle/mobile-menu-toggle.component';
 import { PauseDialogComponent } from './pause-dialog/pause-dialog.component';
 import RemoteConnectivityStatus from './remote-connectivity-status/remote-connectivity-status';
 import { StatusBarState } from './status-bar.state';
 import ThrottleSettingsDialogComponent from './throttle-settings-dialog/throttle-settings-dialog.component';
 
 const date = new Date();
+
+type Timeout = ReturnType<typeof setTimeout>;
 
 @Component({
   selector: 'app-status-bar',
@@ -27,6 +30,7 @@ const date = new Date();
     ShipSpinner,
     ShipProgressBar,
     ShipTooltip,
+    MobileMenuToggleComponent,
   ],
   templateUrl: './status-bar.component.html',
   styleUrl: './status-bar.component.scss',
@@ -62,7 +66,7 @@ export default class StatusBarComponent {
 
     if (!data?.CurrentFilename) return '';
 
-    return `${data.CurrentFilename} (${this.#bytesPipe.transform(data.CurrentFilesize, false, true)})`;
+    return `${data.CurrentFilename}`;
   });
 
   nextBackup = computed(() => {
@@ -72,6 +76,18 @@ export default class StatusBarComponent {
       backup: (this.serverState()?.ProposedSchedule?.[0] as any)?.backup,
       time: (this.serverState()?.ProposedSchedule?.[0] as any)?.Item2,
     };
+  });
+
+  tooltipTrigger = signal(true);
+  tooltipTriggerEffect = effect(() => {
+    this.tooltipText();
+    this.tooltipTrigger.update((n) => !n);
+
+    if (this.copiedTimeout) {
+      clearTimeout(this.copiedTimeout);
+      this.copiedTimeout = undefined;
+      this.copied.set(false);
+    }
   });
 
   openThrottleSettingsDialog() {
@@ -86,6 +102,19 @@ export default class StatusBarComponent {
       maxWidth: '550px',
       width: '100%',
     });
+  }
+
+  copied = signal(false);
+  copiedTimeout?: Timeout;
+  copyToClipboard($event: Event, text: string) {
+    $event.stopPropagation();
+    navigator.clipboard.writeText(text);
+
+    this.copied.set(true);
+
+    this.copiedTimeout = setTimeout(() => {
+      this.copied.set(false);
+    }, 2000);
   }
 
   pauseResume() {

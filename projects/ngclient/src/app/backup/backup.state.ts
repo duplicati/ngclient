@@ -51,7 +51,7 @@ export class BackupState {
   scheduleType = signal<string>('daily');
   settings = signal<SettingInputDto[]>([]);
   optionsFields = {
-    remoteVolumeSize: signal('50MB'),
+    // remoteVolumeSize: signal('50MB'),
     backupRetention: signal<RetentionType>('all'),
     backupRetentionTime: signal(''),
     backupRetentionVersions: signal<number | null>(0),
@@ -449,9 +449,9 @@ export class BackupState {
 
     var retentionValue: RetentionType = 'all';
     excludedSettings?.forEach((x) => {
-      if (x.Name === 'dblock-size') {
-        this.optionsFields.remoteVolumeSize.set(x.Value ?? '50MB');
-      }
+      // if (x.Name === 'dblock-size') {
+      //   this.optionsFields.remoteVolumeSize.set(x.Value ?? '50MB');
+      // }
 
       if (x.Name === 'keep-time') {
         // If this is not filled correctly, revert to 'all'
@@ -595,10 +595,10 @@ export class BackupState {
     if (generalFormValue.compression === '') compression = [];
 
     const optionFields = [
-      {
-        Name: 'dblock-size',
-        Value: this.optionsFields.remoteVolumeSize(),
-      },
+      // {
+      //   Name: 'dblock-size',
+      //   Value: this.optionsFields.remoteVolumeSize(),
+      // },
     ];
 
     switch (this.optionsFields.backupRetention()) {
@@ -745,7 +745,7 @@ export class BackupState {
     this.generalForm.reset();
     this.sourceDataForm.reset();
     this.scheduleFields = SCHEDULE_FIELD_DEFAULTS();
-    this.optionsFields.remoteVolumeSize.set('50MB');
+    // this.optionsFields.remoteVolumeSize.set('50MB');
     this.optionsFields.backupRetention.set('all');
     this.settings.set([]);
     this.targetUrls.set([]);

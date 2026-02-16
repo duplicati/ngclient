@@ -86,12 +86,21 @@ sh-menu {
   border-radius: var(--shape-3);
   box-shadow: var(--box-shadow-10);
 
+  @include breakpoint(-milli) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .text {
     display: flex;
     flex-direction: column;
     gap: p2r(8);
     width: 100%;
     max-width: 40%;
+
+    @include breakpoint(-milli) {
+      max-width: initial;
+    }
 
     h3 {
       display: flex;

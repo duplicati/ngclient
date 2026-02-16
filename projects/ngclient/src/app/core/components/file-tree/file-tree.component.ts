@@ -131,6 +131,7 @@ export default class FileTreeComponent {
   pathDiscoveryMethod = signal<'browse' | 'path'>('browse');
   isLoading = signal<string | null>(null);
   currentPath = signal<string>('/');
+  currentPathResolvedShorthands = computed(() => this.#sysInfo.resolveShorthandPath(this.currentPath()));
   #inputRef = signal<HTMLInputElement | null>(null);
   treeSearchQuery = signal<string>('');
   treeNodes = signal<TreeNode[]>([]);
@@ -641,8 +642,10 @@ export default class FileTreeComponent {
       const path = this.createFolderPath()?.trim();
       if (path) {
         const currentPath = this.currentPath();
+        const resolvedCurrentPath = this.currentPathResolvedShorthands();
         const newPath = this.#appendDirSep(path);
-        const fullPath = currentPath + newPath;
+        const fullPath = `${resolvedCurrentPath}/${newPath}`;
+
         this.#dupServer
           .postApiV1RemoteoperationCreate({
             requestBody: {

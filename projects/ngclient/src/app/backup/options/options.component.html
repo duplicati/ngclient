@@ -1,7 +1,7 @@
 <section>
   <h3 class="title-30" i18n>Options</h3>
 
-  <div class="remote-volume-wrap">
+  <!-- <div class="remote-volume-wrap">
     <app-size [customId]="'size'" [(ngModel)]="optionsFields.remoteVolumeSize">
       <label for="size" i18n>
         Remote volume size
@@ -25,7 +25,7 @@
         <sh-icon suffix>arrow-square-out</sh-icon>
       </a>
     </p>
-  </div>
+  </div> -->
 
   <sh-select [options]="retentionOptions()" [inlineSearch]="true" [isClearable]="false" value="value" label="name">
     <label for="size" i18n>Backup retention</label>
@@ -69,7 +69,6 @@
     [hasFreeTextSettings]="true"
     [hiddenOptions]="[
       '--skip-files-larger-than',
-      'dblock-size',
       'encryption-module',
       'no-encryption',
       '--no-encryption',
