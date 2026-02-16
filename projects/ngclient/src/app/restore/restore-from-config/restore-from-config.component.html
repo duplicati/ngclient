@@ -33,7 +33,7 @@
   @if (isSecureFile()) {
     <sh-form-field>
       <label for="passphrase" i18n>Passphrase</label>
-      <input type="password" formControlName="passphrase" />
+      <input type="password" autocomplete="disabled" formControlName="passphrase" />
     </sh-form-field>
   }
 </form>
