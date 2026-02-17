@@ -2210,6 +2210,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     displayName: $localize`Microsoft Office 365`,
     description: $localize`Create backups of Microsoft Office 365 data.`,
     icon: 'assets/dest-icons/office365.png',
+    isNonFree: true,
     dynamicFields: [
       {
         name: 'auth-username',
@@ -2254,6 +2255,56 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
     },
   },
+  {
+    key: 'googleworkspace',
+    displayName: $localize`Google Workspace`,
+    description: $localize`Create backups of Google Workspace data.`,
+    icon: 'assets/dest-icons/googleworkspace.png',
+    isNonFree: true,
+    dynamicFields: [
+      {
+        name: 'google-admin-email',
+        type: 'Email',
+        shortDescription: $localize`Admin Email`,
+        longDescription: $localize`Email address of the Google Workspace admin user.`,
+        isMandatory: true,
+      },
+      {
+        name: 'google-service-account-json',
+        type: 'FreeText',
+        shortDescription: $localize`Service account JSON`,
+        longDescription: $localize`Paste the service account JSON here.`,
+        isMandatory: true,
+      },
+    ],
+    advancedFields: [
+      {
+        name: 'google-service-account-file',
+        type: 'FileTree',
+        accepts: '.json,',
+        shortDescription: $localize`Service account JSON file`,
+        longDescription: $localize`Pick the path to a file with service account JSON.`,
+      },
+    ],
+    mapper: {
+      to: (fields: ValueOfDestinationFormGroup): string => {
+        const urlParams = toSearchParams([...Object.entries(fields.advanced), ...Object.entries(fields.dynamic)]);
+        return `googleworkspace://${urlParams}`;
+      },
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
+        const { advanced, dynamic } = fromSearchParams(destinationType, urlObj);
+        return <ValueOfDestinationFormGroup>{
+          destinationType,
+          advanced: {
+            ...advanced,
+          },
+          dynamic: {
+            ...dynamic,
+          },
+        };
+      },
+    },
+  },
   CreateCustomS3ProviderEntry('rabata', 'Rabata.io', null, 'assets/dest-icons/rabata.png', ['.rabata.io']),
   CreateCustomS3ProviderEntry('wasabi', 'Wasabi Hot Storage', null, 'assets/dest-icons/wasabi.png', ['.wasabisys.com']),
   CreateCustomS3ProviderEntry('impossiblecloud', 'Impossible Cloud', null, 'assets/dest-icons/impossiblecloud.png', [
@@ -2280,6 +2331,11 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     '.lyvecloud.seagate.com',
   ]),
   CreateCustomS3ProviderEntry('internxt', 'Internxt', null, 'assets/dest-icons/internxt.png', ['.internxt.com']),
+  CreateCustomS3ProviderEntry('selectel', 'Selectel', null, 'assets/dest-icons/selectel.png', [
+    '.storage.selcloud.ru',
+    '.srvstorage.uz',
+    '.srvstorage.kz',
+  ]),
 ];
 
 export const S3_HOST_SUFFIX_MAP: Record<string, string> = {
@@ -2321,4 +2377,7 @@ export const S3_HOST_SUFFIX_MAP: Record<string, string> = {
   '.tencentcloudapi.com': 'Tencent Cloud S3',
   '.rabata.io': 'Rabata S3',
   '.internxt.com': 'Internxt S3',
+  '.storage.selcloud.ru': 'Selectel S3',
+  '.srvstorage.uz': 'Selectel S3',
+  '.srvstorage.kz': 'Selectel S3',
 };

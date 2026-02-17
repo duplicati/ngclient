@@ -294,7 +294,7 @@ export class BackupState {
 
   mapSourceDataToForm(backup: BackupDto) {
     const path = backup.Sources ?? '';
-    const filters = backup.Filters?.map((x) => `${x.Include ? '' : '-'}${x.Expression}`) ?? [];
+    const filters = backup.Filters?.map((x) => `${x.Include ? '+' : '-'}${x.Expression}`) ?? [];
     const excludes =
       backup.Settings?.find((x) => x.Name === '--exclude-files-attributes')
         ?.Value?.toLowerCase()

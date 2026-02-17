@@ -3,13 +3,13 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipDialogService } from '@ship-ui/core';
 import { catchError, finalize, forkJoin, Observable, retry, switchMap, take, throwError, timer } from 'rxjs';
+import { TestState } from '../backup/source-data/target-url-dialog/test-url/test-url';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer, GetBackupResultDto, ListFilesetsResponseDto } from '../core/openapi';
 import { SysinfoState } from '../core/states/sysinfo.state';
 import { createRestoreOptionsForm } from './options/options.component';
 import { createEncryptionForm } from './restore-encryption/restore-encryption.component';
 import { createRestoreSelectFilesForm } from './select-files/select-files.component';
-import { TestState } from '../backup/source-data/target-url-dialog/test-url/test-url';
 
 type ListResultFileset = {
   readonly Version: number;
@@ -46,6 +46,7 @@ export class RestoreFlowState {
   isFullWidthPage = signal(false);
   extendedDataType = signal<string | null>(null);
   alternateRestorePath = signal<string | null>(null);
+  alternateRestorePathSourcePrefix = signal<string | null>(null);
 
   init(id: 'string', isFileRestore = false) {
     this.backupId.set(id);
@@ -67,8 +68,9 @@ export class RestoreFlowState {
     this.destinationTargetUrl.set(targetUrl);
   }
 
-  setAlternateRestorePath(path: string | null) {
+  setAlternateRestorePath(path: string | null, prefix: string | null) {
     this.alternateRestorePath.set(path);
+    this.alternateRestorePathSourcePrefix.set(prefix);
   }
 
   submit() {
@@ -131,6 +133,7 @@ export class RestoreFlowState {
           overwrite: optionsValue.handleExisting === 'overwrite',
           permissions: optionsValue.permissions,
           skip_metadata: !optionsValue.includeMetadata,
+          source_prefix: this.alternateRestorePathSourcePrefix(),
         },
       })
       .pipe(finalize(() => this.isSubmitting.set(false)))

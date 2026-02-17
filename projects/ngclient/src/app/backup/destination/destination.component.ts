@@ -119,6 +119,7 @@ export default class DestinationComponent {
   isLoadingDestinations = this.#connectionStringsState.resourceDestinations.isLoading;
 
   isNew = this.#backupState.isNew;
+  backupId = this.#backupState.backupId;
 
   selectedDestinationType = computed(() => {
     const targetUrl = this.targetUrlModel();

@@ -4,21 +4,38 @@
   <app-toggle-card [disableToggle]="true">
     <ng-container title i18n>Where do you want to restore files to?</ng-container>
 
-    @if (hasOffice365Data()) {
-      <sh-radio class="raised primary" i18n>
-        Same Office 365 Tenant
-        <input type="radio" name="restoreFrom" value="same-o365" formControlName="restoreFrom" />
-      </sh-radio>
+    @if (extendedDataType() !== null) {
+      @if (extendedDataType() === 'o365') {
+        <sh-radio class="raised primary" i18n>
+          Same Office 365 Tenant
+          <input type="radio" name="restoreFrom" value="same-custom" formControlName="restoreFrom" />
+        </sh-radio>
 
-      <sh-radio class="raised primary" i18n>
-        Different Office 365 Tenant
-        <input
-          type="radio"
-          name="restoreFrom"
-          value="other-o365"
-          formControlName="restoreFrom"
-          (click)="chooseOfficeTenant()" />
-      </sh-radio>
+        <sh-radio class="raised primary" i18n>
+          Different Office 365 Tenant
+          <input
+            type="radio"
+            name="restoreFrom"
+            value="other-custom"
+            formControlName="restoreFrom"
+            (click)="chooseCustomRemoteDestination()" />
+        </sh-radio>
+      } @else if (extendedDataType() === 'gsuite') {
+        <sh-radio class="raised primary" i18n>
+          Same Google Workspace Account
+          <input type="radio" name="restoreFrom" value="same-custom" formControlName="restoreFrom" />
+        </sh-radio>
+
+        <sh-radio class="raised primary" i18n>
+          Different Google Workspace Account
+          <input
+            type="radio"
+            name="restoreFrom"
+            value="other-custom"
+            formControlName="restoreFrom"
+            (click)="chooseCustomRemoteDestination()" />
+        </sh-radio>
+      }
 
       <sh-radio class="raised primary" i18n>
         Local file system
@@ -32,8 +49,12 @@
         </app-file-tree>
       }
 
-      @if (showOffice365RestoreTree()) {
-        <app-file-tree [office365Mode]="true" [backupId]="backupId()" [destinationUrl]="office365destinationUrl()">
+      @if (showCustomRemoteRestoreTree()) {
+        <app-file-tree
+          [customRemoteMode]="extendedDataType()"
+          [backupId]="backupId()"
+          [sourcePrefix]="remoteCustomSourcePrefix()"
+          [destinationUrl]="customDestinationUrl()">
           <label for="path">Path</label>
           <input type="text" id="path" formControlName="restoreFromPath" />
         </app-file-tree>
@@ -56,13 +77,13 @@
     }
   </app-toggle-card>
 
-  @if (isOffice365Restore()) {
+  @if (isCustomRemoteRestore()) {
     <app-toggle-card [disableToggle]="true">
       <ng-container title i18n>Restore settings</ng-container>
 
       <sh-toggle class="raised primary" i18n>
         Ignore existing resources in the destination
-        <input type="checkbox" formControlName="officeIgnoreExisting" />
+        <input type="checkbox" formControlName="customRemoteIgnoreExisting" />
       </sh-toggle>
     </app-toggle-card>
   } @else {
