@@ -243,8 +243,15 @@ export class StatusBarState {
   }
 
   #constructFileStatus(status: Status): string {
-    const fileOffset = status?.BackendFileProgress ?? 0;
-    const fileSize = status?.BackendFileSize ?? 0;
+    const fileOffset =
+      (['Backup_WaitForUpload', 'Backup_ProcessingFiles'].includes(status.Phase!)
+        ? status?.BackendFileProgress
+        : status.CurrentFileoffset) ?? 0;
+
+    const fileSize =
+      (['Backup_WaitForUpload', 'Backup_ProcessingFiles'].includes(status.Phase!)
+        ? status?.BackendFileSize
+        : status.CurrentFilesize) ?? 0;
 
     if (!status.CurrentFilename) return '';
     const fileName =
