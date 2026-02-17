@@ -22,7 +22,7 @@
             <app-destination-list (setDestination)="setDestination($event)"></app-destination-list>
           </sh-card>
         } @else {
-          <sh-toggle-card class="destination-card type-a" [disableToggle]="true" [isActive]="true">
+          <sh-toggle-card class="destination-card type-a" [disallowToggle]="true" [isActive]="true">
             <ng-container title>
               <app-destination-list-item [targetUrl]="dest.url" [connectionStringId]="dest.connectionStringId">
                 <button shButton class="small" (click)="changeDestination($index)" type="button">Change</button>
@@ -56,7 +56,9 @@
               (targetUrlChange)="updateTargetUrl($index, $event)"
               [testSignal]="testStates()[$index] || null"
               (testSignalChange)="updateTestState($index, $event)"
+              [backupId]="backupId()"
               [connectionStringId]="dest.connectionStringId"
+              [sourcePrefix]="null"
               [suppressErrorDialogs]="false"
               [askToCreate]="true"
               [testExpectation]="isNew() ? 'destinationEmpty' : 'any'"

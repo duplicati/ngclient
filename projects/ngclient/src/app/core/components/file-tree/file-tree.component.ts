@@ -116,8 +116,9 @@ export default class FileTreeComponent {
   showHiddenNodes = input(false);
   enableCreateFolder = input(false);
   hideShortcuts = input(false);
-  office365Mode = input(false);
+  customRemoteMode = input<'gsuite' | 'o365' | null>(null);
   backupId = input<string | null | undefined>('');
+  sourcePrefix = input<string | null | undefined>('');
   destinationUrl = input<string | null | undefined>('');
   loadExtendedData = input(true);
   hasExtendedData = output<string>();
@@ -130,7 +131,7 @@ export default class FileTreeComponent {
   formRef = viewChild<ElementRef<HTMLFormElement>>('formRef');
   pathDiscoveryMethod = signal<'browse' | 'path'>('browse');
   isLoading = signal<string | null>(null);
-  currentPath = signal<string>('/');
+  currentPath = signal<string>('');
   currentPathResolvedShorthands = computed(() => this.#sysInfo.resolveShorthandPath(this.currentPath()));
   #inputRef = signal<HTMLInputElement | null>(null);
   treeSearchQuery = signal<string>('');
@@ -737,6 +738,34 @@ export default class FileTreeComponent {
         modulekey: 'office365',
         requestBody: {
           'backup-id': this.backupId() ?? '',
+          'source-prefix': this.sourcePrefix() ?? '',
+          operation: 'ListDestinationRestoreTargets',
+          url: this.destinationUrl() ?? '',
+          path: path ?? '/',
+        },
+      })
+      .pipe(
+        map((res) => {
+          const d = res.Result as {
+            [key: string]: string;
+          };
+          return Object.keys(d).map((key) => {
+            return {
+              Path: key,
+              Metadata: JSON.parse(d[key]),
+            };
+          });
+        })
+      );
+  }
+
+  #getGoogleWorkspaceFiles(path: string | null) {
+    return this.#dupServer
+      .postApiV1WebmoduleByModulekey({
+        modulekey: 'googleworkspace',
+        requestBody: {
+          'backup-id': this.backupId() ?? '',
+          'source-prefix': this.sourcePrefix() ?? '',
           operation: 'ListDestinationRestoreTargets',
           url: this.destinationUrl() ?? '',
           path: path ?? '/',
@@ -768,7 +797,7 @@ export default class FileTreeComponent {
             Paths: path ? [path] : null,
             PageSize: 0, // TODO: Add pagination support
             Page: 0,
-            ReturnExtended: this.office365Mode() || this.loadExtendedData(),
+            ReturnExtended: this.customRemoteMode() !== null || this.loadExtendedData(),
           },
         })
         .pipe(map((res) => res.Data ?? []));
@@ -786,8 +815,12 @@ export default class FileTreeComponent {
   }
 
   #getFilePath(path: string) {
-    if (this.office365Mode()) {
+    if (this.customRemoteMode() === 'o365') {
       return this.#getOffice365Files(path);
+    }
+
+    if (this.customRemoteMode() === 'gsuite') {
+      return this.#getGoogleWorkspaceFiles(path);
     }
 
     if (this.isByBackupSettings()) {
@@ -901,7 +934,7 @@ export default class FileTreeComponent {
     (this.#getFilePath(newPath) as Observable<any>).pipe(finalize(() => this.isLoading.set(null))).subscribe({
       next: (x) => {
         let alignDataArray =
-          this.isByBackupSettings() || this.office365Mode()
+          this.isByBackupSettings() || this.customRemoteMode() !== null
             ? x.map((y: { Path: string; Size: number; Metadata: { [key: string]: string | null } | null }) => {
                 this.#detectExtendData(y.Metadata);
                 const text = this.#getDisplayName(

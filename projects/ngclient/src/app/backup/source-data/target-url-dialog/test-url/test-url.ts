@@ -21,6 +21,9 @@ export class TestUrl {
   testSignal = model.required<TestState>();
   connectionStringId = input<number | null>(null);
 
+  backupId = input.required<string | null>();
+  sourcePrefix = input.required<string | null>();
+
   suppressErrorDialogs = input.required<boolean>();
   askToCreate = input.required<boolean>();
   testExpectation = input.required<TestExpectation>();
@@ -102,8 +105,9 @@ export class TestUrl {
       this.#testDestination
         .testDestination(
           targetUrl,
-          null,
+          this.backupId(),
           this.connectionStringId(),
+          this.sourcePrefix(),
           0,
           this.moduleType(),
           this.suppressErrorDialogs(),
@@ -120,8 +124,9 @@ export class TestUrl {
               this.#testDestination
                 .testDestination(
                   suggestedUrl ?? targetUrl,
-                  null,
+                  this.backupId(),
                   this.connectionStringId(),
+                  this.sourcePrefix(),
                   0,
                   this.moduleType(),
                   this.suppressErrorDialogs(),
