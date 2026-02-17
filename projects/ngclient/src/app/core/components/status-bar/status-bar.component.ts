@@ -1,4 +1,4 @@
-import { DatePipe, NgTemplateOutlet } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import {
   ShipButton,
@@ -33,7 +33,6 @@ type Timeout = ReturnType<typeof setTimeout>;
     RemoteConnectivityStatus,
     RelativeTimePipe,
     DatePipe,
-    NgTemplateOutlet,
     ShipIcon,
     ShipButton,
     ShipSpinner,
