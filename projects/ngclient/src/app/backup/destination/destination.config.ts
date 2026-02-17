@@ -282,7 +282,14 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     dynamicFields: [
       {
         name: 'auth-username',
+        shortDescription: $localize`Username`,
+        longDescription: $localize`Username`,
         isMandatory: true,
+      },
+      {
+        name: 'auth-password',
+        shortDescription: $localize`Password`,
+        longDescription: $localize`Password`,
       },
     ],
     advancedFields: [

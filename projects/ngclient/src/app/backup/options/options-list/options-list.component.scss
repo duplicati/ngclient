@@ -48,6 +48,10 @@ sh-toggle {
 .option-col {
   display: flex;
   flex-direction: column;
+
+  .fill {
+    color: var(--base-12);
+  }
 }
 
 .form-column {
