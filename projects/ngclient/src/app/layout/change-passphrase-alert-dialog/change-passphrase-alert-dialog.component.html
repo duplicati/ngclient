@@ -44,17 +44,17 @@
 </div>
 
 <footer footer>
-  <button shButton [class.loader]="isUpdating()" (click)="cancel()" i18n>Not now thanks</button>
+  <button shButton [class.loading]="isUpdating()" (click)="cancel()" i18n>Not now thanks</button>
 
   @if (passphrase().length !== 0 && passphrase() === repeatPassphrase()) {
-    <button shButton class="raised primary" [class.loader]="isUpdating()" (click)="updatePassphrase()" i18n>
+    <button shButton class="raised primary" [class.loading]="isUpdating()" (click)="updatePassphrase()" i18n>
       Yes, update passphrase now
     </button>
   } @else {
     <button
       shButton
       class="raised primary"
-      [class.loader]="isUpdating()"
+      [class.loading]="isUpdating()"
       [disabled]="true"
       i18n-shTooltip
       shTooltip="Password have to be filled and have to match"

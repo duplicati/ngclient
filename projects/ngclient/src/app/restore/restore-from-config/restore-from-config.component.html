@@ -14,7 +14,7 @@
         class="raised primary"
         (click)="submit()"
         [disabled]="isRestoring()"
-        [class.loader]="isRestoring()">
+        [class.loading]="isRestoring()">
         <sh-icon>download-simple</sh-icon>
         Restore
       </button>

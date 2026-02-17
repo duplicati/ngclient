@@ -68,7 +68,7 @@
         }
       }
 
-      <button shButton i18n [class.loader]="isResuming()" (click)="pauseResume()">
+      <button shButton i18n [class.loading]="isResuming()" (click)="pauseResume()">
         @if (clientIsRunning()) {
           <sh-icon>pause</sh-icon>
           Pause

@@ -30,7 +30,7 @@
       <button
         shButton
         i18n
-        [class.loader]="isRepairing()"
+        [class.loading]="isRepairing()"
         [disabled]="!isValidatedPath() || pathHasChanged()"
         (click)="repairDatabase()">
         <sh-icon>wrench</sh-icon>
@@ -40,14 +40,14 @@
       <button
         shButton
         i18n
-        [class.loader]="isDeleting()"
+        [class.loading]="isDeleting()"
         [disabled]="!isValidatedPath() || pathHasChanged()"
         (click)="deleteDatabase()">
         <sh-icon>trash</sh-icon>
         Delete
       </button>
 
-      <button shButton i18n [class.loader]="isRestoring()" [disabled]="pathHasChanged()" (click)="restoreDatabase()">
+      <button shButton i18n [class.loading]="isRestoring()" [disabled]="pathHasChanged()" (click)="restoreDatabase()">
         <sh-icon>clock-counter-clockwise</sh-icon>
         Recreate (delete and repair)
       </button>
@@ -55,7 +55,7 @@
       <button
         shButton
         i18n
-        [class.loader]="isCreatingBugReport()"
+        [class.loading]="isCreatingBugReport()"
         [disabled]="isCreatingBugReport() || !isValidatedPath() || pathHasChanged()"
         (click)="createErrorReport()">
         <sh-icon>file-plus</sh-icon>
