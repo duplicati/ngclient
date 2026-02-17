@@ -1,6 +1,14 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
-import { ShipButton, ShipDialogService, ShipIcon, ShipProgressBar, ShipSpinner, ShipTooltip } from '@ship-ui/core';
+import {
+  ShipButton,
+  ShipDialogService,
+  ShipIcon,
+  ShipMenu,
+  ShipProgressBar,
+  ShipSpinner,
+  ShipTooltip,
+} from '@ship-ui/core';
 import { ServerSettingsService } from '../../../settings/server-settings.service';
 import { DuplicatiServer } from '../../openapi';
 import { BytesPipe } from '../../pipes/byte.pipe';
@@ -25,11 +33,13 @@ type Timeout = ReturnType<typeof setTimeout>;
     RemoteConnectivityStatus,
     RelativeTimePipe,
     DatePipe,
+    NgTemplateOutlet,
     ShipIcon,
     ShipButton,
     ShipSpinner,
     ShipProgressBar,
     ShipTooltip,
+    ShipMenu,
     MobileMenuToggleComponent,
   ],
   templateUrl: './status-bar.component.html',

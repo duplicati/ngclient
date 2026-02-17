@@ -49,36 +49,71 @@
   </div>
 
   <div class="current-backup-actions">
-    @if (!isUsingRelay() && !hideConsoleConnectionStatus()) {
-      <app-remote-connectivity-status />
-    }
-
-    @if (runningTask()) {
-      @if (isStopping()) {
-        <button shButton i18n (click)="abort()">
-          <sh-icon>skull</sh-icon>
-          Abort
-        </button>
-      } @else {
-        <button shButton i18n (click)="stop()">
-          <sh-icon>stop</sh-icon>
-          Stop
-        </button>
+    <div class="desktop-actions">
+      @if (!isUsingRelay() && !hideConsoleConnectionStatus()) {
+        <app-remote-connectivity-status />
       }
-    }
 
-    <button shButton i18n [class.loader]="isResuming()" (click)="pauseResume()">
-      @if (clientIsRunning()) {
-        <sh-icon>pause</sh-icon>
-        Pause
-      } @else {
-        <sh-icon>play</sh-icon>
-        Resume
+      @if (runningTask()) {
+        @if (isStopping()) {
+          <button shButton i18n (click)="abort()">
+            <sh-icon>skull</sh-icon>
+            Abort
+          </button>
+        } @else {
+          <button shButton i18n (click)="stop()">
+            <sh-icon>stop</sh-icon>
+            Stop
+          </button>
+        }
       }
-    </button>
 
-    <button shButton (click)="openThrottleSettingsDialog()">
-      <sh-icon>speedometer</sh-icon>
-    </button>
+      <button shButton i18n [class.loader]="isResuming()" (click)="pauseResume()">
+        @if (clientIsRunning()) {
+          <sh-icon>pause</sh-icon>
+          Pause
+        } @else {
+          <sh-icon>play</sh-icon>
+          Resume
+        }
+      </button>
+
+      <button shButton (click)="openThrottleSettingsDialog()">
+        <sh-icon>speedometer</sh-icon>
+      </button>
+    </div>
+
+    <div class="mobile-actions">
+      <sh-menu>
+        <button shButton class="small menu-mobile-toggle">
+          @if (!isUsingRelay() && !hideConsoleConnectionStatus()) {
+            <app-remote-connectivity-status class="hide-text" />
+          }
+          <sh-icon>dots-three-vertical-bold</sh-icon>
+        </button>
+
+        <ng-container menu>
+          @if (!isUsingRelay() && !hideConsoleConnectionStatus()) {
+            <app-remote-connectivity-status class="in-menu" />
+          }
+          @if (runningTask()) {
+            <button (click)="isStopping() ? abort() : stop()">
+              <sh-icon>{{ isStopping() ? 'skull' : 'stop' }}</sh-icon>
+              {{ isStopping() ? 'Abort' : 'Stop' }}
+            </button>
+          }
+
+          <button (click)="pauseResume()">
+            <sh-icon>{{ clientIsRunning() ? 'pause' : 'play' }}</sh-icon>
+            {{ clientIsRunning() ? 'Pause' : 'Resume' }}
+          </button>
+
+          <button (click)="openThrottleSettingsDialog()">
+            <sh-icon>speedometer</sh-icon>
+            Throttle Settings
+          </button>
+        </ng-container>
+      </sh-menu>
+    </div>
   </div>
 </div>
