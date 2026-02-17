@@ -21,7 +21,6 @@ import { TestState, TestUrl } from '../backup/source-data/target-url-dialog/test
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { ConnectionStringDto } from '../core/openapi';
-import { TestDestinationService } from '../core/services/test-destination.service';
 import { BackupsState } from '../core/states/backups.state';
 import { ConnectionStringsState } from '../core/states/connection-strings.state';
 
@@ -48,7 +47,6 @@ import { ConnectionStringsState } from '../core/states/connection-strings.state'
 export default class Destinations {
   #connectionStringsState = inject(ConnectionStringsState);
   #backupsState = inject(BackupsState);
-  #testDestination = inject(TestDestinationService);
   #dialog = inject(ShipDialogService);
   getSimplePath = getSimplePath;
   backups = this.#backupsState.backups;
