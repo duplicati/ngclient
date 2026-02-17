@@ -160,6 +160,7 @@ export type DestinationTestRequestDto = {
     } | null;
     AutoCreate: boolean;
     DestinationType?: RemoteDestinationType;
+    SourcePrefix?: (string) | null;
 };
 
 export type DestinationTestResponseDto = {
@@ -491,6 +492,7 @@ export type RemoteOperationInput = {
     path?: (string) | null;
     backupId?: (string) | null;
     connectionStringId?: (number) | null;
+    sourcePrefix?: (string) | null;
 };
 
 export type RepairInputDto = {
