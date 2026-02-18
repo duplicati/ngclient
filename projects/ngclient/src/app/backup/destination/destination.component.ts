@@ -127,6 +127,15 @@ export default class DestinationComponent {
     return getConfigurationByUrl(targetUrl) ?? null;
   });
 
+  isLoadingDestinationEffect = effect(() => {
+    // If there are no stored destinations, skip the button click
+    const isLoading = this.isLoadingDestinations();
+    const destinations = this.destinations();
+    if (!isLoading && destinations.length == 0) {
+      this.toggleCustomList();
+    }
+  });
+
   selectedDestinationTypeOption = computed(() => {
     const x = this.selectedDestinationType();
     return x
