@@ -2,7 +2,7 @@
   @if (saved()) {
     <sh-alert class="success" i18n>Settings saved</sh-alert>
   }
-  <button shButton type="button" class="raised primary" [class.loader]="isSubmitting()" (click)="submit()" i18n>
+  <button shButton type="button" class="raised primary" [class.loading]="isSubmitting()" (click)="submit()" i18n>
     <sh-icon>floppy-disk</sh-icon>
     Save settings
   </button>

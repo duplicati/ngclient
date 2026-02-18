@@ -14,7 +14,7 @@
         class="raised primary"
         (click)="submit()"
         [disabled]="isImporting() || !isValid()"
-        [class.loader]="isImporting()">
+        [class.loading]="isImporting()">
         <sh-icon>download-simple</sh-icon>
         Import
       </button>
