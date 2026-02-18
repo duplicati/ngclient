@@ -15,7 +15,6 @@ import {
   ShipButton,
   ShipCard,
   ShipDialog,
-  ShipDialogService,
   ShipDivider,
   ShipFormField,
   ShipIcon,
@@ -95,7 +94,6 @@ export default class DestinationComponent {
   #router = inject(Router);
   #route = inject(ActivatedRoute);
   #backupState = inject(BackupState);
-  #dialog = inject(ShipDialogService);
   #connectionStringsState = inject(ConnectionStringsState);
   injector = inject(Injector);
 

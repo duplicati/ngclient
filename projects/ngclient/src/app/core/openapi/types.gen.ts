@@ -48,6 +48,7 @@ export type BackupDto = {
     } | null;
     IsTemporary: boolean;
     IsUnencryptedOrPassphraseStored: boolean;
+    AdditionalTargetURLs: Array<TargetUrlDto> | null;
 };
 
 export type BackupInputDto = {
@@ -63,6 +64,7 @@ export type BackupInputDto = {
     Metadata?: {
         [key: string]: string;
     } | null;
+    AdditionalTargetURLs?: Array<TargetUrlInputDto> | null;
 };
 
 export type BulkUpdateBackupsRequestDto = {
@@ -672,6 +674,26 @@ export type SystemInfoDto = {
     DefaultOAuthURL: (string) | null;
     DefaultOAuthURLv2: (string) | null;
     PowerModeProviders: Array<string> | null;
+};
+
+export type TargetUrlDto = {
+    UrlKey: (string) | null;
+    TargetUrl: (string) | null;
+    Mode: (string) | null;
+    Interval?: (string) | null;
+    Options?: {
+        [key: string]: unknown;
+    } | null;
+};
+
+export type TargetUrlInputDto = {
+    UrlKey?: (string) | null;
+    TargetUrl: (string) | null;
+    Mode?: (string) | null;
+    Interval?: (string) | null;
+    Options?: {
+        [key: string]: unknown;
+    } | null;
 };
 
 export type TaskStartedDto = {
