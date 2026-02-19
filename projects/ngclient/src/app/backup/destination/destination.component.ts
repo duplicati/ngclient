@@ -269,6 +269,7 @@ export default class DestinationComponent {
 
   startAddingNew() {
     this.isAddingNew.set(true);
+    if (this.destinations().length === 0) this.showCustomList.set(true);
   }
 
   changeDestination(index: number) {
