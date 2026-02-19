@@ -132,7 +132,8 @@ export default class DestinationComponent {
     // If there are no stored destinations, skip the button click
     const isLoading = this.isLoadingDestinations();
     const destinations = this.destinations();
-    if (!isLoading && destinations.length == 0) {
+    const currentTargets = this.targetUrls();
+    if (!isLoading && destinations.length == 0 && currentTargets.length == 0) {
       this.toggleCustomList();
     }
   });

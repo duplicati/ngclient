@@ -158,12 +158,14 @@
         </app-destination-list-item>
       }
     } @else {
-      <div class="custom-list-header">
-        <button shButton iconOnly variant="ghost" (click)="closeCustomList()" type="button">
-          <sh-icon>arrow-left</sh-icon>
-        </button>
-        <h3 i18n>Select storage type</h3>
-      </div>
+      @if (destinations.length > 0) {
+        <div class="custom-list-header">
+          <button shButton iconOnly variant="ghost" (click)="closeCustomList()" type="button">
+            <sh-icon>arrow-left</sh-icon>
+          </button>
+          <h3 i18n>Select storage type</h3>
+        </div>
+      }
       <app-destination-list (setDestination)="setDestination($event)"></app-destination-list>
     }
   }
