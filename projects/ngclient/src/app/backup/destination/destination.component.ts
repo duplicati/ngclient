@@ -20,6 +20,7 @@ import {
   ShipIcon,
   ShipMenu,
   ShipProgressBar,
+  ShipToggle,
   ShipToggleCard,
 } from '@ship-ui/core';
 import { IDynamicModule } from '../../core/openapi';
@@ -85,6 +86,7 @@ export type DestinationFormGroupValue = ReturnType<typeof createDestinationFormG
     ShipDivider,
     ShipProgressBar,
     ShipToggleCard,
+    ShipToggle,
   ],
   templateUrl: './destination.component.html',
   styleUrl: './destination.component.scss',
@@ -110,7 +112,6 @@ export default class DestinationComponent {
   currentEditingIndex = signal<number | null>(null);
   targetUrlDialogOpen = signal(false);
   showCustomList = signal(false);
-  saveConnectionString = this.#backupState.saveConnectionString;
   isConnectionStringSaved = this.#backupState.isConnectionStringSaved;
 
   destinations = this.#connectionStringsState.destinations;
@@ -302,6 +303,10 @@ export default class DestinationComponent {
       newStates[index] = state;
       return newStates;
     });
+  }
+
+  toggleSave(index: number) {
+    this.#backupState.toggleSaveConnectionString(index);
   }
 
   goBack() {

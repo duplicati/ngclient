@@ -50,6 +50,18 @@
               </app-destination-list-item>
             </ng-container>
 
+            @if (!dest.connectionStringId) {
+              <div class="options-row" style="margin: 0 1rem 1rem 1rem">
+                <sh-toggle
+                  [color]="'primary'"
+                  [variant]="'raised'"
+                  [class.active]="dest.save"
+                  (click)="toggleSave($index)">
+                  <span label i18n>Save as connection string</span>
+                </sh-toggle>
+              </div>
+            }
+
             <app-test-url
               #testUrl
               [targetUrl]="dest.url"

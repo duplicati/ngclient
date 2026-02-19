@@ -136,23 +136,17 @@ export class SysinfoState {
   });
 
   resolveShorthandPath(path: string) {
-    console.log('path', path);
-
     if (!path.startsWith('%') || !path.endsWith('%')) {
       return path;
     }
 
     const specialFolders = this.systemInfo()?.SpecialFolders;
 
-    console.log('specialFolders', specialFolders);
-
     if (!specialFolders) {
       return path;
     }
 
     const found = specialFolders.find((x) => x.ID?.startsWith(path));
-
-    console.log('found', found);
 
     return found?.Path ?? path;
   }
