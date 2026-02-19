@@ -34,6 +34,8 @@ import { TestState } from './source-data/target-url-dialog/test-url/test-url';
 
 const SMART_RETENTION = '1W:1D,4W:1W,12M:1M';
 
+const DEFAULT_SAVE_CONNECTIONSTRING = false;
+
 type TempExtendedTargetUrlDto = TargetUrlDto & {
   ConnectionStringID: number | null;
 };
@@ -736,9 +738,17 @@ export class BackupState {
     this.targetUrls.update((urls) => {
       const newUrls = [...urls];
       if (newUrls.length === 0) {
-        newUrls.push({ url: targetUrl, connectionStringId, save: connectionStringId ? true : true });
+        newUrls.push({
+          url: targetUrl,
+          connectionStringId,
+          save: connectionStringId ? true : DEFAULT_SAVE_CONNECTIONSTRING,
+        });
       } else {
-        newUrls[0] = { url: targetUrl, connectionStringId, save: connectionStringId ? true : true };
+        newUrls[0] = {
+          url: targetUrl,
+          connectionStringId,
+          save: connectionStringId ? true : DEFAULT_SAVE_CONNECTIONSTRING,
+        };
       }
       return newUrls;
     });
@@ -746,7 +756,10 @@ export class BackupState {
 
   // Helpers for array manipulation
   addTargetUrl(url: string, connectionStringId: number | null) {
-    this.targetUrls.update((urls) => [...urls, { url, connectionStringId, save: connectionStringId ? true : true }]);
+    this.targetUrls.update((urls) => [
+      ...urls,
+      { url, connectionStringId, save: connectionStringId ? true : DEFAULT_SAVE_CONNECTIONSTRING },
+    ]);
   }
 
   updateTargetUrl(index: number, url: string, connectionStringId: number | null) {
