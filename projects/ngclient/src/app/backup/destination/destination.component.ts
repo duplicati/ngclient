@@ -186,7 +186,8 @@ export default class DestinationComponent {
     const index = this.currentEditingIndex();
     if (index !== null) {
       const currentId = this.targetUrls()[index]?.connectionStringId ?? null;
-      this.#backupState.updateTargetUrl(index, targetUrl, currentId);
+      const currentKey = this.targetUrls()[index]?.urlKey ?? null;
+      this.#backupState.updateTargetUrl(index, targetUrl, currentId, currentKey);
     } else {
       // Should not happen if opened via button that sets index
       this.#backupState.setTargetUrl(targetUrl);
@@ -202,7 +203,7 @@ export default class DestinationComponent {
     const url = config.mapper.default ? config.mapper.default(this.#backupState.backupName() ?? '') : `${key}://`;
 
     if (this.currentEditingIndex() !== null) {
-      this.#backupState.updateTargetUrl(this.currentEditingIndex()!, url, null);
+      this.#backupState.updateTargetUrl(this.currentEditingIndex()!, url, null, null);
       this.updateTestState(this.currentEditingIndex()!, null);
       this.currentEditingIndex.set(null);
       this.showCustomList.set(false);
@@ -211,12 +212,12 @@ export default class DestinationComponent {
 
     if (this.showCustomList()) {
       // Adding new
-      this.#backupState.addTargetUrl(url, null);
+      this.#backupState.addTargetUrl(url, null, null);
       this.showCustomList.set(false);
       this.isAddingNew.set(false);
     } else {
       // Setting primary or fallback append (less likely used path but preserved for safety)
-      this.#backupState.addTargetUrl(url, null);
+      this.#backupState.addTargetUrl(url, null, null);
       this.showCustomList.set(false);
       this.isAddingNew.set(false);
     }
@@ -252,9 +253,9 @@ export default class DestinationComponent {
     if (!option.BaseUrl) return;
 
     if (this.targetUrls().length === 0) {
-      this.#backupState.setTargetUrl(option.BaseUrl, true, option.ID);
+      this.#backupState.setTargetUrl(option.BaseUrl, true, option.ID, null);
     } else {
-      this.#backupState.addTargetUrl(option.BaseUrl, option.ID);
+      this.#backupState.addTargetUrl(option.BaseUrl, option.ID, null);
       this.showCustomList.set(false);
       this.isAddingNew.set(false);
     }
@@ -290,7 +291,8 @@ export default class DestinationComponent {
   updateTargetUrl(index: number, url: string | null) {
     if (!url) return;
     const currentId = this.targetUrls()[index]?.connectionStringId ?? null;
-    this.#backupState.updateTargetUrl(index, url, currentId);
+    const currentKey = this.targetUrls()[index]?.urlKey ?? null;
+    this.#backupState.updateTargetUrl(index, url, currentId, currentKey);
 
     // If we want to separate them if the user want to
     // this.#backupState.updateTargetUrl(index, url, null);

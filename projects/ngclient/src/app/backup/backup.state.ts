@@ -38,6 +38,7 @@ const DEFAULT_SAVE_CONNECTIONSTRING = false;
 
 type TempExtendedTargetUrlDto = TargetUrlDto & {
   ConnectionStringID: number | null;
+  UrlKey: string | null;
 };
 
 @Injectable({
@@ -64,7 +65,7 @@ export class BackupState {
     backupRetentionCustom: signal(''),
   };
 
-  targetUrls = signal<{ url: string; connectionStringId: number | null; save: boolean }[]>([]);
+  targetUrls = signal<{ url: string; connectionStringId: number | null; urlKey: string | null; save: boolean }[]>([]);
   targetUrlModel = computed(() => this.targetUrls()[0]?.url ?? null);
   connectionStringId = computed(() => this.targetUrls()[0]?.connectionStringId ?? null);
 
@@ -179,6 +180,7 @@ export class BackupState {
               return {
                 TargetUrl: t.url,
                 ConnectionStringID: id ?? undefined,
+                UrlKey: t.urlKey,
               };
             });
 
@@ -322,11 +324,12 @@ export class BackupState {
     const url = backup.TargetURL ?? '';
     const csId = (backup.ConnectionStringID === -1 ? null : backup.ConnectionStringID) ?? null;
 
-    const firstDestination = url ? [{ url, connectionStringId: csId, save: !!csId }] : [];
+    const firstDestination = url ? [{ url, connectionStringId: csId, urlKey: null, save: !!csId }] : [];
 
     const additionalDestinations =
       (anyBackup.AdditionalTargetURLs as TempExtendedTargetUrlDto[])?.map((t) => ({
         url: t.TargetUrl!,
+        urlKey: t.UrlKey,
         connectionStringId: t.ConnectionStringID ?? null,
         save: !!t.ConnectionStringID,
       })) ?? [];
@@ -704,7 +707,8 @@ export class BackupState {
             // modifying signal directly inside tap is side-effecty but fine here.
             // We will update them via the standard update method to stay consistent.
             if (currentUrls[index].connectionStringId !== id) {
-              this.updateTargetUrl(index, currentUrls[index].url, id);
+              const currentKey = currentUrls[index].urlKey;
+              this.updateTargetUrl(index, currentUrls[index].url, id, currentKey);
             }
           }
         });
@@ -727,7 +731,12 @@ export class BackupState {
     };
   }
 
-  setTargetUrl(targetUrl: string | null, resetLastTargetUrl = false, connectionStringId: number | null = null) {
+  setTargetUrl(
+    targetUrl: string | null,
+    resetLastTargetUrl = false,
+    connectionStringId: number | null = null,
+    targetUrlKey: string | null = null
+  ) {
     if (resetLastTargetUrl) this.#lastTargetUrl = null;
 
     if (targetUrl === null) {
@@ -740,12 +749,14 @@ export class BackupState {
       if (newUrls.length === 0) {
         newUrls.push({
           url: targetUrl,
+          urlKey: targetUrlKey,
           connectionStringId,
           save: connectionStringId ? true : DEFAULT_SAVE_CONNECTIONSTRING,
         });
       } else {
         newUrls[0] = {
           url: targetUrl,
+          urlKey: targetUrlKey,
           connectionStringId,
           save: connectionStringId ? true : DEFAULT_SAVE_CONNECTIONSTRING,
         };
@@ -755,14 +766,14 @@ export class BackupState {
   }
 
   // Helpers for array manipulation
-  addTargetUrl(url: string, connectionStringId: number | null) {
+  addTargetUrl(url: string, connectionStringId: number | null, urlKey: string | null) {
     this.targetUrls.update((urls) => [
       ...urls,
-      { url, connectionStringId, save: connectionStringId ? true : DEFAULT_SAVE_CONNECTIONSTRING },
+      { url, connectionStringId, urlKey, save: connectionStringId ? true : DEFAULT_SAVE_CONNECTIONSTRING },
     ]);
   }
 
-  updateTargetUrl(index: number, url: string, connectionStringId: number | null) {
+  updateTargetUrl(index: number, url: string, connectionStringId: number | null, urlKey: string | null) {
     this.targetUrls.update((urls) => {
       if (index < 0 || index >= urls.length) return urls;
       const newUrls = [...urls];
@@ -770,7 +781,7 @@ export class BackupState {
       // If connectionStringId is provided (meaning we probably saved it or loaded it), save should be true?
       // If it's null, we respect existing save flag?
       // Attempting to preserve user intent.
-      newUrls[index] = { url, connectionStringId, save: connectionStringId ? true : existingSave };
+      newUrls[index] = { url, connectionStringId, urlKey, save: connectionStringId ? true : existingSave };
       return newUrls;
     });
   }
