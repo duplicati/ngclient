@@ -681,6 +681,7 @@ export type TargetUrlDto = {
     TargetUrl: (string) | null;
     Mode: (string) | null;
     Interval?: (string) | null;
+    ConnectionStringID?: number;
     Options?: {
         [key: string]: unknown;
     } | null;
@@ -691,6 +692,7 @@ export type TargetUrlInputDto = {
     TargetUrl: (string) | null;
     Mode?: (string) | null;
     Interval?: (string) | null;
+    ConnectionStringID?: number;
     Options?: {
         [key: string]: unknown;
     } | null;
