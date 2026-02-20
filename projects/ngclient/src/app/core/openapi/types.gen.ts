@@ -342,17 +342,6 @@ export type LicenseDto = {
     Jsondata: (string) | null;
 };
 
-export type LicenseStatusDto = {
-    IsConfigured: boolean;
-    IsValid: boolean;
-    IsInGracePeriod: boolean;
-    ExpiresAt: (string) | null;
-    ExpiresWithGraceAt: (string) | null;
-    Features: {
-        [key: string]: string;
-    } | null;
-};
-
 export type ListFilesetsRequestDto = {
     BackupId: (string) | null;
     ForceRemoteListing?: (boolean) | null;
@@ -686,8 +675,6 @@ export type SystemInfoDto = {
     DefaultOAuthURL: (string) | null;
     DefaultOAuthURLv2: (string) | null;
     PowerModeProviders: Array<string> | null;
-    LocalLicenseStatus: LicenseStatusDto;
-    RemoteLicenseStatus: LicenseStatusDto;
 };
 
 export type TargetUrlDto = {
