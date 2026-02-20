@@ -10,6 +10,7 @@ import { SysinfoState } from '../../core/states/sysinfo.state';
 import { BackupState } from '../backup.state';
 import { getConfigurationByUrl } from '../destination/destination.config-utilities';
 import { NewFilterComponent } from './new-filter/new-filter.component';
+import { TargetDiskDialog } from './target-disk-dialog/target-disk-dialog';
 import { TargetUrlDialog } from './target-url-dialog/target-url-dialog';
 
 const fb = new FormBuilder();
@@ -98,6 +99,11 @@ export default class SourceDataComponent {
   bulkFilterEditMode = signal(false);
   bulkFilters = signal('');
   mobileMenuOpen = signal(false);
+  isLocalDiskSupported = computed(
+    () =>
+      this.osType() === 'Windows' &&
+      this.#sysInfo.systemInfo()?.SourceProviderModules?.find((x) => x.Key == 'diskimage')
+  );
 
   openRemoteDestinationDialog() {
     const dialogRef = this.#dialog.open(TargetUrlDialog, {
@@ -120,10 +126,33 @@ export default class SourceDataComponent {
       if (!targetUrl) return;
 
       const shortId = Math.random().toString(36).substring(2, 10);
-      const protcolName = targetUrl.split('://')[0];
+      const protocolName = targetUrl.split('://')[0];
       const prefix = this.#sysInfo.systemInfo()?.DirectorySeparator === '\\' ? 'X:\\' : '/';
 
-      const newRemotePath = `@${prefix}dupl-${protcolName}-${shortId}|${targetUrl}`;
+      const newRemotePath = `@${prefix}dupl-${protocolName}-${shortId}|${targetUrl}`;
+
+      this.addPath(newRemotePath);
+    });
+  }
+
+  openLocalDiskDialog() {
+    const dialogRef = this.#dialog.open(TargetDiskDialog, {
+      maxWidth: '700px',
+      maxHeight: '80vh',
+      width: '100%',
+      closeOnOutsideClick: false,
+      data: {
+        initialPath: null,
+      },
+    });
+
+    dialogRef.closed.subscribe((destination) => {
+      if (!destination) return;
+
+      const shortId = Math.random().toString(36).substring(2, 10);
+      const prefix = this.#sysInfo.systemInfo()?.DirectorySeparator === '\\' ? 'X:\\' : '/';
+
+      const newRemotePath = `@${prefix}dupl-disk-${shortId}|diskimage://${destination}`;
 
       this.addPath(newRemotePath);
     });
@@ -175,35 +204,65 @@ export default class SourceDataComponent {
 
   editPath(oldPath: string) {
     if (oldPath && oldPath.startsWith('@')) {
-      const dialogRef = this.#dialog.open(TargetUrlDialog, {
-        maxWidth: '700px',
-        maxHeight: '80vh',
-        width: '100%',
-        closeOnOutsideClick: false,
-        data: {
-          targetUrlModel: oldPath.split('|')[1] ?? null,
-          moduleType: 'SourceProvider',
-          askToCreate: false,
-          expectedResult: 'destinationNotEmpty',
-          suppressErrorDialogs: true,
-          backupId: this.#backupState.backupId(),
-          sourcePrefix: oldPath.split('|')[0] ?? null,
-        },
-      });
+      const parts = oldPath.split('|');
+      if (parts.length !== 2) return;
 
-      dialogRef.closed.subscribe((targetUrl) => {
-        if (!targetUrl) return;
-
-        const prefix = oldPath.split('|')[0];
-        const newPath = `${prefix}|${targetUrl}`;
-
-        const currentPath = this.sourceDataForm.controls.path.value;
-        this.sourceDataForm.controls.path.setValue(currentPath?.replace(oldPath, newPath) ?? '');
-      });
+      if (parts[1].startsWith('diskimage://')) {
+        this.editLocalDiskSource(oldPath, parts[0], parts[1].substring('diskimage://'.length));
+      } else {
+        this.editTargetUrlPath(oldPath, parts[0], parts[1]);
+      }
       return;
     }
     this.oldPath.set(oldPath);
     this.editingPath.set(oldPath);
+  }
+
+  editLocalDiskSource(oldPath: string, prefix: string, path: string) {
+    const dialogRef = this.#dialog.open(TargetDiskDialog, {
+      maxWidth: '700px',
+      maxHeight: '80vh',
+      width: '100%',
+      closeOnOutsideClick: false,
+      data: {
+        initialPath: path,
+      },
+    });
+
+    dialogRef.closed.subscribe((newPath) => {
+      if (!newPath) return;
+
+      const newRemotePath = `${prefix}|diskimage://${newPath}`;
+      const currentPath = this.sourceDataForm.controls.path.value;
+      this.sourceDataForm.controls.path.setValue(currentPath?.replace(oldPath, newRemotePath) ?? '');
+    });
+  }
+
+  editTargetUrlPath(oldPath: string, prefix: string, url: string) {
+    const dialogRef = this.#dialog.open(TargetUrlDialog, {
+      maxWidth: '700px',
+      maxHeight: '80vh',
+      width: '100%',
+      closeOnOutsideClick: false,
+      data: {
+        targetUrlModel: url,
+        moduleType: 'SourceProvider',
+        askToCreate: false,
+        expectedResult: 'destinationNotEmpty',
+        suppressErrorDialogs: true,
+        backupId: this.#backupState.backupId(),
+        sourcePrefix: prefix,
+      },
+    });
+
+    dialogRef.closed.subscribe((targetUrl) => {
+      if (!targetUrl) return;
+
+      const newPath = `${prefix}|${targetUrl}`;
+
+      const currentPath = this.sourceDataForm.controls.path.value;
+      this.sourceDataForm.controls.path.setValue(currentPath?.replace(oldPath, newPath) ?? '');
+    });
   }
 
   updateFilesLargerThan($event: any) {
@@ -301,6 +360,7 @@ export default class SourceDataComponent {
   getBackendIcon(path: string | null | undefined) {
     if (!path) return '';
     const url = path.split('|')[1];
+    if (url.startsWith('diskimage:')) return 'assets/dest-icons/external-harddrive.png';
     const match = getConfigurationByUrl(url);
     return match.icon ?? 'database';
   }
@@ -308,6 +368,8 @@ export default class SourceDataComponent {
   getRemotePathDisplayName(path: string | null | undefined) {
     if (!path) return '';
     const url = path.split('|')[1];
+    if (url.startsWith('diskimage:')) return $localize`Local disk`;
+
     const match = getConfigurationByUrl(url);
     const name = match ? match.displayName : 'Unknown';
     return name;

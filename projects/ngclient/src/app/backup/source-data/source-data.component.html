@@ -39,7 +39,13 @@
         <span i18n>Paths</span>
         <div class="spacer"></div>
         @if (!bulkPathEditMode()) {
-          <button shButton class="small" type="button" (click)="openRemoteDestinationDialog()" i18n>
+          @if (isLocalDiskSupported()) {
+            <button shButton class="small rowbutton" type="button" (click)="openLocalDiskDialog()" i18n>
+              <sh-icon>hard-drive</sh-icon>
+              Add local disk
+            </button>
+          }
+          <button shButton class="small rowbutton" type="button" (click)="openRemoteDestinationDialog()" i18n>
             <sh-icon>cloud-arrow-down</sh-icon>
             Add remote path
           </button>

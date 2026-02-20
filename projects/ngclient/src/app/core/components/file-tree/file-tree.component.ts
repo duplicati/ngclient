@@ -116,7 +116,7 @@ export default class FileTreeComponent {
   showHiddenNodes = input(false);
   enableCreateFolder = input(false);
   hideShortcuts = input(false);
-  customRemoteMode = input<'gsuite' | 'o365' | null>(null);
+  customRemoteMode = input<'gsuite' | 'o365' | 'diskimage' | null>(null);
   backupId = input<string | null | undefined>('');
   sourcePrefix = input<string | null | undefined>('');
   destinationUrl = input<string | null | undefined>('');
@@ -786,6 +786,30 @@ export default class FileTreeComponent {
       );
   }
 
+  #getDiskImagePaths(path: string | null) {
+    return this.#dupServer
+      .postApiV1WebmoduleByModulekey({
+        modulekey: 'diskimage',
+        requestBody: {
+          operation: 'ListDestinationRestoreTargets',
+          path: path ?? '/',
+        },
+      })
+      .pipe(
+        map((res) => {
+          const d = res.Result as {
+            [key: string]: string;
+          };
+          return Object.keys(d).map((key) => {
+            return {
+              Path: key,
+              Metadata: JSON.parse(d[key]),
+            };
+          });
+        })
+      );
+  }
+
   #getBackupFiles(path: string | null) {
     const backupSettings = this.backupSettings()!;
     if (this.#sysInfo.hasV2ListOperations()) {
@@ -821,6 +845,10 @@ export default class FileTreeComponent {
 
     if (this.customRemoteMode() === 'gsuite') {
       return this.#getGoogleWorkspaceFiles(path);
+    }
+
+    if (this.customRemoteMode() === 'diskimage') {
+      return this.#getDiskImagePaths(path);
     }
 
     if (this.isByBackupSettings()) {
@@ -910,7 +938,8 @@ export default class FileTreeComponent {
         metadata['o365:Name'] ||
         metadata['o365:DisplayName'] ||
         metadata['gsuite:Name'] ||
-        metadata['gsuite:DisplayName'];
+        metadata['gsuite:DisplayName'] ||
+        metadata['diskimage:Name'];
       if (name) return name;
     }
     return text;
