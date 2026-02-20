@@ -134,6 +134,7 @@ export class RestoreFlowState {
           permissions: optionsValue.permissions,
           skip_metadata: !optionsValue.includeMetadata,
           source_prefix: this.alternateRestorePathSourcePrefix(),
+          connection_string_id: null,
         },
       })
       .pipe(finalize(() => this.isSubmitting.set(false)))
