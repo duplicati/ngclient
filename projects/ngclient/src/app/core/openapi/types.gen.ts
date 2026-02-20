@@ -342,6 +342,17 @@ export type LicenseDto = {
     Jsondata: (string) | null;
 };
 
+export type LicenseStatusDto = {
+    IsConfigured: boolean;
+    IsValid: boolean;
+    IsInGracePeriod: boolean;
+    ExpiresAt: (string) | null;
+    ExpiresWithGraceAt: (string) | null;
+    Features: {
+        [key: string]: string;
+    } | null;
+};
+
 export type ListFilesetsRequestDto = {
     BackupId: (string) | null;
     ForceRemoteListing?: (boolean) | null;
@@ -513,6 +524,7 @@ export type RestoreInputDto = {
     overwrite?: (boolean) | null;
     permissions?: (boolean) | null;
     skip_metadata?: (boolean) | null;
+    connection_string_id?: (number) | null;
     source_prefix?: (string) | null;
 };
 
@@ -674,6 +686,8 @@ export type SystemInfoDto = {
     DefaultOAuthURL: (string) | null;
     DefaultOAuthURLv2: (string) | null;
     PowerModeProviders: Array<string> | null;
+    LocalLicenseStatus: LicenseStatusDto;
+    RemoteLicenseStatus: LicenseStatusDto;
 };
 
 export type TargetUrlDto = {
@@ -681,8 +695,8 @@ export type TargetUrlDto = {
     TargetUrl: (string) | null;
     Mode: (string) | null;
     Interval?: (string) | null;
-    ConnectionStringID?: number;
-    Options?: {
+    ConnectionStringID: number;
+    Options: {
         [key: string]: unknown;
     } | null;
 };
@@ -701,6 +715,25 @@ export type TargetUrlInputDto = {
 export type TaskStartedDto = {
     Status?: (string) | null;
     ID?: number;
+};
+
+export type TempDiskSpaceRequestDto = {
+    BackupId?: (string) | null;
+};
+
+export type TempDiskSpaceResponseDto = {
+    Success: boolean;
+    Error: (string) | null;
+    StatusCode: (string) | null;
+    Data?: TempDiskSpaceResult;
+};
+
+export type TempDiskSpaceResult = {
+    TempPath: (string) | null;
+    FreeSpace: (number) | null;
+    TotalSpace: (number) | null;
+    DblockSize: number;
+    RestoreCacheMax: number;
 };
 
 export type TimeZoneDto = {
@@ -1262,6 +1295,12 @@ export type PostApiV1RemotecontrolRegisterResponse = (RemoteControlStatusOutput)
 export type DeleteApiV1RemotecontrolRegisterResponse = (RemoteControlStatusOutput);
 
 export type PostApiV1RemotecontrolRegisterWaitResponse = (RemoteControlStatusOutput);
+
+export type PostApiV2SystemTempDiskSpaceData = {
+    requestBody: TempDiskSpaceRequestDto;
+};
+
+export type PostApiV2SystemTempDiskSpaceResponse = (TempDiskSpaceResponseDto);
 
 export type PostApiV2BackupListFilesetsData = {
     requestBody: ListFilesetsRequestDto;
