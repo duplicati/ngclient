@@ -41,7 +41,7 @@
 
 <footer footer>
   <button shButton (click)="closed.emit(false)" i18n>Cancel</button>
-  <button shButton class="raised primary" [class.loader]="isSubmitting()" (click)="submit()" i18n>
+  <button shButton class="raised primary" [class.loading]="isSubmitting()" (click)="submit()" i18n>
     Update settings
   </button>
 </footer>

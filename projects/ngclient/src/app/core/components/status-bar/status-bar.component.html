@@ -1,7 +1,35 @@
 <div class="current-backup">
+  <app-mobile-menu-toggle />
+
   <div class="current-backup-progress">
     @if (serverState()?.ActiveTask && statusData()?.task?.Status && statusData()?.task?.Status !== 'Completed') {
-      <div [shTooltip]="tooltipText()">{{ statusData()!.actionText }} - {{ statusData()!.statusText }}</div>
+      <div>{{ statusData()!.actionText }} - {{ statusData()!.statusText }}</div>
+
+      @if (statusData()?.BackendFileSize) {
+        <div class="file-status-text" [shTooltip]="fileStatusTooltip">
+          {{ statusData()!.fileStatusText }}
+        </div>
+
+        <ng-template #fileStatusTooltip>
+          <div class="tooltip-status-content">
+            <button
+              shButton
+              size="small"
+              [color]="copied() ? 'success' : null"
+              (click)="copyToClipboard($event, tooltipText())">
+              @if (copied() === true) {
+                <sh-icon>check</sh-icon>
+              } @else {
+                <sh-icon>copy</sh-icon>
+              }
+              Copy
+            </button>
+
+            <p class="tooltip-file-status-text">{{ tooltipText() }}</p>
+          </div>
+        </ng-template>
+      }
+
       <sh-progress-bar class="raised primary" [value]="statusData()!.progress * 100" />
     } @else if (nextBackup().backup || nextBackup().time) {
       <div class="label" i18n>
@@ -21,36 +49,71 @@
   </div>
 
   <div class="current-backup-actions">
-    @if (!isUsingRelay() && !hideConsoleConnectionStatus()) {
-      <app-remote-connectivity-status />
-    }
-
-    @if (runningTask()) {
-      @if (isStopping()) {
-        <button shButton i18n (click)="abort()">
-          <sh-icon>skull</sh-icon>
-          Abort
-        </button>
-      } @else {
-        <button shButton i18n (click)="stop()">
-          <sh-icon>stop</sh-icon>
-          Stop
-        </button>
+    <div class="desktop-actions">
+      @if (!isUsingRelay() && !hideConsoleConnectionStatus()) {
+        <app-remote-connectivity-status />
       }
-    }
 
-    <button shButton i18n [class.loader]="isResuming()" (click)="pauseResume()">
-      @if (clientIsRunning()) {
-        <sh-icon>pause</sh-icon>
-        Pause
-      } @else {
-        <sh-icon>play</sh-icon>
-        Resume
+      @if (runningTask()) {
+        @if (isStopping()) {
+          <button shButton i18n (click)="abort()">
+            <sh-icon>skull</sh-icon>
+            Abort
+          </button>
+        } @else {
+          <button shButton i18n (click)="stop()">
+            <sh-icon>stop</sh-icon>
+            Stop
+          </button>
+        }
       }
-    </button>
 
-    <button shButton (click)="openThrottleSettingsDialog()">
-      <sh-icon>speedometer</sh-icon>
-    </button>
+      <button shButton i18n [class.loading]="isResuming()" (click)="pauseResume()">
+        @if (clientIsRunning()) {
+          <sh-icon>pause</sh-icon>
+          Pause
+        } @else {
+          <sh-icon>play</sh-icon>
+          Resume
+        }
+      </button>
+
+      <button shButton (click)="openThrottleSettingsDialog()">
+        <sh-icon>speedometer</sh-icon>
+      </button>
+    </div>
+
+    <div class="mobile-actions">
+      <sh-menu>
+        <button shButton class="small menu-mobile-toggle">
+          @if (!isUsingRelay() && !hideConsoleConnectionStatus()) {
+            <app-remote-connectivity-status class="hide-text" />
+          }
+          <sh-icon>dots-three-vertical-bold</sh-icon>
+        </button>
+
+        <ng-container menu>
+          @if (!isUsingRelay() && !hideConsoleConnectionStatus()) {
+            <app-remote-connectivity-status class="in-menu" />
+          }
+          @if (runningTask()) {
+            <button (click)="isStopping() ? abort() : stop()">
+              <sh-icon>{{ isStopping() ? 'skull' : 'stop' }}</sh-icon>
+              {{ isStopping() ? 'Abort' : 'Stop' }}
+            </button>
+          }
+
+          <button (click)="pauseResume()">
+            <sh-icon>{{ clientIsRunning() ? 'pause' : 'play' }}</sh-icon>
+            {{ clientIsRunning() ? 'Pause' : 'Resume' }}
+          </button>
+
+          <button (click)="openThrottleSettingsDialog()">
+            <sh-icon>speedometer</sh-icon>
+            Throttle Settings
+          </button>
+        </ng-container>
+      </sh-menu>
+    </div>
   </div>
 </div>

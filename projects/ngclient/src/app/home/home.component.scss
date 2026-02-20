@@ -22,6 +22,10 @@ header {
   grid-template-columns: 1fr 1fr;
   padding: p2r(0 32);
   gap: p2r(16);
+
+  @include breakpoint(-milli) {
+    grid-template-columns: 1fr;
+  }
 }
 
 sh-card {
@@ -44,6 +48,13 @@ sh-card {
 
   h2 {
     padding: p2r(0 32);
+
+    @include breakpoint(-milli) {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: p2r(8);
+    }
   }
 }
 
@@ -86,12 +97,21 @@ sh-menu {
   border-radius: var(--shape-3);
   box-shadow: var(--box-shadow-10);
 
+  @include breakpoint(-milli) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .text {
     display: flex;
     flex-direction: column;
     gap: p2r(8);
     width: 100%;
     max-width: 40%;
+
+    @include breakpoint(-milli) {
+      max-width: initial;
+    }
 
     h3 {
       display: flex;

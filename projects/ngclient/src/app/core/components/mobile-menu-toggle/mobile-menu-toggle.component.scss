@@ -1,0 +1,23 @@
+@use '@ship-ui/core/styles/helpers' as *;
+
+:host {
+  display: contents;
+}
+
+.toggle-sidebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .cross,
+  .burger {
+    opacity: 1;
+    transition: opacity 124ms linear;
+    margin: 0;
+
+    &.hidden {
+      opacity: 0;
+    }
+  }
+}

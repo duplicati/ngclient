@@ -62,7 +62,7 @@
         <input id="backup-name" formControlName="backup-name" />
       </sh-form-field>
 
-      <app-toggle-card [disallowToggle]="true">
+      <app-toggle-card [disableToggle]="true">
         <ng-container title i18n>Filters</ng-container>
         <ng-container content formGroupName="filters">
           @for (filterCtrl of standardFields.controls.filters.controls; track $index) {
@@ -77,7 +77,7 @@
     <app-options-list [(options)]="settings" [hasFreeTextSettings]="true" />
 
     <div class="form-actions">
-      <button shButton class="raised primary" [class.loader]="isSubmitting()" (click)="submit()" i18n>
+      <button shButton class="raised primary" [class.loading]="isSubmitting()" (click)="submit()" i18n>
         <sh-icon>arrow-right</sh-icon>
         Run "{{ baseCmdForm.value.command }}" command now
       </button>

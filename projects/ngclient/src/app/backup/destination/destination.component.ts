@@ -2,23 +2,35 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  ElementRef,
+  effect,
   inject,
   Injector,
   signal,
-  viewChild,
+  viewChildren,
 } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ShipAlert, ShipButton, ShipDialog, ShipDialogService, ShipFormField, ShipIcon, ShipMenu } from '@ship-ui/core';
-import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
+import {
+  ShipAlert,
+  ShipButton,
+  ShipCard,
+  ShipDialog,
+  ShipDivider,
+  ShipFormField,
+  ShipIcon,
+  ShipMenu,
+  ShipProgressBar,
+  ShipToggle,
+  ShipToggleCard,
+} from '@ship-ui/core';
 import { IDynamicModule } from '../../core/openapi';
+import { ConnectionStringsState } from '../../core/states/connection-strings.state';
 import { DestinationTypeOption } from '../../core/states/destinationconfig.state';
 import { BackupState } from '../backup.state';
-import { TestUrl } from '../source-data/target-url-dialog/test-url/test-url';
+import { TestState, TestUrl } from '../source-data/target-url-dialog/test-url/test-url';
 import { DestinationListItemComponent } from './destination-list-item/destination-list-item.component';
 import { DestinationListComponent } from './destination-list/destination-list.component';
-import { getConfigurationByKey, getConfigurationByUrl } from './destination.config-utilities';
+import { getConfigurationByKey, getConfigurationByUrl, getSimplePath } from './destination.config-utilities';
 import { SingleDestinationComponent } from './single-destination/single-destination.component';
 
 const fb = new FormBuilder();
@@ -70,6 +82,11 @@ export type DestinationFormGroupValue = ReturnType<typeof createDestinationFormG
     ShipIcon,
     ShipDialog,
     ShipAlert,
+    ShipCard,
+    ShipDivider,
+    ShipProgressBar,
+    ShipToggleCard,
+    ShipToggle,
   ],
   templateUrl: './destination.component.html',
   styleUrl: './destination.component.scss',
@@ -79,18 +96,26 @@ export default class DestinationComponent {
   #router = inject(Router);
   #route = inject(ActivatedRoute);
   #backupState = inject(BackupState);
-  #dialog = inject(ShipDialogService);
+  #connectionStringsState = inject(ConnectionStringsState);
   injector = inject(Injector);
 
-  formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
-  testUrlComponent = viewChild.required<TestUrl>('testUrl');
+  testUrlComponents = viewChildren<TestUrl>('testUrl');
 
-  testSignal = this.#backupState.targetUrlTestSignal;
-  targetUrlModel = this.#backupState.targetUrlModel;
+  // We manage local test states for the list. BackupState's signal might be used for global valid status if we want,
+  // but for the list we need individual states.
+  testStates = signal<TestState[]>([]);
+
+  targetUrls = this.#backupState.targetUrls;
+  targetUrlModel = computed(() => this.targetUrls()[0]?.url ?? null);
   targetUrlCtrl = signal<string | null>(null);
   targetUrlInitial = signal<string | null>(null);
+  currentEditingIndex = signal<number | null>(null);
   targetUrlDialogOpen = signal(false);
-  toggleNewDestination = signal(true);
+  showCustomList = signal(false);
+  isConnectionStringSaved = this.#backupState.isConnectionStringSaved;
+
+  destinations = this.#connectionStringsState.destinations;
+  isLoadingDestinations = this.#connectionStringsState.resourceDestinations.isLoading;
 
   isNew = this.#backupState.isNew;
   backupId = this.#backupState.backupId;
@@ -101,6 +126,16 @@ export default class DestinationComponent {
     if (!targetUrl) return null;
 
     return getConfigurationByUrl(targetUrl) ?? null;
+  });
+
+  isLoadingDestinationEffect = effect(() => {
+    // If there are no stored destinations, skip the button click
+    const isLoading = this.isLoadingDestinations();
+    const destinations = this.destinations();
+    const currentTargets = this.targetUrls();
+    if (!isLoading && destinations.length == 0 && currentTargets.length == 0) {
+      this.toggleCustomList();
+    }
   });
 
   selectedDestinationTypeOption = computed(() => {
@@ -116,14 +151,27 @@ export default class DestinationComponent {
       : null;
   });
 
-  copyTargetUrl() {
-    navigator.clipboard.writeText(this.targetUrlModel() ?? '');
+  getConnectionString(id: number | null) {
+    const connectionString = this.#connectionStringsState.destinations().find((d) => d.ID === id);
+    console.log('connection', connectionString);
+    return connectionString;
   }
 
-  openTargetUrlDialog() {
-    const targetUrl = this.targetUrlModel();
+  getSimplePath(url: string | null) {
+    if (!url) return '';
+    return getSimplePath(url);
+  }
+
+  copyTargetUrl(index: number = 0) {
+    const url = this.targetUrls()[index]?.url;
+    if (url) navigator.clipboard.writeText(url);
+  }
+
+  openTargetUrlDialog(index: number = 0) {
+    const targetUrl = this.targetUrls()[index]?.url ?? null;
     this.targetUrlCtrl.set(targetUrl);
     this.targetUrlInitial.set(targetUrl);
+    this.currentEditingIndex.set(index);
     this.targetUrlDialogOpen.set(true);
   }
 
@@ -135,89 +183,178 @@ export default class DestinationComponent {
 
     if (!submit || targetUrl === initialTargetUrl || !targetUrl) return;
 
-    this.#backupState.setTargetUrl(targetUrl);
+    const index = this.currentEditingIndex();
+    if (index !== null) {
+      const currentId = this.targetUrls()[index]?.connectionStringId ?? null;
+      const currentKey = this.targetUrls()[index]?.urlKey ?? null;
+      this.#backupState.updateTargetUrl(index, targetUrl, currentId, currentKey);
+    } else {
+      // Should not happen if opened via button that sets index
+      this.#backupState.setTargetUrl(targetUrl);
+    }
+
+    this.currentEditingIndex.set(null);
   }
 
   setDestination(key: IDynamicModule['Key']) {
     const config = getConfigurationByKey(key ?? '');
     if (!config) return;
 
-    if (config.mapper.default) {
-      const defaultUrl = config.mapper.default(this.#backupState.backupName() ?? '');
-      this.#backupState.setTargetUrl(defaultUrl, true);
+    const url = config.mapper.default ? config.mapper.default(this.#backupState.backupName() ?? '') : `${key}://`;
+
+    if (this.currentEditingIndex() !== null) {
+      this.#backupState.updateTargetUrl(this.currentEditingIndex()!, url, null, null);
+      this.updateTestState(this.currentEditingIndex()!, null);
+      this.currentEditingIndex.set(null);
+      this.showCustomList.set(false);
       return;
     }
 
-    this.#backupState.setTargetUrl(`${key}://`, true);
+    if (this.showCustomList()) {
+      // Adding new
+      this.#backupState.addTargetUrl(url, null, null);
+      this.showCustomList.set(false);
+      this.isAddingNew.set(false);
+    } else {
+      // Setting primary or fallback append (less likely used path but preserved for safety)
+      this.#backupState.addTargetUrl(url, null, null);
+      this.showCustomList.set(false);
+      this.isAddingNew.set(false);
+    }
   }
 
-  removeDestination() {
-    this.#backupState.setTargetUrl(null, true);
+  // Sync test states with target urls length
+  // We try to preserve existing states if possible, but indices might shift.
+  // For now simple resizing/resetting of new ones.
+  targetUrlsEffect = effect(
+    () => {
+      const urls = this.targetUrls();
+      this.testStates.update((states) => {
+        if (states.length === urls.length) return states;
+
+        const newStates = [...states];
+        if (newStates.length < urls.length) {
+          // Add new null states
+          for (let i = newStates.length; i < urls.length; i++) {
+            newStates.push(null);
+          }
+        } else {
+          // Truncate
+          newStates.length = urls.length;
+        }
+        return newStates;
+      });
+    },
+    { allowSignalWrites: true }
+  );
+
+  selectSavedDestination(option: any) {
+    if (!option.BaseUrl) return;
+    if (!option.BaseUrl) return;
+
+    if (this.targetUrls().length === 0) {
+      this.#backupState.setTargetUrl(option.BaseUrl, true, option.ID, null);
+    } else {
+      this.#backupState.addTargetUrl(option.BaseUrl, option.ID, null);
+      this.showCustomList.set(false);
+      this.isAddingNew.set(false);
+    }
+  }
+
+  toggleCustomList() {
+    this.currentEditingIndex.set(null);
+    this.showCustomList.set(true);
+  }
+
+  isAddingNew = signal(false);
+
+  startAddingNew() {
+    this.isAddingNew.set(true);
+    if (this.destinations().length === 0) this.showCustomList.set(true);
+  }
+
+  changeDestination(index: number) {
+    this.currentEditingIndex.set(index);
+    this.showCustomList.set(true);
+  }
+
+  closeCustomList() {
+    this.showCustomList.set(false);
+    this.currentEditingIndex.set(null);
+    this.isAddingNew.set(false);
+  }
+
+  removeDestination(index: number) {
+    this.#backupState.removeTargetUrl(index);
+  }
+
+  updateTargetUrl(index: number, url: string | null) {
+    if (!url) return;
+    const currentId = this.targetUrls()[index]?.connectionStringId ?? null;
+    const currentKey = this.targetUrls()[index]?.urlKey ?? null;
+    this.#backupState.updateTargetUrl(index, url, currentId, currentKey);
+
+    // If we want to separate them if the user want to
+    // this.#backupState.updateTargetUrl(index, url, null);
+
+    // Reset test state for this index
+    this.updateTestState(index, null);
+  }
+
+  updateTestState(index: number, state: TestState) {
+    this.testStates.update((states) => {
+      const newStates = [...states];
+      newStates[index] = state;
+      return newStates;
+    });
+  }
+
+  toggleSave(index: number) {
+    this.#backupState.toggleSaveConnectionString(index);
   }
 
   goBack() {
     this.#router.navigate(['general'], { relativeTo: this.#route.parent });
   }
 
-  next() {
+  async next() {
     const isNew = this.#backupState.isNew();
-    const testSignalValue = this.testSignal();
 
     if (!isNew) {
       this.#navigateToNext();
       return;
     }
 
-    if (testSignalValue === null) {
-      this.#dialog.open(ConfirmDialogComponent, {
-        data: {
-          title: $localize`Test destination`,
-          message: $localize`You have not tested the destination yet. Do you want to test it now?`,
-          confirmText: $localize`Test now`,
-          cancelText: $localize`Skip test and continue`,
-        },
-        closed: (res) => {
-          if (res) {
-            this.testUrlComponent()
-              ?.testDestination(false)
-              ?.then((res) => {
-                if (res.action === 'success' && !res.containsBackup && !res.anyFilesFound) {
-                  this.#navigateToNext();
-                } else {
-                  this.#dialog.open(ConfirmDialogComponent, {
-                    data: {
-                      title: $localize`Test did not succeed`,
-                      message: res.errorMessage ?? $localize`Failed to test the destination.`,
-                      confirmText: $localize`OK`,
-                      cancelText: undefined,
-                    },
-                  });
-                }
-              });
-          } else {
-            this.#navigateToNext();
-          }
-        },
-      });
-      return;
-    }
+    const components = this.testUrlComponents();
+    const testStates = this.testStates(); // We use this to check initial state, but relying on component.testDestination is safer for latest ref
 
-    const testResult = typeof testSignalValue === 'string' ? null : testSignalValue;
+    // Sequential validation
+    for (let i = 0; i < components.length; i++) {
+      const component = components[i];
 
-    if (testResult?.action !== 'success' || testResult.containsBackup || testResult.anyFilesFound) {
-      this.#dialog.open(ConfirmDialogComponent, {
-        data: {
-          title: $localize`Test destination`,
-          message: $localize`The destination has not been tested successfully. Are you sure you want to continue?`,
-          confirmText: $localize`Yes, continue`,
-          cancelText: $localize`Cancel`,
-        },
-        closed: (res) => {
-          if (res) this.#navigateToNext();
-        },
-      });
+      // We can check if it's already successful to skip re-testing
+      // logic: if testStates[i] is success, continue
+      // BUT: user might have changed something? The component's internal logic should handle "if dirty, reset state".
+      // If state is 'success', it means it's valid for the CURRENT url.
 
-      return;
+      const currentState = this.testStates()[i];
+
+      if (currentState && typeof currentState !== 'string' && currentState.action === 'success') {
+        continue;
+      }
+
+      // Test it
+      // We pass false to autoCreateFolders because we want the prompt to happen if needed (handled by TestUrl component if we configured it so?
+      // destination.component.html says: [askToCreate]="true".
+      // TestUrl.testDestination(false) => folderHandling = askToCreate ? 'prompt' : 'error' => 'prompt'.
+      // So it will prompt the user.
+
+      const result = await component.testDestination(false);
+
+      if (result?.action !== 'success') {
+        // Stop here. The component shows the error.
+        return;
+      }
     }
 
     this.#navigateToNext();
@@ -225,6 +362,9 @@ export default class DestinationComponent {
 
   #navigateToNext() {
     if (this.#backupState.shouldAutoSave()) {
+      // In the new world we might want to ensure all connection string IDs are saved/updated?
+      // But backupState submit handles saving logic for connection strings now (if we implemented it correctly there)
+      // or at least logic exists.
       this.#backupState.submit(true);
     }
 

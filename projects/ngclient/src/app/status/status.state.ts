@@ -25,55 +25,43 @@ export class StatusPageState {
   #statusBarState = inject(StatusBarState);
   #serverState = inject(ServerStateService);
 
-  // Recent files tracking
   #recentFiles = signal<RecentFile[]>([]);
   recentFiles = this.#recentFiles.asReadonly();
   #maxRecentFiles = 5;
-  #fileExpirationMs = 10000; // 10 seconds
 
-  // ETA calculation
   #etaData = signal<ETAData | null>(null);
   etaData = this.#etaData.asReadonly();
 
   #viewActivatedAt: Date | null = null;
   #initialProgress: { files: number; bytes: number } | null = null;
-  #etaInterval: any = null;
+  #etaInterval: number | null = null;
 
-  constructor() {
-    // Effect to track file changes
-    effect(
-      () => {
-        const statusData = this.#statusBarState.statusData();
-        if (statusData && statusData.CurrentFilename && statusData.CurrentFilesize !== undefined) {
-          this.#addRecentFile(statusData.CurrentFilename, statusData.CurrentFilesize);
-        }
-      },
-      { allowSignalWrites: true }
-    );
-  }
+  recentFileEffect = effect(() => {
+    const statusData = this.#statusBarState.statusData();
+    if (statusData && statusData.CurrentFilename && statusData.CurrentFilesize !== undefined) {
+      this.#addRecentFile(statusData.CurrentFilename, statusData.CurrentFilesize);
+    }
+  });
 
   #addRecentFile(filename: string, filesize: number) {
     const now = new Date();
-    this.#recentFiles.update((files) => {
-      // Remove expired files
-      const validFiles = files.filter((f) => now.getTime() - f.timestamp.getTime() < this.#fileExpirationMs);
 
-      // Check if file already exists (to avoid duplicates if polling is fast)
-      if (validFiles.length > 0 && validFiles[0].filename === filename) {
-        return validFiles;
+    this.#recentFiles.update((files) => {
+      if (files.length > 0 && files[0].filename === filename) {
+        return files;
       }
 
-      // Add new file
-      const newFiles = [{ filename, filesize, timestamp: now }, ...validFiles];
+      const newFiles = [{ filename, filesize, timestamp: now }, ...files];
 
-      // Limit to max files
       return newFiles.slice(0, this.#maxRecentFiles);
     });
   }
 
   activateView() {
     this.#viewActivatedAt = new Date();
+
     const statusData = this.#statusBarState.statusData();
+
     if (statusData && statusData.ProcessedFileCount !== undefined && statusData.ProcessedFileSize !== undefined) {
       this.#initialProgress = {
         files: statusData.ProcessedFileCount,
@@ -81,10 +69,8 @@ export class StatusPageState {
       };
     }
 
-    // Start ETA calculation interval
     this.#etaInterval = setInterval(() => {
       this.#calculateETA();
-      this.#cleanupRecentFiles();
     }, 1000);
   }
 
@@ -95,13 +81,6 @@ export class StatusPageState {
       clearInterval(this.#etaInterval);
       this.#etaInterval = null;
     }
-  }
-
-  #cleanupRecentFiles() {
-    const now = new Date();
-    this.#recentFiles.update((files) =>
-      files.filter((f) => now.getTime() - f.timestamp.getTime() < this.#fileExpirationMs)
-    );
   }
 
   #calculateETA() {
@@ -139,7 +118,6 @@ export class StatusPageState {
       etaBytes = remainingBytes / bytesPerSecond;
     }
 
-    // Use the longer (slower) ETA
     let estimatedCompletion: Date | null = null;
     let metric: 'files' | 'bytes' = 'bytes';
 

@@ -19,6 +19,7 @@ export class TestUrl {
 
   targetUrl = model.required<string | null>();
   testSignal = model.required<TestState>();
+  connectionStringId = input<number | null>(null);
 
   backupId = input.required<string | null>();
   sourcePrefix = input.required<string | null>();
@@ -105,6 +106,7 @@ export class TestUrl {
         .testDestination(
           targetUrl,
           this.backupId(),
+          this.connectionStringId(),
           this.sourcePrefix(),
           0,
           this.moduleType(),
@@ -123,6 +125,7 @@ export class TestUrl {
                 .testDestination(
                   suggestedUrl ?? targetUrl,
                   this.backupId(),
+                  this.connectionStringId(),
                   this.sourcePrefix(),
                   0,
                   this.moduleType(),

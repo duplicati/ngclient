@@ -312,7 +312,7 @@
 <ng-template #actions let-backup>
   <button
     shButton
-    [class.loader]="startingBackup() === backup.Backup.ID"
+    [class.loading]="startingBackup() === backup.Backup.ID"
     (click)="startBackup($any(backup.Backup.ID))"
     i18n>
     <sh-icon>play-circle</sh-icon>
@@ -329,7 +329,7 @@
     <button
       type="button"
       shButton
-      [class.loader]="loadingId() === backup.Backup.ID"
+      [class.loading]="loadingId() === backup.Backup.ID"
       [class.success]="successId() === backup.Backup.ID">
       @if (successId() === backup.Backup.ID) {
         <sh-icon>check</sh-icon>

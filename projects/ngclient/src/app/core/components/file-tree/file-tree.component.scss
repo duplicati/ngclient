@@ -174,3 +174,21 @@
   justify-content: space-between;
   align-items: center;
 }
+
+.box {
+  border: 1px solid var(--base-4);
+  border-radius: var(--shape-3);
+  padding: p2r(8);
+  background: var(--base-2);
+
+  pre {
+    margin: 0;
+  }
+}
+
+.wrap-box {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(4);
+  margin-bottom: p2r(16);
+}

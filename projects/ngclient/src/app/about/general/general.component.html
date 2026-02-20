@@ -9,7 +9,7 @@
 
   <div class="actions">
     @if (serverState()?.UpdaterState === 'Waiting') {
-      <button shButton (click)="checkForUpdates()" [class.loader]="checkingForUpdates()">Check for updates</button>
+      <button shButton (click)="checkForUpdates()" [class.loading]="checkingForUpdates()">Check for updates</button>
 
       @if (serverState()?.UpdateDownloadLink) {
         <a class="primary raised" shButton [href]="serverState()?.UpdateDownloadLink" target="_blank" i18n>

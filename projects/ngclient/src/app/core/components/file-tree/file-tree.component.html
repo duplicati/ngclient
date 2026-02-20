@@ -129,10 +129,13 @@
     </header>
 
     <div content>
-      <div>
-        Folder will be created under
-        <pre>{{ currentPath() }}</pre>
+      <div class="wrap-box">
+        <p i18n>Will be created as:</p>
+        <div class="box">
+          <pre>{{ currentPathResolvedShorthands() }}{{ createFolderPath() ? '/' + createFolderPath() : '' }}</pre>
+        </div>
       </div>
+
       <sh-form-field>
         <textarea id="targetUrl" autocomplete="off" [(ngModel)]="createFolderPath"></textarea>
       </sh-form-field>

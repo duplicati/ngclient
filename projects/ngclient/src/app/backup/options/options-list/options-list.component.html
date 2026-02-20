@@ -1,4 +1,4 @@
-<sh-toggle-card [disallowToggle]="true">
+<sh-toggle-card [disableToggle]="true" [isActive]="true">
   <ng-container title>
     <ng-container i18n>Advanced options</ng-container>
 
@@ -26,8 +26,8 @@
                   [class.deprecated]="option.deprecatedDescription"
                   (click)="addSetting(option)">
                   <div class="option-col">
-                    <p>{{ option.shortDescription }}</p>
-                    {{ option.name }}
+                    {{ option.shortDescription }}
+                    <p>{{ option.name }}</p>
                   </div>
                 </button>
               }

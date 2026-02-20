@@ -32,7 +32,7 @@
 
     @if (item.id === openEntry()) {
       <section class="log-content">
-        <sh-toggle-card [disallowToggle]="true">
+        <sh-toggle-card [disableToggle]="true">
           <ng-container title>
             <h3 i18n>Time</h3>
           </ng-container>
@@ -44,7 +44,7 @@
           </ng-container>
         </sh-toggle-card>
 
-        <sh-toggle-card [disallowToggle]="true">
+        <sh-toggle-card [disableToggle]="true">
           <ng-container title>
             <h3 i18n>Source files</h3>
           </ng-container>

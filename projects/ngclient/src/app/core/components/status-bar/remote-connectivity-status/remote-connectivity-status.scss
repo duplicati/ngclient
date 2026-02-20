@@ -4,6 +4,19 @@
   display: flex;
   align-items: center;
   padding: p2r(0 12);
+
+  @include breakpoint(-milli) {
+    padding: 0;
+  }
+
+  &.hide-text {
+    font-size: 0;
+  }
+
+  &.in-menu {
+    padding: p2r(12);
+    border-bottom: 1px solid var(--base-4);
+  }
 }
 
 .connectivity-status {

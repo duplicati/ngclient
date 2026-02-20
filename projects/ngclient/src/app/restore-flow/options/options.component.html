@@ -1,7 +1,7 @@
 <form [formGroup]="optionsForm" #formRef (submit)="submit()">
   <h3 class="title-30" i18n>Restore options</h3>
 
-  <app-toggle-card [disallowToggle]="true">
+  <app-toggle-card [disableToggle]="true">
     <ng-container title i18n>Where do you want to restore files to?</ng-container>
 
     @if (extendedDataType() !== null) {
@@ -78,7 +78,7 @@
   </app-toggle-card>
 
   @if (isCustomRemoteRestore()) {
-    <app-toggle-card [disallowToggle]="true">
+    <app-toggle-card [disableToggle]="true">
       <ng-container title i18n>Restore settings</ng-container>
 
       <sh-toggle class="raised primary" i18n>
@@ -87,7 +87,7 @@
       </sh-toggle>
     </app-toggle-card>
   } @else {
-    <app-toggle-card [disallowToggle]="true">
+    <app-toggle-card [disableToggle]="true">
       <ng-container title i18n>How do you want to handle existing files?</ng-container>
 
       <sh-radio class="raised primary" i18n>
@@ -122,7 +122,7 @@
       Go back
     </button>
 
-    <button shButton [class.loader]="isSubmitting()" class="raised primary" type="submit" i18n>
+    <button shButton [class.loading]="isSubmitting()" class="raised primary" type="submit" i18n>
       <sh-icon>arrow-right</sh-icon>
       Submit
     </button>

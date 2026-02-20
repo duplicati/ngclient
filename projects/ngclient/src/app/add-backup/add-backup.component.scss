@@ -17,6 +17,11 @@ div.backup-types {
   grid-template-columns: 1fr 1fr;
   gap: p2r(16);
   max-width: p2r(700);
+  padding: p2r(0 32);
+
+  @include breakpoint(-milli) {
+    grid-template-columns: 1fr;
+  }
 }
 
 sh-card {

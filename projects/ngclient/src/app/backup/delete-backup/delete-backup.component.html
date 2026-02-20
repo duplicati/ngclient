@@ -49,5 +49,5 @@
 
 <div class="actions">
   <button shButton [routerLink]="['/']" i18n>Cancel</button>
-  <button shButton class="raised error" [class.loader]="isDeleting()" (click)="deleteBackup()">Delete backup</button>
+  <button shButton class="raised error" [class.loading]="isDeleting()" (click)="deleteBackup()">Delete backup</button>
 </div>

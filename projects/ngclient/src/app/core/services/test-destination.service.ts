@@ -37,6 +37,7 @@ export class TestDestinationService {
   testDestination(
     targetUrl: string,
     backupId: string | null,
+    connectionStringId: number | null,
     sourcePrefix: string | null,
     destinationIndex: number,
     urlType: RemoteDestinationType,
@@ -47,6 +48,7 @@ export class TestDestinationService {
       return this.testDestinationv2(
         targetUrl,
         backupId,
+        connectionStringId,
         sourcePrefix,
         destinationIndex,
         urlType,
@@ -57,6 +59,7 @@ export class TestDestinationService {
       return this.testDestinationv1(
         targetUrl,
         backupId,
+        connectionStringId,
         sourcePrefix,
         destinationIndex,
         urlType,
@@ -68,6 +71,7 @@ export class TestDestinationService {
   private testDestinationv2(
     targetUrl: string,
     backupId: string | null,
+    connectionStringId: number | null,
     sourcePrefix: string | null,
     destinationIndex: number,
     urlType: RemoteDestinationType,
@@ -79,6 +83,7 @@ export class TestDestinationService {
         .postApiV2DestinationTest({
           requestBody: {
             DestinationUrl: targetUrl,
+            ConnectionStringId: connectionStringId ?? null,
             BackupId: backupId == 'new' ? null : backupId,
             AutoCreate: folderHandling === 'create',
             Options: null,
@@ -153,6 +158,7 @@ export class TestDestinationService {
   private testDestinationv1(
     targetUrl: string,
     backupId: string | null,
+    connectionStringId: number | null,
     sourcePrefix: string | null,
     destinationIndex: number,
     urlType: RemoteDestinationType,
@@ -166,6 +172,7 @@ export class TestDestinationService {
           requestBody: {
             path: targetUrl,
             backupId: backupId == 'new' ? null : backupId,
+            connectionStringId: connectionStringId ?? null,
             sourcePrefix: backupId == 'new' ? null : sourcePrefix,
           },
           type: urlType,

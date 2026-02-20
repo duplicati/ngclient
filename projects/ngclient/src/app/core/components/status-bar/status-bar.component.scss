@@ -11,6 +11,31 @@
   top: 0;
   z-index: 2000;
   background: var(--base-1);
+
+  &:has(sh-progress-bar) {
+    padding: p2r(16 16 24);
+  }
+}
+
+.file-status-text {
+  color: var(--base-8);
+
+  &:empty {
+    display: none;
+  }
+}
+
+.tooltip-file-status-text {
+  overflow-wrap: break-word;
+  word-break: break-word;
+  display: inline-block;
+  margin-bottom: p2r(4);
+}
+
+.tooltip-status-content {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(4);
 }
 
 .current-backup {
@@ -24,13 +49,17 @@
 .current-backup-progress {
   display: flex;
   flex-direction: column;
-  gap: p2r(4);
+  gap: p2r(0);
   min-width: p2r(300);
   flex: 1 0;
 
   sh-progress-bar {
-    max-width: p2r(300);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
     width: 100%;
+    max-width: initial;
   }
 
   .label {
@@ -43,10 +72,53 @@
 .current-backup-actions {
   display: flex;
   gap: p2r(8);
+
+  .desktop-actions {
+    display: flex;
+    gap: p2r(8);
+
+    @include breakpoint(-milli) {
+      display: none;
+    }
+  }
+
+  .mobile-actions {
+    display: none;
+
+    @include breakpoint(-milli) {
+      display: flex;
+    }
+  }
+
+  .menu-mobile-toggle {
+    position: relative;
+
+    app-remote-connectivity-status {
+      position: absolute;
+      top: p2r(-4);
+      right: p2r(-4);
+    }
+  }
 }
 
 .label-loading {
   display: inline-flex;
   align-items: center;
   gap: p2r(4);
+}
+
+.menu-status-item {
+  padding: p2r(8 16);
+  display: flex;
+  flex-direction: column;
+  gap: p2r(4);
+  border-bottom: 1px solid var(--base-4);
+  margin-bottom: p2r(4);
+
+  .label {
+    display: flex;
+    align-items: center;
+    gap: p2r(4);
+    font-size: p2r(14); // Adjust as needed
+  }
 }

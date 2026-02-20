@@ -21,11 +21,11 @@
   <sh-form-field class="expression-input">
     <input type="text" [(ngModel)]="internalPath" (ngModelChange)="updateFilter()" />
     @if (currentExpressionOption()?.startsWith?.length) {
-      <ng-container prefix>{{ currentExpressionOption()?.startsWith }}</ng-container>
+      <div boxPrefix>{{ currentExpressionOption()?.startsWith }}</div>
     }
 
     @if (currentExpressionOption()?.endsWith?.length) {
-      <ng-container suffix>{{ currentExpressionOption()?.endsWith }}</ng-container>
+      <div boxSuffix>{{ currentExpressionOption()?.endsWith }}</div>
     }
   </sh-form-field>
 }

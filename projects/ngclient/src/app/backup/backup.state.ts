@@ -2,7 +2,7 @@ import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { ShipDialogService } from '@ship-ui/core';
-import { finalize } from 'rxjs';
+import { finalize, forkJoin, map, Observable, of, switchMap, tap } from 'rxjs';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import { splitSize } from '../core/components/size/size.component';
 import {
@@ -14,12 +14,14 @@ import {
   ScheduleDto,
   SettingDto,
   SettingInputDto,
+  TargetUrlDto,
 } from '../core/openapi';
 import { TimespanLiteralsService } from '../core/services/timespan-literals.service';
 import { parseRecursiveObjectOfSignals } from '../core/signals/parse-recursive-signals-object';
+import { ConnectionStringsState } from '../core/states/connection-strings.state';
 import { SysinfoState } from '../core/states/sysinfo.state';
 import { ServerSettingsService } from '../settings/server-settings.service';
-import { FormView } from './destination/destination.config-utilities';
+import { FormView, getConfigurationByUrl } from './destination/destination.config-utilities';
 import { createGeneralForm, NONE_OPTION } from './general/general.component';
 import { RetentionType } from './options/options.component';
 import {
@@ -32,6 +34,13 @@ import { TestState } from './source-data/target-url-dialog/test-url/test-url';
 
 const SMART_RETENTION = '1W:1D,4W:1W,12M:1M';
 
+const DEFAULT_SAVE_CONNECTIONSTRING = false;
+
+type TempExtendedTargetUrlDto = TargetUrlDto & {
+  ConnectionStringID: number | null;
+  UrlKey: string | null;
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -42,6 +51,7 @@ export class BackupState {
   #dupServer = inject(DuplicatiServer);
   #serverSettings = inject(ServerSettingsService);
   #timespanLiteralService = inject(TimespanLiteralsService);
+  #connectionStringsState = inject(ConnectionStringsState);
 
   generalForm = createGeneralForm();
   sourceDataForm = createSourceDataForm();
@@ -49,14 +59,16 @@ export class BackupState {
   scheduleType = signal<string>('daily');
   settings = signal<SettingInputDto[]>([]);
   optionsFields = {
-    remoteVolumeSize: signal('50MB'),
     backupRetention: signal<RetentionType>('all'),
     backupRetentionTime: signal(''),
     backupRetentionVersions: signal<number | null>(0),
     backupRetentionCustom: signal(''),
   };
 
-  targetUrlModel = signal<string | null>(null);
+  targetUrls = signal<{ url: string; connectionStringId: number | null; urlKey: string | null; save: boolean }[]>([]);
+  targetUrlModel = computed(() => this.targetUrls()[0]?.url ?? null);
+  connectionStringId = computed(() => this.targetUrls()[0]?.connectionStringId ?? null);
+
   targetUrlTestSignal = signal<TestState>(null);
   backupMetadata = signal<Record<string, string> | null>(null);
 
@@ -70,6 +82,12 @@ export class BackupState {
   isNew = computed(() => this.backupId() === 'new');
   shouldAutoSave = computed(() => !this.isDraft() && !this.isNew());
   osType = computed(() => this.#sysinfo.systemInfo()?.OSType);
+
+  isConnectionStringSaved = computed(() => {
+    const targetUrl = this.targetUrlModel();
+    if (!targetUrl) return false;
+    return this.#connectionStringsState.destinations().some((d) => d.BaseUrl === targetUrl);
+  });
 
   selectedOptions = signal<FormView[]>([]);
 
@@ -94,6 +112,22 @@ export class BackupState {
 
     if (testSignalValue === 'testing' || lastTargetUrl === null || lastTargetUrl === newUrl) return;
     this.#testSignal.set(null);
+  });
+
+  #clearConnectionStringIdEffect = effect(() => {
+    const targetUrl = this.targetUrlModel();
+    const existingId = this.connectionStringId();
+
+    if (existingId) {
+      const destinations = this.#connectionStringsState.destinations();
+      if (destinations.length === 0) return;
+
+      const match = destinations.find((d) => d.ID === existingId);
+      if (!match || match.BaseUrl !== targetUrl) {
+        // This effect might need rethinking or we just handle it via the update methods now
+        // avoiding side-effects on the signal array for now to prevent infinite loops if not careful
+      }
+    }
   });
 
   setTestState(state: TestState) {
@@ -123,37 +157,59 @@ export class BackupState {
   submit(withoutExit = false) {
     this.isSubmitting.set(true);
 
-    const backup = this.#mapFormsToBackup();
-    const backupId = this.backupId();
+    this.#saveConnectionStringIfNeeded()
+      .pipe(
+        switchMap((csIds) => {
+          const backup = this.#mapFormsToBackup();
+          const backupId = this.backupId();
 
-    if (this.isDraft() && backup.Backup) backup.Backup.Metadata = this.backupMetadata();
+          const anyBackup = backup;
+          if (anyBackup.Backup) {
+            if (csIds.length > 0 && csIds[0] !== null) {
+              backup.Backup.ConnectionStringID = csIds[0]!;
+            } else {
+              if (csIds.length > 0 && csIds[0] === null) {
+                backup.Backup.ConnectionStringID = undefined;
+              }
+            }
 
-    if (backupId === 'new' || !backupId || this.isDraft()) {
-      this.#dupServer
-        .postApiV1Backups({
-          requestBody: backup,
-        })
-        .pipe(finalize(() => this.isSubmitting.set(false)))
-        .subscribe({
-          next: () => {
-            if (!withoutExit) this.exit(false);
-          },
-          error: () => {},
-        });
-    } else {
-      this.#dupServer
-        .putApiV1BackupById({
-          id: backupId,
-          requestBody: backup,
-        })
-        .pipe(finalize(() => this.isSubmitting.set(false)))
-        .subscribe({
-          next: () => {
-            if (!withoutExit) this.exit(false);
-          },
-          error: () => {},
-        });
-    }
+            const targetUrls = this.targetUrls();
+
+            const options = targetUrls.slice(1).map((t, i) => {
+              const id = csIds[i + 1];
+              return {
+                TargetUrl: t.url,
+                ConnectionStringID: id ?? undefined,
+                UrlKey: t.urlKey,
+              };
+            });
+
+            if (options.length > 0) {
+              anyBackup.Backup.AdditionalTargetURLs = options;
+            }
+          }
+
+          if (this.isDraft() && backup.Backup) backup.Backup.Metadata = this.backupMetadata();
+
+          if (backupId === 'new' || !backupId || this.isDraft()) {
+            return this.#dupServer.postApiV1Backups({
+              requestBody: backup,
+            });
+          } else {
+            return this.#dupServer.putApiV1BackupById({
+              id: backupId,
+              requestBody: backup,
+            });
+          }
+        }),
+        finalize(() => this.isSubmitting.set(false))
+      )
+      .subscribe({
+        next: () => {
+          if (!withoutExit) this.exit(false);
+        },
+        error: () => {},
+      });
   }
 
   validateBeforeSubmit() {
@@ -183,8 +239,11 @@ export class BackupState {
       return 'general';
     }
 
-    const targetUrl = this.targetUrlModel() ?? '';
-    if (targetUrl.trim() === '') {
+    const targetUrls = this.targetUrls();
+    // Validate that at least one target URL exists and is not empty
+    const hasValidDestination = targetUrls.length > 0 && targetUrls.some((t) => t.url.trim() !== '');
+
+    if (!hasValidDestination) {
       this.#dialog.open(ConfirmDialogComponent, {
         data: {
           title: $localize`Destination required`,
@@ -261,7 +320,21 @@ export class BackupState {
   }
 
   mapDestinationToForm(backup: BackupDto) {
-    this.targetUrlModel.set(backup.TargetURL ?? '');
+    const anyBackup = backup;
+    const url = backup.TargetURL ?? '';
+    const csId = (backup.ConnectionStringID === -1 ? null : backup.ConnectionStringID) ?? null;
+
+    const firstDestination = url ? [{ url, connectionStringId: csId, urlKey: null, save: !!csId }] : [];
+
+    const additionalDestinations =
+      (anyBackup.AdditionalTargetURLs as TempExtendedTargetUrlDto[])?.map((t) => ({
+        url: t.TargetUrl!,
+        urlKey: t.UrlKey,
+        connectionStringId: t.ConnectionStringID ?? null,
+        save: !!t.ConnectionStringID,
+      })) ?? [];
+
+    this.targetUrls.set([...firstDestination, ...additionalDestinations]);
   }
 
   mapGeneralToForm(backup: BackupDto) {
@@ -378,9 +451,9 @@ export class BackupState {
 
     var retentionValue: RetentionType = 'all';
     excludedSettings?.forEach((x) => {
-      if (x.Name === 'dblock-size') {
-        this.optionsFields.remoteVolumeSize.set(x.Value ?? '50MB');
-      }
+      // if (x.Name === 'dblock-size') {
+      //   this.optionsFields.remoteVolumeSize.set(x.Value ?? '50MB');
+      // }
 
       if (x.Name === 'keep-time') {
         // If this is not filled correctly, revert to 'all'
@@ -433,7 +506,9 @@ export class BackupState {
     const scheduleFormValue = this.getScheduleFormValue();
     const sourceDataFormValue = this.sourceDataForm.value;
 
-    const targetUrl = this.targetUrlModel();
+    const targetUrls = this.targetUrls();
+    const firstTarget = targetUrls[0];
+    const targetUrl = firstTarget?.url ?? null;
 
     const pathFilters = sourceDataFormValue.path?.split('\0') ?? [];
     const settings = this.mapFormsToSettings();
@@ -462,6 +537,7 @@ export class BackupState {
         Name: generalFormValue.name,
         Description: generalFormValue.description,
         TargetURL: targetUrl ?? null,
+        ConnectionStringID: firstTarget?.connectionStringId ?? null,
         Sources: pathFilters.filter((x) => !(x.startsWith('-') || x.startsWith('+'))),
         Settings: settings,
         Filters: pathFilters
@@ -521,10 +597,10 @@ export class BackupState {
     if (generalFormValue.compression === '') compression = [];
 
     const optionFields = [
-      {
-        Name: 'dblock-size',
-        Value: this.optionsFields.remoteVolumeSize(),
-      },
+      // {
+      //   Name: 'dblock-size',
+      //   Value: this.optionsFields.remoteVolumeSize(),
+      // },
     ];
 
     switch (this.optionsFields.backupRetention()) {
@@ -580,6 +656,66 @@ export class BackupState {
     return [...encryption, ...compression, ...optionFields, ...settings];
   }
 
+  #saveConnectionStringIfNeeded(): Observable<(number | null)[]> {
+    const targetUrls = this.targetUrls();
+    if (targetUrls.length === 0) return of([]);
+
+    const obs = targetUrls.map((t) => {
+      if (t.connectionStringId) return of(t.connectionStringId);
+
+      if (!t.save) return of(null);
+
+      // Create new
+      const targetUrl = t.url;
+      const config = getConfigurationByUrl(targetUrl);
+      const typeName = config?.displayName ?? 'Destination';
+
+      // We can't easily know "existing count" for naming without reloading or checking state repeatedly.
+      // A simple approach is unique name or timestamp, or just let DB handle it?
+      // For now, using a generic name approach similar to before but maybe improved.
+      // Actually, relying on state might be racy if we do parallel.
+      // Let's do them sequentially or just accept potential naming collisions (Backend likely handles unique names or we append random?)
+      // Let's stick to the existing logic but knowing it might be "Destination #N".
+
+      const existingDestinations = this.#connectionStringsState.destinations();
+      const existingCount = existingDestinations.filter((d) => d.Name?.startsWith(typeName)).length;
+      // Note: this count won't increment effectively for parallel requests unless we predict it.
+      // For now, let's assume sequential or just one new one usually.
+      // If multiple new, they might get same name.
+      // A better way: UUID or timestamp.
+      const name = `${typeName} ${new Date().toISOString()}`; // Temporary uniqueness
+
+      const requestBody = {
+        Name: name,
+        Description: null,
+        BaseUrl: targetUrl,
+      };
+
+      return this.#connectionStringsState.save('new', requestBody).pipe(map((res) => res.Data?.ID ?? null));
+    });
+
+    // ForkJoin to do them all
+    return forkJoin(obs).pipe(
+      tap((ids) => {
+        // Update local state with new IDs
+        const currentUrls = this.targetUrls();
+        ids.forEach((id, index) => {
+          if (id && index < currentUrls.length) {
+            this.#connectionStringsState.reload(); // Reload to get new names/etc
+            // updateTargetUrl triggers effect, might be noisy but correct
+            // We don't want to trigger "updateTargetUrl" public method potentially?
+            // modifying signal directly inside tap is side-effecty but fine here.
+            // We will update them via the standard update method to stay consistent.
+            if (currentUrls[index].connectionStringId !== id) {
+              const currentKey = currentUrls[index].urlKey;
+              this.updateTargetUrl(index, currentUrls[index].url, id, currentKey);
+            }
+          }
+        });
+      })
+    );
+  }
+
   #evaluateTimeString(t: string | undefined) {
     if (!t || t?.indexOf('T') === -1) {
       return {
@@ -595,19 +731,81 @@ export class BackupState {
     };
   }
 
-  setTargetUrl(targetUrl: string | null, resetLastTargetUrl = false) {
+  setTargetUrl(
+    targetUrl: string | null,
+    resetLastTargetUrl = false,
+    connectionStringId: number | null = null,
+    targetUrlKey: string | null = null
+  ) {
     if (resetLastTargetUrl) this.#lastTargetUrl = null;
 
-    this.targetUrlModel.set(targetUrl);
+    if (targetUrl === null) {
+      this.targetUrls.set([]);
+      return;
+    }
+
+    this.targetUrls.update((urls) => {
+      const newUrls = [...urls];
+      if (newUrls.length === 0) {
+        newUrls.push({
+          url: targetUrl,
+          urlKey: targetUrlKey,
+          connectionStringId,
+          save: connectionStringId ? true : DEFAULT_SAVE_CONNECTIONSTRING,
+        });
+      } else {
+        newUrls[0] = {
+          url: targetUrl,
+          urlKey: targetUrlKey,
+          connectionStringId,
+          save: connectionStringId ? true : DEFAULT_SAVE_CONNECTIONSTRING,
+        };
+      }
+      return newUrls;
+    });
+  }
+
+  // Helpers for array manipulation
+  addTargetUrl(url: string, connectionStringId: number | null, urlKey: string | null) {
+    this.targetUrls.update((urls) => [
+      ...urls,
+      { url, connectionStringId, urlKey, save: connectionStringId ? true : DEFAULT_SAVE_CONNECTIONSTRING },
+    ]);
+  }
+
+  updateTargetUrl(index: number, url: string, connectionStringId: number | null, urlKey: string | null) {
+    this.targetUrls.update((urls) => {
+      if (index < 0 || index >= urls.length) return urls;
+      const newUrls = [...urls];
+      const existingSave = newUrls[index].save;
+      // If connectionStringId is provided (meaning we probably saved it or loaded it), save should be true?
+      // If it's null, we respect existing save flag?
+      // Attempting to preserve user intent.
+      newUrls[index] = { url, connectionStringId, urlKey, save: connectionStringId ? true : existingSave };
+      return newUrls;
+    });
+  }
+
+  toggleSaveConnectionString(index: number) {
+    this.targetUrls.update((urls) => {
+      if (index < 0 || index >= urls.length) return urls;
+      const newUrls = [...urls];
+      newUrls[index] = { ...newUrls[index], save: !newUrls[index].save };
+      return newUrls;
+    });
+  }
+
+  removeTargetUrl(index: number) {
+    this.targetUrls.update((urls) => urls.filter((_, i) => i !== index));
   }
 
   #resetAllForms() {
     this.generalForm.reset();
     this.sourceDataForm.reset();
     this.scheduleFields = SCHEDULE_FIELD_DEFAULTS();
-    this.optionsFields.remoteVolumeSize.set('50MB');
+    // this.optionsFields.remoteVolumeSize.set('50MB');
     this.optionsFields.backupRetention.set('all');
     this.settings.set([]);
-    this.targetUrlModel.set(null);
+    this.targetUrls.set([]);
   }
 }

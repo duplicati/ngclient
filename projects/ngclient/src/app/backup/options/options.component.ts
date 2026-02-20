@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipButton, ShipFormField, ShipIcon, ShipSelect } from '@ship-ui/core';
-import { SIZE_OPTIONS, SizeComponent, splitSize } from '../../core/components/size/size.component';
 import { TimespanComponent } from '../../core/components/timespan/timespan.component';
 import { BackupState } from '../backup.state';
 import { OptionsListComponent } from './options-list/options-list.component';
@@ -32,23 +31,9 @@ const RETENTION_OPTIONS: { value: RetentionType; name: string }[] = [
   },
 ];
 
-const MaxVolumeSize = 1024 * 1024 * 1024 * 2; // 2GiB
-const MinVolumeSize = 1024 * 1024 * 5; // 5MiB
-
 @Component({
   selector: 'app-advanced-options-settings',
-  imports: [
-    FormsModule,
-
-    OptionsListComponent,
-    SizeComponent,
-    TimespanComponent,
-
-    ShipButton,
-    ShipIcon,
-    ShipSelect,
-    ShipFormField,
-  ],
+  imports: [FormsModule, OptionsListComponent, TimespanComponent, ShipButton, ShipIcon, ShipSelect, ShipFormField],
   templateUrl: './options.component.html',
   styleUrl: './options.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -65,21 +50,6 @@ export default class OptionsComponent {
   applicationOptions = this.#backupState.applicationOptions;
 
   retentionOptions = signal(RETENTION_OPTIONS);
-  exceededVolumeSize = computed(() => {
-    const { size, unit } = splitSize(this.optionsFields.remoteVolumeSize());
-
-    if (size === null || size === undefined || unit === null || unit === undefined) {
-      return false;
-    }
-
-    const current =
-      size *
-      Math.pow(
-        1024,
-        SIZE_OPTIONS.findIndex((x) => x.value === unit)
-      );
-    return current > MaxVolumeSize || current < MinVolumeSize;
-  });
 
   goBack() {
     this.#router.navigate(['schedule'], { relativeTo: this.#route.parent });

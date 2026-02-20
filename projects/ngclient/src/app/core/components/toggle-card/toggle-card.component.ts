@@ -13,10 +13,10 @@ import { ShipIcon } from '@ship-ui/core';
 })
 export default class ToggleCardComponent {
   isActive = model(false);
-  disallowToggle = input(false);
+  disableToggle = input(false);
 
   ngOnInit() {
-    if (this.disallowToggle()) {
+    if (this.disableToggle()) {
       this.isActive.set(true);
     }
   }

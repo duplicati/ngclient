@@ -1,16 +1,4 @@
 <sh-sidenav [class]="sidenavType()" [(isOpen)]="isNavOpen" [disableDrag]="true">
-  @if (isMobile()) {
-    <ng-container sidenav-closed-topbar>
-      <button shButton class="small toggle-sidebar" (click)="toggleNav()">
-        @if (isNavOpen()) {
-          <sh-icon class="cross">x-bold</sh-icon>
-        } @else {
-          <sh-icon class="burger">list-bold</sh-icon>
-        }
-      </button>
-    </ng-container>
-  }
-
   <div sidenav>
     <header>
       <app-logo />
@@ -38,6 +26,11 @@
       <button action routerLink="/restore" routerLinkActive="active" i18n>
         <sh-icon>clock-counter-clockwise</sh-icon>
         Restore
+      </button>
+
+      <button action routerLink="/destinations" routerLinkActive="active" i18n>
+        <sh-icon>link-simple</sh-icon>
+        Destinations
       </button>
 
       <!-- <button action routerLink="/status" routerLinkActive="active" i18n>

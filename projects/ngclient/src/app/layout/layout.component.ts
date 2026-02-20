@@ -45,7 +45,6 @@ export default class LayoutComponent {
   relayIsEnabled = this.#relayConfigState.relayIsEnabled;
   isDarkMode = this.#layoutState.isDarkMode;
   isNavOpen = this.#layoutState.isNavOpen;
-  isMobile = this.#layoutState.isMobile;
   sidenavType = this.#layoutState.sidenavType;
   machineName = computed(() => {
     const serverSettings = this.#serverSettingsState.serverSettings();
@@ -80,10 +79,6 @@ export default class LayoutComponent {
         }
       },
     });
-  }
-
-  toggleNav() {
-    this.#layoutState.toggleNav();
   }
 
   toggleBodyClass() {

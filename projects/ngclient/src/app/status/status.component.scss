@@ -1,21 +1,45 @@
 :host {
   display: block;
-  padding: 20px;
-  max-width: 1200px;
+  padding: 24px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
 .status-page {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 20px;
+  gap: 24px;
 
   @media (min-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  @media (min-width: 1024px) {
+  @media (min-width: 1200px) {
     grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (min-width: 1200px) {
+    .logs-card {
+      grid-column: span 2;
+    }
+
+    &.idle {
+      .idle-hero-card {
+        grid-column: span 2;
+      }
+      .next-task-hero {
+        grid-column: 3;
+      }
+      .server-state-card {
+        grid-column: 3;
+      }
+      .activity-card {
+        grid-column: 1 / -1;
+      }
+      .logs-card {
+        grid-column: 1 / -1;
+      }
+    }
   }
 }
 
@@ -23,218 +47,401 @@ sh-card {
   height: 100%;
   display: flex;
   flex-direction: column;
+  --sh-card-padding: 24px;
 }
 
-.progress-section {
-  h2 {
-    margin-top: 0;
-    margin-bottom: 15px;
-    font-size: 1.2rem;
-    color: var(--text-primary);
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  .header-titl-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    sh-icon {
+      color: var(--primary-color);
+      font-size: 24px;
+    }
+
+    h2,
+    h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+  }
+}
+
+// Progress Section (Active)
+.progress-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  .percentage-display {
+    text-align: center;
+
+    .percentage-value {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--primary-color);
+      line-height: 1;
+    }
   }
 
   sh-progress-bar {
-    margin-bottom: 15px;
-    height: 20px;
-    --progress-bar-color: var(--primary-color);
-  }
-
-  .stats-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-
-    .stat-item {
-      display: flex;
-      flex-direction: column;
-
-      .label {
-        font-size: 0.8rem;
-        color: var(--text-secondary);
-      }
-
-      .value {
-        font-weight: 500;
-      }
-    }
-  }
-}
-
-.files-section {
-  h3 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    font-size: 1rem;
-    color: var(--text-secondary);
-  }
-
-  .current-file {
-    margin-bottom: 20px;
-    padding: 10px;
-    background: var(--bg-secondary);
+    height: 8px;
     border-radius: 4px;
-
-    .filename {
-      font-weight: 500;
-      word-break: break-all;
-      margin-bottom: 5px;
-    }
-
-    .filesize {
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-    }
+    --sh-progress-bar-track-color: var(--bg-secondary);
   }
 
-  .recent-files {
-    .recent-file {
-      display: flex;
-      justify-content: space-between;
-      padding: 5px 0;
-      border-bottom: 1px solid var(--border-color);
+  .stat-item {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+
+    .label {
+      color: var(--text-secondary);
       font-size: 0.9rem;
+    }
 
-      &:last-child {
-        border-bottom: none;
-      }
-
-      .filename {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        margin-right: 10px;
-      }
-
-      .filesize {
-        color: var(--text-secondary);
-        white-space: nowrap;
-      }
+    .value {
+      font-weight: 600;
     }
   }
 }
 
-.speed-section {
-  .speed-header {
+// Files Section (Active)
+.files-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: block;
+    padding-left: 12px;
+  }
+
+  .file-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    width: 100%;
 
-    h3 {
-      margin: 0;
-      font-size: 1rem;
-      color: var(--text-secondary);
+    &.current {
+      gap: 12px;
+      justify-content: flex-start;
+
+      sh-icon {
+        color: var(--primary-color);
+      }
+
+      .file-details {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
     }
 
-    .aggregate-speed {
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: var(--primary-color);
-    }
-  }
-
-  .eta-info {
-    margin-bottom: 15px;
-    padding: 10px;
-    background: var(--bg-secondary);
-    border-radius: 4px;
-
-    .eta-time {
+    .filename {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-right: 12px;
+      font-size: 0.9rem;
       font-weight: 500;
-      margin-bottom: 5px;
+      flex: 1;
     }
 
-    .speed-metrics {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.8rem;
+    .filesize {
       color: var(--text-secondary);
+      font-size: 0.85rem;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
     }
   }
 
-  .transfers-toggle {
-    margin-bottom: 10px;
-    text-align: right;
+  .empty-state {
+    color: var(--text-secondary);
+    font-style: italic;
+    text-align: center;
+    width: 100%;
+  }
+}
+
+// Performance Section (Active)
+.performance-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .aggregate-speed {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
   }
 
-  .transfer-details {
-    max-height: 200px;
-    overflow-y: auto;
+  .eta-item,
+  .metric-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+    .label {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .value {
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+
+      .sub-text {
+        color: var(--text-secondary);
+        font-weight: 400;
+        font-size: 0.85rem;
+        margin-left: 4px;
+      }
+    }
+  }
+
+  .transfers-section {
+    .toggle-btn {
+      width: 100%;
+      margin-bottom: 12px;
+    }
 
     .transfer-item {
-      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      gap: 4px;
 
-      .transfer-info {
+      .transfer-header {
         display: flex;
         justify-content: space-between;
-        font-size: 0.8rem;
-        margin-bottom: 2px;
+        font-size: 0.85rem;
 
         .path {
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
-          margin-right: 10px;
+          margin-right: 12px;
+        }
+
+        .speed {
+          color: var(--text-secondary);
+          font-variant-numeric: tabular-nums;
         }
       }
 
-      sh-progress-bar {
+      .mini-progress {
         height: 4px;
       }
     }
   }
 }
 
-.logs-section {
-  grid-column: 1 / -1;
-
-  h3 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    font-size: 1rem;
-    color: var(--text-secondary);
-  }
-
+// Logs Section
+.logs-content {
   app-logs-live {
-    height: 300px;
+    height: 350px;
     display: block;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
   }
 }
 
-.server-status-section {
-  h3 {
-    margin-top: 0;
-    margin-bottom: 15px;
-    font-size: 1rem;
-    color: var(--text-secondary);
+// Server Status
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+
+  &.running {
+    background: rgba(var(--primary-rgb), 0.1);
+    color: var(--primary-color);
   }
+}
 
-  .status-row {
+.actions-grid {
+  margin-top: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+
+  .action-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+// --- IDLE STATE SPECIFIC ---
+
+.idle-hero-card {
+  .idle-content {
     display: flex;
-    margin-bottom: 10px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 32px 0;
+    gap: 32px;
 
-    .label {
-      width: 100px;
-      color: var(--text-secondary);
+    @media (min-width: 768px) {
+      flex-direction: row;
+      text-align: left;
+      justify-content: space-around;
+      padding: 48px 0;
     }
 
-    .value {
-      flex: 1;
-      font-weight: 500;
+    .status-visual {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-      .sub-text {
-        font-size: 0.8rem;
+    .status-info {
+      h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+        color: var(--text-primary);
+      }
+      .status-description {
         color: var(--text-secondary);
+        font-size: 1.1rem;
+        max-width: 300px;
+      }
+    }
+
+    .idle-actions {
+      display: flex;
+      align-items: center;
+
+      button {
+        padding-left: 32px;
+        padding-right: 32px;
       }
     }
   }
+}
 
-  .actions {
-    margin-top: 20px;
+.complete-status {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--primary-color);
+
+  .status-icon {
+    font-size: 48px;
+    opacity: 0;
+    animation: reveal-icon 200ms linear forwards;
+    animation-delay: 1s;
+  }
+}
+
+.border-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.border-circle {
+  fill: none;
+  stroke: var(--primary-color);
+  stroke-width: 5px;
+  stroke-dasharray: 282.74;
+  stroke-dashoffset: 282.74;
+  animation: draw-border 1.2s linear forwards;
+}
+
+@keyframes draw-border {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes reveal-icon {
+  to {
+    opacity: 1;
+  }
+}
+
+.next-task-hero {
+  .next-task-content {
     display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+
+    .task-main {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      .task-name {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--primary-color);
+      }
+
+      .task-time-group {
+        display: flex;
+        flex-direction: column;
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+      }
+    }
+
+    .chevron {
+      color: var(--text-secondary);
+      opacity: 0.5;
+    }
+  }
+}
+
+.server-state-card {
+  .state-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .state-line {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      .warning-text {
+        font-size: 0.85rem;
+        color: var(--error-color);
+        font-weight: 500;
+      }
+    }
   }
 }
