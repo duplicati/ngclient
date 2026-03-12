@@ -1,52 +1,7 @@
 <div class="current-backup">
   <app-mobile-menu-toggle />
 
-  <div class="current-backup-progress">
-    @if (serverState()?.ActiveTask && statusData()?.task?.Status && statusData()?.task?.Status !== 'Completed') {
-      <div>{{ statusData()!.actionText }} - {{ statusData()!.statusText }}</div>
-
-      @if (statusData()?.BackendFileSize) {
-        <div class="file-status-text" [shTooltip]="fileStatusTooltip">
-          {{ statusData()!.fileStatusText }}
-        </div>
-
-        <ng-template #fileStatusTooltip>
-          <div class="tooltip-status-content">
-            <button
-              shButton
-              size="small"
-              [color]="copied() ? 'success' : null"
-              (click)="copyToClipboard($event, tooltipText())">
-              @if (copied() === true) {
-                <sh-icon>check</sh-icon>
-              } @else {
-                <sh-icon>copy</sh-icon>
-              }
-              Copy
-            </button>
-
-            <p class="tooltip-file-status-text">{{ tooltipText() }}</p>
-          </div>
-        </ng-template>
-      }
-
-      <sh-progress-bar class="raised primary" [value]="statusData()!.progress * 100" />
-    } @else if (nextBackup().backup || nextBackup().time) {
-      <div class="label" i18n>
-        {{ nextBackup().backup?.Backup?.Name }} -
-        <sh-icon>clock</sh-icon>
-        {{ nextBackup().time | relativeTime }} at
-        {{ nextBackup().time | date: 'shortTime' }}
-      </div>
-    } @else if (!serverState()?.ActiveTask) {
-      <div class="label" i18n>No scheduled tasks</div>
-    } @else {
-      <div class="label label-loading" i18n>
-        Loading
-        <sh-spinner [style.--spinner-size]="'12px'" [style.--spinner-thickness]="'2px'"></sh-spinner>
-      </div>
-    }
-  </div>
+  <app-backup-progress class="global-progress" />
 
   <div class="current-backup-actions">
     <div class="desktop-actions">
@@ -96,6 +51,7 @@
           @if (!isUsingRelay() && !hideConsoleConnectionStatus()) {
             <app-remote-connectivity-status class="in-menu" />
           }
+
           @if (runningTask()) {
             <button (click)="isStopping() ? abort() : stop()">
               <sh-icon>{{ isStopping() ? 'skull' : 'stop' }}</sh-icon>

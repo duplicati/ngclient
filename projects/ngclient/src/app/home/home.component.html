@@ -119,6 +119,7 @@
                       <sh-icon>arrow-up-right</sh-icon>
                     </button>
                   </div>
+                  <app-backup-progress [backupId]="backup.Backup.ID" />
                 </div>
               } @else {
                 <div class="backup">
@@ -132,46 +133,51 @@
                       </sh-chip>
                     </h3>
 
-                    <p>
-                      <span i18n>Last successful backup:</span>
-                      {{ backup.Backup.Metadata?.['LastBackupFinished'] | relativeTime: timeType() === 'actual' }}
-                    </p>
-
-                    <!-- Warning: Model says Schedule cannot be null, but it can, so dont remove the short-circuit operator -->
-                    @if (backup?.Schedule?.Time) {
+                    @if (runningBackupId() !== backup.Backup.ID) {
                       <p>
-                        <span i18n>Next scheduled run:</span>
-                        {{ backup.Schedule.Time | relativeTime: timeType() === 'actual' }}
+                        <span i18n>Last successful backup:</span>
+                        {{ backup.Backup.Metadata?.['LastBackupFinished'] | relativeTime: timeType() === 'actual' }}
                       </p>
+
+                      <!-- Warning: Model says Schedule cannot be null, but it can, so dont remove the short-circuit operator -->
+                      @if (backup?.Schedule?.Time) {
+                        <p>
+                          <span i18n>Next scheduled run:</span>
+                          {{ backup.Schedule.Time | relativeTime: timeType() === 'actual' }}
+                        </p>
+                      }
+
+                      <p>
+                        <span i18n>Duration:</span>
+                        @if (backup.Backup.Metadata?.['LastBackupDuration']) {
+                          {{ backup.Backup.Metadata?.['LastBackupDuration'] | durationFormat: timeType() === 'actual' }}
+                        } @else {
+                          <ng-container>-</ng-container>
+                        }
+                      </p>
+
+                      <p>
+                        <span i18n>Source:</span>
+                        @if (backup.Backup.Metadata?.['SourceFilesSize']) {
+                          {{ backup.Backup.Metadata?.['SourceFilesSize'] | bytes }}
+                        } @else {
+                          <ng-container>-</ng-container>
+                        }
+                      </p>
+
+                      <p>
+                        <span i18n>Destination:</span>
+                        @if (backup.Backup.Metadata?.['TargetFilesSize']) {
+                          {{ backup.Backup.Metadata?.['TargetFilesSize'] | bytes }}
+                        } @else {
+                          <ng-container>-</ng-container>
+                        }
+                      </p>
+                    } @else {
+                      <app-backup-progress [backupId]="backup.Backup.ID" />
                     }
-
-                    <p>
-                      <span i18n>Duration:</span>
-                      @if (backup.Backup.Metadata?.['LastBackupDuration']) {
-                        {{ backup.Backup.Metadata?.['LastBackupDuration'] | durationFormat: timeType() === 'actual' }}
-                      } @else {
-                        <ng-container>-</ng-container>
-                      }
-                    </p>
-
-                    <p>
-                      <span i18n>Source:</span>
-                      @if (backup.Backup.Metadata?.['SourceFilesSize']) {
-                        {{ backup.Backup.Metadata?.['SourceFilesSize'] | bytes }}
-                      } @else {
-                        <ng-container>-</ng-container>
-                      }
-                    </p>
-
-                    <p>
-                      <span i18n>Destination:</span>
-                      @if (backup.Backup.Metadata?.['TargetFilesSize']) {
-                        {{ backup.Backup.Metadata?.['TargetFilesSize'] | bytes }}
-                      } @else {
-                        <ng-container>-</ng-container>
-                      }
-                    </p>
                   </div>
+
                   <div class="tags">
                     @let versions = getBackupVersionCount(backup);
                     <sh-chip class="simple success" i18n>
@@ -310,86 +316,110 @@
 </section>
 
 <ng-template #actions let-backup>
-  <button
-    shButton
-    [class.loading]="startingBackup() === backup.Backup.ID"
-    (click)="startBackup($any(backup.Backup.ID))"
-    i18n>
-    <sh-icon>play-circle</sh-icon>
-    @if (viewMode() === 'list') {
-      Start
+  @if (runningBackupId() === backup.Backup.ID) {
+    @if (isStopping()) {
+      <button shButton [class.small]="viewMode() === 'details'" i18n (click)="abort()">
+        <sh-icon>skull</sh-icon>
+        Abort
+      </button>
+    } @else {
+      <button shButton [class.small]="viewMode() === 'details'" i18n (click)="stop()">
+        <sh-icon>stop</sh-icon>
+        Stop
+      </button>
     }
-  </button>
 
-  <button type="button" shButton [routerLink]="['/backup', backup.Backup.ID]">
-    <sh-icon>pencil-simple</sh-icon>
-  </button>
-
-  <sh-menu>
-    <button
-      type="button"
-      shButton
-      [class.loading]="loadingId() === backup.Backup.ID"
-      [class.success]="successId() === backup.Backup.ID">
-      @if (successId() === backup.Backup.ID) {
-        <sh-icon>check</sh-icon>
+    <button shButton [class.small]="viewMode() === 'details'" i18n [class.loading]="isResuming()" (click)="pauseResume()">
+      @if (clientIsRunning()) {
+        <sh-icon>pause</sh-icon>
+        Pause
       } @else {
-        <sh-icon>dots-three-vertical</sh-icon>
+        <sh-icon>play</sh-icon>
+        Resume
+      }
+    </button>
+  } @else {
+    <button
+      shButton
+      [class.loading]="startingBackup() === backup.Backup.ID"
+      (click)="startBackup($any(backup.Backup.ID))"
+      i18n>
+      <sh-icon>play-circle</sh-icon>
+      @if (viewMode() === 'list') {
+        Start
       }
     </button>
 
-    <ng-container menu>
-      <h3 title>Operations</h3>
+    <button type="button" shButton [routerLink]="['/backup', backup.Backup.ID]">
+      <sh-icon>pencil-simple</sh-icon>
+    </button>
 
-      <button type="button" [routerLink]="['/restore', backup.Backup.ID]" i18n>
-        <sh-icon>clock-counter-clockwise</sh-icon>
-        Restore
+    <sh-menu>
+      <button
+        type="button"
+        shButton
+        [class.loading]="loadingId() === backup.Backup.ID"
+        [class.success]="successId() === backup.Backup.ID">
+        @if (successId() === backup.Backup.ID) {
+          <sh-icon>check</sh-icon>
+        } @else {
+          <sh-icon>dots-three-vertical</sh-icon>
+        }
       </button>
 
-      <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'export']" i18n>
-        <sh-icon>export</sh-icon>
-        Export
-      </button>
+      <ng-container menu>
+        <h3 title>Operations</h3>
 
-      <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'delete']" i18n>
-        <sh-icon>x-circle</sh-icon>
-        Delete
-      </button>
+        <button type="button" [routerLink]="['/restore', backup.Backup.ID]" i18n>
+          <sh-icon>clock-counter-clockwise</sh-icon>
+          Restore
+        </button>
 
-      <sh-divider />
+        <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'export']" i18n>
+          <sh-icon>export</sh-icon>
+          Export
+        </button>
 
-      <h3 title i18n>Advanced</h3>
+        <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'delete']" i18n>
+          <sh-icon>x-circle</sh-icon>
+          Delete
+        </button>
 
-      <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'database']" i18n>
-        <sh-icon>database</sh-icon>
-        Database
-      </button>
+        <sh-divider />
 
-      <button type="button" (click)="verifyFiles(backup.Backup.ID!)" i18n>
-        <sh-icon>check-square-offset</sh-icon>
-        Verify files
-      </button>
+        <h3 title i18n>Advanced</h3>
 
-      <button type="button" (click)="compressBackup(backup.Backup.ID!)" i18n>
-        <sh-icon>file-archive</sh-icon>
-        Compress now
-      </button>
+        <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'database']" i18n>
+          <sh-icon>database</sh-icon>
+          Database
+        </button>
 
-      <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'commandline']" i18n>
-        <sh-icon>terminal-window</sh-icon>
-        Commandline
-      </button>
+        <button type="button" (click)="verifyFiles(backup.Backup.ID!)" i18n>
+          <sh-icon>check-square-offset</sh-icon>
+          Verify files
+        </button>
 
-      <sh-divider />
+        <button type="button" (click)="compressBackup(backup.Backup.ID!)" i18n>
+          <sh-icon>file-archive</sh-icon>
+          Compress now
+        </button>
 
-      <h3 title i18n>Reporting</h3>
+        <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'commandline']" i18n>
+          <sh-icon>terminal-window</sh-icon>
+          Commandline
+        </button>
 
-      <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'log']" i18n>
-        <sh-icon>notepad</sh-icon>
-        Log
-      </button>
-    </ng-container>
-  </sh-menu>
+        <sh-divider />
+
+        <h3 title i18n>Reporting</h3>
+
+        <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'log']" i18n>
+          <sh-icon>notepad</sh-icon>
+          Log
+        </button>
+      </ng-container>
+    </sh-menu>
+  }
 </ng-template>
 
 <ng-template #sortIcons>

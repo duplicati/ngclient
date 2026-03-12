@@ -66,6 +66,12 @@ export class StatusBarState {
 
   clientIsRunning = computed(() => this.serverState()?.ProgramState === 'Running');
 
+  runningBackupId = computed(() => {
+    const data = this.statusData();
+    const isActive = !!(this.serverState()?.ActiveTask && data?.task?.Status && data?.task?.Status !== 'Completed');
+    return isActive ? (data?.BackupID ?? null) : null;
+  });
+
   isResuming = signal<boolean>(false);
   isFetching = this.#isFetching.asReadonly();
   connectionStatus = this.#serverState.connectionStatus;

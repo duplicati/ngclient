@@ -17,27 +17,6 @@
   }
 }
 
-.file-status-text {
-  color: var(--base-8);
-
-  &:empty {
-    display: none;
-  }
-}
-
-.tooltip-file-status-text {
-  overflow-wrap: break-word;
-  word-break: break-word;
-  display: inline-block;
-  margin-bottom: p2r(4);
-}
-
-.tooltip-status-content {
-  display: flex;
-  flex-direction: column;
-  gap: p2r(4);
-}
-
 .current-backup {
   display: flex;
   justify-content: space-between;
@@ -46,27 +25,9 @@
   gap: p2r(8);
 }
 
-.current-backup-progress {
-  display: flex;
-  flex-direction: column;
-  gap: p2r(0);
-  min-width: p2r(300);
+.global-progress {
   flex: 1 0;
-
-  sh-progress-bar {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    max-width: initial;
-  }
-
-  .label {
-    display: flex;
-    align-items: center;
-    gap: p2r(4);
-  }
+  min-width: p2r(300);
 }
 
 .current-backup-actions {
@@ -99,12 +60,6 @@
       right: p2r(-4);
     }
   }
-}
-
-.label-loading {
-  display: inline-flex;
-  align-items: center;
-  gap: p2r(4);
 }
 
 .menu-status-item {

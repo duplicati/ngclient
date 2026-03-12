@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
   ShipButton,
@@ -12,11 +12,14 @@ import {
   ShipProgressBar,
   ShipSort,
   ShipTable,
+  ShipDialogService,
 } from '@ship-ui/core';
 import { finalize } from 'rxjs';
 import { S3_HOST_SUFFIX_MAP } from '../backup/destination/destination.config';
 import { getConfigurationByUrl } from '../backup/destination/destination.config-utilities';
+import { BackupProgressComponent } from '../core/components/backup-progress/backup-progress.component';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
+import { PauseDialogComponent } from '../core/components/status-bar/pause-dialog/pause-dialog.component';
 import { StatusBarState } from '../core/components/status-bar/status-bar.state';
 import { localStorageSignal } from '../core/functions/localstorage-signal';
 import { BackupAndScheduleOutputDto, DuplicatiServer } from '../core/openapi';
@@ -49,6 +52,7 @@ const DestinationOverrides: Record<string, { Display: string | null; Icon: strin
     DurationFormatPipe,
     BytesPipe,
     RelativeTimePipe,
+    BackupProgressComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -59,6 +63,7 @@ export default class HomeComponent {
   #statusBarState = inject(StatusBarState);
   #backupsState = inject(BackupsState);
   #remoteControlState = inject(RemoteControlState);
+  #dialog = inject(ShipDialogService);
 
   MISSING_BACKUP_NAME = $localize`Backup name missing`;
   sortOrderOptions = this.#backupsState.orderByOptions;
@@ -67,8 +72,16 @@ export default class HomeComponent {
   backupsLoading = this.#backupsState.backupsLoading;
   startingBackup = this.#backupsState.startingBackup;
   deletingBackup = this.#backupsState.deletingBackup;
+  runningBackupId = this.#statusBarState.runningBackupId;
 
   timeType = this.#backupsState.timeType;
+
+  clientIsRunning = this.#statusBarState.clientIsRunning;
+  isResuming = this.#statusBarState.isResuming;
+
+  runningTask = computed(() => this.#statusBarState.serverState()?.ActiveTask?.Item1);
+  isStopping = computed(() => this.runningTask() == this.#taskStopRequested());
+  #taskStopRequested = signal(-1);
 
   viewMode = localStorageSignal<'list' | 'details'>('viewMode', 'list');
 
@@ -103,6 +116,35 @@ export default class HomeComponent {
 
   startBackup(id: string) {
     this.#statusBarState.resumeDialogCheck(() => this.#backupsState.startBackup(id));
+  }
+
+  openPauseDialog() {
+    this.#dialog.open(PauseDialogComponent, {
+      maxWidth: '550px',
+      width: '100%',
+    });
+  }
+
+  pauseResume() {
+    if (this.clientIsRunning()) {
+      this.openPauseDialog();
+      return;
+    }
+
+    this.#statusBarState.pauseResume().subscribe();
+  }
+
+  stop() {
+    const taskId = this.runningTask();
+    if (!taskId) return;
+    this.#taskStopRequested.set(taskId);
+    this.#dupServer.postApiV1TaskByTaskidStop({ taskid: taskId }).subscribe();
+  }
+
+  abort() {
+    const taskId = this.runningTask();
+    if (!taskId) return;
+    this.#dupServer.postApiV1TaskByTaskidAbort({ taskid: taskId }).subscribe();
   }
 
   getBackendIcon(targetUrl: string | null | undefined) {
