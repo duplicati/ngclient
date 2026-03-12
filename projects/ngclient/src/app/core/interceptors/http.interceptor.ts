@@ -2,15 +2,12 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ShipAlertService } from '@ship-ui/core';
-import { catchError, finalize, map, Observable, shareReplay, switchMap, throwError } from 'rxjs';
+import { catchError, map, switchMap, throwError } from 'rxjs';
 import { ENVIRONMENT_TOKEN } from '../../../environments/environment-token';
 import { mapLocale } from '../locales/locales.utility';
-import { AccessTokenOutputDto } from '../openapi';
 import { OpenAPI } from '../openapi/core/OpenAPI';
 import { LOCALSTORAGE } from '../services/localstorage.token';
 import { AppAuthState, dummytoken } from '../states/app-auth.state';
-
-let refreshRequest: Observable<AccessTokenOutputDto> | null = null;
 
 export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AppAuthState);
@@ -91,17 +88,15 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
         if (!isLoginRequest && !isRefreshRequest && !isLogoutRequest) {
           if (error.status === 401) {
             notifyUser = false;
-            refreshRequest ??= auth.refreshToken().pipe(shareReplay());
 
-            return refreshRequest!.pipe(
+            return auth.refreshToken().pipe(
               switchMap(() => {
                 return next(
                   req.clone({
                     headers: req.headers.set('Authorization', `Bearer ${auth.token()}`),
                   })
                 );
-              }),
-              finalize(() => (refreshRequest = null))
+              })
             );
           }
         }

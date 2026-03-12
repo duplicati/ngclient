@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, finalize, map, Observable, of, take, tap } from 'rxjs';
+import { catchError, finalize, map, Observable, of, take, tap, shareReplay } from 'rxjs';
 import { AccessTokenOutputDto, DuplicatiServer, PostApiV1AuthRefreshData } from '../openapi';
 import { OpenAPI } from '../openapi/core/OpenAPI';
 import { getXsrfQueryParam } from '../utils/proxy-config.util';
@@ -47,7 +47,7 @@ export class AppAuthState {
     }
   }
 
-  private getRefreshNonceBody(): { requestBody: PostApiV1AuthRefreshData | undefined; local: boolean } {
+  getRefreshNonceBody(): { requestBody: PostApiV1AuthRefreshData | undefined; local: boolean } {
     // Prefer session storage for nonce, if present
     // Note that the local storage is for persistent login and is shared across tabs, so we cannot cache it in a signal
     const sessionStoredNonce = sessionStorage.getItem(SESSION_STORAGE_REFRESH_NONCE_KEY);
@@ -77,6 +77,8 @@ export class AppAuthState {
         })
       );
   }
+
+  #refreshRequest$: Observable<AccessTokenOutputDto> | null = null;
 
   refreshToken() {
     // In relay mode, the requests are proxied and authenticated by the client
@@ -108,16 +110,26 @@ export class AppAuthState {
         );
     }
 
+    if (this.#refreshRequest$) {
+      return this.#refreshRequest$;
+    }
+
     const { requestBody, local } = this.getRefreshNonceBody();
-    return this.#dupServer.postApiV1AuthRefresh(requestBody).pipe(
+    this.#refreshRequest$ = this.#dupServer.postApiV1AuthRefresh(requestBody).pipe(
       take(1),
       tap((res) => {
         if (res.AccessToken) {
           this.#token.set(res.AccessToken);
           this.setRefreshNonce(res.RefreshNonce, local);
         }
-      })
+      }),
+      finalize(() => {
+        this.#refreshRequest$ = null;
+      }),
+      shareReplay(1)
     );
+
+    return this.#refreshRequest$;
   }
 
   checkProxyAuthed() {
