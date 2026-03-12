@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8200:8200"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - duplicati
+    restart: unless-stopped
+
+  duplicati:
+    image: duplicati/duplicati:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      # The bug report mentions webinterface password, which requires CLI args
+      - CLI_ARGS=--webservice-password=admin --webservice-allowed-hostnames=*
+    volumes:
+      - ./duplicati_config:/config
+      - ./duplicati_data:/source
+    restart: unless-stopped
