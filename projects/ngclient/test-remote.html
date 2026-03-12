@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+  <body>
+    <iframe id="ngclient" src="http://localhost:4200" width="100%" height="800px"></iframe>
+    <script>
+      const iframe = document.getElementById('ngclient');
+      iframe.onload = () => {
+        const config = {
+          accessToken: 'test-token',
+          clientId: 'test-client-id',
+          machineServerUrl: 'wss://localhost:5003/portal', // Point this to your docker container WebSocket
+          locale: 'en-US',
+        };
+
+        // Send the exact message format expected by RelayconfigState
+        iframe.contentWindow.postMessage('access:' + JSON.stringify(config), '*');
+      };
+    </script>
+  </body>
+</html>

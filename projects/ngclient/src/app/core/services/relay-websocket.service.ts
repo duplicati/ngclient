@@ -66,6 +66,7 @@ export class RelayWebsocketService {
   #isReconnecting = signal(false);
   #isConnectedToMachineServer = signal(false);
   #reconnectToken = signal<string | null>(null);
+  #reconnectUrl = signal<string | null>(null);
   #hasHandledFirstCommandResponse = false;
 
   isConnectedToMachineServer = this.#isConnectedToMachineServer.asReadonly();
@@ -81,14 +82,15 @@ export class RelayWebsocketService {
     const isReconnecting = this.#isReconnecting();
     const reconnectInterval = this.#reconnectInterval();
     const reconnectToken = this.#reconnectToken();
+    const reconnectUrl = this.#reconnectUrl();
 
-    if (!reconnectToken || !isReconnecting || !reconnectInterval || reconnectInterval < this.#MIN_POLL_INTERVAL) {
+    if (!reconnectToken || !reconnectUrl || !isReconnecting || !reconnectInterval || reconnectInterval < this.#MIN_POLL_INTERVAL) {
       this.#activeInterval && window.clearInterval(this.#activeInterval);
       return;
     }
 
     this.#activeInterval = window.setInterval(() => {
-      this.connectToMachineServer(reconnectToken);
+      this.connectToMachineServer(reconnectToken, reconnectUrl);
     }, reconnectInterval);
   });
 
@@ -111,7 +113,7 @@ export class RelayWebsocketService {
     else return null;
   }
 
-  connectToMachineServer(token: string, options?: { reconnect?: boolean }) {
+  connectToMachineServer(token: string, machineServerUrl: string, options?: { reconnect?: boolean }) {
     const reconnect = options?.reconnect ?? false;
     const state = this.wsState();
 
@@ -123,7 +125,7 @@ export class RelayWebsocketService {
     if (this.#ws) return;
 
     this.#hasHandledFirstCommandResponse = false;
-    this.#ws = new WebSocket(this.#env.machineServerUrl);
+    this.#ws = new WebSocket(machineServerUrl);
     this.#wsState.set('connecting');
 
     this.#ws.onopen = () => {
@@ -131,6 +133,7 @@ export class RelayWebsocketService {
       this.#isConnectedToMachineServer.set(true);
       this.#isReconnecting.set(false);
       this.#reconnectToken.set(null);
+      this.#reconnectUrl.set(null);
     };
 
     this.#ws.onclose = () => {
@@ -138,6 +141,7 @@ export class RelayWebsocketService {
       this.#wsState.set('disconnected');
       this.#isConnectedToMachineServer.set(false);
       this.#reconnectToken.set(token);
+      this.#reconnectUrl.set(machineServerUrl);
       this.#isReconnecting.set(true);
     };
 
@@ -240,6 +244,7 @@ export class RelayWebsocketService {
   sendCommand(
     token: string,
     clientId: string,
+    machineServerUrl: string,
     method: RequestMethod,
     path: string,
     requestBody: string | null,
@@ -248,7 +253,7 @@ export class RelayWebsocketService {
   ) {
     if (this.wsState() === 'disconnected' || this.wsState() === 'error') {
       // Connect to the machine server if we are not connected
-      this.connectToMachineServer(token);
+      this.connectToMachineServer(token, machineServerUrl);
     }
 
     return new Promise<CommandResponse>((resolve, reject) => {

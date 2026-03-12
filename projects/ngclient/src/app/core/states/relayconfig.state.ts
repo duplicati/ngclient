@@ -6,6 +6,7 @@ import { isRelaySupportEnabled } from '../utils/proxy-config.util';
 export type Relayconfig = {
   accessToken: string;
   clientId: string;
+  machineServerUrl: string;
   locale: string;
 };
 
@@ -42,7 +43,7 @@ export class RelayconfigState {
           const data = event.data.replace('access:', '');
           const parsed = JSON.parse(data) as { [key: string]: unknown };
 
-          if (!parsed?.['accessToken'] || !parsed?.['clientId']) {
+          if (!parsed?.['accessToken'] || !parsed?.['clientId'] || !parsed?.['machineServerUrl']) {
             this.#sendMessageToParent('error:invalid-config');
             this.#relayIsEnabled.set(false);
             return;
@@ -55,6 +56,12 @@ export class RelayconfigState {
           }
 
           if (typeof parsed['accessToken'] !== 'string') {
+            this.#sendMessageToParent('error:invalid-config');
+            this.#relayIsEnabled.set(false);
+            return;
+          }
+
+          if (typeof parsed['machineServerUrl'] !== 'string') {
             this.#sendMessageToParent('error:invalid-config');
             this.#relayIsEnabled.set(false);
             return;
