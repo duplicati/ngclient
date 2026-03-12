@@ -25,7 +25,7 @@ export default class LoginComponent {
   successLogin = signal(false);
   isLoading = signal(false);
   loginForm = fb.group({
-    user: fb.control<string>(''), // Used as a honeypot to prevent autofill
+    email_address: fb.control<string>(''), // Used as a honeypot to prevent autofill
     pass: fb.control<string>('', Validators.required),
     rememberMe: fb.control<boolean>(this.rememberMe()),
   });
@@ -45,10 +45,10 @@ export default class LoginComponent {
 
   submit() {
     const password = this.loginForm.value.pass;
-    const username = this.loginForm.value.user;
+    const honeypot = this.loginForm.value.email_address;
     this.rememberMe.set(this.loginForm.value.rememberMe ?? false);
 
-    if (username) return; // Honeypot
+    if (honeypot) return; // Honeypot
     if (!password) return;
 
     this.isLoading.set(true);

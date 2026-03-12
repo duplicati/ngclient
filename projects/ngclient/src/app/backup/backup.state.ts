@@ -35,11 +35,7 @@ import { TestState } from './source-data/target-url-dialog/test-url/test-url';
 const SMART_RETENTION = '1W:1D,4W:1W,12M:1M';
 
 const DEFAULT_SAVE_CONNECTIONSTRING = false;
-
-type TempExtendedTargetUrlDto = TargetUrlDto & {
-  ConnectionStringID: number | null;
-  UrlKey: string | null;
-};
+´
 
 @Injectable({
   providedIn: 'root',
@@ -327,7 +323,7 @@ export class BackupState {
     const firstDestination = url ? [{ url, connectionStringId: csId, urlKey: null, save: !!csId }] : [];
 
     const additionalDestinations =
-      (anyBackup.AdditionalTargetURLs as TempExtendedTargetUrlDto[])?.map((t) => ({
+      (anyBackup.AdditionalTargetURLs as TargetUrlDto[])?.map((t) => ({
         url: t.TargetUrl!,
         urlKey: t.UrlKey,
         connectionStringId: t.ConnectionStringID ?? null,

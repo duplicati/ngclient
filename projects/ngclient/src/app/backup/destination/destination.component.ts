@@ -226,27 +226,22 @@ export default class DestinationComponent {
   // Sync test states with target urls length
   // We try to preserve existing states if possible, but indices might shift.
   // For now simple resizing/resetting of new ones.
-  targetUrlsEffect = effect(
-    () => {
-      const urls = this.targetUrls();
-      this.testStates.update((states) => {
-        if (states.length === urls.length) return states;
+  targetUrlsEffect = effect(() => {
+    const urls = this.targetUrls();
+    this.testStates.update((states) => {
+      if (states.length === urls.length) return states;
 
-        const newStates = [...states];
-        if (newStates.length < urls.length) {
-          // Add new null states
-          for (let i = newStates.length; i < urls.length; i++) {
-            newStates.push(null);
-          }
-        } else {
-          // Truncate
-          newStates.length = urls.length;
+      const newStates = [...states];
+      if (newStates.length < urls.length) {
+        for (let i = newStates.length; i < urls.length; i++) {
+          newStates.push(null);
         }
-        return newStates;
-      });
-    },
-    { allowSignalWrites: true }
-  );
+      } else {
+        newStates.length = urls.length;
+      }
+      return newStates;
+    });
+  });
 
   selectSavedDestination(option: any) {
     if (!option.BaseUrl) return;
