@@ -35,7 +35,6 @@ import { TestState } from './source-data/target-url-dialog/test-url/test-url';
 const SMART_RETENTION = '1W:1D,4W:1W,12M:1M';
 
 const DEFAULT_SAVE_CONNECTIONSTRING = false;
-´
 
 @Injectable({
   providedIn: 'root',
