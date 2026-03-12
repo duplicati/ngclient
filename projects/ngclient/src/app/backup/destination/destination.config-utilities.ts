@@ -56,7 +56,7 @@ export class UrlLike {
   // as well as punycode conversion for strings that are not valid hostnames
   private extractExactHostname(url: string): string {
     // Matches protocol://[userinfo@]hostname[:port][/...]
-    const match = url.match(/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\/(?:[^@\/?#]*@)?([^:\/?#]+)/);
+    const match = url.match(/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\/(?:[^@\/?#]*@)?(\[[a-fA-F0-9:.]+\]|[^:\/?#]+)/);
     return match ? match[1] : '';
   }
 }
@@ -229,7 +229,7 @@ export function getAllConfigurationsByKey(key: string): DestinationConfigEntry[]
 export function fromUrlObj(urlObj: UrlLike) {
   return {
     bucket: decodeURIComponent(urlObj.exactHostname),
-    server: decodeURIComponent(urlObj.hostname),
+    server: decodeURIComponent(urlObj.exactHostname || urlObj.hostname),
     port: urlObj.port,
     path: removeLeadingSlash(decodeURIComponent(urlObj.pathname)),
   };
