@@ -8,7 +8,7 @@
 ### Dependencies
 
 - ShipUI - https://shipui.com/ - ([Docs](https://docs.shipui.com/), [GitHub](https://github.com/shipuicom/core))
-- Angular 20 - https://angular.dev
+- Angular 21 - https://angular.dev
 - Dayjs - https://day.js.org/en/
 - Phosphor Icons - https://phosphoricons.com/
 
@@ -17,7 +17,7 @@
 ### Testing the client on windows
 
 - Open windows on parallels then run backend on port 8200
-  - `cd [BACKEND_PATH]\Executables\net8\Duplicati.Server`
-  - `dotnet run -- --webservice-password=helloworld --webservice-interface=any` (insert your test password)
+  - `cd [BACKEND_PATH]\Executables\Duplicati.Server`
+  - `dotnet run -- --webservice-password=helloworld --webservice-disable-api-extensions=v1:websocket --webservice-interface=any` (insert your test password)
 - `npm run start:windows`
 - Debug on your mac in `localhost:4200`
