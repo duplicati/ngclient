@@ -159,3 +159,23 @@ details {
     background-color: var(--warn-8);
   }
 }
+
+.warning-item {
+  display: flex;
+  flex-direction: row;
+  gap: p2r(8);
+  padding: p2r(12);
+  border-radius: var(--shape-2);
+  background-color: var(--base-2);
+
+  code {
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  button {
+    align-self: flex-start;
+    white-space: nowrap;
+  }
+}

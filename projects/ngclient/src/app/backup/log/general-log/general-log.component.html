@@ -156,8 +156,44 @@
             </summary>
 
             <div class="content">
-              @for (item of item.data?.Warnings; track $index) {
-                <code>{{ item | json }}</code>
+              @for (warning of item.data?.Warnings; track $index) {
+                @let parsedWarning = parseWarning(warning);
+                <div class="warning-item">
+                  <code>{{ warning }}</code>
+                  <button shButton class="small" (click)="copyToClipboard($event, warning, warning)">
+                    Copy
+                    @if (copied() == warning) {
+                      <sh-icon>check</sh-icon>
+                    } @else {
+                      <sh-icon>copy</sh-icon>
+                    }
+                  </button>
+                  @if (parsedWarning?.MessageId) {
+                    @let isSuppressed = isWarningSuppressed(parsedWarning!.MessageId!);
+                    <button
+                      shButton
+                      class="small"
+                      (click)="toggleWarningSuppression(parsedWarning!.MessageId!)"
+                      [disabled]="isSuppressingWarning()">
+                      @if (isSuppressingWarning()) {
+                        <ng-container i18n>
+                          Updating
+                          <sh-icon>spinner</sh-icon>
+                        </ng-container>
+                      } @else if (isSuppressed) {
+                        <ng-container i18n>
+                          Un-suppress
+                          <sh-icon>bell</sh-icon>
+                        </ng-container>
+                      } @else {
+                        <ng-container i18n>
+                          Suppress
+                          <sh-icon>bell-slash</sh-icon>
+                        </ng-container>
+                      }
+                    </button>
+                  }
+                </div>
               }
             </div>
           </details>
@@ -178,7 +214,17 @@
               }
 
               @for (item of item.data?.Errors; track $index) {
-                <code>{{ item | json }}</code>
+                <div class="warning-item">
+                  <code>{{ item }}</code>
+                  <button shButton class="small" (click)="copyToClipboard($event, item, item)" i18n>
+                    Copy
+                    @if (copied() == item) {
+                      <sh-icon>check</sh-icon>
+                    } @else {
+                      <sh-icon>copy</sh-icon>
+                    }
+                  </button>
+                </div>
               }
             </div>
           </details>
@@ -195,7 +241,14 @@
             </summary>
 
             <code>
-              <button shButton class="small">Copy</button>
+              <button shButton class="small" (click)="copyToClipboard($event, stringify(item.data), 'all')">
+                Copy
+                @if (copied() == 'all') {
+                  <sh-icon>check</sh-icon>
+                } @else {
+                  <sh-icon>copy</sh-icon>
+                }
+              </button>
 
               {{ item.data | json }}
             </code>
