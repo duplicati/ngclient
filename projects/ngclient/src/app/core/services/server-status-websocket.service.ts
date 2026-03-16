@@ -107,13 +107,18 @@ export class ServerStatusWebSocketService {
   });
   #reqidCounter = 0;
 
-  start() {
-    this.#connect();
+  #connectTimeout: any = null;
 
+  start() {
     this.shouldConnect.set(true);
+    this.#connect();
   }
 
   #connect(): void {
+    if (this.#connectTimeout) {
+      clearTimeout(this.#connectTimeout);
+      this.#connectTimeout = null;
+    }
     const token = this.#auth.token();
 
     if (!token) {
@@ -176,6 +181,16 @@ export class ServerStatusWebSocketService {
             } else {
               console.error('WebSocket authentication failed:', authReply.Message);
               this.#connectionStatus.set('disconnected');
+              
+              this.#auth.refreshToken().subscribe({
+                next: () => {
+                  this.reconnect();
+                },
+                error: (error) => {
+                  console.error('Error refreshing token after WebSocket auth failed', error);
+                },
+              });
+              
               return;
             }
           }
@@ -251,7 +266,8 @@ export class ServerStatusWebSocketService {
           this.#disconnectedDialog.component.reconnectTimer.set(15000);
         }
 
-        setTimeout(() => this.#connect(), 5000);
+        if (this.#connectTimeout) clearTimeout(this.#connectTimeout);
+        this.#connectTimeout = setTimeout(() => this.#connect(), 5000);
       }
     };
 

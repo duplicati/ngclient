@@ -200,8 +200,8 @@
             </label>
 
             <input
-              [type]="$any(item).showPassword ? 'text' : 'password'"
-              autocomplete="off"
+              [type]="$any(item)['showPassword'] ? 'text' : 'password'"
+              autocomplete="new-password"
               [id]="formId"
               [ngModel]="item.Value()"
               (ngModelChange)="updateSettingValue(item, $event)" />

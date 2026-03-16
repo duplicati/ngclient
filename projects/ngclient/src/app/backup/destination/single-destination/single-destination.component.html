@@ -257,7 +257,7 @@
           </label>
           <input
             [type]="$any(item.formView).showPassword ? 'text' : 'password'"
-            autocomplete="off"
+            autocomplete="new-password"
             [id]="formFieldId"
             [ngModel]="formInput"
             (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
