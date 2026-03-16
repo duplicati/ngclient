@@ -64,7 +64,6 @@
     <h3 i18n>Logs</h3>
 
     <app-logs-live
-      [asSimpleList]="true"
       [polling]="restoreResult() == ''"
       [whenFilter]="lastRestoreStarted()?.getTime()"
       [backupIdFilter]="backupId()"></app-logs-live>

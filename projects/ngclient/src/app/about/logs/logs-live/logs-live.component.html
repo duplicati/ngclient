@@ -2,7 +2,7 @@
   <div class="live-view-disabled" i18n>Live logs are disabled</div>
 } @else {
   <sh-table
-    [class.type-b]="asSimpleList()"
+    [class.type-b]="true"
     [data]="logs()"
     [loading]="logsLoading()"
     [style.grid-template-columns]="'auto 1fr auto'">
@@ -12,18 +12,18 @@
       <th class="sticky-end"></th>
     </tr>
 
-    @for (row of logs(); track $index) {
-      <tr (click)="toggleRow($index)">
+    @for (row of logs(); track row['ID']) {
+      <tr (click)="toggleRow(row['ID'])">
         <td>{{ row['When'] | date: 'medium' }}</td>
         <td>{{ subStringMessage(row['Message']) }}</td>
         <td class="sticky-end">
-          <button shButton class="outlined small" [class.rotated-icon]="$index === openRowIndex()" type="button">
+          <button shButton class="outlined small" [class.rotated-icon]="row['ID'] === openRowId()" type="button">
             <sh-icon>caret-down</sh-icon>
           </button>
         </td>
       </tr>
 
-      @if ($index === openRowIndex()) {
+      @if (row['ID'] === openRowId()) {
         <tr>
           <td class="expanded-cell">
             <sh-list class="primary">
@@ -34,23 +34,25 @@
               <div item>MessageID: {{ row['MessageID'] }}</div>
             </sh-list>
 
-            @if (row['Exception']) {
+            @if (row['Exception'] || row['Message']) {
               <code>
-                <ol class="line-numbers-ol">
-                  @for (line of breakIntoLines(row['Exception']); track $index) {
-                    <li>{{ line }}</li>
-                  }
-                </ol>
-              </code>
-            }
+                @if (row['Exception']) {
+                  <strong># Exception</strong>
+                  <ol class="line-numbers-ol">
+                    @for (line of breakIntoLines(row['Exception']); track $index) {
+                      <li>{{ line }}</li>
+                    }
+                  </ol>
+                }
 
-            @if (row['Message']) {
-              <code>
-                <ol class="line-numbers-ol">
-                  @for (line of breakIntoLines(row['Message']); track $index) {
-                    <li>{{ line }}</li>
-                  }
-                </ol>
+                @if (row['Message']) {
+                  <strong># Message</strong>
+                  <ol class="line-numbers-ol">
+                    @for (line of breakIntoLines(row['Message']); track $index) {
+                      <li>{{ line }}</li>
+                    }
+                  </ol>
+                }
               </code>
             }
           </td>

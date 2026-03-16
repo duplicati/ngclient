@@ -10,7 +10,7 @@ import { LogsLiveState } from './logs-live.state';
   styleUrl: './logs-live.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    '[class.simple-list]': 'asSimpleList()',
+    '[class.is-disabled]': "logLevel() === 'Disabled'",
   },
 })
 export default class LogsLiveComponent {
@@ -18,7 +18,6 @@ export default class LogsLiveComponent {
 
   whenFilter = input<number | null>();
   backupIdFilter = input<string | null>();
-  asSimpleList = input<boolean>();
   polling = input<boolean>();
 
   logLevel = this.#logsLiveState.logLevel;
@@ -32,7 +31,7 @@ export default class LogsLiveComponent {
     this.#logsLiveState.isPolling.set(polling);
   });
 
-  openRowIndex = signal<number | null>(null);
+  openRowId = signal<number | null>(null);
 
   whenEffect = effect(() => {
     const whenFilter = this.whenFilter() ?? null;
@@ -48,8 +47,9 @@ export default class LogsLiveComponent {
     this.#logsLiveState.logLevel.set(backupIdFilter ? 'Verbose' : 'Disabled');
   });
 
-  toggleRow(index: number) {
-    this.openRowIndex.set(index === this.openRowIndex() ? null : index);
+  toggleRow(id: number | null | undefined) {
+    if (id == null) return;
+    this.openRowId.set(id === this.openRowId() ? null : id);
   }
 
   breakIntoLines(str: string | null | undefined): string[] {

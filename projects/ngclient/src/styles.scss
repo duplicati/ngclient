@@ -64,6 +64,10 @@ body {
     color: var(--base-1);
     display: inline-block;
     font-size: 85%;
+
+    strong {
+      margin-bottom: p2r(4);
+    }
   }
 
   h1 code {
@@ -78,10 +82,14 @@ body {
 ol.line-numbers-ol {
   list-style: none;
   counter-reset: my-counter;
+  margin: 0;
+  padding: p2r(0 24);
+  width: 100%;
 
   li {
     counter-increment: my-counter;
-    padding-left: p2r(4);
+    padding: p2r(0 20 0 4);
+    width: min-content;
 
     &::marker {
       content: counter(my-counter) ' ';

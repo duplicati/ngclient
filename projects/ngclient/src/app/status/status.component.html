@@ -214,7 +214,6 @@
     </div>
     <div class="logs-content">
       <app-logs-live
-        [asSimpleList]="true"
         [polling]="isTaskRunning()"
         [whenFilter]="taskStartTime()?.getTime()"
         [backupIdFilter]="currentBackupId()"></app-logs-live>
