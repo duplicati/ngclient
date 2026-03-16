@@ -181,7 +181,7 @@ export class ServerStatusWebSocketService {
             } else {
               console.error('WebSocket authentication failed:', authReply.Message);
               this.#connectionStatus.set('disconnected');
-              
+
               this.#auth.refreshToken().subscribe({
                 next: () => {
                   this.reconnect();
@@ -190,7 +190,7 @@ export class ServerStatusWebSocketService {
                   console.error('Error refreshing token after WebSocket auth failed', error);
                 },
               });
-              
+
               return;
             }
           }
