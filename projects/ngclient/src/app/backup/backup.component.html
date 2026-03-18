@@ -6,43 +6,38 @@
   }
   <sh-stepper class="primary">
     <div
-      step
+      tabindex="-1"
       routerLinkActive="active"
       [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'general']"
       i18n>
-      <sh-radio />
       General
     </div>
     <div
-      step
+      tabindex="-1"
       routerLinkActive="active"
       [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'destination']"
       i18n>
-      <sh-radio />
       Destination
     </div>
     <div
-      step
+      tabindex="-1"
       routerLinkActive="active"
       [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'source-data']"
       i18n>
-      <sh-radio />
       Source Data
     </div>
     <div
-      step
+      tabindex="-1"
       routerLinkActive="active"
       [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'schedule']"
       i18n>
-      <sh-radio />
       Schedule
     </div>
     <div
-      step
+      tabindex="-1"
       routerLinkActive="active"
       [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'options']"
       i18n>
-      <sh-radio />
       Options
     </div>
   </sh-stepper>

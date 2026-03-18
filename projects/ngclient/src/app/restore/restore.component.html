@@ -6,7 +6,11 @@
   @defer (when !backupsLoading()) {
     @if (backups().length) {
       @for (backup of backups(); track $index) {
-        <sh-card class="type-a actionable" [routerLink]="['/restore', backup.Backup.ID]">
+        <sh-card
+          class="type-a actionable"
+          [routerLink]="['/restore', backup.Backup.ID]"
+          (keydown.enter)="$any($event.target).click()"
+          (keydown.space)="$any($event.target).click()">
           <img src="assets/images/folder.png" alt="" width="48px" />
 
           <div class="text">
@@ -17,7 +21,7 @@
             </p>
           </div>
 
-          <button shButton i18n>
+          <button shButton tabindex="-1" i18n>
             Restore
             <sh-icon>arrow-right</sh-icon>
           </button>
@@ -38,25 +42,33 @@
     <sh-divider>Or without a local configuration</sh-divider>
   }
 
-  <sh-card class="type-a actionable" [routerLink]="['/restore-from-files']">
+  <sh-card
+    class="type-a actionable"
+    [routerLink]="['/restore-from-files']"
+    (keydown.enter)="$any($event.target).click()"
+    (keydown.space)="$any($event.target).click()">
     <img src="assets/images/backup.png" alt="" width="48px" />
     <div class="text">
       <h3 i18n>Direct restore from backup files</h3>
       <p i18n>Point to your backup files and restore from there.</p>
     </div>
-    <button shButton i18n>
+    <button shButton tabindex="-1" i18n>
       Start
       <sh-icon>play-circle</sh-icon>
     </button>
   </sh-card>
 
-  <sh-card class="type-a actionable" [routerLink]="['/restore/from-config']">
+  <sh-card
+    class="type-a actionable"
+    [routerLink]="['/restore/from-config']"
+    (keydown.enter)="$any($event.target).click()"
+    (keydown.space)="$any($event.target).click()">
     <img src="assets/images/restore.png" alt="" width="48px" />
     <div class="text">
       <h3 i18n>Restore from configuration</h3>
       <p i18n>Load destination from an exported job</p>
     </div>
-    <button shButton i18n>
+    <button shButton tabindex="-1" i18n>
       Start
       <sh-icon>play-circle</sh-icon>
     </button>

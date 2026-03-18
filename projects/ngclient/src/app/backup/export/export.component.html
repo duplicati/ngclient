@@ -31,13 +31,13 @@
 </header>
 
 <form [formGroup]="exportForm" autocomplete="off">
-  <sh-button-group>
-    <button type="button" [class.active]="exportType() === 'cmd'" (click)="exportType.set('cmd')" i18n>
+  <sh-button-group [(value)]="exportType" class="type-b">
+    <button value="cmd" i18n>
       <sh-icon>terminal-window</sh-icon>
       As command line
     </button>
 
-    <button type="button" [class.active]="exportType() === 'file'" (click)="exportType.set('file')" i18n>
+    <button value="file" i18n>
       <sh-icon>file</sh-icon>
       To file
     </button>

@@ -31,7 +31,10 @@
         </div>
 
         <div class="right multiple">
-          <sh-toggle class="primary raised" [class.active]="!consoleControlDisabled()" (click)="toggleConsoleControl()">
+          <sh-toggle
+            class="primary raised"
+            [checked]="!consoleControlDisabled()"
+            (checkedChange)="toggleConsoleControl($event)">
             @if (consoleControlDisabled()) {
               <label i18n>
                 Remote control disabled
@@ -47,8 +50,8 @@
 
           <sh-toggle
             class="primary raised"
-            [class.active]="!hideConsoleConnectionStatus()"
-            (click)="saveHideConsoleConnectionStatus()">
+            [checked]="!hideConsoleConnectionStatus()"
+            (checkedChange)="saveHideConsoleConnectionStatus($event)">
             @if (hideConsoleConnectionStatus()) {
               <label i18n>
                 Console connection status is hidden
@@ -73,8 +76,8 @@
         <div class="right">
           <sh-toggle
             class="primary raised"
-            [class.active]="!hideConsoleConnectionStatus()"
-            (click)="saveHideConsoleConnectionStatus()">
+            [checked]="!hideConsoleConnectionStatus()"
+            (checkedChange)="saveHideConsoleConnectionStatus($event)">
             @if (hideConsoleConnectionStatus()) {
               <label i18n>Console connection status is hidden</label>
             } @else {
@@ -236,7 +239,7 @@
     </div>
 
     <div class="right remote-access-form">
-      <sh-toggle class="primary raised" [class.active]="allowRemoteAccess()" (click)="updateRemoteAccess()">
+      <sh-toggle class="primary raised" [checked]="allowRemoteAccess()" (checkedChange)="updateRemoteAccess($event)">
         <label i18n>Allow remote access</label>
       </sh-toggle>
 
@@ -277,7 +280,10 @@
     </div>
 
     <div class="right">
-      <sh-toggle class="primary raised" [class.active]="disableTrayIconLogin()" (click)="saveDisableTrayIconLogin()">
+      <sh-toggle
+        class="primary raised"
+        [checked]="disableTrayIconLogin()"
+        (checkedChange)="saveDisableTrayIconLogin($event)">
         <label i18n>Prevent tray icon automatic log-in</label>
       </sh-toggle>
     </div>
@@ -320,7 +326,7 @@
 
     <div class="right radios">
       <div class="radio-option" (click)="setNewChannel('')">
-        <sh-radio class="primary raised" [class.active]="updateChannel() === ''" i18n>
+        <sh-radio class="primary raised" [checked]="updateChannel() === ''" i18n>
           Default ({{ sysinfo()?.DefaultUpdateChannel }})
         </sh-radio>
 
@@ -328,13 +334,13 @@
       </div>
 
       <div class="radio-option" (click)="setNewChannel('stable')">
-        <sh-radio class="primary raised" [class.active]="updateChannel() === 'stable'" i18n>Stable</sh-radio>
+        <sh-radio class="primary raised" [checked]="updateChannel() === 'stable'" i18n>Stable</sh-radio>
 
         <p i18n>Official stable release.</p>
       </div>
 
       <div class="radio-option" (click)="setNewChannel('beta')">
-        <sh-radio class="primary raised" [class.active]="updateChannel() === 'beta'" i18n>Beta</sh-radio>
+        <sh-radio class="primary raised" [checked]="updateChannel() === 'beta'" i18n>Beta</sh-radio>
 
         <p i18n>
           Try out the new features that we are working on. Test a backup and restore before using this in production
@@ -343,15 +349,13 @@
       </div>
 
       <div class="radio-option" (click)="setNewChannel('experimental')">
-        <sh-radio class="primary raised" [class.active]="updateChannel() === 'experimental'" i18n>
-          Experimental
-        </sh-radio>
+        <sh-radio class="primary raised" [checked]="updateChannel() === 'experimental'" i18n>Experimental</sh-radio>
 
         <p i18n>Early previews of new features. Not for use with important data.</p>
       </div>
 
       <div class="radio-option" (click)="setNewChannel('canary')">
-        <sh-radio class="primary raised" [class.active]="updateChannel() === 'canary'" i18n>Canary</sh-radio>
+        <sh-radio class="primary raised" [checked]="updateChannel() === 'canary'" i18n>Canary</sh-radio>
 
         <p i18n>Builds for developers and testers only. Not for use with important data.</p>
       </div>

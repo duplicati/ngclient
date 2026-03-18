@@ -2,25 +2,33 @@
 
 <section>
   <header>
-    <sh-card class="type-a actionable" [routerLink]="['/add-backup']">
+    <sh-card
+      class="type-a actionable"
+      [routerLink]="['/add-backup']"
+      (keydown.enter)="$any($event.target).click()"
+      (keydown.space)="$any($event.target).click()">
       <img src="assets/images/backup.png" alt="" width="48px" />
       <div class="text">
         <h3 i18n>Backups</h3>
         <p i18n>Keep your data safe at your chosen destination.</p>
       </div>
-      <button type="button" shButton i18n>
+      <button type="button" tabindex="-1" shButton i18n>
         Create
         <sh-icon>plus</sh-icon>
       </button>
     </sh-card>
 
-    <sh-card class="type-a actionable" [routerLink]="['/restore']">
+    <sh-card
+      class="type-a actionable"
+      [routerLink]="['/restore']"
+      (keydown.enter)="$any($event.target).click()"
+      (keydown.space)="$any($event.target).click()">
       <img src="assets/images/restore.png" alt="" width="48px" />
       <div class="text">
         <h3 i18n>Restores</h3>
         <p i18n>Recover your files from any backup set.</p>
       </div>
-      <button type="button" shButton i18n>
+      <button type="button" tabindex="-1" shButton i18n>
         Start
         <sh-icon>arrow-right</sh-icon>
       </button>
@@ -33,13 +41,13 @@
 
       @if (backups().length > 0) {
         <div class="actions">
-          <sh-button-group class="small type-b">
-            <button type="button" [class.active]="viewMode() === 'list'" i18n (click)="viewMode.set('list')">
+          <sh-button-group class="small type-b" [(value)]="viewMode">
+            <button value="list" i18n>
               <sh-icon>rows</sh-icon>
               List
             </button>
 
-            <button type="button" [class.active]="viewMode() === 'details'" i18n (click)="viewMode.set('details')">
+            <button value="details" i18n>
               <sh-icon>list</sh-icon>
               Details
             </button>
@@ -329,7 +337,12 @@
       </button>
     }
 
-    <button shButton [class.small]="viewMode() === 'details'" i18n [class.loading]="isResuming()" (click)="pauseResume()">
+    <button
+      shButton
+      [class.small]="viewMode() === 'details'"
+      i18n
+      [class.loading]="isResuming()"
+      (click)="pauseResume()">
       @if (clientIsRunning()) {
         <sh-icon>pause</sh-icon>
         Pause

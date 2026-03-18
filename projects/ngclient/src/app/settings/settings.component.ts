@@ -196,14 +196,11 @@ export default class SettingsComponent {
   consoleControlDisabled = signal(false);
   hideConsoleConnectionStatus = this.#serverSettingsService.isConsoleConnectionStatusHidden;
 
-  updateRemoteAccess() {
-    const prevValue = this.allowRemoteAccess();
-    const newValue = !prevValue;
-
-    this.allowRemoteAccess.set(newValue);
+  updateRemoteAccess($event: boolean) {
+    this.allowRemoteAccess.set($event);
 
     this.#serverSettingsService
-      .setRemoteAccessInterface(newValue ? 'any' : 'loopback')
+      .setRemoteAccessInterface($event ? 'any' : 'loopback')
       .pipe(finalize(() => this.updatingRemoteAccess.set(false)))
       .subscribe();
   }
@@ -219,13 +216,11 @@ export default class SettingsComponent {
       .subscribe();
   }
 
-  toggleConsoleControl() {
-    const prevValue = this.consoleControlDisabled();
-    const newValue = !prevValue;
-    this.updatingConsoleControl.set(true);
+  toggleConsoleControl($event: boolean) {
+    this.consoleControlDisabled.set(!$event);
 
     this.#serverSettingsService
-      .setDisableConsoleControl(newValue)
+      .setDisableConsoleControl(!$event)
       .pipe(finalize(() => this.updatingConsoleControl.set(false)))
       .subscribe();
   }
@@ -233,9 +228,8 @@ export default class SettingsComponent {
   updatingDisableTrayIconLogin = signal(false);
   disableTrayIconLogin = signal(false);
 
-  saveDisableTrayIconLogin() {
-    const prevValue = this.disableTrayIconLogin();
-    const newValue = !prevValue;
+  saveDisableTrayIconLogin($event: boolean) {
+    const newValue = $event;
 
     this.updatingDisableTrayIconLogin.set(true);
     this.#serverSettingsService
@@ -246,14 +240,11 @@ export default class SettingsComponent {
 
   updatingHideConsoleConnectionStatus = signal(false);
 
-  saveHideConsoleConnectionStatus() {
-    const prevValue = this.hideConsoleConnectionStatus();
-    const newValue = !prevValue;
-
+  saveHideConsoleConnectionStatus($event: boolean) {
     this.updatingHideConsoleConnectionStatus.set(true);
 
     this.#serverSettingsService
-      .setHideConsoleConnectionStatus(newValue)
+      .setHideConsoleConnectionStatus(!$event)
       .pipe(finalize(() => this.updatingHideConsoleConnectionStatus.set(false)))
       .subscribe();
   }

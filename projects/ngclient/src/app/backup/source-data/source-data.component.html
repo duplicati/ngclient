@@ -216,7 +216,11 @@
         <input type="checkbox" i18n-placeholder placeholder="Temporary files" formControlName="temporary" />
       </sh-toggle>
 
-      <sh-toggle class="raised primary" [class.active]="filesLargerThan()" (click)="toggleFilesLargerThan()" i18n>
+      <sh-toggle
+        class="raised primary"
+        [checked]="filesLargerThan() !== null"
+        (checkedChange)="toggleFilesLargerThan($event)"
+        i18n>
         Files larger than
       </sh-toggle>
 

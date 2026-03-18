@@ -3,31 +3,28 @@
 @if (!isProgressPage()) {
   <sh-stepper class="primary">
     @if (isFileRestore()) {
-      <div step routerLinkActive="active" [routerLink]="['/restore-from-files/destination']" i18n>
-        <sh-radio />
+      <div tabindex="-1" routerLinkActive="active" [routerLink]="['/restore-from-files/destination']" i18n>
         Destination
       </div>
-      <div step routerLinkActive="active" [routerLink]="['/restore-from-files/encryption']" i18n>
-        <sh-radio />
+      <div tabindex="-1" routerLinkActive="active" [routerLink]="['/restore-from-files/encryption']" i18n>
         Encryption
       </div>
-      <div step routerLinkActive="active" class="inactive" [routerLink]="['/restore-from-files/select-files']" i18n>
-        <sh-radio />
+      <div
+        tabindex="-1"
+        routerLinkActive="active"
+        class="inactive"
+        [routerLink]="['/restore-from-files/select-files']"
+        i18n>
         Select files
       </div>
-      <div step routerLinkActive="active" class="inactive" [routerLink]="['/restore-from-files/options']" i18n>
-        <sh-radio />
+      <div tabindex="-1" routerLinkActive="active" class="inactive" [routerLink]="['/restore-from-files/options']" i18n>
         Options
       </div>
     } @else {
-      <div step routerLinkActive="active" [routerLink]="['/restore', backupId(), 'select-files']" i18n>
-        <sh-radio />
+      <div tabindex="-1" routerLinkActive="active" [routerLink]="['/restore', backupId(), 'select-files']" i18n>
         Select files
       </div>
-      <div step routerLinkActive="active" [routerLink]="['/restore', backupId(), 'options']" i18n>
-        <sh-radio />
-        Options
-      </div>
+      <div tabindex="-1" routerLinkActive="active" [routerLink]="['/restore', backupId(), 'options']" i18n>Options</div>
     }
   </sh-stepper>
 }

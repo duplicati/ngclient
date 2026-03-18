@@ -4,8 +4,13 @@
 
 <div class="list">
   @for (option of destinationTypeOptionsFocused(); track $index) {
-    <app-destination-list-item [destination]="option">
-      <button shButton i18n (click)="setDestination.emit(option.customKey ?? option.key)" type="button">
+    <app-destination-list-item
+      [destination]="option"
+      tabindex="0"
+      (click)="setDestination.emit(option.customKey ?? option.key)"
+      (keydown.enter)="$any($event.target).click()"
+      (keydown.space)="$any($event.target).click()">
+      <button shButton tabindex="-1" i18n type="button">
         Choose
         <sh-icon>arrow-right</sh-icon>
       </button>

@@ -52,11 +52,7 @@
 
             @if (!dest.connectionStringId) {
               <div class="options-row" style="margin: 0 1rem 1rem 1rem">
-                <sh-toggle
-                  [color]="'primary'"
-                  [variant]="'raised'"
-                  [class.active]="dest.save"
-                  (click)="toggleSave($index)">
+                <sh-toggle [color]="'primary'" [variant]="'raised'" [(checked)]="dest.save">
                   <span label i18n>Save as connection string</span>
                 </sh-toggle>
               </div>
@@ -96,7 +92,12 @@
           </div>
         </div>
       } @else {
-        <sh-card class="type-a actionable add-new" (click)="toggleCustomList()">
+        <sh-card
+          class="type-a actionable add-new"
+          (click)="toggleCustomList()"
+          tabindex="0"
+          (keydown.enter)="$any($event.target).click()"
+          (keydown.space)="$any($event.target).click()">
           <sh-icon>plus-circle</sh-icon>
           <div class="text">
             <h3 i18n>Configure a new destination</h3>
@@ -113,7 +114,10 @@
             class="actionable"
             variant="type-a"
             [targetUrl]="option.BaseUrl"
-            (click)="selectSavedDestination(option)">
+            (click)="selectSavedDestination(option)"
+            tabindex="0"
+            (keydown.enter)="$any($event.target).click()"
+            (keydown.space)="$any($event.target).click()">
             <h3 displayName>{{ option.Name || option.BaseUrl }}</h3>
             @if (option.Description) {
               <p description>{{ option.Description }}</p>

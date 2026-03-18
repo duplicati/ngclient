@@ -1,20 +1,7 @@
 @if (!multiSelect() && customRemoteMode() === null) {
-  <sh-button-group class="type-b small">
-    <button
-      type="button"
-      [class.active]="pathDiscoveryMethod() === 'browse'"
-      (click)="pathDiscoveryMethod.set('browse')"
-      i18n>
-      Browse path
-    </button>
-
-    <button
-      type="button"
-      [class.active]="pathDiscoveryMethod() === 'path'"
-      (click)="pathDiscoveryMethod.set('path')"
-      i18n>
-      Manually type path
-    </button>
+  <sh-button-group class="type-b small" [(value)]="pathDiscoveryMethod">
+    <button type="button" value="browse" i18n>Browse path</button>
+    <button type="button" value="path" i18n>Manually type path</button>
   </sh-button-group>
 }
 
@@ -89,11 +76,7 @@
 
   <div class="footer">
     @if (!accepts() && !isByBackupSettings() && customRemoteMode() === null) {
-      <sh-toggle
-        [class.active]="_showHiddenNodes()"
-        class="primary raised browse-files-toggle"
-        (click)="_showHiddenNodes.set(!_showHiddenNodes())"
-        i18n>
+      <sh-toggle [(checked)]="_showHiddenNodes" class="primary raised browse-files-toggle" i18n>
         Show hidden {{ showFiles() ? 'files' : 'folders' }}
       </sh-toggle>
     }

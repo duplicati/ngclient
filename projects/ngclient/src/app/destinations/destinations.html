@@ -12,7 +12,12 @@
         </div>
       </div>
     } @else {
-      <sh-card class="type-a actionable add-new" (click)="selectDestination('new')">
+      <sh-card
+        class="type-a actionable add-new"
+        (click)="selectDestination('new')"
+        tabindex="0"
+        (keydown.enter)="$any($event.target).click()"
+        (keydown.space)="$any($event.target).click()">
         <sh-icon>plus-circle</sh-icon>
         <div class="text">
           <h3 i18n>Add new destination</h3>

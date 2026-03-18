@@ -122,7 +122,7 @@ export default class SourceDataComponent {
       },
     });
 
-    dialogRef.closed.subscribe((targetUrl) => {
+    dialogRef.component.closed.subscribe((targetUrl) => {
       if (!targetUrl) return;
 
       const shortId = Math.random().toString(36).substring(2, 10);
@@ -375,8 +375,8 @@ export default class SourceDataComponent {
     return name;
   }
 
-  toggleFilesLargerThan() {
-    if (this.sourceDataForm.controls.excludes.value.filesLargerThan?.size === null) {
+  toggleFilesLargerThan($event: boolean) {
+    if ($event) {
       this.sourceDataForm.controls.excludes.controls.filesLargerThan.setValue({
         size: 50,
         unit: 'MB',

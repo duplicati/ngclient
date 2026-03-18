@@ -434,10 +434,7 @@
           <sh-icon prefix>numpad</sh-icon>
         </sh-form-field>
       } @else if (item.formView.type === 'Boolean') {
-        <sh-toggle
-          class="primary raised"
-          [class.active]="isTrue(formInput)"
-          (click)="updateFieldValue(item.fieldGroup, item.formView.name, isTrue(formInput) ? 'false' : 'true')">
+        <sh-toggle class="primary raised">
           <label [for]="formFieldId">
             {{ labelContent }}
             @if (item.formView.longDescription) {
@@ -454,6 +451,13 @@
                 }
               "></ng-container>
           </label>
+
+          <input
+            type="checkbox"
+            [checked]="isTrue(formInput)"
+            (change)="
+              updateFieldValue(item.fieldGroup, item.formView.name, $event.target.checked ? 'true' : 'false')
+            " />
         </sh-toggle>
       } @else if (item.formView.type === 'Flags') {
         @let options = mapOptions(item.formView);

@@ -56,11 +56,9 @@
     </div>
   }
 
-  <sh-tabs class="primary">
-    <button tab [class.active]="activeTab() === 'general'" (click)="activeTab.set('general')" i18n>General</button>
-    <button tab [class.active]="activeTab() === 'destination'" (click)="activeTab.set('destination')" i18n>
-      Destination
-    </button>
+  <sh-tabs class="primary" [(value)]="activeTab">
+    <button value="general" i18n>General</button>
+    <button value="destination" i18n>Destination</button>
   </sh-tabs>
 
   @if (activeTab() === 'general') {

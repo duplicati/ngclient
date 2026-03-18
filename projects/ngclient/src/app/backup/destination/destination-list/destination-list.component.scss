@@ -6,6 +6,7 @@
   gap: p2r(16);
   height: 100%;
   overflow: hidden;
+  padding: p2r(4);
 }
 
 .list {
@@ -14,6 +15,8 @@
   gap: p2r(16);
   height: 100%;
   overflow: auto;
-  padding-bottom: p2r(16);
+  padding: p2r(4 6 16 6);
+  width: calc(100% + #{p2r(8)});
+  margin-left: p2r(-6);
   border-bottom: p2r(1) solid var(--base-4);
 }
