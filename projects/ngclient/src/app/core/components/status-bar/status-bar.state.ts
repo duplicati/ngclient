@@ -302,11 +302,16 @@ export class StatusBarState {
         const speedTxt = this.#constructSpeedText(status);
         if (speedTxt !== '') text = `Waiting for upload to finish ${speedTxt}`;
       } else if (status.Phase === 'Backup_RemoteSynchronization') {
+        const destCount = status.RemoteSyncDestinationCount ?? 0;
+        const destIndex = status.RemoteSyncDestinationIndex ?? 0;
+        const destLabel = destCount > 1 ? ` (${destIndex}/${destCount})` : '';
         if (status.TotalFileCount! > 0) {
           const filesleft = status.TotalFileCount! - status.ProcessedFileCount!;
           const sizeleft = status.TotalFileSize! - status.ProcessedFileSize!;
           const speedTxt = this.#constructSpeedText(status);
-          text = `Synchronizing secondary destination: ${filesleft} files (${this.#bytesPipe.transform(sizeleft)}) to go ${speedTxt}`;
+          text = `Synchronizing secondary destination${destLabel}: ${filesleft} files (${this.#bytesPipe.transform(sizeleft)}) to go ${speedTxt}`;
+        } else if (destLabel) {
+          text = `${STATUS_STATES[status.Phase]}`.replace('…', `${destLabel} …`);
         }
       }
     }

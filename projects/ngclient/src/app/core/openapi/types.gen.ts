@@ -313,6 +313,8 @@ export type IProgressEventData = {
     readonly TotalFileSize?: number;
     readonly StillCounting?: boolean;
     readonly ActiveTransfers?: Array<ActiveTransfer> | null;
+    readonly RemoteSyncDestinationIndex?: number;
+    readonly RemoteSyncDestinationCount?: number;
 };
 
 export type IsBackupActiveDto = {
