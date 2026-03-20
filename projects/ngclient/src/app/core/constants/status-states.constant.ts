@@ -13,6 +13,7 @@ export const STATUS_STATES: Record<string, string> = {
   Backup_PostBackupVerify: $localize`Verifying backend data …`,
   Backup_Lock: $localize`Locking remote data …`,
   Backup_Complete: $localize`Backup complete!`,
+  Backup_RemoteSynchronization: $localize`Synchronizing secondary destination(s) …`,
   Restore_Begin: $localize`Starting restore …`,
   Restore_RecreateDatabase: $localize`Rebuilding local database …`,
   Restore_PreRestoreVerify: $localize`Verifying remote data …`,
