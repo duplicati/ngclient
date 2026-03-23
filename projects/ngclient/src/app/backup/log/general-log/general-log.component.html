@@ -126,6 +126,40 @@
             </details>
           }
 
+          @if (item.data?.RemoteSynchronizationResults) {
+            @for (syncResult of item.data?.RemoteSynchronizationResults; track $index) {
+              <details name="details">
+                <summary i18n>
+                  <sh-icon>arrows-clockwise</sh-icon>
+                  Secondary destination: {{ syncResult.Destination }}
+
+                  <div class="actions">
+                    <sh-icon class="toggle-indicator">caret-down</sh-icon>
+                  </div>
+                </summary>
+
+                <div class="content">
+                  <p i18n>Start: {{ syncResult.BeginTime | date: 'medium' }}</p>
+                  <p i18n>End: {{ syncResult.EndTime | date: 'medium' }}</p>
+                  <p i18n>Duration: {{ syncResult.Duration | durationFormat }}</p>
+                  <sh-divider />
+                  <p i18n>
+                    Files copied: {{ syncResult.CopiedFileCount }} ({{
+                      syncResult.CopiedFileSize | bytes: true : true
+                    }})
+                  </p>
+                  <p i18n>Files deleted: {{ syncResult.DeletedFileCount }}</p>
+                  <p i18n>Files renamed: {{ syncResult.RenamedFileCount }}</p>
+                  <p i18n>Files verified: {{ syncResult.VerifiedFileCount }}</p>
+                  <p i18n>Failed verifications: {{ syncResult.FailedVerificationCount }}</p>
+                  <sh-divider />
+                  <p i18n>Warnings: {{ syncResult.WarningsActualLength }}</p>
+                  <p i18n>Errors: {{ syncResult.ErrorsActualLength }}</p>
+                </div>
+              </details>
+            }
+          }
+
           @if (item.data?.MainOperation === 'Test') {
             <details name="details">
               <summary i18n>
