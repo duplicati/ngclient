@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal, untracked, DestroyRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ShipAlert, ShipButton, ShipCard, ShipFormField, ShipIcon, ShipProgressBar } from '@ship-ui/core';
@@ -46,44 +46,89 @@ export default class Connect {
   registeringCounter = signal<number | null>(null);
   didTry = false;
   triedFinishConnection = false;
+  #counterTimer: ReturnType<typeof setTimeout> | null = null;
+  #destroyRef = inject(DestroyRef);
+
+  constructor() {
+    // Clean up timer when component is destroyed
+    this.#destroyRef.onDestroy(() => {
+      this.#stopCounterTick();
+    });
+  }
+
   stateEffect = effect(() => {
     const registerUrl = this.#remoteControlState.registerUrl();
     const state = this.state();
     const typeParam = this.typeParam();
-    const counter = this.registeringCounter();
 
     if (state === 'inactive' && typeParam === 'logon' && registerUrl !== '') {
       if (!this.didTry) {
-        this.#remoteControlState.beginRemoteRegistration();
         this.didTry = true;
+        // Schedule asynchronously to avoid synchronous signal write
+        // (beginRemoteRegistration sets state to 'registering' which would
+        // re-trigger this effect synchronously, causing an infinite loop)
+        queueMicrotask(() => this.#remoteControlState.beginRemoteRegistration());
       }
     }
 
-    if (state === 'registered' && this.claimUrl() !== null) {
+    if (state === 'registered') {
       if (!this.triedFinishConnection) {
-        this.triedFinishConnection = true;
-        this.#finishConnection();
+        const claimUrl = untracked(() => this.claimUrl());
+        if (claimUrl !== null) {
+          this.triedFinishConnection = true;
+          this.#finishConnection();
+        }
       }
     }
 
     if (state === 'registering') {
-      if (counter === null) {
-        this.registeringCounter.set(0);
-      }
-
-      setTimeout(() => {
-        this.registeringCounter.set((counter ?? 0) + 1);
-      }, 1000);
+      // Start the counter tick loop (untracked to avoid re-triggering this effect)
+      untracked(() => {
+        if (this.registeringCounter() === null) {
+          this.registeringCounter.set(0);
+        }
+        this.#startCounterTick();
+      });
     } else {
-      this.registeringCounter.set(null);
+      // Clear timer and reset counter when leaving 'registering' state
+      this.#stopCounterTick();
+      untracked(() => this.registeringCounter.set(null));
     }
 
     if (state === 'connected' || state === 'disabled' || state === 'connecting') {
-      this.#serverSettingsService.setShownWelcomePage().subscribe(() => {
-        this.#router.navigate(['']);
+      // Schedule asynchronously to avoid synchronous signal writes
+      // from patchServerSettings during change detection
+      queueMicrotask(() => {
+        this.#serverSettingsService.setShownWelcomePage().subscribe(() => {
+          this.#router.navigate(['']);
+        });
       });
     }
   });
+
+  #startCounterTick() {
+    // Clear any existing timer to prevent accumulation
+    if (this.#counterTimer !== null) {
+      clearTimeout(this.#counterTimer);
+    }
+
+    this.#counterTimer = setTimeout(() => {
+      this.#counterTimer = null;
+      const current = this.registeringCounter() ?? 0;
+      this.registeringCounter.set(current + 1);
+      // Continue ticking as long as we're still in 'registering' state
+      if (this.state() === 'registering') {
+        this.#startCounterTick();
+      }
+    }, 1000);
+  }
+
+  #stopCounterTick() {
+    if (this.#counterTimer !== null) {
+      clearTimeout(this.#counterTimer);
+      this.#counterTimer = null;
+    }
+  }
 
   ngOnInit() {
     this.#remoteControlState.refreshRemoteControlStatus();

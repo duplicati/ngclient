@@ -30,6 +30,10 @@ export class RemoteControlState {
   #serverSettings = inject(ServerSettingsService);
 
   repeatRegisterTimer: Timeout | null = null;
+  #errorRetryTimer: Timeout | null = null;
+  #errorRetryCount = 0;
+  readonly #maxErrorRetries = 5;
+  readonly #baseRetryDelayMs = 2000;
   state = signal<State>('unknown');
   claimUrl = signal<string | null>(null);
   registerUrl = signal<string>('');
@@ -57,12 +61,8 @@ export class RemoteControlState {
   });
 
   #mapRemoteControlStatus(data: RemoteControlStatusOutput) {
-    // remoteControlEnabled = data.IsEnabled;
-    // remoteControlCanEnable = data.CanEnable;
-    // remoteControlConnected = data.IsConnected;
-    // remoteControlIsRegistering = data.IsRegistering;
-    // remoteControlIsRegisteringFaulted = data.IsRegisteringFaulted;
-    // remoteControlIsRegisteringCompleted = data.IsRegisteringCompleted;
+    // Reset error retry count on successful response
+    this.#errorRetryCount = 0;
 
     data.RegistrationUrl && this.claimUrl.set(data.RegistrationUrl);
 
@@ -120,14 +120,31 @@ export class RemoteControlState {
     }
   }
 
-  #mapRemoteControlError(data: any) {
-    // AppUtils.connectionError(data);
+  #mapRemoteControlError(_data: any) {
+    // Clear any existing error retry timer
+    if (this.#errorRetryTimer !== null) {
+      clearTimeout(this.#errorRetryTimer);
+      this.#errorRetryTimer = null;
+    }
 
-    this.#dupServer.getApiV1RemotecontrolStatus().subscribe({
-      next: (res) => {
-        this.#mapRemoteControlStatus(res);
-      },
-    });
+    // Stop retrying after max attempts to avoid infinite request loops
+    if (this.#errorRetryCount >= this.#maxErrorRetries) {
+      this.state.set('registeringfaulted');
+      this.#errorRetryCount = 0;
+      return;
+    }
+
+    // Exponential backoff: 2s, 4s, 8s, 16s, 32s
+    const delay = this.#baseRetryDelayMs * Math.pow(2, this.#errorRetryCount);
+    this.#errorRetryCount++;
+
+    this.#errorRetryTimer = setTimeout(() => {
+      this.#errorRetryTimer = null;
+      this.#dupServer.getApiV1RemotecontrolStatus().subscribe({
+        next: (res) => this.#mapRemoteControlStatus(res),
+        error: (err) => this.#mapRemoteControlError(err),
+      });
+    }, delay);
   }
 
   refreshRemoteControlStatus() {
