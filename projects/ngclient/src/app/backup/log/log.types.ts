@@ -109,6 +109,7 @@ export interface BackupResult {
   DeleteResults: null;
   RepairResults: null;
   TestResults: TestResults;
+  RemoteSynchronizationResults: RemoteSynchronizationResult[];
   ParsedResult: string;
   Interrupted: boolean;
   Version: string;
@@ -146,6 +147,29 @@ export interface TestResult {
   Warnings: string[];
   Errors: string[];
   BackendStatistics: BackendStatistics;
+}
+
+export interface RemoteSynchronizationResult {
+  Destination: string;
+  DeletedFileCount: number;
+  RenamedFileCount: number;
+  CopiedFileCount: number;
+  VerifiedFileCount: number;
+  FailedVerificationCount: number;
+  CopiedFileSize: number;
+  MainOperation: string;
+  ParsedResult: string;
+  Interrupted: boolean;
+  Version: string;
+  EndTime: string;
+  BeginTime: string;
+  Duration: string;
+  MessagesActualLength: number;
+  WarningsActualLength: number;
+  ErrorsActualLength: number;
+  Messages: string[] | null;
+  Warnings: string[] | null;
+  Errors: string[] | null;
 }
 
 export type DuplicatiBackupResult = BackupResult | TestResult;

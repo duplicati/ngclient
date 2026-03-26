@@ -85,10 +85,14 @@ details {
         height: p2r(32);
         transition: transform 125ms linear;
       }
+
+      sh-icon.toggle-indicator {
+        transform: rotate(0deg);
+      }
     }
   }
 
-  &[open] summary .actions sh-icon {
+  &[open] > summary .actions sh-icon.toggle-indicator {
     transform: rotate(180deg);
   }
 
