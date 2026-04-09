@@ -409,7 +409,6 @@ export class BackupState {
       '--no-encryption',
       '--exclude-files-attributes',
       '--skip-files-larger-than',
-      'dblock-size',
       'passphrase',
       'keep-time',
       'keep-versions',
@@ -446,10 +445,6 @@ export class BackupState {
 
     var retentionValue: RetentionType = 'all';
     excludedSettings?.forEach((x) => {
-      // if (x.Name === 'dblock-size') {
-      //   this.optionsFields.remoteVolumeSize.set(x.Value ?? '50MB');
-      // }
-
       if (x.Name === 'keep-time') {
         // If this is not filled correctly, revert to 'all'
         const v = x.Value ?? '';
@@ -558,7 +553,6 @@ export class BackupState {
       'keep-time',
       'keep-versions',
       'retention-policy',
-      'dblock-size',
       'compression-module',
     ];
 
@@ -591,12 +585,7 @@ export class BackupState {
 
     if (generalFormValue.compression === '') compression = [];
 
-    const optionFields = [
-      // {
-      //   Name: 'dblock-size',
-      //   Value: this.optionsFields.remoteVolumeSize(),
-      // },
-    ];
+    const optionFields = [];
 
     switch (this.optionsFields.backupRetention()) {
       case 'time':
