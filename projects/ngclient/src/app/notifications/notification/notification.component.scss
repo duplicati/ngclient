@@ -14,3 +14,10 @@
   max-height: p2r(200);
   overflow: auto;
 }
+
+.sub-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: p2r(8);
+  margin-top: p2r(8);
+}

@@ -17,7 +17,7 @@
       </div>
     }
 
-    <div class="actions">
+    <div class="sub-actions">
       @if (_notification.Message?.includes('please run repair')) {
         <button shButton class="small outlined" (click)="doRepair(_notification.BackupID!)" i18n>Repair</button>
       }
