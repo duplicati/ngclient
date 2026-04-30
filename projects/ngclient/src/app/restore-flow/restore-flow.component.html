@@ -1,6 +1,6 @@
 <app-status-bar />
 
-@if (!isProgressPage()) {
+@if (!isFullWidthPage()) {
   <sh-stepper class="primary">
     @if (isFileRestore()) {
       <div tabindex="-1" routerLinkActive="active" [routerLink]="['/restore-from-files/destination']" i18n>

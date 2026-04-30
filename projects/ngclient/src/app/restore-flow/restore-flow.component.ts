@@ -14,7 +14,7 @@ import { RestoreFlowState } from './restore-flow.state';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RestoreFlowState, BackupState],
   host: {
-    '[class.full-width]': 'isProgressPage()',
+    '[class.full-width]': 'isFullWidthPage()',
   },
 })
 export default class RestoreFlowComponent {
@@ -28,16 +28,17 @@ export default class RestoreFlowComponent {
 
   backupId = this.#restoreFlowState.backupId;
   isFileRestore = this.#restoreFlowState.isFileRestore;
-  isProgressPage = signal(false);
+  isFullWidthPage = signal(false);
 
   paramsChanged = effect(() => {
     const childRouteUrl = this.#childRouteUrlSignal();
     const backupId = this.#routeParamsSignal()?.['id'];
-    const isFileRestore = !!this.#routeUrlSignal()?.find((x) => x.path === 'restore-from-files');
+    const isFileRestorePage = !!this.#routeUrlSignal()?.find((x) => x.path === 'restore-from-files');
+    const isSelectFilesPage = !!childRouteUrl?.find((x) => x.path === 'select-files');
     const isProgressPage = !!childRouteUrl?.find((x) => x.path === 'progress');
 
-    this.isProgressPage.set(isProgressPage);
-    this.#restoreFlowState.init(backupId, isFileRestore);
+    this.isFullWidthPage.set(isProgressPage || isSelectFilesPage);
+    this.#restoreFlowState.init(backupId, isFileRestorePage);
   });
 
   ngOnInit() {
@@ -45,7 +46,7 @@ export default class RestoreFlowComponent {
       if (event instanceof NavigationEnd) {
         const newUrl = event.urlAfterRedirects;
 
-        this.isProgressPage.set(newUrl.includes('progress'));
+        this.isFullWidthPage.set(newUrl.includes('progress') || newUrl.includes('select-files'));
       }
     });
   }

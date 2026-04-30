@@ -68,6 +68,7 @@
   gap: p2r(8);
   padding: p2r(8 16);
   height: p2r(200);
+  min-height: p2r(100);
   border: 1px solid var(--base-4);
   border-radius: var(--shape-3);
   overflow: auto;
