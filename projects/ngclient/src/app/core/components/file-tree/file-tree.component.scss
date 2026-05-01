@@ -119,6 +119,18 @@
         opacity: 0.6;
       }
 
+      .size {
+        opacity: 0.6;
+      }
+
+      &.generated {
+        opacity: 0.6;
+
+        .text {
+          color: var(--base-7);
+        }
+      }
+
       &.root {
         gap: p2r(4);
 

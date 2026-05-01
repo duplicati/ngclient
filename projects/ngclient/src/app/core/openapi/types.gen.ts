@@ -559,6 +559,7 @@ export type SearchEntriesRequestDto = {
     Paths: Array<string> | null;
     Filters: Array<string> | null;
     Time: (string) | null;
+    Version: (number[]) | null;
     ReturnExtended?: (boolean) | null;
 };
 

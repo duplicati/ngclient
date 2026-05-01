@@ -20,3 +20,18 @@ form {
   color: var(--base-9);
   font-style: italic;
 }
+
+.search-container {
+  display: flex;
+  align-items: flex-end;
+  gap: p2r(8);
+
+  sh-form-field {
+    flex: 1;
+  }
+}
+
+.search-results-info {
+  color: var(--base-8);
+  font-size: var(--small);
+}

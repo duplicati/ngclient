@@ -29,6 +29,50 @@
     }
 
     @if (showFileTree()) {
+      @if (canSearch()) {
+        <div class="search-container">
+          <sh-form-field>
+            <label for="search" i18n>Search files</label>
+            <input
+              type="text"
+              id="search"
+              [(ngModel)]="searchQuery"
+              [ngModelOptions]="{ standalone: true }"
+              (keydown.enter)="$event.preventDefault(); performSearch()"
+              i18n-placeholder
+              placeholder="Enter search term..." />
+          </sh-form-field>
+          <button
+            shButton
+            type="button"
+            class="small"
+            (click)="performSearch()"
+            [disabled]="isSearching() || !searchQuery().trim()">
+            @if (isSearching()) {
+              <sh-icon class="spinner">spinner</sh-icon>
+            } @else {
+              <sh-icon>magnifying-glass</sh-icon>
+            }
+            <span i18n>Search</span>
+          </button>
+          @if (isSearchMode()) {
+            <button shButton type="button" class="small secondary" (click)="clearSearch()">
+              <sh-icon>x-circle</sh-icon>
+              <span i18n>Clear</span>
+            </button>
+          }
+        </div>
+        @if (isSearchMode() && !isSearching()) {
+          <div class="search-results-info">
+            @if (searchResults().length === 0) {
+              <span i18n>0 results found</span>
+            } @else {
+              <span i18n>Found {{ searchResults().length }} result(s)</span>
+            }
+          </div>
+        }
+      }
+
       <!-- <pre>{{ rootPaths() }}</pre> -->
       <app-file-tree
         [rootPaths]="rootPaths()"
@@ -37,6 +81,8 @@
         [multiSelect]="true"
         [showFiles]="true"
         [loadExtendedData]="true"
+        [searchMode]="isSearchMode()"
+        [searchResults]="searchResults()"
         (hasExtendedData)="extendedDataType.set($event)">
         <label for="path" i18n>Path</label>
         <input type="text" id="path" formControlName="filesToRestore" />

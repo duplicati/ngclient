@@ -2,10 +2,10 @@ import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ShipButton, ShipIcon, ShipProgressBar, ShipSelect } from '@ship-ui/core';
+import { ShipButton, ShipFormField, ShipIcon, ShipProgressBar, ShipSelect } from '@ship-ui/core';
 import { finalize, Subject, take, takeUntil } from 'rxjs';
 import FileTreeComponent, { BackupSettings } from '../../core/components/file-tree/file-tree.component';
-import { DuplicatiServer, GetApiV1BackupByIdFilesData, TreeNodeDto } from '../../core/openapi';
+import { DuplicatiServer, GetApiV1BackupByIdFilesData, SearchEntriesItemDto, TreeNodeDto } from '../../core/openapi';
 import { BytesPipe } from '../../core/pipes/byte.pipe';
 import { ServerStateService } from '../../core/services/server-state.service';
 import { SysinfoState } from '../../core/states/sysinfo.state';
@@ -29,6 +29,7 @@ export const createRestoreSelectFilesForm = () => {
     BytesPipe,
     FileTreeComponent,
     ShipButton,
+    ShipFormField,
     ShipIcon,
     ShipSelect,
     ShipProgressBar,
@@ -70,6 +71,14 @@ export default class SelectFilesComponent {
   loadingRootPath = signal(false);
   isRepairing = computed(() => this.#activeRepairIds().length > 0);
   loadedVersions = signal<{ [key: string]: boolean }>({});
+
+  // Search functionality
+  canSearch = computed(() => this.#sysinfo.hasV2ListOperations());
+  searchQuery = signal<string>('');
+  isSearching = signal(false);
+  searchResults = signal<SearchEntriesItemDto[]>([]);
+  hasSearched = signal(false);
+  isSearchMode = computed(() => this.searchQuery().length > 0 && this.hasSearched());
 
   loadingEffect = effect(() => {
     const versionOptionsLoading = this.versionOptionsLoading();
@@ -278,5 +287,53 @@ export default class SelectFilesComponent {
     } else {
       this.#restoreFlowState.exit();
     }
+  }
+
+  performSearch() {
+    const query = this.searchQuery().trim();
+    const backupSettings = this.backupSettings();
+
+    if (!query || !backupSettings) return;
+
+    const option = this.versionOptions()?.find((x) => x.Version === parseInt(this.selectOption() ?? ''));
+    const version = option?.Version;
+
+    if (version === null || version === undefined) return;
+
+    this.isSearching.set(true);
+    this.searchResults.set([]);
+    this.hasSearched.set(true);
+
+    this.#dupServer
+      .postApiV2BackupSearch({
+        requestBody: {
+          BackupId: backupSettings.id,
+          Time: null,
+          Version: [version],
+          Filters: [query],
+          Paths: null,
+          PageSize: 1000,
+          Page: 0,
+          ReturnExtended: true,
+        },
+      })
+      .pipe(
+        takeUntil(this.abortLoading$),
+        finalize(() => this.isSearching.set(false))
+      )
+      .subscribe({
+        next: (res) => {
+          this.searchResults.set(res.Data ?? []);
+        },
+        error: () => {
+          this.searchResults.set([]);
+        },
+      });
+  }
+
+  clearSearch() {
+    this.searchQuery.set('');
+    this.searchResults.set([]);
+    this.hasSearched.set(false);
   }
 }

@@ -1,11 +1,11 @@
-@if (!multiSelect() && customRemoteMode() === null) {
+@if (!multiSelect() && customRemoteMode() === null && !searchMode()) {
   <sh-button-group class="type-b small" [(value)]="pathDiscoveryMethod">
     <button type="button" value="browse" i18n>Browse path</button>
     <button type="button" value="path" i18n>Manually type path</button>
   </sh-button-group>
 }
 
-<div class="section" [class.hidden]="pathDiscoveryMethod() !== 'browse'">
+<div class="section" [class.hidden]="!searchMode() && pathDiscoveryMethod() !== 'browse'">
   <ng-content select="label" ngProjectAs="label"></ng-content>
 
   <div class="browse-files" [class.visualize-accepted]="accepts()" #treeContainer>
@@ -27,6 +27,8 @@
               [class.usually-hidden]="node.hidden"
               [class.root]="data.level === 0"
               [class.loading]="isLoading() === node.id"
+              [class.generated]="node.isGenerated"
+              [class.search-match]="node.isSearchMatch"
               (click)="toggleNode(node.id, node)">
               <div class="icon" [class.file]="node.cls === 'file'">
                 @if (node.id !== '/') {
@@ -54,7 +56,10 @@
               </div>
 
               <div class="text" (click)="toggleSelectedNode($event, node)">
-                {{ node.text }}
+                <span>{{ node.text }}</span>
+                @if (node.cls == 'file' && node.fileSize != null) {
+                  <span class="size">&nbsp;({{ node.fileSize | bytes }})</span>
+                }
               </div>
             </div>
 
@@ -75,13 +80,13 @@
   </div>
 
   <div class="footer">
-    @if (!accepts() && !isByBackupSettings() && customRemoteMode() === null) {
+    @if (!accepts() && !isByBackupSettings() && customRemoteMode() === null && !searchMode()) {
       <sh-toggle [(checked)]="_showHiddenNodes" class="primary raised browse-files-toggle" i18n>
         Show hidden {{ showFiles() ? 'files' : 'folders' }}
       </sh-toggle>
     }
 
-    @if (enableCreateFolder() && customRemoteMode() === null) {
+    @if (enableCreateFolder() && customRemoteMode() === null && !searchMode()) {
       <button
         shButton
         type="button"
@@ -95,7 +100,7 @@
   </div>
 </div>
 
-<div #formRef class="form-field" [class.hidden]="pathDiscoveryMethod() !== 'path'">
+<div #formRef class="form-field" [class.hidden]="searchMode() || pathDiscoveryMethod() !== 'path'">
   <sh-form-field>
     <ng-content select="label" ngProjectAs="label"></ng-content>
     <ng-content select="input" ngProjectAs="input"></ng-content>

@@ -29,8 +29,10 @@ import {
   GetApiV1BackupByIdFilesData,
   GetApiV1BackupByIdFilesResponse,
   PostApiV1FilesystemResponse,
+  SearchEntriesItemDto,
   TreeNodeDto,
 } from '../../openapi';
+import { BytesPipe } from '../../pipes/byte.pipe';
 import { SysinfoState } from '../../states/sysinfo.state';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
@@ -51,6 +53,9 @@ type FileTreeNode = TreeNode & {
   children: FileTreeNode[];
   evalState: TreeEvalEnum;
   isIndeterminate: boolean;
+  isSearchMatch?: boolean;
+  isGenerated?: boolean;
+  hasChildrenInSearch?: boolean;
 };
 
 type InputValueChangedEvent = CustomEvent<{ value: string }>;
@@ -90,6 +95,7 @@ const ROOTPATH = '/';
     ShipDialog,
     NgTemplateOutlet,
     FormsModule,
+    BytesPipe,
   ],
   templateUrl: './file-tree.component.html',
   styleUrl: './file-tree.component.scss',
@@ -122,6 +128,8 @@ export default class FileTreeComponent {
   destinationUrl = input<string | null | undefined>('');
   loadExtendedData = input(true);
   hasExtendedData = output<string>();
+  searchMode = input(false);
+  searchResults = input<SearchEntriesItemDto[]>([]);
 
   _showHiddenNodes = signal(false);
   createFolderDialogOpen = signal(false);
@@ -156,7 +164,210 @@ export default class FileTreeComponent {
   });
 
   TreeEvalEnum = TreeEvalEnum;
+
+  // Build tree structure from search results
+  searchResultTreeStructure = computed<FileTreeNode[]>(() => {
+    const searchResults = this.searchResults();
+    if (searchResults.length === 0) {
+      return [];
+    }
+
+    const currentPaths = this.currentPath()
+      .split('\0')
+      .filter((x) => x !== '' && x !== ROOTPATH);
+    const showHiddenNodes = this.showHiddenNodes();
+
+    // Build path info map from search results
+    const pathInfoMap = new Map<
+      string,
+      { part: string; parentPath: string; isFolder: boolean; match: SearchEntriesItemDto | null }
+    >();
+
+    for (const searchEntry of searchResults) {
+      const resultPath = searchEntry.Path ?? '';
+      const pathDelimiter = this.#getPathDelimiter(resultPath);
+      const parts = resultPath.split(pathDelimiter).filter((p) => p !== '');
+
+      let currentPath = '';
+      for (let i = 0; i < parts.length; i++) {
+        const part = parts[i];
+        const isLastPart = i === parts.length - 1;
+        const isFolder = !isLastPart || this.#isFolder(resultPath);
+
+        const parentPath = currentPath || ROOTPATH;
+        const prefix = currentPath
+          ? currentPath.endsWith(pathDelimiter)
+            ? currentPath.slice(0, -pathDelimiter.length)
+            : currentPath
+          : '';
+        currentPath = prefix ? `${prefix}${pathDelimiter}${part}` : `${pathDelimiter}${part}`;
+        if (isFolder && !currentPath.endsWith(pathDelimiter)) {
+          currentPath += pathDelimiter;
+        }
+
+        if (!pathInfoMap.has(currentPath)) {
+          pathInfoMap.set(currentPath, {
+            part,
+            parentPath,
+            isFolder,
+            match: isLastPart ? searchEntry : null,
+          });
+        } else if (isLastPart) {
+          const existing = pathInfoMap.get(currentPath)!;
+          existing.match = searchEntry;
+        }
+      }
+    }
+
+    // Build children map
+    const childrenMap = new Map<string, string[]>();
+    for (const [path, info] of pathInfoMap) {
+      if (!childrenMap.has(info.parentPath)) {
+        childrenMap.set(info.parentPath, []);
+      }
+      childrenMap.get(info.parentPath)!.push(path);
+    }
+
+    // Determine which paths are "visible" (not collapsed into a parent chain)
+    // and what their collapsed display text should be
+    const visiblePaths = new Set<string>();
+    const collapsedTextMap = new Map<string, string>(); // visible path -> display text
+
+    for (const [path, info] of pathInfoMap) {
+      if (!info.isFolder) {
+        // Files are always visible
+        visiblePaths.add(path);
+        continue;
+      }
+
+      // A folder is hidden (collapsed into its parent) if:
+      // - Its parent has exactly ONE child total
+      // - AND that one child is this folder
+      //
+      // This means the folder is just a passthrough with no siblings.
+      // We collapse it into the nearest visible ancestor.
+
+      const parentChildren = childrenMap.get(info.parentPath) || [];
+      const isOnlyChild = parentChildren.length === 1 && parentChildren[0] === path;
+
+      if (isOnlyChild && info.parentPath !== ROOTPATH) {
+        // This folder is hidden - collapsed into parent
+        continue;
+      }
+
+      // This folder is visible
+      visiblePaths.add(path);
+
+      // Build collapsed text if this folder starts a single-child chain
+      // Walk down the chain and concatenate names
+      let chainText = info.part;
+      let chainPath = path;
+      while (true) {
+        const chainChildren = childrenMap.get(chainPath) || [];
+        if (chainChildren.length !== 1) break;
+
+        const nextPath = chainChildren[0];
+        const nextInfo = pathInfoMap.get(nextPath);
+        if (!nextInfo || !nextInfo.isFolder) break;
+
+        chainText += '/' + nextInfo.part;
+        chainPath = nextPath;
+      }
+
+      // Only set collapsed text if we actually collapsed something
+      if (chainPath !== path) {
+        collapsedTextMap.set(path, chainText);
+      }
+    }
+
+    // Also make root visible
+    visiblePaths.add(ROOTPATH);
+
+    // Build the tree without a root node
+    // Top-level items are direct children of an implicit root
+    const topLevelNodes: FileTreeNode[] = [];
+    const nodeMap = new Map<string, FileTreeNode>();
+
+    // Sort visible paths by depth
+    const sortedPaths = Array.from(visiblePaths)
+      .filter((p) => p !== ROOTPATH)
+      .sort((a, b) => a.split('/').length - b.split('/').length || a.localeCompare(b));
+
+    for (const path of sortedPaths) {
+      const info = pathInfoMap.get(path);
+      if (!info) continue;
+
+      // Find the actual parent in the visible tree
+      let parentPath = info.parentPath;
+      while (parentPath !== ROOTPATH && !visiblePaths.has(parentPath)) {
+        const parentInfo = pathInfoMap.get(parentPath);
+        parentPath = parentInfo?.parentPath || ROOTPATH;
+      }
+
+      // Check if a node with this id already exists
+      if (nodeMap.has(path)) continue;
+
+      const displayText = this.#getDisplayName(collapsedTextMap.get(path), info.match?.Metadata) ?? info.part;
+      const isGenerated = info.match === null;
+
+      const evalState =
+        info.match !== null && !info.isFolder && showHiddenNodes
+          ? TreeEvalEnum.None
+          : this.#eval(currentPaths, path, info.isFolder ? 'folder' : 'file', null);
+
+      const newNode: FileTreeNode = {
+        id: path,
+        resolvedpath: path,
+        text: displayText,
+        parentPath: parentPath,
+        children: [],
+        evalState: evalState,
+        isIndeterminate: this.isIndeterminate(currentPaths, path),
+        cls: info.isFolder ? 'folder' : 'file',
+        isSearchMatch: info.match !== null,
+        isGenerated: isGenerated,
+        hasChildrenInSearch: (childrenMap.get(path)?.length || 0) > 0,
+        iconCls: null,
+        check: false,
+        leaf: !info.isFolder,
+        hidden: false,
+        systemFile: false,
+        temporary: false,
+        symlink: false,
+        fileSize: info.match?.Size ?? 0,
+      };
+
+      nodeMap.set(path, newNode);
+
+      if (parentPath === ROOTPATH) {
+        topLevelNodes.push(newNode);
+      } else {
+        const parentNode = nodeMap.get(parentPath);
+        if (parentNode) {
+          parentNode.children.push(newNode);
+        }
+      }
+    }
+
+    // Sort children alphabetically, folders first
+    const sortNodes = (nodes: FileTreeNode[]) => {
+      nodes.sort((a, b) => {
+        if (a.cls === 'folder' && b.cls !== 'folder') return -1;
+        if (a.cls !== 'folder' && b.cls === 'folder') return 1;
+        return (a.text ?? '').localeCompare(b.text ?? '');
+      });
+      nodes.forEach((node) => sortNodes(node.children));
+    };
+    sortNodes(topLevelNodes);
+
+    return topLevelNodes;
+  });
+
   treeStructure = computed<FileTreeNode[]>(() => {
+    if (this.searchMode()) {
+      return this.searchResultTreeStructure();
+    }
+
     const showHiddenNodes = this.showHiddenNodes();
     const _currentPaths = this.currentPath()
       .split('\0')
@@ -579,6 +790,9 @@ export default class FileTreeComponent {
 
     $event.stopPropagation();
 
+    // In search mode, only allow selecting search matches
+    if (this.searchMode() && !node.isSearchMatch) return;
+
     if (node.evalState === TreeEvalEnum.ExcludedByParent) return;
 
     if (this.selectFiles() && node.cls === 'folder') {
@@ -990,6 +1204,7 @@ export default class FileTreeComponent {
                   leaf: node !== null,
                   resolvedpath: y.Path,
                   hidden: false,
+                  fileSize: y.Size,
                 };
               })
             : x;
