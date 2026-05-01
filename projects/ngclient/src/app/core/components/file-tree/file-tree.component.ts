@@ -1091,7 +1091,7 @@ export default class FileTreeComponent {
       const sep = this.#getPathDelimiter(x);
       const split = x.split(sep);
 
-      if (split.at(-1) !== '') {
+      if (split.at(-1) === '') {
         split.pop();
       }
 
