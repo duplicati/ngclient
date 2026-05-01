@@ -475,6 +475,8 @@ export default class FileTreeComponent {
         }
 
         nodeMap.set(nodePath, newNode);
+        if (newNode.id?.startsWith('%') && newNode.id?.endsWith('%'))
+          nodeMap.set(this.#appendDirSep(nodePath), newNode);
         if (parentNode) {
           parentNode.children.push(newNode);
         }
