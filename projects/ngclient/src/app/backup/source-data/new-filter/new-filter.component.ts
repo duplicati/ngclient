@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, Injector, input, output, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ShipFormField, ShipIcon, ShipSelect } from '@ship-ui/core';
 
@@ -130,13 +130,17 @@ const EXPRESSION_OPTIONS: ExpressionTypeMap[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NewFilterComponent {
+  #injector = inject(Injector);
+
   path = input.required<string>();
   osType = input<string>();
+  isNew = input<boolean>(false);
   pathChange = output<string>();
   remove = output<void>();
 
   internalPath = signal<string>('');
   pathType = signal<string>('-Expression');
+  textInput = viewChild<ElementRef<HTMLInputElement>>('textInput');
   currentExpressionOption = computed(() => {
     const pathType = this.pathType();
 
@@ -230,7 +234,25 @@ export class NewFilterComponent {
       this.pathType.set(`${direction}Expression`);
       this.internalPath.set(x);
     }
+
+    // Focus the input if this is a newly added filter
+    if (this.isNew()) {
+      afterNextRender(
+        () => {
+          this.focusInput();
+        },
+        { injector: this.#injector }
+      );
+    }
   });
+
+  focusInput() {
+    const input = this.textInput()?.nativeElement;
+    if (input) {
+      input.focus();
+      input.select();
+    }
+  }
 
   updateFilter() {
     let newPath = this.internalPath();

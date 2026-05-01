@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -9,7 +9,7 @@ import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.c
 import { SysinfoState } from '../../core/states/sysinfo.state';
 import { BackupState } from '../backup.state';
 import { getConfigurationByUrl } from '../destination/destination.config-utilities';
-import { NewFilterComponent } from './new-filter/new-filter.component';
+import { FiltersComponent } from '../components/filters/filters.component';
 import { TargetDiskDialog } from './target-disk-dialog/target-disk-dialog';
 import { TargetUrlDialog } from './target-url-dialog/target-url-dialog';
 
@@ -51,7 +51,7 @@ export const createSourceDataForm = (
     ShipButton,
     ShipToggle,
     ShipMenu,
-    NewFilterComponent,
+    FiltersComponent,
     FileTreeComponent,
     ToggleCardComponent,
     SizeComponent,
@@ -96,14 +96,21 @@ export default class SourceDataComponent {
   addingNewPath = signal(false);
   bulkPathEditMode = signal(false);
   bulkPaths = signal('');
-  bulkFilterEditMode = signal(false);
-  bulkFilters = signal('');
   mobileMenuOpen = signal(false);
-  isLocalDiskSupported = computed(
-    () =>
-      this.osType() === 'Windows' &&
-      this.#sysInfo.systemInfo()?.SourceProviderModules?.find((x) => x.Key == 'diskimage')
+  isLocalDiskSupported = computed(() =>
+    this.#sysInfo.systemInfo()?.SourceProviderModules?.find((x) => x.Key == 'diskimage')
   );
+
+  filters = signal<string[]>([]);
+
+  #syncFilters = effect(() => {
+    const pathValue = this.pathSignal();
+    const filterValues =
+      pathValue
+        ?.split('\0')
+        .filter((x) => x !== '___none___' && (x.startsWith('-') || x.startsWith('+'))) ?? [];
+    this.filters.set(filterValues);
+  });
 
   openRemoteDestinationDialog() {
     const dialogRef = this.#dialog.open(TargetUrlDialog, {
@@ -175,29 +182,6 @@ export default class SourceDataComponent {
         .filter((p) => p.trim() !== '') ?? [];
     const filters = this.pathArray();
     const combined = [...newPaths, ...filters];
-    const distinct = [...new Set(combined)].join('\0');
-    this.sourceDataForm.controls.path.setValue(distinct);
-  }
-
-  toggleBulkFilterEdit() {
-    if (this.bulkFilterEditMode()) {
-      this.bulkFilterEditMode.set(false);
-    } else {
-      const filters = this.pathArray()
-        .filter((x) => x !== '___none___' && (x.startsWith('-') || x.startsWith('+')))
-        .join('\n');
-      this.bulkFilters.set(filters);
-      this.bulkFilterEditMode.set(true);
-    }
-  }
-
-  saveBulkFilterEdit() {
-    const newFilters =
-      this.bulkFilters()
-        .split('\n')
-        .filter((p) => p.trim() !== '' && (p.startsWith('-') || p.startsWith('+'))) ?? [];
-    const paths = this.nonFilterPaths() ?? [];
-    const combined = [...paths, ...newFilters];
     const distinct = [...new Set(combined)].join('\0');
     this.sourceDataForm.controls.path.setValue(distinct);
   }
@@ -316,40 +300,9 @@ export default class SourceDataComponent {
     this.sourceDataForm.controls.path.setValue(combined);
   }
 
-  addFilter(newPath = '-*') {
-    const currentPath = this.sourceDataForm.controls.path.value;
-    const combined = [currentPath, newPath].filter((x) => x && x !== '').join('\0');
-
-    this.sourceDataForm.controls.path.setValue(combined);
-  }
-
-  patchPathAt(newPath: string, index: number) {
-    const currentPath = this.sourceDataForm.controls.path.value;
-    const nonFilterPath = currentPath!
-      .split('\0')
-      .filter((x) => !x.startsWith('-') && !x.startsWith('+'))
-      .join('\0');
-
-    const _newPath = this.pathArray()
-      .map((x, i) => (i === index ? `${newPath}` : `${x}`))
-      .join('\0');
-
-    const combined = [nonFilterPath, _newPath].filter((x) => x && x !== '').join('\0');
-    this.sourceDataForm.controls.path.setValue(combined);
-  }
-
-  removePathAt(index: number) {
-    const currentPath = this.sourceDataForm.controls.path.value;
-    const nonFilterPath = currentPath!
-      .split('\0')
-      .filter((x) => !x.startsWith('-') && !x.startsWith('+'))
-      .join('\0');
-
-    const _newPath = this.pathArray()
-      .filter((_, i) => i !== index)
-      .join('\0');
-
-    const combined = [nonFilterPath, _newPath].filter((x) => x && x !== '').join('\0');
+  updateFilters(newFilters: string[]) {
+    const nonFilterPaths = this.nonFilterPaths() ?? [];
+    const combined = [...nonFilterPaths, ...newFilters].filter((x) => x && x !== '').join('\0');
     this.sourceDataForm.controls.path.setValue(combined);
   }
 

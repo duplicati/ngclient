@@ -1,0 +1,57 @@
+<app-toggle-card [disableToggle]="disableToggle()">
+  <ng-container title>
+    <span i18n>Filters</span>
+    <div class="spacer"></div>
+    @if (!bulkFilterEditMode()) {
+      <button type="button" shButton class="small" (click)="addFilter()" i18n>
+        <sh-icon>plus</sh-icon>
+        Add filter
+      </button>
+    }
+    <sh-menu>
+      <button shButton class="small" type="button">
+        <sh-icon>dots-three-vertical</sh-icon>
+      </button>
+
+      <ng-container menu>
+        <button shButton type="button" class="small" (click)="toggleBulkFilterEdit()" i18n>
+          <sh-icon>link</sh-icon>
+          @if (bulkFilterEditMode()) {
+            Edit contents as list
+          } @else {
+            Edit contents as text
+          }
+        </button>
+      </ng-container>
+    </sh-menu>
+  </ng-container>
+
+  @if (!bulkFilterEditMode()) {
+    <p description i18n>Customize your filters.</p>
+  } @else {
+    <p description i18n>Edit filters as text, one per line.</p>
+  }
+
+  @if (bulkFilterEditMode()) {
+    <sh-form-field>
+      <textarea
+        class="bulk-textarea"
+        wrap="off"
+        [(ngModel)]="bulkFilters"
+        [ngModelOptions]="{ updateOn: 'blur', standalone: true }"
+        rows="10"
+        (ngModelChange)="saveBulkFilterEdit()"></textarea>
+    </sh-form-field>
+  } @else {
+    <div class="filters" #filtersContainer>
+      @for (filter of filters(); track $index) {
+        <app-new-filter
+          [path]="filter"
+          [osType]="osType()"
+          [isNew]="lastAddedIndex() === $index"
+          (pathChange)="updateFilterAt($event, $index)"
+          (remove)="removeFilterAt($index)"></app-new-filter>
+      }
+    </div>
+  }
+</app-toggle-card>

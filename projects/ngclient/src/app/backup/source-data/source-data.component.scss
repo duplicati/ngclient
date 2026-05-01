@@ -126,12 +126,7 @@ sh-divider {
   min-height: p2r(200);
 }
 
-sh-menu {
-  margin-left: p2r(4);
-}
-
-.paths,
-.filters {
+.paths {
   max-height: 200px;
   overflow-y: auto;
   display: flex;

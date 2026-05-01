@@ -62,16 +62,7 @@
         <input id="backup-name" formControlName="backup-name" />
       </sh-form-field>
 
-      <app-toggle-card [disableToggle]="true">
-        <ng-container title i18n>Filters</ng-container>
-        <ng-container content formGroupName="filters">
-          @for (filterCtrl of standardFields.controls.filters.controls; track $index) {
-            <sh-form-field>
-              <input id="filter-{{ $index }}" [formControl]="filterCtrl" />
-            </sh-form-field>
-          }
-        </ng-container>
-      </app-toggle-card>
+      <app-filters [(filters)]="filters" [osType]="osType() ?? ''" (filtersChange)="updateFilters($event)" />
     </form>
 
     <app-options-list [(options)]="settings" [hasFreeTextSettings]="true" />

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -13,9 +13,10 @@ import {
 } from '@ship-ui/core';
 import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
 import { StatusBarState } from '../../core/components/status-bar/status-bar.state';
-import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { BackupDto, Commandline, DuplicatiServer, GetBackupResultDto } from '../../core/openapi';
+import { SysinfoState } from '../../core/states/sysinfo.state';
 import { BackupState } from '../backup.state';
+import { FiltersComponent } from '../components/filters/filters.component';
 import { OptionsListComponent } from '../options/options-list/options-list.component';
 import { CommandlineService } from './commandline.service';
 
@@ -27,7 +28,7 @@ const fb = new FormBuilder();
     FormsModule,
     StatusBarComponent,
     OptionsListComponent,
-    ToggleCardComponent,
+    FiltersComponent,
     ReactiveFormsModule,
     RouterLink,
     ShipFormField,
@@ -51,6 +52,9 @@ export default class CommandlineComponent {
   #commandline = inject(Commandline);
   #statusBarState = inject(StatusBarState);
   #commandlineService = inject(CommandlineService);
+  #sysInfo = inject(SysinfoState);
+
+  osType = computed(() => this.#sysInfo.systemInfo()?.OSType);
 
   #routeParamsSignal = toSignal(this.#route.params);
   commandOptions = toSignal(this.#commandline.getApiV1Commandline());
@@ -72,7 +76,14 @@ export default class CommandlineComponent {
 
   finishedLoading = this.#backupState.finishedLoading;
   backupId = this.#backupState.backupId;
+  filters = signal<string[]>([]);
   settings = this.#backupState.settings;
+
+  updateFilters(newFilters: string[]) {
+    this.standardFields.controls.filters.clear();
+    newFilters.forEach((f) => this.standardFields.controls.filters.push(fb.control(f)));
+    this.filters.set(newFilters);
+  }
 
   #e = effect(() => {
     const backupId = this.#routeParamsSignal()?.['id'];
@@ -110,10 +121,15 @@ export default class CommandlineComponent {
       'backup-name': backup.Name,
     });
 
+    this.standardFields.controls.filters.clear();
     if (backup.Filters && backup.Filters.length) {
-      backup.Filters.map((x) => {
-        this.standardFields.controls.filters.push(fb.control(`${x.Include ? '' : '-'}${x.Expression}`));
+      const filterValues = backup.Filters.map((x) => `${x.Include ? '' : '-'}${x.Expression}`);
+      filterValues.forEach((f) => {
+        this.standardFields.controls.filters.push(fb.control(f));
       });
+      this.filters.set(filterValues);
+    } else {
+      this.filters.set([]);
     }
   }
 
@@ -227,6 +243,7 @@ export default class CommandlineComponent {
       state.filters.forEach((f: string) => {
         this.standardFields.controls.filters.push(fb.control(f));
       });
+      this.filters.set(state.filters);
     }
 
     // Handle options

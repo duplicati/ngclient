@@ -1,0 +1,27 @@
+@use '@ship-ui/core/styles/helpers' as *;
+
+:host {
+  display: block;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.bulk-textarea {
+  width: 100%;
+  font-family: monospace;
+  min-height: p2r(200);
+}
+
+.filters {
+  max-height: 200px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: p2r(8);
+}
+
+sh-menu {
+  margin-left: p2r(4);
+}
