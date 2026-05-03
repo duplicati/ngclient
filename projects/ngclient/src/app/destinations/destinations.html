@@ -53,7 +53,7 @@
                 Update backups
               </button>
             }
-            <button shButton iconOnly variant="ghost" (click)="deleteDestination(option.ID, $event)" type="button">
+            <button shButton iconOnly class="ghost" (click)="deleteDestination(option.ID, $event)" type="button">
               <sh-icon>trash</sh-icon>
             </button>
             <button shButton i18n type="button" class="manage-btn">
@@ -66,7 +66,7 @@
     }
   } @else {
     <header class="edit-header">
-      <button shButton iconOnly variant="ghost" (click)="cancelEdit()" type="button">
+      <button shButton iconOnly class="ghost" (click)="cancelEdit()" type="button">
         <sh-icon>arrow-left</sh-icon>
       </button>
     </header>
@@ -80,8 +80,7 @@
               <button
                 shButton
                 type="button"
-                variant="ghost"
-                class="small"
+                class="small ghost"
                 [disabled]="testSignal() == 'testing'"
                 (click)="testDestination()"
                 i18n>
@@ -126,7 +125,7 @@
 
         @if (editBaseUrl()) {
           <app-destination-list-item [targetUrl]="editBaseUrl()" class="selected-backend">
-            <button shButton i18n (click)="removeDestination()" type="button" variant="ghost">Change</button>
+            <button shButton i18n (click)="removeDestination()" type="button" class="ghost">Change</button>
           </app-destination-list-item>
 
           <app-single-destination [(targetUrl)]="editBaseUrl" />

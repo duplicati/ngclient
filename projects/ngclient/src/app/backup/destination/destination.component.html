@@ -129,7 +129,7 @@
       }
     } @else if (isAddingNew() && !showCustomList()) {
       <div class="custom-list-header">
-        <button shButton iconOnly variant="ghost" (click)="closeCustomList()" type="button">
+        <button shButton iconOnly class="ghost" (click)="closeCustomList()" type="button">
           <sh-icon>arrow-left</sh-icon>
           Back
         </button>
@@ -164,7 +164,7 @@
     } @else {
       @if (destinations().length > 0 || currentTargets.length > 0) {
         <div class="custom-list-header">
-          <button shButton iconOnly variant="ghost" (click)="closeCustomList()" type="button">
+          <button shButton iconOnly class="ghost" (click)="closeCustomList()" type="button">
             <sh-icon>arrow-left</sh-icon>
           </button>
           <h3 i18n>Select storage type</h3>
