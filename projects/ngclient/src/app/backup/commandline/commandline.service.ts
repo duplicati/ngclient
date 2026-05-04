@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SettingInputDto } from '../../core/openapi';
+import { randomUUID } from '../../core/functions/crypto';
 
 export interface CommandlineState {
   command: string;
@@ -19,7 +20,7 @@ export class CommandlineService {
   #states = new Map<string, CommandlineState>();
 
   saveState(state: CommandlineState): string {
-    const id = crypto.randomUUID();
+    const id = randomUUID();
     this.#states.set(id, state);
     return id;
   }
