@@ -2207,8 +2207,9 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   },
   {
     key: 'office365',
-    displayName: $localize`Microsoft Office 365`,
-    description: $localize`Create backups of Microsoft Office 365 data.`,
+    displayName: $localize`Microsoft 365`,
+    description: $localize`Create backups of Microsoft 365 data.`,
+    searchTerms: 'office o365 office365 m365 ms365',
     icon: 'assets/dest-icons/office365.png',
     isNonFree: true,
     dynamicFields: [

@@ -177,7 +177,7 @@ export default class OptionsComponent {
             message:
               this.extendedDataType() === 'gsuite'
                 ? $localize`Please choose a path to restore to in the Google Workspace account.`
-                : $localize`Please choose a path to restore to in the Office 365 tenant.`,
+                : $localize`Please choose a path to restore to in the Microsoft 365 tenant.`,
             confirmText: $localize`OK`,
             cancelText: undefined,
           },
