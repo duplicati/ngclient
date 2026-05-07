@@ -1,31 +1,32 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, inject, signal, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
   ShipButton,
   ShipButtonGroup,
   ShipCard,
   ShipChip,
+  ShipDialogService,
   ShipDivider,
   ShipIcon,
   ShipMenu,
   ShipProgressBar,
   ShipSort,
   ShipTable,
-  ShipDialogService,
 } from '@ship-ui/core';
 import { finalize } from 'rxjs';
 import { S3_HOST_SUFFIX_MAP } from '../backup/destination/destination.config';
 import { getConfigurationByUrl } from '../backup/destination/destination.config-utilities';
 import { BackupProgressComponent } from '../core/components/backup-progress/backup-progress.component';
-import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { PauseDialogComponent } from '../core/components/status-bar/pause-dialog/pause-dialog.component';
+import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { StatusBarState } from '../core/components/status-bar/status-bar.state';
 import { localStorageSignal } from '../core/functions/localstorage-signal';
 import { BackupAndScheduleOutputDto, DuplicatiServer } from '../core/openapi';
 import { BytesPipe } from '../core/pipes/byte.pipe';
 import { DurationFormatPipe } from '../core/pipes/duration.pipe';
 import { RelativeTimePipe } from '../core/pipes/relative-time.pipe';
+import { ServerStateService } from '../core/services/server-state.service';
 import { Backup, BackupsState, OrderBy, TimeType } from '../core/states/backups.state';
 import { RemoteControlState } from '../settings/remote-control/remote-control.state';
 
@@ -63,6 +64,7 @@ export default class HomeComponent {
   #statusBarState = inject(StatusBarState);
   #backupsState = inject(BackupsState);
   #remoteControlState = inject(RemoteControlState);
+  #serverState = inject(ServerStateService);
   #dialog = inject(ShipDialogService);
 
   MISSING_BACKUP_NAME = $localize`Backup name missing`;
@@ -81,6 +83,22 @@ export default class HomeComponent {
 
   runningTask = computed(() => this.#statusBarState.serverState()?.ActiveTask?.Item1);
   isStopping = computed(() => this.runningTask() == this.#taskStopRequested());
+  scheduledTimes = computed(() => {
+    const schedule = this.#serverState.serverState()?.ProposedSchedule ?? [];
+    const backups = this.#backupsState.backups();
+
+    const res: { [key: string]: string } = {};
+    backups.forEach((bk) => {
+      const backupId = bk.Backup?.ID;
+      if (!backupId) return;
+
+      var actual = schedule.find((x) => x.Item1 == backupId);
+      if (actual?.Item2) res[backupId] = actual.Item2;
+      else if (bk.Schedule?.Time) res[backupId] = bk.Schedule.Time;
+    });
+    return res;
+  });
+
   #taskStopRequested = signal(-1);
 
   viewMode = localStorageSignal<'list' | 'details'>('viewMode', 'list');
