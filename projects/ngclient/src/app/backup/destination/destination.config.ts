@@ -2306,6 +2306,42 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
     },
   },
+  {
+    key: 'drimecloud',
+    displayName: $localize`Drime Cloud`,
+    description: $localize`Store backups in Drime Cloud.`,
+    icon: 'assets/dest-icons/drime.png',
+    customFields: {
+      path: {
+        type: 'Path',
+        name: 'path',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
+        shortDescription: $localize`Path in Drime Cloud`,
+        longDescription: $localize`Path in Drime Cloud`,
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+    },
+    dynamicFields: [
+      {
+        name: 'api-token',
+        isMandatory: true,
+      },
+    ],
+    mapper: {
+      to: (fields: ValueOfDestinationFormGroup) => {
+        return buildUrlFromFields(fields, null, null, fields.custom.path);
+      },
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
+        return <ValueOfDestinationFormGroup>{
+          destinationType,
+          custom: {
+            path: getSimplePath(urlObj),
+          },
+          ...fromSearchParams(destinationType, urlObj),
+        };
+      },
+    },
+  },
   CreateCustomS3ProviderEntry('rabata', 'Rabata.io', null, 'assets/dest-icons/rabata.png', ['.rabata.io']),
   CreateCustomS3ProviderEntry('wasabi', 'Wasabi Hot Storage', null, 'assets/dest-icons/wasabi.png', ['.wasabisys.com']),
   CreateCustomS3ProviderEntry('impossiblecloud', 'Impossible Cloud', null, 'assets/dest-icons/impossiblecloud.png', [
