@@ -262,14 +262,13 @@
                 </sh-chip>
               </td>
               <td>
-                @if (backup.Backup.Metadata?.['LastBackupDate']) {
-                  {{ backup.Backup.Metadata?.['LastBackupDate'] | relativeTime: timeType() === 'actual' }}
+                @if (backup.Backup.Metadata?.['LastBackupFinished']) {
+                  {{ backup.Backup.Metadata?.['LastBackupFinished'] | relativeTime: timeType() === 'actual' }}
                 } @else {
                   <ng-container>-</ng-container>
                 }
               </td>
               <td>
-                <!-- Warning: Model says Schedule cannot be null, but it can, so dont remove the short-circuit operator -->
                 @if (backup?.Schedule?.Time) {
                   {{ backup.Schedule.Time | relativeTime: timeType() === 'actual' }}
                 } @else {
