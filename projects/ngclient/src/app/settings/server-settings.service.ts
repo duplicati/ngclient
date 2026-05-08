@@ -25,6 +25,7 @@ export class ServerSettingsService {
   #wsService = inject(ServerStatusWebSocketService);
   #serverState = inject(ServerStateService);
 
+  // This causes an extra request on startup, before we get the websocket connection ready
   #initialServerSettings = toSignal(this.#dupServer.getApiV1Serversettings());
   #serverSettings = signal<GetApiV1ServersettingsResponse | undefined>(undefined);
 

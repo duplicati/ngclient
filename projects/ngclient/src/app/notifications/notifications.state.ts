@@ -1,7 +1,10 @@
-import { effect, inject, Injectable, signal } from '@angular/core';
-import { catchError, finalize, forkJoin, of, take, tap } from 'rxjs';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
+import { catchError, forkJoin, of, take, tap } from 'rxjs';
 import { StatusBarState } from '../core/components/status-bar/status-bar.state';
 import { DuplicatiServer, NotificationDto } from '../core/openapi';
+import { ServerStateService } from '../core/services/server-state.service';
+import { ServerStatusWebSocketService } from '../core/services/server-status-websocket.service';
+import { SysinfoState } from '../core/states/sysinfo.state';
 
 @Injectable({
   providedIn: 'root',
@@ -9,6 +12,9 @@ import { DuplicatiServer, NotificationDto } from '../core/openapi';
 export class NotificationsState {
   #dupServer = inject(DuplicatiServer);
   #statusBarState = inject(StatusBarState);
+  #serverState = inject(ServerStateService);
+  #sysinfo = inject(SysinfoState);
+  #wsService = inject(ServerStatusWebSocketService);
 
   serverState = this.#statusBarState.serverState;
 
@@ -21,17 +27,44 @@ export class NotificationsState {
   });
 
   #lastNotificationEventId = -1;
-  #isloadingNotifications = signal(false);
   #notificationStream = signal<NotificationDto[]>([]);
   #tempStream = signal<NotificationDto[]>([]);
 
   notifications = this.#notificationStream.asReadonly();
+  pendingRefresh = false;
+
+  constructor() {
+    this.#wsService.subscribe('notifications');
+  }
 
   init() {
     if (this.notifications().length === 0) {
       this.getNotifications();
     }
   }
+
+  notificationsEffect = effect(() => {
+    const notifications = this.#wsService.notificationState();
+    if (!notifications) return;
+
+    this.#notificationStream.set(notifications);
+  });
+
+  pendingRefreshEffect = effect(() => {
+    const isSet = this.#serverState.isConnectionMethodSet();
+    if (!isSet) return;
+
+    if (this.pendingRefresh) {
+      this.pendingRefresh = false;
+      this.getNotifications();
+    }
+  });
+
+  #usingWebsocket = computed(() => {
+    const isUsingWs = this.#serverState.getConnectionMethod() === 'websocket';
+    const hasWsRemote = this.#sysinfo.hasWsRemoteControl();
+    return isUsingWs && hasWsRemote;
+  });
 
   updateLastNotificationEventId(eventId: number) {
     const currentEventId = this.#lastNotificationEventId;
@@ -43,14 +76,17 @@ export class NotificationsState {
   }
 
   getNotifications() {
-    this.#isloadingNotifications.set(true);
+    if (this.#usingWebsocket()) return;
+    if (!this.#serverState.isConnectionMethodSet()) {
+      this.pendingRefresh = true;
+      return;
+    }
 
     this.#dupServer
       .getApiV1Notifications()
       .pipe(
         take(1),
-        tap((notifications) => this.#notificationStream.set(notifications)),
-        finalize(() => this.#isloadingNotifications.set(false))
+        tap((notifications) => this.#notificationStream.set(notifications))
       )
       .subscribe();
   }
