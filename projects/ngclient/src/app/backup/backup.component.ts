@@ -35,6 +35,7 @@ export default class BackupComponent {
     const backupId = this.#routeParamsSignal()?.['id'];
     const isDraft = !!this.#routeUrlSignal()?.find((x) => x.path === 'backup-draft');
 
+    if (backupId == this.#backupState.backupId()) return;
     this.#backupState.backupId.set(backupId);
 
     if (backupId !== 'new') {
