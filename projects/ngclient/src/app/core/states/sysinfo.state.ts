@@ -121,6 +121,14 @@ export class SysinfoState {
     const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
     return apiExtensions.includes('v1:websocket:authenticate');
   });
+  hasWsRemoteControl = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v1:subscribe:remotecontrol');
+  });
+  hasWsNotifications = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v1:subscribe:notifications');
+  });
 
   defaultOAuthUrl = computed(() => {
     const url = this.systemInfo()?.DefaultOAuthURL ?? 'https://duplicati-oauth-handler.appspot.com/';
