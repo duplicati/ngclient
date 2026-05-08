@@ -711,7 +711,7 @@ export class BackupState {
 
     return {
       time: `${('' + date.getHours()).padStart(2, '0')}:${('' + date.getMinutes()).padStart(2, '0')}`,
-      date: date.toISOString().split('T')[0],
+      date: `${('' + date.getFullYear()).padStart(4, '0')}-${('' + (date.getMonth() + 1)).padStart(2, '0')}-${('' + date.getDate()).padStart(2, '0')}`,
     };
   }
 
