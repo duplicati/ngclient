@@ -113,6 +113,7 @@ export class TestDestinationService {
                 observer,
                 targetUrl,
                 backupId,
+                connectionStringId,
                 destinationIndex,
                 suppressErrorDialogs,
                 folderHandling
@@ -192,6 +193,7 @@ export class TestDestinationService {
               err.message,
               targetUrl,
               backupId,
+              connectionStringId,
               destinationIndex,
               suppressErrorDialogs,
               folderHandling
@@ -207,6 +209,7 @@ export class TestDestinationService {
     observer: Subscriber<TestDestinationResult>,
     targetUrl: string,
     backupId: string | null,
+    connectionStringId: number | null,
     destinationIndex: number,
     suppressErrorDialogs: boolean,
     folderHandling: FolderHandlingOption
@@ -245,6 +248,7 @@ export class TestDestinationService {
             .postApiV2DestinationTest({
               requestBody: {
                 DestinationUrl: targetUrl,
+                ConnectionStringId: connectionStringId,
                 AutoCreate: true,
                 Options: null,
                 BackupId: backupId == 'new' ? null : backupId,
@@ -575,13 +579,22 @@ with the REPORTED host key: ${reportedhostkey}?`;
     errorMessage: string,
     targetUrl: string,
     backupId: string | null,
+    connectionStringId: number | null,
     destinationIndex: number,
     suppressErrorDialogs: boolean,
     folderHandling: FolderHandlingOption
   ) {
     return new Observable<TestDestinationResult>((observer) => {
       if (errorMessage === 'missing-folder') {
-        this.handleMissingFolder(observer, targetUrl, backupId, destinationIndex, suppressErrorDialogs, folderHandling);
+        this.handleMissingFolder(
+          observer,
+          targetUrl,
+          backupId,
+          connectionStringId,
+          destinationIndex,
+          suppressErrorDialogs,
+          folderHandling
+        );
         return;
       }
 
