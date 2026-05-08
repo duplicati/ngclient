@@ -20,7 +20,6 @@ import {
   ShipTooltip,
 } from '@ship-ui/core';
 import { PasswordGeneratorService } from '../../core/services/password-generator.service';
-import { SysinfoState } from '../../core/states/sysinfo.state';
 import { validateWhen, watchField } from '../../core/validators/custom.validators';
 import { BackupState } from '../backup.state';
 
@@ -77,7 +76,6 @@ export default class GeneralComponent {
   #route = inject(ActivatedRoute);
   #passwordGeneratorService = inject(PasswordGeneratorService);
   #backupState = inject(BackupState);
-  #sysinfo = inject(SysinfoState);
 
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
   generalForm = this.#backupState.generalForm;
@@ -152,7 +150,7 @@ export default class GeneralComponent {
   generatePassword() {
     this.copiedPassword.set(false);
 
-    const newPass = this.#passwordGeneratorService.generate(16);
+    const newPass = this.#passwordGeneratorService.generate(41);
     this.generalForm.controls.password.setValue(newPass);
     this.generalForm.controls.repeatPassword.setValue(newPass);
 
