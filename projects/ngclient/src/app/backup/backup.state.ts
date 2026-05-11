@@ -338,7 +338,6 @@ export class BackupState {
     const encryptionModule = backup.Settings?.find((x) => x.Name === 'encryption-module');
     const passphrase = backup.Settings?.find((x) => x.Name === 'passphrase')?.Value ?? '';
     const encryption = encryptionModule?.Value && encryptionModule.Value.length ? encryptionModule.Value : '';
-    const compressionModule = backup.Settings?.find((x) => x.Name === 'compression-module')?.Value ?? '';
 
     const baseUpdate: Partial<typeof this.generalForm.value> = {
       name: backup.Name ?? '',
@@ -360,10 +359,6 @@ export class BackupState {
     if (passphrase && passphrase !== '') {
       baseUpdate.password = passphrase;
       baseUpdate.repeatPassword = passphrase;
-    }
-
-    if (compressionModule && compressionModule !== '') {
-      baseUpdate.compression = compressionModule;
     }
 
     this.generalForm.patchValue(baseUpdate);
@@ -544,6 +539,9 @@ export class BackupState {
 
   mapFormsToSettings(settingsIgnoreList: string[] = []) {
     const generalFormValue = this.generalForm.value;
+    // These are stored different the in ngax client, so for compatibility we
+    // store them without the -- prefix
+    const legacyOptionValues = ['dblock-size', 'compression-module'];
     const modulesToIgnore = [
       '--no-encryption',
       '--exclude-files-attributes',
@@ -553,7 +551,8 @@ export class BackupState {
       'keep-time',
       'keep-versions',
       'retention-policy',
-      'compression-module',
+      ...legacyOptionValues,
+      ...legacyOptionValues.map((x) => `--${x}`),
     ];
 
     let encryption = [
@@ -576,14 +575,19 @@ export class BackupState {
       ];
     }
 
-    let compression = [
-      {
-        Name: 'compression-module',
-        Value: generalFormValue.compression,
-      },
-    ];
+    let legacyOptions = legacyOptionValues
+      .map((legacyOption) => {
+        const matchingSetting = this.settings().find((x) => x.Name === legacyOption || x.Name === '--' + legacyOption);
 
-    if (generalFormValue.compression === '') compression = [];
+        if (matchingSetting)
+          return {
+            Name: legacyOption,
+            Value: matchingSetting.Value,
+          };
+
+        return null;
+      })
+      .filter((x) => x !== null);
 
     const optionFields = [];
 
@@ -637,7 +641,7 @@ export class BackupState {
         };
       });
 
-    return [...encryption, ...compression, ...optionFields, ...settings];
+    return [...encryption, ...legacyOptions, ...optionFields, ...settings];
   }
 
   #saveConnectionStringIfNeeded(): Observable<(number | null)[]> {
