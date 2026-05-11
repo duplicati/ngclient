@@ -57,8 +57,8 @@
 
               <div class="text" (click)="toggleSelectedNode($event, node)">
                 <span>{{ node.text }}</span>
-                @if (node.cls == 'file' && node.fileSize != null) {
-                  <span class="size">&nbsp;({{ node.fileSize | bytes }})</span>
+                @if (node.cls == 'file' && node.fileSize != null && node.fileSiz >= 0) {
+                  <span class="size">&nbsp;({{ node.fileSize | bytes }}) -- {{ node.fileSize }}</span>
                 }
               </div>
             </div>
