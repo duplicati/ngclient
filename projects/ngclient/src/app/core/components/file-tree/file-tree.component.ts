@@ -459,7 +459,7 @@ export default class FileTreeComponent {
 
         const parentNode = nodeMap.get(node.parentPath);
         const evalState =
-          node.hidden === true && showHiddenNodes
+          node.hidden === true && !showHiddenNodes
             ? TreeEvalEnum.None
             : this.#eval(currentPaths, nodePath, node.cls, parentNode);
 
