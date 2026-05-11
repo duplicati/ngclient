@@ -43,7 +43,10 @@
       </sh-radio>
 
       @if (optionsFormSignal()?.restoreFrom === 'pickLocation') {
-        <app-file-tree [disabled]="optionsFormSignal()?.restoreFrom !== 'pickLocation'" [enableCreateFolder]="true">
+        <app-file-tree
+          [disabled]="optionsFormSignal()?.restoreFrom !== 'pickLocation'"
+          [enableCreateFolder]="true"
+          [resolvePaths]="true">
           <label for="path">Path</label>
           <input type="text" id="path" formControlName="restoreFromPath" />
         </app-file-tree>
@@ -70,7 +73,10 @@
         <input type="radio" name="restoreFrom" value="pickLocation" formControlName="restoreFrom" />
       </sh-radio>
 
-      <app-file-tree [disabled]="optionsFormSignal()?.restoreFrom !== 'pickLocation'" [enableCreateFolder]="true">
+      <app-file-tree
+        [disabled]="optionsFormSignal()?.restoreFrom !== 'pickLocation'"
+        [enableCreateFolder]="true"
+        [resolvePaths]="true">
         <label for="path">Path</label>
         <input type="text" id="path" formControlName="restoreFromPath" />
       </app-file-tree>

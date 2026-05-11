@@ -132,7 +132,8 @@
           [showFiles]="true"
           [hideShortcuts]="true"
           [showHiddenNodes]="true"
-          [selectFiles]="true">
+          [selectFiles]="true"
+          [resolvePaths]="true">
           <label [for]="formFieldId">
             @if (item.formView.isMandatory && isFieldEmpty) {
               <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
@@ -149,7 +150,11 @@
             (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
         </app-file-tree>
       } @else if (item.formView.type === 'FolderTree') {
-        <app-file-tree [hideShortcuts]="true" [enableCreateFolder]="true" [startingPath]="fieldValue">
+        <app-file-tree
+          [hideShortcuts]="true"
+          [enableCreateFolder]="true"
+          [startingPath]="fieldValue"
+          [resolvePaths]="true">
           <label [for]="formFieldId">
             @if (item.formView.isMandatory && isFieldEmpty) {
               <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
