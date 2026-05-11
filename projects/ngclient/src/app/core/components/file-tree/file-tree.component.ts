@@ -1094,6 +1094,9 @@ export default class FileTreeComponent {
       if (split.at(-1) === '') {
         split.pop();
       }
+      if (!this.#isFolder(x)) {
+        split.pop();
+      }
 
       return { split, sep };
     });
