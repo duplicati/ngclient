@@ -260,6 +260,8 @@ export type IDynamicModule = {
             [key: string]: string;
         } | null;
     } | null;
+    readonly IsDeprecated?: boolean | null;
+    readonly IsUntested?: boolean | null;
 };
 
 export type IListResultFileset = {

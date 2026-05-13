@@ -1,5 +1,6 @@
 import { computed, inject, Injectable } from '@angular/core';
 import {
+  DestinationConfigEntry,
   getAllConfigurationsByKey,
   getConfigurationByKey,
 } from '../../backup/destination/destination.config-utilities';
@@ -48,7 +49,7 @@ export class DestinationConfigState {
       .filter((x) => x !== null);
   }
 
-  #mapConfigEntriesToOptions(entries: any[]): DestinationTypeOption[] {
+  #mapConfigEntriesToOptions(entries: DestinationConfigEntry[]): DestinationTypeOption[] {
     return entries.map((x) => ({
       key: x.customKey ?? x.key,
       customKey: x.customKey ?? null,

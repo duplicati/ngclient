@@ -15,13 +15,15 @@
         } @else {
           {{ item.displayName }}
         }
-      </div>
 
-      @if ((item.sortOrder ?? 0) == -2) {
-        <sh-chip class="small simple primary">Special</sh-chip>
-      } @else if ((item.sortOrder ?? 0) < 0) {
-        <sh-chip class="small simple warn">Deprecated</sh-chip>
-      }
+        @if ((item.sortOrder ?? 0) == -3) {
+          <sh-chip class="small simple primary">Untested</sh-chip>
+        } @else if ((item.sortOrder ?? 0) == -2) {
+          <sh-chip class="small simple primary">Special</sh-chip>
+        } @else if ((item.sortOrder ?? 0) < 0) {
+          <sh-chip class="small simple warn">Deprecated</sh-chip>
+        }
+      </div>
     </div>
 
     <div class="description">

@@ -20,3 +20,9 @@
   margin-left: p2r(-6);
   border-bottom: p2r(1) solid var(--base-4);
 }
+
+.search-area {
+  display: flex;
+  flex-direction: row;
+  gap: p2r(16);
+}
