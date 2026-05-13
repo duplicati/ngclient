@@ -786,10 +786,11 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   },
   {
     key: 'od4b',
-    displayName: $localize`OneDrive Business`,
-    description: $localize`Store backups in OneDrive Business.`,
+    displayName: $localize`OneDrive Business (deprecated)`,
+    description: $localize`Store backups in OneDrive Business. Deprecated, use Sharepoint instead.`,
     icon: 'assets/dest-icons/one-drive.png',
     searchTerms: 'microsoft ms',
+    sortOrder: -1,
     customFields: {
       server: {
         type: 'Hostname',
@@ -848,10 +849,11 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   },
   {
     key: 'mssp',
-    displayName: $localize`Microsoft SharePoint`,
-    description: $localize`Store backups in Microsoft SharePoint.`,
+    displayName: $localize`Microsoft SharePoint (deprecated)`,
+    description: $localize`Store backups in Microsoft SharePoint using legacy API.`,
     icon: 'assets/dest-icons/sharepoint.png',
     searchTerms: 'microsoft ms',
+    sortOrder: -1,
     customFields: {
       server: {
         type: 'Hostname',
@@ -910,7 +912,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   },
   {
     key: 'sharepoint',
-    displayName: $localize`Microsoft SharePoint v2`,
+    displayName: $localize`Microsoft SharePoint`,
     description: $localize`Store backups in Microsoft SharePoint.`,
     icon: 'assets/dest-icons/sharepoint.png',
     oauthField: 'authid',
