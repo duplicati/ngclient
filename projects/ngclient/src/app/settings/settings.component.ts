@@ -156,6 +156,7 @@ export default class SettingsComponent {
   updateChannel = signal<UpdateChannel>('');
   isUsingRelay = this.#relayConfigState.relayIsEnabled;
   defaultClient = signal(this.#getDefaultClient());
+  hasIpcController = this.#sysinfo.hasIpcController;
   usageStatisticsDisabled = computed(() => {
     const value = this.#sysinfo.systemInfo()?.DefaultUsageReportLevel ?? '';
     return value.toLowerCase() === 'disabled';
@@ -195,6 +196,7 @@ export default class SettingsComponent {
   updatingConsoleControl = signal(false);
   consoleControlDisabled = signal(false);
   hideConsoleConnectionStatus = this.#serverSettingsService.isConsoleConnectionStatusHidden;
+  isControllerIpcEnabled = this.#serverSettingsService.isControllerIpcEnabled;
 
   updateRemoteAccess($event: boolean) {
     this.allowRemoteAccess.set($event);
@@ -246,6 +248,17 @@ export default class SettingsComponent {
     this.#serverSettingsService
       .setHideConsoleConnectionStatus(!$event)
       .pipe(finalize(() => this.updatingHideConsoleConnectionStatus.set(false)))
+      .subscribe();
+  }
+
+  updatingControllerIpcState = signal(false);
+
+  saveControllerIpcState($event: boolean) {
+    this.updatingControllerIpcState.set(true);
+
+    this.#serverSettingsService
+      .setControllerIpcState(!!$event)
+      .pipe(finalize(() => this.updatingControllerIpcState.set(false)))
       .subscribe();
   }
 

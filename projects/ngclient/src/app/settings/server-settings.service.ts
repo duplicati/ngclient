@@ -7,6 +7,7 @@ import { ServerStatusWebSocketService } from '../core/services/server-status-web
 
 const SHOWN_WELCOME_PAGE_KEY = 'shown-welcome-page-v1';
 const HIDE_CONSOLE_CONNECTION_STATUS_KEY = 'hide-console-connection-status';
+const USE_OUT_OF_PROCESS_CONTROLLER_KEY = 'use-out-of-process-controller';
 const DISABLE_CONSOLE_CONTROL_KEY = 'disable-console-control';
 const DISABLE_TRAYICON_LOGIN_KEY = 'disable-tray-icon-login';
 const REMOTE_ACCESS_INTERFACE_KEY = 'server-listen-interface';
@@ -44,6 +45,12 @@ export class ServerSettingsService {
     const settings = this.serverSettings();
     if (!settings) return false;
     return settings[HIDE_CONSOLE_CONNECTION_STATUS_KEY] === 'True';
+  });
+
+  isControllerIpcEnabled = computed(() => {
+    const settings = this.serverSettings();
+    if (!settings) return false;
+    return settings[USE_OUT_OF_PROCESS_CONTROLLER_KEY] === 'True';
   });
 
   refreshServerSettings() {
@@ -99,6 +106,10 @@ export class ServerSettingsService {
 
   setHideConsoleConnectionStatus(hide: boolean) {
     return this.patchServerSetting(HIDE_CONSOLE_CONNECTION_STATUS_KEY, hide ? 'True' : 'False');
+  }
+
+  setControllerIpcState(enabled: boolean) {
+    return this.patchServerSetting(USE_OUT_OF_PROCESS_CONTROLLER_KEY, enabled ? 'True' : 'False');
   }
 
   setDisableTrayIconLogin(disable: boolean) {

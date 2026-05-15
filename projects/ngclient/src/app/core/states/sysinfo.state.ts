@@ -132,6 +132,10 @@ export class SysinfoState {
     const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
     return apiExtensions.includes('v1:subscribe:notifications');
   });
+  hasIpcController = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v1:ipc:controller');
+  });
 
   defaultOAuthUrl = computed(() => {
     const url = this.systemInfo()?.DefaultOAuthURL ?? 'https://duplicati-oauth-handler.appspot.com/';
