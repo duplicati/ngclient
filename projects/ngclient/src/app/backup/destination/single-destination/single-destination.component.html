@@ -565,7 +565,12 @@
                 <sh-spinner [style.--spinner-size]="'16px'" [style.--spinner-thickness]="'2px'"></sh-spinner>
                 <span i18n>Loading available backups...</span>
               } @else if (restoreBackupIdOptions().length == 0) {
-                <div class="no-backups-found" i18n>No backups found from this machine, contact support</div>
+                <div class="no-backups-found">
+                  <span i18n>No backups found from this machine, contact support</span>
+                  <button shButton type="button" class="small" (click)="reloadTrigger.set(!reloadTrigger())" i18n>
+                    Try again
+                  </button>
+                </div>
               } @else {
                 <sh-select [options]="restoreBackupIdOptions()" [isClearable]="false">
                   <label [for]="formFieldId">

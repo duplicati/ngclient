@@ -26,7 +26,7 @@ import {
   ShipToggleCard,
   ShipTooltip,
 } from '@ship-ui/core';
-import { distinctUntilChanged, finalize, map, of, switchMap, tap } from 'rxjs';
+import { catchError, distinctUntilChanged, finalize, map, merge, of, switchMap } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../core/components/confirm-dialog/confirm-dialog.component';
 import { FileDropTextareaComponent } from '../../../core/components/file-drop-textarea/file-drop-textarea.component';
 import FileTreeComponent from '../../../core/components/file-tree/file-tree.component';
@@ -123,39 +123,29 @@ export class SingleDestinationComponent {
 
   isLoadingRestoreBackupIdOptions = signal(false);
   isRestoreFlow = computed(() => !this.useBackupState());
+  reloadTrigger = signal(false);
+  hasLoadedBackupIdOptions = signal(false);
   restoreBackupIdOptions = toSignal(
-    toObservable(this.targetUrl).pipe(
-      map((url) => {
-        if (!url) {
-          return {
-            authKey: null as string | null,
-            url: null as string | null,
-            isRestore: this.isRestoreFlow(),
-            hasKey: this.hasStorageApiKey(),
-          };
-        }
-
-        const queryStart = url.indexOf('?');
-        const query = queryStart >= 0 ? url.substring(queryStart + 1) : '';
-        const params = new URLSearchParams(query);
-
-        const apiId = params.get('duplicati-auth-apiid') ?? '';
-        const apiKey = params.get('duplicati-auth-apikey') ?? '';
-
-        const authKey = `${apiId}|${apiKey}`;
-
-        return { authKey, url };
-      }),
-      distinctUntilChanged((a, b) => a.authKey === b.authKey),
-      tap(({ url }) => {
-        (this as any).lastRestoreAuthQueryUrl = url;
-      }),
-      switchMap(({ url }) => {
-        if (url && url.startsWith('duplicati://') && this.hasStorageApiKey() && this.isRestoreFlow()) {
+    merge(
+      toObservable(this.targetUrl).pipe(
+        distinctUntilChanged(),
+        map((url) => ({ url, isReload: false }))
+      ),
+      toObservable(this.reloadTrigger).pipe(map(() => ({ url: this.targetUrl(), isReload: true })))
+    ).pipe(
+      switchMap(({ url, isReload }) => {
+        const isValidRequest = url && url.startsWith('duplicati://') && this.hasStorageApiKey() && this.isRestoreFlow();
+        const shouldLoad = isValidRequest && (isReload || !this.hasLoadedBackupIdOptions());
+        if (shouldLoad) {
+          this.hasLoadedBackupIdOptions.set(true);
           this.isLoadingRestoreBackupIdOptions.set(true);
-          return this.#webmoduleService
-            .getDuplicatiStorageBackups(url)
-            .pipe(finalize(() => this.isLoadingRestoreBackupIdOptions.set(false)));
+          return this.#webmoduleService.getDuplicatiStorageBackups(url).pipe(
+            catchError((err) => {
+              console.error('Error loading Duplicati storage backups', err);
+              return of([] as string[]);
+            }),
+            finalize(() => this.isLoadingRestoreBackupIdOptions.set(false))
+          );
         } else {
           return of<string[]>([]);
         }
@@ -170,7 +160,11 @@ export class SingleDestinationComponent {
   });
 
   hasStorageApiKey = computed(() => {
-    return (this.#serverSettings.serverSettings()?.['remote-control-storage-api-id'] ?? '').length > 0;
+    const form = this.destinationForm();
+    return (
+      (this.#serverSettings.serverSettings()?.['remote-control-storage-api-id'] ?? '').length > 0 ||
+      form.advanced['duplicati-auth-apiid']
+    );
   });
 
   isAuthenticatingFilen = signal(false);
