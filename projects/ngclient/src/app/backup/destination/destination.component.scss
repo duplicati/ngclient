@@ -102,7 +102,7 @@ form {
   display: flex;
   align-items: center;
   gap: p2r(24);
-  padding: p2r(48);
+  padding: p2r(48 24);
   background: var(--base-1);
   color: var(--primary-8);
   cursor: pointer;
