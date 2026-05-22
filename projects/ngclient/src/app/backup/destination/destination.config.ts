@@ -173,7 +173,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups on your local file system.`,
     icon: 'assets/dest-icons/file-system.png',
     searchTerms: 'local disk harddrive localdisk filesystem unc server share drive',
-    sortOrder: 100,
+    sortOrder: 110,
     customFields: {
       path: {
         type: 'FolderTree',
@@ -215,7 +215,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups with Duplicati Storage.`,
     icon: 'assets/dest-icons/duplicati.png',
     searchTerms: 'duplicati internal built-in',
-    sortOrder: -2,
+    sortOrder: 100,
     dynamicFields: [
       {
         name: 'duplicati-backup-id',
