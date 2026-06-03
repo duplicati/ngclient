@@ -161,6 +161,7 @@ export type DestinationTestRequestDto = {
         [key: string]: string;
     } | null;
     AutoCreate: boolean;
+    ReadOnlyTest: boolean;
     DestinationType?: RemoteDestinationType;
     SourcePrefix?: (string) | null;
 };
@@ -967,6 +968,7 @@ export type PostApiV1RemoteoperationDbpathResponse = (GetDbPathDto);
 
 export type PostApiV1RemoteoperationTestData = {
     autocreate?: boolean;
+    readonlytest?: boolean;
     requestBody: RemoteOperationInput;
     type?: RemoteDestinationType;
 };

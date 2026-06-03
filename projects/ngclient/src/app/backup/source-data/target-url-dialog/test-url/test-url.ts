@@ -26,6 +26,7 @@ export class TestUrl {
 
   suppressErrorDialogs = input.required<boolean>();
   askToCreate = input.required<boolean>();
+  readOnlyTest = input.required<boolean>();
   testExpectation = input.required<TestExpectation>();
   moduleType = input.required<RemoteDestinationType>();
 
@@ -111,7 +112,8 @@ export class TestUrl {
           0,
           this.moduleType(),
           this.suppressErrorDialogs(),
-          folderHandling
+          folderHandling,
+          this.readOnlyTest()
         )
         ?.subscribe({
           next: (res) => {
@@ -130,7 +132,8 @@ export class TestUrl {
                   0,
                   this.moduleType(),
                   this.suppressErrorDialogs(),
-                  folderHandling
+                  folderHandling,
+                  this.readOnlyTest()
                 )
                 ?.subscribe({
                   // We only support one level of re-test for now

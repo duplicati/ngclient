@@ -600,6 +600,7 @@ export class DuplicatiServer {
             url: '/api/v1/remoteoperation/test',
             query: {
                 autocreate: data.autocreate,
+                readonlytest: data.readonlytest,
                 type: data.type
             },
             body: data.requestBody,
