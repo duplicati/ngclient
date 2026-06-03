@@ -7,6 +7,7 @@ import {
   ShipAlert,
   ShipButton,
   ShipButtonGroup,
+  ShipDialogService,
   ShipFormField,
   ShipIcon,
   ShipProgressBar,
@@ -14,6 +15,7 @@ import {
   ShipTooltip,
 } from '@ship-ui/core';
 import { finalize, switchMap } from 'rxjs';
+import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer } from '../../core/openapi';
 import { OpenAPI } from '../../core/openapi/core/OpenAPI';
 import { PasswordGeneratorService } from '../../core/services/password-generator.service';
@@ -42,6 +44,7 @@ const fb = new FormBuilder();
 })
 export default class ExportComponent {
   #passwordGeneratorService = inject(PasswordGeneratorService);
+  #dialog = inject(ShipDialogService);
   #dupServer = inject(DuplicatiServer);
   #route = inject(ActivatedRoute);
   #router = inject(Router);
@@ -89,6 +92,31 @@ export default class ExportComponent {
   });
 
   submit() {
+    if (
+      this.exportType() === 'file' &&
+      this.exportFormSignal()?.exportPasswords === true &&
+      !this.exportFormSignal()?.encryption
+    ) {
+      this.#dialog.open(ConfirmDialogComponent, {
+        data: {
+          title: $localize`Export without encryption?`,
+          message: $localize`Are you sure you want to export your backup without encryption?`,
+          confirmText: $localize`Yes, write plain-text passwords`,
+          cancelText: $localize`Cancel`,
+        },
+        closed: (res) => {
+          if (!res) return;
+
+          this.submitApproved();
+        },
+      });
+      return;
+    }
+
+    this.submitApproved();
+  }
+
+  submitApproved() {
     this.isExporting.set(true);
 
     if (this.exportType() === 'file') {
