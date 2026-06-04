@@ -1,10 +1,23 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal, untracked, DestroyRef } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  input,
+  signal,
+  untracked,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ShipAlert, ShipButton, ShipCard, ShipFormField, ShipIcon, ShipProgressBar } from '@ship-ui/core';
 import { WINDOW } from '../../core/providers/window';
+import { RelayconfigState } from '../../core/states/relayconfig.state';
+import { SysinfoState } from '../../core/states/sysinfo.state';
 import { RemoteControlState } from '../../settings/remote-control/remote-control.state';
 import { ServerSettingsService } from '../../settings/server-settings.service';
+import { ServerStatusWebSocketService } from '../../core/services/server-status-websocket.service';
 
 @Component({
   selector: 'app-connect',
@@ -18,6 +31,9 @@ export default class Connect {
   #window = inject(WINDOW);
   #remoteControlState = inject(RemoteControlState);
   #serverSettingsService = inject(ServerSettingsService);
+  #relayconfigState = inject(RelayconfigState);
+  #sysinfo = inject(SysinfoState);
+  #wsService = inject(ServerStatusWebSocketService);
 
   isOldOpen = signal(false);
   typeParam = input.required<'logon' | 'link'>();
@@ -54,6 +70,11 @@ export default class Connect {
     this.#destroyRef.onDestroy(() => {
       this.#stopCounterTick();
     });
+  }
+
+  ngAfterViewInit() {
+    const method = this.#relayconfigState.relayIsEnabled() || !this.#sysinfo.hasWebSocket() ? 'longpoll' : 'websocket';
+    if (method === 'websocket') this.#wsService.reconnectIfNeeded();
   }
 
   stateEffect = effect(() => {
