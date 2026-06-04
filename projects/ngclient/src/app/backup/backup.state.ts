@@ -294,19 +294,12 @@ export class BackupState {
   mapSourceDataToForm(backup: BackupDto) {
     const path = backup.Sources ?? '';
     const filters = backup.Filters?.map((x) => `${x.Include ? '+' : '-'}${x.Expression}`) ?? [];
-    const excludes =
-      backup.Settings?.find((x) => x.Name === '--exclude-files-attributes')
-        ?.Value?.toLowerCase()
-        ?.split(',') ?? [];
     const filesLargerThan =
       backup.Settings?.find((x) => x.Name === '--skip-files-larger-than')?.Value?.toUpperCase() ?? null;
 
     const sourceObj = {
       path: [...path, ...filters].join('\0'),
       excludes: {
-        hidden: excludes.includes('hidden'),
-        system: excludes.includes('system'),
-        temporary: excludes.includes('temporary'),
         filesLargerThan: filesLargerThan === null ? undefined : splitSize(filesLargerThan),
       },
     };
@@ -402,7 +395,6 @@ export class BackupState {
   mapOptionsToForms(backup: BackupDto, includeGlobalOptions: boolean = false) {
     const settingsToExclude = [
       '--no-encryption',
-      '--exclude-files-attributes',
       '--skip-files-larger-than',
       'passphrase',
       'keep-time',
@@ -498,18 +490,8 @@ export class BackupState {
     const pathFilters = sourceDataFormValue.path?.split('\0') ?? [];
     const settings = this.mapFormsToSettings();
 
-    const excludes = Object.entries(sourceDataFormValue.excludes ?? {})
-      .filter(([key, val]) => val && key !== 'filesLargerThan')
-      .map(([key]) => key);
-
     const filesLargerThan = sourceDataFormValue.excludes?.filesLargerThan;
 
-    if (excludes.length) {
-      settings.push({
-        Name: '--exclude-files-attributes',
-        Value: excludes.join(','),
-      });
-    }
     if (filesLargerThan && filesLargerThan.size !== null && filesLargerThan.unit !== null) {
       settings.push({
         Name: '--skip-files-larger-than',

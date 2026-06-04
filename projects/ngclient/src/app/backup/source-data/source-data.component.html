@@ -145,21 +145,6 @@
       <ng-container title i18n>Exclude</ng-container>
       <p description i18n>Choose if there’s any files you want to exclude.</p>
 
-      <sh-toggle class="raised primary" i18n>
-        Files with the Hidden attribute
-        <input type="checkbox" i18n-placeholder placeholder="Hidden files" formControlName="hidden" />
-      </sh-toggle>
-
-      <sh-toggle class="raised primary" i18n>
-        Files with the System attribute
-        <input type="checkbox" i18n-placeholder placeholder="System files" formControlName="system" />
-      </sh-toggle>
-
-      <sh-toggle class="raised primary" i18n>
-        Files with the Temporary attribute
-        <input type="checkbox" i18n-placeholder placeholder="Temporary files" formControlName="temporary" />
-      </sh-toggle>
-
       <sh-toggle
         class="raised primary"
         [checked]="filesLargerThan() !== null"

@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, signal, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -8,8 +17,8 @@ import { SizeComponent, splitSize } from '../../core/components/size/size.compon
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 import { BackupState } from '../backup.state';
-import { getConfigurationByUrl } from '../destination/destination.config-utilities';
 import { FiltersComponent } from '../components/filters/filters.component';
+import { getConfigurationByUrl } from '../destination/destination.config-utilities';
 import { TargetDiskDialog } from './target-disk-dialog/target-disk-dialog';
 import { TargetUrlDialog } from './target-url-dialog/target-url-dialog';
 
@@ -20,9 +29,6 @@ export const createSourceDataForm = (
     path: '',
     filters: [],
     excludes: {
-      hidden: false,
-      system: false,
-      temporary: false,
       filesLargerThan: null,
     },
   }
@@ -30,9 +36,6 @@ export const createSourceDataForm = (
   return fb.group({
     path: fb.control<string>(defaults.path),
     excludes: fb.group({
-      hidden: fb.control<boolean>(defaults.excludes.hidden),
-      system: fb.control<boolean>(defaults.excludes.system),
-      temporary: fb.control<boolean>(defaults.excludes.temporary),
       filesLargerThan: fb.group({
         size: fb.control<number | null>(null),
         unit: fb.control<string | null>(null),
@@ -106,9 +109,7 @@ export default class SourceDataComponent {
   #syncFilters = effect(() => {
     const pathValue = this.pathSignal();
     const filterValues =
-      pathValue
-        ?.split('\0')
-        .filter((x) => x !== '___none___' && (x.startsWith('-') || x.startsWith('+'))) ?? [];
+      pathValue?.split('\0').filter((x) => x !== '___none___' && (x.startsWith('-') || x.startsWith('+'))) ?? [];
     this.filters.set(filterValues);
   });
 
