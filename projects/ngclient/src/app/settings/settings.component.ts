@@ -150,7 +150,7 @@ export default class SettingsComponent {
   powerModeCtrl = signal<string>('');
   usageStatistics = signal<UsageStatisticsType['value']>('');
   updatingUsageStatistics = signal(false);
-  remoteControlStatus = this.#remoteControlState.status;
+  remoteControlStatus = this.#remoteControlState.statusMessage;
   remoteControlState = this.#remoteControlState.state;
   updatingChannel = signal(false);
   updateChannel = signal<UpdateChannel>('');

@@ -1,37 +1,64 @@
 <section class="left">
   <div class="actionables">
+    <div class="without-connecting" (click)="openSkipDialog()" i18n>Proceed without connecting to console</div>
+
+    <div class="benefits">
+      @for (benefit of primaryBenefits; track benefit) {
+        <div class="benefit">
+          <sh-icon class="primary">check-circle</sh-icon>
+          <span>{{ benefit }}</span>
+        </div>
+      }
+    </div>
+
     <button
       shButton
       class="connect outlined primary"
       (mouseenter)="hoveringConnect.set(true)"
       (mouseleave)="hoveringConnect.set(false)"
-      routerLink="/welcome/connect/logon">
+      (click)="connect()">
       <div class="action">
         <h2 i18n>Connect to console</h2>
         <p i18n>Consolidate all your backup reports in one place.</p>
       </div>
     </button>
 
-    <sh-divider>or</sh-divider>
-
-    <button
-      shButton
-      class="connect outlined"
-      (mouseenter)="hoveringConnect.set(true)"
-      (mouseleave)="hoveringConnect.set(false)"
-      routerLink="/welcome/connect/link">
-      <div class="action">
-        <h2 i18n>Connection link</h2>
-        <p i18n>For enterprises that are onboarding many machines.</p>
-      </div>
-    </button>
-
-    <div class="space"></div>
-
-    <p class="without-connecting" (click)="setWelcomeShown()">Proceed without connecting to console</p>
+    <div class="connection-link-label">
+      <sh-checkbox [(checked)]="hasConnectionLink" class="primary raised connection-link-check"></sh-checkbox>
+      <span i18n>I have a connection link</span>
+      <sh-icon [shTooltip]="'Connection links are used for Enterprise and large-scale installations'">
+        information
+      </sh-icon>
+    </div>
   </div>
 </section>
 
 <section class="right" [class.hovering]="hoveringConnect()">
-  <img src="/assets/images/console.avif" alt="" />
+  <img src="assets/images/console.avif" alt="" />
 </section>
+
+<sh-dialog [(isOpen)]="skipDialogOpen" [options]="{ maxWidth: '520px', width: '100%' }">
+  <header header>
+    <h3 i18n>Are you sure?</h3>
+  </header>
+
+  <div content>
+    <h4 class="dialog-benefits-header">
+      You can use Duplicati without a Console connection, but connecting to the Console will expand the capabilities of
+      Duplicati.
+    </h4>
+    <div class="dialog-benefits">
+      @for (benefit of secondaryBenefits; track benefit) {
+        <div class="benefit">
+          <sh-icon class="primary">check-circle</sh-icon>
+          <span>{{ benefit }}</span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <footer footer>
+    <button type="button" shButton class="outlined" (click)="skipDialogOpen.set(false)" i18n>Cancel</button>
+    <button type="button" shButton class="outlined" (click)="setWelcomeShown()" i18n>Proceed without connecting</button>
+  </footer>
+</sh-dialog>

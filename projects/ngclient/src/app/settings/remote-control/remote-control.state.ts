@@ -50,7 +50,7 @@ export class RemoteControlState {
   claimUrl = signal<string | null>(null);
   registerUrl = signal<string>('');
   customRegisterUrl = signal<string>('');
-  status = computed(() => {
+  statusMessage = computed(() => {
     const state = this.state();
 
     if (state === 'connecting') return $localize`Console connection is enabled but not connected`;
