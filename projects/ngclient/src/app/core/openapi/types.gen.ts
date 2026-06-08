@@ -161,7 +161,7 @@ export type DestinationTestRequestDto = {
         [key: string]: string;
     } | null;
     AutoCreate: boolean;
-    ReadOnlyTest: boolean;
+    ReadOnlyTest?: boolean;
     DestinationType?: RemoteDestinationType;
     SourcePrefix?: (string) | null;
 };
@@ -216,6 +216,14 @@ export type FilterInputDto = {
     Expression?: (string) | null;
 };
 
+export type FolderStatusDto = {
+    Path: (string) | null;
+    Status: (string) | null;
+    BackupName?: (string) | null;
+    LastBackupTime?: (string) | null;
+    BackupId?: (string) | null;
+};
+
 export type GetBackupResultDto = {
     Schedule?: ScheduleDto;
     Backup?: BackupDto;
@@ -261,8 +269,8 @@ export type IDynamicModule = {
             [key: string]: string;
         } | null;
     } | null;
-    readonly IsDeprecated?: boolean | null;
-    readonly IsUntested?: boolean | null;
+    readonly IsDeprecated?: boolean;
+    readonly IsUntested?: boolean;
 };
 
 export type IListResultFileset = {
@@ -345,6 +353,17 @@ export type LicenseDto = {
     Url: (string) | null;
     License: (string) | null;
     Jsondata: (string) | null;
+};
+
+export type LicenseStatusDto = {
+    IsConfigured: boolean;
+    IsValid: boolean;
+    IsInGracePeriod: boolean;
+    ExpiresAt: (string) | null;
+    ExpiresWithGraceAt: (string) | null;
+    Features: {
+        [key: string]: string;
+    } | null;
 };
 
 export type ListFilesetsRequestDto = {
@@ -561,9 +580,9 @@ export type SearchEntriesRequestDto = {
     BackupId: (string) | null;
     Paths: Array<string> | null;
     Filters: Array<string> | null;
-    Time: (string) | null;
-    Version: (number[]) | null;
+    Time?: (string) | null;
     ReturnExtended?: (boolean) | null;
+    Version?: Array<number> | null;
 };
 
 export type SearchEntriesResponseDto = {
@@ -681,6 +700,8 @@ export type SystemInfoDto = {
     DefaultOAuthURL: (string) | null;
     DefaultOAuthURLv2: (string) | null;
     PowerModeProviders: Array<string> | null;
+    LocalLicenseStatus: LicenseStatusDto;
+    RemoteLicenseStatus: LicenseStatusDto;
 };
 
 export type TargetUrlDto = {
@@ -921,6 +942,14 @@ export type PostApiV1FilesystemValidateData = {
 
 export type PostApiV1FilesystemValidateResponse = (unknown);
 
+export type GetApiV1FolderstatusResponse = (Array<FolderStatusDto>);
+
+export type GetApiV1FolderstatusByPathData = {
+    path: string;
+};
+
+export type GetApiV1FolderstatusByPathResponse = (FolderStatusDto);
+
 export type GetApiV1LicensesResponse = (Array<LicenseDto>);
 
 export type GetApiV1LogdataPollData = {
@@ -968,7 +997,7 @@ export type PostApiV1RemoteoperationDbpathResponse = (GetDbPathDto);
 
 export type PostApiV1RemoteoperationTestData = {
     autocreate?: boolean;
-    readonlytest?: boolean;
+    readOnlyTest?: boolean;
     requestBody: RemoteOperationInput;
     type?: RemoteDestinationType;
 };

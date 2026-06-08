@@ -177,6 +177,7 @@ export class TestDestinationService {
     return new Observable<TestDestinationResult>((observer) => {
       this.#dupServer
         .postApiV1RemoteoperationTest({
+          readOnlyTest: readOnlyTest,
           requestBody: {
             path: targetUrl,
             backupId: backupId == 'new' ? null : backupId,
