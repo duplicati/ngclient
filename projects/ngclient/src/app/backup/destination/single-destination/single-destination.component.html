@@ -130,7 +130,7 @@
           [startingPath]="fieldValue"
           [accepts]="item.formView.accepts"
           [showFiles]="true"
-          [hideShortcuts]="true"
+          [hideShortcuts]="false"
           [showHiddenNodes]="true"
           [selectFiles]="true"
           [resolvePaths]="true">
@@ -151,7 +151,7 @@
         </app-file-tree>
       } @else if (item.formView.type === 'FolderTree') {
         <app-file-tree
-          [hideShortcuts]="true"
+          [hideShortcuts]="false"
           [enableCreateFolder]="true"
           [startingPath]="fieldValue"
           [resolvePaths]="true">

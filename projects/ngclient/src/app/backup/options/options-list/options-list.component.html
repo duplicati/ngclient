@@ -142,6 +142,7 @@
             [showFiles]="true"
             [showHiddenNodes]="true"
             [selectFiles]="true"
+            [hideShortcuts]="false"
             [resolvePaths]="true">
             <label [for]="formId">
               <ng-container *ngTemplateOutlet="defaultLabel" />
@@ -153,7 +154,7 @@
               (ngModelChange)="updateSettingValue(item, $event)" />
           </app-file-tree>
         } @else if (item.FormView.type === 'FolderTree') {
-          <app-file-tree [startingPath]="item.Value()" [resolvePaths]="true">
+          <app-file-tree [startingPath]="item.Value()" [hideShortcuts]="false" [resolvePaths]="true">
             <label [for]="formId"></label>
             <input
               type="text"
