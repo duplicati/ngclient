@@ -750,6 +750,25 @@ export type TempDiskSpaceResult = {
     RestoreCacheMax: number;
 };
 
+export type TestFilterRequestDto = {
+    Paths?: Array<string> | null;
+    Sources?: Array<string> | null;
+    Filters?: Array<string> | null;
+};
+
+export type TestFilterResponseDto = {
+    Success: boolean;
+    Error: (string) | null;
+    StatusCode: (string) | null;
+    Data?: Array<TestFilterResponseItem> | null;
+};
+
+export type TestFilterResponseItem = {
+    Path?: (string) | null;
+    Included?: boolean;
+    MatchedFilter?: (string) | null;
+};
+
 export type TimeZoneDto = {
     ID: (string) | null;
     DisplayName: (string) | null;
@@ -1324,6 +1343,12 @@ export type PostApiV2SystemTempDiskSpaceData = {
 };
 
 export type PostApiV2SystemTempDiskSpaceResponse = (TempDiskSpaceResponseDto);
+
+export type PostApiV2FilesystemTestFilterData = {
+    requestBody: TestFilterRequestDto;
+};
+
+export type PostApiV2FilesystemTestFilterResponse = (TestFilterResponseDto);
 
 export type PostApiV2BackupListFilesetsData = {
     requestBody: ListFilesetsRequestDto;

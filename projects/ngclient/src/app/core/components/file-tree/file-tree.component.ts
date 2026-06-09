@@ -11,6 +11,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import {
   ShipButton,
@@ -146,6 +147,14 @@ export default class FileTreeComponent {
   treeNodes = signal<TreeNode[]>([]);
   pathDelimiter = computed(() => this.#sysInfo.systemInfo()?.DirectorySeparator ?? '');
 
+  // Boolean guard to prevent remote eval from being called when not needed
+  #performRemoteEval = computed(() => {
+    const anyFilters = this.currentPathArray()
+      .filter((x) => this.#isFilter(x))
+      .find((x) => x.includes('*') || x.includes('[') || x.includes('{') || x.includes('?'));
+    return anyFilters && this.#sysInfo.hasV2FilterOperations();
+  });
+
   filterGroups = this.#sysInfo.filterGroups();
   isByBackupSettings = computed(() => {
     const backupSettings = this.backupSettings();
@@ -163,10 +172,16 @@ export default class FileTreeComponent {
       : this.treeNodes();
   });
 
-  currentPathResolved = computed(() => {
-    const currentPaths = this.currentPath()
+  // The currentPath signal split into an array of paths and filters
+  currentPathArray = computed(() => {
+    return this.currentPath()
       .split('\0')
       .filter((x) => x !== '' && x !== ROOTPATH);
+  });
+
+  // The paths signal where shortcut paths are resolved to their full path
+  currentPathResolved = computed(() => {
+    const currentPaths = this.currentPathArray();
 
     return currentPaths
       .map((x) => {
@@ -178,6 +193,66 @@ export default class FileTreeComponent {
 
   TreeEvalEnum = TreeEvalEnum;
 
+  // Data sent to the server to evaluate the filters
+  #remoteEvalInput = computed(() => {
+    if (!this.#performRemoteEval()) return null;
+
+    const currentPaths = this.currentPathArray();
+
+    const sources = currentPaths.filter((x) => !this.#isFilter(x));
+    const filters = currentPaths.filter((x) => this.#isFilter(x));
+
+    const pathsToTest = this.searchableTreeNodes()
+      .map((x) => x.id!)
+      .filter(Boolean);
+
+    return {
+      paths: pathsToTest,
+      sources: sources,
+      filters: filters,
+    };
+  });
+
+  // Resource that performs the remote evaluation of the filters
+  #remoteFilterResource = rxResource({
+    params: () => ({ data: this.#remoteEvalInput() }),
+    stream: ({ params }) => {
+      if (!this.#performRemoteEval() || !params.data || params.data.sources.length === 0) return of(null);
+
+      return this.#dupServer
+        .postApiV2FilesystemTestFilter({
+          requestBody: {
+            Paths: params.data?.paths,
+            Sources: params.data?.sources,
+            Filters: params.data?.filters,
+          },
+        })
+        .pipe(
+          map((res) => {
+            if (!res.Success || !res.Data) {
+              console.log('Error evaluating filters', res);
+              return null;
+            }
+
+            const map = new Map<string, TreeEvalEnum>();
+            for (const r of res.Data) {
+              if (r.Path) {
+                let state = TreeEvalEnum.None;
+                if (r.Included) {
+                  state = TreeEvalEnum.Included;
+                } else if (r.MatchedFilter) {
+                  state = TreeEvalEnum.Excluded;
+                }
+                map.set(r.Path, state);
+              }
+            }
+            return map;
+          }),
+          catchError(() => of(null))
+        );
+    },
+  });
+
   // Build tree structure from search results
   searchResultTreeStructure = computed<FileTreeNode[]>(() => {
     const searchResults = this.searchResults();
@@ -185,9 +260,7 @@ export default class FileTreeComponent {
       return [];
     }
 
-    const currentPaths = this.currentPath()
-      .split('\0')
-      .filter((x) => x !== '' && x !== ROOTPATH);
+    const currentPaths = this.currentPathArray();
     const showHiddenNodes = this.showHiddenNodes();
 
     // Build path info map from search results
@@ -326,7 +399,9 @@ export default class FileTreeComponent {
       const evalState =
         info.match !== null && !info.isFolder && showHiddenNodes
           ? TreeEvalEnum.None
-          : this.#eval(currentPaths, path, info.isFolder ? 'folder' : 'file', null);
+          : this.#performRemoteEval()
+            ? this.#evalRemote(path, null, currentPaths, info.isFolder ? 'folder' : 'file')
+            : this.#eval(currentPaths, path, info.isFolder ? 'folder' : 'file', null);
 
       const newNode: FileTreeNode = {
         id: path,
@@ -381,28 +456,10 @@ export default class FileTreeComponent {
       return this.searchResultTreeStructure();
     }
 
+    const remoteEvals = this.#remoteFilterResource.value(); // read dependency
+
     const showHiddenNodes = this.showHiddenNodes();
-    const _currentPaths = this.currentPath()
-      .split('\0')
-      .filter((x) => x !== '' && x !== ROOTPATH);
-
-    let currentPaths = structuredClone(_currentPaths);
-
-    for (let index = 0; index < currentPaths.length; index++) {
-      const path = currentPaths[index];
-      const x = path.slice(1);
-
-      if (x.startsWith('{') && x.endsWith('}')) {
-        const groupName = x.slice(1, -1);
-
-        const filterGroup = this.filterGroups?.['FilterGroups'][groupName];
-
-        if (filterGroup && filterGroup.length) {
-          const _filterGroup = filterGroup.map((x) => `-${x}`);
-          currentPaths.splice(index, 1, ..._filterGroup);
-        }
-      }
-    }
+    const currentPaths = this.#resolveFilterGroups(this.currentPathArray());
 
     const nodes = this.searchableTreeNodes();
     const rootPaths = this.rootPaths();
@@ -412,7 +469,9 @@ export default class FileTreeComponent {
 
     if (rootPaths.length > 0) {
       roots = rootPaths.map((rootPath) => {
-        const evalState = this.#eval(currentPaths, rootPath, 'folder', null);
+        const evalState = this.#performRemoteEval()
+          ? this.#evalRemote(rootPath, null, currentPaths, 'folder')
+          : this.#eval(currentPaths, rootPath, 'folder', null);
 
         return {
           id: rootPath,
@@ -474,7 +533,9 @@ export default class FileTreeComponent {
         const evalState =
           node.hidden === true && !showHiddenNodes
             ? TreeEvalEnum.None
-            : this.#eval(currentPaths, nodePath, node.cls, parentNode);
+            : this.#performRemoteEval()
+              ? this.#evalRemote(nodePath, parentNode, currentPaths, node.cls)
+              : this.#eval(currentPaths, nodePath, node.cls, parentNode);
 
         const newNode: FileTreeNode = {
           ...node,
@@ -500,6 +561,25 @@ export default class FileTreeComponent {
     return roots;
   });
 
+  #resolveFilterGroups(currentPaths: string[]): string[] {
+    const paths = structuredClone(currentPaths);
+    for (let index = 0; index < paths.length; index++) {
+      const path = paths[index];
+      const x = path.slice(1);
+
+      if (x.startsWith('{') && x.endsWith('}')) {
+        const groupName = x.slice(1, -1);
+        const filterGroup = this.filterGroups?.['FilterGroups']?.[groupName];
+
+        if (filterGroup && filterGroup.length) {
+          const _filterGroup = filterGroup.map((x) => `-${x}`);
+          paths.splice(index, 1, ..._filterGroup);
+        }
+      }
+    }
+    return paths;
+  }
+
   #appendDirSep(path?: string | null) {
     if (!path) return ROOTPATH;
     const pathDelimiter = this.#getPathDelimiter(path);
@@ -516,6 +596,23 @@ export default class FileTreeComponent {
     return node.resolvedpath;
   }
 
+  #evalRemote(
+    nodeId: string,
+    parentNode: FileTreeNode | null | undefined,
+    currentPaths: string[],
+    nodeType: string
+  ): TreeEvalEnum {
+    if (parentNode && parentNode.evalState === TreeEvalEnum.Excluded) return TreeEvalEnum.ExcludedByParent;
+
+    const evalMap = this.#remoteFilterResource.value();
+    if (evalMap && evalMap.has(nodeId)) {
+      return evalMap.get(nodeId)!;
+    }
+
+    // If the remote does not have the node, fall back to local evaluation
+    return this.#eval(currentPaths, nodeId, nodeType, parentNode);
+  }
+
   #eval(
     currentPaths: string[],
     nodeId: string,
@@ -526,8 +623,8 @@ export default class FileTreeComponent {
 
     let result = TreeEvalEnum.None;
 
-    const pathsWithoutDir = currentPaths.filter((x) => !x.startsWith('-') && !x.startsWith('+'));
-    const pathsWithDir = currentPaths.filter((x) => x.startsWith('-') || x.startsWith('+'));
+    const pathsWithoutDir = currentPaths.filter((x) => !this.#isFilter(x));
+    const pathsWithDir = currentPaths.filter((x) => this.#isFilter(x));
     const isMultiSelect = this.multiSelect();
     // If we are resolving paths, also match against the resolved path
     const resolvedNodeId = this.#resolveNodeId(this.treeNodes().find((x) => x.id === nodeId)) ?? nodeId;
@@ -830,9 +927,7 @@ export default class FileTreeComponent {
 
     if (accepts && !node.accepted) return;
 
-    const currentPaths = this.currentPath()
-      .split('\0')
-      .filter((x) => x !== '' && x !== ROOTPATH);
+    const currentPaths = this.currentPathArray();
 
     const isChildOfSelected = this.isChildOfSelected(node);
     // Use the resolved path if we are resolving paths
@@ -864,9 +959,7 @@ export default class FileTreeComponent {
   }
 
   isChildOfSelected(node: FileTreeNode) {
-    const currentPaths = this.currentPath()
-      .split('\0')
-      .filter((x) => x !== '' && x !== ROOTPATH && this.#isFolder(x));
+    const currentPaths = this.currentPathArray().filter((x) => this.#isFolder(x));
 
     return currentPaths.some((x) => node.id?.startsWith(x) || `-${node.id}`.startsWith(x));
   }
@@ -1110,7 +1203,7 @@ export default class FileTreeComponent {
   #fetchPathSegmentsRecursively(path: string) {
     let pathArr = path
       .split('\0')
-      .filter((x) => !x.startsWith('-') && !x.startsWith('+') && !x.startsWith('@'))
+      .filter((x) => !this.#isFilter(x) && !x.startsWith('@'))
       .filter(Boolean);
 
     const segmentArr = pathArr.map((x) => {
@@ -1210,6 +1303,10 @@ export default class FileTreeComponent {
       path.endsWith('/') ||
       path.endsWith('\\')
     );
+  }
+
+  #isFilter(path: string): boolean {
+    return path.startsWith('+') || path.startsWith('-');
   }
 
   #getPath(node: FileTreeNode | null = null, newPath = ROOTPATH) {
