@@ -24,7 +24,7 @@ import {
   ShipProgressBar,
   ShipToggle,
 } from '@ship-ui/core';
-import { catchError, finalize, forkJoin, map, Observable, of } from 'rxjs';
+import { catchError, finalize, forkJoin, map, Observable, of, switchMap, timer } from 'rxjs';
 import {
   DuplicatiServer,
   GetApiV1BackupByIdFilesData,
@@ -219,37 +219,41 @@ export default class FileTreeComponent {
     stream: ({ params }) => {
       if (!this.#performRemoteEval() || !params.data || params.data.sources.length === 0) return of(null);
 
-      return this.#dupServer
-        .postApiV2FilesystemTestFilter({
-          requestBody: {
-            Paths: params.data?.paths,
-            Sources: params.data?.sources,
-            Filters: params.data?.filters,
-          },
-        })
-        .pipe(
-          map((res) => {
-            if (!res.Success || !res.Data) {
-              console.log('Error evaluating filters', res);
-              return null;
-            }
-
-            const map = new Map<string, TreeEvalEnum>();
-            for (const r of res.Data) {
-              if (r.Path) {
-                let state = TreeEvalEnum.None;
-                if (r.Included) {
-                  state = TreeEvalEnum.Included;
-                } else if (r.MatchedFilter) {
-                  state = TreeEvalEnum.Excluded;
+      return timer(300).pipe(
+        switchMap(() =>
+          this.#dupServer
+            .postApiV2FilesystemTestFilter({
+              requestBody: {
+                Paths: params.data?.paths,
+                Sources: params.data?.sources,
+                Filters: params.data?.filters,
+              },
+            })
+            .pipe(
+              map((res) => {
+                if (!res.Success || !res.Data) {
+                  console.log('Error evaluating filters', res);
+                  return null;
                 }
-                map.set(r.Path, state);
-              }
-            }
-            return map;
-          }),
-          catchError(() => of(null))
-        );
+
+                const map = new Map<string, TreeEvalEnum>();
+                for (const r of res.Data) {
+                  if (r.Path) {
+                    let state = TreeEvalEnum.None;
+                    if (r.Included) {
+                      state = TreeEvalEnum.Included;
+                    } else if (r.MatchedFilter) {
+                      state = TreeEvalEnum.Excluded;
+                    }
+                    map.set(r.Path, state);
+                  }
+                }
+                return map;
+              }),
+              catchError(() => of(null))
+            )
+        )
+      );
     },
   });
 
