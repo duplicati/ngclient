@@ -783,10 +783,11 @@ export default class FileTreeComponent {
   }
 
   #globMatch(str: string, pattern: string, evaluateFullPath = false): boolean {
-    const regexPattern = pattern
-      .replace(/\*/g, '.*')
-      .replace(/\?/g, '.')
-      .replace(/\[!([^\]]+)\]/g, '[^$1]');
+    const regexPattern = pattern.replace(/[\\.+^${}()|[\]*?]/g, (match) => {
+      if (match === '*') return '.*';
+      if (match === '?') return '.';
+      return '\\' + match;
+    });
 
     const regex = new RegExp(`${regexPattern}${evaluateFullPath ? '$' : ''}`);
 
