@@ -143,6 +143,7 @@ export default class FileTreeComponent {
   hideShortcuts = input(false);
   resolvePaths = input(false);
   customRemoteMode = input<'gsuite' | 'o365' | 'diskimage' | null>(null);
+  showUnrootedSources = input(false);
   backupId = input<string | null | undefined>('');
   sourcePrefix = input<string | null | undefined>('');
   destinationUrl = input<string | null | undefined>('');
@@ -215,9 +216,14 @@ export default class FileTreeComponent {
     if (path.startsWith('@') && path.includes('|')) {
       const parts = path.split('|');
       const prefix = parts[0];
-      const type = parts[1].split('://')[0];
-      const url = parts[1].split('|')[0];
-      const subpath = parts[2] ?? '';
+      const url = parts[1];
+      const type = url.split('://')[0];
+      let subpath = parts[2] ?? '';
+
+      // Disk images have the initial path in the url
+      if (type === 'diskimage' && !subpath) {
+        subpath = this.#appendDirSep(parts[1].split('://')[1]);
+      }
 
       return { mount: prefix.substring(1), prefix: prefix, url, type, path: subpath };
     }
@@ -226,6 +232,7 @@ export default class FileTreeComponent {
   }
 
   #unrootedSources = computed(() => {
+    if (!this.showUnrootedSources()) return [];
     let rootPaths = this.rootPaths();
     if (rootPaths === undefined || rootPaths.length === 0) {
       rootPaths = [ROOTPATH];
@@ -1304,7 +1311,11 @@ export default class FileTreeComponent {
       return this.#getGoogleWorkspaceFiles(path, null);
     }
 
-    if (this.customRemoteMode() === 'diskimage' || remote?.type === 'diskimage') {
+    if (remote?.type === 'diskimage') {
+      return this.#getDiskImagePaths(remote.path);
+    }
+
+    if (this.customRemoteMode() === 'diskimage') {
       return this.#getDiskImagePaths(path);
     }
 
@@ -1442,20 +1453,30 @@ export default class FileTreeComponent {
                   y.Metadata
                 );
 
-                // MS365 returns with remote prefix, GWS returns raw paths,
-                // so we normalize them to always have the remote prefix
-                const expandedPath = !remote || y.Path.startsWith(remote.prefix) ? y.Path : remote.prefix + y.Path;
+                // Avoid traversing the filesystem blocks in the UI
+                if (y.Metadata && y.Metadata['diskimage:Type'] === 'filesystem') {
+                  return null;
+                }
 
-                const newRemoteSource: RemoteSource | null = remote
-                  ? {
-                      ...remote,
-                      path: expandedPath.substring(remote.prefix.length),
-                    }
-                  : null;
+                let id = y.Path;
+                let newRemoteSource: RemoteSource | null = null;
+
+                if (remote) {
+                  // MS365 returns with remote prefix, GWS returns raw paths,
+                  // so we normalize them to always have the remote prefix
+                  let targetPath = y.Path;
+                  if (!targetPath.startsWith(remote.prefix)) targetPath = remote.prefix + targetPath;
+
+                  id = targetPath.substring(1); // Remove leading @ for the path to match the tree
+                  newRemoteSource = {
+                    ...remote,
+                    path: targetPath.substring(remote.prefix.length),
+                  };
+                }
 
                 return {
                   text: text,
-                  id: newRemoteSource ? expandedPath.substring(1) : y.Path,
+                  id: id,
                   cls: this.#isFolder(y.Path) ? 'folder' : 'file',
                   leaf: node !== null,
                   resolvedpath: y.Path,
@@ -1467,15 +1488,17 @@ export default class FileTreeComponent {
             : x;
 
         this.treeNodes.update((y) => {
-          const newArray = alignDataArray.map((z: any) => {
-            const cls = this.#isFolder(z.id) ? 'folder' : 'file';
+          const newArray = alignDataArray
+            .filter((f: any) => f !== null)
+            .map((z: any) => {
+              const cls = this.#isFolder(z.id) ? 'folder' : 'file';
 
-            return {
-              ...z,
-              cls,
-              parentPath: newPath,
-            };
-          });
+              return {
+                ...z,
+                cls,
+                parentPath: newPath,
+              };
+            });
 
           const arrayUniqueByKey = [...new Map([...y, ...newArray].map((item) => [item.id, item])).values()];
 
