@@ -195,6 +195,21 @@ export function addPort(port: string | number | null | undefined) {
   return ':' + port.toString();
 }
 
+export function getBackendIcon(url: string | null | undefined) {
+  if (!url) return '';
+  if (url.startsWith('diskimage:')) return 'assets/dest-icons/external-harddrive.png';
+  const match = getConfigurationByUrl(url);
+  return match.icon;
+}
+
+export function getRemotePathDisplayName(url: string | null | undefined) {
+  if (!url) return '';
+  if (url.startsWith('diskimage:')) return $localize`Local disk`;
+
+  const match = getConfigurationByUrl(url);
+  return match ? match.displayName : 'Unknown';
+}
+
 export function getConfigurationByUrl(targetUrl: string): DestinationConfigEntry {
   try {
     const urlObj = new UrlLike(targetUrl);
