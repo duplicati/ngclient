@@ -100,6 +100,11 @@ export class SysinfoState {
     return apiExtensions.includes('v2:destination:test');
   });
 
+  hasV2ListBackendOperations = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v2:destination:list');
+  });
+
   hasV2FilterOperations = computed(() => {
     const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
     return apiExtensions.includes('v2:filesystem:test-filter');

@@ -238,6 +238,17 @@
           } @else {
             <sh-icon prefix>textbox</sh-icon>
           }
+
+          @if (item.formView.type === 'Path' && hasV2ListBackendOperations()) {
+            <button
+              suffix
+              shButton
+              type="button"
+              class="outlined small"
+              (click)="browse(item.fieldGroup, item.formView.name, $event)">
+              Browse ...
+            </button>
+          }
         </sh-form-field>
       } @else if (item.formView.type === 'Password') {
         <sh-form-field>

@@ -132,6 +132,7 @@ export default class FileTreeComponent {
   disabled = input(false);
   showFiles = input(false);
   selectFiles = input(false);
+  onlySelectFolder = input(false);
   accepts = input<string | null | undefined>(null);
   startingPath = input<string | null>(null);
   rootPaths = input<string[]>([]);
@@ -142,9 +143,10 @@ export default class FileTreeComponent {
   enableCreateFolder = input(false);
   hideShortcuts = input(false);
   resolvePaths = input(false);
-  customRemoteMode = input<'gsuite' | 'o365' | 'diskimage' | null>(null);
+  customRemoteMode = input<'gsuite' | 'o365' | 'diskimage' | 'backend' | null>(null);
   showUnrootedSources = input(false);
   backupId = input<string | null | undefined>('');
+  connectionStringId = input<number | null | undefined>(null);
   sourcePrefix = input<string | null | undefined>('');
   destinationUrl = input<string | null | undefined>('');
   loadExtendedData = input(true);
@@ -1035,6 +1037,8 @@ export default class FileTreeComponent {
       return;
     }
 
+    if (this.onlySelectFolder() && node.cls !== 'folder') return;
+
     const accepts = this.accepts();
 
     if (accepts && !node.accepted) return;
@@ -1188,6 +1192,26 @@ export default class FileTreeComponent {
     });
   }
 
+  #getBackendFiles(path: string | null) {
+    return this.#dupServer
+      .postApiV2DestinationList({
+        requestBody: {
+          BackupId: this.backupId() ?? null,
+          DestinationUrl: this.destinationUrl() ?? null,
+          ConnectionStringId: this.connectionStringId() ?? null,
+          DestinationType: 'Backend',
+          Path: path,
+          Offset: null,
+          Limit: null,
+        },
+      })
+      .pipe(
+        map((res) => {
+          return res.Data?.Items ?? [];
+        })
+      );
+  }
+
   #getMicrosoft365Files(path: string | null, remote: RemoteSource | null) {
     return this.#dupServer
       .postApiV1WebmoduleByModulekey({
@@ -1321,6 +1345,10 @@ export default class FileTreeComponent {
 
     if (this.isByBackupSettings()) {
       return this.#getBackupFiles(path);
+    }
+
+    if (this.customRemoteMode() === 'backend') {
+      return this.#getBackendFiles(path);
     }
 
     return this.#getFilesystemPath(path);

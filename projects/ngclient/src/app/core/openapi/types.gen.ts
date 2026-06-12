@@ -153,6 +153,38 @@ export type DeleteBackupOutputDto = {
     ID?: (number) | null;
 };
 
+export type DestinationListRequestDto = {
+    BackupId: (string) | null;
+    ConnectionStringId?: (number) | null;
+    DestinationUrl: (string) | null;
+    DestinationType?: RemoteDestinationType;
+    SourcePrefix?: (string) | null;
+    Path: (string) | null;
+    Offset: (number) | null;
+    Limit: (number) | null;
+};
+
+export type DestinationListResponesContent = {
+    Items: Array<DestinationListResponseItem> | null;
+    Offset: number;
+    HasMore: boolean;
+};
+
+export type DestinationListResponseDto = {
+    Success: boolean;
+    Error: (string) | null;
+    StatusCode: (string) | null;
+    Data?: DestinationListResponesContent;
+};
+
+export type DestinationListResponseItem = {
+    Path: (string) | null;
+    Size: number;
+    Metadata: {
+        [key: string]: (string) | null;
+    } | null;
+};
+
 export type DestinationTestRequestDto = {
     DestinationUrl: (string) | null;
     BackupId?: (string) | null;
@@ -1337,6 +1369,12 @@ export type PostApiV1RemotecontrolRegisterResponse = (RemoteControlStatusOutput)
 export type DeleteApiV1RemotecontrolRegisterResponse = (RemoteControlStatusOutput);
 
 export type PostApiV1RemotecontrolRegisterWaitResponse = (RemoteControlStatusOutput);
+
+export type PostApiV2DestinationListData = {
+    requestBody: DestinationListRequestDto;
+};
+
+export type PostApiV2DestinationListResponse = (DestinationListResponseDto);
 
 export type PostApiV2SystemTempDiskSpaceData = {
     requestBody: TempDiskSpaceRequestDto;

@@ -49,6 +49,7 @@ import {
   parseKeyValueTextToObject,
   toTargetPath,
 } from '../destination.config-utilities';
+import { BrowsePathDialog } from './browse-path-dialog/browse-path-dialog';
 
 type DestinationConfig = {
   destinationType: string;
@@ -120,6 +121,7 @@ export class SingleDestinationComponent {
   destinationFormConfig = signal<DestinationConfig | null>(null);
 
   showTextArea = signal(false);
+  hasV2ListBackendOperations = this.#sysinfo.hasV2ListBackendOperations;
 
   isLoadingRestoreBackupIdOptions = signal(false);
   isRestoreFlow = computed(() => !this.useBackupState());
@@ -455,6 +457,34 @@ export class SingleDestinationComponent {
 
   #oauthInProgress = signal(false);
 
+  browse(fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string, newValue: any) {
+    const backupId = this.useBackupState() ? this.#backupState.backupId() : null;
+    const connectionStringId = this.useBackupState() ? this.#backupState.connectionStringId() : null;
+
+    const dialogRef = this.#dialogService.open(BrowsePathDialog, {
+      maxWidth: '700px',
+      maxHeight: '80vh',
+      width: '100%',
+      closeOnOutsideClick: false,
+      data: {
+        backupId: backupId,
+        destinationUrl: this.targetUrl(),
+        connectionStringId: connectionStringId,
+      },
+    });
+
+    dialogRef.closed.subscribe((destination) => {
+      if (!destination) return;
+
+      destination = destination.replace(/^\/+/, '');
+
+      this.destinationForm.update((y) => {
+        y[fieldGroup][fieldName] = destination;
+        return { ...y };
+      });
+    });
+  }
+
   oauthStartTokenCreation(
     backendKey: string,
     fieldGroup: 'custom' | 'dynamic' | 'advanced',
@@ -495,7 +525,7 @@ export class SingleDestinationComponent {
       if (hasAuthId) {
         this.destinationForm.update((y) => {
           y[fieldGroup][fieldName] = authId;
-          return y;
+          return { ...y };
         });
 
         this.#oauthInProgress.set(false);
@@ -576,7 +606,7 @@ export class SingleDestinationComponent {
           this.destinationForm.update((y) => {
             y.advanced['api-key'] = apiKey;
             y.dynamic['two-factor-code'] = null;
-            return y;
+            return { ...y };
           });
           this.refreshView.set(!this.refreshView());
         },
