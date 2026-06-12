@@ -5,6 +5,10 @@
   </sh-button-group>
 }
 
+@if (errorMessage()) {
+  <sh-alert [color]="'error'">{{ errorMessage() }}</sh-alert>
+}
+
 <div class="section" [class.hidden]="!searchMode() && pathDiscoveryMethod() !== 'browse'">
   <ng-content select="label" ngProjectAs="label"></ng-content>
 

@@ -14,6 +14,7 @@ import {
 import { rxResource } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import {
+  ShipAlert,
   ShipButton,
   ShipButtonGroup,
   ShipDialog,
@@ -115,6 +116,7 @@ const ROOTPATH = '/';
     NgTemplateOutlet,
     FormsModule,
     BytesPipe,
+    ShipAlert,
   ],
   templateUrl: './file-tree.component.html',
   styleUrl: './file-tree.component.scss',
@@ -157,6 +159,8 @@ export default class FileTreeComponent {
   _showHiddenNodes = signal(false);
   createFolderDialogOpen = signal(false);
   createFolderPath = signal<string | null>(null);
+  errorMessage = signal<string | null>(null);
+  anyRemoteSourcesLoaded = signal(false);
 
   treeContainerRef = viewChild<ElementRef<HTMLDivElement>>('treeContainer');
   formRef = viewChild<ElementRef<HTMLFormElement>>('formRef');
@@ -1417,6 +1421,8 @@ export default class FileTreeComponent {
               return [];
             });
 
+            if (allNewNodes.length > 0) this.anyRemoteSourcesLoaded.set(true);
+
             const arrayUniqueByKey = [...new Map([...y, ...allNewNodes].map((item) => [item.id, item])).values()];
 
             this.#findActiveNodeAndScrollTo();
@@ -1515,6 +1521,8 @@ export default class FileTreeComponent {
               })
             : x;
 
+        if (alignDataArray.length > 0) this.anyRemoteSourcesLoaded.set(true);
+
         this.treeNodes.update((y) => {
           const newArray = alignDataArray
             .filter((f: any) => f !== null)
@@ -1536,6 +1544,14 @@ export default class FileTreeComponent {
             return arrayUniqueByKey as TreeNode[];
           }
         });
+      },
+      error: (err) => {
+        this.errorMessage.set(err.message);
+        if (this.anyRemoteSourcesLoaded()) {
+          setTimeout(() => {
+            this.errorMessage.set(null);
+          }, 5000);
+        }
       },
     });
   }
