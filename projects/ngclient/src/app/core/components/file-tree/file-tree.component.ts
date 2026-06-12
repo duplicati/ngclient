@@ -1240,9 +1240,13 @@ export default class FileTreeComponent {
       })
       .pipe(
         map((res) => {
-          const d = res.Result as {
-            [key: string]: string;
-          };
+          const d = res.Result;
+          if (!d) {
+            throw new Error('No result returned');
+          }
+          if (res.Status !== 'OK') {
+            throw new Error(d['error'] ?? 'An error occured');
+          }
           return Object.keys(d).map((key) => {
             return {
               Path: (remote?.prefix ?? '') + key,
@@ -1267,9 +1271,14 @@ export default class FileTreeComponent {
       })
       .pipe(
         map((res) => {
-          const d = res.Result as {
-            [key: string]: string;
-          };
+          const d = res.Result;
+          if (!d) {
+            throw new Error('No result returned');
+          }
+
+          if (res.Status !== 'OK') {
+            throw new Error(d['error'] ?? 'An error occured');
+          }
           return Object.keys(d).map((key) => {
             return {
               Path: (remote?.prefix ?? '') + key,
