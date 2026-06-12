@@ -5,10 +5,6 @@
   </sh-button-group>
 }
 
-@if (errorMessage()) {
-  <sh-alert [color]="'error'">{{ errorMessage() }}</sh-alert>
-}
-
 <div class="section" [class.hidden]="!searchMode() && pathDiscoveryMethod() !== 'browse'">
   <ng-content select="label" ngProjectAs="label"></ng-content>
 
@@ -116,6 +112,10 @@
   <!-- <pre>{{ selectedPaths() | json }}</pre> -->
   <!-- <pre>{{ currentPath() }}</pre> -->
 </div>
+
+@if (errorMessage()) {
+  <sh-alert [color]="'error'">{{ errorMessage() }}</sh-alert>
+}
 
 @if (createFolderDialogOpen()) {
   <sh-dialog [(isOpen)]="createFolderDialogOpen" [options]="{ maxWidth: '700px', width: '100%' }">

@@ -32,6 +32,7 @@ import {
   GetApiV1BackupByIdFilesData,
   GetApiV1BackupByIdFilesResponse,
   PostApiV1FilesystemResponse,
+  RemoteDestinationType,
   SearchEntriesItemDto,
   TreeNodeDto,
 } from '../../openapi';
@@ -101,6 +102,9 @@ export type BackupSettings = {
 
 // The virtual root path for the file tree, also used for Windows as the root path.
 const ROOTPATH = '/';
+
+// Toggle for the v2 listing API
+const usev2Listing = true;
 
 @Component({
   selector: 'app-file-tree',
@@ -1196,14 +1200,15 @@ export default class FileTreeComponent {
     });
   }
 
-  #getBackendFiles(path: string | null) {
+  #getBackendFiles(path: string | null, remote: RemoteSource | null, destinationType: RemoteDestinationType) {
     return this.#dupServer
       .postApiV2DestinationList({
         requestBody: {
           BackupId: this.backupId() ?? null,
-          DestinationUrl: this.destinationUrl() ?? null,
+          DestinationUrl: remote?.url ?? this.destinationUrl() ?? null,
           ConnectionStringId: this.connectionStringId() ?? null,
-          DestinationType: 'Backend',
+          DestinationType: destinationType,
+          SourcePrefix: remote?.prefix ?? this.sourcePrefix() ?? null,
           Path: path,
           Offset: null,
           Limit: null,
@@ -1211,7 +1216,12 @@ export default class FileTreeComponent {
       })
       .pipe(
         map((res) => {
-          return res.Data?.Items ?? [];
+          return (res.Data?.Items ?? [])
+            .map((x) => ({
+              ...x,
+              Path: (remote?.prefix ?? '') + x.Path,
+            }))
+            .filter((x) => x.Metadata == null || !x.Metadata['ExtType']);
         })
       );
   }
@@ -1262,7 +1272,7 @@ export default class FileTreeComponent {
           };
           return Object.keys(d).map((key) => {
             return {
-              Path: key,
+              Path: (remote?.prefix ?? '') + key,
               Metadata: JSON.parse(d[key]),
             };
           });
@@ -1324,26 +1334,43 @@ export default class FileTreeComponent {
 
   #getFilePath(path: string, remote: RemoteSource | null | undefined) {
     if (remote?.type === 'office365') {
+      if (this.#sysInfo.hasV2ListBackendOperations() && usev2Listing)
+        return this.#getBackendFiles(remote.path, remote, 'SourceProvider');
+
       return this.#getMicrosoft365Files(remote.path, remote);
     }
 
     if (this.customRemoteMode() === 'o365') {
+      if (this.#sysInfo.hasV2ListBackendOperations() && usev2Listing)
+        return this.#getBackendFiles(path, null, 'SourceProvider');
+
       return this.#getMicrosoft365Files(path, null);
     }
 
     if (remote?.type === 'googleworkspace') {
+      if (this.#sysInfo.hasV2ListBackendOperations() && usev2Listing)
+        return this.#getBackendFiles(remote.path, remote, 'SourceProvider');
+
       return this.#getGoogleWorkspaceFiles(remote.path, remote);
     }
 
     if (this.customRemoteMode() === 'gsuite') {
+      if (this.#sysInfo.hasV2ListBackendOperations() && usev2Listing)
+        return this.#getBackendFiles(path, null, 'SourceProvider');
+
       return this.#getGoogleWorkspaceFiles(path, null);
     }
 
     if (remote?.type === 'diskimage') {
+      if (this.#sysInfo.hasV2ListBackendOperations() && usev2Listing)
+        return this.#getBackendFiles(remote.path, remote, 'SourceProvider');
+
       return this.#getDiskImagePaths(remote.path);
     }
 
     if (this.customRemoteMode() === 'diskimage') {
+      if (this.#sysInfo.hasV2ListBackendOperations() && usev2Listing)
+        return this.#getBackendFiles(path, null, 'SourceProvider');
       return this.#getDiskImagePaths(path);
     }
 
@@ -1352,7 +1379,7 @@ export default class FileTreeComponent {
     }
 
     if (this.customRemoteMode() === 'backend') {
-      return this.#getBackendFiles(path);
+      return this.#getBackendFiles(path, null, 'Backend');
     }
 
     return this.#getFilesystemPath(path);
@@ -1496,15 +1523,10 @@ export default class FileTreeComponent {
                 let newRemoteSource: RemoteSource | null = null;
 
                 if (remote) {
-                  // MS365 returns with remote prefix, GWS returns raw paths,
-                  // so we normalize them to always have the remote prefix
-                  let targetPath = y.Path;
-                  if (!targetPath.startsWith(remote.prefix)) targetPath = remote.prefix + targetPath;
-
-                  id = targetPath.substring(1); // Remove leading @ for the path to match the tree
+                  id = y.Path.substring(1); // Remove leading @ for the path to match the tree
                   newRemoteSource = {
                     ...remote,
-                    path: targetPath.substring(remote.prefix.length),
+                    path: y.Path.substring(remote.prefix.length),
                   };
                 }
 
