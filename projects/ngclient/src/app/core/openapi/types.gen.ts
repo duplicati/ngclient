@@ -615,6 +615,7 @@ export type SearchEntriesRequestDto = {
     Time?: (string) | null;
     ReturnExtended?: (boolean) | null;
     Version?: Array<number> | null;
+    CaseSensitiveSearch?: (boolean) | null;
 };
 
 export type SearchEntriesResponseDto = {
@@ -710,6 +711,7 @@ export type SystemInfoDto = {
     NewLine: (string) | null;
     CLRVersion: (string) | null;
     Options: Array<ICommandLineArgument> | null;
+    ServerOnlyOptions: Array<ICommandLineArgument> | null;
     CompressionModules: Array<IDynamicModule> | null;
     EncryptionModules: Array<IDynamicModule> | null;
     BackendModules: Array<IDynamicModule> | null;
