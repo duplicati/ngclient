@@ -47,7 +47,7 @@ export class SysinfoState {
     const defaultOptions = {
       displayName: 'Default',
       options:
-        this.systemInfo()?.Options?.map((x) =>
+        [...(this.systemInfo()?.Options ?? []), ...(this.systemInfo()?.ServerOnlyOptions ?? [])].map((x) =>
           this.#mapCommandLineArgumentsToFormViewsExpanding(x, this.systemInfo())
         ) ?? [],
     };
