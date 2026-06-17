@@ -616,6 +616,7 @@ export type SearchEntriesRequestDto = {
     ReturnExtended?: (boolean) | null;
     Version?: Array<number> | null;
     CaseSensitiveSearch?: (boolean) | null;
+    SearchMetadata?: (boolean) | null;
 };
 
 export type SearchEntriesResponseDto = {
