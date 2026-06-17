@@ -1,0 +1,71 @@
+@use '@ship-ui/core/styles/helpers' as *;
+
+:host {
+  display: block;
+  padding: p2r(32);
+  max-width: p2r(800);
+  margin: 0 auto;
+}
+
+.loading-state,
+.empty-state {
+  text-align: center;
+  padding: p2r(64 32);
+
+  p {
+    margin-top: p2r(16);
+    color: var(--color-on-surface-variant);
+  }
+}
+
+.config-list {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(16);
+  margin-top: p2r(32);
+  margin-bottom: p2r(32);
+
+  sh-card {
+    padding: p2r(16);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: p2r(8);
+
+    .provider {
+      display: flex;
+      flex-direction: row;
+      gap: p2r(8);
+      margin-left: p2r(28);
+    }
+
+    .metadata {
+      display: flex;
+      flex-direction: column;
+      gap: p2r(8);
+      margin-left: p2r(28);
+    }
+  }
+}
+
+.provider-icon {
+  width: p2r(20);
+  height: p2r(20);
+}
+
+.options {
+  margin-bottom: p2r(32);
+  display: flex;
+  flex-direction: column;
+  gap: p2r(16);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  margin-top: p2r(32);
+
+  .spacer {
+    flex: 1;
+  }
+}

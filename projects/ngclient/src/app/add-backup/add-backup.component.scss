@@ -19,6 +19,11 @@ div.backup-types {
   max-width: p2r(700);
   padding: p2r(0 32);
 
+  &.three-column {
+    grid-template-columns: 1fr 1fr 1fr;
+    max-width: p2r(1050);
+  }
+
   @include breakpoint(-milli) {
     grid-template-columns: 1fr;
   }

@@ -110,6 +110,11 @@ export class SysinfoState {
     return apiExtensions.includes('v2:filesystem:test-filter');
   });
 
+  hasRestoreControlFilesOperation = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v1:backup:restorecontrolfiles');
+  });
+
   hasProgressSubscribeOption = computed(() => {
     const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
     return apiExtensions.includes('v1:subscribe:progress');
