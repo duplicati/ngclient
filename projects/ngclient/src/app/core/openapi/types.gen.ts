@@ -313,6 +313,12 @@ export type IListResultFileset = {
     readonly FileSizes?: number;
 };
 
+export type ImportBackupFromTempDto = {
+    BackupId?: (string) | null;
+    ImportMetadata?: boolean;
+    Direct?: boolean;
+};
+
 export type ImportBackupInputDto = {
     config?: (string) | null;
     cmdline?: (boolean) | null;
@@ -571,6 +577,15 @@ export type RestoreInputDto = {
     skip_metadata?: (boolean) | null;
     connection_string_id?: (number) | null;
     source_prefix?: (string) | null;
+};
+
+export type RestoreTaskConfigElementDto = {
+    BackupId: (string) | null;
+    Name: (string) | null;
+    TargetURLDisplay: (string) | null;
+    Metadata: {
+        [key: string]: (string) | null;
+    } | null;
 };
 
 export type ScheduleDto = {
@@ -1356,6 +1371,18 @@ export type PostApiV1BackupByIdCopytotempData = {
 };
 
 export type PostApiV1BackupByIdCopytotempResponse = (CreateBackupDto);
+
+export type PostApiV1BackupByIdRestoreTaskConfigData = {
+    id: string;
+};
+
+export type PostApiV1BackupByIdRestoreTaskConfigResponse = (Array<RestoreTaskConfigElementDto>);
+
+export type PostApiV1BackupByIdImportfromtempData = {
+    requestBody: ImportBackupFromTempDto;
+};
+
+export type PostApiV1BackupByIdImportfromtempResponse = (ImportBackupOutputDto);
 
 export type PostApiV1RemotecontrolEnableResponse = (RemoteControlStatusOutput);
 
