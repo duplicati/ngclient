@@ -586,6 +586,10 @@ export type RestoreTaskConfigElementDto = {
     Metadata: {
         [key: string]: (string) | null;
     } | null;
+    DisplayNames: {
+        [key: string]: string;
+    } | null;
+    AdditionalTargetUrls: Array<string> | null;
 };
 
 export type ScheduleDto = {

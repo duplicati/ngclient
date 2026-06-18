@@ -6,6 +6,8 @@ import {
   ShipButton,
   ShipCard,
   ShipCheckbox,
+  ShipChip,
+  ShipFormField,
   ShipIcon,
   ShipProgressBar,
   ShipToggle,
@@ -36,6 +38,8 @@ type ConfigOption = RestoreTaskConfigElementDto & {
     ShipIcon,
     BytesPipe,
     RelativeTimePipe,
+    ShipChip,
+    ShipFormField,
   ],
   templateUrl: './select-config.component.html',
   styleUrl: './select-config.component.scss',
@@ -56,13 +60,17 @@ export default class SelectConfigComponent implements OnInit {
   configs = signal<ConfigOption[]>([]);
   saveNow = signal(false);
   importMetadata = signal(false);
+  searchTerm = signal('');
 
-  saveNowTooltip = computed(() => {
-    if (this.canChooseSaveNow()) return 'Save backups without editing the configuration';
-    return 'Save now can only be disabled when importing a single backup';
+  allSelected = computed(() => this.selectedItems().length === this.configs().length);
+  noneSelected = computed(() => this.selectedItems().length === 0);
+  configsSorted = computed(() => {
+    const searchTerm = this.searchTerm().toLowerCase();
+    return this.configs()
+      .map((c) => ({ ...c, Match: searchTerm ? c.Name?.toLowerCase().includes(searchTerm) : null }))
+      .sort((a, b) => (a.Name ?? '').localeCompare(b.Name ?? ''))
+      .sort((a, b) => (a.Match === b.Match ? 0 : a.Match ? -1 : 1));
   });
-
-  canChooseSaveNow = computed(() => this.selectedItems().length === 1);
 
   ngOnInit() {
     const id = this.#importState.temporaryBackupId();
@@ -80,16 +88,10 @@ export default class SelectConfigComponent implements OnInit {
             .sort((a, b) => (a.Name ?? '').localeCompare(b.Name ?? ''))
             .map((item) => ({
               ...item,
-              Selected: true,
+              Selected: result.length === 1,
             }));
 
           this.configs.set(options);
-
-          if (options.length === 1) {
-            this.saveNow.set(false); // Can be checked or unchecked by user
-          } else {
-            this.saveNow.set(true); // Forced true if multiple
-          }
         },
         error: (err) => {
           this.#importState.showErrorDialog(err.message || 'Failed to fetch configurations');
@@ -100,6 +102,18 @@ export default class SelectConfigComponent implements OnInit {
   toggleSelected(id: string | null) {
     this.configs.update((configs) => {
       return configs.map((c) => (c.BackupId === id ? { ...c, Selected: !c.Selected } : c));
+    });
+  }
+
+  selectAll() {
+    this.configs.update((configs) => {
+      return configs.map((c) => ({ ...c, Selected: true }));
+    });
+  }
+
+  selectNone() {
+    this.configs.update((configs) => {
+      return configs.map((c) => ({ ...c, Selected: false }));
     });
   }
 
