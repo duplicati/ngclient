@@ -13,6 +13,7 @@ import {
   ShipProgressBar,
   ShipSort,
   ShipTable,
+  ShipTooltip,
 } from '@ship-ui/core';
 import { finalize } from 'rxjs';
 import { getBackendIcon, getBackendType } from '../backup/destination/destination.config-utilities';
@@ -45,6 +46,7 @@ import { RemoteControlState } from '../settings/remote-control/remote-control.st
     ShipButtonGroup,
     ShipTable,
     ShipSort,
+    ShipTooltip,
     DurationFormatPipe,
     BytesPipe,
     RelativeTimePipe,
