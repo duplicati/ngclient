@@ -149,6 +149,14 @@
                         <!-- <sh-icon>{{ getBackendIcon(backup.Backup.TargetURL) }}</sh-icon> -->
                         {{ getBackendType(backup.Backup.TargetURL) }}
                       </sh-chip>
+                      @if (backup.Backup.AdditionalTargetURLs?.length) {
+                        @for (url of backup.Backup.AdditionalTargetURLs; track $index) {
+                          <sh-chip>
+                            <img class="provider-icon" [src]="getBackendIcon(url.TargetUrl)" alt="" />
+                            {{ getBackendType(url.TargetUrl) }}
+                          </sh-chip>
+                        }
+                      }
                     </h3>
 
                     @if (runningBackupId() !== backup.Backup.ID) {
@@ -275,6 +283,14 @@
                   <!-- <sh-icon>{{ getBackendIcon(backup.Backup.TargetURL) }}</sh-icon> -->
                   {{ getBackendType(backup.Backup.TargetURL) }}
                 </sh-chip>
+                @if (backup.Backup.AdditionalTargetURLs?.length) {
+                  @for (url of backup.Backup.AdditionalTargetURLs; track $index) {
+                    <sh-chip>
+                      <img class="provider-icon" [src]="getBackendIcon(url.TargetUrl)" alt="" />
+                      {{ getBackendType(url.TargetUrl) }}
+                    </sh-chip>
+                  }
+                }
               </td>
               <td>
                 @if (backup.Backup.Metadata?.['LastBackupFinished']) {
