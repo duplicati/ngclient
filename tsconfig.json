@@ -15,6 +15,15 @@
     "paths": {
       "ngclient-lib": [
         "./dist/ngclient-lib"
+      ],
+      "~openapi/*": [
+        "./projects/ngclient/src/app/core/openapi/*"
+      ],
+      "~core/*": [
+        "./projects/ngclient/src/app/core/*"
+      ],
+      "~settings/*": [
+        "./projects/ngclient/src/app/settings/*"
       ]
     },
     "allowJs": true,
