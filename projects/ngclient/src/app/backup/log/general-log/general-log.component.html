@@ -51,12 +51,24 @@
 
           <ng-container content>
             <p i18n>
-              Evaluated: {{ item.data?.ExaminedFiles }} ({{ item.data?.SizeOfExaminedFiles | bytes: true : true }})
+              Evaluated: {{ item.data?.ExaminedFiles }} ({{
+                item.data?.SizeOfExaminedFiles | bytes: true : true
+              }})
             </p>
-            <p i18n>Opened: {{ item.data?.OpenedFiles }} ({{ item.data?.SizeOfOpenedFiles | bytes: true : true }})</p>
-            <p i18n>Added: {{ item.data?.AddedFiles }} ({{ item.data?.SizeOfAddedFiles | bytes: true : true }})</p>
             <p i18n>
-              Modified: {{ item.data?.ModifiedFiles }} ({{ item.data?.SizeOfModifiedFiles | bytes: true : true }})
+              Opened: {{ item.data?.OpenedFiles }} ({{
+                item.data?.SizeOfOpenedFiles | bytes: true : true
+              }})
+            </p>
+            <p i18n>
+              Added: {{ item.data?.AddedFiles }} ({{
+                item.data?.SizeOfAddedFiles | bytes: true : true
+              }})
+            </p>
+            <p i18n>
+              Modified: {{ item.data?.ModifiedFiles }} ({{
+                item.data?.SizeOfModifiedFiles | bytes: true : true
+              }})
             </p>
             <p i18n>Deleted: {{ item.data?.DeletedFiles }}</p>
             <p i18n>Too large: {{ item.data?.TooLargeFiles }}</p>
@@ -102,7 +114,9 @@
               <div class="content">
                 <p i18n>Start: {{ item.data?.CompactResults?.BeginTime | date: 'medium' }}</p>
                 <p i18n>End: {{ item.data?.CompactResults?.EndTime | date: 'medium' }}</p>
-                <p i18n>Duration: {{ item.data?.CompactResults?.Duration | durationFormat }}</p>
+                <p i18n>
+                  Duration: {{ item.data?.CompactResults?.Duration | durationFormat }}
+                </p>
                 <sh-divider />
                 <p i18n>
                   Deleted files: {{ item.data?.CompactResults?.DeletedFileCount }} ({{

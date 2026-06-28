@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { LOCALSTORAGE } from './core/services/localstorage.token';
 import { RelayconfigState } from './core/states/relayconfig.state';
@@ -10,6 +10,7 @@ import { configureProxySupport } from './core/utils/proxy-config.util';
   template: `
     <router-outlet />
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [],
 })
 export class App {
