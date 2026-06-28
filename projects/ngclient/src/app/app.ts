@@ -10,7 +10,6 @@ import { configureProxySupport } from './core/utils/proxy-config.util';
   template: `
     <router-outlet />
   `,
-  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [],
 })
 export class App {
