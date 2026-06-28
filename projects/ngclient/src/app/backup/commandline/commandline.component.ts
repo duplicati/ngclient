@@ -2,15 +2,13 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } 
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import {
-  ShipButton,
-  ShipDivider,
-  ShipFormField,
-  ShipIcon,
-  ShipProgressBar,
-  ShipSelect,
-  ShipTooltip,
-} from '@ship-ui/core';
+import { ShipTooltip } from '@ship-ui/core';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipDivider } from '@ship-ui/core/ship-divider';
+import { ShipFormField } from '@ship-ui/core/ship-form-field';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
+import { ShipSelect } from '@ship-ui/core/ship-select';
 import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
 import { StatusBarState } from '../../core/components/status-bar/status-bar.state';
 import { BackupDto, Commandline, DuplicatiServer, GetBackupResultDto } from '../../core/openapi';

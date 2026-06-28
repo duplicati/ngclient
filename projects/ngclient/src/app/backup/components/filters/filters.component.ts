@@ -12,7 +12,10 @@ import {
   viewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ShipButton, ShipFormField, ShipIcon, ShipMenu } from '@ship-ui/core';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipFormField } from '@ship-ui/core/ship-form-field';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipMenu } from '@ship-ui/core/ship-menu';
 import ToggleCardComponent from '../../../core/components/toggle-card/toggle-card.component';
 import { NewFilterComponent } from '../../source-data/new-filter/new-filter.component';
 

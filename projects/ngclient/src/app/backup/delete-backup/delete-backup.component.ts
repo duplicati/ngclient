@@ -2,7 +2,10 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, signal } f
 import { rxResource } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { ShipButton, ShipCheckbox, ShipDialogService, ShipIcon } from '@ship-ui/core';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipCheckbox } from '@ship-ui/core/ship-checkbox';
+import { ShipDialogService } from '@ship-ui/core/ship-dialog';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { catchError, finalize, map, of } from 'rxjs';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer } from '../../core/openapi';

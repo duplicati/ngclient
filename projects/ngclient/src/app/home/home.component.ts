@@ -1,19 +1,16 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import {
-  ShipButton,
-  ShipButtonGroup,
-  ShipCard,
-  ShipChip,
-  ShipDialogService,
-  ShipDivider,
-  ShipIcon,
-  ShipMenu,
-  ShipProgressBar,
-  ShipSort,
-  ShipTable,
-} from '@ship-ui/core';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipButtonGroup } from '@ship-ui/core/ship-button-group';
+import { ShipCard } from '@ship-ui/core/ship-card';
+import { ShipChip } from '@ship-ui/core/ship-chip';
+import { ShipDialogService } from '@ship-ui/core/ship-dialog';
+import { ShipDivider } from '@ship-ui/core/ship-divider';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipMenu } from '@ship-ui/core/ship-menu';
+import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
+import { ShipSort, ShipTable } from '@ship-ui/core/ship-table';
 import { finalize } from 'rxjs';
 import { getBackendIcon, getBackendType } from '../backup/destination/destination.config-utilities';
 import { BackupProgressComponent } from '../core/components/backup-progress/backup-progress.component';

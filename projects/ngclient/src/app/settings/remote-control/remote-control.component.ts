@@ -1,6 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ShipButton, ShipChip, ShipFormField, ShipIcon } from '@ship-ui/core';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipChip } from '@ship-ui/core/ship-chip';
+import { ShipFormField } from '@ship-ui/core/ship-form-field';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ServerSettingsService } from '../server-settings.service';
 import { RemoteControlState } from './remote-control.state';
 

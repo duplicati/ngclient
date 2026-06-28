@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { ShipDialogService } from '@ship-ui/core';
+import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { Observable, Subscriber } from 'rxjs';
 import { DisconnectedDialogComponent } from '../components/disconnected-dialog/disconnected-dialog.component';
 import {

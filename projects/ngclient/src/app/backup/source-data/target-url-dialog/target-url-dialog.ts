@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, effect, input, output, signal } from '@angular/core';
-import { ShipButton } from '@ship-ui/core';
+import { ShipButton } from '@ship-ui/core/ship-button';
 import { IDynamicModule, RemoteDestinationType } from '../../../core/openapi';
 import { DestinationListItemComponent } from '../../destination/destination-list-item/destination-list-item.component';
 import { DestinationListComponent } from '../../destination/destination-list/destination-list.component';

@@ -1,5 +1,5 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
-import { ShipDialogService } from '@ship-ui/core';
+import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { finalize, map, of, switchMap } from 'rxjs';
 import { STATUS_STATES } from '../../constants/status-states.constant';
 import {

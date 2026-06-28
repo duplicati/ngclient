@@ -13,18 +13,15 @@ import {
 } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import {
-  ShipAlert,
-  ShipButton,
-  ShipButtonGroup,
-  ShipDialog,
-  ShipDialogService,
-  ShipFormField,
-  ShipIcon,
-  ShipList,
-  ShipProgressBar,
-  ShipToggle,
-} from '@ship-ui/core';
+import { ShipAlert } from '@ship-ui/core/ship-alert';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipButtonGroup } from '@ship-ui/core/ship-button-group';
+import { ShipDialog, ShipDialogService } from '@ship-ui/core/ship-dialog';
+import { ShipFormField } from '@ship-ui/core/ship-form-field';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipList } from '@ship-ui/core/ship-list';
+import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
+import { ShipToggle } from '@ship-ui/core/ship-toggle';
 import { catchError, finalize, forkJoin, map, Observable, of, switchMap, timer } from 'rxjs';
 import { getBackendIcon, getRemotePathDisplayName } from '../../../backup/destination/destination.config-utilities';
 import {

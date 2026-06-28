@@ -9,7 +9,9 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ShipFormField, ShipIcon, ShipSelect } from '@ship-ui/core';
+import { ShipFormField } from '@ship-ui/core/ship-form-field';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipSelect } from '@ship-ui/core/ship-select';
 
 type ExpressionDirection = '-' | '+';
 type _ExpressionType =

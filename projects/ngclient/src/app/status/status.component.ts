@@ -1,6 +1,11 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
-import { ShipButton, ShipCard, ShipDialogService, ShipIcon, ShipList, ShipProgressBar } from '@ship-ui/core';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipCard } from '@ship-ui/core/ship-card';
+import { ShipDialogService } from '@ship-ui/core/ship-dialog';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipList } from '@ship-ui/core/ship-list';
+import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import LogsLiveComponent from '../about/logs/logs-live/logs-live.component';
 import { PauseDialogComponent } from '../core/components/status-bar/pause-dialog/pause-dialog.component';
 import { StatusBarState } from '../core/components/status-bar/status-bar.state';

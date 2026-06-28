@@ -1,7 +1,11 @@
 import { DatePipe, JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input, resource, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { ShipButton, ShipDivider, ShipIcon, ShipProgressBar, ShipToggleCard } from '@ship-ui/core';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipDivider } from '@ship-ui/core/ship-divider';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
+import { ShipToggleCard } from '@ship-ui/core/ship-toggle-card';
 import { finalize, firstValueFrom, map, switchMap } from 'rxjs';
 import { DuplicatiServer, SettingDto, SettingInputDto } from '../../../core/openapi';
 import { BytesPipe } from '../../../core/pipes/byte.pipe';

@@ -10,15 +10,13 @@ import {
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  ShipAlert,
-  ShipButton,
-  ShipFormField,
-  ShipIcon,
-  ShipProgressBar,
-  ShipSelect,
-  ShipTooltip,
-} from '@ship-ui/core';
+import { ShipTooltip } from '@ship-ui/core';
+import { ShipAlert } from '@ship-ui/core/ship-alert';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipFormField } from '@ship-ui/core/ship-form-field';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
+import { ShipSelect } from '@ship-ui/core/ship-select';
 import { PasswordGeneratorService } from '../../core/services/password-generator.service';
 import { validateWhen, watchField } from '../../core/validators/custom.validators';
 import { BackupState } from '../backup.state';

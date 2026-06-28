@@ -2,7 +2,10 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ShipButton, ShipFormField, ShipIcon, ShipToggleCard } from '@ship-ui/core';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipFormField } from '@ship-ui/core/ship-form-field';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipToggleCard } from '@ship-ui/core/ship-toggle-card';
 import { finalize } from 'rxjs';
 import { DuplicatiServer, SettingInputDto } from '../../../core/openapi';
 import { OptionsListComponent } from '../../options/options-list/options-list.component';

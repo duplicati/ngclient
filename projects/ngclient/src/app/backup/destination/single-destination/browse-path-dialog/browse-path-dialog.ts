@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ShipButton } from '@ship-ui/core';
+import { ShipButton } from '@ship-ui/core/ship-button';
 import FileTreeComponent from '../../../../core/components/file-tree/file-tree.component';
 
 @Component({

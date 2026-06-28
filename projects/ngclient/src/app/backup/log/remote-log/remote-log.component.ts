@@ -1,7 +1,8 @@
 import { DatePipe, JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, input, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { ShipIcon, ShipProgressBar } from '@ship-ui/core';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { map } from 'rxjs';
 import { DuplicatiServer } from '../../../core/openapi';
 

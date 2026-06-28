@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  baseUrl: '/api',  
+  baseUrl: '/api',
   machineServerUrl: '${WS_URL}',
   defaultTimeout: 30000,
 };

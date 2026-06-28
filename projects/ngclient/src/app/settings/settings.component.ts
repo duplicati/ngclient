@@ -1,20 +1,18 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {
-  ShipAlert,
-  ShipButton,
-  ShipChip,
-  ShipDialogService,
-  ShipDivider,
-  ShipFormField,
-  ShipIcon,
-  ShipProgressBar,
-  ShipRadio,
-  ShipRangeSlider,
-  ShipSelect,
-  ShipToggle,
-  ShipTooltip,
-} from '@ship-ui/core';
+import { ShipTooltip } from '@ship-ui/core';
+import { ShipAlert } from '@ship-ui/core/ship-alert';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipChip } from '@ship-ui/core/ship-chip';
+import { ShipDialogService } from '@ship-ui/core/ship-dialog';
+import { ShipDivider } from '@ship-ui/core/ship-divider';
+import { ShipFormField } from '@ship-ui/core/ship-form-field';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
+import { ShipRadio } from '@ship-ui/core/ship-radio';
+import { ShipRangeSlider } from '@ship-ui/core/ship-range-slider';
+import { ShipSelect } from '@ship-ui/core/ship-select';
+import { ShipToggle } from '@ship-ui/core/ship-toggle';
 import { finalize } from 'rxjs';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { LANGUAGES } from '../core/locales/locales.utility';

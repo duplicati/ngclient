@@ -1,7 +1,10 @@
 import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ShipCard, ShipIcon, ShipProgressBar, ShipSpinner } from '@ship-ui/core';
+import { ShipCard } from '@ship-ui/core/ship-card';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
+import { ShipSpinner } from '@ship-ui/core/ship-spinner';
 import LogsLiveComponent from '../../about/logs/logs-live/logs-live.component';
 import { StatusBarState } from '../../core/components/status-bar/status-bar.state';
 import { DuplicatiServer, GetTaskStateDto } from '../../core/openapi';

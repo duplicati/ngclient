@@ -1,6 +1,10 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
-import { ShipButton, ShipIcon, ShipProgressBar, ShipSpinner, ShipTooltip } from '@ship-ui/core';
+import { ShipTooltip } from '@ship-ui/core';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
+import { ShipSpinner } from '@ship-ui/core/ship-spinner';
 import { BytesPipe } from '../../pipes/byte.pipe';
 import { RelativeTimePipe } from '../../pipes/relative-time.pipe';
 import { BackupsState } from '../../states/backups.state';

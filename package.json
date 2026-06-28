@@ -42,7 +42,7 @@
     "@angular/platform-browser": "22.0.4",
     "@angular/platform-browser-dynamic": "22.0.4",
     "@angular/router": "22.0.4",
-    "@ship-ui/core": "^0.19.4",
+    "@ship-ui/core": "^0.22.17",
     "dayjs": "^1.11.19",
     "marked": "^16.4.2",
     "ngxtension": "5.1.0",

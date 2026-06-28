@@ -1,6 +1,6 @@
 import { isPlatformBrowser } from '@angular/common';
 import { DOCUMENT, Injectable, PLATFORM_ID, computed, effect, inject, signal } from '@angular/core';
-import { ShipSidenavType } from '@ship-ui/core';
+import { ShipSidenavType } from '@ship-ui/core/ship-sidenav';
 import { localStorageSignal } from '../core/functions/localstorage-signal';
 import { WINDOW } from '../core/providers/window';
 

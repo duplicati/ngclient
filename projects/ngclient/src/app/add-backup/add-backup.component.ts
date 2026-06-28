@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { ShipButton, ShipCard, ShipIcon } from '@ship-ui/core';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipCard } from '@ship-ui/core/ship-card';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { SysinfoState } from '../core/states/sysinfo.state';
 

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { ShipFormField, ShipSelect } from '@ship-ui/core';
+import { ShipFormField } from '@ship-ui/core/ship-form-field';
+import { ShipSelect } from '@ship-ui/core/ship-select';
 
 const PER_SECOND_FIELDS = ['throttle-upload', 'throttle-download'];
 
