@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ShipTooltip } from '@ship-ui/core';
+import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipChip } from '@ship-ui/core/ship-chip';

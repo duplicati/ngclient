@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ShipTooltip } from '@ship-ui/core';
+import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { ShipAlertService } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipCard } from '@ship-ui/core/ship-card';

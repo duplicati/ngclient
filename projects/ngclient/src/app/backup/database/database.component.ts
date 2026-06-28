@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, Signal, s
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { ShipTooltip } from '@ship-ui/core';
+import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';

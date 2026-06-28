@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { ShipTooltip } from '@ship-ui/core';
+import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { RemoteControlState } from '../../../../settings/remote-control/remote-control.state';
 
