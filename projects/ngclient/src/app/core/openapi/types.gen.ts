@@ -153,6 +153,38 @@ export type DeleteBackupOutputDto = {
     ID?: (number) | null;
 };
 
+export type DestinationListRequestDto = {
+    BackupId: (string) | null;
+    ConnectionStringId?: (number) | null;
+    DestinationUrl: (string) | null;
+    DestinationType?: RemoteDestinationType;
+    SourcePrefix?: (string) | null;
+    Path: (string) | null;
+    Offset: (number) | null;
+    Limit: (number) | null;
+};
+
+export type DestinationListResponesContent = {
+    Items: Array<DestinationListResponseItem> | null;
+    Offset: number;
+    HasMore: boolean;
+};
+
+export type DestinationListResponseDto = {
+    Success: boolean;
+    Error: (string) | null;
+    StatusCode: (string) | null;
+    Data?: DestinationListResponesContent;
+};
+
+export type DestinationListResponseItem = {
+    Path: (string) | null;
+    Size: number;
+    Metadata: {
+        [key: string]: (string) | null;
+    } | null;
+};
+
 export type DestinationTestRequestDto = {
     DestinationUrl: (string) | null;
     BackupId?: (string) | null;
@@ -161,7 +193,7 @@ export type DestinationTestRequestDto = {
         [key: string]: string;
     } | null;
     AutoCreate: boolean;
-    ReadOnlyTest: boolean;
+    ReadOnlyTest?: boolean;
     DestinationType?: RemoteDestinationType;
     SourcePrefix?: (string) | null;
 };
@@ -216,6 +248,14 @@ export type FilterInputDto = {
     Expression?: (string) | null;
 };
 
+export type FolderStatusDto = {
+    Path: (string) | null;
+    Status: (string) | null;
+    BackupName?: (string) | null;
+    LastBackupTime?: (string) | null;
+    BackupId?: (string) | null;
+};
+
 export type GetBackupResultDto = {
     Schedule?: ScheduleDto;
     Backup?: BackupDto;
@@ -261,8 +301,8 @@ export type IDynamicModule = {
             [key: string]: string;
         } | null;
     } | null;
-    readonly IsDeprecated?: boolean | null;
-    readonly IsUntested?: boolean | null;
+    readonly IsDeprecated?: boolean;
+    readonly IsUntested?: boolean;
 };
 
 export type IListResultFileset = {
@@ -271,6 +311,12 @@ export type IListResultFileset = {
     readonly Time?: string;
     readonly FileCount?: number;
     readonly FileSizes?: number;
+};
+
+export type ImportBackupFromTempDto = {
+    BackupId?: (string) | null;
+    ImportMetadata?: boolean;
+    Direct?: boolean;
 };
 
 export type ImportBackupInputDto = {
@@ -345,6 +391,17 @@ export type LicenseDto = {
     Url: (string) | null;
     License: (string) | null;
     Jsondata: (string) | null;
+};
+
+export type LicenseStatusDto = {
+    IsConfigured: boolean;
+    IsValid: boolean;
+    IsInGracePeriod: boolean;
+    ExpiresAt: (string) | null;
+    ExpiresWithGraceAt: (string) | null;
+    Features: {
+        [key: string]: string;
+    } | null;
 };
 
 export type ListFilesetsRequestDto = {
@@ -522,6 +579,19 @@ export type RestoreInputDto = {
     source_prefix?: (string) | null;
 };
 
+export type RestoreTaskConfigElementDto = {
+    BackupId: (string) | null;
+    Name: (string) | null;
+    TargetURLDisplay: (string) | null;
+    Metadata: {
+        [key: string]: (string) | null;
+    } | null;
+    DisplayNames: {
+        [key: string]: string;
+    } | null;
+    AdditionalTargetUrls: Array<string> | null;
+};
+
 export type ScheduleDto = {
     ID: number;
     Tags: Array<string> | null;
@@ -561,9 +631,11 @@ export type SearchEntriesRequestDto = {
     BackupId: (string) | null;
     Paths: Array<string> | null;
     Filters: Array<string> | null;
-    Time: (string) | null;
-    Version: (number[]) | null;
+    Time?: (string) | null;
     ReturnExtended?: (boolean) | null;
+    Version?: Array<number> | null;
+    CaseSensitiveSearch?: (boolean) | null;
+    SearchMetadata?: (boolean) | null;
 };
 
 export type SearchEntriesResponseDto = {
@@ -659,6 +731,7 @@ export type SystemInfoDto = {
     NewLine: (string) | null;
     CLRVersion: (string) | null;
     Options: Array<ICommandLineArgument> | null;
+    ServerOnlyOptions: Array<ICommandLineArgument> | null;
     CompressionModules: Array<IDynamicModule> | null;
     EncryptionModules: Array<IDynamicModule> | null;
     BackendModules: Array<IDynamicModule> | null;
@@ -681,6 +754,8 @@ export type SystemInfoDto = {
     DefaultOAuthURL: (string) | null;
     DefaultOAuthURLv2: (string) | null;
     PowerModeProviders: Array<string> | null;
+    LocalLicenseStatus: LicenseStatusDto;
+    RemoteLicenseStatus: LicenseStatusDto;
 };
 
 export type TargetUrlDto = {
@@ -727,6 +802,25 @@ export type TempDiskSpaceResult = {
     TotalSpace: (number) | null;
     DblockSize: number;
     RestoreCacheMax: number;
+};
+
+export type TestFilterRequestDto = {
+    Paths?: Array<string> | null;
+    Sources?: Array<string> | null;
+    Filters?: Array<string> | null;
+};
+
+export type TestFilterResponseDto = {
+    Success: boolean;
+    Error: (string) | null;
+    StatusCode: (string) | null;
+    Data?: Array<TestFilterResponseItem> | null;
+};
+
+export type TestFilterResponseItem = {
+    Path?: (string) | null;
+    Included?: boolean;
+    MatchedFilter?: (string) | null;
 };
 
 export type TimeZoneDto = {
@@ -921,6 +1015,14 @@ export type PostApiV1FilesystemValidateData = {
 
 export type PostApiV1FilesystemValidateResponse = (unknown);
 
+export type GetApiV1FolderstatusResponse = (Array<FolderStatusDto>);
+
+export type GetApiV1FolderstatusByPathData = {
+    path: string;
+};
+
+export type GetApiV1FolderstatusByPathResponse = (FolderStatusDto);
+
 export type GetApiV1LicensesResponse = (Array<LicenseDto>);
 
 export type GetApiV1LogdataPollData = {
@@ -968,7 +1070,7 @@ export type PostApiV1RemoteoperationDbpathResponse = (GetDbPathDto);
 
 export type PostApiV1RemoteoperationTestData = {
     autocreate?: boolean;
-    readonlytest?: boolean;
+    readOnlyTest?: boolean;
     requestBody: RemoteOperationInput;
     type?: RemoteDestinationType;
 };
@@ -1274,6 +1376,18 @@ export type PostApiV1BackupByIdCopytotempData = {
 
 export type PostApiV1BackupByIdCopytotempResponse = (CreateBackupDto);
 
+export type PostApiV1BackupByIdRestoreTaskConfigData = {
+    id: string;
+};
+
+export type PostApiV1BackupByIdRestoreTaskConfigResponse = (Array<RestoreTaskConfigElementDto>);
+
+export type PostApiV1BackupByIdImportfromtempData = {
+    requestBody: ImportBackupFromTempDto;
+};
+
+export type PostApiV1BackupByIdImportfromtempResponse = (ImportBackupOutputDto);
+
 export type PostApiV1RemotecontrolEnableResponse = (RemoteControlStatusOutput);
 
 export type PostApiV1RemotecontrolDisableResponse = (RemoteControlStatusOutput);
@@ -1290,11 +1404,23 @@ export type DeleteApiV1RemotecontrolRegisterResponse = (RemoteControlStatusOutpu
 
 export type PostApiV1RemotecontrolRegisterWaitResponse = (RemoteControlStatusOutput);
 
+export type PostApiV2DestinationListData = {
+    requestBody: DestinationListRequestDto;
+};
+
+export type PostApiV2DestinationListResponse = (DestinationListResponseDto);
+
 export type PostApiV2SystemTempDiskSpaceData = {
     requestBody: TempDiskSpaceRequestDto;
 };
 
 export type PostApiV2SystemTempDiskSpaceResponse = (TempDiskSpaceResponseDto);
+
+export type PostApiV2FilesystemTestFilterData = {
+    requestBody: TestFilterRequestDto;
+};
+
+export type PostApiV2FilesystemTestFilterResponse = (TestFilterResponseDto);
 
 export type PostApiV2BackupListFilesetsData = {
     requestBody: ListFilesetsRequestDto;

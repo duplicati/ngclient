@@ -8,7 +8,19 @@
     </div>
   </header>
 
-  @if (!isUsingRelay()) {
+  @if (isUsingRelay()) {
+    <section>
+      <div class="left">
+        <h3 i18n>Console connection status</h3>
+        <p>{{ remoteControlStatus() }}</p>
+      </div>
+      <div class="right">
+        @if (additionalReportingUrl() !== '' && remoteControlState() !== 'registered') {
+          <sh-chip class="reporting-url primary simple" i18n>Reporting configured by server</sh-chip>
+        }
+      </div>
+    </section>
+  } @else {
     <section>
       <div class="left">
         <h3 i18n>Connect to console</h3>

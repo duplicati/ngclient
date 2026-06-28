@@ -47,7 +47,7 @@ export class SysinfoState {
     const defaultOptions = {
       displayName: 'Default',
       options:
-        this.systemInfo()?.Options?.map((x) =>
+        [...(this.systemInfo()?.Options ?? []), ...(this.systemInfo()?.ServerOnlyOptions ?? [])].map((x) =>
           this.#mapCommandLineArgumentsToFormViewsExpanding(x, this.systemInfo())
         ) ?? [],
     };
@@ -98,6 +98,21 @@ export class SysinfoState {
   hasV2TestOperations = computed(() => {
     const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
     return apiExtensions.includes('v2:destination:test');
+  });
+
+  hasV2ListBackendOperations = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v2:destination:list');
+  });
+
+  hasV2FilterOperations = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v2:filesystem:test-filter');
+  });
+
+  hasRestoreControlFilesOperation = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v1:backup:restorecontrolfiles');
   });
 
   hasProgressSubscribeOption = computed(() => {

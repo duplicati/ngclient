@@ -138,6 +138,10 @@
           width: p2r(48);
         }
 
+        .icon:has(img:nth-child(2)) {
+          width: p2r(40);
+        }
+
         .icon {
           width: p2r(24);
         }
@@ -163,6 +167,11 @@
         align-items: center;
         justify-content: center;
         cursor: pointer;
+
+        .provider-icon {
+          width: p2r(16);
+          height: p2r(16);
+        }
 
         &.file {
           width: p2r(48);

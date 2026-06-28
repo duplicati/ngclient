@@ -3,6 +3,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   ShipAlert,
   ShipButton,
+  ShipChip,
   ShipDialogService,
   ShipDivider,
   ShipFormField,
@@ -126,6 +127,7 @@ type UsageStatisticsType = (typeof USAGE_STATISTICS_OPTIONS)[number];
     ShipDivider,
     ShipAlert,
     ShipSelect,
+    ShipChip,
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss',
@@ -160,6 +162,11 @@ export default class SettingsComponent {
   usageStatisticsDisabled = computed(() => {
     const value = this.#sysinfo.systemInfo()?.DefaultUsageReportLevel ?? '';
     return value.toLowerCase() === 'disabled';
+  });
+
+  additionalReportingUrl = computed(() => {
+    const settings = this.#serverSettingsService.serverSettings();
+    return settings ? settings['additional-report-url'] || '' : '';
   });
 
   #setReporterDefaultEffect = effect(() => {

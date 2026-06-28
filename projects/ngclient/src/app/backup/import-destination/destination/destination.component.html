@@ -1,0 +1,112 @@
+@let hasDestination = !!targetUrlModel();
+
+<form #formRef (submit)="next()">
+  <header>
+    <h3 class="title-30">
+      <span i18n>Backup destination</span>
+
+      <div class="actions">
+        @if (!hasDestination) {
+          <button shButton type="button" class="small" (click)="openTargetUrlDialog()" i18n>
+            <sh-icon>link</sh-icon>
+            Set target URL
+          </button>
+        } @else {
+          <sh-menu>
+            <button shButton type="button" class="small">
+              <sh-icon>dots-three-vertical</sh-icon>
+            </button>
+
+            <ng-container menu>
+              <button shButton type="button" class="small" (click)="openTargetUrlDialog()" i18n>
+                <sh-icon>link</sh-icon>
+                Edit target URL
+              </button>
+              @if (hasDestination) {
+                <button shButton type="button" class="small" (click)="copyTargetUrl()" i18n>
+                  <sh-icon>copy</sh-icon>
+                  Copy URL to clipboard
+                </button>
+              }
+            </ng-container>
+          </sh-menu>
+        }
+      </div>
+    </h3>
+
+    <app-test-url
+      #testUrl
+      [(targetUrl)]="targetUrlModel"
+      [(testSignal)]="testSignal"
+      [backupId]="null"
+      [sourcePrefix]="null"
+      [suppressErrorDialogs]="false"
+      [askToCreate]="false"
+      [testExpectation]="'containsBackup'"
+      [readOnlyTest]="true"
+      [moduleType]="'Backend'"></app-test-url>
+
+    @let option = selectedDestinationTypeOption();
+
+    @if (option) {
+      <app-destination-list-item [destination]="option" class="current-destination">
+        <button shButton i18n (click)="removeDestination()" type="button">Change</button>
+      </app-destination-list-item>
+    }
+  </header>
+
+  @if (!hasDestination) {
+    <app-destination-list (setDestination)="setDestination($event)" />
+  }
+
+  @if (hasDestination) {
+    <app-single-destination [(targetUrl)]="targetUrlModel" />
+  }
+
+  <div class="form-actions">
+    <button shButton type="button" (click)="goBack()" i18n>
+      <sh-icon>arrow-left</sh-icon>
+      Go back
+    </button>
+
+    <button
+      shButton
+      class="raised primary"
+      type="submit"
+      [disabled]="testSignal() == 'testing' || !hasDestination"
+      i18n>
+      @if (testSignal() == 'testing') {
+        <sh-icon class="loader">spinner</sh-icon>
+      } @else {
+        <sh-icon>arrow-right</sh-icon>
+      }
+      Continue
+    </button>
+  </div>
+</form>
+
+@if (targetUrlDialogOpen()) {
+  <sh-dialog [(isOpen)]="targetUrlDialogOpen" [options]="{ maxWidth: '700px', width: '100%' }">
+    <header header>
+      <div class="target-dialog-header">
+        <h2 i18n>Edit target URL</h2>
+        <sh-alert class="warn" i18n>Be careful, this will overwrite everything you have in your destination.</sh-alert>
+      </div>
+    </header>
+
+    <div content>
+      <sh-form-field>
+        <textarea id="targetUrl" autocomplete="off" [(ngModel)]="targetUrlCtrl"></textarea>
+      </sh-form-field>
+    </div>
+
+    <footer footer>
+      <button shButton type="button" (click)="closeTargetUrlDialog(false)">Cancel</button>
+
+      <button shButton class="raised primary" type="submit" (click)="closeTargetUrlDialog(true)" i18n>
+        Override target URL
+        <sh-icon>swap</sh-icon>
+      </button>
+    </footer>
+  </sh-dialog>
+}

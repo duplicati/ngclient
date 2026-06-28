@@ -1518,6 +1518,13 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         isMandatory: true,
       },
     ],
+    advancedFields: [
+      {
+        type: 'FileTree',
+        name: 'debug-propfind-file',
+        accepts: '.txt,.log',
+      },
+    ],
     mapper: {
       to: (fields: ValueOfDestinationFormGroup): string => {
         const { server, port, path } = fields.custom;

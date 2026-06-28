@@ -1,0 +1,105 @@
+@use '@ship-ui/core/styles/helpers' as *;
+
+:host {
+  display: block;
+  padding: p2r(32);
+  max-width: p2r(800);
+  margin: 0 auto;
+}
+
+.loading-state,
+.empty-state {
+  text-align: center;
+  padding: p2r(64 32);
+
+  p {
+    margin-top: p2r(16);
+    color: var(--color-on-surface-variant);
+  }
+}
+
+h2 {
+  margin-bottom: p2r(32);
+}
+
+.search-area {
+  display: flex;
+  flex-direction: row;
+  gap: p2r(16);
+  margin-bottom: p2r(32);
+}
+
+.list-actions {
+  display: flex;
+  flex-direction: row;
+  gap: p2r(8);
+  margin-bottom: p2r(8);
+  justify-content: flex-end;
+}
+
+.clear-search {
+  opacity: 0.6;
+  cursor: pointer;
+}
+
+.config-list {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(16);
+  margin-bottom: p2r(32);
+
+  sh-card {
+    padding: p2r(16);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: p2r(8);
+
+    &.unmatched {
+      opacity: 0.4;
+    }
+
+    h3 {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: p2r(8);
+      flex-grow: 1;
+    }
+
+    .provider {
+      display: flex;
+      flex-direction: column;
+      gap: p2r(8);
+    }
+
+    .metadata {
+      display: flex;
+      flex-direction: column;
+      gap: p2r(8);
+      margin-left: p2r(28);
+    }
+  }
+}
+
+.provider-icon {
+  width: p2r(20);
+  height: p2r(20);
+}
+
+.options {
+  margin-bottom: p2r(32);
+  display: flex;
+  flex-direction: column;
+  gap: p2r(16);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  margin-top: p2r(32);
+
+  .spacer {
+    flex: 1;
+  }
+}

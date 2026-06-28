@@ -29,8 +29,8 @@
               [class.loading]="isLoading() === node.id"
               [class.generated]="node.isGenerated"
               [class.search-match]="node.isSearchMatch"
-              (click)="toggleNode(node.id, node)">
-              <div class="icon" [class.file]="node.cls === 'file'">
+              (click)="toggleSelectedNode($event, node)">
+              <div class="icon" [class.file]="node.cls === 'file'" (click)="toggleNode($event, node.id, node)">
                 @if (node.id !== '/') {
                   @if (node.children.length) {
                     <sh-icon class="small">caret-down</sh-icon>
@@ -41,7 +41,10 @@
                   } @else {
                     <sh-icon class="small">caret-right</sh-icon>
                   }
-                  @if (node.children.length) {
+
+                  @if (node.customIcon) {
+                    <img class="provider-icon" [src]="node.customIcon" alt="Provider icon" />
+                  } @else if (node.children.length) {
                     <sh-icon class="primary">folder-open</sh-icon>
                   } @else if (node.id === '%HOME%') {
                     <sh-icon class="primary">folder-user</sh-icon>
@@ -55,7 +58,7 @@
                 }
               </div>
 
-              <div class="text" (click)="toggleSelectedNode($event, node)">
+              <div class="text">
                 <span>{{ node.text }}</span>
                 @if (node.cls == 'file' && node.fileSize != null && node.fileSize >= 0) {
                   <span class="size">&nbsp;({{ node.fileSize | bytes: true : true }})</span>
@@ -109,6 +112,10 @@
   <!-- <pre>{{ selectedPaths() | json }}</pre> -->
   <!-- <pre>{{ currentPath() }}</pre> -->
 </div>
+
+@if (errorMessage()) {
+  <sh-alert [color]="'error'">{{ errorMessage() }}</sh-alert>
+}
 
 @if (createFolderDialogOpen()) {
   <sh-dialog [(isOpen)]="createFolderDialogOpen" [options]="{ maxWidth: '700px', width: '100%' }">

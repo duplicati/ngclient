@@ -18,7 +18,7 @@ import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.c
 import { SysinfoState } from '../../core/states/sysinfo.state';
 import { BackupState } from '../backup.state';
 import { FiltersComponent } from '../components/filters/filters.component';
-import { getConfigurationByUrl } from '../destination/destination.config-utilities';
+import { getBackendIcon, getRemotePathDisplayName } from '../destination/destination.config-utilities';
 import { TargetDiskDialog } from './target-disk-dialog/target-disk-dialog';
 import { TargetUrlDialog } from './target-url-dialog/target-url-dialog';
 
@@ -100,6 +100,7 @@ export default class SourceDataComponent {
   bulkPathEditMode = signal(false);
   bulkPaths = signal('');
   mobileMenuOpen = signal(false);
+  backupId = this.#backupState.backupId();
   isLocalDiskSupported = computed(() =>
     this.#sysInfo.systemInfo()?.SourceProviderModules?.find((x) => x.Key == 'diskimage')
   );
@@ -314,19 +315,12 @@ export default class SourceDataComponent {
   getBackendIcon(path: string | null | undefined) {
     if (!path) return '';
     const url = path.split('|')[1];
-    if (url.startsWith('diskimage:')) return 'assets/dest-icons/external-harddrive.png';
-    const match = getConfigurationByUrl(url);
-    return match.icon ?? 'database';
+    return getBackendIcon(url);
   }
-
   getRemotePathDisplayName(path: string | null | undefined) {
     if (!path) return '';
     const url = path.split('|')[1];
-    if (url.startsWith('diskimage:')) return $localize`Local disk`;
-
-    const match = getConfigurationByUrl(url);
-    const name = match ? match.displayName : 'Unknown';
-    return name;
+    return getRemotePathDisplayName(url);
   }
 
   toggleFilesLargerThan($event: boolean) {
