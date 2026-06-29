@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipChip } from '@ship-ui/core/ship-chip';
@@ -13,6 +12,7 @@ import { ShipRadio } from '@ship-ui/core/ship-radio';
 import { ShipRangeSlider } from '@ship-ui/core/ship-range-slider';
 import { ShipSelect } from '@ship-ui/core/ship-select';
 import { ShipToggle } from '@ship-ui/core/ship-toggle';
+import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { finalize } from 'rxjs';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { LANGUAGES } from '../core/locales/locales.utility';
@@ -25,30 +25,30 @@ import { RemoteControlState } from './remote-control/remote-control.state';
 import { ServerSettingsService } from './server-settings.service';
 
 import { CreateSignalOptions, WritableSignal } from '@angular/core';
-import { SIGNAL, SignalGetter, signalSetFn, signalUpdateFn } from '@angular/core/primitives/signals';
-import { createSignal } from 'ngxtension/create-signal';
+import { createSignal, SIGNAL, SignalGetter, signalSetFn, signalUpdateFn } from '@angular/core/primitives/signals';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import { RelayconfigState } from '../core/states/relayconfig.state';
 
 export function debounceSignal<T>(initialValue: T, time: number, options?: CreateSignalOptions<T>): WritableSignal<T> {
-  const signalFn = createSignal(initialValue) as SignalGetter<T> & WritableSignal<T>;
-  const node = signalFn[SIGNAL];
-  if (options?.equal) {
-    node.equal = options.equal;
-  }
+  const [getter] = createSignal<T>(initialValue, options?.equal);
 
-  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+  const signalFn = getter as unknown as WritableSignal<T>;
+  const node = (getter as SignalGetter<T>)[SIGNAL];
+
+  let timeoutId: any;
 
   signalFn.set = (newValue: T) => {
     clearTimeout(timeoutId);
-
-    timeoutId = setTimeout(() => signalSetFn(node, newValue), time);
+    timeoutId = setTimeout(() => {
+      signalSetFn(node, newValue);
+    }, time);
   };
 
   signalFn.update = (updateFn: (value: T) => T) => {
     clearTimeout(timeoutId);
-
-    timeoutId = setTimeout(() => signalUpdateFn(node, updateFn), time);
+    timeoutId = setTimeout(() => {
+      signalUpdateFn(node, updateFn);
+    }, time);
   };
 
   return signalFn;
