@@ -29,7 +29,9 @@
     "tx:push": "tx push -s",
     "tx:pull": "tx pull -a --mode translated --minimum-perc 20",
     "tx:sync": "ng extract-i18n --output-path projects/ngclient/src/locale --format xlf && tx push -s && tx pull -a --minimum-perc 20 && ng build ngclient --localize && npx tsx scripts/convert-xlf-to-json.ts",
-    "gen:openapi": "openapi-ts"
+    "gen:openapi": "openapi-ts",
+    "test": "ng test ngclient",
+    "test:ci": "ng test ngclient --watch=false"
   },
   "dependencies": {
     "@angular/common": "21.2.11",
@@ -53,9 +55,11 @@
     "@angular/compiler-cli": "21.2.11",
     "@hey-api/openapi-ts": "^0.83.1",
     "baseline-browser-mapping": "^2.9.18",
+    "jsdom": "^28.0.0",
     "ng-packagr": "21.2.3",
     "prettier": "^3.7.4",
     "typescript": "~5.9.2",
+    "vitest": "^4.0.8",
     "xml2js": "^0.6.2"
   }
 }
