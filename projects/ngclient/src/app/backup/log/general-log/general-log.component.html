@@ -251,10 +251,32 @@
                   </details>
 
                   <sh-divider />
-
                 </div>
               </details>
             }
+          }
+
+          @if (item.data?.LockResults) {
+            <details name="details">
+              <summary i18n>
+                <sh-icon>lock</sh-icon>
+                Lock results
+
+                <div class="actions">
+                  <sh-icon class="toggle-indicator">caret-down</sh-icon>
+                </div>
+              </summary>
+
+              <div class="content">
+                <p i18n>Start: {{ item.data?.LockResults?.BeginTime | date: 'medium' }}</p>
+                <p i18n>End: {{ item.data?.LockResults?.EndTime | date: 'medium' }}</p>
+                <p i18n>Duration: {{ item.data?.LockResults?.Duration | durationFormat }}</p>
+                <sh-divider />
+                <p i18n>Volumes read: {{ item.data?.LockResults?.VolumesRead }}</p>
+                <p i18n>Volumes updated: {{ item.data?.LockResults?.VolumesUpdated }}</p>
+                <p i18n>Parsed result: {{ item.data?.LockResults?.ParsedResult }}</p>
+              </div>
+            </details>
           }
 
           @if (item.data?.MainOperation === 'Test') {

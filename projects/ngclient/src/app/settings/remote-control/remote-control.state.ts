@@ -4,6 +4,8 @@ import { ShipDialogService } from '@ship-ui/core';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer, RemoteControlStatusOutput } from '../../core/openapi';
 import { WINDOW } from '../../core/providers/window';
+import { ServerStateService } from '../../core/services/server-state.service';
+import { ServerStatusWebSocketService } from '../../core/services/server-status-websocket.service';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 import { ServerSettingsService } from '../server-settings.service';
 
@@ -27,18 +29,28 @@ export class RemoteControlState {
   #dialog = inject(ShipDialogService);
   #dupServer = inject(DuplicatiServer);
   #sysinfo = inject(SysinfoState);
+  #wsService = inject(ServerStatusWebSocketService);
+  #serverState = inject(ServerStateService);
   #serverSettings = inject(ServerSettingsService);
+
+  constructor() {
+    this.#wsService.subscribe('remotecontrol');
+  }
 
   repeatRegisterTimer: Timeout | null = null;
   #errorRetryTimer: Timeout | null = null;
   #errorRetryCount = 0;
   readonly #maxErrorRetries = 5;
   readonly #baseRetryDelayMs = 2000;
+
+  // Handle case where we are asked to refresh before the connection method is set
+  pendingRefresh = false;
+
   state = signal<State>('unknown');
   claimUrl = signal<string | null>(null);
   registerUrl = signal<string>('');
   customRegisterUrl = signal<string>('');
-  status = computed(() => {
+  statusMessage = computed(() => {
     const state = this.state();
 
     if (state === 'connecting') return $localize`Console connection is enabled but not connected`;
@@ -60,10 +72,31 @@ export class RemoteControlState {
     this.registerUrl.set(systemInfo.RemoteControlRegistrationUrl ?? '');
   });
 
-  #mapRemoteControlStatus(data: RemoteControlStatusOutput) {
-    // Reset error retry count on successful response
-    this.#errorRetryCount = 0;
+  remoteEffect = effect(() => {
+    const remoteControlState = this.#wsService.remoteControlState();
 
+    if (!remoteControlState) return;
+
+    this.#mapRemoteControlStatus(remoteControlState);
+  });
+
+  pendingRefreshEffect = effect(() => {
+    const isSet = this.#serverState.isConnectionMethodSet();
+    if (!isSet) return;
+
+    if (this.pendingRefresh) {
+      this.pendingRefresh = false;
+      this.refreshRemoteControlStatus();
+    }
+  });
+
+  #usingWebsocket = computed(() => {
+    const isUsingWs = this.#serverState.getConnectionMethod() === 'websocket';
+    const hasWsRemote = this.#sysinfo.hasWsRemoteControl();
+    return isUsingWs && hasWsRemote;
+  });
+
+  #updateLocalViewState(data: RemoteControlStatusOutput) {
     data.RegistrationUrl && this.claimUrl.set(data.RegistrationUrl);
 
     if (data.IsConnected) {
@@ -83,6 +116,16 @@ export class RemoteControlState {
     } else {
       this.state.set('inactive');
     }
+  }
+
+  #mapRemoteControlStatus(data: RemoteControlStatusOutput) {
+    // Reset error retry count on successful response
+    this.#errorRetryCount = 0;
+
+    this.#updateLocalViewState(data);
+
+    // Don't poll if we are using websocket
+    if (this.#usingWebsocket()) return;
 
     const currentState = this.state();
 
@@ -148,6 +191,12 @@ export class RemoteControlState {
   }
 
   refreshRemoteControlStatus() {
+    if (this.#usingWebsocket()) return;
+    if (!this.#serverState.isConnectionMethodSet()) {
+      this.pendingRefresh = true;
+      return;
+    }
+
     this.#dupServer.getApiV1RemotecontrolStatus().subscribe({
       next: (res) => this.#mapRemoteControlStatus(res),
       error: (err) => this.#mapRemoteControlError(err),

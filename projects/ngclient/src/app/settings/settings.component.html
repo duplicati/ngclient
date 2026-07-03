@@ -8,7 +8,19 @@
     </div>
   </header>
 
-  @if (!isUsingRelay()) {
+  @if (isUsingRelay()) {
+    <section>
+      <div class="left">
+        <h3 i18n>Console connection status</h3>
+        <p>{{ remoteControlStatus() }}</p>
+      </div>
+      <div class="right">
+        @if (additionalReportingUrl() !== '' && remoteControlState() !== 'registered') {
+          <sh-chip class="reporting-url primary simple" i18n>Reporting configured by server</sh-chip>
+        }
+      </div>
+    </section>
+  } @else {
     <section>
       <div class="left">
         <h3 i18n>Connect to console</h3>
@@ -430,6 +442,29 @@
             {{ option.label }}
           </ng-template>
         </sh-select>
+      </div>
+    </section>
+  }
+
+  @if (hasIpcController()) {
+    <section>
+      <div class="left">
+        <h3 i18n>Experimental options</h3>
+        <p i18n>Toggle experimental options.</p>
+      </div>
+
+      <div class="right multiple">
+        <p>Backup process isolation</p>
+        <sh-toggle
+          class="primary raised"
+          [checked]="isControllerIpcEnabled()"
+          (checkedChange)="saveControllerIpcState($event)">
+          @if (isControllerIpcEnabled()) {
+            <label i18n>Operations run in an isolated process</label>
+          } @else {
+            <label i18n>Operations run inside the server process</label>
+          }
+        </sh-toggle>
       </div>
     </section>
   }

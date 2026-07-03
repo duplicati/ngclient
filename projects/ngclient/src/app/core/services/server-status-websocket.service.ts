@@ -4,10 +4,12 @@ import { Observable, Subscriber } from 'rxjs';
 import { DisconnectedDialogComponent } from '../components/disconnected-dialog/disconnected-dialog.component';
 import {
   GetApiV1BackupsResponse,
+  GetApiV1NotificationsResponse,
   GetApiV1ServersettingsResponse,
   GetTaskStateDto,
   IProgressEventData,
   OpenAPI,
+  RemoteControlStatusOutput,
   ServerStatusDto,
 } from '../openapi';
 import { AppAuthState } from '../states/app-auth.state';
@@ -21,9 +23,10 @@ export type SubscriptionService =
   | 'progress'
   | 'taskqueue'
   | 'taskcompleted'
-  | 'notification'
+  | 'notifications'
   | 'legacystatus'
-  | 'serversettings';
+  | 'serversettings'
+  | 'remotecontrol';
 type RequestAction = 'sub' | 'unsub';
 type ResponseAction = 'reply';
 type ResponseType = SubscriptionService | ResponseAction;
@@ -90,6 +93,8 @@ export class ServerStatusWebSocketService {
   #serverSettings = signal<GetApiV1ServersettingsResponse | null>(null);
   #serverTaskQueue = signal<GetTaskStateDto[] | null>(null);
   #backupListState = signal<GetApiV1BackupsResponse | null>(null);
+  #notificationState = signal<GetApiV1NotificationsResponse | null>(null);
+  #remoteControlState = signal<RemoteControlStatusOutput | null>(null);
   #disconnectedDialog: ReturnType<typeof this.dialog.open<DisconnectedDialogComponent>> | undefined = undefined;
   #subscriptions = signal<Partial<{ [key in SubscriptionService]: any }>>({ legacystatus: true });
 
@@ -101,6 +106,8 @@ export class ServerStatusWebSocketService {
   subscriptions = this.#subscriptions.asReadonly();
   serverTaskQueue = this.#serverTaskQueue.asReadonly();
   backupListState = this.#backupListState.asReadonly();
+  notificationState = this.#notificationState.asReadonly();
+  remoteControlState = this.#remoteControlState.asReadonly();
   #taskCompletedSubscriber: Subscriber<GetTaskStateDto> | null = null;
   taskCompleted = new Observable<GetTaskStateDto>((subscriber) => {
     this.#taskCompletedSubscriber = subscriber;
@@ -231,6 +238,14 @@ export class ServerStatusWebSocketService {
           const evobj = respobj as WebsocketEventMessage<GetApiV1BackupsResponse>;
           if (LOGGING_ENABLED) console.log('Received backup list update:', evobj.Data);
           this.#backupListState.set(evobj.Data);
+        } else if (type === 'notifications') {
+          const evobj = respobj as WebsocketEventMessage<GetApiV1NotificationsResponse>;
+          if (LOGGING_ENABLED) console.log('Received notification update:', evobj.Data);
+          this.#notificationState.set(evobj.Data);
+        } else if (type === 'remotecontrol') {
+          const evobj = respobj as WebsocketEventMessage<RemoteControlStatusOutput>;
+          if (LOGGING_ENABLED) console.log('Received remote control update:', evobj.Data);
+          this.#remoteControlState.set(evobj.Data);
         } else {
           console.warn('Unknown WebSocket message type:', type);
         }

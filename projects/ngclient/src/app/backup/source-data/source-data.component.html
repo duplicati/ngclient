@@ -9,7 +9,13 @@
       </button>
     </div>
 
-    <app-file-tree class="fill" [multiSelect]="true" [startingPath]="getPath()" [showFiles]="true">
+    <app-file-tree
+      class="fill"
+      [multiSelect]="true"
+      [startingPath]="getPath()"
+      [showFiles]="true"
+      [showUnrootedSources]="true"
+      [backupId]="backupId">
       <label for="path" i18n>Folder path</label>
       <input type="text" id="path" tabindex="4" i18n-placeholder placeholder="Path" formControlName="path" />
     </app-file-tree>
@@ -107,7 +113,7 @@
               } @else {
                 @if (path.startsWith('@')) {
                   <sh-chip>
-                    <img class="provider-icon" [src]="getBackendIcon(path)" alt="" />
+                    <img class="provider-icon" [src]="getBackendIcon(path)" alt="Provider icon" />
                     {{ getRemotePathDisplayName(path) }}
                   </sh-chip>
                 } @else {
@@ -144,21 +150,6 @@
     <app-toggle-card formGroupName="excludes" [disableToggle]="true">
       <ng-container title i18n>Exclude</ng-container>
       <p description i18n>Choose if there’s any files you want to exclude.</p>
-
-      <sh-toggle class="raised primary" i18n>
-        Files with the Hidden attribute
-        <input type="checkbox" i18n-placeholder placeholder="Hidden files" formControlName="hidden" />
-      </sh-toggle>
-
-      <sh-toggle class="raised primary" i18n>
-        Files with the System attribute
-        <input type="checkbox" i18n-placeholder placeholder="System files" formControlName="system" />
-      </sh-toggle>
-
-      <sh-toggle class="raised primary" i18n>
-        Files with the Temporary attribute
-        <input type="checkbox" i18n-placeholder placeholder="Temporary files" formControlName="temporary" />
-      </sh-toggle>
 
       <sh-toggle
         class="raised primary"

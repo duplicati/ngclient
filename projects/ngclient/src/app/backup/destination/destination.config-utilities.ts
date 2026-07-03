@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ArgumentType, ICommandLineArgument, SettingInputDto } from '../../core/openapi';
 import { WebModuleOption, WebModulesService } from '../../core/services/webmodules.service';
 import { DestinationFormGroupValue } from './destination.component';
-import { DESTINATION_CONFIG, DESTINATION_CONFIG_DEFAULT, S3_BASE } from './destination.config';
+import { DESTINATION_CONFIG, DESTINATION_CONFIG_DEFAULT, S3_BASE, S3_HOST_SUFFIX_MAP } from './destination.config';
 
 const fb = new FormBuilder();
 
@@ -195,6 +195,21 @@ export function addPort(port: string | number | null | undefined) {
   return ':' + port.toString();
 }
 
+export function getBackendIcon(url: string | null | undefined) {
+  if (!url) return '';
+  if (url.startsWith('diskimage:')) return 'assets/dest-icons/external-harddrive.png';
+  const match = getConfigurationByUrl(url);
+  return match.icon;
+}
+
+export function getRemotePathDisplayName(url: string | null | undefined) {
+  if (!url) return '';
+  if (url.startsWith('diskimage:')) return $localize`Local disk`;
+
+  const match = getConfigurationByUrl(url);
+  return match ? match.displayName : 'Unknown';
+}
+
 export function getConfigurationByUrl(targetUrl: string): DestinationConfigEntry {
   try {
     const urlObj = new UrlLike(targetUrl);
@@ -204,6 +219,33 @@ export function getConfigurationByUrl(targetUrl: string): DestinationConfigEntry
 
   const key = targetUrl.split('://')[0];
   return getConfigurationByKey(key);
+}
+
+const DestinationOverrides: Record<string, { Display: string | null; Icon: string | null }> = {
+  file: { Display: $localize`Local`, Icon: null },
+};
+
+export function getBackendType(targetUrl: string | null | undefined) {
+  if (!targetUrl) return '';
+  const match = getConfigurationByUrl(targetUrl);
+  if (!match) return '';
+
+  const override = DestinationOverrides[match.key];
+  if (override?.Display) return override.Display;
+
+  if (match.key === 's3') {
+    const fakeHttpUrl = 'http://null?' + targetUrl.split('?')[1]; // simulate query string
+    const url = new URL(fakeHttpUrl);
+    const serverName = url.searchParams.get('s3-server-name')?.toLowerCase() ?? '';
+
+    for (const [suffix, name] of Object.entries(S3_HOST_SUFFIX_MAP)) {
+      if (serverName.endsWith(suffix)) {
+        return name;
+      }
+    }
+  }
+
+  return match.displayName;
 }
 
 export function getConfigurationByKey(key: string): DestinationConfigEntry {

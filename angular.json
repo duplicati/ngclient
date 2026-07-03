@@ -250,6 +250,12 @@
             "format": "json",
             "outputPath": "projects/ngclient/src/locale"
           }
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "projects/ngclient/tsconfig.spec.json"
+          }
         }
       }
     },

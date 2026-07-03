@@ -26,7 +26,7 @@ import {
   ShipToggleCard,
   ShipTooltip,
 } from '@ship-ui/core';
-import { distinctUntilChanged, finalize, map, of, switchMap, tap } from 'rxjs';
+import { catchError, distinctUntilChanged, finalize, map, merge, of, switchMap } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../core/components/confirm-dialog/confirm-dialog.component';
 import { FileDropTextareaComponent } from '../../../core/components/file-drop-textarea/file-drop-textarea.component';
 import FileTreeComponent from '../../../core/components/file-tree/file-tree.component';
@@ -49,6 +49,7 @@ import {
   parseKeyValueTextToObject,
   toTargetPath,
 } from '../destination.config-utilities';
+import { BrowsePathDialog } from './browse-path-dialog/browse-path-dialog';
 
 type DestinationConfig = {
   destinationType: string;
@@ -120,42 +121,33 @@ export class SingleDestinationComponent {
   destinationFormConfig = signal<DestinationConfig | null>(null);
 
   showTextArea = signal(false);
+  hasV2ListBackendOperations = this.#sysinfo.hasV2ListBackendOperations;
 
   isLoadingRestoreBackupIdOptions = signal(false);
   isRestoreFlow = computed(() => !this.useBackupState());
+  reloadTrigger = signal(false);
+  hasLoadedBackupIdOptions = signal(false);
   restoreBackupIdOptions = toSignal(
-    toObservable(this.targetUrl).pipe(
-      map((url) => {
-        if (!url) {
-          return {
-            authKey: null as string | null,
-            url: null as string | null,
-            isRestore: this.isRestoreFlow(),
-            hasKey: this.hasStorageApiKey(),
-          };
-        }
-
-        const queryStart = url.indexOf('?');
-        const query = queryStart >= 0 ? url.substring(queryStart + 1) : '';
-        const params = new URLSearchParams(query);
-
-        const apiId = params.get('duplicati-auth-apiid') ?? '';
-        const apiKey = params.get('duplicati-auth-apikey') ?? '';
-
-        const authKey = `${apiId}|${apiKey}`;
-
-        return { authKey, url };
-      }),
-      distinctUntilChanged((a, b) => a.authKey === b.authKey),
-      tap(({ url }) => {
-        (this as any).lastRestoreAuthQueryUrl = url;
-      }),
-      switchMap(({ url }) => {
-        if (url && url.startsWith('duplicati://') && this.hasStorageApiKey() && this.isRestoreFlow()) {
+    merge(
+      toObservable(this.targetUrl).pipe(
+        distinctUntilChanged(),
+        map((url) => ({ url, isReload: false }))
+      ),
+      toObservable(this.reloadTrigger).pipe(map(() => ({ url: this.targetUrl(), isReload: true })))
+    ).pipe(
+      switchMap(({ url, isReload }) => {
+        const isValidRequest = url && url.startsWith('duplicati://') && this.hasStorageApiKey() && this.isRestoreFlow();
+        const shouldLoad = isValidRequest && (isReload || !this.hasLoadedBackupIdOptions());
+        if (shouldLoad) {
+          this.hasLoadedBackupIdOptions.set(true);
           this.isLoadingRestoreBackupIdOptions.set(true);
-          return this.#webmoduleService
-            .getDuplicatiStorageBackups(url)
-            .pipe(finalize(() => this.isLoadingRestoreBackupIdOptions.set(false)));
+          return this.#webmoduleService.getDuplicatiStorageBackups(url).pipe(
+            catchError((err) => {
+              console.error('Error loading Duplicati storage backups', err);
+              return of([] as string[]);
+            }),
+            finalize(() => this.isLoadingRestoreBackupIdOptions.set(false))
+          );
         } else {
           return of<string[]>([]);
         }
@@ -170,7 +162,11 @@ export class SingleDestinationComponent {
   });
 
   hasStorageApiKey = computed(() => {
-    return (this.#serverSettings.serverSettings()?.['remote-control-storage-api-id'] ?? '').length > 0;
+    const form = this.destinationForm();
+    return (
+      (this.#serverSettings.serverSettings()?.['remote-control-storage-api-id'] ?? '').length > 0 ||
+      form.advanced['duplicati-auth-apiid']
+    );
   });
 
   isAuthenticatingFilen = signal(false);
@@ -461,6 +457,34 @@ export class SingleDestinationComponent {
 
   #oauthInProgress = signal(false);
 
+  browse(fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string, newValue: any) {
+    const backupId = this.useBackupState() ? this.#backupState.backupId() : null;
+    const connectionStringId = this.useBackupState() ? this.#backupState.connectionStringId() : null;
+
+    const dialogRef = this.#dialogService.open(BrowsePathDialog, {
+      maxWidth: '700px',
+      maxHeight: '80vh',
+      width: '100%',
+      closeOnOutsideClick: false,
+      data: {
+        backupId: backupId,
+        destinationUrl: this.targetUrl(),
+        connectionStringId: connectionStringId,
+      },
+    });
+
+    dialogRef.closed.subscribe((destination) => {
+      if (!destination) return;
+
+      destination = destination.replace(/^\/+/, '');
+
+      this.destinationForm.update((y) => {
+        y[fieldGroup][fieldName] = destination;
+        return { ...y };
+      });
+    });
+  }
+
   oauthStartTokenCreation(
     backendKey: string,
     fieldGroup: 'custom' | 'dynamic' | 'advanced',
@@ -501,7 +525,7 @@ export class SingleDestinationComponent {
       if (hasAuthId) {
         this.destinationForm.update((y) => {
           y[fieldGroup][fieldName] = authId;
-          return y;
+          return { ...y };
         });
 
         this.#oauthInProgress.set(false);
@@ -582,7 +606,7 @@ export class SingleDestinationComponent {
           this.destinationForm.update((y) => {
             y.advanced['api-key'] = apiKey;
             y.dynamic['two-factor-code'] = null;
-            return y;
+            return { ...y };
           });
           this.refreshView.set(!this.refreshView());
         },

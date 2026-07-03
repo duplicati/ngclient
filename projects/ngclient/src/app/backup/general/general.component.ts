@@ -13,12 +13,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import {
   ShipAlert,
   ShipButton,
+  ShipButtonGroup,
   ShipFormField,
   ShipIcon,
   ShipProgressBar,
   ShipSelect,
   ShipTooltip,
 } from '@ship-ui/core';
+import { OperationType } from '../../core/openapi';
 import { PasswordGeneratorService } from '../../core/services/password-generator.service';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 import { validateWhen, watchField } from '../../core/validators/custom.validators';
@@ -34,6 +36,7 @@ export const createGeneralForm = (
     password: '',
     repeatPassword: '',
     compression: '',
+    operationType: 'Backup' as OperationType,
   }
 ) => {
   return fb.group({
@@ -46,7 +49,7 @@ export const createGeneralForm = (
     repeatPassword: fb.control<string>(defaults.repeatPassword, [
       validateWhen((t) => t?.value.encryption !== '-', [Validators.required]),
     ]),
-    compression: fb.control<string>(defaults.compression),
+    operationType: fb.control<OperationType>(defaults.operationType),
   });
 };
 
@@ -67,6 +70,7 @@ export const NONE_OPTION = {
     ShipAlert,
     ShipTooltip,
     ShipAlert,
+    ShipButtonGroup,
   ],
   templateUrl: './general.component.html',
   styleUrl: './general.component.scss',
@@ -83,8 +87,10 @@ export default class GeneralComponent {
   generalForm = this.#backupState.generalForm;
   generalFormSignal = this.#backupState.generalFormSignal;
   encryptionFieldSignal = this.#backupState.encryptionFieldSignal;
+  operationTypeFieldSignal = signal<OperationType>('Backup'); // this.#backupState.operationTypeFieldSignal;
   encryptionOptions = this.#backupState.encryptionOptions;
   isNew = this.#backupState.isNew;
+  syncModeSupported = this.#sysinfo.hasSyncMode;
 
   showPassword = signal(false);
   copiedPassword = signal(false);
@@ -98,6 +104,16 @@ export default class GeneralComponent {
       this.copiedPassword.set(false);
       this.showCopyPassword.set(false);
     }
+  });
+
+  #operationTypeEffect1 = effect(() => {
+    const operationType = this.#backupState.operationTypeFieldSignal();
+    this.operationTypeFieldSignal.set(operationType ?? 'Backup');
+  });
+
+  #operationTypeEffect2 = effect(() => {
+    const operationType = this.operationTypeFieldSignal();
+    this.generalForm.controls.operationType.setValue(operationType);
   });
 
   nameAndDescriptionValid = computed(() => {
@@ -152,7 +168,7 @@ export default class GeneralComponent {
   generatePassword() {
     this.copiedPassword.set(false);
 
-    const newPass = this.#passwordGeneratorService.generate(16);
+    const newPass = this.#passwordGeneratorService.generate(41);
     this.generalForm.controls.password.setValue(newPass);
     this.generalForm.controls.repeatPassword.setValue(newPass);
 

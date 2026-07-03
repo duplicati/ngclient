@@ -292,6 +292,7 @@ export default class SelectFilesComponent {
   performSearch() {
     const query = this.searchQuery().trim();
     const backupSettings = this.backupSettings();
+    const needsMetadata = (this.#restoreFlowState.extendedDataType() ?? '').length > 0;
 
     if (!query || !backupSettings) return;
 
@@ -314,7 +315,8 @@ export default class SelectFilesComponent {
           Paths: null,
           PageSize: 1000,
           Page: 0,
-          ReturnExtended: true,
+          ReturnExtended: needsMetadata,
+          SearchMetadata: needsMetadata,
         },
       })
       .pipe(

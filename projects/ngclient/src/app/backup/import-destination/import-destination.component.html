@@ -1,0 +1,22 @@
+<app-status-bar />
+
+<sh-stepper class="primary">
+  <div tabindex="-1" routerLinkActive="active" [routerLink]="['/backup/import-destination/destination']" i18n>
+    Destination
+  </div>
+  <div tabindex="-1" routerLinkActive="active" [routerLink]="['/backup/import-destination/encryption']" i18n>
+    Encryption
+  </div>
+  <div
+    tabindex="-1"
+    routerLinkActive="active"
+    class="inactive"
+    [routerLink]="['/backup/import-destination/select-config']"
+    i18n>
+    Select configurations
+  </div>
+</sh-stepper>
+
+<section>
+  <router-outlet />
+</section>

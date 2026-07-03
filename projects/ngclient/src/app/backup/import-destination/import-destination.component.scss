@@ -1,0 +1,29 @@
+@use '@ship-ui/core/styles/helpers' as *;
+
+:host {
+  display: block;
+
+  &.full-width section {
+    max-width: p2r(1000);
+  }
+}
+
+sh-stepper {
+  // max-width: p2r(500);
+  margin: p2r(40 32);
+  width: calc(100% - #{p2r(64)});
+}
+
+section {
+  max-width: p2r(500);
+  margin: 0 auto p2r(40);
+
+  @include breakpoint(-milli) {
+    padding: p2r(0 32);
+  }
+}
+
+.inactive {
+  pointer-events: none;
+  opacity: 0.5;
+}

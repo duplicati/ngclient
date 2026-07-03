@@ -1,11 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import { ShipButton, ShipDivider } from '@ship-ui/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { ShipButton, ShipCheckbox, ShipDialog, ShipIcon, ShipTooltip } from '@ship-ui/core';
+import { RemoteControlState } from '../../settings/remote-control/remote-control.state';
 import { ServerSettingsService } from '../../settings/server-settings.service';
 
 @Component({
   selector: 'app-select',
-  imports: [RouterLink, ShipDivider, ShipButton],
+  imports: [ShipButton, ShipCheckbox, ShipDialog, ShipIcon, ShipTooltip],
   templateUrl: './select.html',
   styleUrl: './select.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -13,11 +14,45 @@ import { ServerSettingsService } from '../../settings/server-settings.service';
 export default class Select {
   #serverSettingsService = inject(ServerSettingsService);
   #router = inject(Router);
+  #remoteControl = inject(RemoteControlState);
+
   hoveringConnect = signal(false);
+  skipDialogOpen = signal(false);
+  hasConnectionLink = signal(false);
+
+  primaryBenefits = [
+    $localize`Zero-configuration cloud storage`,
+    $localize`Centralized backup reporting and monitoring`,
+    $localize`Remote management from the dashboard`,
+    $localize`Notifcations if backups stop running`,
+  ];
+
+  secondaryBenefits = [
+    $localize`Get notified if your backups stop working`,
+    $localize`Access AI powered troubleshooting`,
+    $localize`View all backups from one place`,
+  ];
+
+  #onConnectEvent = effect(() => {
+    const state = this.#remoteControl.state();
+    if (state == 'unknown' || state == 'inactive') return;
+
+    // If we connect while showing the dialog, dismiss it
+    this.setWelcomeShown();
+  });
 
   setWelcomeShown() {
     this.#serverSettingsService.setShownWelcomePage().subscribe(() => {
       this.#router.navigate(['']);
     });
+  }
+
+  openSkipDialog() {
+    this.skipDialogOpen.set(true);
+  }
+
+  connect() {
+    const route = this.hasConnectionLink() ? '/welcome/connect/link' : '/welcome/connect/logon';
+    this.#router.navigate([route]);
   }
 }

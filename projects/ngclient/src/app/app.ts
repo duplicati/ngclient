@@ -12,7 +12,7 @@ import { configureProxySupport } from './core/utils/proxy-config.util';
   `,
   styles: [],
 })
-export class AppComponent {
+export class App {
   #ls = inject(LOCALSTORAGE);
   #relayConfigState = inject(RelayconfigState);
 

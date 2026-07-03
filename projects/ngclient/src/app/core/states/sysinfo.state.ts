@@ -46,7 +46,10 @@ export class SysinfoState {
   allOptionsGrouped = computed(() => {
     const defaultOptions = {
       displayName: 'Default',
-      options: this.systemInfo()?.Options?.map(this.#mapCommandLineArgumentsToFormViews) ?? [],
+      options:
+        [...(this.systemInfo()?.Options ?? []), ...(this.systemInfo()?.ServerOnlyOptions ?? [])].map((x) =>
+          this.#mapCommandLineArgumentsToFormViewsExpanding(x, this.systemInfo())
+        ) ?? [],
     };
 
     const generic =
@@ -97,6 +100,21 @@ export class SysinfoState {
     return apiExtensions.includes('v2:destination:test');
   });
 
+  hasV2ListBackendOperations = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v2:destination:list');
+  });
+
+  hasV2FilterOperations = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v2:filesystem:test-filter');
+  });
+
+  hasRestoreControlFilesOperation = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v1:backup:restorecontrolfiles');
+  });
+
   hasProgressSubscribeOption = computed(() => {
     const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
     return apiExtensions.includes('v1:subscribe:progress');
@@ -120,6 +138,23 @@ export class SysinfoState {
   hasWebSocketAuth = computed(() => {
     const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
     return apiExtensions.includes('v1:websocket:authenticate');
+  });
+  hasWsRemoteControl = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v1:subscribe:remotecontrol');
+  });
+  hasWsNotifications = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v1:subscribe:notifications');
+  });
+  hasIpcController = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v1:ipc:controller');
+  });
+
+  hasSyncMode = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v1:backup:sync-mode');
   });
 
   defaultOAuthUrl = computed(() => {
@@ -179,6 +214,46 @@ export class SysinfoState {
     }
 
     obs.subscribe();
+  }
+
+  #mapCommandLineArgumentsToFormViewsExpanding(x: ICommandLineArgument, sysinfo: SystemInfoDto | null) {
+    if (x.Name === 'encryption-module') {
+      const options = sysinfo?.EncryptionModules?.map((y) => y.Key)
+        .filter((x) => x)
+        .map((x) => x!);
+
+      if (options && options.length > 0) {
+        return {
+          name: x.Name as string,
+          type: 'Enumeration',
+          shortDescription: x.ShortDescription ?? undefined,
+          longDescription: x.LongDescription ?? undefined,
+          deprecatedDescription: (x.Deprecated ?? false) ? (x.DeprecationMessage ?? undefined) : undefined,
+          options: options,
+          defaultValue: x.DefaultValue,
+        } as FormView;
+      }
+    }
+
+    if (x.Name === 'compression-module') {
+      const options = sysinfo?.CompressionModules?.map((y) => y.Key)
+        .filter((x) => x)
+        .map((x) => x!);
+
+      if (options && options.length > 0) {
+        return {
+          name: x.Name as string,
+          type: 'Enumeration',
+          shortDescription: x.ShortDescription ?? undefined,
+          longDescription: x.LongDescription ?? undefined,
+          deprecatedDescription: (x.Deprecated ?? false) ? (x.DeprecationMessage ?? undefined) : undefined,
+          options: options,
+          defaultValue: x.DefaultValue,
+        } as FormView;
+      }
+    }
+
+    return this.#mapCommandLineArgumentsToFormViews(x);
   }
 
   #mapCommandLineArgumentsToFormViews(x: ICommandLineArgument) {

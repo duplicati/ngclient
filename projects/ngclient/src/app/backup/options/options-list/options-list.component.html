@@ -51,6 +51,16 @@
                 <sh-icon>link</sh-icon>
                 Edit contents as text
               </button>
+
+              <button
+                shButton
+                type="button"
+                class="outlined small"
+                (click)="showOptionNames.set(!showOptionNames())"
+                i18n>
+                <sh-icon>wrench</sh-icon>
+                Toggle option names
+              </button>
             </ng-container>
           </sh-menu>
         }
@@ -84,7 +94,13 @@
             warning-octagon
           </sh-icon>
         }
-        <span [class.deprecated]="item.FormView.deprecatedDescription">{{ item.FormView.shortDescription }}</span>
+        <span [class.deprecated]="item.FormView.deprecatedDescription">
+          @if (showOptionNames()) {
+            <span class="optionname">--{{ item.FormView.name }}</span>
+          } @else {
+            {{ item.FormView.shortDescription }}
+          }
+        </span>
 
         @if (item.FormView.deprecatedDescription) {
           <sh-icon class="warn" [shTooltip]="item.FormView.deprecatedDescription">archive</sh-icon>
@@ -125,7 +141,9 @@
             [accepts]="item.FormView.accepts"
             [showFiles]="true"
             [showHiddenNodes]="true"
-            [selectFiles]="true">
+            [selectFiles]="true"
+            [hideShortcuts]="false"
+            [resolvePaths]="true">
             <label [for]="formId">
               <ng-container *ngTemplateOutlet="defaultLabel" />
             </label>
@@ -136,7 +154,7 @@
               (ngModelChange)="updateSettingValue(item, $event)" />
           </app-file-tree>
         } @else if (item.FormView.type === 'FolderTree') {
-          <app-file-tree [startingPath]="item.Value()">
+          <app-file-tree [startingPath]="item.Value()" [hideShortcuts]="false" [resolvePaths]="true">
             <label [for]="formId"></label>
             <input
               type="text"

@@ -1,6 +1,9 @@
-<sh-form-field>
-  <input type="text" i18n-placeholder placeholder="Search for destination..." [(ngModel)]="destinationSearchTerm" />
-</sh-form-field>
+<div class="search-area">
+  <sh-form-field>
+    <input type="text" i18n-placeholder placeholder="Search for destination..." [(ngModel)]="destinationSearchTerm" />
+  </sh-form-field>
+  <sh-toggle [(checked)]="showAllDestinations" class="raised primary" i18n>Show&nbsp;all</sh-toggle>
+</div>
 
 <div class="list">
   @for (option of destinationTypeOptionsFocused(); track $index) {

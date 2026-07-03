@@ -3,7 +3,7 @@
 <section>
   <h2 i18n>Add a new backup</h2>
 
-  <div class="backup-types">
+  <div class="backup-types" [class.three-column]="hasRestoreControlFilesOperation()">
     <sh-card class="type-a">
       <img src="assets/images/new-backup.png" />
       <h3 i18n>New backup</h3>
@@ -17,7 +17,7 @@
     </sh-card>
 
     <sh-card class="type-a">
-      <img src="assets/images/new-backup.png" />
+      <img src="assets/images/backup-from-config.png" />
       <h3 i18n>Import from file</h3>
       <p i18n>Import backup configuration from a file. During import, you can adjust the settings.</p>
       <button shButton class="raised primary" [routerLink]="['/backup/import']" i18n>
@@ -25,5 +25,16 @@
         <sh-icon>upload-simple</sh-icon>
       </button>
     </sh-card>
+    @if (hasRestoreControlFilesOperation()) {
+      <sh-card class="type-a">
+        <img src="assets/images/backup-from-remote.png" />
+        <h3 i18n>Import from destination</h3>
+        <p i18n>Import one or more backup configurations from a remote destination.</p>
+        <button shButton class="raised primary" [routerLink]="['/backup/import-destination']" i18n>
+          Import from destination
+          <sh-icon>download-simple</sh-icon>
+        </button>
+      </sh-card>
+    }
   </div>
 </section>

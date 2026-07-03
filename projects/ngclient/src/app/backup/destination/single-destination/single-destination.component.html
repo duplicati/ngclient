@@ -130,9 +130,10 @@
           [startingPath]="fieldValue"
           [accepts]="item.formView.accepts"
           [showFiles]="true"
-          [hideShortcuts]="true"
+          [hideShortcuts]="false"
           [showHiddenNodes]="true"
-          [selectFiles]="true">
+          [selectFiles]="true"
+          [resolvePaths]="true">
           <label [for]="formFieldId">
             @if (item.formView.isMandatory && isFieldEmpty) {
               <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
@@ -149,7 +150,11 @@
             (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
         </app-file-tree>
       } @else if (item.formView.type === 'FolderTree') {
-        <app-file-tree [hideShortcuts]="true" [enableCreateFolder]="true" [startingPath]="fieldValue">
+        <app-file-tree
+          [hideShortcuts]="false"
+          [enableCreateFolder]="true"
+          [startingPath]="fieldValue"
+          [resolvePaths]="true">
           <label [for]="formFieldId">
             @if (item.formView.isMandatory && isFieldEmpty) {
               <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
@@ -232,6 +237,17 @@
             <sh-icon prefix>jar</sh-icon>
           } @else {
             <sh-icon prefix>textbox</sh-icon>
+          }
+
+          @if (item.formView.type === 'Path' && hasV2ListBackendOperations()) {
+            <button
+              suffix
+              shButton
+              type="button"
+              class="outlined small"
+              (click)="browse(item.fieldGroup, item.formView.name, $event)">
+              Browse ...
+            </button>
           }
         </sh-form-field>
       } @else if (item.formView.type === 'Password') {
@@ -560,7 +576,12 @@
                 <sh-spinner [style.--spinner-size]="'16px'" [style.--spinner-thickness]="'2px'"></sh-spinner>
                 <span i18n>Loading available backups...</span>
               } @else if (restoreBackupIdOptions().length == 0) {
-                <div class="no-backups-found" i18n>No backups found from this machine, contact support</div>
+                <div class="no-backups-found">
+                  <span i18n>No backups found from this machine, contact support</span>
+                  <button shButton type="button" class="small" (click)="reloadTrigger.set(!reloadTrigger())" i18n>
+                    Try again
+                  </button>
+                </div>
               } @else {
                 <sh-select [options]="restoreBackupIdOptions()" [isClearable]="false">
                   <label [for]="formFieldId">
@@ -640,49 +661,47 @@
         }
       } @else if (item.formView.type === 'Filen2FACode') {
         @if (!hasFilenApiKey()) {
-          <div class="filen-2fa-setup">
-            <sh-form-field>
-              <label [for]="formFieldId">
-                @if (item.formView.isMandatory && isFieldEmpty) {
-                  <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
-                }
-                {{ labelContent }}
-                @if (item.formView.longDescription) {
-                  <sh-icon class="primary" [shTooltip]="item.formView.longDescription">question</sh-icon>
-                }
+          <sh-form-field>
+            <label [for]="formFieldId">
+              @if (item.formView.isMandatory && isFieldEmpty) {
+                <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
+              }
+              {{ labelContent }}
+              @if (item.formView.longDescription) {
+                <sh-icon class="primary" [shTooltip]="item.formView.longDescription">question</sh-icon>
+              }
 
-                <ng-container
-                  *ngTemplateOutlet="
-                    validateTemplate;
-                    context: {
-                      $implicit: {
-                        fieldGroup: item.fieldGroup,
-                        formView: item.formView,
-                      },
-                    }
-                  "></ng-container>
-              </label>
+              <ng-container
+                *ngTemplateOutlet="
+                  validateTemplate;
+                  context: {
+                    $implicit: {
+                      fieldGroup: item.fieldGroup,
+                      formView: item.formView,
+                    },
+                  }
+                "></ng-container>
+            </label>
 
-              <input
-                type="text"
-                [id]="formFieldId"
-                [ngModel]="formInput"
-                autocomplete="off"
-                (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
+            <input
+              type="text"
+              [id]="formFieldId"
+              [ngModel]="formInput"
+              autocomplete="off"
+              (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
 
-              <sh-icon prefix>textbox</sh-icon>
-            </sh-form-field>
+            <sh-icon prefix>textbox</sh-icon>
             <button
+              suffix
               shButton
               type="button"
-              class="outlined"
+              class="outlined small"
               (click)="authenticateFilen()"
               [disabled]="isAuthenticatingFilen()"
               i18n>
-              Authenticate&nbsp;now
-              <sh-icon>arrow-right</sh-icon>
+              Authenticate now
             </button>
-          </div>
+          </sh-form-field>
         }
       }
 

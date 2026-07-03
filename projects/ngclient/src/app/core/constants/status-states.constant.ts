@@ -66,5 +66,10 @@ export const STATUS_STATES: Record<string, string> = {
   PurgeFiles_Compact: $localize`Compacting remote data …`,
   PurgeFiles_Complete: $localize`Purging files complete!`,
   ReadLockInfo_Running: $localize`Reading lock info …`,
+  Sync_Begin: $localize`Starting sync …`,
+  Sync_CountingFiles: $localize`Counting files to sync …`,
+  Sync_ProcessingFiles: $localize`Processing files to sync …`,
+  Sync_WaitForUpload: $localize`Waiting for upload to finish …`,
+  Sync_Complete: $localize`Sync complete!`,
   Error: $localize`Error!`,
 };

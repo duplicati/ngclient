@@ -42,7 +42,8 @@ export class TestDestinationService {
     destinationIndex: number,
     urlType: RemoteDestinationType,
     suppressErrorDialogs: boolean,
-    folderHandling: FolderHandlingOption
+    folderHandling: FolderHandlingOption,
+    readOnlyTest: boolean
   ) {
     if (this.#sysinfo.hasV2TestOperations())
       return this.testDestinationv2(
@@ -53,7 +54,8 @@ export class TestDestinationService {
         destinationIndex,
         urlType,
         suppressErrorDialogs,
-        folderHandling
+        folderHandling,
+        readOnlyTest
       );
     else
       return this.testDestinationv1(
@@ -64,7 +66,8 @@ export class TestDestinationService {
         destinationIndex,
         urlType,
         suppressErrorDialogs,
-        folderHandling
+        folderHandling,
+        readOnlyTest
       );
   }
 
@@ -76,7 +79,8 @@ export class TestDestinationService {
     destinationIndex: number,
     urlType: RemoteDestinationType,
     suppressErrorDialogs: boolean,
-    folderHandling: FolderHandlingOption
+    folderHandling: FolderHandlingOption,
+    readOnlyTest: boolean
   ) {
     return new Observable<TestDestinationResult>((observer) => {
       this.#dupServer
@@ -86,6 +90,7 @@ export class TestDestinationService {
             ConnectionStringId: connectionStringId ?? null,
             BackupId: backupId == 'new' ? null : backupId,
             AutoCreate: folderHandling === 'create',
+            ReadOnlyTest: readOnlyTest,
             Options: null,
             DestinationType: urlType,
             SourcePrefix: backupId == 'new' ? null : sourcePrefix,
@@ -113,9 +118,11 @@ export class TestDestinationService {
                 observer,
                 targetUrl,
                 backupId,
+                connectionStringId,
                 destinationIndex,
                 suppressErrorDialogs,
-                folderHandling
+                folderHandling,
+                readOnlyTest
               );
               return;
             }
@@ -163,12 +170,14 @@ export class TestDestinationService {
     destinationIndex: number,
     urlType: RemoteDestinationType,
     suppressErrorDialogs: boolean,
-    folderHandling: FolderHandlingOption
+    folderHandling: FolderHandlingOption,
+    readOnlyTest: boolean
   ) {
     // V1 does not support auto-create folders, but we should retire the use of V1 anyway
     return new Observable<TestDestinationResult>((observer) => {
       this.#dupServer
         .postApiV1RemoteoperationTest({
+          readOnlyTest: readOnlyTest,
           requestBody: {
             path: targetUrl,
             backupId: backupId == 'new' ? null : backupId,
@@ -192,9 +201,11 @@ export class TestDestinationService {
               err.message,
               targetUrl,
               backupId,
+              connectionStringId,
               destinationIndex,
               suppressErrorDialogs,
-              folderHandling
+              folderHandling,
+              readOnlyTest
             ).subscribe((res) => {
               observer.next(res);
             });
@@ -207,9 +218,11 @@ export class TestDestinationService {
     observer: Subscriber<TestDestinationResult>,
     targetUrl: string,
     backupId: string | null,
+    connectionStringId: number | null,
     destinationIndex: number,
     suppressErrorDialogs: boolean,
-    folderHandling: FolderHandlingOption
+    folderHandling: FolderHandlingOption,
+    readOnlyTest: boolean
   ) {
     function sendError() {
       observer.next({
@@ -245,7 +258,9 @@ export class TestDestinationService {
             .postApiV2DestinationTest({
               requestBody: {
                 DestinationUrl: targetUrl,
+                ConnectionStringId: connectionStringId,
                 AutoCreate: true,
+                ReadOnlyTest: readOnlyTest,
                 Options: null,
                 BackupId: backupId == 'new' ? null : backupId,
               },
@@ -575,13 +590,24 @@ with the REPORTED host key: ${reportedhostkey}?`;
     errorMessage: string,
     targetUrl: string,
     backupId: string | null,
+    connectionStringId: number | null,
     destinationIndex: number,
     suppressErrorDialogs: boolean,
-    folderHandling: FolderHandlingOption
+    folderHandling: FolderHandlingOption,
+    readOnlyTest: boolean
   ) {
     return new Observable<TestDestinationResult>((observer) => {
       if (errorMessage === 'missing-folder') {
-        this.handleMissingFolder(observer, targetUrl, backupId, destinationIndex, suppressErrorDialogs, folderHandling);
+        this.handleMissingFolder(
+          observer,
+          targetUrl,
+          backupId,
+          connectionStringId,
+          destinationIndex,
+          suppressErrorDialogs,
+          folderHandling,
+          readOnlyTest
+        );
         return;
       }
 

@@ -7,6 +7,7 @@
   height: 100%;
   overflow: hidden;
   padding: p2r(4);
+  min-height: 250px;
 }
 
 .list {
@@ -19,4 +20,10 @@
   width: calc(100% + #{p2r(8)});
   margin-left: p2r(-6);
   border-bottom: p2r(1) solid var(--base-4);
+}
+
+.search-area {
+  display: flex;
+  flex-direction: row;
+  gap: p2r(16);
 }

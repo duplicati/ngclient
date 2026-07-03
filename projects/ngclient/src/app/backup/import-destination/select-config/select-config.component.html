@@ -1,0 +1,106 @@
+<div class="content-wrapper">
+  <h2 i18n>Select configurations to import</h2>
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <sh-progress-bar class="primary indeterminate"></sh-progress-bar>
+      <p i18n>Fetching backup configurations from destination...</p>
+    </div>
+  } @else if (configs().length === 0) {
+    <div class="empty-state">
+      <p i18n>No backup configurations found at this destination.</p>
+    </div>
+  } @else {
+    @if (configs().length > 1) {
+      <div class="search-area">
+        <sh-form-field>
+          <input type="text" i18n-placeholder placeholder="Search for destination..." [(ngModel)]="searchTerm" />
+          <sh-icon prefix>magnifying-glass</sh-icon>
+          @if (searchTerm()) {
+            <sh-icon class="clear-search" suffix (click)="searchTerm.set('')">x-circle</sh-icon>
+          }
+        </sh-form-field>
+      </div>
+
+      <div class="list-actions">
+        <button shButton class="small" [disabled]="allSelected()" (click)="selectAll()" i18n>Select&nbsp;all</button>
+        <button shButton class="small" [disabled]="noneSelected()" (click)="selectNone()" i18n>Select&nbsp;none</button>
+      </div>
+    }
+
+    <div class="config-list">
+      @for (config of configsSorted(); track config.BackupId) {
+        <sh-card
+          class="type-a actionable full-width"
+          [class.unmatched]="config.Match === false"
+          (click)="toggleSelected(config.BackupId)">
+          <sh-checkbox class="primary raised" [(checked)]="config.Selected">
+            <h3>
+              {{ config.Name }}
+              <sh-chip class="small provider">
+                <img class="provider-icon" [src]="getBackendIcon(config.TargetURLDisplay)" alt="" />
+                {{ getBackendType(config.TargetURLDisplay) }}
+              </sh-chip>
+            </h3>
+          </sh-checkbox>
+
+          <div class="metadata">
+            @if (config.Metadata?.['SourceFilesSize']) {
+              <div i18n>
+                Source size:
+                {{ config.Metadata?.['SourceFilesSize'] | bytes }}
+              </div>
+            }
+            @if (config.Metadata?.['TargetFilesSize']) {
+              <div i18n>
+                Target size:
+                {{ config.Metadata?.['TargetFilesSize'] | bytes }}
+              </div>
+            }
+            @if (config.Metadata?.['LastBackupFinished']) {
+              <div i18n>
+                Last backup:
+                {{ config.Metadata?.['LastBackupFinished'] | relativeTime: false }}
+              </div>
+            }
+          </div>
+        </sh-card>
+      }
+    </div>
+
+    <div class="options">
+      @if (selectedItems().length <= 1) {
+        <sh-toggle [color]="'primary'" [(checked)]="saveNow" i18n>
+          Save now
+          <sh-icon class="small" [shTooltip]="'Save backups without editing the configuration'">info</sh-icon>
+        </sh-toggle>
+      } @else {
+        <!-- Swap out with a different disabled checkbox so we don't change the underlying state, just the visual state -->
+        <sh-toggle [color]="'primary'" [checked]="true" [disabled]="true" i18n>
+          Save now
+          <sh-icon class="small" [shTooltip]="'Save now can only be disabled when importing a single backup'">
+            info
+          </sh-icon>
+        </sh-toggle>
+      }
+      <sh-toggle [color]="'primary'" [(checked)]="importMetadata" i18n>Import metadata</sh-toggle>
+    </div>
+  }
+
+  <div class="actions">
+    <button shButton (click)="back()" [disabled]="isImporting()" i18n>Back</button>
+    <div class="spacer"></div>
+    <button
+      shButton
+      class="primary raised"
+      (click)="import()"
+      [disabled]="isImporting() || selectedItems().length === 0 || isLoading()"
+      i18n>
+      @if (isImporting()) {
+        Importing...
+      } @else {
+        Import selected
+      }
+    </button>
+  </div>
+</div>

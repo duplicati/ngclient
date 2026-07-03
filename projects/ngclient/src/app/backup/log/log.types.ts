@@ -82,6 +82,25 @@ export interface TestResults {
   BackendStatistics: BackendStatistics;
 }
 
+export interface LockResults {
+  MainOperation: string;
+  VolumesRead: number;
+  VolumesUpdated: number;
+  ParsedResult: string;
+  Interrupted: boolean;
+  Version: string;
+  EndTime: string;
+  BeginTime: string;
+  Duration: string;
+  MessagesActualLength: number;
+  WarningsActualLength: number;
+  ErrorsActualLength: number;
+  Messages: string[] | null;
+  Warnings: string[] | null;
+  Errors: string[] | null;
+  BackendStatistics: BackendStatistics;
+}
+
 export interface BackupResult {
   DeletedFiles: number;
   DeletedFolders: number;
@@ -110,6 +129,7 @@ export interface BackupResult {
   RepairResults: null;
   TestResults: TestResults;
   RemoteSynchronizationResults: RemoteSynchronizationResult[];
+  LockResults: LockResults;
   ParsedResult: string;
   Interrupted: boolean;
   Version: string;

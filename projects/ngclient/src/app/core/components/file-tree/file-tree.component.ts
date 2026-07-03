@@ -11,8 +11,10 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import {
+  ShipAlert,
   ShipButton,
   ShipButtonGroup,
   ShipDialog,
@@ -23,12 +25,14 @@ import {
   ShipProgressBar,
   ShipToggle,
 } from '@ship-ui/core';
-import { catchError, finalize, forkJoin, map, Observable, of } from 'rxjs';
+import { catchError, finalize, forkJoin, map, Observable, of, switchMap, timer } from 'rxjs';
+import { getBackendIcon, getRemotePathDisplayName } from '../../../backup/destination/destination.config-utilities';
 import {
   DuplicatiServer,
   GetApiV1BackupByIdFilesData,
   GetApiV1BackupByIdFilesResponse,
   PostApiV1FilesystemResponse,
+  RemoteDestinationType,
   SearchEntriesItemDto,
   TreeNodeDto,
 } from '../../openapi';
@@ -56,9 +60,26 @@ type FileTreeNode = TreeNode & {
   isSearchMatch?: boolean;
   isGenerated?: boolean;
   hasChildrenInSearch?: boolean;
+  customIcon?: string;
+  remoteSource?: RemoteSource;
 };
 
 type InputValueChangedEvent = CustomEvent<{ value: string }>;
+
+type UnrootedSource = {
+  id: string;
+  path: string;
+  displayName: string;
+  icon: string;
+};
+
+type RemoteSource = {
+  mount: string;
+  prefix: string;
+  url: string;
+  type: string;
+  path: string;
+};
 
 interface CustomEventMap {
   inputValueChanged: InputValueChangedEvent;
@@ -82,6 +103,9 @@ export type BackupSettings = {
 // The virtual root path for the file tree, also used for Windows as the root path.
 const ROOTPATH = '/';
 
+// Toggle for the v2 listing API
+const usev2Listing = true;
+
 @Component({
   selector: 'app-file-tree',
   imports: [
@@ -96,6 +120,7 @@ const ROOTPATH = '/';
     NgTemplateOutlet,
     FormsModule,
     BytesPipe,
+    ShipAlert,
   ],
   templateUrl: './file-tree.component.html',
   styleUrl: './file-tree.component.scss',
@@ -113,6 +138,7 @@ export default class FileTreeComponent {
   disabled = input(false);
   showFiles = input(false);
   selectFiles = input(false);
+  onlySelectFolder = input(false);
   accepts = input<string | null | undefined>(null);
   startingPath = input<string | null>(null);
   rootPaths = input<string[]>([]);
@@ -122,8 +148,11 @@ export default class FileTreeComponent {
   showHiddenNodes = input(false);
   enableCreateFolder = input(false);
   hideShortcuts = input(false);
-  customRemoteMode = input<'gsuite' | 'o365' | 'diskimage' | null>(null);
+  resolvePaths = input(false);
+  customRemoteMode = input<'gsuite' | 'o365' | 'diskimage' | 'backend' | null>(null);
+  showUnrootedSources = input(false);
   backupId = input<string | null | undefined>('');
+  connectionStringId = input<number | null | undefined>(null);
   sourcePrefix = input<string | null | undefined>('');
   destinationUrl = input<string | null | undefined>('');
   loadExtendedData = input(true);
@@ -134,17 +163,26 @@ export default class FileTreeComponent {
   _showHiddenNodes = signal(false);
   createFolderDialogOpen = signal(false);
   createFolderPath = signal<string | null>(null);
+  errorMessage = signal<string | null>(null);
+  anyRemoteSourcesLoaded = signal(false);
 
   treeContainerRef = viewChild<ElementRef<HTMLDivElement>>('treeContainer');
   formRef = viewChild<ElementRef<HTMLFormElement>>('formRef');
   pathDiscoveryMethod = signal<'browse' | 'path'>('browse');
   isLoading = signal<string | null>(null);
   currentPath = signal<string>('');
-  currentPathResolvedShorthands = computed(() => this.#sysInfo.resolveShorthandPath(this.currentPath()));
   #inputRef = signal<HTMLInputElement | null>(null);
   treeSearchQuery = signal<string>('');
   treeNodes = signal<TreeNode[]>([]);
   pathDelimiter = computed(() => this.#sysInfo.systemInfo()?.DirectorySeparator ?? '');
+
+  // Boolean guard to prevent remote eval from being called when not needed
+  #performRemoteEval = computed(() => {
+    const anyFilters = this.currentPathArray()
+      .filter((x) => this.#isFilter(x))
+      .find((x) => x.includes('*') || x.includes('[') || x.includes('{') || x.includes('?'));
+    return anyFilters && this.#sysInfo.hasV2FilterOperations();
+  });
 
   filterGroups = this.#sysInfo.filterGroups();
   isByBackupSettings = computed(() => {
@@ -163,7 +201,153 @@ export default class FileTreeComponent {
       : this.treeNodes();
   });
 
+  // The currentPath signal split into an array of paths and filters
+  currentPathArray = computed(() => {
+    return this.currentPath()
+      .split('\0')
+      .filter((x) => x !== '' && x !== ROOTPATH);
+  });
+
+  // The paths signal where shortcut paths are resolved to their full path
+  currentPathResolved = computed(() => {
+    const currentPaths = this.currentPathArray();
+
+    return currentPaths
+      .map((x) => {
+        const path = this.treeNodes().find((n) => n.id === x)?.resolvedpath ?? x;
+        return this.#sysInfo.resolveShorthandPath(path);
+      })
+      .join('\0');
+  });
+
+  #parseRemotePath(path: string | null | undefined): RemoteSource | null {
+    if (!path) return null;
+
+    if (path.startsWith('@') && path.includes('|')) {
+      const parts = path.split('|');
+      const prefix = parts[0];
+      const url = parts[1];
+      const type = url.split('://')[0];
+      let subpath = parts[2] ?? '';
+
+      // Disk images have the initial path in the url
+      if (type === 'diskimage' && !subpath) {
+        subpath = this.#appendDirSep(parts[1].split('://')[1]);
+      }
+
+      return { mount: prefix.substring(1), prefix: prefix, url, type, path: subpath };
+    }
+
+    return null;
+  }
+
+  #unrootedSources = computed(() => {
+    if (!this.showUnrootedSources()) return [];
+    let rootPaths = this.rootPaths();
+    if (rootPaths === undefined || rootPaths.length === 0) {
+      rootPaths = [ROOTPATH];
+    }
+
+    const currentPaths = this.currentPathArray()
+      .filter((x) => !this.#isFilter(x))
+      .filter((x) => !x.startsWith('%'))
+      .filter((x) => !rootPaths.find((y) => x.startsWith(y)));
+
+    return currentPaths.map((x) => {
+      const remoteSource = this.#parseRemotePath(x);
+      if (remoteSource) {
+        const res: UnrootedSource = {
+          id: x,
+          path: remoteSource.mount,
+          displayName: getRemotePathDisplayName(remoteSource.url),
+          icon: getBackendIcon(remoteSource.url),
+        };
+        return res;
+      }
+
+      return {
+        id: x,
+        path: x,
+        displayName: x,
+        icon: null,
+      };
+    });
+  });
+
+  #resolveWithRemoteSource(currentPaths: string[]): string[] {
+    return currentPaths.map((x) => {
+      if (this.#isFilter(x)) return x;
+      const remote = this.#parseRemotePath(x);
+      if (remote) return this.#appendDirSep(remote.mount);
+      return x;
+    });
+  }
+
   TreeEvalEnum = TreeEvalEnum;
+
+  // Data sent to the server to evaluate the filters
+  #remoteEvalInput = computed(() => {
+    if (!this.#performRemoteEval()) return null;
+
+    const currentPaths = this.#resolveWithRemoteSource(this.currentPathArray());
+
+    const sources = currentPaths.filter((x) => !this.#isFilter(x));
+    const filters = currentPaths.filter((x) => this.#isFilter(x));
+
+    const pathsToTest = this.searchableTreeNodes()
+      .map((x) => x.id!)
+      .filter(Boolean);
+
+    return {
+      paths: pathsToTest,
+      sources: sources,
+      filters: filters,
+    };
+  });
+
+  // Resource that performs the remote evaluation of the filters
+  #remoteFilterResource = rxResource({
+    params: () => ({ data: this.#remoteEvalInput() }),
+    stream: ({ params }) => {
+      if (!this.#performRemoteEval() || !params.data || params.data.sources.length === 0) return of(null);
+
+      return timer(300).pipe(
+        switchMap(() =>
+          this.#dupServer
+            .postApiV2FilesystemTestFilter({
+              requestBody: {
+                Paths: params.data?.paths,
+                Sources: params.data?.sources,
+                Filters: params.data?.filters,
+              },
+            })
+            .pipe(
+              map((res) => {
+                if (!res.Success || !res.Data) {
+                  console.log('Error evaluating filters', res);
+                  return null;
+                }
+
+                const map = new Map<string, TreeEvalEnum>();
+                for (const r of res.Data) {
+                  if (r.Path) {
+                    let state = TreeEvalEnum.None;
+                    if (r.Included) {
+                      state = TreeEvalEnum.Included;
+                    } else if (r.MatchedFilter) {
+                      state = TreeEvalEnum.Excluded;
+                    }
+                    map.set(r.Path, state);
+                  }
+                }
+                return map;
+              }),
+              catchError(() => of(null))
+            )
+        )
+      );
+    },
+  });
 
   // Build tree structure from search results
   searchResultTreeStructure = computed<FileTreeNode[]>(() => {
@@ -172,9 +356,7 @@ export default class FileTreeComponent {
       return [];
     }
 
-    const currentPaths = this.currentPath()
-      .split('\0')
-      .filter((x) => x !== '' && x !== ROOTPATH);
+    const currentPaths = this.currentPathArray();
     const showHiddenNodes = this.showHiddenNodes();
 
     // Build path info map from search results
@@ -313,7 +495,9 @@ export default class FileTreeComponent {
       const evalState =
         info.match !== null && !info.isFolder && showHiddenNodes
           ? TreeEvalEnum.None
-          : this.#eval(currentPaths, path, info.isFolder ? 'folder' : 'file', null);
+          : this.#performRemoteEval()
+            ? this.#evalRemote(path, null, currentPaths, info.isFolder ? 'folder' : 'file')
+            : this.#eval(currentPaths, path, info.isFolder ? 'folder' : 'file', null);
 
       const newNode: FileTreeNode = {
         id: path,
@@ -368,28 +552,10 @@ export default class FileTreeComponent {
       return this.searchResultTreeStructure();
     }
 
+    const remoteEvals = this.#remoteFilterResource.value(); // read dependency
+
     const showHiddenNodes = this.showHiddenNodes();
-    const _currentPaths = this.currentPath()
-      .split('\0')
-      .filter((x) => x !== '' && x !== ROOTPATH);
-
-    let currentPaths = structuredClone(_currentPaths);
-
-    for (let index = 0; index < currentPaths.length; index++) {
-      const path = currentPaths[index];
-      const x = path.slice(1);
-
-      if (x.startsWith('{') && x.endsWith('}')) {
-        const groupName = x.slice(1, -1);
-
-        const filterGroup = this.filterGroups?.['FilterGroups'][groupName];
-
-        if (filterGroup && filterGroup.length) {
-          const _filterGroup = filterGroup.map((x) => `-${x}`);
-          currentPaths.splice(index, 1, ..._filterGroup);
-        }
-      }
-    }
+    const currentPaths = this.#resolveFilterGroups(this.currentPathArray());
 
     const nodes = this.searchableTreeNodes();
     const rootPaths = this.rootPaths();
@@ -399,7 +565,9 @@ export default class FileTreeComponent {
 
     if (rootPaths.length > 0) {
       roots = rootPaths.map((rootPath) => {
-        const evalState = this.#eval(currentPaths, rootPath, 'folder', null);
+        const evalState = this.#performRemoteEval()
+          ? this.#evalRemote(rootPath, null, currentPaths, 'folder')
+          : this.#eval(currentPaths, rootPath, 'folder', null);
 
         return {
           id: rootPath,
@@ -426,6 +594,24 @@ export default class FileTreeComponent {
         } as any as FileTreeNode,
       ];
     }
+
+    const additionalRoots = this.#unrootedSources().map(
+      (x) =>
+        ({
+          id: x.path,
+          resolvedpath: x.path,
+          remoteSource: this.#parseRemotePath(x.id),
+          text: x.displayName,
+          parentPath: '',
+          children: [],
+          evalState: TreeEvalEnum.Included,
+          isIndeterminate: false,
+          cls: 'folder',
+          customIcon: x.icon,
+        }) as any as FileTreeNode
+    );
+
+    roots = [...roots, ...additionalRoots];
 
     roots.map((root) => {
       const nodeMap = new Map<string, FileTreeNode>();
@@ -459,9 +645,11 @@ export default class FileTreeComponent {
 
         const parentNode = nodeMap.get(node.parentPath);
         const evalState =
-          node.hidden === true && showHiddenNodes
+          node.hidden === true && !showHiddenNodes
             ? TreeEvalEnum.None
-            : this.#eval(currentPaths, nodePath, node.cls, parentNode);
+            : this.#performRemoteEval()
+              ? this.#evalRemote(nodePath, parentNode, currentPaths, node.cls)
+              : this.#eval(currentPaths, nodePath, node.cls, parentNode);
 
         const newNode: FileTreeNode = {
           ...node,
@@ -487,11 +675,56 @@ export default class FileTreeComponent {
     return roots;
   });
 
+  #resolveFilterGroups(currentPaths: string[]): string[] {
+    const paths = structuredClone(currentPaths);
+    for (let index = 0; index < paths.length; index++) {
+      const path = paths[index];
+      const x = path.slice(1);
+
+      if (x.startsWith('{') && x.endsWith('}')) {
+        const groupName = x.slice(1, -1);
+        const filterGroup = this.filterGroups?.['FilterGroups']?.[groupName];
+
+        if (filterGroup && filterGroup.length) {
+          const _filterGroup = filterGroup.map((x) => `-${x}`);
+          paths.splice(index, 1, ..._filterGroup);
+        }
+      }
+    }
+    return paths;
+  }
+
   #appendDirSep(path?: string | null) {
     if (!path) return ROOTPATH;
     const pathDelimiter = this.#getPathDelimiter(path);
     if (path.endsWith('/') || path.endsWith('\\') || path === ROOTPATH) return path;
     return path + pathDelimiter;
+  }
+
+  #resolveNodeId(node: TreeNodeDto | null | undefined) {
+    if (!node?.id) return null;
+    if (!this.resolvePaths()) return node.id;
+    if (!node.resolvedpath) return node.id;
+
+    if (node.id.startsWith('%') && node.id.endsWith('%')) return this.#appendDirSep(node.resolvedpath);
+    return node.resolvedpath;
+  }
+
+  #evalRemote(
+    nodeId: string,
+    parentNode: FileTreeNode | null | undefined,
+    currentPaths: string[],
+    nodeType: string
+  ): TreeEvalEnum {
+    if (parentNode && parentNode.evalState === TreeEvalEnum.Excluded) return TreeEvalEnum.ExcludedByParent;
+
+    const evalMap = this.#remoteFilterResource.value();
+    if (evalMap && evalMap.has(nodeId)) {
+      return evalMap.get(nodeId)!;
+    }
+
+    // If the remote does not have the node, fall back to local evaluation
+    return this.#eval(currentPaths, nodeId, nodeType, parentNode);
   }
 
   #eval(
@@ -504,22 +737,24 @@ export default class FileTreeComponent {
 
     let result = TreeEvalEnum.None;
 
-    const pathsWithoutDir = currentPaths.filter((x) => !x.startsWith('-') && !x.startsWith('+'));
-    const pathsWithDir = currentPaths.filter((x) => x.startsWith('-') || x.startsWith('+'));
+    const sources = this.#resolveWithRemoteSource(currentPaths.filter((x) => !this.#isFilter(x)));
+    const filters = currentPaths.filter((x) => this.#isFilter(x));
     const isMultiSelect = this.multiSelect();
+    // If we are resolving paths, also match against the resolved path
+    const resolvedNodeId = this.#resolveNodeId(this.treeNodes().find((x) => x.id === nodeId)) ?? nodeId;
 
-    if (pathsWithoutDir.length === 0) return result;
+    if (sources.length === 0) return result;
 
-    for (let index = 0; index < pathsWithoutDir.length; index++) {
-      const x = pathsWithoutDir[index];
-      if (nodeId === x) {
+    for (let index = 0; index < sources.length; index++) {
+      const x = sources[index];
+      if (nodeId === x || resolvedNodeId == x) {
         result = TreeEvalEnum.Included;
         break;
       }
 
       if (!isMultiSelect || !this.#isFolder(x)) continue;
 
-      const res = nodeId?.startsWith(x);
+      const res = nodeId?.startsWith(x) || resolvedNodeId?.startsWith(x);
 
       if (res) {
         result = TreeEvalEnum.Included;
@@ -527,17 +762,17 @@ export default class FileTreeComponent {
       }
     }
 
-    if (pathsWithDir.length === 0) return result;
+    if (filters.length === 0) return result;
 
-    for (let i = 0; i < pathsWithDir.length; i++) {
-      const pathPart = pathsWithDir[i];
+    for (let i = 0; i < filters.length; i++) {
+      const pathPart = filters[i];
       const x = pathPart.slice(1);
       const dir = pathPart.startsWith('-') ? TreeEvalEnum.Excluded : TreeEvalEnum.Included;
 
       if (this.#isFolder(x)) {
         // Works - Folder
         if (nodeType !== 'folder') continue;
-        const res = nodeId === x;
+        const res = nodeId === x || resolvedNodeId == x;
 
         if (res) {
           result = dir;
@@ -658,10 +893,11 @@ export default class FileTreeComponent {
   }
 
   #globMatch(str: string, pattern: string, evaluateFullPath = false): boolean {
-    const regexPattern = pattern
-      .replace(/\*/g, '.*')
-      .replace(/\?/g, '.')
-      .replace(/\[!([^\]]+)\]/g, '[^$1]');
+    const regexPattern = pattern.replace(/[\\.+^${}()|[\]*?]/g, (match) => {
+      if (match === '*') return '.*';
+      if (match === '?') return '.';
+      return '\\' + match;
+    });
 
     const regex = new RegExp(`${regexPattern}${evaluateFullPath ? '$' : ''}`);
 
@@ -789,6 +1025,13 @@ export default class FileTreeComponent {
 
   toggleSelectedNode($event: Event, node: FileTreeNode) {
     if (node.id === ROOTPATH) return;
+    if (
+      this.#unrootedSources()
+        .map((x) => this.#parseRemotePath(x.id)?.mount)
+        .filter((x) => x)
+        .includes(node.id ?? '')
+    )
+      return;
 
     $event.stopPropagation();
 
@@ -798,54 +1041,56 @@ export default class FileTreeComponent {
     if (node.evalState === TreeEvalEnum.ExcludedByParent) return;
 
     if (this.selectFiles() && node.cls === 'folder') {
-      this.toggleNode(node.id as string, node);
+      this.toggleNode($event, node.id as string, node);
       return;
     }
+
+    if (this.onlySelectFolder() && node.cls !== 'folder') return;
 
     const accepts = this.accepts();
 
     if (accepts && !node.accepted) return;
 
-    const currentPaths = this.currentPath()
-      .split('\0')
-      .filter((x) => x !== '' && x !== ROOTPATH);
+    const currentPaths = this.currentPathArray();
+    const currentPathsWithRemotes = this.#resolveWithRemoteSource(currentPaths);
 
     const isChildOfSelected = this.isChildOfSelected(node);
-    const pathToTest = isChildOfSelected ? `-${node.id}` : node.id!;
-    const isFolder = this.#isFolder(node.id!);
+    // Use the resolved path if we are resolving paths
+    const nodeId = this.#resolveNodeId(node);
+    const pathToTest = isChildOfSelected ? `-${nodeId}` : nodeId!;
+    const isFolder = this.#isFolder(nodeId!);
 
     if (this.multiSelect()) {
-      if (currentPaths.includes(node.id!)) {
+      if (currentPathsWithRemotes.includes(nodeId!)) {
         // is selected
         this.currentPath.set(
-          currentPaths.filter((x) => x !== node.id && !(isFolder && x.startsWith(pathToTest))).join('\0')
+          currentPaths.filter((x) => x !== nodeId && !(isFolder && x.startsWith(pathToTest))).join('\0')
         );
-      } else if (currentPaths.some((x) => x == pathToTest)) {
+      } else if (currentPathsWithRemotes.some((x) => x == pathToTest)) {
         // is already selected
         this.currentPath.set(currentPaths.filter((x) => x !== pathToTest).join('\0'));
       } else {
         // is not selected, remove subpaths, keep excludes
-        const filteredPaths = isFolder ? currentPaths.filter((x) => !x.startsWith(node.id!)) : currentPaths;
+        const filteredPaths = isFolder ? currentPaths.filter((x) => !x.startsWith(nodeId!)) : currentPaths;
         this.currentPath.set([...filteredPaths, pathToTest].join('\0'));
       }
     } else {
-      if (currentPaths.includes(node.id!)) {
-        this.currentPath.set(currentPaths.filter((x) => x !== node.id).join('\0'));
+      if (currentPaths.includes(nodeId!)) {
+        this.currentPath.set(currentPaths.filter((x) => x !== nodeId).join('\0'));
       } else {
-        this.currentPath.set(node.id!);
+        this.currentPath.set(nodeId!);
       }
     }
   }
 
   isChildOfSelected(node: FileTreeNode) {
-    const currentPaths = this.currentPath()
-      .split('\0')
-      .filter((x) => x !== '' && x !== ROOTPATH && this.#isFolder(x));
+    const currentPaths = this.#resolveWithRemoteSource(this.currentPathArray()).filter((x) => this.#isFolder(x));
 
     return currentPaths.some((x) => node.id?.startsWith(x) || `-${node.id}`.startsWith(x));
   }
 
-  toggleNode(path: string, node: FileTreeNode | null = null) {
+  toggleNode($event: Event, path: string, node: FileTreeNode | null = null) {
+    $event.stopPropagation();
     if (node?.cls === 'folder') {
       if (node?.children.length) {
         this.treeNodes.update((y) => y.filter((z) => !z.id?.startsWith(node.id as string) || z.id === node.id));
@@ -866,7 +1111,7 @@ export default class FileTreeComponent {
       const path = this.createFolderPath()?.trim();
       if (path) {
         const currentPath = this.currentPath();
-        const resolvedCurrentPath = this.currentPathResolvedShorthands();
+        const resolvedCurrentPath = this.currentPathResolved();
         const newPath = this.#appendDirSep(path);
         const fullPath = `${resolvedCurrentPath}/${newPath}`;
 
@@ -955,26 +1200,56 @@ export default class FileTreeComponent {
     });
   }
 
-  #getOffice365Files(path: string | null) {
+  #getBackendFiles(path: string | null, remote: RemoteSource | null, destinationType: RemoteDestinationType) {
+    return this.#dupServer
+      .postApiV2DestinationList({
+        requestBody: {
+          BackupId: this.backupId() ?? null,
+          DestinationUrl: remote?.url ?? this.destinationUrl() ?? null,
+          ConnectionStringId: this.connectionStringId() ?? null,
+          DestinationType: destinationType,
+          SourcePrefix: remote?.prefix ?? this.sourcePrefix() ?? null,
+          Path: path,
+          Offset: null,
+          Limit: null,
+        },
+      })
+      .pipe(
+        map((res) => {
+          return (res.Data?.Items ?? [])
+            .map((x) => ({
+              ...x,
+              Path: (remote?.prefix ?? '') + x.Path,
+            }))
+            .filter((x) => x.Metadata == null || !x.Metadata['ExtType']);
+        })
+      );
+  }
+
+  #getMicrosoft365Files(path: string | null, remote: RemoteSource | null) {
     return this.#dupServer
       .postApiV1WebmoduleByModulekey({
         modulekey: 'office365',
         requestBody: {
           'backup-id': this.backupId() ?? '',
-          'source-prefix': this.sourcePrefix() ?? '',
+          'source-prefix': remote?.prefix ?? this.sourcePrefix() ?? '',
           operation: 'ListDestinationRestoreTargets',
-          url: this.destinationUrl() ?? '',
+          url: remote?.url ?? this.destinationUrl() ?? '',
           path: path ?? '/',
         },
       })
       .pipe(
         map((res) => {
-          const d = res.Result as {
-            [key: string]: string;
-          };
+          const d = res.Result;
+          if (!d) {
+            throw new Error('No result returned');
+          }
+          if (res.Status !== 'OK') {
+            throw new Error(d['error'] ?? 'An error occured');
+          }
           return Object.keys(d).map((key) => {
             return {
-              Path: key,
+              Path: (remote?.prefix ?? '') + key,
               Metadata: JSON.parse(d[key]),
             };
           });
@@ -982,26 +1257,31 @@ export default class FileTreeComponent {
       );
   }
 
-  #getGoogleWorkspaceFiles(path: string | null) {
+  #getGoogleWorkspaceFiles(path: string | null, remote: RemoteSource | null) {
     return this.#dupServer
       .postApiV1WebmoduleByModulekey({
         modulekey: 'googleworkspace',
         requestBody: {
           'backup-id': this.backupId() ?? '',
-          'source-prefix': this.sourcePrefix() ?? '',
+          'source-prefix': remote?.prefix ?? this.sourcePrefix() ?? '',
           operation: 'ListDestinationRestoreTargets',
-          url: this.destinationUrl() ?? '',
+          url: remote?.url ?? this.destinationUrl() ?? '',
           path: path ?? '/',
         },
       })
       .pipe(
         map((res) => {
-          const d = res.Result as {
-            [key: string]: string;
-          };
+          const d = res.Result;
+          if (!d) {
+            throw new Error('No result returned');
+          }
+
+          if (res.Status !== 'OK') {
+            throw new Error(d['error'] ?? 'An error occured');
+          }
           return Object.keys(d).map((key) => {
             return {
-              Path: key,
+              Path: (remote?.prefix ?? '') + key,
               Metadata: JSON.parse(d[key]),
             };
           });
@@ -1061,21 +1341,54 @@ export default class FileTreeComponent {
     }
   }
 
-  #getFilePath(path: string) {
+  #getFilePath(path: string, remote: RemoteSource | null | undefined) {
+    if (remote?.type === 'office365') {
+      if (this.#sysInfo.hasV2ListBackendOperations() && usev2Listing)
+        return this.#getBackendFiles(remote.path, remote, 'SourceProvider');
+
+      return this.#getMicrosoft365Files(remote.path, remote);
+    }
+
     if (this.customRemoteMode() === 'o365') {
-      return this.#getOffice365Files(path);
+      if (this.#sysInfo.hasV2ListBackendOperations() && usev2Listing)
+        return this.#getBackendFiles(path, null, 'SourceProvider');
+
+      return this.#getMicrosoft365Files(path, null);
+    }
+
+    if (remote?.type === 'googleworkspace') {
+      if (this.#sysInfo.hasV2ListBackendOperations() && usev2Listing)
+        return this.#getBackendFiles(remote.path, remote, 'SourceProvider');
+
+      return this.#getGoogleWorkspaceFiles(remote.path, remote);
     }
 
     if (this.customRemoteMode() === 'gsuite') {
-      return this.#getGoogleWorkspaceFiles(path);
+      if (this.#sysInfo.hasV2ListBackendOperations() && usev2Listing)
+        return this.#getBackendFiles(path, null, 'SourceProvider');
+
+      return this.#getGoogleWorkspaceFiles(path, null);
+    }
+
+    if (remote?.type === 'diskimage') {
+      if (this.#sysInfo.hasV2ListBackendOperations() && usev2Listing)
+        return this.#getBackendFiles(remote.path, remote, 'SourceProvider');
+
+      return this.#getDiskImagePaths(remote.path);
     }
 
     if (this.customRemoteMode() === 'diskimage') {
+      if (this.#sysInfo.hasV2ListBackendOperations() && usev2Listing)
+        return this.#getBackendFiles(path, null, 'SourceProvider');
       return this.#getDiskImagePaths(path);
     }
 
     if (this.isByBackupSettings()) {
       return this.#getBackupFiles(path);
+    }
+
+    if (this.customRemoteMode() === 'backend') {
+      return this.#getBackendFiles(path, null, 'Backend');
     }
 
     return this.#getFilesystemPath(path);
@@ -1084,7 +1397,7 @@ export default class FileTreeComponent {
   #fetchPathSegmentsRecursively(path: string) {
     let pathArr = path
       .split('\0')
-      .filter((x) => !x.startsWith('-') && !x.startsWith('+') && !x.startsWith('@'))
+      .filter((x) => !this.#isFilter(x) && !x.startsWith('@'))
       .filter(Boolean);
 
     const segmentArr = pathArr.map((x) => {
@@ -1092,6 +1405,9 @@ export default class FileTreeComponent {
       const split = x.split(sep);
 
       if (split.at(-1) === '') {
+        split.pop();
+      }
+      if (!this.#isFolder(x)) {
         split.pop();
       }
 
@@ -1121,7 +1437,7 @@ export default class FileTreeComponent {
 
     const observables: Observable<FilePathResult>[] = urlPieces.map((urlPiece) => {
       this.isLoading.set(urlPiece);
-      return (this.#getFilePath(urlPiece) as any).pipe(
+      return (this.#getFilePath(urlPiece, null) as any).pipe(
         map((data) => ({ status: 'success', value: data, url: urlPiece }) as FilePathResult),
         catchError((err) => of({ status: 'error', value: err, url: urlPiece } as FilePathResult))
       );
@@ -1140,6 +1456,8 @@ export default class FileTreeComponent {
               }
               return [];
             });
+
+            if (allNewNodes.length > 0) this.anyRemoteSourcesLoaded.set(true);
 
             const arrayUniqueByKey = [...new Map([...y, ...allNewNodes].map((item) => [item.id, item])).values()];
 
@@ -1183,13 +1501,18 @@ export default class FileTreeComponent {
     );
   }
 
+  #isFilter(path: string): boolean {
+    return path.startsWith('+') || path.startsWith('-');
+  }
+
   #getPath(node: FileTreeNode | null = null, newPath = ROOTPATH) {
+    const remote = node?.remoteSource;
     this.isLoading.set(newPath);
 
-    (this.#getFilePath(newPath) as Observable<any>).pipe(finalize(() => this.isLoading.set(null))).subscribe({
+    (this.#getFilePath(newPath, remote) as Observable<any>).pipe(finalize(() => this.isLoading.set(null))).subscribe({
       next: (x) => {
         let alignDataArray =
-          this.isByBackupSettings() || this.customRemoteMode() !== null
+          this.isByBackupSettings() || this.customRemoteMode() !== null || remote
             ? x.map((y: { Path: string; Size: number; Metadata: { [key: string]: string | null } | null }) => {
                 this.#detectExtendData(y.Metadata);
                 const sep = this.#getPathDelimiter(y.Path);
@@ -1199,28 +1522,50 @@ export default class FileTreeComponent {
                     .pop(),
                   y.Metadata
                 );
+
+                // Avoid traversing the filesystem blocks in the UI
+                if (y.Metadata && y.Metadata['diskimage:Type'] === 'filesystem') {
+                  return null;
+                }
+
+                let id = y.Path;
+                let newRemoteSource: RemoteSource | null = null;
+
+                if (remote) {
+                  id = y.Path.substring(1); // Remove leading @ for the path to match the tree
+                  newRemoteSource = {
+                    ...remote,
+                    path: y.Path.substring(remote.prefix.length),
+                  };
+                }
+
                 return {
                   text: text,
-                  id: y.Path,
+                  id: id,
                   cls: this.#isFolder(y.Path) ? 'folder' : 'file',
                   leaf: node !== null,
                   resolvedpath: y.Path,
                   hidden: false,
+                  remoteSource: newRemoteSource,
                   fileSize: y.Size,
                 };
               })
             : x;
 
-        this.treeNodes.update((y) => {
-          const newArray = alignDataArray.map((z: any) => {
-            const cls = this.#isFolder(z.id) ? 'folder' : 'file';
+        if (alignDataArray.length > 0) this.anyRemoteSourcesLoaded.set(true);
 
-            return {
-              ...z,
-              cls,
-              parentPath: newPath,
-            };
-          });
+        this.treeNodes.update((y) => {
+          const newArray = alignDataArray
+            .filter((f: any) => f !== null)
+            .map((z: any) => {
+              const cls = this.#isFolder(z.id) ? 'folder' : 'file';
+
+              return {
+                ...z,
+                cls,
+                parentPath: newPath,
+              };
+            });
 
           const arrayUniqueByKey = [...new Map([...y, ...newArray].map((item) => [item.id, item])).values()];
 
@@ -1230,6 +1575,14 @@ export default class FileTreeComponent {
             return arrayUniqueByKey as TreeNode[];
           }
         });
+      },
+      error: (err) => {
+        this.errorMessage.set(err.message);
+        if (this.anyRemoteSourcesLoaded()) {
+          setTimeout(() => {
+            this.errorMessage.set(null);
+          }, 5000);
+        }
       },
     });
   }

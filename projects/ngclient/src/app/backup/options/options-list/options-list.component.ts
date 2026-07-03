@@ -65,6 +65,7 @@ export class OptionsListComponent {
   hasFreeTextSettings = input(false);
   applicationOptions = input<SettingDto[] | null | undefined>();
   showTextArea = signal(false);
+  showOptionNames = signal(false);
 
   allOptionsGrouped = this.#sysInfo.allOptionsGrouped;
   allOptions = this.#sysInfo.allOptions;

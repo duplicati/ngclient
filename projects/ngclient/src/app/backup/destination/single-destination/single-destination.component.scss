@@ -62,13 +62,6 @@ label {
   white-space: pre;
 }
 
-.filen-2fa-setup {
-  display: flex;
-  flex-direction: row;
-  gap: 8px;
-  align-items: flex-end;
-}
-
 .duplicati-backup-id {
   display: flex;
   flex-direction: row;
@@ -88,5 +81,12 @@ label {
     display: flex;
     flex-direction: column;
     gap: 4px;
+  }
+}
+
+.no-backups-found {
+  button {
+    margin-left: 4px;
+    margin-right: 4px;
   }
 }

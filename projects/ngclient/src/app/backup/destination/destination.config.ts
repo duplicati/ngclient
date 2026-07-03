@@ -173,7 +173,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups on your local file system.`,
     icon: 'assets/dest-icons/file-system.png',
     searchTerms: 'local disk harddrive localdisk filesystem unc server share drive',
-    sortOrder: 100,
+    sortOrder: 110,
     customFields: {
       path: {
         type: 'FolderTree',
@@ -215,7 +215,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     description: $localize`Store backups with Duplicati Storage.`,
     icon: 'assets/dest-icons/duplicati.png',
     searchTerms: 'duplicati internal built-in',
-    sortOrder: -2,
+    sortOrder: 100,
     dynamicFields: [
       {
         name: 'duplicati-backup-id',
@@ -786,10 +786,11 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   },
   {
     key: 'od4b',
-    displayName: $localize`OneDrive Business`,
-    description: $localize`Store backups in OneDrive Business.`,
+    displayName: $localize`OneDrive Business (deprecated)`,
+    description: $localize`Store backups in OneDrive Business. Deprecated, use Sharepoint instead.`,
     icon: 'assets/dest-icons/one-drive.png',
     searchTerms: 'microsoft ms',
+    sortOrder: -1,
     customFields: {
       server: {
         type: 'Hostname',
@@ -848,10 +849,11 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   },
   {
     key: 'mssp',
-    displayName: $localize`Microsoft SharePoint`,
-    description: $localize`Store backups in Microsoft SharePoint.`,
+    displayName: $localize`Microsoft SharePoint (deprecated)`,
+    description: $localize`Store backups in Microsoft SharePoint using legacy API.`,
     icon: 'assets/dest-icons/sharepoint.png',
     searchTerms: 'microsoft ms',
+    sortOrder: -1,
     customFields: {
       server: {
         type: 'Hostname',
@@ -910,7 +912,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   },
   {
     key: 'sharepoint',
-    displayName: $localize`Microsoft SharePoint v2`,
+    displayName: $localize`Microsoft SharePoint`,
     description: $localize`Store backups in Microsoft SharePoint.`,
     icon: 'assets/dest-icons/sharepoint.png',
     oauthField: 'authid',
@@ -1514,6 +1516,13 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         name: 'auth-password',
         shortDescription: $localize`Password`,
         isMandatory: true,
+      },
+    ],
+    advancedFields: [
+      {
+        type: 'FileTree',
+        name: 'debug-propfind-file',
+        accepts: '.txt,.log',
       },
     ],
     mapper: {
@@ -2302,6 +2311,42 @@ export const DESTINATION_CONFIG: DestinationConfig = [
           dynamic: {
             ...dynamic,
           },
+        };
+      },
+    },
+  },
+  {
+    key: 'drimecloud',
+    displayName: $localize`Drime Cloud`,
+    description: $localize`Store backups in Drime Cloud.`,
+    icon: 'assets/dest-icons/drime.png',
+    customFields: {
+      path: {
+        type: 'Path',
+        name: 'path',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
+        shortDescription: $localize`Path in Drime Cloud`,
+        longDescription: $localize`Path in Drime Cloud`,
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+    },
+    dynamicFields: [
+      {
+        name: 'api-token',
+        isMandatory: true,
+      },
+    ],
+    mapper: {
+      to: (fields: ValueOfDestinationFormGroup) => {
+        return buildUrlFromFields(fields, null, null, fields.custom.path);
+      },
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
+        return <ValueOfDestinationFormGroup>{
+          destinationType,
+          custom: {
+            path: getSimplePath(urlObj),
+          },
+          ...fromSearchParams(destinationType, urlObj),
         };
       },
     },

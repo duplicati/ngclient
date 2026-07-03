@@ -3,6 +3,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   ShipAlert,
   ShipButton,
+  ShipChip,
   ShipDialogService,
   ShipDivider,
   ShipFormField,
@@ -126,6 +127,7 @@ type UsageStatisticsType = (typeof USAGE_STATISTICS_OPTIONS)[number];
     ShipDivider,
     ShipAlert,
     ShipSelect,
+    ShipChip,
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss',
@@ -150,15 +152,21 @@ export default class SettingsComponent {
   powerModeCtrl = signal<string>('');
   usageStatistics = signal<UsageStatisticsType['value']>('');
   updatingUsageStatistics = signal(false);
-  remoteControlStatus = this.#remoteControlState.status;
+  remoteControlStatus = this.#remoteControlState.statusMessage;
   remoteControlState = this.#remoteControlState.state;
   updatingChannel = signal(false);
   updateChannel = signal<UpdateChannel>('');
   isUsingRelay = this.#relayConfigState.relayIsEnabled;
   defaultClient = signal(this.#getDefaultClient());
+  hasIpcController = this.#sysinfo.hasIpcController;
   usageStatisticsDisabled = computed(() => {
     const value = this.#sysinfo.systemInfo()?.DefaultUsageReportLevel ?? '';
     return value.toLowerCase() === 'disabled';
+  });
+
+  additionalReportingUrl = computed(() => {
+    const settings = this.#serverSettingsService.serverSettings();
+    return settings ? settings['additional-report-url'] || '' : '';
   });
 
   #setReporterDefaultEffect = effect(() => {
@@ -195,6 +203,7 @@ export default class SettingsComponent {
   updatingConsoleControl = signal(false);
   consoleControlDisabled = signal(false);
   hideConsoleConnectionStatus = this.#serverSettingsService.isConsoleConnectionStatusHidden;
+  isControllerIpcEnabled = this.#serverSettingsService.isControllerIpcEnabled;
 
   updateRemoteAccess($event: boolean) {
     this.allowRemoteAccess.set($event);
@@ -246,6 +255,17 @@ export default class SettingsComponent {
     this.#serverSettingsService
       .setHideConsoleConnectionStatus(!$event)
       .pipe(finalize(() => this.updatingHideConsoleConnectionStatus.set(false)))
+      .subscribe();
+  }
+
+  updatingControllerIpcState = signal(false);
+
+  saveControllerIpcState($event: boolean) {
+    this.updatingControllerIpcState.set(true);
+
+    this.#serverSettingsService
+      .setControllerIpcState(!!$event)
+      .pipe(finalize(() => this.updatingControllerIpcState.set(false)))
       .subscribe();
   }
 
