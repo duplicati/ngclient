@@ -51,6 +51,7 @@ export default class OptionsComponent {
   settings = this.#backupState.settings;
   optionsFields = this.#backupState.optionsFields;
   applicationOptions = this.#backupState.applicationOptions;
+  isSyncMode = this.#backupState.isSyncMode;
 
   retentionOptions = signal(RETENTION_OPTIONS);
 

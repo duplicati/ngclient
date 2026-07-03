@@ -208,7 +208,11 @@ export class StatusBarState {
     let pg = -1;
 
     if (status.task && status) {
-      if (status.Phase === 'Backup_ProcessingFiles' || status.Phase === 'Restore_DownloadingRemoteFiles') {
+      if (
+        status.Phase === 'Backup_ProcessingFiles' ||
+        status.Phase === 'Restore_DownloadingRemoteFiles' ||
+        status.Phase === 'Sync_ProcessingFiles'
+      ) {
         if (status.StillCounting) {
           pg = 0;
         } else {
@@ -223,13 +227,19 @@ export class StatusBarState {
             pg = 0.9;
           }
         }
-      } else if (status.Phase === 'Backup_Finalize' || status.Phase === 'Backup_WaitForUpload') {
+      } else if (status.Phase === 'Sync_CountingFiles') {
+        pg = 0;
+      } else if (
+        status.Phase === 'Backup_Finalize' ||
+        status.Phase === 'Backup_WaitForUpload' ||
+        status.Phase === 'Sync_WaitForUpload'
+      ) {
         pg = 0.9;
       } else if (status.Phase === 'Backup_Delete' || status.Phase === 'Backup_Compact') {
         pg = 0.95;
       } else if (status.Phase === 'Backup_VerificationUpload' || status.Phase === 'Backup_PostBackupVerify') {
         pg = 0.98;
-      } else if (status.Phase === 'Backup_Complete') {
+      } else if (status.Phase === 'Backup_Complete' || status.Phase === 'Sync_Complete') {
         pg = 1;
       } else if (status.Phase === 'Backup_RemoteSynchronization') {
         pg = status.OverallProgress! > 0 ? status.OverallProgress! : 0;
@@ -252,12 +262,16 @@ export class StatusBarState {
 
   #constructFileStatus(status: Status): string {
     const fileOffset =
-      (['Backup_WaitForUpload', 'Backup_ProcessingFiles'].includes(status.Phase!)
+      (['Backup_WaitForUpload', 'Backup_ProcessingFiles', 'Sync_WaitForUpload', 'Sync_ProcessingFiles'].includes(
+        status.Phase!
+      )
         ? status?.BackendFileProgress
         : status.CurrentFileoffset) ?? 0;
 
     const fileSize =
-      (['Backup_WaitForUpload', 'Backup_ProcessingFiles'].includes(status.Phase!)
+      (['Backup_WaitForUpload', 'Backup_ProcessingFiles', 'Sync_WaitForUpload', 'Sync_ProcessingFiles'].includes(
+        status.Phase!
+      )
         ? status?.BackendFileSize
         : status.CurrentFilesize) ?? 0;
 
@@ -284,8 +298,13 @@ export class StatusBarState {
       // This happens during the initial phases of a backup/restore
       if (status.TotalFileCount === 0) return text;
 
-      if (status.Phase === 'Backup_ProcessingFiles' || status.Phase === 'Restore_DownloadingRemoteFiles') {
-        if (status.StillCounting) {
+      if (
+        status.Phase === 'Backup_ProcessingFiles' ||
+        status.Phase === 'Restore_DownloadingRemoteFiles' ||
+        status.Phase === 'Sync_ProcessingFiles' ||
+        status.Phase === 'Sync_CountingFiles'
+      ) {
+        if (status.StillCounting || status.Phase === 'Sync_CountingFiles') {
           text = `Counting (${status.TotalFileCount} files found, ${this.#bytesPipe.transform(status.TotalFileSize)})`;
         } else {
           const unaccountedbytes = status.CurrentFilecomplete ? 0 : status.CurrentFileoffset;
@@ -294,11 +313,12 @@ export class StatusBarState {
           const restoringText = status.Phase === 'Restore_DownloadingRemoteFiles' ? 'Restoring: ' : '';
           const speedTxt = this.#constructSpeedText(status);
 
-          if (status.Phase === 'Backup_ProcessingFiles' && filesleft === 0) text = `Completing upload ${speedTxt}`;
+          if ((status.Phase === 'Backup_ProcessingFiles' || status.Phase === 'Sync_ProcessingFiles') && filesleft === 0)
+            text = `Completing upload ${speedTxt}`;
           else if (status.BackendIsBlocking ?? false) text = `Waiting for transfers ${speedTxt}`;
           else text = `${restoringText}${filesleft} files (${this.#bytesPipe.transform(sizeleft)}) to go ${speedTxt}`;
         }
-      } else if (status.Phase === 'Backup_WaitForUpload') {
+      } else if (status.Phase === 'Backup_WaitForUpload' || status.Phase === 'Sync_WaitForUpload') {
         const speedTxt = this.#constructSpeedText(status);
         if (speedTxt !== '') text = `Waiting for upload to finish ${speedTxt}`;
       } else if (status.Phase === 'Backup_RemoteSynchronization') {

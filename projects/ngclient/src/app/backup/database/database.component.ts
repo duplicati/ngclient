@@ -140,7 +140,7 @@ export default class DatabaseComponent {
   private doRepairDatabase() {
     this.isRestoring.set(true);
     this.#dupServer
-      .postApiV1BackupByIdRepair({ id: this.backupId()!, requestBody: { refresh_lock_info: true } })
+      .postApiV1BackupByIdRepair({ id: this.backupId()!, requestBody: {} })
       .pipe(
         take(1),
         finalize(() => this.isRestoring.set(false))

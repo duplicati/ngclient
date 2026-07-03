@@ -109,6 +109,11 @@
                   <div class="text">
                     <h3>
                       {{ backup.Backup.Name ?? MISSING_BACKUP_NAME }}
+                      @if (backup.Backup.OperationType === 'Sync') {
+                        <sh-chip class="simple accent" [shTooltip]="'Synchronization job'" i18n>
+                          <sh-icon>arrows-left-right</sh-icon>
+                        </sh-chip>
+                      }
                       <sh-chip>
                         <img class="provider-icon" [src]="getBackendIcon(backup.Backup.TargetURL)" alt="" />
                         <!-- <sh-icon>{{ getBackendIcon(backup.Backup.TargetURL) }}</sh-icon> -->
@@ -134,11 +139,24 @@
                   <div class="text">
                     <h3>
                       {{ backup.Backup.Name ?? MISSING_BACKUP_NAME }}
+                      @if (backup.Backup.OperationType === 'Sync') {
+                        <sh-chip class="simple accent" i18n [shTooltip]="'Synchronization job'" i18n>
+                          <sh-icon>arrows-left-right</sh-icon>
+                        </sh-chip>
+                      }
                       <sh-chip>
                         <img class="provider-icon" [src]="getBackendIcon(backup.Backup.TargetURL)" alt="" />
                         <!-- <sh-icon>{{ getBackendIcon(backup.Backup.TargetURL) }}</sh-icon> -->
                         {{ getBackendType(backup.Backup.TargetURL) }}
                       </sh-chip>
+                      @if (backup.Backup.AdditionalTargetURLs?.length) {
+                        @for (url of backup.Backup.AdditionalTargetURLs; track $index) {
+                          <sh-chip>
+                            <img class="provider-icon" [src]="getBackendIcon(url.TargetUrl)" alt="" />
+                            {{ getBackendType(url.TargetUrl) }}
+                          </sh-chip>
+                        }
+                      }
                     </h3>
 
                     @if (runningBackupId() !== backup.Backup.ID) {
@@ -259,6 +277,11 @@
             <tr>
               <td>
                 {{ backup.Backup.Name ?? MISSING_BACKUP_NAME }}
+                @if (backup.Backup.OperationType === 'Sync') {
+                  <sh-chip class="small accent" [shTooltip]="'Synchronization job'" i18n>
+                    <sh-icon>arrows-left-right</sh-icon>
+                  </sh-chip>
+                }
               </td>
               <td>
                 <sh-chip class="small">
@@ -266,6 +289,14 @@
                   <!-- <sh-icon>{{ getBackendIcon(backup.Backup.TargetURL) }}</sh-icon> -->
                   {{ getBackendType(backup.Backup.TargetURL) }}
                 </sh-chip>
+                @if (backup.Backup.AdditionalTargetURLs?.length) {
+                  @for (url of backup.Backup.AdditionalTargetURLs; track $index) {
+                    <sh-chip>
+                      <img class="provider-icon" [src]="getBackendIcon(url.TargetUrl)" alt="" />
+                      {{ getBackendType(url.TargetUrl) }}
+                    </sh-chip>
+                  }
+                }
               </td>
               <td>
                 @if (backup.Backup.Metadata?.['LastBackupFinished']) {

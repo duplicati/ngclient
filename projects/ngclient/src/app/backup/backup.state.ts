@@ -11,6 +11,7 @@ import {
   BackupDto,
   DuplicatiServer,
   ICommandLineArgument,
+  OperationType,
   ScheduleDto,
   SettingDto,
   SettingInputDto,
@@ -77,6 +78,7 @@ export class BackupState {
   isNew = computed(() => this.backupId() === 'new');
   shouldAutoSave = computed(() => !this.isDraft() && !this.isNew());
   osType = computed(() => this.#sysinfo.systemInfo()?.OSType);
+  isSyncMode = computed(() => this.generalForm.controls.operationType.value === 'Sync');
 
   isConnectionStringSaved = computed(() => {
     const targetUrl = this.targetUrlModel();
@@ -89,6 +91,7 @@ export class BackupState {
   sourceDataFormSignal = toSignal(this.sourceDataForm.valueChanges);
   generalFormSignal = toSignal(this.generalForm.valueChanges);
   encryptionFieldSignal = toSignal(this.generalForm.controls.encryption.valueChanges);
+  operationTypeFieldSignal = toSignal(this.generalForm.controls.operationType.valueChanges);
 
   advancedOptions = computed(() => {
     return this.#sysinfo.systemInfo()?.Options?.map(this.#mapCommandLineArgumentsToFormViews) ?? [];
@@ -214,8 +217,11 @@ export class BackupState {
     const backup = this.#mapFormsToBackup();
 
     const isNameValid = (backup.Backup.Name ?? '').trim() !== '';
+    const isSyncMode = this.generalForm.controls.operationType.value === 'Sync';
     const isUsingEncryption =
-      this.generalForm.controls.encryption.value !== '' && this.generalForm.controls.encryption.value !== '-';
+      !isSyncMode &&
+      this.generalForm.controls.encryption.value !== '' &&
+      this.generalForm.controls.encryption.value !== '-';
     const isPasswordValid =
       isUsingEncryption === false ||
       (this.generalForm.controls.password.value === this.generalForm.controls.repeatPassword.value &&
@@ -331,10 +337,12 @@ export class BackupState {
     const encryptionModule = backup.Settings?.find((x) => x.Name === 'encryption-module');
     const passphrase = backup.Settings?.find((x) => x.Name === 'passphrase')?.Value ?? '';
     const encryption = encryptionModule?.Value && encryptionModule.Value.length ? encryptionModule.Value : '';
+    const operationType = backup.OperationType ?? 'Backup';
 
     const baseUpdate: Partial<typeof this.generalForm.value> = {
       name: backup.Name ?? '',
       description: backup.Description ?? '',
+      operationType,
     };
 
     if (name && name !== '') {
@@ -505,6 +513,7 @@ export class BackupState {
         Description: generalFormValue.description,
         TargetURL: targetUrl ?? null,
         ConnectionStringID: firstTarget?.connectionStringId ?? null,
+        OperationType: (generalFormValue.operationType as OperationType) ?? 'Backup',
         Sources: pathFilters.filter((x) => !(x.startsWith('-') || x.startsWith('+'))),
         Settings: settings,
         Filters: pathFilters
@@ -544,7 +553,9 @@ export class BackupState {
       },
     ];
 
-    if (generalFormValue.encryption !== '' && generalFormValue.encryption !== NONE_OPTION.Key) {
+    const isSyncMode = generalFormValue.operationType === 'Sync';
+
+    if (!isSyncMode && generalFormValue.encryption !== '' && generalFormValue.encryption !== NONE_OPTION.Key) {
       encryption = [
         {
           Name: 'encryption-module',
@@ -573,34 +584,36 @@ export class BackupState {
 
     const optionFields = [];
 
-    switch (this.optionsFields.backupRetention()) {
-      case 'time':
-        optionFields.push({
-          Name: 'keep-time',
-          Value: this.optionsFields.backupRetentionTime(),
-        });
-        break;
+    if (!this.isSyncMode()) {
+      switch (this.optionsFields.backupRetention()) {
+        case 'time':
+          optionFields.push({
+            Name: 'keep-time',
+            Value: this.optionsFields.backupRetentionTime(),
+          });
+          break;
 
-      case 'versions':
-        optionFields.push({
-          Name: 'keep-versions',
-          Value: this.optionsFields.backupRetentionVersions()?.toString() ?? '',
-        });
-        break;
+        case 'versions':
+          optionFields.push({
+            Name: 'keep-versions',
+            Value: this.optionsFields.backupRetentionVersions()?.toString() ?? '',
+          });
+          break;
 
-      case 'custom':
-        optionFields.push({
-          Name: 'retention-policy',
-          Value: this.optionsFields.backupRetentionCustom(),
-        });
-        break;
+        case 'custom':
+          optionFields.push({
+            Name: 'retention-policy',
+            Value: this.optionsFields.backupRetentionCustom(),
+          });
+          break;
 
-      case 'smart':
-        optionFields.push({
-          Name: 'retention-policy',
-          Value: SMART_RETENTION,
-        });
-        break;
+        case 'smart':
+          optionFields.push({
+            Name: 'retention-policy',
+            Value: SMART_RETENTION,
+          });
+          break;
+      }
     }
 
     const _settingsIgnoreList = [...settingsIgnoreList, ...modulesToIgnore];
@@ -770,7 +783,7 @@ export class BackupState {
   }
 
   #resetAllForms() {
-    this.generalForm.reset();
+    this.generalForm.reset({ operationType: 'Backup' });
     this.sourceDataForm.reset();
     this.scheduleFields = SCHEDULE_FIELD_DEFAULTS();
     // this.optionsFields.remoteVolumeSize.set('50MB');

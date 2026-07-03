@@ -41,3 +41,16 @@ sup {
     color: var(--success-8);
   }
 }
+
+.mode-toggle {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+  transition: transform 125ms linear;
+  transform: scale(1);
+  gap: p2r(4);
+  sh-button-group {
+    width: 100%;
+  }
+}
