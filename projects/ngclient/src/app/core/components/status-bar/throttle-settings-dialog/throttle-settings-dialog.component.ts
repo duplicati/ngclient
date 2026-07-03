@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ShipButton, ShipFormField, ShipSelect } from '@ship-ui/core';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipFormField } from '@ship-ui/core/ship-form-field';
+import { ShipSelect } from '@ship-ui/core/ship-select';
 import { finalize } from 'rxjs';
 import { DuplicatiServer } from '../../../openapi';
 

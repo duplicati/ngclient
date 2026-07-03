@@ -84,7 +84,13 @@ export class RelayWebsocketService {
     const reconnectToken = this.#reconnectToken();
     const reconnectUrl = this.#reconnectUrl();
 
-    if (!reconnectToken || !reconnectUrl || !isReconnecting || !reconnectInterval || reconnectInterval < this.#MIN_POLL_INTERVAL) {
+    if (
+      !reconnectToken ||
+      !reconnectUrl ||
+      !isReconnecting ||
+      !reconnectInterval ||
+      reconnectInterval < this.#MIN_POLL_INTERVAL
+    ) {
       this.#activeInterval && window.clearInterval(this.#activeInterval);
       return;
     }

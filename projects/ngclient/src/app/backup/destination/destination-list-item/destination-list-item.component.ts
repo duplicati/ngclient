@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { ShipCard, ShipCardVariant, ShipChip } from '@ship-ui/core';
+import { ShipCardVariant } from '@ship-ui/core';
+import { ShipCard } from '@ship-ui/core/ship-card';
+import { ShipChip } from '@ship-ui/core/ship-chip';
 import { ConnectionStringsState } from '../../../core/states/connection-strings.state';
 import { DestinationTypeOption } from '../../../core/states/destinationconfig.state';
 import { getConfigurationByUrl, getSimplePath } from '../destination.config-utilities';

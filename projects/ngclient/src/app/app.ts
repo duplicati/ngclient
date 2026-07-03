@@ -10,7 +10,6 @@ import { configureProxySupport } from './core/utils/proxy-config.util';
   template: `
     <router-outlet />
   `,
-  styles: [],
 })
 export class App {
   #ls = inject(LOCALSTORAGE);

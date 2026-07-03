@@ -1,15 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import {
-  ShipAlertService,
-  ShipButton,
-  ShipDialogService,
-  ShipFileUpload,
-  ShipFormField,
-  ShipIcon,
-  ShipToggle,
-} from '@ship-ui/core';
+import { ShipAlertService } from '@ship-ui/core/ship-alert';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipDialogService } from '@ship-ui/core/ship-dialog';
+import { ShipFileUpload } from '@ship-ui/core/ship-file-upload';
+import { ShipFormField } from '@ship-ui/core/ship-form-field';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipToggle } from '@ship-ui/core/ship-toggle';
 import { finalize } from 'rxjs';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer } from '../../core/openapi';

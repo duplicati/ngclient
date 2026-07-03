@@ -1,6 +1,10 @@
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { ShipButton, ShipCheckbox, ShipDialog, ShipIcon, ShipTooltip } from '@ship-ui/core';
+import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipCheckbox } from '@ship-ui/core/ship-checkbox';
+import { ShipDialog } from '@ship-ui/core/ship-dialog';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { RemoteControlState } from '../../settings/remote-control/remote-control.state';
 import { ServerSettingsService } from '../../settings/server-settings.service';
 

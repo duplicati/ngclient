@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { ShipButton, ShipIcon } from '@ship-ui/core';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
 import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
 import { CommandLineLogOutputDto, DuplicatiServer } from '../../core/openapi';
 

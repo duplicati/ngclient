@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { ShipDialogService } from '@ship-ui/core';
+import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { Observable, Subscriber } from 'rxjs';
 import { ConfirmDialogComponent } from '../components/confirm-dialog/confirm-dialog.component';
 import {

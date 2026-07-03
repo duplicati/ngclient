@@ -1,7 +1,11 @@
 import { ChangeDetectionStrategy, Component, effect, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ShipAlert, ShipButton, ShipCheckbox, ShipFormField, ShipIcon } from '@ship-ui/core';
+import { ShipAlert } from '@ship-ui/core/ship-alert';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipCheckbox } from '@ship-ui/core/ship-checkbox';
+import { ShipFormField } from '@ship-ui/core/ship-form-field';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { finalize } from 'rxjs';
 import LogoComponent from '../core/components/logo/logo.component';
 import { localStorageSignal } from '../core/functions/localstorage-signal';

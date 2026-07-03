@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
-import { ShipButton } from '@ship-ui/core';
+import { ShipButton } from '@ship-ui/core/ship-button';
 
 export type ConfirmDialogData = {
   title: string;

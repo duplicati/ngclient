@@ -1,7 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ShipButton, ShipDialogService, ShipIcon, ShipRadio, ShipToggle } from '@ship-ui/core';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipDialogService } from '@ship-ui/core/ship-dialog';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipRadio } from '@ship-ui/core/ship-radio';
+import { ShipToggle } from '@ship-ui/core/ship-toggle';
 import { TargetUrlDialog } from '../../backup/source-data/target-url-dialog/target-url-dialog';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';

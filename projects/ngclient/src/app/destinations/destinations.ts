@@ -1,14 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {
-  ShipButton,
-  ShipCard,
-  ShipDialogService,
-  ShipDivider,
-  ShipFormField,
-  ShipIcon,
-  ShipProgressBar,
-} from '@ship-ui/core';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipCard } from '@ship-ui/core/ship-card';
+import { ShipDialogService } from '@ship-ui/core/ship-dialog';
+import { ShipDivider } from '@ship-ui/core/ship-divider';
+import { ShipFormField } from '@ship-ui/core/ship-form-field';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { DestinationListItemComponent } from '../backup/destination/destination-list-item/destination-list-item.component';
 import { DestinationListComponent } from '../backup/destination/destination-list/destination-list.component';
 import {

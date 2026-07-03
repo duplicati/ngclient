@@ -10,19 +10,17 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  ShipAlert,
-  ShipButton,
-  ShipCard,
-  ShipDialog,
-  ShipDivider,
-  ShipFormField,
-  ShipIcon,
-  ShipMenu,
-  ShipProgressBar,
-  ShipToggle,
-  ShipToggleCard,
-} from '@ship-ui/core';
+import { ShipAlert } from '@ship-ui/core/ship-alert';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipCard } from '@ship-ui/core/ship-card';
+import { ShipDialog } from '@ship-ui/core/ship-dialog';
+import { ShipDivider } from '@ship-ui/core/ship-divider';
+import { ShipFormField } from '@ship-ui/core/ship-form-field';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipMenu } from '@ship-ui/core/ship-menu';
+import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
+import { ShipToggle } from '@ship-ui/core/ship-toggle';
+import { ShipToggleCard } from '@ship-ui/core/ship-toggle-card';
 import { IDynamicModule } from '../../core/openapi';
 import { ConnectionStringsState } from '../../core/states/connection-strings.state';
 import { DestinationTypeOption } from '../../core/states/destinationconfig.state';

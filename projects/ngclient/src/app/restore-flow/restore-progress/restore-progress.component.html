@@ -34,7 +34,8 @@
         <p>
           <span i18n>Files processed:</span>
           @if (statusData()?.ProcessedFileCount) {
-            {{ statusData()?.ProcessedFileCount | number }} of {{ statusData()?.TotalFileCount | number }}
+            {{ statusData()?.ProcessedFileCount | number }} of
+            {{ statusData()?.TotalFileCount | number }}
           } @else {
             <ng-container i18n>N/A</ng-container>
           }
@@ -43,7 +44,8 @@
         <p>
           <span i18n>Size processed:</span>
           @if (statusData()?.ProcessedFileSize) {
-            {{ statusData()?.ProcessedFileSize | bytes }} of {{ statusData()?.TotalFileSize | bytes }}
+            {{ statusData()?.ProcessedFileSize | bytes }} of
+            {{ statusData()?.TotalFileSize | bytes }}
           } @else {
             <ng-container i18n>N/A</ng-container>
           }

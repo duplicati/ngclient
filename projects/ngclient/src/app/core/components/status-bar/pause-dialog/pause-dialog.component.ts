@@ -1,6 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ShipAlert, ShipButton, ShipCheckbox, ShipRadio } from '@ship-ui/core';
+import { ShipAlert } from '@ship-ui/core/ship-alert';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipCheckbox } from '@ship-ui/core/ship-checkbox';
+import { ShipRadio } from '@ship-ui/core/ship-radio';
 import { finalize } from 'rxjs';
 import { DuplicatiServer } from '../../../openapi';
 

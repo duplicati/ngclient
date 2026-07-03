@@ -1,5 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, model } from '@angular/core';
-import { ShipAlert, ShipButton, ShipIcon, ShipSpinner } from '@ship-ui/core';
+import { ShipAlert } from '@ship-ui/core/ship-alert';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipSpinner } from '@ship-ui/core/ship-spinner';
 import { RemoteDestinationType } from '../../../../core/openapi';
 import { TestDestinationResult, TestDestinationService } from '../../../../core/services/test-destination.service';
 import { fromTargetPath } from '../../../destination/destination.config-utilities';

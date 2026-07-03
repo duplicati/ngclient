@@ -10,11 +10,17 @@
 
   @if (pathState()?.type === '-FileGroup' || pathState()?.type === '+FileGroup') {
     <sh-select [options]="fileGroupOptions()" [isClearable]="false" value="value" label="key">
-      <input type="text" [ngModel]="pathState()?.expression" (ngModelChange)="updateStateExpression($event)" />
+      <input
+        type="text"
+        [ngModel]="pathState()?.expression"
+        (ngModelChange)="updateStateExpression($event)" />
     </sh-select>
   } @else {
     <sh-form-field>
-      <input type="text" [ngModel]="pathState()?.expression" (ngModelChange)="updateStateExpression($event)" />
+      <input
+        type="text"
+        [ngModel]="pathState()?.expression"
+        (ngModelChange)="updateStateExpression($event)" />
     </sh-form-field>
   }
 

@@ -1,13 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  ShipAlert,
-  ShipAlertService,
-  ShipAlertType,
-  ShipButton,
-  ShipDialogService,
-  ShipProgressBar,
-} from '@ship-ui/core';
+import { ShipAlert, ShipAlertService, ShipAlertType } from '@ship-ui/core/ship-alert';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipDialogService } from '@ship-ui/core/ship-dialog';
+import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer, NotificationType } from '../../core/openapi';
 import { OpenAPI } from '../../core/openapi/core/OpenAPI';

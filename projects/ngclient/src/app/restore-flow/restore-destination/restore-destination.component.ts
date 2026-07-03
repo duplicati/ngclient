@@ -10,7 +10,12 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ShipAlert, ShipButton, ShipDialog, ShipDialogService, ShipFormField, ShipIcon, ShipMenu } from '@ship-ui/core';
+import { ShipAlert } from '@ship-ui/core/ship-alert';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipDialog, ShipDialogService } from '@ship-ui/core/ship-dialog';
+import { ShipFormField } from '@ship-ui/core/ship-form-field';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipMenu } from '@ship-ui/core/ship-menu';
 import { BackupState } from '../../backup/backup.state';
 import { DestinationListItemComponent } from '../../backup/destination/destination-list-item/destination-list-item.component';
 import { DestinationListComponent } from '../../backup/destination/destination-list/destination-list.component';

@@ -1,16 +1,14 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input, model, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {
-  ShipButton,
-  ShipFormField,
-  ShipIcon,
-  ShipMenu,
-  ShipSelect,
-  ShipToggle,
-  ShipToggleCard,
-  ShipTooltip,
-} from '@ship-ui/core';
+import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipFormField } from '@ship-ui/core/ship-form-field';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipMenu } from '@ship-ui/core/ship-menu';
+import { ShipSelect } from '@ship-ui/core/ship-select';
+import { ShipToggle } from '@ship-ui/core/ship-toggle';
+import { ShipToggleCard } from '@ship-ui/core/ship-toggle-card';
 import FileTreeComponent from '../../../core/components/file-tree/file-tree.component';
 import { SizeComponent } from '../../../core/components/size/size.component';
 import { TimespanComponent } from '../../../core/components/timespan/timespan.component';

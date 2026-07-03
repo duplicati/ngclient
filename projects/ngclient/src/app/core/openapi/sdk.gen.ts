@@ -5,1670 +5,1942 @@ import { HttpClient } from '@angular/common/http';
 import type { Observable } from 'rxjs';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { GetApiV1CommandlineResponse, GetApiV2ConnectionStringsResponse, PostApiV2ConnectionStringsData, PostApiV2ConnectionStringsResponse, GetApiV2ConnectionStringByIdData, GetApiV2ConnectionStringByIdResponse, PutApiV2ConnectionStringByIdData, PutApiV2ConnectionStringByIdResponse, DeleteApiV2ConnectionStringByIdData, DeleteApiV2ConnectionStringByIdResponse, PostApiV2ConnectionStringByIdUpdateBackupsData, PostApiV2ConnectionStringByIdUpdateBackupsResponse, PostApiV1CommandlineData, PostApiV1CommandlineResponse, GetApiV1AcknowledgementsResponse, PostApiV1AuthRefreshData, PostApiV1AuthRefreshResponse, PostApiV1AuthSigninData, PostApiV1AuthSigninResponse, PostApiV1AuthLoginData, PostApiV1AuthLoginResponse, PostApiV1AuthIssuesignintokenData, PostApiV1AuthIssuesignintokenResponse, PostApiV1AuthRefreshLogoutData, PostApiV1AuthRefreshLogoutResponse, PostApiV1AuthIssuetokenByOperationData, PostApiV1AuthIssuetokenByOperationResponse, PostApiV1AuthIssueForeverTokenResponse, PostApiV1AuthStatusResponse, GetApiV1BackupdefaultsResponse, GetApiV1BackupsData, GetApiV1BackupsResponse, PostApiV1BackupsData, PostApiV1BackupsResponse, PostApiV1BackupsImportData, PostApiV1BackupsImportResponse, GetApiV1BugreportByReportidData, GetApiV1BugreportByReportidResponse, GetApiV1ChangelogData, GetApiV1ChangelogResponse, GetApiV1CommandlineByRunidData, GetApiV1CommandlineByRunidResponse, PostApiV1CommandlineByRunidAbortData, PostApiV1CommandlineByRunidAbortResponse, PostApiV1FilesystemData, PostApiV1FilesystemResponse, PostApiV1FilesystemValidateData, PostApiV1FilesystemValidateResponse, GetApiV1FolderstatusResponse, GetApiV1FolderstatusByPathData, GetApiV1FolderstatusByPathResponse, GetApiV1LicensesResponse, GetApiV1LogdataPollData, GetApiV1LogdataPollResponse, GetApiV1LogdataLogData, GetApiV1LogdataLogResponse, GetApiV1LogdataCrashlogResponse, GetApiV1NotificationByIdData, GetApiV1NotificationByIdResponse, DeleteApiV1NotificationByIdData, DeleteApiV1NotificationByIdResponse, GetApiV1NotificationsResponse, GetApiV1ProgressstateResponse, GetApiV1RemotecontrolStatusResponse, PostApiV1RemoteoperationDbpathData, PostApiV1RemoteoperationDbpathResponse, PostApiV1RemoteoperationTestData, PostApiV1RemoteoperationTestResponse, PostApiV1RemoteoperationCreateData, PostApiV1RemoteoperationCreateResponse, GetApiV1ServersettingsResponse, PatchApiV1ServersettingsData, PatchApiV1ServersettingsResponse, GetApiV1ServersettingByKeyData, GetApiV1ServersettingByKeyResponse, PutApiV1ServersettingByKeyData, PutApiV1ServersettingByKeyResponse, GetApiV1ServerstateData, GetApiV1ServerstateResponse, PostApiV1ServerstatePauseData, PostApiV1ServerstatePauseResponse, PostApiV1ServerstateResumeResponse, GetApiV1SysteminfoResponse, GetApiV1SysteminfoFiltergroupsResponse, GetApiV1TasksResponse, GetApiV1TaskByTaskidData, GetApiV1TaskByTaskidResponse, PostApiV1TaskByTaskidStopData, PostApiV1TaskByTaskidStopResponse, PostApiV1TaskByTaskidAbortData, PostApiV1TaskByTaskidAbortResponse, GetApiV1UisettingsResponse, PostApiV1UisettingsData, PostApiV1UisettingsResponse, GetApiV1UisettingsBySchemeData, GetApiV1UisettingsBySchemeResponse, PatchApiV1UisettingsBySchemeData, PatchApiV1UisettingsBySchemeResponse, PostApiV1UpdatesCheckResponse, PostApiV1WebmoduleByModulekeyData, PostApiV1WebmoduleByModulekeyResponse, GetApiV1BackupByIdData, GetApiV1BackupByIdResponse, PutApiV1BackupByIdData, PutApiV1BackupByIdResponse, DeleteApiV1BackupByIdData, DeleteApiV1BackupByIdResponse, GetApiV1BackupByIdFilesData, GetApiV1BackupByIdFilesResponse, GetApiV1BackupByIdLogData, GetApiV1BackupByIdLogResponse, GetApiV1BackupByIdRemotelogData, GetApiV1BackupByIdRemotelogResponse, GetApiV1BackupByIdFilesetsData, GetApiV1BackupByIdFilesetsResponse, GetApiV1BackupByIdExportArgsonlyData, GetApiV1BackupByIdExportArgsonlyResponse, GetApiV1BackupByIdExportCmdlineData, GetApiV1BackupByIdExportCmdlineResponse, GetApiV1BackupByIdExportData, GetApiV1BackupByIdExportResponse, GetApiV1BackupByIdIsdbusedelsewhereData, GetApiV1BackupByIdIsdbusedelsewhereResponse, GetApiV1BackupByIdIsactiveData, GetApiV1BackupByIdIsactiveResponse, PostApiV1BackupByIdDeletedbData, PostApiV1BackupByIdDeletedbResponse, PostApiV1BackupByIdMovedbData, PostApiV1BackupByIdMovedbResponse, PostApiV1BackupByIdUpdatedbData, PostApiV1BackupByIdUpdatedbResponse, PostApiV1BackupByIdRestoreData, PostApiV1BackupByIdRestoreResponse, PostApiV1BackupByIdCreatereportData, PostApiV1BackupByIdCreatereportResponse, PostApiV1BackupByIdRepairData, PostApiV1BackupByIdRepairResponse, PostApiV1BackupByIdRepairupdateData, PostApiV1BackupByIdRepairupdateResponse, PostApiV1BackupByIdVacuumData, PostApiV1BackupByIdVacuumResponse, PostApiV1BackupByIdVerifyData, PostApiV1BackupByIdVerifyResponse, PostApiV1BackupByIdCompactData, PostApiV1BackupByIdCompactResponse, PostApiV1BackupByIdStartData, PostApiV1BackupByIdStartResponse, PostApiV1BackupByIdRunData, PostApiV1BackupByIdRunResponse, PostApiV1BackupByIdReportRemoteSizeData, PostApiV1BackupByIdReportRemoteSizeResponse, PostApiV1BackupByIdCopytotempData, PostApiV1BackupByIdCopytotempResponse, PostApiV1BackupByIdRestoreTaskConfigData, PostApiV1BackupByIdRestoreTaskConfigResponse, PostApiV1BackupByIdImportfromtempData, PostApiV1BackupByIdImportfromtempResponse, PostApiV1RemotecontrolEnableResponse, PostApiV1RemotecontrolDisableResponse, DeleteApiV1RemotecontrolRegistrationResponse, PostApiV1RemotecontrolRegisterData, PostApiV1RemotecontrolRegisterResponse, DeleteApiV1RemotecontrolRegisterResponse, PostApiV1RemotecontrolRegisterWaitResponse, PostApiV2DestinationListData, PostApiV2DestinationListResponse, PostApiV2SystemTempDiskSpaceData, PostApiV2SystemTempDiskSpaceResponse, PostApiV2FilesystemTestFilterData, PostApiV2FilesystemTestFilterResponse, PostApiV2BackupListFilesetsData, PostApiV2BackupListFilesetsResponse, PostApiV2BackupListFolderData, PostApiV2BackupListFolderResponse, PostApiV2BackupListVersionsData, PostApiV2BackupListVersionsResponse, PostApiV2BackupSearchData, PostApiV2BackupSearchResponse, PostApiV2DestinationTestData, PostApiV2DestinationTestResponse, GetApiV1WebmodulesResponse } from './types.gen';
+import type {
+  GetApiV1CommandlineResponse,
+  GetApiV2ConnectionStringsResponse,
+  PostApiV2ConnectionStringsData,
+  PostApiV2ConnectionStringsResponse,
+  GetApiV2ConnectionStringByIdData,
+  GetApiV2ConnectionStringByIdResponse,
+  PutApiV2ConnectionStringByIdData,
+  PutApiV2ConnectionStringByIdResponse,
+  DeleteApiV2ConnectionStringByIdData,
+  DeleteApiV2ConnectionStringByIdResponse,
+  PostApiV2ConnectionStringByIdUpdateBackupsData,
+  PostApiV2ConnectionStringByIdUpdateBackupsResponse,
+  PostApiV1CommandlineData,
+  PostApiV1CommandlineResponse,
+  GetApiV1AcknowledgementsResponse,
+  PostApiV1AuthRefreshData,
+  PostApiV1AuthRefreshResponse,
+  PostApiV1AuthSigninData,
+  PostApiV1AuthSigninResponse,
+  PostApiV1AuthLoginData,
+  PostApiV1AuthLoginResponse,
+  PostApiV1AuthIssuesignintokenData,
+  PostApiV1AuthIssuesignintokenResponse,
+  PostApiV1AuthRefreshLogoutData,
+  PostApiV1AuthRefreshLogoutResponse,
+  PostApiV1AuthIssuetokenByOperationData,
+  PostApiV1AuthIssuetokenByOperationResponse,
+  PostApiV1AuthIssueForeverTokenResponse,
+  PostApiV1AuthStatusResponse,
+  GetApiV1BackupdefaultsResponse,
+  GetApiV1BackupsData,
+  GetApiV1BackupsResponse,
+  PostApiV1BackupsData,
+  PostApiV1BackupsResponse,
+  PostApiV1BackupsImportData,
+  PostApiV1BackupsImportResponse,
+  GetApiV1BugreportByReportidData,
+  GetApiV1BugreportByReportidResponse,
+  GetApiV1ChangelogData,
+  GetApiV1ChangelogResponse,
+  GetApiV1CommandlineByRunidData,
+  GetApiV1CommandlineByRunidResponse,
+  PostApiV1CommandlineByRunidAbortData,
+  PostApiV1CommandlineByRunidAbortResponse,
+  PostApiV1FilesystemData,
+  PostApiV1FilesystemResponse,
+  PostApiV1FilesystemValidateData,
+  PostApiV1FilesystemValidateResponse,
+  GetApiV1FolderstatusResponse,
+  GetApiV1FolderstatusByPathData,
+  GetApiV1FolderstatusByPathResponse,
+  GetApiV1LicensesResponse,
+  GetApiV1LogdataPollData,
+  GetApiV1LogdataPollResponse,
+  GetApiV1LogdataLogData,
+  GetApiV1LogdataLogResponse,
+  GetApiV1LogdataCrashlogResponse,
+  GetApiV1NotificationByIdData,
+  GetApiV1NotificationByIdResponse,
+  DeleteApiV1NotificationByIdData,
+  DeleteApiV1NotificationByIdResponse,
+  GetApiV1NotificationsResponse,
+  GetApiV1ProgressstateResponse,
+  GetApiV1RemotecontrolStatusResponse,
+  PostApiV1RemoteoperationDbpathData,
+  PostApiV1RemoteoperationDbpathResponse,
+  PostApiV1RemoteoperationTestData,
+  PostApiV1RemoteoperationTestResponse,
+  PostApiV1RemoteoperationCreateData,
+  PostApiV1RemoteoperationCreateResponse,
+  GetApiV1ServersettingsResponse,
+  PatchApiV1ServersettingsData,
+  PatchApiV1ServersettingsResponse,
+  GetApiV1ServersettingByKeyData,
+  GetApiV1ServersettingByKeyResponse,
+  PutApiV1ServersettingByKeyData,
+  PutApiV1ServersettingByKeyResponse,
+  GetApiV1ServerstateData,
+  GetApiV1ServerstateResponse,
+  PostApiV1ServerstatePauseData,
+  PostApiV1ServerstatePauseResponse,
+  PostApiV1ServerstateResumeResponse,
+  GetApiV1SysteminfoResponse,
+  GetApiV1SysteminfoFiltergroupsResponse,
+  GetApiV1TasksResponse,
+  GetApiV1TaskByTaskidData,
+  GetApiV1TaskByTaskidResponse,
+  PostApiV1TaskByTaskidStopData,
+  PostApiV1TaskByTaskidStopResponse,
+  PostApiV1TaskByTaskidAbortData,
+  PostApiV1TaskByTaskidAbortResponse,
+  GetApiV1UisettingsResponse,
+  PostApiV1UisettingsData,
+  PostApiV1UisettingsResponse,
+  GetApiV1UisettingsBySchemeData,
+  GetApiV1UisettingsBySchemeResponse,
+  PatchApiV1UisettingsBySchemeData,
+  PatchApiV1UisettingsBySchemeResponse,
+  PostApiV1UpdatesCheckResponse,
+  PostApiV1WebmoduleByModulekeyData,
+  PostApiV1WebmoduleByModulekeyResponse,
+  GetApiV1BackupByIdData,
+  GetApiV1BackupByIdResponse,
+  PutApiV1BackupByIdData,
+  PutApiV1BackupByIdResponse,
+  DeleteApiV1BackupByIdData,
+  DeleteApiV1BackupByIdResponse,
+  GetApiV1BackupByIdFilesData,
+  GetApiV1BackupByIdFilesResponse,
+  GetApiV1BackupByIdLogData,
+  GetApiV1BackupByIdLogResponse,
+  GetApiV1BackupByIdRemotelogData,
+  GetApiV1BackupByIdRemotelogResponse,
+  GetApiV1BackupByIdFilesetsData,
+  GetApiV1BackupByIdFilesetsResponse,
+  GetApiV1BackupByIdExportArgsonlyData,
+  GetApiV1BackupByIdExportArgsonlyResponse,
+  GetApiV1BackupByIdExportCmdlineData,
+  GetApiV1BackupByIdExportCmdlineResponse,
+  GetApiV1BackupByIdExportData,
+  GetApiV1BackupByIdExportResponse,
+  GetApiV1BackupByIdIsdbusedelsewhereData,
+  GetApiV1BackupByIdIsdbusedelsewhereResponse,
+  GetApiV1BackupByIdIsactiveData,
+  GetApiV1BackupByIdIsactiveResponse,
+  PostApiV1BackupByIdDeletedbData,
+  PostApiV1BackupByIdDeletedbResponse,
+  PostApiV1BackupByIdMovedbData,
+  PostApiV1BackupByIdMovedbResponse,
+  PostApiV1BackupByIdUpdatedbData,
+  PostApiV1BackupByIdUpdatedbResponse,
+  PostApiV1BackupByIdRestoreData,
+  PostApiV1BackupByIdRestoreResponse,
+  PostApiV1BackupByIdCreatereportData,
+  PostApiV1BackupByIdCreatereportResponse,
+  PostApiV1BackupByIdRepairData,
+  PostApiV1BackupByIdRepairResponse,
+  PostApiV1BackupByIdRepairupdateData,
+  PostApiV1BackupByIdRepairupdateResponse,
+  PostApiV1BackupByIdVacuumData,
+  PostApiV1BackupByIdVacuumResponse,
+  PostApiV1BackupByIdVerifyData,
+  PostApiV1BackupByIdVerifyResponse,
+  PostApiV1BackupByIdCompactData,
+  PostApiV1BackupByIdCompactResponse,
+  PostApiV1BackupByIdStartData,
+  PostApiV1BackupByIdStartResponse,
+  PostApiV1BackupByIdRunData,
+  PostApiV1BackupByIdRunResponse,
+  PostApiV1BackupByIdReportRemoteSizeData,
+  PostApiV1BackupByIdReportRemoteSizeResponse,
+  PostApiV1BackupByIdCopytotempData,
+  PostApiV1BackupByIdCopytotempResponse,
+  PostApiV1BackupByIdRestoreTaskConfigData,
+  PostApiV1BackupByIdRestoreTaskConfigResponse,
+  PostApiV1BackupByIdImportfromtempData,
+  PostApiV1BackupByIdImportfromtempResponse,
+  PostApiV1RemotecontrolEnableResponse,
+  PostApiV1RemotecontrolDisableResponse,
+  DeleteApiV1RemotecontrolRegistrationResponse,
+  PostApiV1RemotecontrolRegisterData,
+  PostApiV1RemotecontrolRegisterResponse,
+  DeleteApiV1RemotecontrolRegisterResponse,
+  PostApiV1RemotecontrolRegisterWaitResponse,
+  PostApiV2DestinationListData,
+  PostApiV2DestinationListResponse,
+  PostApiV2SystemTempDiskSpaceData,
+  PostApiV2SystemTempDiskSpaceResponse,
+  PostApiV2FilesystemTestFilterData,
+  PostApiV2FilesystemTestFilterResponse,
+  PostApiV2BackupListFilesetsData,
+  PostApiV2BackupListFilesetsResponse,
+  PostApiV2BackupListFolderData,
+  PostApiV2BackupListFolderResponse,
+  PostApiV2BackupListVersionsData,
+  PostApiV2BackupListVersionsResponse,
+  PostApiV2BackupSearchData,
+  PostApiV2BackupSearchResponse,
+  PostApiV2DestinationTestData,
+  PostApiV2DestinationTestResponse,
+  GetApiV1WebmodulesResponse,
+} from './types.gen';
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root',
 })
 export class Commandline {
-    constructor(public readonly http: HttpClient) { }
-    
-    /**
-     * @returns string OK
-     * @throws ApiError
-     */
-    public getApiV1Commandline(): Observable<GetApiV1CommandlineResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/commandline'
-        });
-    }
+  constructor(public readonly http: HttpClient) {}
+
+  /**
+   * @returns string OK
+   * @throws ApiError
+   */
+  public getApiV1Commandline(): Observable<GetApiV1CommandlineResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/commandline',
+    });
+  }
 }
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root',
 })
 export class ConnectionStrings {
-    constructor(public readonly http: HttpClient) { }
-    
-    /**
-     * @returns ConnectionStringDtoArrayResponseEnvelope OK
-     * @throws ApiError
-     */
-    public getApiV2ConnectionStrings(): Observable<GetApiV2ConnectionStringsResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v2/connection-strings'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @returns ConnectionStringDtoResponseEnvelope OK
-     * @throws ApiError
-     */
-    public postApiV2ConnectionStrings(data: PostApiV2ConnectionStringsData): Observable<PostApiV2ConnectionStringsResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v2/connection-strings',
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @returns ConnectionStringDtoResponseEnvelope OK
-     * @throws ApiError
-     */
-    public getApiV2ConnectionStringById(data: GetApiV2ConnectionStringByIdData): Observable<GetApiV2ConnectionStringByIdResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v2/connection-string/{id}',
-            path: {
-                id: data.id
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @param data.requestBody
-     * @returns ConnectionStringDtoResponseEnvelope OK
-     * @throws ApiError
-     */
-    public putApiV2ConnectionStringById(data: PutApiV2ConnectionStringByIdData): Observable<PutApiV2ConnectionStringByIdResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'PUT',
-            url: '/api/v2/connection-string/{id}',
-            path: {
-                id: data.id
-            },
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @returns ObjectResponseEnvelope OK
-     * @throws ApiError
-     */
-    public deleteApiV2ConnectionStringById(data: DeleteApiV2ConnectionStringByIdData): Observable<DeleteApiV2ConnectionStringByIdResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'DELETE',
-            url: '/api/v2/connection-string/{id}',
-            path: {
-                id: data.id
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @param data.requestBody
-     * @returns BulkUpdateBackupsResponseDtoResponseEnvelope OK
-     * @throws ApiError
-     */
-    public postApiV2ConnectionStringByIdUpdateBackups(data: PostApiV2ConnectionStringByIdUpdateBackupsData): Observable<PostApiV2ConnectionStringByIdUpdateBackupsResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v2/connection-string/{id}/update-backups',
-            path: {
-                id: data.id
-            },
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
+  constructor(public readonly http: HttpClient) {}
+
+  /**
+   * @returns ConnectionStringDtoArrayResponseEnvelope OK
+   * @throws ApiError
+   */
+  public getApiV2ConnectionStrings(): Observable<GetApiV2ConnectionStringsResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v2/connection-strings',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns ConnectionStringDtoResponseEnvelope OK
+   * @throws ApiError
+   */
+  public postApiV2ConnectionStrings(
+    data: PostApiV2ConnectionStringsData
+  ): Observable<PostApiV2ConnectionStringsResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v2/connection-strings',
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @returns ConnectionStringDtoResponseEnvelope OK
+   * @throws ApiError
+   */
+  public getApiV2ConnectionStringById(
+    data: GetApiV2ConnectionStringByIdData
+  ): Observable<GetApiV2ConnectionStringByIdResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v2/connection-string/{id}',
+      path: {
+        id: data.id,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @param data.requestBody
+   * @returns ConnectionStringDtoResponseEnvelope OK
+   * @throws ApiError
+   */
+  public putApiV2ConnectionStringById(
+    data: PutApiV2ConnectionStringByIdData
+  ): Observable<PutApiV2ConnectionStringByIdResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'PUT',
+      url: '/api/v2/connection-string/{id}',
+      path: {
+        id: data.id,
+      },
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @returns ObjectResponseEnvelope OK
+   * @throws ApiError
+   */
+  public deleteApiV2ConnectionStringById(
+    data: DeleteApiV2ConnectionStringByIdData
+  ): Observable<DeleteApiV2ConnectionStringByIdResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'DELETE',
+      url: '/api/v2/connection-string/{id}',
+      path: {
+        id: data.id,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @param data.requestBody
+   * @returns BulkUpdateBackupsResponseDtoResponseEnvelope OK
+   * @throws ApiError
+   */
+  public postApiV2ConnectionStringByIdUpdateBackups(
+    data: PostApiV2ConnectionStringByIdUpdateBackupsData
+  ): Observable<PostApiV2ConnectionStringByIdUpdateBackupsResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v2/connection-string/{id}/update-backups',
+      path: {
+        id: data.id,
+      },
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
 }
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root',
 })
 export class DuplicatiServer {
-    constructor(public readonly http: HttpClient) { }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @returns CommandlineTaskStartedDto OK
-     * @throws ApiError
-     */
-    public postApiV1Commandline(data: PostApiV1CommandlineData): Observable<PostApiV1CommandlineResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/commandline',
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @returns AcknowlegdementDto OK
-     * @throws ApiError
-     */
-    public getApiV1Acknowledgements(): Observable<GetApiV1AcknowledgementsResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/acknowledgements'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @returns AccessTokenOutputDto OK
-     * @throws ApiError
-     */
-    public postApiV1AuthRefresh(data: PostApiV1AuthRefreshData = {}): Observable<PostApiV1AuthRefreshResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/auth/refresh',
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @returns AccessTokenOutputDto OK
-     * @throws ApiError
-     */
-    public postApiV1AuthSignin(data: PostApiV1AuthSigninData): Observable<PostApiV1AuthSigninResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/auth/signin',
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @returns AccessTokenOutputDto OK
-     * @throws ApiError
-     */
-    public postApiV1AuthLogin(data: PostApiV1AuthLoginData): Observable<PostApiV1AuthLoginResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/auth/login',
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @returns SigninTokenOutputDto OK
-     * @throws ApiError
-     */
-    public postApiV1AuthIssuesignintoken(data: PostApiV1AuthIssuesignintokenData): Observable<PostApiV1AuthIssuesignintokenResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/auth/issuesignintoken',
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @returns unknown OK
-     * @throws ApiError
-     */
-    public postApiV1AuthRefreshLogout(data: PostApiV1AuthRefreshLogoutData = {}): Observable<PostApiV1AuthRefreshLogoutResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/auth/refresh/logout',
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.operation
-     * @returns SingleOperationTokenOutputDto OK
-     * @throws ApiError
-     */
-    public postApiV1AuthIssuetokenByOperation(data: PostApiV1AuthIssuetokenByOperationData): Observable<PostApiV1AuthIssuetokenByOperationResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/auth/issuetoken/{operation}',
-            path: {
-                operation: data.operation
-            }
-        });
-    }
-    
-    /**
-     * @returns AccessTokenOutputDto OK
-     * @throws ApiError
-     */
-    public postApiV1AuthIssueForeverToken(): Observable<PostApiV1AuthIssueForeverTokenResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/auth/issue-forever-token'
-        });
-    }
-    
-    /**
-     * @returns unknown OK
-     * @throws ApiError
-     */
-    public postApiV1AuthStatus(): Observable<PostApiV1AuthStatusResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/auth/status'
-        });
-    }
-    
-    /**
-     * @returns string OK
-     * @throws ApiError
-     */
-    public getApiV1Backupdefaults(): Observable<GetApiV1BackupdefaultsResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/backupdefaults'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.orderBy
-     * @returns BackupAndScheduleOutputDto OK
-     * @throws ApiError
-     */
-    public getApiV1Backups(data: GetApiV1BackupsData = {}): Observable<GetApiV1BackupsResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/backups',
-            query: {
-                orderBy: data.orderBy
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @param data.temporary
-     * @param data.existingdb
-     * @returns CreateBackupDto OK
-     * @throws ApiError
-     */
-    public postApiV1Backups(data: PostApiV1BackupsData): Observable<PostApiV1BackupsResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/backups',
-            query: {
-                temporary: data.temporary,
-                existingdb: data.existingdb
-            },
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @returns ImportBackupOutputDto OK
-     * @throws ApiError
-     */
-    public postApiV1BackupsImport(data: PostApiV1BackupsImportData): Observable<PostApiV1BackupsImportResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/backups/import',
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.reportid
-     * @param data.token
-     * @returns unknown OK
-     * @throws ApiError
-     */
-    public getApiV1BugreportByReportid(data: GetApiV1BugreportByReportidData): Observable<GetApiV1BugreportByReportidResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/bugreport/{reportid}',
-            path: {
-                reportid: data.reportid
-            },
-            query: {
-                token: data.token
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.fromUpdate
-     * @returns ChangelogDto OK
-     * @throws ApiError
-     */
-    public getApiV1Changelog(data: GetApiV1ChangelogData = {}): Observable<GetApiV1ChangelogResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/changelog',
-            query: {
-                'from-update': data.fromUpdate
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.runid
-     * @param data.offset
-     * @param data.pagesize
-     * @returns CommandLineLogOutputDto OK
-     * @throws ApiError
-     */
-    public getApiV1CommandlineByRunid(data: GetApiV1CommandlineByRunidData): Observable<GetApiV1CommandlineByRunidResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/commandline/{runid}',
-            path: {
-                runid: data.runid
-            },
-            query: {
-                offset: data.offset,
-                pagesize: data.pagesize
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.runid
-     * @returns unknown OK
-     * @throws ApiError
-     */
-    public postApiV1CommandlineByRunidAbort(data: PostApiV1CommandlineByRunidAbortData): Observable<PostApiV1CommandlineByRunidAbortResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/commandline/{runid}/abort',
-            path: {
-                runid: data.runid
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @param data.onlyFolders
-     * @param data.showHidden
-     * @returns TreeNodeDto OK
-     * @throws ApiError
-     */
-    public postApiV1Filesystem(data: PostApiV1FilesystemData): Observable<PostApiV1FilesystemResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/filesystem',
-            query: {
-                onlyFolders: data.onlyFolders,
-                showHidden: data.showHidden
-            },
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @returns unknown OK
-     * @throws ApiError
-     */
-    public postApiV1FilesystemValidate(data: PostApiV1FilesystemValidateData): Observable<PostApiV1FilesystemValidateResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/filesystem/validate',
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @returns FolderStatusDto OK
-     * @throws ApiError
-     */
-    public getApiV1Folderstatus(): Observable<GetApiV1FolderstatusResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/folderstatus'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.path
-     * @returns FolderStatusDto OK
-     * @throws ApiError
-     */
-    public getApiV1FolderstatusByPath(data: GetApiV1FolderstatusByPathData): Observable<GetApiV1FolderstatusByPathResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/folderstatus/{path}',
-            path: {
-                path: data.path
-            }
-        });
-    }
-    
-    /**
-     * @returns LicenseDto OK
-     * @throws ApiError
-     */
-    public getApiV1Licenses(): Observable<GetApiV1LicensesResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/licenses'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.level
-     * @param data.id
-     * @param data.pagesize
-     * @returns LogEntry OK
-     * @throws ApiError
-     */
-    public getApiV1LogdataPoll(data: GetApiV1LogdataPollData): Observable<GetApiV1LogdataPollResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/logdata/poll',
-            query: {
-                level: data.level,
-                id: data.id,
-                pagesize: data.pagesize
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.offset
-     * @param data.pagesize
-     * @returns unknown OK
-     * @throws ApiError
-     */
-    public getApiV1LogdataLog(data: GetApiV1LogdataLogData = {}): Observable<GetApiV1LogdataLogResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/logdata/log',
-            query: {
-                offset: data.offset,
-                pagesize: data.pagesize
-            }
-        });
-    }
-    
-    /**
-     * @returns CrashLogOutputDto OK
-     * @throws ApiError
-     */
-    public getApiV1LogdataCrashlog(): Observable<GetApiV1LogdataCrashlogResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/logdata/crashlog'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @returns NotificationDto OK
-     * @throws ApiError
-     */
-    public getApiV1NotificationById(data: GetApiV1NotificationByIdData): Observable<GetApiV1NotificationByIdResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/notification/{id}',
-            path: {
-                id: data.id
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @returns unknown OK
-     * @throws ApiError
-     */
-    public deleteApiV1NotificationById(data: DeleteApiV1NotificationByIdData): Observable<DeleteApiV1NotificationByIdResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'DELETE',
-            url: '/api/v1/notification/{id}',
-            path: {
-                id: data.id
-            }
-        });
-    }
-    
-    /**
-     * @returns NotificationDto OK
-     * @throws ApiError
-     */
-    public getApiV1Notifications(): Observable<GetApiV1NotificationsResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/notifications'
-        });
-    }
-    
-    /**
-     * @returns IProgressEventData OK
-     * @throws ApiError
-     */
-    public getApiV1Progressstate(): Observable<GetApiV1ProgressstateResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/progressstate'
-        });
-    }
-    
-    /**
-     * @returns RemoteControlStatusOutput OK
-     * @throws ApiError
-     */
-    public getApiV1RemotecontrolStatus(): Observable<GetApiV1RemotecontrolStatusResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/remotecontrol/status'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @returns GetDbPathDto OK
-     * @throws ApiError
-     */
-    public postApiV1RemoteoperationDbpath(data: PostApiV1RemoteoperationDbpathData): Observable<PostApiV1RemoteoperationDbpathResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/remoteoperation/dbpath',
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @param data.autocreate
-     * @param data.readOnlyTest
-     * @param data.type
-     * @returns unknown OK
-     * @throws ApiError
-     */
-    public postApiV1RemoteoperationTest(data: PostApiV1RemoteoperationTestData): Observable<PostApiV1RemoteoperationTestResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/remoteoperation/test',
-            query: {
-                autocreate: data.autocreate,
-                readOnlyTest: data.readOnlyTest,
-                type: data.type
-            },
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @returns unknown OK
-     * @throws ApiError
-     */
-    public postApiV1RemoteoperationCreate(data: PostApiV1RemoteoperationCreateData): Observable<PostApiV1RemoteoperationCreateResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/remoteoperation/create',
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @returns string OK
-     * @throws ApiError
-     */
-    public getApiV1Serversettings(): Observable<GetApiV1ServersettingsResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/serversettings'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @returns unknown OK
-     * @throws ApiError
-     */
-    public patchApiV1Serversettings(data: PatchApiV1ServersettingsData): Observable<PatchApiV1ServersettingsResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'PATCH',
-            url: '/api/v1/serversettings',
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.key
-     * @returns string OK
-     * @throws ApiError
-     */
-    public getApiV1ServersettingByKey(data: GetApiV1ServersettingByKeyData): Observable<GetApiV1ServersettingByKeyResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/serversetting/{key}',
-            path: {
-                key: data.key
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.key
-     * @param data.requestBody
-     * @returns unknown OK
-     * @throws ApiError
-     */
-    public putApiV1ServersettingByKey(data: PutApiV1ServersettingByKeyData): Observable<PutApiV1ServersettingByKeyResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'PUT',
-            url: '/api/v1/serversetting/{key}',
-            path: {
-                key: data.key
-            },
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.lastEventId
-     * @param data.longpoll
-     * @param data.duration
-     * @returns ServerStatusDto OK
-     * @throws ApiError
-     */
-    public getApiV1Serverstate(data: GetApiV1ServerstateData = {}): Observable<GetApiV1ServerstateResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/serverstate',
-            query: {
-                lastEventId: data.lastEventId,
-                longpoll: data.longpoll,
-                duration: data.duration
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.duration
-     * @param data.pauseTransfers
-     * @returns unknown OK
-     * @throws ApiError
-     */
-    public postApiV1ServerstatePause(data: PostApiV1ServerstatePauseData = {}): Observable<PostApiV1ServerstatePauseResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/serverstate/pause',
-            query: {
-                duration: data.duration,
-                pauseTransfers: data.pauseTransfers
-            }
-        });
-    }
-    
-    /**
-     * @returns unknown OK
-     * @throws ApiError
-     */
-    public postApiV1ServerstateResume(): Observable<PostApiV1ServerstateResumeResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/serverstate/resume'
-        });
-    }
-    
-    /**
-     * @returns SystemInfoDto OK
-     * @throws ApiError
-     */
-    public getApiV1Systeminfo(): Observable<GetApiV1SysteminfoResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/systeminfo'
-        });
-    }
-    
-    /**
-     * @returns FilterGroupsDto OK
-     * @throws ApiError
-     */
-    public getApiV1SysteminfoFiltergroups(): Observable<GetApiV1SysteminfoFiltergroupsResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/systeminfo/filtergroups'
-        });
-    }
-    
-    /**
-     * @returns GetTaskStateDto OK
-     * @throws ApiError
-     */
-    public getApiV1Tasks(): Observable<GetApiV1TasksResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/tasks'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.taskid
-     * @returns GetTaskStateDto OK
-     * @throws ApiError
-     */
-    public getApiV1TaskByTaskid(data: GetApiV1TaskByTaskidData): Observable<GetApiV1TaskByTaskidResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/task/{taskid}',
-            path: {
-                taskid: data.taskid
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.taskid
-     * @returns unknown OK
-     * @throws ApiError
-     */
-    public postApiV1TaskByTaskidStop(data: PostApiV1TaskByTaskidStopData): Observable<PostApiV1TaskByTaskidStopResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/task/{taskid}/stop',
-            path: {
-                taskid: data.taskid
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.taskid
-     * @returns unknown OK
-     * @throws ApiError
-     */
-    public postApiV1TaskByTaskidAbort(data: PostApiV1TaskByTaskidAbortData): Observable<PostApiV1TaskByTaskidAbortResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/task/{taskid}/abort',
-            path: {
-                taskid: data.taskid
-            }
-        });
-    }
-    
-    /**
-     * @returns string OK
-     * @throws ApiError
-     */
-    public getApiV1Uisettings(): Observable<GetApiV1UisettingsResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/uisettings'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @returns unknown OK
-     * @throws ApiError
-     */
-    public postApiV1Uisettings(data: PostApiV1UisettingsData): Observable<PostApiV1UisettingsResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/uisettings',
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.scheme
-     * @returns string OK
-     * @throws ApiError
-     */
-    public getApiV1UisettingsByScheme(data: GetApiV1UisettingsBySchemeData): Observable<GetApiV1UisettingsBySchemeResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/uisettings/{scheme}',
-            path: {
-                scheme: data.scheme
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.scheme
-     * @param data.requestBody
-     * @returns unknown OK
-     * @throws ApiError
-     */
-    public patchApiV1UisettingsByScheme(data: PatchApiV1UisettingsBySchemeData): Observable<PatchApiV1UisettingsBySchemeResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'PATCH',
-            url: '/api/v1/uisettings/{scheme}',
-            path: {
-                scheme: data.scheme
-            },
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @returns unknown OK
-     * @throws ApiError
-     */
-    public postApiV1UpdatesCheck(): Observable<PostApiV1UpdatesCheckResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/updates/check'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.modulekey
-     * @param data.requestBody
-     * @returns WebModuleOutputDto OK
-     * @throws ApiError
-     */
-    public postApiV1WebmoduleByModulekey(data: PostApiV1WebmoduleByModulekeyData): Observable<PostApiV1WebmoduleByModulekeyResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/webmodule/{modulekey}',
-            path: {
-                modulekey: data.modulekey
-            },
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @returns GetBackupResultDto OK
-     * @throws ApiError
-     */
-    public getApiV1BackupById(data: GetApiV1BackupByIdData): Observable<GetApiV1BackupByIdResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/backup/{id}',
-            path: {
-                id: data.id
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @param data.requestBody
-     * @returns unknown OK
-     * @throws ApiError
-     */
-    public putApiV1BackupById(data: PutApiV1BackupByIdData): Observable<PutApiV1BackupByIdResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'PUT',
-            url: '/api/v1/backup/{id}',
-            path: {
-                id: data.id
-            },
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @param data.deleteRemoteFiles
-     * @param data.deleteLocalDb
-     * @param data.force
-     * @returns DeleteBackupOutputDto OK
-     * @throws ApiError
-     */
-    public deleteApiV1BackupById(data: DeleteApiV1BackupByIdData): Observable<DeleteApiV1BackupByIdResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'DELETE',
-            url: '/api/v1/backup/{id}',
-            path: {
-                id: data.id
-            },
-            query: {
-                'delete-remote-files': data.deleteRemoteFiles,
-                'delete-local-db': data.deleteLocalDb,
-                force: data.force
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @param data.filter
-     * @param data.time
-     * @param data.allVersions
-     * @param data.prefixOnly
-     * @param data.folderContents
-     * @returns unknown OK
-     * @throws ApiError
-     */
-    public getApiV1BackupByIdFiles(data: GetApiV1BackupByIdFilesData): Observable<GetApiV1BackupByIdFilesResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/backup/{id}/files',
-            path: {
-                id: data.id
-            },
-            query: {
-                filter: data.filter,
-                time: data.time,
-                'all-versions': data.allVersions,
-                'prefix-only': data.prefixOnly,
-                'folder-contents': data.folderContents
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @param data.offset
-     * @param data.pagesize
-     * @returns unknown OK
-     * @throws ApiError
-     */
-    public getApiV1BackupByIdLog(data: GetApiV1BackupByIdLogData): Observable<GetApiV1BackupByIdLogResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/backup/{id}/log',
-            path: {
-                id: data.id
-            },
-            query: {
-                offset: data.offset,
-                pagesize: data.pagesize
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @param data.offset
-     * @param data.pagesize
-     * @returns unknown OK
-     * @throws ApiError
-     */
-    public getApiV1BackupByIdRemotelog(data: GetApiV1BackupByIdRemotelogData): Observable<GetApiV1BackupByIdRemotelogResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/backup/{id}/remotelog',
-            path: {
-                id: data.id
-            },
-            query: {
-                offset: data.offset,
-                pagesize: data.pagesize
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @param data.includeMetadata
-     * @param data.fromRemoteOnly
-     * @returns IListResultFileset OK
-     * @throws ApiError
-     */
-    public getApiV1BackupByIdFilesets(data: GetApiV1BackupByIdFilesetsData): Observable<GetApiV1BackupByIdFilesetsResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/backup/{id}/filesets',
-            path: {
-                id: data.id
-            },
-            query: {
-                'include-metadata': data.includeMetadata,
-                'from-remote-only': data.fromRemoteOnly
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @param data.exportPasswords
-     * @param data.passphrase
-     * @returns ExportArgsOnlyDto OK
-     * @throws ApiError
-     */
-    public getApiV1BackupByIdExportArgsonly(data: GetApiV1BackupByIdExportArgsonlyData): Observable<GetApiV1BackupByIdExportArgsonlyResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/backup/{id}/export-argsonly',
-            path: {
-                id: data.id
-            },
-            query: {
-                'export-passwords': data.exportPasswords,
-                passphrase: data.passphrase
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @param data.exportPasswords
-     * @param data.passphrase
-     * @returns ExportCommandlineDto OK
-     * @throws ApiError
-     */
-    public getApiV1BackupByIdExportCmdline(data: GetApiV1BackupByIdExportCmdlineData): Observable<GetApiV1BackupByIdExportCmdlineResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/backup/{id}/export-cmdline',
-            path: {
-                id: data.id
-            },
-            query: {
-                'export-passwords': data.exportPasswords,
-                passphrase: data.passphrase
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @param data.token
-     * @param data.exportPasswords
-     * @param data.passphrase
-     * @returns unknown OK
-     * @throws ApiError
-     */
-    public getApiV1BackupByIdExport(data: GetApiV1BackupByIdExportData): Observable<GetApiV1BackupByIdExportResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/backup/{id}/export',
-            path: {
-                id: data.id
-            },
-            query: {
-                'export-passwords': data.exportPasswords,
-                passphrase: data.passphrase,
-                token: data.token
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @returns IsDbUsedElsewhereDto OK
-     * @throws ApiError
-     */
-    public getApiV1BackupByIdIsdbusedelsewhere(data: GetApiV1BackupByIdIsdbusedelsewhereData): Observable<GetApiV1BackupByIdIsdbusedelsewhereResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/backup/{id}/isdbusedelsewhere',
-            path: {
-                id: data.id
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @returns IsBackupActiveDto OK
-     * @throws ApiError
-     */
-    public getApiV1BackupByIdIsactive(data: GetApiV1BackupByIdIsactiveData): Observable<GetApiV1BackupByIdIsactiveResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/backup/{id}/isactive',
-            path: {
-                id: data.id
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @returns unknown OK
-     * @throws ApiError
-     */
-    public postApiV1BackupByIdDeletedb(data: PostApiV1BackupByIdDeletedbData): Observable<PostApiV1BackupByIdDeletedbResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/backup/{id}/deletedb',
-            path: {
-                id: data.id
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @param data.requestBody
-     * @returns unknown OK
-     * @throws ApiError
-     */
-    public postApiV1BackupByIdMovedb(data: PostApiV1BackupByIdMovedbData): Observable<PostApiV1BackupByIdMovedbResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/backup/{id}/movedb',
-            path: {
-                id: data.id
-            },
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @param data.requestBody
-     * @returns unknown OK
-     * @throws ApiError
-     */
-    public postApiV1BackupByIdUpdatedb(data: PostApiV1BackupByIdUpdatedbData): Observable<PostApiV1BackupByIdUpdatedbResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/backup/{id}/updatedb',
-            path: {
-                id: data.id
-            },
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @param data.requestBody
-     * @returns TaskStartedDto OK
-     * @throws ApiError
-     */
-    public postApiV1BackupByIdRestore(data: PostApiV1BackupByIdRestoreData): Observable<PostApiV1BackupByIdRestoreResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/backup/{id}/restore',
-            path: {
-                id: data.id
-            },
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @returns TaskStartedDto OK
-     * @throws ApiError
-     */
-    public postApiV1BackupByIdCreatereport(data: PostApiV1BackupByIdCreatereportData): Observable<PostApiV1BackupByIdCreatereportResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/backup/{id}/createreport',
-            path: {
-                id: data.id
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @param data.requestBody
-     * @returns TaskStartedDto OK
-     * @throws ApiError
-     */
-    public postApiV1BackupByIdRepair(data: PostApiV1BackupByIdRepairData): Observable<PostApiV1BackupByIdRepairResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/backup/{id}/repair',
-            path: {
-                id: data.id
-            },
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @param data.requestBody
-     * @returns TaskStartedDto OK
-     * @throws ApiError
-     */
-    public postApiV1BackupByIdRepairupdate(data: PostApiV1BackupByIdRepairupdateData): Observable<PostApiV1BackupByIdRepairupdateResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/backup/{id}/repairupdate',
-            path: {
-                id: data.id
-            },
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @returns TaskStartedDto OK
-     * @throws ApiError
-     */
-    public postApiV1BackupByIdVacuum(data: PostApiV1BackupByIdVacuumData): Observable<PostApiV1BackupByIdVacuumResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/backup/{id}/vacuum',
-            path: {
-                id: data.id
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @returns TaskStartedDto OK
-     * @throws ApiError
-     */
-    public postApiV1BackupByIdVerify(data: PostApiV1BackupByIdVerifyData): Observable<PostApiV1BackupByIdVerifyResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/backup/{id}/verify',
-            path: {
-                id: data.id
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @returns TaskStartedDto OK
-     * @throws ApiError
-     */
-    public postApiV1BackupByIdCompact(data: PostApiV1BackupByIdCompactData): Observable<PostApiV1BackupByIdCompactResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/backup/{id}/compact',
-            path: {
-                id: data.id
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @param data.skipQueue
-     * @returns TaskStartedDto OK
-     * @throws ApiError
-     */
-    public postApiV1BackupByIdStart(data: PostApiV1BackupByIdStartData): Observable<PostApiV1BackupByIdStartResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/backup/{id}/start',
-            path: {
-                id: data.id
-            },
-            query: {
-                skipQueue: data.skipQueue
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @param data.skipQueue
-     * @returns TaskStartedDto OK
-     * @throws ApiError
-     */
-    public postApiV1BackupByIdRun(data: PostApiV1BackupByIdRunData): Observable<PostApiV1BackupByIdRunResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/backup/{id}/run',
-            path: {
-                id: data.id
-            },
-            query: {
-                skipQueue: data.skipQueue
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @returns TaskStartedDto OK
-     * @throws ApiError
-     */
-    public postApiV1BackupByIdReportRemoteSize(data: PostApiV1BackupByIdReportRemoteSizeData): Observable<PostApiV1BackupByIdReportRemoteSizeResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/backup/{id}/report-remote-size',
-            path: {
-                id: data.id
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @returns CreateBackupDto OK
-     * @throws ApiError
-     */
-    public postApiV1BackupByIdCopytotemp(data: PostApiV1BackupByIdCopytotempData): Observable<PostApiV1BackupByIdCopytotempResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/backup/{id}/copytotemp',
-            path: {
-                id: data.id
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.id
-     * @returns RestoreTaskConfigElementDto OK
-     * @throws ApiError
-     */
-    public postApiV1BackupByIdRestoreTaskConfig(data: PostApiV1BackupByIdRestoreTaskConfigData): Observable<PostApiV1BackupByIdRestoreTaskConfigResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/backup/{id}/restore-task-config',
-            path: {
-                id: data.id
-            }
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @returns ImportBackupOutputDto OK
-     * @throws ApiError
-     */
-    public postApiV1BackupByIdImportfromtemp(data: PostApiV1BackupByIdImportfromtempData): Observable<PostApiV1BackupByIdImportfromtempResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/backup/{id}/importfromtemp',
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @returns RemoteControlStatusOutput OK
-     * @throws ApiError
-     */
-    public postApiV1RemotecontrolEnable(): Observable<PostApiV1RemotecontrolEnableResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/remotecontrol/enable'
-        });
-    }
-    
-    /**
-     * @returns RemoteControlStatusOutput OK
-     * @throws ApiError
-     */
-    public postApiV1RemotecontrolDisable(): Observable<PostApiV1RemotecontrolDisableResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/remotecontrol/disable'
-        });
-    }
-    
-    /**
-     * @returns RemoteControlStatusOutput OK
-     * @throws ApiError
-     */
-    public deleteApiV1RemotecontrolRegistration(): Observable<DeleteApiV1RemotecontrolRegistrationResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'DELETE',
-            url: '/api/v1/remotecontrol/registration'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @returns RemoteControlStatusOutput OK
-     * @throws ApiError
-     */
-    public postApiV1RemotecontrolRegister(data: PostApiV1RemotecontrolRegisterData): Observable<PostApiV1RemotecontrolRegisterResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/remotecontrol/register',
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @returns RemoteControlStatusOutput OK
-     * @throws ApiError
-     */
-    public deleteApiV1RemotecontrolRegister(): Observable<DeleteApiV1RemotecontrolRegisterResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'DELETE',
-            url: '/api/v1/remotecontrol/register'
-        });
-    }
-    
-    /**
-     * @returns RemoteControlStatusOutput OK
-     * @throws ApiError
-     */
-    public postApiV1RemotecontrolRegisterWait(): Observable<PostApiV1RemotecontrolRegisterWaitResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v1/remotecontrol/register/wait'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @returns DestinationListResponseDto OK
-     * @throws ApiError
-     */
-    public postApiV2DestinationList(data: PostApiV2DestinationListData): Observable<PostApiV2DestinationListResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v2/destination/list',
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @returns TempDiskSpaceResponseDto OK
-     * @throws ApiError
-     */
-    public postApiV2SystemTempDiskSpace(data: PostApiV2SystemTempDiskSpaceData): Observable<PostApiV2SystemTempDiskSpaceResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v2/system/temp-disk-space',
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @returns TestFilterResponseDto OK
-     * @throws ApiError
-     */
-    public postApiV2FilesystemTestFilter(data: PostApiV2FilesystemTestFilterData): Observable<PostApiV2FilesystemTestFilterResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v2/filesystem/test-filter',
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @returns ListFilesetsResponseDto OK
-     * @throws ApiError
-     */
-    public postApiV2BackupListFilesets(data: PostApiV2BackupListFilesetsData): Observable<PostApiV2BackupListFilesetsResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v2/backup/list-filesets',
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @returns ListFolderContentResponseDto OK
-     * @throws ApiError
-     */
-    public postApiV2BackupListFolder(data: PostApiV2BackupListFolderData): Observable<PostApiV2BackupListFolderResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v2/backup/list-folder',
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @returns ListFileVersionsOutputDto OK
-     * @throws ApiError
-     */
-    public postApiV2BackupListVersions(data: PostApiV2BackupListVersionsData): Observable<PostApiV2BackupListVersionsResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v2/backup/list-versions',
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @returns SearchEntriesResponseDto OK
-     * @throws ApiError
-     */
-    public postApiV2BackupSearch(data: PostApiV2BackupSearchData): Observable<PostApiV2BackupSearchResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v2/backup/search',
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
-    
-    /**
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @returns DestinationTestResponseDto OK
-     * @throws ApiError
-     */
-    public postApiV2DestinationTest(data: PostApiV2DestinationTestData): Observable<PostApiV2DestinationTestResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'POST',
-            url: '/api/v2/destination/test',
-            body: data.requestBody,
-            mediaType: 'application/json'
-        });
-    }
+  constructor(public readonly http: HttpClient) {}
+
+  /**
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns CommandlineTaskStartedDto OK
+   * @throws ApiError
+   */
+  public postApiV1Commandline(data: PostApiV1CommandlineData): Observable<PostApiV1CommandlineResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/commandline',
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @returns AcknowlegdementDto OK
+   * @throws ApiError
+   */
+  public getApiV1Acknowledgements(): Observable<GetApiV1AcknowledgementsResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/acknowledgements',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns AccessTokenOutputDto OK
+   * @throws ApiError
+   */
+  public postApiV1AuthRefresh(data: PostApiV1AuthRefreshData = {}): Observable<PostApiV1AuthRefreshResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/auth/refresh',
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns AccessTokenOutputDto OK
+   * @throws ApiError
+   */
+  public postApiV1AuthSignin(data: PostApiV1AuthSigninData): Observable<PostApiV1AuthSigninResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/auth/signin',
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns AccessTokenOutputDto OK
+   * @throws ApiError
+   */
+  public postApiV1AuthLogin(data: PostApiV1AuthLoginData): Observable<PostApiV1AuthLoginResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/auth/login',
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns SigninTokenOutputDto OK
+   * @throws ApiError
+   */
+  public postApiV1AuthIssuesignintoken(
+    data: PostApiV1AuthIssuesignintokenData
+  ): Observable<PostApiV1AuthIssuesignintokenResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/auth/issuesignintoken',
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns unknown OK
+   * @throws ApiError
+   */
+  public postApiV1AuthRefreshLogout(
+    data: PostApiV1AuthRefreshLogoutData = {}
+  ): Observable<PostApiV1AuthRefreshLogoutResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/auth/refresh/logout',
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.operation
+   * @returns SingleOperationTokenOutputDto OK
+   * @throws ApiError
+   */
+  public postApiV1AuthIssuetokenByOperation(
+    data: PostApiV1AuthIssuetokenByOperationData
+  ): Observable<PostApiV1AuthIssuetokenByOperationResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/auth/issuetoken/{operation}',
+      path: {
+        operation: data.operation,
+      },
+    });
+  }
+
+  /**
+   * @returns AccessTokenOutputDto OK
+   * @throws ApiError
+   */
+  public postApiV1AuthIssueForeverToken(): Observable<PostApiV1AuthIssueForeverTokenResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/auth/issue-forever-token',
+    });
+  }
+
+  /**
+   * @returns unknown OK
+   * @throws ApiError
+   */
+  public postApiV1AuthStatus(): Observable<PostApiV1AuthStatusResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/auth/status',
+    });
+  }
+
+  /**
+   * @returns string OK
+   * @throws ApiError
+   */
+  public getApiV1Backupdefaults(): Observable<GetApiV1BackupdefaultsResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/backupdefaults',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.orderBy
+   * @returns BackupAndScheduleOutputDto OK
+   * @throws ApiError
+   */
+  public getApiV1Backups(data: GetApiV1BackupsData = {}): Observable<GetApiV1BackupsResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/backups',
+      query: {
+        orderBy: data.orderBy,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @param data.temporary
+   * @param data.existingdb
+   * @returns CreateBackupDto OK
+   * @throws ApiError
+   */
+  public postApiV1Backups(data: PostApiV1BackupsData): Observable<PostApiV1BackupsResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/backups',
+      query: {
+        temporary: data.temporary,
+        existingdb: data.existingdb,
+      },
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns ImportBackupOutputDto OK
+   * @throws ApiError
+   */
+  public postApiV1BackupsImport(data: PostApiV1BackupsImportData): Observable<PostApiV1BackupsImportResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/backups/import',
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.reportid
+   * @param data.token
+   * @returns unknown OK
+   * @throws ApiError
+   */
+  public getApiV1BugreportByReportid(
+    data: GetApiV1BugreportByReportidData
+  ): Observable<GetApiV1BugreportByReportidResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/bugreport/{reportid}',
+      path: {
+        reportid: data.reportid,
+      },
+      query: {
+        token: data.token,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.fromUpdate
+   * @returns ChangelogDto OK
+   * @throws ApiError
+   */
+  public getApiV1Changelog(data: GetApiV1ChangelogData = {}): Observable<GetApiV1ChangelogResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/changelog',
+      query: {
+        'from-update': data.fromUpdate,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.runid
+   * @param data.offset
+   * @param data.pagesize
+   * @returns CommandLineLogOutputDto OK
+   * @throws ApiError
+   */
+  public getApiV1CommandlineByRunid(
+    data: GetApiV1CommandlineByRunidData
+  ): Observable<GetApiV1CommandlineByRunidResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/commandline/{runid}',
+      path: {
+        runid: data.runid,
+      },
+      query: {
+        offset: data.offset,
+        pagesize: data.pagesize,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.runid
+   * @returns unknown OK
+   * @throws ApiError
+   */
+  public postApiV1CommandlineByRunidAbort(
+    data: PostApiV1CommandlineByRunidAbortData
+  ): Observable<PostApiV1CommandlineByRunidAbortResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/commandline/{runid}/abort',
+      path: {
+        runid: data.runid,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @param data.onlyFolders
+   * @param data.showHidden
+   * @returns TreeNodeDto OK
+   * @throws ApiError
+   */
+  public postApiV1Filesystem(data: PostApiV1FilesystemData): Observable<PostApiV1FilesystemResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/filesystem',
+      query: {
+        onlyFolders: data.onlyFolders,
+        showHidden: data.showHidden,
+      },
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns unknown OK
+   * @throws ApiError
+   */
+  public postApiV1FilesystemValidate(
+    data: PostApiV1FilesystemValidateData
+  ): Observable<PostApiV1FilesystemValidateResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/filesystem/validate',
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @returns FolderStatusDto OK
+   * @throws ApiError
+   */
+  public getApiV1Folderstatus(): Observable<GetApiV1FolderstatusResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/folderstatus',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.path
+   * @returns FolderStatusDto OK
+   * @throws ApiError
+   */
+  public getApiV1FolderstatusByPath(
+    data: GetApiV1FolderstatusByPathData
+  ): Observable<GetApiV1FolderstatusByPathResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/folderstatus/{path}',
+      path: {
+        path: data.path,
+      },
+    });
+  }
+
+  /**
+   * @returns LicenseDto OK
+   * @throws ApiError
+   */
+  public getApiV1Licenses(): Observable<GetApiV1LicensesResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/licenses',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.level
+   * @param data.id
+   * @param data.pagesize
+   * @returns LogEntry OK
+   * @throws ApiError
+   */
+  public getApiV1LogdataPoll(data: GetApiV1LogdataPollData): Observable<GetApiV1LogdataPollResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/logdata/poll',
+      query: {
+        level: data.level,
+        id: data.id,
+        pagesize: data.pagesize,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.offset
+   * @param data.pagesize
+   * @returns unknown OK
+   * @throws ApiError
+   */
+  public getApiV1LogdataLog(data: GetApiV1LogdataLogData = {}): Observable<GetApiV1LogdataLogResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/logdata/log',
+      query: {
+        offset: data.offset,
+        pagesize: data.pagesize,
+      },
+    });
+  }
+
+  /**
+   * @returns CrashLogOutputDto OK
+   * @throws ApiError
+   */
+  public getApiV1LogdataCrashlog(): Observable<GetApiV1LogdataCrashlogResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/logdata/crashlog',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @returns NotificationDto OK
+   * @throws ApiError
+   */
+  public getApiV1NotificationById(data: GetApiV1NotificationByIdData): Observable<GetApiV1NotificationByIdResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/notification/{id}',
+      path: {
+        id: data.id,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @returns unknown OK
+   * @throws ApiError
+   */
+  public deleteApiV1NotificationById(
+    data: DeleteApiV1NotificationByIdData
+  ): Observable<DeleteApiV1NotificationByIdResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'DELETE',
+      url: '/api/v1/notification/{id}',
+      path: {
+        id: data.id,
+      },
+    });
+  }
+
+  /**
+   * @returns NotificationDto OK
+   * @throws ApiError
+   */
+  public getApiV1Notifications(): Observable<GetApiV1NotificationsResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/notifications',
+    });
+  }
+
+  /**
+   * @returns IProgressEventData OK
+   * @throws ApiError
+   */
+  public getApiV1Progressstate(): Observable<GetApiV1ProgressstateResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/progressstate',
+    });
+  }
+
+  /**
+   * @returns RemoteControlStatusOutput OK
+   * @throws ApiError
+   */
+  public getApiV1RemotecontrolStatus(): Observable<GetApiV1RemotecontrolStatusResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/remotecontrol/status',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns GetDbPathDto OK
+   * @throws ApiError
+   */
+  public postApiV1RemoteoperationDbpath(
+    data: PostApiV1RemoteoperationDbpathData
+  ): Observable<PostApiV1RemoteoperationDbpathResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/remoteoperation/dbpath',
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @param data.autocreate
+   * @param data.readOnlyTest
+   * @param data.type
+   * @returns unknown OK
+   * @throws ApiError
+   */
+  public postApiV1RemoteoperationTest(
+    data: PostApiV1RemoteoperationTestData
+  ): Observable<PostApiV1RemoteoperationTestResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/remoteoperation/test',
+      query: {
+        autocreate: data.autocreate,
+        readOnlyTest: data.readOnlyTest,
+        type: data.type,
+      },
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns unknown OK
+   * @throws ApiError
+   */
+  public postApiV1RemoteoperationCreate(
+    data: PostApiV1RemoteoperationCreateData
+  ): Observable<PostApiV1RemoteoperationCreateResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/remoteoperation/create',
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @returns string OK
+   * @throws ApiError
+   */
+  public getApiV1Serversettings(): Observable<GetApiV1ServersettingsResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/serversettings',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns unknown OK
+   * @throws ApiError
+   */
+  public patchApiV1Serversettings(data: PatchApiV1ServersettingsData): Observable<PatchApiV1ServersettingsResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'PATCH',
+      url: '/api/v1/serversettings',
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.key
+   * @returns string OK
+   * @throws ApiError
+   */
+  public getApiV1ServersettingByKey(
+    data: GetApiV1ServersettingByKeyData
+  ): Observable<GetApiV1ServersettingByKeyResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/serversetting/{key}',
+      path: {
+        key: data.key,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.key
+   * @param data.requestBody
+   * @returns unknown OK
+   * @throws ApiError
+   */
+  public putApiV1ServersettingByKey(
+    data: PutApiV1ServersettingByKeyData
+  ): Observable<PutApiV1ServersettingByKeyResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'PUT',
+      url: '/api/v1/serversetting/{key}',
+      path: {
+        key: data.key,
+      },
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.lastEventId
+   * @param data.longpoll
+   * @param data.duration
+   * @returns ServerStatusDto OK
+   * @throws ApiError
+   */
+  public getApiV1Serverstate(data: GetApiV1ServerstateData = {}): Observable<GetApiV1ServerstateResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/serverstate',
+      query: {
+        lastEventId: data.lastEventId,
+        longpoll: data.longpoll,
+        duration: data.duration,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.duration
+   * @param data.pauseTransfers
+   * @returns unknown OK
+   * @throws ApiError
+   */
+  public postApiV1ServerstatePause(
+    data: PostApiV1ServerstatePauseData = {}
+  ): Observable<PostApiV1ServerstatePauseResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/serverstate/pause',
+      query: {
+        duration: data.duration,
+        pauseTransfers: data.pauseTransfers,
+      },
+    });
+  }
+
+  /**
+   * @returns unknown OK
+   * @throws ApiError
+   */
+  public postApiV1ServerstateResume(): Observable<PostApiV1ServerstateResumeResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/serverstate/resume',
+    });
+  }
+
+  /**
+   * @returns SystemInfoDto OK
+   * @throws ApiError
+   */
+  public getApiV1Systeminfo(): Observable<GetApiV1SysteminfoResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/systeminfo',
+    });
+  }
+
+  /**
+   * @returns FilterGroupsDto OK
+   * @throws ApiError
+   */
+  public getApiV1SysteminfoFiltergroups(): Observable<GetApiV1SysteminfoFiltergroupsResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/systeminfo/filtergroups',
+    });
+  }
+
+  /**
+   * @returns GetTaskStateDto OK
+   * @throws ApiError
+   */
+  public getApiV1Tasks(): Observable<GetApiV1TasksResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/tasks',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.taskid
+   * @returns GetTaskStateDto OK
+   * @throws ApiError
+   */
+  public getApiV1TaskByTaskid(data: GetApiV1TaskByTaskidData): Observable<GetApiV1TaskByTaskidResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/task/{taskid}',
+      path: {
+        taskid: data.taskid,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.taskid
+   * @returns unknown OK
+   * @throws ApiError
+   */
+  public postApiV1TaskByTaskidStop(data: PostApiV1TaskByTaskidStopData): Observable<PostApiV1TaskByTaskidStopResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/task/{taskid}/stop',
+      path: {
+        taskid: data.taskid,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.taskid
+   * @returns unknown OK
+   * @throws ApiError
+   */
+  public postApiV1TaskByTaskidAbort(
+    data: PostApiV1TaskByTaskidAbortData
+  ): Observable<PostApiV1TaskByTaskidAbortResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/task/{taskid}/abort',
+      path: {
+        taskid: data.taskid,
+      },
+    });
+  }
+
+  /**
+   * @returns string OK
+   * @throws ApiError
+   */
+  public getApiV1Uisettings(): Observable<GetApiV1UisettingsResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/uisettings',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns unknown OK
+   * @throws ApiError
+   */
+  public postApiV1Uisettings(data: PostApiV1UisettingsData): Observable<PostApiV1UisettingsResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/uisettings',
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.scheme
+   * @returns string OK
+   * @throws ApiError
+   */
+  public getApiV1UisettingsByScheme(
+    data: GetApiV1UisettingsBySchemeData
+  ): Observable<GetApiV1UisettingsBySchemeResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/uisettings/{scheme}',
+      path: {
+        scheme: data.scheme,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.scheme
+   * @param data.requestBody
+   * @returns unknown OK
+   * @throws ApiError
+   */
+  public patchApiV1UisettingsByScheme(
+    data: PatchApiV1UisettingsBySchemeData
+  ): Observable<PatchApiV1UisettingsBySchemeResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'PATCH',
+      url: '/api/v1/uisettings/{scheme}',
+      path: {
+        scheme: data.scheme,
+      },
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @returns unknown OK
+   * @throws ApiError
+   */
+  public postApiV1UpdatesCheck(): Observable<PostApiV1UpdatesCheckResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/updates/check',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.modulekey
+   * @param data.requestBody
+   * @returns WebModuleOutputDto OK
+   * @throws ApiError
+   */
+  public postApiV1WebmoduleByModulekey(
+    data: PostApiV1WebmoduleByModulekeyData
+  ): Observable<PostApiV1WebmoduleByModulekeyResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/webmodule/{modulekey}',
+      path: {
+        modulekey: data.modulekey,
+      },
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @returns GetBackupResultDto OK
+   * @throws ApiError
+   */
+  public getApiV1BackupById(data: GetApiV1BackupByIdData): Observable<GetApiV1BackupByIdResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/backup/{id}',
+      path: {
+        id: data.id,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @param data.requestBody
+   * @returns unknown OK
+   * @throws ApiError
+   */
+  public putApiV1BackupById(data: PutApiV1BackupByIdData): Observable<PutApiV1BackupByIdResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'PUT',
+      url: '/api/v1/backup/{id}',
+      path: {
+        id: data.id,
+      },
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @param data.deleteRemoteFiles
+   * @param data.deleteLocalDb
+   * @param data.force
+   * @returns DeleteBackupOutputDto OK
+   * @throws ApiError
+   */
+  public deleteApiV1BackupById(data: DeleteApiV1BackupByIdData): Observable<DeleteApiV1BackupByIdResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'DELETE',
+      url: '/api/v1/backup/{id}',
+      path: {
+        id: data.id,
+      },
+      query: {
+        'delete-remote-files': data.deleteRemoteFiles,
+        'delete-local-db': data.deleteLocalDb,
+        force: data.force,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @param data.filter
+   * @param data.time
+   * @param data.allVersions
+   * @param data.prefixOnly
+   * @param data.folderContents
+   * @returns unknown OK
+   * @throws ApiError
+   */
+  public getApiV1BackupByIdFiles(data: GetApiV1BackupByIdFilesData): Observable<GetApiV1BackupByIdFilesResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/backup/{id}/files',
+      path: {
+        id: data.id,
+      },
+      query: {
+        filter: data.filter,
+        time: data.time,
+        'all-versions': data.allVersions,
+        'prefix-only': data.prefixOnly,
+        'folder-contents': data.folderContents,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @param data.offset
+   * @param data.pagesize
+   * @returns unknown OK
+   * @throws ApiError
+   */
+  public getApiV1BackupByIdLog(data: GetApiV1BackupByIdLogData): Observable<GetApiV1BackupByIdLogResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/backup/{id}/log',
+      path: {
+        id: data.id,
+      },
+      query: {
+        offset: data.offset,
+        pagesize: data.pagesize,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @param data.offset
+   * @param data.pagesize
+   * @returns unknown OK
+   * @throws ApiError
+   */
+  public getApiV1BackupByIdRemotelog(
+    data: GetApiV1BackupByIdRemotelogData
+  ): Observable<GetApiV1BackupByIdRemotelogResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/backup/{id}/remotelog',
+      path: {
+        id: data.id,
+      },
+      query: {
+        offset: data.offset,
+        pagesize: data.pagesize,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @param data.includeMetadata
+   * @param data.fromRemoteOnly
+   * @returns IListResultFileset OK
+   * @throws ApiError
+   */
+  public getApiV1BackupByIdFilesets(
+    data: GetApiV1BackupByIdFilesetsData
+  ): Observable<GetApiV1BackupByIdFilesetsResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/backup/{id}/filesets',
+      path: {
+        id: data.id,
+      },
+      query: {
+        'include-metadata': data.includeMetadata,
+        'from-remote-only': data.fromRemoteOnly,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @param data.exportPasswords
+   * @param data.passphrase
+   * @returns ExportArgsOnlyDto OK
+   * @throws ApiError
+   */
+  public getApiV1BackupByIdExportArgsonly(
+    data: GetApiV1BackupByIdExportArgsonlyData
+  ): Observable<GetApiV1BackupByIdExportArgsonlyResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/backup/{id}/export-argsonly',
+      path: {
+        id: data.id,
+      },
+      query: {
+        'export-passwords': data.exportPasswords,
+        passphrase: data.passphrase,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @param data.exportPasswords
+   * @param data.passphrase
+   * @returns ExportCommandlineDto OK
+   * @throws ApiError
+   */
+  public getApiV1BackupByIdExportCmdline(
+    data: GetApiV1BackupByIdExportCmdlineData
+  ): Observable<GetApiV1BackupByIdExportCmdlineResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/backup/{id}/export-cmdline',
+      path: {
+        id: data.id,
+      },
+      query: {
+        'export-passwords': data.exportPasswords,
+        passphrase: data.passphrase,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @param data.token
+   * @param data.exportPasswords
+   * @param data.passphrase
+   * @returns unknown OK
+   * @throws ApiError
+   */
+  public getApiV1BackupByIdExport(data: GetApiV1BackupByIdExportData): Observable<GetApiV1BackupByIdExportResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/backup/{id}/export',
+      path: {
+        id: data.id,
+      },
+      query: {
+        'export-passwords': data.exportPasswords,
+        passphrase: data.passphrase,
+        token: data.token,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @returns IsDbUsedElsewhereDto OK
+   * @throws ApiError
+   */
+  public getApiV1BackupByIdIsdbusedelsewhere(
+    data: GetApiV1BackupByIdIsdbusedelsewhereData
+  ): Observable<GetApiV1BackupByIdIsdbusedelsewhereResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/backup/{id}/isdbusedelsewhere',
+      path: {
+        id: data.id,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @returns IsBackupActiveDto OK
+   * @throws ApiError
+   */
+  public getApiV1BackupByIdIsactive(
+    data: GetApiV1BackupByIdIsactiveData
+  ): Observable<GetApiV1BackupByIdIsactiveResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/backup/{id}/isactive',
+      path: {
+        id: data.id,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @returns unknown OK
+   * @throws ApiError
+   */
+  public postApiV1BackupByIdDeletedb(
+    data: PostApiV1BackupByIdDeletedbData
+  ): Observable<PostApiV1BackupByIdDeletedbResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/backup/{id}/deletedb',
+      path: {
+        id: data.id,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @param data.requestBody
+   * @returns unknown OK
+   * @throws ApiError
+   */
+  public postApiV1BackupByIdMovedb(data: PostApiV1BackupByIdMovedbData): Observable<PostApiV1BackupByIdMovedbResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/backup/{id}/movedb',
+      path: {
+        id: data.id,
+      },
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @param data.requestBody
+   * @returns unknown OK
+   * @throws ApiError
+   */
+  public postApiV1BackupByIdUpdatedb(
+    data: PostApiV1BackupByIdUpdatedbData
+  ): Observable<PostApiV1BackupByIdUpdatedbResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/backup/{id}/updatedb',
+      path: {
+        id: data.id,
+      },
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @param data.requestBody
+   * @returns TaskStartedDto OK
+   * @throws ApiError
+   */
+  public postApiV1BackupByIdRestore(
+    data: PostApiV1BackupByIdRestoreData
+  ): Observable<PostApiV1BackupByIdRestoreResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/backup/{id}/restore',
+      path: {
+        id: data.id,
+      },
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @returns TaskStartedDto OK
+   * @throws ApiError
+   */
+  public postApiV1BackupByIdCreatereport(
+    data: PostApiV1BackupByIdCreatereportData
+  ): Observable<PostApiV1BackupByIdCreatereportResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/backup/{id}/createreport',
+      path: {
+        id: data.id,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @param data.requestBody
+   * @returns TaskStartedDto OK
+   * @throws ApiError
+   */
+  public postApiV1BackupByIdRepair(data: PostApiV1BackupByIdRepairData): Observable<PostApiV1BackupByIdRepairResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/backup/{id}/repair',
+      path: {
+        id: data.id,
+      },
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @param data.requestBody
+   * @returns TaskStartedDto OK
+   * @throws ApiError
+   */
+  public postApiV1BackupByIdRepairupdate(
+    data: PostApiV1BackupByIdRepairupdateData
+  ): Observable<PostApiV1BackupByIdRepairupdateResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/backup/{id}/repairupdate',
+      path: {
+        id: data.id,
+      },
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @returns TaskStartedDto OK
+   * @throws ApiError
+   */
+  public postApiV1BackupByIdVacuum(data: PostApiV1BackupByIdVacuumData): Observable<PostApiV1BackupByIdVacuumResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/backup/{id}/vacuum',
+      path: {
+        id: data.id,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @returns TaskStartedDto OK
+   * @throws ApiError
+   */
+  public postApiV1BackupByIdVerify(data: PostApiV1BackupByIdVerifyData): Observable<PostApiV1BackupByIdVerifyResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/backup/{id}/verify',
+      path: {
+        id: data.id,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @returns TaskStartedDto OK
+   * @throws ApiError
+   */
+  public postApiV1BackupByIdCompact(
+    data: PostApiV1BackupByIdCompactData
+  ): Observable<PostApiV1BackupByIdCompactResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/backup/{id}/compact',
+      path: {
+        id: data.id,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @param data.skipQueue
+   * @returns TaskStartedDto OK
+   * @throws ApiError
+   */
+  public postApiV1BackupByIdStart(data: PostApiV1BackupByIdStartData): Observable<PostApiV1BackupByIdStartResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/backup/{id}/start',
+      path: {
+        id: data.id,
+      },
+      query: {
+        skipQueue: data.skipQueue,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @param data.skipQueue
+   * @returns TaskStartedDto OK
+   * @throws ApiError
+   */
+  public postApiV1BackupByIdRun(data: PostApiV1BackupByIdRunData): Observable<PostApiV1BackupByIdRunResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/backup/{id}/run',
+      path: {
+        id: data.id,
+      },
+      query: {
+        skipQueue: data.skipQueue,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @returns TaskStartedDto OK
+   * @throws ApiError
+   */
+  public postApiV1BackupByIdReportRemoteSize(
+    data: PostApiV1BackupByIdReportRemoteSizeData
+  ): Observable<PostApiV1BackupByIdReportRemoteSizeResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/backup/{id}/report-remote-size',
+      path: {
+        id: data.id,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @returns CreateBackupDto OK
+   * @throws ApiError
+   */
+  public postApiV1BackupByIdCopytotemp(
+    data: PostApiV1BackupByIdCopytotempData
+  ): Observable<PostApiV1BackupByIdCopytotempResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/backup/{id}/copytotemp',
+      path: {
+        id: data.id,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.id
+   * @returns RestoreTaskConfigElementDto OK
+   * @throws ApiError
+   */
+  public postApiV1BackupByIdRestoreTaskConfig(
+    data: PostApiV1BackupByIdRestoreTaskConfigData
+  ): Observable<PostApiV1BackupByIdRestoreTaskConfigResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/backup/{id}/restore-task-config',
+      path: {
+        id: data.id,
+      },
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns ImportBackupOutputDto OK
+   * @throws ApiError
+   */
+  public postApiV1BackupByIdImportfromtemp(
+    data: PostApiV1BackupByIdImportfromtempData
+  ): Observable<PostApiV1BackupByIdImportfromtempResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/backup/{id}/importfromtemp',
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @returns RemoteControlStatusOutput OK
+   * @throws ApiError
+   */
+  public postApiV1RemotecontrolEnable(): Observable<PostApiV1RemotecontrolEnableResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/remotecontrol/enable',
+    });
+  }
+
+  /**
+   * @returns RemoteControlStatusOutput OK
+   * @throws ApiError
+   */
+  public postApiV1RemotecontrolDisable(): Observable<PostApiV1RemotecontrolDisableResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/remotecontrol/disable',
+    });
+  }
+
+  /**
+   * @returns RemoteControlStatusOutput OK
+   * @throws ApiError
+   */
+  public deleteApiV1RemotecontrolRegistration(): Observable<DeleteApiV1RemotecontrolRegistrationResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'DELETE',
+      url: '/api/v1/remotecontrol/registration',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns RemoteControlStatusOutput OK
+   * @throws ApiError
+   */
+  public postApiV1RemotecontrolRegister(
+    data: PostApiV1RemotecontrolRegisterData
+  ): Observable<PostApiV1RemotecontrolRegisterResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/remotecontrol/register',
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @returns RemoteControlStatusOutput OK
+   * @throws ApiError
+   */
+  public deleteApiV1RemotecontrolRegister(): Observable<DeleteApiV1RemotecontrolRegisterResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'DELETE',
+      url: '/api/v1/remotecontrol/register',
+    });
+  }
+
+  /**
+   * @returns RemoteControlStatusOutput OK
+   * @throws ApiError
+   */
+  public postApiV1RemotecontrolRegisterWait(): Observable<PostApiV1RemotecontrolRegisterWaitResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v1/remotecontrol/register/wait',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns DestinationListResponseDto OK
+   * @throws ApiError
+   */
+  public postApiV2DestinationList(data: PostApiV2DestinationListData): Observable<PostApiV2DestinationListResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v2/destination/list',
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns TempDiskSpaceResponseDto OK
+   * @throws ApiError
+   */
+  public postApiV2SystemTempDiskSpace(
+    data: PostApiV2SystemTempDiskSpaceData
+  ): Observable<PostApiV2SystemTempDiskSpaceResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v2/system/temp-disk-space',
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns TestFilterResponseDto OK
+   * @throws ApiError
+   */
+  public postApiV2FilesystemTestFilter(
+    data: PostApiV2FilesystemTestFilterData
+  ): Observable<PostApiV2FilesystemTestFilterResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v2/filesystem/test-filter',
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns ListFilesetsResponseDto OK
+   * @throws ApiError
+   */
+  public postApiV2BackupListFilesets(
+    data: PostApiV2BackupListFilesetsData
+  ): Observable<PostApiV2BackupListFilesetsResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v2/backup/list-filesets',
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns ListFolderContentResponseDto OK
+   * @throws ApiError
+   */
+  public postApiV2BackupListFolder(data: PostApiV2BackupListFolderData): Observable<PostApiV2BackupListFolderResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v2/backup/list-folder',
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns ListFileVersionsOutputDto OK
+   * @throws ApiError
+   */
+  public postApiV2BackupListVersions(
+    data: PostApiV2BackupListVersionsData
+  ): Observable<PostApiV2BackupListVersionsResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v2/backup/list-versions',
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns SearchEntriesResponseDto OK
+   * @throws ApiError
+   */
+  public postApiV2BackupSearch(data: PostApiV2BackupSearchData): Observable<PostApiV2BackupSearchResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v2/backup/search',
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns DestinationTestResponseDto OK
+   * @throws ApiError
+   */
+  public postApiV2DestinationTest(data: PostApiV2DestinationTestData): Observable<PostApiV2DestinationTestResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v2/destination/test',
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
 }
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root',
 })
 export class WebModules {
-    constructor(public readonly http: HttpClient) { }
-    
-    /**
-     * @returns IWebModule OK
-     * @throws ApiError
-     */
-    public getApiV1Webmodules(): Observable<GetApiV1WebmodulesResponse> {
-        return __request(OpenAPI, this.http, {
-            method: 'GET',
-            url: '/api/v1/webmodules'
-        });
-    }
+  constructor(public readonly http: HttpClient) {}
+
+  /**
+   * @returns IWebModule OK
+   * @throws ApiError
+   */
+  public getApiV1Webmodules(): Observable<GetApiV1WebmodulesResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'GET',
+      url: '/api/v1/webmodules',
+    });
+  }
 }

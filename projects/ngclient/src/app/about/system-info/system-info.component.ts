@@ -1,6 +1,7 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { ShipIcon, ShipList } from '@ship-ui/core';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipList } from '@ship-ui/core/ship-list';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 
 @Component({

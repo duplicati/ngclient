@@ -13,19 +13,17 @@ import {
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import {
-  ShipButton,
-  ShipDialogService,
-  ShipFormField,
-  ShipIcon,
-  ShipMenu,
-  ShipProgressBar,
-  ShipSelect,
-  ShipSpinner,
-  ShipToggle,
-  ShipToggleCard,
-  ShipTooltip,
-} from '@ship-ui/core';
+import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipDialogService } from '@ship-ui/core/ship-dialog';
+import { ShipFormField } from '@ship-ui/core/ship-form-field';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipMenu } from '@ship-ui/core/ship-menu';
+import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
+import { ShipSelect } from '@ship-ui/core/ship-select';
+import { ShipSpinner } from '@ship-ui/core/ship-spinner';
+import { ShipToggle } from '@ship-ui/core/ship-toggle';
+import { ShipToggleCard } from '@ship-ui/core/ship-toggle-card';
 import { catchError, distinctUntilChanged, finalize, map, merge, of, switchMap } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../core/components/confirm-dialog/confirm-dialog.component';
 import { FileDropTextareaComponent } from '../../../core/components/file-drop-textarea/file-drop-textarea.component';

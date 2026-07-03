@@ -11,7 +11,12 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { ShipAlert, ShipButton, ShipCard, ShipFormField, ShipIcon, ShipProgressBar } from '@ship-ui/core';
+import { ShipAlert } from '@ship-ui/core/ship-alert';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipCard } from '@ship-ui/core/ship-card';
+import { ShipFormField } from '@ship-ui/core/ship-form-field';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { WINDOW } from '../../core/providers/window';
 import { RelayconfigState } from '../../core/states/relayconfig.state';
 import { SysinfoState } from '../../core/states/sysinfo.state';

@@ -1,6 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { ShipButton, ShipCard, ShipDivider, ShipIcon, ShipProgressBar } from '@ship-ui/core';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipCard } from '@ship-ui/core/ship-card';
+import { ShipDivider } from '@ship-ui/core/ship-divider';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { BackupAndScheduleOutputDto, DuplicatiServer } from '../core/openapi';
 import { BackupsState } from '../core/states/backups.state';

@@ -9,13 +9,9 @@ export const DAYJS = new InjectionToken<typeof dayjs>('Dayjs');
 export const DayJsProvider: Provider = {
   provide: DAYJS,
   useFactory: () => {
-    const locale = (localStorage.getItem('v1:duplicati:locale') ?? 'en-us')
-      .toLowerCase().trim();
+    const locale = (localStorage.getItem('v1:duplicati:locale') ?? 'en-us').toLowerCase().trim();
 
-    const simpleLocale =
-      DAYJS_LOCALES[locale] ??
-      DAYJS_LOCALES[locale.split('-')[0]] ??
-      DAYJS_LOCALES['en-us'];
+    const simpleLocale = DAYJS_LOCALES[locale] ?? DAYJS_LOCALES[locale.split('-')[0]] ?? DAYJS_LOCALES['en-us'];
 
     dayjs.extend(relativeTime);
     dayjs.extend(duration);

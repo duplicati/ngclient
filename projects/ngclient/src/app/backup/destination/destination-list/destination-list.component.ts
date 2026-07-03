@@ -1,6 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ShipButton, ShipFormField, ShipIcon, ShipToggle } from '@ship-ui/core';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipFormField } from '@ship-ui/core/ship-form-field';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipToggle } from '@ship-ui/core/ship-toggle';
 import { RemoteDestinationType } from '../../../core/openapi';
 import { DestinationConfigState } from '../../../core/states/destinationconfig.state';
 import { SysinfoState } from '../../../core/states/sysinfo.state';

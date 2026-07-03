@@ -11,7 +11,9 @@ import {
   viewChild,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ShipAlert, ShipAlertItemInternal, ShipAlertService, ShipButton, ShipIcon } from '@ship-ui/core';
+import { ShipAlert, ShipAlertItemInternal, ShipAlertService } from '@ship-ui/core/ship-alert';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { NotificationComponent } from '../../../notifications/notification/notification.component';
 import { NotificationsComponent } from '../../../notifications/notifications.component';
 import { NotificationsState } from '../../../notifications/notifications.state';

@@ -1,6 +1,8 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
-import { ShipButton, ShipIcon, ShipTable } from '@ship-ui/core';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipTable } from '@ship-ui/core/ship-table';
 import { finalize } from 'rxjs';
 import { DuplicatiServer } from '../../../core/openapi';
 

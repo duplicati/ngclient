@@ -1,15 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  ShipButton,
-  ShipDatepickerInput,
-  ShipFormField,
-  ShipIcon,
-  ShipSelect,
-  ShipToggle,
-  ShipToggleCard,
-} from '@ship-ui/core';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipDatepickerInput } from '@ship-ui/core/ship-datepicker';
+import { ShipFormField } from '@ship-ui/core/ship-form-field';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipSelect } from '@ship-ui/core/ship-select';
+import { ShipToggle } from '@ship-ui/core/ship-toggle';
+import { ShipToggleCard } from '@ship-ui/core/ship-toggle-card';
 import { DayOfWeek, ScheduleInputDto } from '../../core/openapi';
 import { BackupState } from '../backup.state';
 

@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { ShipDialogService } from '@ship-ui/core';
+import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { TestState } from '../../backup/source-data/target-url-dialog/test-url/test-url';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { createEncryptionForm } from './encryption/encryption.component';

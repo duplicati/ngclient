@@ -1,15 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'lib-ngclient-lib',
   imports: [],
   template: `
-    <p>
-      ngclient-lib works!
-    </p>
+    <p>ngclient-lib works!</p>
   `,
-  styles: ``
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  styles: ``,
 })
-export class NgclientLib {
-
-}
+export class NgclientLib {}

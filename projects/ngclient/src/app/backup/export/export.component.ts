@@ -3,17 +3,15 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } 
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import {
-  ShipAlert,
-  ShipButton,
-  ShipButtonGroup,
-  ShipDialogService,
-  ShipFormField,
-  ShipIcon,
-  ShipProgressBar,
-  ShipToggle,
-  ShipTooltip,
-} from '@ship-ui/core';
+import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
+import { ShipAlert } from '@ship-ui/core/ship-alert';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipButtonGroup } from '@ship-ui/core/ship-button-group';
+import { ShipDialogService } from '@ship-ui/core/ship-dialog';
+import { ShipFormField } from '@ship-ui/core/ship-form-field';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
+import { ShipToggle } from '@ship-ui/core/ship-toggle';
 import { finalize, switchMap } from 'rxjs';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer } from '../../core/openapi';

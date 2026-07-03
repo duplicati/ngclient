@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { ShipButton, ShipFormField, ShipMenu } from '@ship-ui/core';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipFormField } from '@ship-ui/core/ship-form-field';
+import { ShipMenu } from '@ship-ui/core/ship-menu';
 
 const SHORT_TIME_OPTIONS = [
   {

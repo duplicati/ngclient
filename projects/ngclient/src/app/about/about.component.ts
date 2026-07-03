@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { ShipTabs } from '@ship-ui/core';
+import { ShipTabs } from '@ship-ui/core/ship-tabs';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 
 @Component({

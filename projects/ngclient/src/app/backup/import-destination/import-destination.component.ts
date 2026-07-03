@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { ShipStepper } from '@ship-ui/core';
+import { ShipStepper } from '@ship-ui/core/ship-stepper';
 import { BackupState } from '../backup.state';
 import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
 import { ImportDestinationState } from './import-destination.state';
@@ -13,5 +13,4 @@ import { ImportDestinationState } from './import-destination.state';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ImportDestinationState, BackupState],
 })
-export default class ImportDestinationComponent {
-}
+export default class ImportDestinationComponent {}

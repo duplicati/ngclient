@@ -1,18 +1,16 @@
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import {
-  ShipAlertService,
-  ShipButton,
-  ShipCard,
-  ShipCheckbox,
-  ShipChip,
-  ShipFormField,
-  ShipIcon,
-  ShipProgressBar,
-  ShipToggle,
-  ShipTooltip,
-} from '@ship-ui/core';
+import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
+import { ShipAlertService } from '@ship-ui/core/ship-alert';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipCard } from '@ship-ui/core/ship-card';
+import { ShipCheckbox } from '@ship-ui/core/ship-checkbox';
+import { ShipChip } from '@ship-ui/core/ship-chip';
+import { ShipFormField } from '@ship-ui/core/ship-form-field';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
+import { ShipToggle } from '@ship-ui/core/ship-toggle';
 import { finalize } from 'rxjs';
 import { DuplicatiServer, RestoreTaskConfigElementDto } from '../../../core/openapi';
 import { BytesPipe } from '../../../core/pipes/byte.pipe';

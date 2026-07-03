@@ -24,7 +24,8 @@
           <div item class="stat-item">
             <span class="label">Size</span>
             <span class="value">
-              {{ statusData()?.ProcessedFileSize | bytes }} / {{ statusData()?.TotalFileSize | bytes }}
+              {{ statusData()?.ProcessedFileSize | bytes }} /
+              {{ statusData()?.TotalFileSize | bytes }}
             </span>
           </div>
         </sh-list>
@@ -91,12 +92,16 @@
             <span class="label">ETA</span>
             <span class="value">
               {{ etaData()?.estimatedCompletion | date: 'mediumTime' }}
-              <span class="sub-text">({{ etaData()?.estimatedCompletion | relativeTime }})</span>
+              <span class="sub-text">
+                ({{ etaData()?.estimatedCompletion | relativeTime }})
+              </span>
             </span>
           </div>
           <div item class="metric-item">
             <span class="label">Files/s</span>
-            <span class="value">{{ etaData()?.currentFilesPerSecond | number: '1.1-1' }}</span>
+            <span class="value">
+              {{ etaData()?.currentFilesPerSecond | number: '1.1-1' }}
+            </span>
           </div>
           <div item class="metric-item">
             <span class="label">Upload Speed</span>

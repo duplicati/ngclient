@@ -1,6 +1,9 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, inject, input, signal } from '@angular/core';
-import { ShipButton, ShipIcon, ShipList, ShipTable } from '@ship-ui/core';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipList } from '@ship-ui/core/ship-list';
+import { ShipTable } from '@ship-ui/core/ship-table';
 import { LogsLiveState } from './logs-live.state';
 
 @Component({

@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { ShipProgressBar, ShipStepper } from '@ship-ui/core';
+import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
+import { ShipStepper } from '@ship-ui/core/ship-stepper';
 import { take } from 'rxjs';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { DuplicatiServer, GetBackupResultDto, SettingDto } from '../core/openapi';

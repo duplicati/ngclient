@@ -8,9 +8,8 @@ describe('NgclientLib', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NgclientLib]
-    })
-    .compileComponents();
+      imports: [NgclientLib],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(NgclientLib);
     component = fixture.componentInstance;

@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ShipButton, ShipIcon, ShipProgressBar } from '@ship-ui/core';
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { finalize, map } from 'rxjs';
 import { DuplicatiServer } from '../../core/openapi';
 import { ServerStateService } from '../../core/services/server-state.service';
