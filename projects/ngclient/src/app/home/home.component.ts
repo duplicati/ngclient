@@ -11,6 +11,7 @@ import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipMenu } from '@ship-ui/core/ship-menu';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { ShipSort, ShipTable } from '@ship-ui/core/ship-table';
+import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { finalize } from 'rxjs';
 import { getBackendIcon, getBackendType } from '../backup/destination/destination.config-utilities';
 import { BackupProgressComponent } from '../core/components/backup-progress/backup-progress.component';
@@ -42,6 +43,7 @@ import { RemoteControlState } from '../settings/remote-control/remote-control.st
     ShipButtonGroup,
     ShipTable,
     ShipSort,
+    ShipTooltip,
     DurationFormatPipe,
     BytesPipe,
     RelativeTimePipe,

@@ -50,6 +50,7 @@ export type BackupDto = {
   Tags: Array<string> | null;
   TargetURL: string | null;
   ConnectionStringID?: number;
+  OperationType?: OperationType;
   DBPath: string | null;
   DBPathExists: boolean;
   Sources: Array<string> | null;
@@ -70,6 +71,7 @@ export type BackupInputDto = {
   Tags?: Array<string> | null;
   TargetURL?: string | null;
   ConnectionStringID?: number;
+  OperationType?: OperationType;
   Sources?: Array<string> | null;
   Settings?: Array<SettingInputDto> | null;
   Filters?: Array<FilterInputDto> | null;
@@ -548,6 +550,8 @@ export type ObjectResponseEnvelope = {
   StatusCode: string | null;
   Data?: unknown;
 };
+
+export type OperationType = 'Backup' | 'Sync';
 
 export type PageInfo = {
   Page?: number;
