@@ -72,13 +72,9 @@ export class ServerStatusLongPollService {
           this.#scheduleNextPoll();
         },
         error: (error) => {
-          const startWaitTime = 5000;
-          const nextAttemptCount = this.#failedConnectionAttempts() + 1;
-          const waitTime = Math.min(startWaitTime * nextAttemptCount, 30000);
+          this.#failedConnectionAttempts.set(this.#failedConnectionAttempts() + 1);
 
-          this.#failedConnectionAttempts.set(nextAttemptCount);
-
-          if (nextAttemptCount > 3) {
+          if (this.#failedConnectionAttempts() > 3) {
             this.#connectionStatus.set('disconnected');
           }
 
@@ -90,10 +86,10 @@ export class ServerStatusLongPollService {
             });
           }
 
-          this.#disconnectedDialog.component.reconnectTimer.set(waitTime);
+          this.#disconnectedDialog.component.reconnectTimer.set(5000);
           setTimeout(() => {
             this.#longPoll();
-          }, waitTime);
+          }, 5000);
         },
       });
   }
@@ -103,6 +99,11 @@ export class ServerStatusLongPollService {
     this.#serverState.set(response);
     this.#lastEventId.set(response.LastEventID ?? -1);
     this.#failedConnectionAttempts.set(0);
+
+    if (this.#disconnectedDialog) {
+      this.#disconnectedDialog.close();
+      this.#disconnectedDialog = undefined;
+    }
   }
 
   #scheduleNextPoll() {
