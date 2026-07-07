@@ -61,6 +61,16 @@
         <sh-icon>file-plus</sh-icon>
         Create bug report database
       </button>
+
+      <button
+        shButton
+        i18n
+        [class.loading]="isCompacting()"
+        [disabled]="isCompacting() || !isValidatedPath() || pathHasChanged()"
+        (click)="compactDatabase()">
+        <sh-icon>file-archive</sh-icon>
+        Compact
+      </button>
     </div>
   </article>
 

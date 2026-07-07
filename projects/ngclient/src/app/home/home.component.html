@@ -443,11 +443,6 @@
           Verify files
         </button>
 
-        <button type="button" (click)="compressBackup(backup.Backup.ID!)" i18n>
-          <sh-icon>file-archive</sh-icon>
-          Compress now
-        </button>
-
         <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'commandline']" i18n>
           <sh-icon>terminal-window</sh-icon>
           Commandline

@@ -72,6 +72,7 @@ export default class DatabaseComponent {
   isMovingDb = signal(false);
   isCreatingBugReport = signal(false);
   createdReport = signal(false);
+  isCompacting = signal(false);
 
   activeBackupEffect = effect(() => {
     const activeBackup = this.activeBackup();
@@ -230,5 +231,13 @@ export default class DatabaseComponent {
           window.setTimeout(() => this.createdReport.set(false), 3000);
         },
       });
+  }
+
+  compactDatabase() {
+    this.isCompacting.set(true);
+    this.#dupServer
+      .postApiV1BackupByIdCompact({ id: this.backupId()! })
+      .pipe(finalize(() => this.isCompacting.set(false)))
+      .subscribe();
   }
 }
