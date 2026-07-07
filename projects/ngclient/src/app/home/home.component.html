@@ -162,10 +162,7 @@
                     @if (runningBackupId() !== backup.Backup.ID) {
                       <p>
                         <span i18n>Last successful backup:</span>
-                        {{
-                          backup.Backup.Metadata?.['LastBackupFinished']
-                            | relativeTime: timeType() === 'actual'
-                        }}
+                        {{ backup.Backup.Metadata?.['LastBackupFinished'] | relativeTime: timeType() === 'actual' }}
                       </p>
 
                       @let next = scheduledTimes()[backup.Backup.ID ?? ''];
@@ -179,10 +176,7 @@
                       <p>
                         <span i18n>Duration:</span>
                         @if (backup.Backup.Metadata?.['LastBackupDuration']) {
-                          {{
-                            backup.Backup.Metadata?.['LastBackupDuration']
-                              | durationFormat: timeType() === 'actual'
-                          }}
+                          {{ backup.Backup.Metadata?.['LastBackupDuration'] | durationFormat: timeType() === 'actual' }}
                         } @else {
                           <ng-container>-</ng-container>
                         }
@@ -300,10 +294,7 @@
               </td>
               <td>
                 @if (backup.Backup.Metadata?.['LastBackupFinished']) {
-                  {{
-                    backup.Backup.Metadata?.['LastBackupFinished']
-                      | relativeTime: timeType() === 'actual'
-                  }}
+                  {{ backup.Backup.Metadata?.['LastBackupFinished'] | relativeTime: timeType() === 'actual' }}
                 } @else {
                   <ng-container>-</ng-container>
                 }
@@ -318,10 +309,7 @@
               </td>
               <td>
                 @if (backup.Backup.Metadata?.['LastBackupDuration']) {
-                  {{
-                    backup.Backup.Metadata?.['LastBackupDuration']
-                      | durationFormat: timeType() === 'actual'
-                  }}
+                  {{ backup.Backup.Metadata?.['LastBackupDuration'] | durationFormat: timeType() === 'actual' }}
                 } @else {
                   <ng-container>-</ng-container>
                 }
@@ -464,6 +452,26 @@
           <sh-icon>terminal-window</sh-icon>
           Commandline
         </button>
+
+        @if (hasDeleteVersions() || hasBrokenFiles()) {
+          <sh-divider />
+
+          <h3 title i18n>Cleanup</h3>
+
+          @if (hasDeleteVersions()) {
+            <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'delete-versions']" i18n>
+              <sh-icon>trash</sh-icon>
+              Delete versions
+            </button>
+          }
+
+          @if (hasBrokenFiles()) {
+            <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'broken-files']" i18n>
+              <sh-icon>file-x</sh-icon>
+              Purge broken files
+            </button>
+          }
+        }
 
         <sh-divider />
 

@@ -25,6 +25,7 @@ import { DurationFormatPipe } from '../core/pipes/duration.pipe';
 import { RelativeTimePipe } from '../core/pipes/relative-time.pipe';
 import { ServerStateService } from '../core/services/server-state.service';
 import { Backup, BackupsState, OrderBy, TimeType } from '../core/states/backups.state';
+import { SysinfoState } from '../core/states/sysinfo.state';
 import { RemoteControlState } from '../settings/remote-control/remote-control.state';
 
 @Component({
@@ -60,6 +61,10 @@ export default class HomeComponent {
   #remoteControlState = inject(RemoteControlState);
   #serverState = inject(ServerStateService);
   #dialog = inject(ShipDialogService);
+  #sysinfo = inject(SysinfoState);
+
+  hasDeleteVersions = this.#sysinfo.hasV2DeleteVersions;
+  hasBrokenFiles = this.#sysinfo.hasV2BrokenFiles;
 
   MISSING_BACKUP_NAME = $localize`Backup name missing`;
   sortOrderOptions = this.#backupsState.orderByOptions;

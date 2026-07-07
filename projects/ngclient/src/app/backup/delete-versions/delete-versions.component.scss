@@ -1,0 +1,39 @@
+@use '@ship-ui/core/styles/helpers' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  padding: p2r(40);
+  max-width: p2r(700);
+}
+
+h3 {
+  font: var(--title-30);
+  margin: 0;
+}
+sh-table {
+  padding: p2r(32 0);
+}
+
+.loading-state,
+.empty-state {
+  padding: p2r(32 0);
+  display: flex;
+  flex-direction: column;
+  gap: p2r(16);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: p2r(8);
+  padding-top: p2r(32);
+}
+
+.sub-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: p2r(8);
+  padding-top: p2r(8);
+  padding-bottom: p2r(32);
+}
