@@ -1,0 +1,62 @@
+<h3 i18n>Delete versions from {{ backup()?.Backup?.Name }}</h3>
+
+@if (isLoading()) {
+  <div class="loading-state">
+    <sh-progress-bar class="primary indeterminate"></sh-progress-bar>
+    <p i18n>Fetching versions from destination...</p>
+  </div>
+} @else if (versions().length === 0) {
+  <div class="empty-state">
+    <p i18n>No versions found for this backup.</p>
+  </div>
+} @else {
+  <sh-table class="type-b" [data]="versions()" [loading]="isLoading()" [(sortByColumn)]="sortByColumn">
+    <tr thead>
+      <th>
+        <sh-checkbox
+          class="primary raised"
+          [class.indeterminate]="indeterminate()"
+          [checked]="allSelected()"
+          (click)="toggleSelect()"></sh-checkbox>
+      </th>
+      <th i18n shSort="version">Version</th>
+      <th i18n shSort="version">Timestamp</th>
+      <th i18n shSort="version">When</th>
+      <th i18n shSort="size">Size</th>
+      <th i18n shSort="files">Files</th>
+    </tr>
+
+    @for (version of versions(); track version.Version) {
+      <tr (click)="toggleSelected(version.Version, $event)">
+        <td>
+          <sh-checkbox
+            class="primary raised"
+            (click)="toggleSelected(version.Version, $event)"
+            [checked]="version.Selected"></sh-checkbox>
+        </td>
+        <td>{{ version.Version }}</td>
+        <td>{{ version.Time | relativeTime: true }}</td>
+        <td>{{ version.Time | relativeTime: false }}</td>
+        <td>{{ version.FileSizes | bytes }}</td>
+        <td>{{ version.FileCount }}</td>
+      </tr>
+    }
+  </sh-table>
+}
+
+<div class="actions">
+  <button shButton [routerLink]="['/']" [disabled]="isDeleting()" i18n>Cancel</button>
+  <button
+    shButton
+    class="raised error"
+    [class.loading]="isDeleting()"
+    (click)="deleteVersions()"
+    [disabled]="isDeleting() || selectedItems().length === 0 || isLoading()"
+    i18n>
+    Delete
+    {selectedItems().length, plural, =1 {1 version} other {{{selectedItems().length}} versions}}
+  </button>
+</div>
+<div class="sub-actions">
+  <sh-checkbox class="primary raised" [(checked)]="performCompact" i18n>Compact after deletion</sh-checkbox>
+</div>
