@@ -95,6 +95,16 @@ export class SysinfoState {
     return apiExtensions.includes('v2:backup:list-filesets') && apiExtensions.includes('v2:backup:list-folder');
   });
 
+  hasV2DeleteVersions = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v2:backup:delete-versions');
+  });
+
+  hasV2BrokenFiles = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v2:backup:list-broken-files') && apiExtensions.includes('v2:backup:purge-broken-files');
+  });
+
   hasV2TestOperations = computed(() => {
     const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
     return apiExtensions.includes('v2:destination:test');

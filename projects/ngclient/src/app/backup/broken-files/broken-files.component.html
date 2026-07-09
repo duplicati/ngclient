@@ -1,0 +1,51 @@
+<h3 i18n>Purge broken files for {{ backup()?.Backup?.Name }}</h3>
+
+@if (isLoading()) {
+  <div class="loading-state">
+    <sh-progress-bar class="primary indeterminate"></sh-progress-bar>
+    <p i18n>Checking for broken files...</p>
+  </div>
+} @else if (!hasBrokenFiles()) {
+  <div class="empty-state">
+    <p i18n>No broken files found for this backup.</p>
+  </div>
+} @else {
+  <div class="fileset-list">
+    @for (fileset of filesets(); track fileset.FilesetID) {
+      @if (fileset.Files?.length) {
+        <sh-card class="type-a full-width">
+          <h3>
+            <span i18n>
+              Version {{ fileset.FilesetID }} at
+              <span class="time">{{ fileset.FilesetTime | relativeTime: true }}</span>
+            </span>
+          </h3>
+
+          <div class="file-list">
+            @for (file of fileset.Files; track file.Path) {
+              <div class="file">
+                <span class="path">{{ file.Path }}</span>
+                @if (file.Size) {
+                  <span class="size">{{ file.Size | bytes }}</span>
+                }
+              </div>
+            }
+          </div>
+        </sh-card>
+      }
+    }
+  </div>
+}
+
+<div class="actions">
+  <button shButton [routerLink]="['/']" [disabled]="isPurging()" i18n>Cancel</button>
+  <button
+    shButton
+    class="raised error"
+    [class.loading]="isPurging()"
+    (click)="purgeBrokenFiles()"
+    [disabled]="isPurging() || !hasBrokenFiles() || isLoading()"
+    i18n>
+    Purge broken files
+  </button>
+</div>

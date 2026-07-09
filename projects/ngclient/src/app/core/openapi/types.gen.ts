@@ -167,6 +167,13 @@ export type DeleteBackupOutputDto = {
   ID?: number | null;
 };
 
+export type DeleteVersionsRequestDto = {
+  BackupId: string | null;
+  Versions: Array<number> | null;
+  AllowFullRemoval?: boolean | null;
+  SuppressCompact?: boolean | null;
+};
+
 export type DestinationListRequestDto = {
   BackupId: string | null;
   ConnectionStringId?: number | null;
@@ -418,6 +425,30 @@ export type LicenseStatusDto = {
   } | null;
 };
 
+export type ListBrokenFilesFileItem = {
+  Path: string | null;
+  Size: number;
+};
+
+export type ListBrokenFilesFilesetItem = {
+  FilesetID: number;
+  FilesetTime: string;
+  Files: Array<ListBrokenFilesFileItem> | null;
+};
+
+export type ListBrokenFilesRequestDto = {
+  BackupId: string | null;
+  Filters?: Array<string> | null;
+};
+
+export type ListBrokenFilesResponseDto = {
+  Success: boolean;
+  Error: string | null;
+  StatusCode: string | null;
+  Data?: Array<ListBrokenFilesFilesetItem> | null;
+  PageInfo: PageInfo;
+};
+
 export type ListFilesetsRequestDto = {
   BackupId: string | null;
   ForceRemoteListing?: boolean | null;
@@ -558,6 +589,10 @@ export type PageInfo = {
   PageSize?: number;
   Total?: number;
   Pages?: number;
+};
+
+export type PurgeBrokenFilesRequestDto = {
+  BackupId: string | null;
 };
 
 export type RefreshTokenInputDto = {
@@ -1452,6 +1487,24 @@ export type PostApiV2FilesystemTestFilterData = {
 };
 
 export type PostApiV2FilesystemTestFilterResponse = TestFilterResponseDto;
+
+export type PostApiV2BackupListBrokenFilesData = {
+  requestBody: ListBrokenFilesRequestDto;
+};
+
+export type PostApiV2BackupListBrokenFilesResponse = ListBrokenFilesResponseDto;
+
+export type PostApiV2BackupPurgeBrokenFilesData = {
+  requestBody: PurgeBrokenFilesRequestDto;
+};
+
+export type PostApiV2BackupPurgeBrokenFilesResponse = TaskStartedDto;
+
+export type PostApiV2BackupDeleteVersionsData = {
+  requestBody: DeleteVersionsRequestDto;
+};
+
+export type PostApiV2BackupDeleteVersionsResponse = TaskStartedDto;
 
 export type PostApiV2BackupListFilesetsData = {
   requestBody: ListFilesetsRequestDto;
