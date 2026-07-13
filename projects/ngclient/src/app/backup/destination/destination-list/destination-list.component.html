@@ -1,6 +1,14 @@
 <div class="search-area">
   <sh-form-field>
-    <input type="text" i18n-placeholder placeholder="Search for destination..." [(ngModel)]="destinationSearchTerm" />
+    @if (showAsSources()) {
+      <input
+        type="text"
+        i18n-placeholder
+        placeholder="Search for remote source..."
+        [(ngModel)]="destinationSearchTerm" />
+    } @else {
+      <input type="text" i18n-placeholder placeholder="Search for destination..." [(ngModel)]="destinationSearchTerm" />
+    }
   </sh-form-field>
   <sh-toggle [(checked)]="showAllDestinations" class="raised primary" i18n>Show&nbsp;all</sh-toggle>
 </div>
@@ -13,6 +21,9 @@
       (click)="setDestination.emit(option.customKey ?? option.key)"
       (keydown.enter)="$any($event.target).click()"
       (keydown.space)="$any($event.target).click()">
+      @if (showAsSources()) {
+        <div description i18n>Use {{ option.displayName }} as a remote source.</div>
+      }
       <button shButton tabindex="-1" i18n type="button">
         Choose
         <sh-icon>arrow-right</sh-icon>
