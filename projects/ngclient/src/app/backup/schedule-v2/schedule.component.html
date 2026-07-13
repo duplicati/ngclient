@@ -19,6 +19,32 @@
     <p i18n>If a date was missed, the job will run as soon as possible.</p>
   </div>
 
+  @let summary = scheduleSummary();
+  <section class="schedule-summary" aria-live="polite">
+    <h4 i18n>Schedule summary</h4>
+
+    @if (summary.autoRun) {
+      <dl>
+        <div>
+          <dt i18n>First run</dt>
+          <dd i18n>{{ summary.date }} at {{ summary.time }}</dd>
+        </div>
+        <div>
+          <dt i18n>Repeats</dt>
+          <dd>{{ summary.repeat }}</dd>
+        </div>
+        <div>
+          <dt i18n>Allowed days</dt>
+          <dd>{{ summary.allowedDays }}</dd>
+        </div>
+      </dl>
+
+      <p i18n>The first run sets the anchor for the recurring schedule.</p>
+    } @else {
+      <p i18n>Backups will not run automatically.</p>
+    }
+  </section>
+
   @if (scheduleFields.autoRun()) {
     <div class="row-inputs">
       <sh-form-field>
