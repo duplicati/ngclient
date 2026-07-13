@@ -13,18 +13,10 @@
     "esModuleInterop": true,
     "sourceMap": true,
     "paths": {
-      "ngclient-lib": [
-        "./dist/ngclient-lib"
-      ],
-      "~openapi/*": [
-        "./projects/ngclient/src/app/core/openapi/*"
-      ],
-      "~core/*": [
-        "./projects/ngclient/src/app/core/*"
-      ],
-      "~settings/*": [
-        "./projects/ngclient/src/app/settings/*"
-      ]
+      "ngclient-lib": ["./dist/ngclient-lib"],
+      "~openapi/*": ["./projects/ngclient/src/app/core/openapi/*"],
+      "~core/*": ["./projects/ngclient/src/app/core/*"],
+      "~settings/*": ["./projects/ngclient/src/app/settings/*"]
     },
     "allowJs": true,
     "declaration": false,
@@ -34,7 +26,6 @@
     "target": "ESNext",
     "module": "ESNext",
     "lib": ["ESNext", "dom"],
-    "typeRoots": ["node_modules/@types", "node_modules/ngxtension"],
     "types": ["@angular/localize"]
   },
   "angularCompilerOptions": {

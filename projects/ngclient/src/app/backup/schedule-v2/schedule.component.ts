@@ -182,11 +182,18 @@ export function scheduleOptionToSchedule(schedule: ScheduleOption['data']): Sche
     schedule.runAgain.allowedDays.sun ? 'Sunday' : null,
   ].filter((x) => x !== null) as DayOfWeek[];
 
-  const time = schedule.nextTime.time.split(':');
-  const date = new Date(schedule.nextTime.date);
+  const dateParts = schedule.nextTime.date.split('-');
+  const timeParts = schedule.nextTime.time.split(':');
 
-  date.setHours(parseInt(time[0]));
-  date.setMinutes(parseInt(time[1]));
+  const year = parseInt(dateParts[0]);
+  const month = parseInt(dateParts[1]) - 1;
+  const day = parseInt(dateParts[2]);
+
+  const hours = parseInt(timeParts[0] ?? '0');
+  const minutes = parseInt(timeParts[1] ?? '0');
+  const seconds = parseInt(timeParts[2] ?? '0');
+
+  const date = new Date(year, month, day, hours, minutes, seconds, 0);
 
   const repeatValue = schedule.runAgain.repeatValue;
   const repeatUnit = schedule.runAgain.repeatUnit;
