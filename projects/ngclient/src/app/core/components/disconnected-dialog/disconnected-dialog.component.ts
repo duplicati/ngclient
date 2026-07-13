@@ -20,7 +20,7 @@ import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/cor
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DisconnectedDialogComponent {
-  reconnectTimer = signal(15000);
+  reconnectTimer = signal(5000);
   countdown = signal(0);
 
   connectTimerEffect = effect(() => {

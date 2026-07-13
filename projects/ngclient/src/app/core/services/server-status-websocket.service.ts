@@ -77,6 +77,7 @@ type WebsocketEventMessage<T extends object> = {
 };
 
 const LOGGING_ENABLED = false;
+const RECONNECT_DELAY_MS = 5000;
 
 @Injectable({
   providedIn: 'root',
@@ -96,6 +97,7 @@ export class ServerStatusWebSocketService {
   #notificationState = signal<GetApiV1NotificationsResponse | null>(null);
   #remoteControlState = signal<RemoteControlStatusOutput | null>(null);
   #disconnectedDialog: ReturnType<typeof this.dialog.open<DisconnectedDialogComponent>> | undefined = undefined;
+  #isHandlingAuthRefresh = false;
   #subscriptions = signal<Partial<{ [key in SubscriptionService]: any }>>({ legacystatus: true });
 
   shouldConnect = signal(true);
@@ -189,11 +191,14 @@ export class ServerStatusWebSocketService {
               console.error('WebSocket authentication failed:', authReply.Message);
               this.#connectionStatus.set('disconnected');
 
+              this.#isHandlingAuthRefresh = true;
               this.#auth.refreshToken().subscribe({
                 next: () => {
                   this.reconnect();
+                  this.#isHandlingAuthRefresh = false;
                 },
                 error: (error) => {
+                  this.#isHandlingAuthRefresh = false;
                   console.error('Error refreshing token after WebSocket auth failed', error);
                 },
               });
@@ -258,31 +263,29 @@ export class ServerStatusWebSocketService {
       if (LOGGING_ENABLED) console.log('WebSocket connection closed', event);
       this.#connectionStatus.set('disconnected');
 
-      var shouldReAuthenticate = event.code === 4401;
-      if (shouldReAuthenticate) {
+      // If server closed with 4401 (auth expired), refresh token first then reconnect
+      if (event.code === 4401) {
+        this.#isHandlingAuthRefresh = true;
         this.#auth.refreshToken().subscribe({
           next: () => {
             this.reconnect();
+            this.#isHandlingAuthRefresh = false;
           },
           error: (error) => {
             console.error('Error refreshing token', error);
+            this.#isHandlingAuthRefresh = false;
+            // Refresh failed — fall back to timed reconnect
+            if (this.shouldConnect()) {
+              this.#showDisconnectedDialogAndScheduleReconnect();
+            }
           },
         });
+        return;
       }
 
-      // Attempt reconnection
-      if (this.shouldConnect()) {
-        if (!this.#disconnectedDialog) {
-          this.#disconnectedDialog = this.dialog.open(DisconnectedDialogComponent, {
-            closeOnButton: false,
-            closeOnEsc: false,
-            closeOnOutsideClick: false,
-          });
-          this.#disconnectedDialog.component.reconnectTimer.set(15000);
-        }
-
-        if (this.#connectTimeout) clearTimeout(this.#connectTimeout);
-        this.#connectTimeout = setTimeout(() => this.#connect(), 5000);
+      // Generic reconnection — skip if a token refresh is already handling reconnect
+      if (this.shouldConnect() && !this.#isHandlingAuthRefresh) {
+        this.#showDisconnectedDialogAndScheduleReconnect();
       }
     };
 
@@ -294,6 +297,7 @@ export class ServerStatusWebSocketService {
 
   #onconnectionEstablished() {
     this.#connectionStatus.set('connected');
+    this.#isHandlingAuthRefresh = false;
 
     const pendingSubscriptions = this.#subscriptions();
     if (Object.keys(pendingSubscriptions).length > 0) {
@@ -305,7 +309,22 @@ export class ServerStatusWebSocketService {
     }
     if (this.#disconnectedDialog) {
       this.#disconnectedDialog.close();
+      this.#disconnectedDialog = undefined;
     }
+  }
+
+  #showDisconnectedDialogAndScheduleReconnect() {
+    if (!this.#disconnectedDialog) {
+      this.#disconnectedDialog = this.dialog.open(DisconnectedDialogComponent, {
+        closeOnButton: false,
+        closeOnEsc: false,
+        closeOnOutsideClick: false,
+      });
+      this.#disconnectedDialog.component.reconnectTimer.set(RECONNECT_DELAY_MS);
+    }
+
+    if (this.#connectTimeout) clearTimeout(this.#connectTimeout);
+    this.#connectTimeout = setTimeout(() => this.#connect(), RECONNECT_DELAY_MS);
   }
 
   stop() {
@@ -314,7 +333,11 @@ export class ServerStatusWebSocketService {
   }
 
   reconnect(): void {
-    this.#websocket?.close();
+    if (this.#websocket) {
+      this.#websocket.onclose = null;
+      this.#websocket.onerror = null;
+      this.#websocket.close();
+    }
     this.start();
   }
 
