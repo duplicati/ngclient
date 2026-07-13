@@ -103,6 +103,7 @@ export type DestinationConfigEntry = {
   key: string;
   displayName: string;
   description: string;
+  sourceDescription?: string | null;
   icon: string;
   isNonFree?: boolean;
   customKey?: string;

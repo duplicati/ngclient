@@ -5,6 +5,7 @@ import { ShipChip } from '@ship-ui/core/ship-chip';
 import { ConnectionStringsState } from '../../../core/states/connection-strings.state';
 import { DestinationTypeOption } from '../../../core/states/destinationconfig.state';
 import { getConfigurationByUrl, getSimplePath } from '../destination.config-utilities';
+import { getDisplayedDescription } from '../destination-description';
 
 @Component({
   selector: 'app-destination-list-item',
@@ -18,6 +19,7 @@ export class DestinationListItemComponent {
   targetUrl = input<string | null>();
   variant = input<ShipCardVariant>('type-b');
   connectionStringId = input<number | null>();
+  showAsSource = input(false);
 
   #connectionStringState = inject(ConnectionStringsState);
 
@@ -43,6 +45,7 @@ export class DestinationListItemComponent {
           customKey: x.customKey ?? null,
           displayName: x.displayName,
           description: x.description,
+          sourceDescription: x.sourceDescription ?? null,
           icon: x.icon,
         } as DestinationTypeOption)
       : null;
@@ -52,6 +55,12 @@ export class DestinationListItemComponent {
     const destination = this.destination();
     const destinationFromTargetUrl = this.destinationFromTargetUrl();
     return destination || destinationFromTargetUrl || null;
+  });
+
+  description = computed(() => {
+    const item = this.destinationItem();
+    if (!item) return '';
+    return getDisplayedDescription(item, this.showAsSource());
   });
 
   getSimplePath(url: string | null | undefined) {

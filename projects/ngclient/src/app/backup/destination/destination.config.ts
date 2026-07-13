@@ -48,6 +48,7 @@ const DEFAULT_DOUBLESLASH_CONFIG: DoubleSlashConfig = {
 
 export const DESTINATION_CONFIG_DEFAULT = {
   description: $localize`Unknown destination type`,
+  sourceDescription: null,
   icon: 'assets/dest-icons/file-system.png',
   isDefaultEntry: true,
   customFields: {
@@ -84,6 +85,7 @@ export const S3_BASE: DestinationConfigEntry = {
   key: 's3',
   displayName: $localize`S3 Compatible`,
   description: $localize`Store backups in any S3 compatible bucket.`,
+  sourceDescription: $localize`Use files from any S3 compatible bucket as a remote source.`,
   icon: 'assets/dest-icons/s3compat.png',
   customFields: {
     bucket: {
@@ -171,6 +173,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'file',
     displayName: $localize`File system`,
     description: $localize`Store backups on your local file system.`,
+    sourceDescription: $localize`Use files from your local file system as a remote source.`,
     icon: 'assets/dest-icons/file-system.png',
     searchTerms: 'local disk harddrive localdisk filesystem unc server share drive',
     sortOrder: 110,
@@ -213,6 +216,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'duplicati',
     displayName: $localize`Duplicati Storage`,
     description: $localize`Store backups with Duplicati Storage.`,
+    sourceDescription: $localize`Use files from Duplicati Storage as a remote source.`,
     icon: 'assets/dest-icons/duplicati.png',
     searchTerms: 'duplicati internal built-in',
     sortOrder: 100,
@@ -247,6 +251,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'ssh',
     displayName: $localize`SFTP (SSH)`,
     description: $localize`Store backups with SFTP (SSH).`,
+    sourceDescription: $localize`Use files from SFTP (SSH) as a remote source.`,
     icon: 'assets/dest-icons/ssh.png',
     searchTerms: 'sftp scp secure shell',
     sortOrder: 80,
@@ -330,6 +335,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 's3',
     displayName: $localize`S3 Compatible`,
     description: $localize`Store backups in any S3 compatible bucket.`,
+    sourceDescription: $localize`Use files from any S3 compatible bucket as a remote source.`,
     icon: 'assets/dest-icons/s3compat.png',
     searchTerms:
       'spaces cloud digitalocean cloudian minio linode bunnycdn oracle cloudflare alibaba huawei tencent baidu jd ucloud qiniu aliyun tcloud tencent ',
@@ -427,6 +433,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     customKey: 's3-aws',
     displayName: $localize`Amazon S3`,
     description: $localize`Store backups in Amazon S3.`,
+    sourceDescription: $localize`Use files from Amazon S3 as a remote source.`,
     icon: 'assets/dest-icons/aws.png',
     searchTerms: 'amazon aws',
     customFields: {
@@ -529,6 +536,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'gcs',
     displayName: $localize`Google Cloud Storage`,
     description: $localize`Store backups in Google Cloud Storage.`,
+    sourceDescription: $localize`Use files from Google Cloud Storage as a remote source.`,
     icon: 'assets/dest-icons/google-cloud.png',
     oauthField: 'authid',
     searchTerms: 'gcp googlecloud',
@@ -605,6 +613,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'googledrive',
     displayName: $localize`Google Drive`,
     description: $localize`Store backups in Google Drive.`,
+    sourceDescription: $localize`Use files from Google Drive as a remote source.`,
     icon: 'assets/dest-icons/google-drive.png',
     oauthField: 'authid',
     searchTerms: 'gdrive',
@@ -644,6 +653,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'pcloud',
     displayName: $localize`pCloud`,
     description: $localize`Store backups in pCloud.`,
+    sourceDescription: $localize`Use files from pCloud as a remote source.`,
     icon: 'assets/dest-icons/pcloud.png',
     oauthField: 'authid',
     customFields: {
@@ -706,6 +716,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'azure',
     displayName: $localize`Azure Blob Storage`,
     description: $localize`Store backups in Azure Blob Storage.`,
+    sourceDescription: $localize`Use files from Azure Blob Storage as a remote source.`,
     icon: 'assets/dest-icons/azure.png',
     searchTerms: 'microsoft ms',
     sortOrder: 60,
@@ -750,6 +761,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'onedrivev2',
     displayName: $localize`OneDrive`,
     description: $localize`Store backups in OneDrive.`,
+    sourceDescription: $localize`Use files from OneDrive as a remote source.`,
     icon: 'assets/dest-icons/one-drive.png',
     oauthField: 'authid',
     searchTerms: 'micorsoft ms',
@@ -788,6 +800,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'od4b',
     displayName: $localize`OneDrive Business (deprecated)`,
     description: $localize`Store backups in OneDrive Business. Deprecated, use Sharepoint instead.`,
+    sourceDescription: $localize`Use files from OneDrive Business as a remote source. Deprecated, use SharePoint instead.`,
     icon: 'assets/dest-icons/one-drive.png',
     searchTerms: 'microsoft ms',
     sortOrder: -1,
@@ -851,6 +864,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'mssp',
     displayName: $localize`Microsoft SharePoint (deprecated)`,
     description: $localize`Store backups in Microsoft SharePoint using legacy API.`,
+    sourceDescription: $localize`Use files from Microsoft SharePoint as a remote source using the legacy API.`,
     icon: 'assets/dest-icons/sharepoint.png',
     searchTerms: 'microsoft ms',
     sortOrder: -1,
@@ -914,6 +928,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'sharepoint',
     displayName: $localize`Microsoft SharePoint`,
     description: $localize`Store backups in Microsoft SharePoint.`,
+    sourceDescription: $localize`Use files from Microsoft SharePoint as a remote source.`,
     icon: 'assets/dest-icons/sharepoint.png',
     oauthField: 'authid',
     searchTerms: 'microsoft ms',
@@ -956,6 +971,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'dropbox',
     displayName: $localize`Dropbox`,
     description: $localize`Store backups in Dropbox.`,
+    sourceDescription: $localize`Use files from Dropbox as a remote source.`,
     icon: 'assets/dest-icons/dropbox.png',
     oauthField: 'authid',
     searchTerms: 'dbx',
@@ -994,6 +1010,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'box',
     displayName: $localize`Box.com`,
     description: $localize`Store backups in Box.com.`,
+    sourceDescription: $localize`Use files from Box.com as a remote source.`,
     icon: 'assets/dest-icons/box-com.png',
     oauthField: 'authid',
     customFields: {
@@ -1031,6 +1048,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'jottacloud',
     displayName: $localize`Jottacloud`,
     description: $localize`Store backups in Jottacloud.`,
+    sourceDescription: $localize`Use files from Jottacloud as a remote source.`,
     icon: 'assets/dest-icons/jottacloud.png',
     oauthField: 'authid',
     customFields: {
@@ -1068,6 +1086,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'b2',
     displayName: $localize`B2 Cloud Storage`,
     description: $localize`Store backups in B2 Cloud Storage.`,
+    sourceDescription: $localize`Use files from B2 Cloud Storage as a remote source.`,
     icon: 'assets/dest-icons/backblaze.png',
     searchTerms: 'backblaze',
     customFields: {
@@ -1150,6 +1169,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'e2',
     displayName: $localize`IDrive e2`,
     description: $localize`Store backups in IDrive e2.`,
+    sourceDescription: $localize`Use files from IDrive e2 as a remote source.`,
     icon: 'assets/dest-icons/idrive-e2.png',
     customFields: {
       bucket: {
@@ -1203,6 +1223,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'mega',
     displayName: $localize`Mega.nz`,
     description: $localize`Store backups in Mega.nz.`,
+    sourceDescription: $localize`Use files from Mega.nz as a remote source.`,
     icon: 'assets/dest-icons/mega-nz.png',
     sortOrder: -1,
     customFields: {
@@ -1247,6 +1268,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'msgroup',
     displayName: $localize`Microsoft Office 365 Group`,
     description: $localize`Store backups in Microsoft Office 365 Group.`,
+    sourceDescription: $localize`Use files from Microsoft Office 365 Group as a remote source.`,
     icon: 'assets/dest-icons/office-365.png',
     oauthField: 'authid',
     searchTerms: 'ms',
@@ -1293,6 +1315,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'cloudfiles',
     displayName: $localize`Rackspace CloudFiles`,
     description: $localize`Store backups in Rackspace CloudFiles.`,
+    sourceDescription: $localize`Use files from Rackspace CloudFiles as a remote source.`,
     icon: 'assets/dest-icons/rackspace.png',
     customFields: {
       server: {
@@ -1354,6 +1377,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'rclone',
     displayName: $localize`Rclone`,
     description: $localize`Store backups in Rclone.`,
+    sourceDescription: $localize`Use files from Rclone as a remote source.`,
     icon: 'assets/dest-icons/rclone.png',
     searchTerms: 'rcl',
     dynamicFields: [
@@ -1411,6 +1435,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'openstack',
     displayName: $localize`OpenStack Object Storage`,
     description: $localize`Store backups in OpenStack Object Storage.`,
+    sourceDescription: $localize`Use files from OpenStack Object Storage as a remote source.`,
     icon: 'assets/dest-icons/open-stack.png',
     searchTerms: 'swift',
     customFields: {
@@ -1475,6 +1500,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'webdav',
     displayName: $localize`WebDAV`,
     description: $localize`Store backups in WebDAV.`,
+    sourceDescription: $localize`Use files from WebDAV as a remote source.`,
     icon: 'assets/dest-icons/webdav.png',
     searchTerms: 'web dav',
     customFields: {
@@ -1549,6 +1575,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'aftp',
     displayName: $localize`Alternative FTP`,
     description: $localize`Store backups in FTP.`,
+    sourceDescription: $localize`Use files from FTP as a remote source.`,
     icon: 'assets/dest-icons/ftp.png',
     searchTerms: 'alt file transfer protocol ftps',
     customFields: {
@@ -1615,6 +1642,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'ftp',
     displayName: $localize`FTP`,
     description: $localize`Store backups in FTP.`,
+    sourceDescription: $localize`Use files from FTP as a remote source.`,
     icon: 'assets/dest-icons/ftp.png',
     searchTerms: 'file transfer protocol ftps',
     customFields: {
@@ -1682,6 +1710,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'sia',
     displayName: $localize`Sia Decentrilized Cloud`,
     description: $localize`Store backups in Sia Decentrilized Cloud.`,
+    sourceDescription: $localize`Use files from Sia Decentralized Cloud as a remote source.`,
     icon: 'assets/dest-icons/sia-cloud.png',
     customFields: {
       server: {
@@ -1722,6 +1751,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'cos',
     displayName: $localize`Tencent COS`,
     description: $localize`Store backups in Tencent COS.`,
+    sourceDescription: $localize`Use files from Tencent COS as a remote source.`,
     icon: 'assets/dest-icons/tencent-cloud.png',
     customFields: {
       bucket: {
@@ -1796,6 +1826,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'tahoe',
     displayName: $localize`Tahoe LAFS`,
     description: $localize`Store backups in Tahoe LAFS.`,
+    sourceDescription: $localize`Use files from Tahoe LAFS as a remote source.`,
     icon: 'assets/dest-icons/tahoelafs.png',
     searchTerms: 'least authority file system',
     customFields: {
@@ -1852,6 +1883,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'smb',
     displayName: $localize`Windows Share (SMB)`,
     description: $localize`Store backups on SMB storage.`,
+    sourceDescription: $localize`Use files from SMB storage as a remote source.`,
     icon: 'assets/dest-icons/smb.png',
     searchTerms: 'cifs samba',
     customFields: {
@@ -1919,6 +1951,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'cifs',
     displayName: $localize`CIFS (deprecated)`,
     description: $localize`Same as SMB backend, but with a different name. Use SMB instead.`,
+    sourceDescription: $localize`Use files from CIFS storage as a remote source. Deprecated, use SMB instead.`,
     icon: 'assets/dest-icons/smb.png',
     sortOrder: -1,
     mapper: DESTINATION_CONFIG_DEFAULT.mapper,
@@ -1927,6 +1960,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'filen',
     displayName: $localize`Filen.io`,
     description: $localize`Store backups in Filen.io.`,
+    sourceDescription: $localize`Use files from Filen.io as a remote source.`,
     icon: 'assets/dest-icons/filen.png',
     customFields: {
       path: {
@@ -1971,6 +2005,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'filejump',
     displayName: $localize`Filejump`,
     description: $localize`Store backups in Filejump.`,
+    sourceDescription: $localize`Use files from Filejump as a remote source.`,
     icon: 'assets/dest-icons/file-jump.png',
     sortOrder: -1,
     customFields: {
@@ -2019,6 +2054,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     customKey: 'storjAccessGrant',
     displayName: $localize`Storj Access Grant`,
     description: $localize`Store backups in Storj Access Grant.`,
+    sourceDescription: $localize`Use files from Storj with an access grant as a remote source.`,
     icon: 'assets/dest-icons/storj.png',
     dynamicFields: [
       {
@@ -2084,6 +2120,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     customKey: 'storjApiKey',
     displayName: $localize`Storj API Key`,
     description: $localize`Store backups in Storj API Key.`,
+    sourceDescription: $localize`Use files from Storj with an API key as a remote source.`,
     icon: 'assets/dest-icons/storj.png',
     dynamicFields: [
       {
@@ -2153,6 +2190,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'aliyunoss',
     displayName: $localize`Aliyun OSS`,
     description: $localize`Store backups in Aliyun OSS`,
+    sourceDescription: $localize`Use files from Aliyun OSS as a remote source.`,
     icon: 'assets/dest-icons/aliyun.png',
     customFields: {
       bucket: {
@@ -2218,6 +2256,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'office365',
     displayName: $localize`Microsoft 365`,
     description: $localize`Create backups of Microsoft 365 data.`,
+    sourceDescription: $localize`Use Microsoft 365 data as a remote source.`,
     searchTerms: 'office o365 office365 m365 ms365',
     icon: 'assets/dest-icons/office365.png',
     isNonFree: true,
@@ -2269,6 +2308,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'googleworkspace',
     displayName: $localize`Google Workspace`,
     description: $localize`Create backups of Google Workspace data.`,
+    sourceDescription: $localize`Use Google Workspace data as a remote source.`,
     icon: 'assets/dest-icons/googleworkspace.png',
     isNonFree: true,
     dynamicFields: [
@@ -2319,6 +2359,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     key: 'drimecloud',
     displayName: $localize`Drime Cloud`,
     description: $localize`Store backups in Drime Cloud.`,
+    sourceDescription: $localize`Use files from Drime Cloud as a remote source.`,
     icon: 'assets/dest-icons/drime.png',
     customFields: {
       path: {

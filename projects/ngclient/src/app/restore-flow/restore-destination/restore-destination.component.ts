@@ -80,6 +80,7 @@ export default class RestoreDestinationComponent {
           customKey: x.customKey ?? null,
           displayName: x.displayName,
           description: x.description,
+          sourceDescription: x.sourceDescription ?? null,
           icon: x.icon,
         } as DestinationTypeOption)
       : null;
