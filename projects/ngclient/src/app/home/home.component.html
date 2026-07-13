@@ -127,6 +127,14 @@
                   </div>
 
                   <div class="actions">
+                    <button
+                      shButton
+                      [class.loading]="startingBackup() === backup.Backup.ID"
+                      (click)="startBackup($any(backup.Backup.ID))"
+                      i18n>
+                      <sh-icon>play-circle</sh-icon>
+                      Start
+                    </button>
                     <button type="button" shButton i18n (click)="openInConsole(backup)">
                       Edit in console
                       <sh-icon>arrow-up-right</sh-icon>
@@ -394,22 +402,34 @@
       }
     </button>
 
-    <button type="button" shButton [routerLink]="['/backup', backup.Backup.ID]">
-      <sh-icon>pencil-simple</sh-icon>
-    </button>
+    @if (backup.Backup.ExternalID) {
+      <button type="button" shButton [shTooltip]="'Externally managed'" [disabled]="true">
+        <sh-icon>pencil-simple</sh-icon>
+      </button>
+    } @else {
+      <button type="button" shButton [routerLink]="['/backup', backup.Backup.ID]">
+        <sh-icon>pencil-simple</sh-icon>
+      </button>
+    }
 
     <sh-menu>
-      <button
-        type="button"
-        shButton
-        [class.loading]="loadingId() === backup.Backup.ID"
-        [class.success]="successId() === backup.Backup.ID">
-        @if (successId() === backup.Backup.ID) {
-          <sh-icon>check</sh-icon>
-        } @else {
+      @if (backup.Backup.ExternalID) {
+        <button type="button" shButton [shTooltip]="'Externally managed'" [disabled]="true">
           <sh-icon>dots-three-vertical</sh-icon>
-        }
-      </button>
+        </button>
+      } @else {
+        <button
+          type="button"
+          shButton
+          [class.loading]="loadingId() === backup.Backup.ID"
+          [class.success]="successId() === backup.Backup.ID">
+          @if (successId() === backup.Backup.ID) {
+            <sh-icon>check</sh-icon>
+          } @else {
+            <sh-icon>dots-three-vertical</sh-icon>
+          }
+        </button>
+      }
 
       <ng-container menu>
         <h3 title>Operations</h3>
