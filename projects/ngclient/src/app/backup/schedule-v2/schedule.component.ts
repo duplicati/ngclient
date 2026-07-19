@@ -182,7 +182,8 @@ export function scheduleOptionToSchedule(schedule: ScheduleOption['data']): Sche
     schedule.runAgain.allowedDays.sun ? 'Sunday' : null,
   ].filter((x) => x !== null) as DayOfWeek[];
 
-  const dateParts = schedule.nextTime.date.split('-');
+  // The DatePicker sets a full date object, and we need it in UTC
+  const dateParts = new Date(schedule.nextTime.date).toISOString().split('T')[0].split('-');
   const timeParts = schedule.nextTime.time.split(':');
 
   const year = parseInt(dateParts[0]);
