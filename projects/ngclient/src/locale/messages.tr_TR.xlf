@@ -819,6 +819,7 @@
       </trans-unit>
       <trans-unit id="8993648739779585463" datatype="html">
         <source>Purge broken files for <x id="INTERPOLATION" equiv-text="{{ backup()?.Backup?.Name }}"/></source>
+        <target>Bozuk dosyaları temizle <x id="INTERPOLATION" equiv-text="{{ backup()?.Backup?.Name }}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/broken-files/broken-files.component.html</context>
           <context context-type="linenumber">1,3</context>
@@ -826,6 +827,7 @@
       </trans-unit>
       <trans-unit id="5245933232040690399" datatype="html">
         <source>Checking for broken files...</source>
+        <target>Bozuk dosyaları kontrol ediliyor...</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/broken-files/broken-files.component.html</context>
           <context context-type="linenumber">6,7</context>
@@ -833,6 +835,7 @@
       </trans-unit>
       <trans-unit id="5189181660778696841" datatype="html">
         <source>No broken files found for this backup.</source>
+        <target>Bu yedeklemede bozuk dosya bulunamadı.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/broken-files/broken-files.component.html</context>
           <context context-type="linenumber">10,11</context>
@@ -840,6 +843,7 @@
       </trans-unit>
       <trans-unit id="954235755571235794" datatype="html">
         <source> Version <x id="INTERPOLATION" equiv-text="{{ fileset.FilesetID }}"/> at <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;time&quot;&gt;"/><x id="INTERPOLATION_1" equiv-text="{{ fileset.FilesetTime | relativeTime: true }}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
+        <target> Sürüm <x id="INTERPOLATION" equiv-text="{{ fileset.FilesetID }}"/> -<x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;time&quot;&gt;"/><x id="INTERPOLATION_1" equiv-text="{{ fileset.FilesetTime | relativeTime: true }}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/broken-files/broken-files.component.html</context>
           <context context-type="linenumber">19,21</context>
@@ -847,6 +851,7 @@
       </trans-unit>
       <trans-unit id="1284180259775045490" datatype="html">
         <source> Purge broken files </source>
+        <target> Bozuk dosyaları temizle</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/broken-files/broken-files.component.html</context>
           <context context-type="linenumber">49,50</context>
@@ -854,6 +859,7 @@
       </trans-unit>
       <trans-unit id="6452379488247076817" datatype="html">
         <source>Confirm purge</source>
+        <target>Temizleme işlemini onaylayın</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/broken-files/broken-files.component.ts</context>
           <context context-type="linenumber">63</context>
@@ -861,6 +867,7 @@
       </trans-unit>
       <trans-unit id="2558066750657712756" datatype="html">
         <source>Are you sure you want to fully remove <x id="PH" equiv-text="count"/> broken file(s)?</source>
+        <target><x id="PH" equiv-text="count"/> bozuk dosyayı tamamen kaldırmak istediğinizden emin misiniz?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/broken-files/broken-files.component.ts</context>
           <context context-type="linenumber">64</context>
@@ -868,6 +875,7 @@
       </trans-unit>
       <trans-unit id="335801832077808217" datatype="html">
         <source>Purge broken files</source>
+        <target>Bozuk dosyaları temizle</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/broken-files/broken-files.component.ts</context>
           <context context-type="linenumber">65</context>
@@ -1107,6 +1115,7 @@
       </trans-unit>
       <trans-unit id="4617665286380126716" datatype="html">
         <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>file-archive<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Compact </source>
+        <target><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>file-archive<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Sıkıştır </target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/database/database.component.html</context>
           <context context-type="linenumber">71,73</context>
@@ -1298,6 +1307,7 @@
       </trans-unit>
       <trans-unit id="8723433753157596234" datatype="html">
         <source>Delete versions from <x id="INTERPOLATION" equiv-text="{{ backup()?.Backup?.Name }}"/></source>
+        <target>Sürümleri şuradan sil <x id="INTERPOLATION" equiv-text="{{ backup()?.Backup?.Name }}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/delete-versions/delete-versions.component.html</context>
           <context context-type="linenumber">1,3</context>
@@ -1305,6 +1315,7 @@
       </trans-unit>
       <trans-unit id="6656233349960841207" datatype="html">
         <source>Fetching versions from destination...</source>
+        <target>Hedeften sürümler alınıyor...</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/delete-versions/delete-versions.component.html</context>
           <context context-type="linenumber">6,7</context>
@@ -1312,6 +1323,7 @@
       </trans-unit>
       <trans-unit id="8446666563885107728" datatype="html">
         <source>No versions found for this backup.</source>
+        <target>Bu yedekleme için hiçbir sürüm bulunamadı.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/delete-versions/delete-versions.component.html</context>
           <context context-type="linenumber">10,11</context>
@@ -1330,11 +1342,12 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">266,267</context>
+          <context context-type="linenumber">274,275</context>
         </context-group>
       </trans-unit>
       <trans-unit id="45739481977493163" datatype="html">
         <source>Size</source>
+        <target>Boyut</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/delete-versions/delete-versions.component.html</context>
           <context context-type="linenumber">25,26</context>
@@ -1342,6 +1355,7 @@
       </trans-unit>
       <trans-unit id="4116911651502837995" datatype="html">
         <source>Files</source>
+        <target>Dosyalar</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/delete-versions/delete-versions.component.html</context>
           <context context-type="linenumber">26,27</context>
@@ -1349,6 +1363,7 @@
       </trans-unit>
       <trans-unit id="3515287874166024137" datatype="html">
         <source> Delete <x id="ICU" equiv-text="{selectedItems().length, plural, =1 {1 version} other {{{selectedItems().length}} versions}}" xid="85461926550041466"/> </source>
+        <target>Sil <x id="ICU" equiv-text="{selectedItems().length, plural, =1 {1 version} other {{{selectedItems().length}} versions}}" xid="85461926550041466"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/delete-versions/delete-versions.component.html</context>
           <context context-type="linenumber">56,60</context>
@@ -1356,6 +1371,7 @@
       </trans-unit>
       <trans-unit id="7942688428184262673" datatype="html">
         <source>{VAR_PLURAL, plural, =1 {1 version} other {<x id="INTERPOLATION"/> versions}}</source>
+        <target>{VAR_PLURAL, plural, =1 {1 versiyon} diğer {<x id="INTERPOLATION"/> versiyon}}</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/delete-versions/delete-versions.component.html</context>
           <context context-type="linenumber">57</context>
@@ -1363,6 +1379,7 @@
       </trans-unit>
       <trans-unit id="4637965229336968093" datatype="html">
         <source>Compact after deletion</source>
+        <target>Silme işleminden sonra sıkıştır</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/delete-versions/delete-versions.component.html</context>
           <context context-type="linenumber">61</context>
@@ -1370,6 +1387,7 @@
       </trans-unit>
       <trans-unit id="5430531719561339771" datatype="html">
         <source>Are you sure you want to delete <x id="PH" equiv-text="count"/> version(s)?</source>
+        <target><x id="PH" equiv-text="count"/> sürümü(leri) silmek istediğinizden emin misiniz?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/delete-versions/delete-versions.component.ts</context>
           <context context-type="linenumber">102</context>
@@ -1377,6 +1395,7 @@
       </trans-unit>
       <trans-unit id="3212330950843009742" datatype="html">
         <source>Delete versions</source>
+        <target>Sürümleri sil</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/backup/delete-versions/delete-versions.component.ts</context>
           <context context-type="linenumber">103</context>
@@ -3691,7 +3710,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">423,425</context>
+          <context context-type="linenumber">443,445</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1704760277951717266" datatype="html">
@@ -4851,7 +4870,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">164,165</context>
+          <context context-type="linenumber">172,173</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3425407769043382371" datatype="html">
@@ -4895,7 +4914,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">186,187</context>
+          <context context-type="linenumber">194,195</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5646035883377382015" datatype="html">
@@ -4907,7 +4926,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">195,196</context>
+          <context context-type="linenumber">203,204</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4758656702002650001" datatype="html">
@@ -5923,7 +5942,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">361,363</context>
+          <context context-type="linenumber">369,371</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1845281535947373751" datatype="html">
@@ -5935,7 +5954,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">366,368</context>
+          <context context-type="linenumber">374,376</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7513388682755268547" datatype="html">
@@ -5947,7 +5966,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">377,385</context>
+          <context context-type="linenumber">385,393</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7047372842772601273" datatype="html">
@@ -7161,11 +7180,11 @@ BİLDİRİLEN ana bilgisayar anahtarını koymak istiyor musunuz: <x id="PH_1" e
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">144,145</context>
+          <context context-type="linenumber">152,153</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">276,277</context>
+          <context context-type="linenumber">284,285</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1124571293447475738" datatype="html">
@@ -7177,7 +7196,14 @@ BİLDİRİLEN ana bilgisayar anahtarını koymak istiyor musunuz: <x id="PH_1" e
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">214,215</context>
+          <context context-type="linenumber">222,223</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3473397813900179081" datatype="html">
+        <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>play-circle<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Start </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
+          <context context-type="linenumber">135,136</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6449258891199330160" datatype="html">
@@ -7185,7 +7211,7 @@ BİLDİRİLEN ana bilgisayar anahtarını koymak istiyor musunuz: <x id="PH_1" e
         <target> Konsolda düzenle <x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>arrow-up-right<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">131,133</context>
+          <context context-type="linenumber">139,141</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5195907025136652253" datatype="html">
@@ -7193,7 +7219,7 @@ BİLDİRİLEN ana bilgisayar anahtarını koymak istiyor musunuz: <x id="PH_1" e
         <target>Sonraki zamanlanmış çalıştırma:</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">171,172</context>
+          <context context-type="linenumber">179,180</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4220765745195024064" datatype="html">
@@ -7201,7 +7227,7 @@ BİLDİRİLEN ana bilgisayar anahtarını koymak istiyor musunuz: <x id="PH_1" e
         <target>Süre:</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">177,178</context>
+          <context context-type="linenumber">185,186</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8856905278208146821" datatype="html">
@@ -7209,11 +7235,11 @@ BİLDİRİLEN ana bilgisayar anahtarını koymak istiyor musunuz: <x id="PH_1" e
         <target> <x id="ICU" equiv-text="{versions, plural, =0 {No version yet} =1 {1 Version} other {{{ versions }} Versions}}" xid="6502601490918455200"/> </target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">210,211</context>
+          <context context-type="linenumber">218,219</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">334,336</context>
+          <context context-type="linenumber">342,344</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4301968594246501194" datatype="html">
@@ -7221,7 +7247,7 @@ BİLDİRİLEN ana bilgisayar anahtarını koymak istiyor musunuz: <x id="PH_1" e
         <target>{VAR_PLURAL, plural, =0 {Henüz sürüm yok} =1 {1 Sürüm} other {<x id="INTERPOLATION"/> Sürüm}}</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">210,211</context>
+          <context context-type="linenumber">218,219</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4833523116462449893" datatype="html">
@@ -7229,7 +7255,7 @@ BİLDİRİLEN ana bilgisayar anahtarını koymak istiyor musunuz: <x id="PH_1" e
         <target> Yedek bulunamadı <x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button shButton class=&quot;primary raised&quot; [routerLink]=&quot;[&apos;/backup/new&apos;]&quot;&gt;"/> Şimdi oluşturmak için tıklayın <x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>plus<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">226,233</context>
+          <context context-type="linenumber">234,241</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2737753982083076672" datatype="html">
@@ -7237,7 +7263,7 @@ BİLDİRİLEN ana bilgisayar anahtarını koymak istiyor musunuz: <x id="PH_1" e
         <target> Yedekleme <x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">239,242</context>
+          <context context-type="linenumber">247,250</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8239510835983979014" datatype="html">
@@ -7245,7 +7271,7 @@ BİLDİRİLEN ana bilgisayar anahtarını koymak istiyor musunuz: <x id="PH_1" e
         <target> Tür <x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">243,246</context>
+          <context context-type="linenumber">251,254</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4031685509248518357" datatype="html">
@@ -7253,7 +7279,7 @@ BİLDİRİLEN ana bilgisayar anahtarını koymak istiyor musunuz: <x id="PH_1" e
         <target> Son yedekleme <x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">247,250</context>
+          <context context-type="linenumber">255,258</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6221598791249318435" datatype="html">
@@ -7261,7 +7287,7 @@ BİLDİRİLEN ana bilgisayar anahtarını koymak istiyor musunuz: <x id="PH_1" e
         <target> Sonraki çalıştırma <x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">251,254</context>
+          <context context-type="linenumber">259,262</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6061597570084022535" datatype="html">
@@ -7269,7 +7295,7 @@ BİLDİRİLEN ana bilgisayar anahtarını koymak istiyor musunuz: <x id="PH_1" e
         <target> Süre <x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">255,258</context>
+          <context context-type="linenumber">263,266</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2200211643890848273" datatype="html">
@@ -7277,7 +7303,7 @@ BİLDİRİLEN ana bilgisayar anahtarını koymak istiyor musunuz: <x id="PH_1" e
         <target> Kaynak <x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">259,262</context>
+          <context context-type="linenumber">267,270</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1887705198379537678" datatype="html">
@@ -7285,7 +7311,7 @@ BİLDİRİLEN ana bilgisayar anahtarını koymak istiyor musunuz: <x id="PH_1" e
         <target> Hedef <x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/><x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngTemplateOutlet=&quot;sortIcons&quot; /&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">263,266</context>
+          <context context-type="linenumber">271,274</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3193976279273491157" datatype="html">
@@ -7293,7 +7319,7 @@ BİLDİRİLEN ana bilgisayar anahtarını koymak istiyor musunuz: <x id="PH_1" e
         <target>Eylemler</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">267,268</context>
+          <context context-type="linenumber">275,276</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2033393708907751806" datatype="html">
@@ -7301,7 +7327,7 @@ BİLDİRİLEN ana bilgisayar anahtarını koymak istiyor musunuz: <x id="PH_1" e
         <target>{VAR_PLURAL, plural, =0 {Sürüm yok} =1 {1 Sürüm} other {<x id="INTERPOLATION"/> Sürüm}}</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">334,335</context>
+          <context context-type="linenumber">342,343</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8187139875840700893" datatype="html">
@@ -7309,7 +7335,7 @@ BİLDİRİLEN ana bilgisayar anahtarını koymak istiyor musunuz: <x id="PH_1" e
         <target>Yedeklemeler yükleniyor...</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">350,351</context>
+          <context context-type="linenumber">358,359</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/restore/restore.component.html</context>
@@ -7321,7 +7347,7 @@ BİLDİRİLEN ana bilgisayar anahtarını koymak istiyor musunuz: <x id="PH_1" e
         <target><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>play-circle<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/><x id="START_BLOCK_IF" equiv-text="@if (viewMode() === &apos;list&apos;) {"/> Başlat <x id="CLOSE_BLOCK_IF" equiv-text="}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">391,397</context>
+          <context context-type="linenumber">399,405</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6370106640591740243" datatype="html">
@@ -7329,7 +7355,7 @@ BİLDİRİLEN ana bilgisayar anahtarını koymak istiyor musunuz: <x id="PH_1" e
         <target><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>clock-counter-clockwise<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Geri yükle </target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">418,420</context>
+          <context context-type="linenumber">438,440</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/layout/layout.component.html</context>
@@ -7341,7 +7367,7 @@ BİLDİRİLEN ana bilgisayar anahtarını koymak istiyor musunuz: <x id="PH_1" e
         <target><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>x-circle<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Sil </target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">428,430</context>
+          <context context-type="linenumber">448,450</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6201638315245239510" datatype="html">
@@ -7349,7 +7375,7 @@ BİLDİRİLEN ana bilgisayar anahtarını koymak istiyor musunuz: <x id="PH_1" e
         <target>Gelişmiş</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">434,436</context>
+          <context context-type="linenumber">454,456</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3774821360524815607" datatype="html">
@@ -7357,7 +7383,7 @@ BİLDİRİLEN ana bilgisayar anahtarını koymak istiyor musunuz: <x id="PH_1" e
         <target><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>database<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Veritabanı </target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">437,439</context>
+          <context context-type="linenumber">457,459</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6760351587885289921" datatype="html">
@@ -7365,7 +7391,7 @@ BİLDİRİLEN ana bilgisayar anahtarını koymak istiyor musunuz: <x id="PH_1" e
         <target><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>check-square-offset<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Dosyaları doğrula </target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">442,444</context>
+          <context context-type="linenumber">462,464</context>
         </context-group>
       </trans-unit>
       <trans-unit id="566215919641077686" datatype="html">
@@ -7373,28 +7399,31 @@ BİLDİRİLEN ana bilgisayar anahtarını koymak istiyor musunuz: <x id="PH_1" e
         <target><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>terminal-window<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Komut satırı </target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">447,449</context>
+          <context context-type="linenumber">467,469</context>
         </context-group>
       </trans-unit>
       <trans-unit id="140680346066644352" datatype="html">
         <source>Cleanup</source>
+        <target>Temizleme</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">454,456</context>
+          <context context-type="linenumber">474,476</context>
         </context-group>
       </trans-unit>
       <trans-unit id="714084985033471613" datatype="html">
         <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>trash<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Delete versions </source>
+        <target><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>trash<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Sürümleri sil</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">458,460</context>
+          <context context-type="linenumber">478,480</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3137376726659662171" datatype="html">
         <source><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>file-x<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Purge broken files </source>
+        <target><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>file-x<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Bozuk dosyaları temizle</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">465,467</context>
+          <context context-type="linenumber">485,487</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4273460998206847730" datatype="html">
@@ -7402,7 +7431,7 @@ BİLDİRİLEN ana bilgisayar anahtarını koymak istiyor musunuz: <x id="PH_1" e
         <target>Raporlama</target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">473,475</context>
+          <context context-type="linenumber">493,495</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6438251515449676895" datatype="html">
@@ -7410,7 +7439,7 @@ BİLDİRİLEN ana bilgisayar anahtarını koymak istiyor musunuz: <x id="PH_1" e
         <target><x id="START_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;sh-icon&gt;"/>notepad<x id="CLOSE_TAG_SH_ICON" ctype="x-sh_icon" equiv-text="&lt;/sh-icon&gt;"/> Günlük </target>
         <context-group purpose="location">
           <context context-type="sourcefile">projects/ngclient/src/app/home/home.component.html</context>
-          <context context-type="linenumber">476,478</context>
+          <context context-type="linenumber">496,498</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5569128980493130010" datatype="html">
