@@ -301,7 +301,7 @@ export default class SettingsComponent {
     this.showPassphraseForm.set(false);
   }
 
-  languageOptions = signal(LANGUAGES);
+  languageOptions = signal([...LANGUAGES].sort((a, b) => a.label.localeCompare(b.label)));
 
   powerModeOptions = computed(() => {
     const sysinfo = this.#sysinfo.systemInfo();
