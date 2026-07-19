@@ -83,6 +83,10 @@
             "translation": "projects/ngclient/src/locale/messages.it.xlf",
             "baseHref": "it"
           },
+          "ko": {
+            "translation": "projects/ngclient/src/locale/messages.ko.xlf",
+            "baseHref": "ko"
+          },
           "ja-JP": {
             "translation": "projects/ngclient/src/locale/messages.ja_JP.xlf",
             "baseHref": "ja-JP"
@@ -114,6 +118,10 @@
           "sv-SE": {
             "translation": "projects/ngclient/src/locale/messages.sv_SE.xlf",
             "baseHref": "sv-SE"
+          },
+          "tr": {
+            "translation": "projects/ngclient/src/locale/messages.tr.xlf",
+            "baseHref": "tr"
           },
           "zh-CN": {
             "translation": "projects/ngclient/src/locale/messages.zh_CN.xlf",
@@ -186,7 +194,7 @@
             "assets": [
               "projects/ngclient/src/assets",
               {
-                "glob": "messages.{en,en_US,en_GB,cs,da,de,es,fi,fr,hu,it,ja_JP,nl_NL,pl,pt_BR,pt,ru,sr_RS,sv_SE,zh_CN,zh_TW,zh-Hans,de_CH,de_DE,es_AR,fr_CA,fr_FR,it_IT,ja,nl_BE,zh-Hant,zh,zh_HK}.json",
+                "glob": "messages.{en,en_US,en_GB,cs,da,de,es,fi,fr,hu,it,ja_JP,ko,nl_NL,pl,pt_BR,pt,ru,sr_RS,sv_SE,tr,zh_CN,zh_TW,zh-Hans,de_CH,de_DE,es_AR,fr_CA,fr_FR,it_IT,ja,nl_BE,zh-Hant,zh,zh_HK}.json",
                 "input": "./projects/ngclient/src/locale",
                 "output": "./locale/"
               },
@@ -196,7 +204,7 @@
                 "output": "./locale/"
               },
               {
-                "glob": "{en,en-gb,cs,da,de,es,fi,fr,hu,it,ja,nl,pl,pt,ru,sr,sv,zh-cn,zh-tw}.js",
+                "glob": "{en,en-gb,cs,da,de,es,fi,fr,hu,it,ja,ko,nl,pl,pt,ru,sr,sv,tr,zh-cn,zh-tw}.js",
                 "input": "./node_modules/dayjs/esm/locale",
                 "output": "./locale/dayjs/"
               },

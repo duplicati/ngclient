@@ -17,6 +17,7 @@ import localeFrCa from '@angular/common/locales/fr-CA';
 import localeHu from '@angular/common/locales/hu';
 import localeIt from '@angular/common/locales/it';
 import localeJa from '@angular/common/locales/ja';
+import localeKo from '@angular/common/locales/ko';
 import localeNl from '@angular/common/locales/nl';
 import localeNlBe from '@angular/common/locales/nl-BE';
 import localePl from '@angular/common/locales/pl';
@@ -24,6 +25,7 @@ import localePt from '@angular/common/locales/pt';
 import localeRu from '@angular/common/locales/ru';
 import localeSr from '@angular/common/locales/sr';
 import localeSv from '@angular/common/locales/sv';
+import localeTr from '@angular/common/locales/tr';
 import localeZhHans from '@angular/common/locales/zh-Hans';
 import localeZhHant from '@angular/common/locales/zh-Hant';
 import localeZhHantHk from '@angular/common/locales/zh-Hant-HK';
@@ -42,12 +44,14 @@ const ANGULAR_LOCALE_DATA: Record<string, any> = {
   hu: localeHu,
   it: localeIt,
   ja: localeJa,
+  ko: localeKo,
   pl: localePl,
   pt: localePt,
   'pt-BR': localePt,
   ru: localeRu,
   sr: localeSr,
   sv: localeSv,
+  tr: localeTr,
   'zh-CN': localeZhHans,
   'zh-TW': localeZhHant,
   'zh-Hans': localeZhHans,
@@ -82,6 +86,7 @@ export const LANGUAGES = [
   { value: 'hu', label: 'Hungarian (hu)' },
   { value: 'it', label: 'Italian (it)' },
   { value: 'ja-JP', label: 'Japanese (ja-JP)' },
+  { value: 'ko', label: 'Korean (ko)' },
   { value: 'nl-NL', label: 'Dutch (nl-NL)' },
   { value: 'pl', label: 'Polish (pl)' },
   { value: 'pt-BR', label: 'Portuguese (pt-BR)' },
@@ -89,6 +94,7 @@ export const LANGUAGES = [
   { value: 'ru', label: 'Russian (ru)' },
   { value: 'sr-RS', label: 'Serbian (sr-RS)' },
   { value: 'sv-SE', label: 'Swedish (sv-SE)' },
+  { value: 'tr', label: 'Turkish (tr)' },
   { value: 'zh-CN', label: 'Chinese (zh-CN)' },
   { value: 'zh-TW', label: 'Chinese (zh-TW)' },
   { value: 'de-CH', label: 'German (de-CH)' },
@@ -154,6 +160,10 @@ const LOCALE_MAP: Record<string, string> = {
   ja: 'ja',
   'ja-JP': 'ja',
 
+  // Korean
+  ko: 'ko',
+  'ko-KR': 'ko',
+
   // Dutch
   nl: 'nl-NL',
   'nl-NL': 'nl-NL',
@@ -180,6 +190,10 @@ const LOCALE_MAP: Record<string, string> = {
   sv: 'sv-SE',
   'sv-SE': 'sv-SE',
   'sv-FI': 'sv-SE',
+
+  // Turkish
+  tr: 'tr',
+  'tr-TR': 'tr',
 
   // Chinese
   zh: 'zh',

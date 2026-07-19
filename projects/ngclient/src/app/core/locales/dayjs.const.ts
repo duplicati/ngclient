@@ -12,6 +12,7 @@ import locale_fr_ca from 'dayjs/esm/locale/fr-ca';
 import locale_hu from 'dayjs/esm/locale/hu';
 import locale_it from 'dayjs/esm/locale/it';
 import locale_ja from 'dayjs/esm/locale/ja';
+import locale_ko from 'dayjs/esm/locale/ko';
 import locale_nl from 'dayjs/esm/locale/nl';
 import locale_nl_be from 'dayjs/esm/locale/nl-be';
 import locale_pl from 'dayjs/esm/locale/pl';
@@ -19,6 +20,7 @@ import locale_pt from 'dayjs/esm/locale/pt';
 import locale_ru from 'dayjs/esm/locale/ru';
 import locale_sr from 'dayjs/esm/locale/sr';
 import locale_sv from 'dayjs/esm/locale/sv';
+import locale_tr from 'dayjs/esm/locale/tr';
 import locale_zh_cn from 'dayjs/esm/locale/zh-cn';
 import locale_zh_hk from 'dayjs/esm/locale/zh-hk';
 import locale_zh_tw from 'dayjs/esm/locale/zh-tw';
@@ -36,12 +38,14 @@ export const DAYJS_LOCALES = {
   hu: locale_hu,
   it: locale_it,
   ja: locale_ja,
+  ko: locale_ko,
   nl: locale_nl,
   pl: locale_pl,
   pt: locale_pt,
   ru: locale_ru,
   sr: locale_sr,
   sv: locale_sv,
+  tr: locale_tr,
   zh: locale_zh_cn,
   'zh-tw': locale_zh_tw,
   'de-ch': locale_de_ch,
