@@ -5,6 +5,39 @@ import { DuplicatiServer, WebModuleOutputDto } from '../openapi';
 
 export type WebModuleOption = { key: string; value: any };
 
+/** The user item-count breakdown. `licensed` and `sharedMailboxWithStorage` require a license seat; the remainder do not. */
+export type Office365UserCounts = {
+  total: number;
+  licensed: number;
+  unlicensed: number;
+  sharedMailboxWithStorage: number;
+  sharedMailboxWithoutStorage: number;
+};
+
+/** The group item-count breakdown. Only `unified` groups require a seat. */
+export type Office365GroupCounts = {
+  total: number;
+  unified: number;
+  notUnified: number;
+};
+
+/** The site item-count breakdown. */
+export type Office365SiteCounts = {
+  total: number;
+  group: number;
+  classic: number;
+  communication: number;
+  personal: number;
+  other: number;
+};
+
+/** The item-count breakdown returned by the office365 `CountItems` operation. */
+export type Office365Counts = {
+  users: Office365UserCounts;
+  groups: Office365GroupCounts;
+  sites: Office365SiteCounts;
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -181,6 +214,28 @@ export class WebModulesService {
       .pipe(
         map((x) => this.#defaultMapResultObjToArray(x)),
         map((res) => res.find((r) => r.key === 'api-key')?.value as string)
+      );
+  }
+
+  /**
+   * Counts the number of top-level Microsoft 365 items (users, groups, sites)
+   * for the given destination URL, broken down by license seat usage and sub-type.
+   */
+  getOffice365Counts(url: string, sourcePrefix: string, backupId: string | null) {
+    return this.#dupServer
+      .postApiV1WebmoduleByModulekey({
+        modulekey: 'office365',
+        requestBody: {
+          'backup-id': backupId ?? '',
+          'source-prefix': sourcePrefix,
+          operation: 'CountItems',
+          url,
+        },
+      })
+      .pipe(
+        map((x) => this.#defaultMapResultObjToArray(x)),
+        map((res) => res.find((r) => r.key === 'counts')?.value as string),
+        map((counts) => JSON.parse(counts) as Office365Counts)
       );
   }
 }

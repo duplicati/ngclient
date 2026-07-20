@@ -1,0 +1,103 @@
+<header>
+  <h3 class="title-30" i18n>Microsoft 365 tenant items found</h3>
+</header>
+
+<section content>
+  @switch (status()) {
+    @case ('loading') {
+      <div class="state loading">
+        <sh-icon>spinner</sh-icon>
+        <span i18n>Loading counts…</span>
+      </div>
+    }
+    @case ('error') {
+      <div class="state error">
+        <sh-icon>warning</sh-icon>
+        <span>{{ error() }}</span>
+      </div>
+    }
+    @case ('success') {
+      @let result = counts()!;
+
+      <div class="counts">
+        <section class="group">
+          <h4 i18n>Users</h4>
+          <dl>
+            <div>
+              <dt i18n>Licensed</dt>
+              <dd>{{ result.users.licensed }}</dd>
+            </div>
+            <div>
+              <dt i18n>Unlicensed</dt>
+              <dd>{{ result.users.unlicensed }}</dd>
+            </div>
+            <div>
+              <dt i18n>Shared mailbox (with storage)</dt>
+              <dd>{{ result.users.sharedMailboxWithStorage }}</dd>
+            </div>
+            <div>
+              <dt i18n>Shared mailbox (without storage)</dt>
+              <dd>{{ result.users.sharedMailboxWithoutStorage }}</dd>
+            </div>
+            <div class="total">
+              <dt i18n>Total</dt>
+              <dd>{{ result.users.total }}</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="group">
+          <h4 i18n>Groups</h4>
+          <dl>
+            <div>
+              <dt i18n>Unified</dt>
+              <dd>{{ result.groups.unified }}</dd>
+            </div>
+            <div>
+              <dt i18n>Not unified</dt>
+              <dd>{{ result.groups.notUnified }}</dd>
+            </div>
+            <div class="total">
+              <dt i18n>Total</dt>
+              <dd>{{ result.groups.total }}</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="group">
+          <h4 i18n>Sites</h4>
+          <dl>
+            <div>
+              <dt i18n>Group</dt>
+              <dd>{{ result.sites.group }}</dd>
+            </div>
+            <div>
+              <dt i18n>Classic</dt>
+              <dd>{{ result.sites.classic }}</dd>
+            </div>
+            <div>
+              <dt i18n>Communication</dt>
+              <dd>{{ result.sites.communication }}</dd>
+            </div>
+            <div>
+              <dt i18n>Personal</dt>
+              <dd>{{ result.sites.personal }}</dd>
+            </div>
+            <div>
+              <dt i18n>Other</dt>
+              <dd>{{ result.sites.other }}</dd>
+            </div>
+            <div class="total">
+              <dt i18n>Total</dt>
+              <dd>{{ result.sites.total }}</dd>
+            </div>
+          </dl>
+        </section>
+      </div>
+    }
+  }
+</section>
+
+<footer footer>
+  <button shButton type="button" (click)="closed.emit()" i18n>Close</button>
+</footer>

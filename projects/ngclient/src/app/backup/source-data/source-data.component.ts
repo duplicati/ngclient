@@ -21,10 +21,12 @@ import { ShipToggle } from '@ship-ui/core/ship-toggle';
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
 import { SizeComponent, splitSize } from '../../core/components/size/size.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
+import { WebModulesService } from '../../core/services/webmodules.service';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 import { BackupState } from '../backup.state';
 import { FiltersComponent } from '../components/filters/filters.component';
 import { getBackendIcon, getRemotePathDisplayName } from '../destination/destination.config-utilities';
+import { Office365CountsDialog } from './office365-counts-dialog/office365-counts-dialog';
 import { TargetDiskDialog } from './target-disk-dialog/target-disk-dialog';
 import { TargetUrlDialog } from './target-url-dialog/target-url-dialog';
 
@@ -76,6 +78,7 @@ export default class SourceDataComponent {
   #router = inject(Router);
   #route = inject(ActivatedRoute);
   #sysInfo = inject(SysinfoState);
+  #webModules = inject(WebModulesService);
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
   sourceDataForm = this.#backupState.sourceDataForm;
   sourceDataFormSignal = this.#backupState.sourceDataFormSignal;
@@ -327,6 +330,26 @@ export default class SourceDataComponent {
     if (!path) return '';
     const url = path.split('|')[1];
     return getRemotePathDisplayName(url);
+  }
+
+  openOffice365Counts(path: string) {
+    if (!path || !path.startsWith('@')) return;
+    const parts = path.split('|');
+    if (parts.length !== 2 || !parts[1].startsWith('office365://')) return;
+
+    const sourcePrefix = parts[0];
+    const url = parts[1];
+
+    this.#dialog.open(Office365CountsDialog, {
+      maxWidth: '500px',
+      width: '100%',
+      closeOnOutsideClick: true,
+      data: {
+        url,
+        sourcePrefix,
+        backupId: this.backupId,
+      },
+    });
   }
 
   toggleFilesLargerThan($event: boolean) {

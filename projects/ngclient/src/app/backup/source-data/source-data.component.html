@@ -116,6 +116,17 @@
                     <img class="provider-icon" [src]="getBackendIcon(path)" alt="Provider icon" />
                     {{ getRemotePathDisplayName(path) }}
                   </sh-chip>
+                  @if (path.includes('|office365://')) {
+                    <button
+                      shButton
+                      type="button"
+                      class="small"
+                      (click)="openOffice365Counts(path)"
+                      i18n-title
+                      title="Show item counts">
+                      <sh-icon>info</sh-icon>
+                    </button>
+                  }
                 } @else {
                   <sh-form-field class="small" [attr.readonly]="true">
                     <input type="text" [ngModel]="path" [ngModelOptions]="{ standalone: true }" />
