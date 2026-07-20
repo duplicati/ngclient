@@ -183,17 +183,20 @@ export function scheduleOptionToSchedule(schedule: ScheduleOption['data']): Sche
   ].filter((x) => x !== null) as DayOfWeek[];
 
   // The DatePicker sets a full date object, and we need it in UTC
-  const dateParts = new Date(schedule.nextTime.date).toISOString().split('T')[0].split('-');
+  // We need to make sure we get the LOCAL date + time,
+  // before we turn it to UTC for submission
+  const parsedDate = new Date(schedule.nextTime.date);
   const timeParts = schedule.nextTime.time.split(':');
 
-  const year = parseInt(dateParts[0]);
-  const month = parseInt(dateParts[1]) - 1;
-  const day = parseInt(dateParts[2]);
+  const year = parsedDate.getFullYear();
+  const month = parsedDate.getMonth();
+  const day = parsedDate.getDate();
 
   const hours = parseInt(timeParts[0] ?? '0');
   const minutes = parseInt(timeParts[1] ?? '0');
   const seconds = parseInt(timeParts[2] ?? '0');
 
+  // Reconstruct the date object, keeping local date and time
   const date = new Date(year, month, day, hours, minutes, seconds, 0);
 
   const repeatValue = schedule.runAgain.repeatValue;
