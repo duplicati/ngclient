@@ -36,6 +36,7 @@ import {
 import { BytesPipe } from '../../pipes/byte.pipe';
 import { SysinfoState } from '../../states/sysinfo.state';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { globMatchesPath, regexMatchesPath } from './file-tree-filter-matcher';
 
 enum TreeEvalEnum {
   ExcludedByParent = -2,
@@ -810,9 +811,7 @@ export default class FileTreeComponent {
       if (x.startsWith('[') && x.endsWith(']')) {
         // Works - Regex
         const regexPattern = x.slice(1, -1);
-        const jsRegex = this.translateCSharpRegex(regexPattern);
-        const regex = new RegExp(`${jsRegex}`);
-        const res = regex.test(nodeId!);
+        const res = regexMatchesPath(nodeId!, regexPattern);
 
         if (res) {
           result = dir;
@@ -825,7 +824,7 @@ export default class FileTreeComponent {
         if (nodeType !== 'file') continue;
         if (x.replace('*.', '').length === 0) continue;
 
-        const res = this.#globMatch(nodeId!, x, true);
+        const res = globMatchesPath(nodeId!, x);
 
         if (res) {
           result = dir;
@@ -842,7 +841,7 @@ export default class FileTreeComponent {
         break;
       }
 
-      const res = this.#globMatch(nodeId!, x, true);
+      const res = globMatchesPath(nodeId!, x);
 
       if (res) {
         result = dir;
@@ -851,25 +850,6 @@ export default class FileTreeComponent {
     }
 
     return result;
-  }
-
-  translateCSharpRegex(csharpRegex: string) {
-    let jsRegex = csharpRegex;
-
-    // 1. Remove verbatim string literal indicator (@)
-    jsRegex = jsRegex.replace(/^@/, '');
-
-    // 2. Handle named capture groups
-    //    (This is a simplification - it won't handle nested groups perfectly)
-    const namedGroupRegex = /\(\?<(?<name>\w+)>(?<pattern>[^)]+)\)/g;
-    jsRegex = jsRegex.replace(namedGroupRegex, (match, name, pattern) => `(${pattern})`);
-
-    // TODO - Add lookbehind polyfill
-
-    // 3. Escape backslashes
-    jsRegex = jsRegex.replace(/\\/g, '\\\\');
-
-    return jsRegex;
   }
 
   isIndeterminate(currentPaths: string[], nodeId: string) {
@@ -887,18 +867,6 @@ export default class FileTreeComponent {
         !currentPath.includes('/') &&
         !currentPath.includes('\\'))
     );
-  }
-
-  #globMatch(str: string, pattern: string, evaluateFullPath = false): boolean {
-    const regexPattern = pattern.replace(/[\\.+^${}()|[\]*?]/g, (match) => {
-      if (match === '*') return '.*';
-      if (match === '?') return '.';
-      return '\\' + match;
-    });
-
-    const regex = new RegExp(`${regexPattern}${evaluateFullPath ? '$' : ''}`);
-
-    return regex.test(str);
   }
 
   #getPathDelimiter(path?: string | null): string {
