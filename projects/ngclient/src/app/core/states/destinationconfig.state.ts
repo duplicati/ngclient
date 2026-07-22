@@ -6,12 +6,14 @@ import {
 } from '../../backup/destination/destination.config-utilities';
 import { IDynamicModule } from '../openapi';
 import { SysinfoState } from './sysinfo.state';
+import { resolveSourceDescription } from '../../backup/destination/destination-description';
 
 export type DestinationTypeOption = {
   key: string;
   customKey: string | null;
   displayName: string;
   description: string;
+  sourceDescription: string | null;
   icon: string;
   searchTerms: string;
   sortOrder?: number;
@@ -33,17 +35,26 @@ export class DestinationConfigState {
         if (entries.length <= 1) {
           const entry = getConfigurationByKey(m.Key);
           const defaultEntry = (<any>entry).isDefaultEntry === true;
-          if (!defaultEntry) return entry;
+          if (!defaultEntry) {
+            return {
+              ...entry,
+              sourceDescription: resolveSourceDescription(entry.sourceDescription, m.Description, entry.description),
+            };
+          }
 
           return [
             {
               ...entry,
               displayName: m.DisplayName || entry.displayName || m.Key,
               description: m.Description || entry.description || '',
+              sourceDescription: resolveSourceDescription(entry.sourceDescription, m.Description, entry.description),
             },
           ];
         } else {
-          return entries;
+          return entries.map((entry) => ({
+            ...entry,
+            sourceDescription: resolveSourceDescription(entry.sourceDescription, m.Description, entry.description),
+          }));
         }
       })
       .filter((x) => x !== null);
@@ -55,6 +66,7 @@ export class DestinationConfigState {
       customKey: x.customKey ?? null,
       displayName: x.displayName,
       description: x.description,
+      sourceDescription: x.sourceDescription ?? null,
       icon: x.icon,
       searchTerms: [x.displayName, x.description, x.key, x.searchTerms ?? '', x.customKey ?? ''].join(' '),
       sortOrder: x.sortOrder ?? 0,
