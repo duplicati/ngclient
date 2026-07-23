@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { effect, inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
@@ -7,7 +7,9 @@ import { TestState } from '../backup/source-data/target-url-dialog/test-url/test
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer, GetBackupResultDto, ListFilesetsResponseDto } from '../core/openapi';
 import { SysinfoState } from '../core/states/sysinfo.state';
+import { ServerSettingsService } from '../settings/server-settings.service';
 import { createRestoreOptionsForm } from './options/options.component';
+import { resolveRestoreOptionDefaults } from './options/restore-option-defaults';
 import { createEncryptionForm } from './restore-encryption/restore-encryption.component';
 import { createRestoreSelectFilesForm } from './select-files/select-files.component';
 
@@ -28,6 +30,8 @@ export class RestoreFlowState {
   #sysinfo = inject(SysinfoState);
   #dialog = inject(ShipDialogService);
   #dupServer = inject(DuplicatiServer);
+  #serverSettings = inject(ServerSettingsService);
+  #restoreOptionsInitializedForBackupId: string | null = null;
 
   backupId = signal<string | null>(null);
   backup = signal<GetBackupResultDto | null>(null);
@@ -47,6 +51,19 @@ export class RestoreFlowState {
   extendedDataType = signal<string | null>(null);
   alternateRestorePath = signal<string | null>(null);
   alternateRestorePathSourcePrefix = signal<string | null>(null);
+
+  #initializeRestoreOptions = effect(() => {
+    const backupId = this.backupId();
+    const backup = this.backup()?.Backup;
+    const serverSettings = this.#serverSettings.serverSettings();
+
+    if (!backupId || !backup || serverSettings === undefined) return;
+    if (backup.ID !== null && backup.ID !== backupId) return;
+    if (this.#restoreOptionsInitializedForBackupId === backupId) return;
+
+    this.#restoreOptionsInitializedForBackupId = backupId;
+    this.optionsForm.patchValue(resolveRestoreOptionDefaults(backup.Settings, serverSettings));
+  });
 
   init(id: 'string', isFileRestore = false) {
     this.backupId.set(id);
