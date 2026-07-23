@@ -12,6 +12,7 @@ import FileTreeComponent from '../../core/components/file-tree/file-tree.compone
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 import { RestoreFlowState } from '../restore-flow.state';
+import { RESTORE_OPTION_DEFAULTS } from './restore-option-defaults';
 
 const fb = new FormBuilder();
 
@@ -19,9 +20,9 @@ export const createRestoreOptionsForm = () => {
   return fb.group({
     restoreFrom: fb.control<'original' | 'pickLocation' | 'same-custom' | 'other-custom'>('original'),
     restoreFromPath: fb.control<string>(''),
-    handleExisting: fb.control<'overwrite' | 'saveTimestamp'>('saveTimestamp'),
-    permissions: fb.control<boolean>(false),
-    includeMetadata: fb.control<boolean>(true),
+    handleExisting: fb.control<'overwrite' | 'saveTimestamp'>(RESTORE_OPTION_DEFAULTS.handleExisting),
+    permissions: fb.control<boolean>(RESTORE_OPTION_DEFAULTS.permissions),
+    includeMetadata: fb.control<boolean>(RESTORE_OPTION_DEFAULTS.includeMetadata),
     customRemoteIgnoreExisting: fb.control<boolean>(false),
   });
 };
