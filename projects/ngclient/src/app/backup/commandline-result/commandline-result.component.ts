@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  afterRenderEffect,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  ElementRef,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ShipButton } from '@ship-ui/core/ship-button';
@@ -26,6 +35,17 @@ export default class CommandlineResultComponent {
   offset = signal<number>(0);
   status = signal<Status>('starting');
   messageLog = signal<string[]>([]);
+  logOutput = viewChild.required<ElementRef<HTMLElement>>('logOutput');
+  autoScrollEnabled = signal(true);
+
+  scrollToBottomEffect = afterRenderEffect(() => {
+    this.messageLog();
+
+    if (!this.autoScrollEnabled()) return;
+
+    const logOutput = this.logOutput().nativeElement;
+    logOutput.scrollTop = logOutput.scrollHeight;
+  });
 
   interval = setInterval(() => {
     this.#dupServer
@@ -50,6 +70,13 @@ export default class CommandlineResultComponent {
     if (res.Started === true && res.Finished === false) {
       this.status.set('started');
     }
+  }
+
+  updateAutoScroll() {
+    const logOutput = this.logOutput().nativeElement;
+    const distanceFromBottom = logOutput.scrollHeight - logOutput.scrollTop - logOutput.clientHeight;
+
+    this.autoScrollEnabled.set(distanceFromBottom <= 2);
   }
 
   abort() {
