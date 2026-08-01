@@ -18,7 +18,6 @@ import { DuplicatiServer } from '../../core/openapi';
 import { OpenAPI } from '../../core/openapi/core/OpenAPI';
 import { PasswordGeneratorService } from '../../core/services/password-generator.service';
 import { BackupsState } from '../../core/states/backups.state';
-import { RelayconfigState } from '../../core/states/relayconfig.state';
 import { validateIf, watchField } from '../../core/validators/custom.validators';
 
 const fb = new FormBuilder();
@@ -49,7 +48,6 @@ export default class ExportComponent {
   #router = inject(Router);
   #httpClient = inject(HttpClient);
   #backups = inject(BackupsState);
-  #relayConfigState = inject(RelayconfigState);
 
   isExporting = signal(false);
   exportType = signal<'file' | 'cmd'>('file');
@@ -163,16 +161,8 @@ export default class ExportComponent {
             const backup = this.activeBackup();
             const backupName = backup?.Backup?.Name ?? 'Backup';
             const fileExt = this.exportFormSignal()?.encryption ? 'aes' : 'json';
-            const filename = `${backupName}-duplicati-config.${fileExt}`;
 
-            // Programmatic downloads are blocked inside the relay iframe, so the
-            // blob is handed to the parent frame which performs the download
-            if (this.#relayConfigState.relayIsEnabled()) {
-              this.#relayConfigState.requestParentDownload(filename, res);
-            } else {
-              this.downloadFile(res, filename);
-            }
-
+            this.downloadFile(res, `${backupName}-duplicati-config.${fileExt}`);
             this.#router.navigate(['/']);
           },
           error: (err) => {
