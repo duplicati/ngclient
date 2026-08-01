@@ -48,6 +48,8 @@ enum TreeEvalEnum {
 type TreeNode = TreeNodeDto & {
   accepted?: boolean;
   parentPath: string;
+  isLoadMore?: boolean;
+  loadMoreOffset?: number | null;
 };
 
 type FileTreeNode = TreeNode & {
@@ -99,6 +101,17 @@ export type BackupSettings = {
 
 // The virtual root path for the file tree, also used for Windows as the root path.
 const ROOTPATH = '/';
+
+// Suffix used to build the id of the synthetic "load more" pagination node.
+// The \0 character cannot appear in real filesystem paths, so it never collides with a real node.
+const LOAD_MORE_ID_SUFFIX = '\0load-more';
+
+// The shape returned by the paginated backend listing API
+type PagedListResult = {
+  items: any[];
+  hasMore: boolean;
+  nextOffset: number;
+};
 
 // Toggle for the v2 listing API
 const usev2Listing = true;
@@ -292,6 +305,7 @@ export default class FileTreeComponent {
     const filters = currentPaths.filter((x) => this.#isFilter(x));
 
     const pathsToTest = this.searchableTreeNodes()
+      .filter((x) => !x.isLoadMore)
       .map((x) => x.id!)
       .filter(Boolean);
 
@@ -641,8 +655,9 @@ export default class FileTreeComponent {
         }
 
         const parentNode = nodeMap.get(node.parentPath);
+        const isLoadMore = node.isLoadMore === true;
         const evalState =
-          node.hidden === true && !showHiddenNodes
+          isLoadMore || (node.hidden === true && !showHiddenNodes)
             ? TreeEvalEnum.None
             : this.#performRemoteEval()
               ? this.#evalRemote(nodePath, parentNode, currentPaths, node.cls)
@@ -650,12 +665,14 @@ export default class FileTreeComponent {
 
         const newNode: FileTreeNode = {
           ...node,
-          isIndeterminate: this.isIndeterminate(currentPaths, nodePath),
+          isIndeterminate: isLoadMore ? false : this.isIndeterminate(currentPaths, nodePath),
           evalState: evalState,
           children: [],
         };
 
-        if (accepts) {
+        if (isLoadMore) {
+          newNode.accepted = true;
+        } else if (accepts) {
           newNode.accepted = this.matchAccepts(accepts, newNode);
         }
 
@@ -1021,6 +1038,7 @@ export default class FileTreeComponent {
   }
 
   toggleSelectedNode($event: Event, node: FileTreeNode) {
+    if (node.isLoadMore) return;
     if (node.id === ROOTPATH) return;
     if (
       this.#unrootedSources()
@@ -1095,6 +1113,14 @@ export default class FileTreeComponent {
         this.#getPath(node, path);
       }
     }
+  }
+
+  loadMore($event: Event, node: FileTreeNode) {
+    $event.stopPropagation();
+    if (!node.isLoadMore) return;
+    if (this.isLoading() !== null) return;
+
+    this.#getPath(node, node.parentPath || ROOTPATH, node.loadMoreOffset ?? null);
   }
 
   openCreateFolderDialog() {
@@ -1197,7 +1223,12 @@ export default class FileTreeComponent {
     });
   }
 
-  #getBackendFiles(path: string | null, remote: RemoteSource | null, destinationType: RemoteDestinationType) {
+  #getBackendFiles(
+    path: string | null,
+    remote: RemoteSource | null,
+    destinationType: RemoteDestinationType,
+    offset: number | null = null
+  ) {
     return this.#dupServer
       .postApiV2DestinationList({
         requestBody: {
@@ -1207,18 +1238,26 @@ export default class FileTreeComponent {
           DestinationType: destinationType,
           SourcePrefix: remote?.prefix ?? this.sourcePrefix() ?? null,
           Path: path,
-          Offset: null,
-          Limit: null,
+          Offset: offset,
+          Limit: 200,
         },
       })
       .pipe(
         map((res) => {
-          return (res.Data?.Items ?? [])
-            .map((x) => ({
-              ...x,
-              Path: (remote?.prefix ?? '') + x.Path,
-            }))
-            .filter((x) => x.Metadata == null || !x.Metadata['ExtType']);
+          const rawItems = res.Data?.Items ?? [];
+
+          const result: PagedListResult = {
+            items: rawItems
+              .map((x) => ({
+                ...x,
+                Path: (remote?.prefix ?? '') + x.Path,
+              }))
+              .filter((x) => x.Metadata == null || !x.Metadata['ExtType']),
+            hasMore: res.Data?.HasMore ?? false,
+            nextOffset: (res.Data?.Offset ?? offset ?? 0) + rawItems.length,
+          };
+
+          return result;
         })
       );
   }
@@ -1338,45 +1377,45 @@ export default class FileTreeComponent {
     }
   }
 
-  #getFilePath(path: string, remote: RemoteSource | null | undefined) {
+  #getFilePath(path: string, remote: RemoteSource | null | undefined, offset: number | null = null) {
     if (remote?.type === 'office365') {
       if (this.#sysInfo.hasV2ListBackendOperations() && usev2Listing)
-        return this.#getBackendFiles(remote.path, remote, 'SourceProvider');
+        return this.#getBackendFiles(remote.path, remote, 'SourceProvider', offset);
 
       return this.#getMicrosoft365Files(remote.path, remote);
     }
 
     if (this.customRemoteMode() === 'o365') {
       if (this.#sysInfo.hasV2ListBackendOperations() && usev2Listing)
-        return this.#getBackendFiles(path, null, 'SourceProvider');
+        return this.#getBackendFiles(path, null, 'SourceProvider', offset);
 
       return this.#getMicrosoft365Files(path, null);
     }
 
     if (remote?.type === 'googleworkspace') {
       if (this.#sysInfo.hasV2ListBackendOperations() && usev2Listing)
-        return this.#getBackendFiles(remote.path, remote, 'SourceProvider');
+        return this.#getBackendFiles(remote.path, remote, 'SourceProvider', offset);
 
       return this.#getGoogleWorkspaceFiles(remote.path, remote);
     }
 
     if (this.customRemoteMode() === 'gsuite') {
       if (this.#sysInfo.hasV2ListBackendOperations() && usev2Listing)
-        return this.#getBackendFiles(path, null, 'SourceProvider');
+        return this.#getBackendFiles(path, null, 'SourceProvider', offset);
 
       return this.#getGoogleWorkspaceFiles(path, null);
     }
 
     if (remote?.type === 'diskimage') {
       if (this.#sysInfo.hasV2ListBackendOperations() && usev2Listing)
-        return this.#getBackendFiles(remote.path, remote, 'SourceProvider');
+        return this.#getBackendFiles(remote.path, remote, 'SourceProvider', offset);
 
       return this.#getDiskImagePaths(remote.path);
     }
 
     if (this.customRemoteMode() === 'diskimage') {
       if (this.#sysInfo.hasV2ListBackendOperations() && usev2Listing)
-        return this.#getBackendFiles(path, null, 'SourceProvider');
+        return this.#getBackendFiles(path, null, 'SourceProvider', offset);
       return this.#getDiskImagePaths(path);
     }
 
@@ -1385,7 +1424,7 @@ export default class FileTreeComponent {
     }
 
     if (this.customRemoteMode() === 'backend') {
-      return this.#getBackendFiles(path, null, 'Backend');
+      return this.#getBackendFiles(path, null, 'Backend', offset);
     }
 
     return this.#getFilesystemPath(path);
@@ -1448,10 +1487,8 @@ export default class FileTreeComponent {
           const errors = res.filter((x) => x.status === 'error') as FilePathResult[];
           this.treeNodes.update((y) => {
             const allNewNodes = results.flatMap((x) => {
-              if (Array.isArray(x.value)) {
-                return x.value.map((z) => ({ ...z, parentPath: x.url }));
-              }
-              return [];
+              const items = Array.isArray(x.value) ? x.value : ((x.value as PagedListResult)?.items ?? []);
+              return items.map((z) => ({ ...z, parentPath: x.url }));
             });
 
             if (allNewNodes.length > 0) this.anyRemoteSourcesLoaded.set(true);
@@ -1502,85 +1539,116 @@ export default class FileTreeComponent {
     return path.startsWith('+') || path.startsWith('-');
   }
 
-  #getPath(node: FileTreeNode | null = null, newPath = ROOTPATH) {
+  #createLoadMoreNode(parentPath: string, remote: RemoteSource | null | undefined, nextOffset: number): TreeNode {
+    return {
+      id: `${parentPath}${LOAD_MORE_ID_SUFFIX}`,
+      text: $localize`Load more`,
+      cls: 'load-more',
+      leaf: true,
+      hidden: false,
+      parentPath: parentPath,
+      remoteSource: remote ?? undefined,
+      isLoadMore: true,
+      loadMoreOffset: nextOffset,
+    } as any as TreeNode;
+  }
+
+  #getPath(node: FileTreeNode | null = null, newPath = ROOTPATH, offset: number | null = null) {
     const remote = node?.remoteSource;
-    this.isLoading.set(newPath);
+    this.isLoading.set(node?.isLoadMore ? (node.id ?? newPath) : newPath);
 
-    (this.#getFilePath(newPath, remote) as Observable<any>).pipe(finalize(() => this.isLoading.set(null))).subscribe({
-      next: (x) => {
-        let alignDataArray =
-          this.isByBackupSettings() || this.customRemoteMode() !== null || remote
-            ? x.map((y: { Path: string; Size: number; Metadata: { [key: string]: string | null } | null }) => {
-                this.#detectExtendData(y.Metadata);
-                const sep = this.#getPathDelimiter(y.Path);
-                const text = this.#getDisplayName(
-                  y.Path.split(sep)
-                    .filter((part: string) => part !== '')
-                    .pop(),
-                  y.Metadata
-                );
+    (this.#getFilePath(newPath, remote, offset) as Observable<any>)
+      .pipe(finalize(() => this.isLoading.set(null)))
+      .subscribe({
+        next: (x) => {
+          const result: PagedListResult = Array.isArray(x)
+            ? { items: x, hasMore: false, nextOffset: 0 }
+            : { items: x?.items ?? [], hasMore: x?.hasMore ?? false, nextOffset: x?.nextOffset ?? 0 };
 
-                // Avoid traversing the filesystem blocks in the UI
-                if (y.Metadata && y.Metadata['diskimage:Type'] === 'filesystem') {
-                  return null;
-                }
+          let alignDataArray =
+            this.isByBackupSettings() || this.customRemoteMode() !== null || remote
+              ? result.items.map(
+                  (y: { Path: string; Size: number; Metadata: { [key: string]: string | null } | null }) => {
+                    this.#detectExtendData(y.Metadata);
+                    const sep = this.#getPathDelimiter(y.Path);
+                    const text = this.#getDisplayName(
+                      y.Path.split(sep)
+                        .filter((part: string) => part !== '')
+                        .pop(),
+                      y.Metadata
+                    );
 
-                let id = y.Path;
-                let newRemoteSource: RemoteSource | null = null;
+                    // Avoid traversing the filesystem blocks in the UI
+                    if (y.Metadata && y.Metadata['diskimage:Type'] === 'filesystem') {
+                      return null;
+                    }
 
-                if (remote) {
-                  id = y.Path.substring(1); // Remove leading @ for the path to match the tree
-                  newRemoteSource = {
-                    ...remote,
-                    path: y.Path.substring(remote.prefix.length),
-                  };
-                }
+                    let id = y.Path;
+                    let newRemoteSource: RemoteSource | null = null;
+
+                    if (remote) {
+                      id = y.Path.substring(1); // Remove leading @ for the path to match the tree
+                      newRemoteSource = {
+                        ...remote,
+                        path: y.Path.substring(remote.prefix.length),
+                      };
+                    }
+
+                    return {
+                      text: text,
+                      id: id,
+                      cls: this.#isFolder(y.Path) ? 'folder' : 'file',
+                      leaf: node !== null,
+                      resolvedpath: y.Path,
+                      hidden: false,
+                      remoteSource: newRemoteSource,
+                      fileSize: y.Size,
+                    };
+                  }
+                )
+              : result.items;
+
+          if (alignDataArray.length > 0) this.anyRemoteSourcesLoaded.set(true);
+
+          this.treeNodes.update((y) => {
+            const newArray = alignDataArray
+              .filter((f: any) => f !== null)
+              .map((z: any) => {
+                const cls = this.#isFolder(z.id) ? 'folder' : 'file';
 
                 return {
-                  text: text,
-                  id: id,
-                  cls: this.#isFolder(y.Path) ? 'folder' : 'file',
-                  leaf: node !== null,
-                  resolvedpath: y.Path,
-                  hidden: false,
-                  remoteSource: newRemoteSource,
-                  fileSize: y.Size,
+                  ...z,
+                  cls,
+                  parentPath: newPath,
                 };
-              })
-            : x;
+              });
 
-        if (alignDataArray.length > 0) this.anyRemoteSourcesLoaded.set(true);
+            // Remove the consumed (or stale) "load more" node for this path
+            const loadMoreId = `${newPath}${LOAD_MORE_ID_SUFFIX}`;
+            let merged = [...y, ...newArray].filter((n) => n.id !== loadMoreId);
 
-        this.treeNodes.update((y) => {
-          const newArray = alignDataArray
-            .filter((f: any) => f !== null)
-            .map((z: any) => {
-              const cls = this.#isFolder(z.id) ? 'folder' : 'file';
+            // If the server has more items, append a fresh "load more" node
+            if (result.hasMore) {
+              merged.push(this.#createLoadMoreNode(newPath, remote, result.nextOffset));
+            }
 
-              return {
-                ...z,
-                cls,
-                parentPath: newPath,
-              };
-            });
+            const arrayUniqueByKey = [...new Map(merged.map((item) => [item.id, item])).values()];
 
-          const arrayUniqueByKey = [...new Map([...y, ...newArray].map((item) => [item.id, item])).values()];
-
-          if (this.hideShortcuts()) {
-            return arrayUniqueByKey.filter((x: TreeNode) => !x.id!.startsWith('%')) as TreeNode[];
-          } else {
-            return arrayUniqueByKey as TreeNode[];
+            if (this.hideShortcuts()) {
+              return arrayUniqueByKey.filter((x: TreeNode) => !x.id!.startsWith('%')) as TreeNode[];
+            } else {
+              return arrayUniqueByKey as TreeNode[];
+            }
+          });
+        },
+        error: (err) => {
+          this.errorMessage.set(err.message);
+          if (this.anyRemoteSourcesLoaded()) {
+            setTimeout(() => {
+              this.errorMessage.set(null);
+            }, 5000);
           }
-        });
-      },
-      error: (err) => {
-        this.errorMessage.set(err.message);
-        if (this.anyRemoteSourcesLoaded()) {
-          setTimeout(() => {
-            this.errorMessage.set(null);
-          }, 5000);
-        }
-      },
-    });
+        },
+      });
   }
 }

@@ -151,6 +151,13 @@
         opacity: 0.7;
       }
 
+      &.load-more {
+        .text {
+          font-style: italic;
+          opacity: 0.7;
+        }
+      }
+
       .text {
         flex: 1 0;
         height: 100%;

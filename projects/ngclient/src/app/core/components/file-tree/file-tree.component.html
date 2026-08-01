@@ -16,7 +16,26 @@
     <ng-template #recursiveTree let-data>
       <sh-list [style.padding-left.rem]="data.level * 0.25">
         @for (node of data.children; track node.id) {
-          @if ((node.hidden && _showHiddenNodes()) || !node.hidden) {
+          @if (node.isLoadMore) {
+            <div
+              action
+              class="load-more"
+              [class.loading]="isLoading() === node.id"
+              (click)="loadMore($event, node)">
+              <div class="icon file">
+                <sh-icon class="small"></sh-icon>
+                @if (isLoading() === node.id) {
+                  <sh-icon class="primary">spinner</sh-icon>
+                } @else {
+                  <sh-icon class="primary">arrow-down</sh-icon>
+                }
+              </div>
+
+              <div class="text">
+                <span>{{ node.text }}</span>
+              </div>
+            </div>
+          } @else if ((node.hidden && _showHiddenNodes()) || !node.hidden) {
             <div
               action
               #treeNode
