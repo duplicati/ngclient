@@ -1239,7 +1239,7 @@ export default class FileTreeComponent {
           SourcePrefix: remote?.prefix ?? this.sourcePrefix() ?? null,
           Path: path,
           Offset: offset,
-          Limit: 200,
+          Limit: 100,
         },
       })
       .pipe(
