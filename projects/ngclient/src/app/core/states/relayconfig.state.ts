@@ -91,6 +91,10 @@ export class RelayconfigState {
     window.parent.postMessage(message, '*');
   }
 
+  requestParentDownload(filename: string, blob: Blob) {
+    window.parent.postMessage({ type: 'download', filename, blob }, '*');
+  }
+
   #killListener() {
     if (this.parentIframeListner) {
       this.parentIframeListner.abort();

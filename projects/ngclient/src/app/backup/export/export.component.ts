@@ -3,7 +3,6 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } 
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipButtonGroup } from '@ship-ui/core/ship-button-group';
@@ -12,12 +11,14 @@ import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { ShipToggle } from '@ship-ui/core/ship-toggle';
+import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { finalize, switchMap } from 'rxjs';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer } from '../../core/openapi';
 import { OpenAPI } from '../../core/openapi/core/OpenAPI';
 import { PasswordGeneratorService } from '../../core/services/password-generator.service';
 import { BackupsState } from '../../core/states/backups.state';
+import { RelayconfigState } from '../../core/states/relayconfig.state';
 import { validateIf, watchField } from '../../core/validators/custom.validators';
 
 const fb = new FormBuilder();
@@ -48,6 +49,7 @@ export default class ExportComponent {
   #router = inject(Router);
   #httpClient = inject(HttpClient);
   #backups = inject(BackupsState);
+  #relayConfigState = inject(RelayconfigState);
 
   isExporting = signal(false);
   exportType = signal<'file' | 'cmd'>('file');
@@ -161,8 +163,16 @@ export default class ExportComponent {
             const backup = this.activeBackup();
             const backupName = backup?.Backup?.Name ?? 'Backup';
             const fileExt = this.exportFormSignal()?.encryption ? 'aes' : 'json';
+            const filename = `${backupName}-duplicati-config.${fileExt}`;
 
-            this.downloadFile(res, `${backupName}-duplicati-config.${fileExt}`);
+            // Programmatic downloads are blocked inside the relay iframe, so the
+            // blob is handed to the parent frame which performs the download
+            if (this.#relayConfigState.relayIsEnabled()) {
+              this.#relayConfigState.requestParentDownload(filename, res);
+            } else {
+              this.downloadFile(res, filename);
+            }
+
             this.#router.navigate(['/']);
           },
           error: (err) => {},
