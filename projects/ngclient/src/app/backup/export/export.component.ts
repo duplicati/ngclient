@@ -175,7 +175,9 @@ export default class ExportComponent {
 
             this.#router.navigate(['/']);
           },
-          error: (err) => {},
+          error: (err) => {
+            console.error('Failed to export backup', err);
+          },
         });
     } else {
       this.#dupServer
@@ -189,7 +191,9 @@ export default class ExportComponent {
           next: (res) => {
             this.exportedCmd.set(res.Command ?? null);
           },
-          error: (err) => {},
+          error: (err) => {
+            console.error('Failed to export backup as command line', err);
+          },
         });
     }
   }

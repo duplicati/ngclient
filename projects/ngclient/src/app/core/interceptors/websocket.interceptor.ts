@@ -30,6 +30,15 @@ function bufferToStringBase64(str: any) {
   return window.btoa(String.fromCharCode(...uint8Array));
 }
 
+function base64ToUint8Array(base64: string): Uint8Array<ArrayBuffer> {
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+
+  return bytes;
+}
+
 function handleRequest(state: CallState, req: HttpRequest<unknown>, next: HttpHandlerFn) {
   const relayconfig = state.relayconfigState.config();
 
@@ -49,6 +58,8 @@ function handleRequest(state: CallState, req: HttpRequest<unknown>, next: HttpHa
     timeoutValue = 1000 * 99; // 99s
   }
 
+  const wantsBinaryBody = req.responseType === 'blob' || req.responseType === 'arraybuffer';
+
   const p = state.relayWebsocket.sendCommand(
     relayconfig.accessToken,
     relayconfig.clientId,
@@ -57,7 +68,8 @@ function handleRequest(state: CallState, req: HttpRequest<unknown>, next: HttpHa
     req.url,
     bodyBase64,
     headers,
-    timeoutValue
+    timeoutValue,
+    wantsBinaryBody
   );
 
   return new Observable<HttpEvent<any>>((observer) => {
@@ -69,8 +81,17 @@ function handleRequest(state: CallState, req: HttpRequest<unknown>, next: HttpHa
         });
       }
 
+      // Binary bodies are transported as base64 and must be materialized
+      // into the type the request asked for, otherwise HttpClient throws
+      let body: any = response.body;
+      if (body != null && req.responseType === 'blob') {
+        body = new Blob([base64ToUint8Array(body)]);
+      } else if (body != null && req.responseType === 'arraybuffer') {
+        body = base64ToUint8Array(body).buffer;
+      }
+
       const httpResponse = new HttpResponse({
-        body: response.body,
+        body: body,
         status: response.statusCode,
         statusText: 'OK',
         headers: httpHeaders,

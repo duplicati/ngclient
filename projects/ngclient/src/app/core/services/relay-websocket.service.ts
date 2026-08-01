@@ -42,6 +42,7 @@ type PromiseResolver = {
   resolve: (value: CommandResponse | PromiseLike<CommandResponse>) => void;
   reject: (reason?: any) => void;
   timer: number;
+  binaryBody: boolean;
 };
 
 export type CommandResponse = {
@@ -215,7 +216,7 @@ export class RelayWebsocketService {
             } else {
               this.#markInitialCommandHandled();
             }
-            payload.body = payload?.body == null ? null : this.utf8Atob(payload.body);
+            payload.body = payload?.body == null ? null : f.binaryBody ? payload.body : this.utf8Atob(payload.body);
             f.resolve(payload);
           }
 
@@ -255,7 +256,8 @@ export class RelayWebsocketService {
     path: string,
     requestBody: string | null,
     headers: { [key: string]: string } | null,
-    timeout: number = 5000
+    timeout: number = 5000,
+    binaryBody = false
   ) {
     if (this.wsState() === 'disconnected' || this.wsState() === 'error') {
       // Connect to the machine server if we are not connected
@@ -283,6 +285,7 @@ export class RelayWebsocketService {
       const f: PromiseResolver = {
         resolve,
         reject,
+        binaryBody,
         timer: window.setTimeout(() => {
           const f = this.#pendingCommands[messageId];
           if (f) {
