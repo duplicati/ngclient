@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipCheckbox } from '@ship-ui/core/ship-checkbox';
 import { ShipDialog } from '@ship-ui/core/ship-dialog';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { RemoteControlState } from '../../settings/remote-control/remote-control.state';
 import { ServerSettingsService } from '../../settings/server-settings.service';
 
@@ -28,7 +28,7 @@ export default class Select {
     $localize`Zero-configuration cloud storage`,
     $localize`Centralized backup reporting and monitoring`,
     $localize`Remote management from the dashboard`,
-    $localize`Notifcations if backups stop running`,
+    $localize`Notifications if backups stop running`,
   ];
 
   secondaryBenefits = [
