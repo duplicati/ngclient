@@ -45,6 +45,7 @@ const SHORT_FIELD_TYPES = [
   'run-script-timeout',
   'list-timeout',
   'short-timeout',
+  'long-database-query-threshold',
 ];
 
 @Component({
