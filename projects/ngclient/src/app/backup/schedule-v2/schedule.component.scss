@@ -17,6 +17,38 @@
   gap: p2r(4);
 }
 
+.schedule-summary {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(12);
+  padding: p2r(16);
+  border: p2r(1) solid var(--base-4);
+  border-radius: p2r(8);
+  background: var(--base-1);
+
+  h4,
+  p,
+  dl,
+  dd {
+    margin: 0;
+  }
+
+  dl {
+    display: grid;
+    gap: p2r(8);
+  }
+
+  dl > div {
+    display: grid;
+    grid-template-columns: minmax(p2r(100), 1fr) 2fr;
+    gap: p2r(12);
+  }
+
+  dt {
+    color: var(--base-8);
+  }
+}
+
 .row-inputs {
   display: flex;
   align-items: flex-end;
