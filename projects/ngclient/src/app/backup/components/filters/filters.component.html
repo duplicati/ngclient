@@ -3,6 +3,11 @@
     <span i18n>Filters</span>
     <div class="spacer"></div>
     @if (!bulkFilterEditMode()) {
+      @if (wrongConfiguration()) {
+        <sh-icon class="warn" i18n-shTooltip shTooltip="The filters will unconditionally exclude all files.">
+          warning
+        </sh-icon>
+      }
       <button type="button" shButton class="small" (click)="addFilter()" i18n>
         <sh-icon>plus</sh-icon>
         Add filter
