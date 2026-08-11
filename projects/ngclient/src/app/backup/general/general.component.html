@@ -7,7 +7,7 @@
         <sh-icon icon>arrows-left-right</sh-icon>
         Synchronization job - files are not encrypted
       </sh-alert>
-    } @else if (generalFormSignal()?.encryption !== '') {
+    } @else if (!canEditEncryption() && generalFormSignal()?.encryption !== '') {
       <sh-alert class="primary" i18n>
         <sh-icon icon>lock</sh-icon>
         Encrypted backup
@@ -61,7 +61,7 @@
       </sh-alert>
     }
   } @else {
-    @if (isNew()) {
+    @if (canEditEncryption()) {
       <sh-select [options]="encryptionOptions()" [isClearable]="false" value="Key" label="DisplayName">
         <label for="encryption" i18n>Encryption</label>
         <input
@@ -165,7 +165,9 @@
       Exit
     </button>
 
-    @if (generalFormSignal()?.operationType === 'Sync' || encryptionFieldSignal() === noneOptionKey || !isNew()) {
+    @if (
+      generalFormSignal()?.operationType === 'Sync' || encryptionFieldSignal() === noneOptionKey || !canEditEncryption()
+    ) {
       <button shButton class="raised primary" type="submit" [disabled]="nameAndDescriptionValid() === false" i18n>
         Continue
         <sh-icon>arrow-right</sh-icon>
