@@ -279,6 +279,7 @@ export default class DestinationComponent {
   }
 
   removeDestination(index: number) {
+    this.testStates.update((states) => states.filter((_, stateIndex) => stateIndex !== index));
     this.#backupState.removeTargetUrl(index);
   }
 
