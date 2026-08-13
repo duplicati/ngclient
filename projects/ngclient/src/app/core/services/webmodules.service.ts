@@ -1,7 +1,10 @@
+import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable } from '@angular/core';
 import { map } from 'rxjs';
 import { LazySignal } from '../functions/lazy-signal';
 import { DuplicatiServer, WebModuleOutputDto } from '../openapi';
+import { OpenAPI } from '../openapi/core/OpenAPI';
+import { RelayconfigState } from '../states/relayconfig.state';
 
 export type WebModuleOption = { key: string; value: any };
 
@@ -43,6 +46,8 @@ export type Office365Counts = {
 })
 export class WebModulesService {
   #dupServer = inject(DuplicatiServer);
+  #http = inject(HttpClient);
+  #relayconfigState = inject(RelayconfigState);
 
   #s3Providers = new LazySignal(() => this.getS3Config('Providers'));
   #s3Regions = new LazySignal(() => this.getS3Config('Regions'));
@@ -220,18 +225,30 @@ export class WebModulesService {
   /**
    * Counts the number of top-level Microsoft 365 items (users, groups, sites)
    * for the given destination URL, broken down by license seat usage and sub-type.
+   *
+   * Counting items in a large tenant can take a while, so when the websocket
+   * relay proxy is active a `timeout` header is sent to extend the relayed
+   * request timeout beyond the default.
    */
   getOffice365Counts(url: string, sourcePrefix: string, backupId: string | null) {
-    return this.#dupServer
-      .postApiV1WebmoduleByModulekey({
-        modulekey: 'office365',
-        requestBody: {
+    // The websocket relay interceptor reads the timeout from this header
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (this.#relayconfigState.relayIsEnabled()) {
+      headers['timeout'] = `${5 * 60 * 1000}`;
+    }
+
+    return this.#http
+      .post<WebModuleOutputDto>(
+        `${OpenAPI.BASE}/api/v1/webmodule/office365`,
+        // The websocket relay only supports string bodies, so serialize here
+        JSON.stringify({
           'backup-id': backupId ?? '',
           'source-prefix': sourcePrefix,
           operation: 'CountItems',
           url,
-        },
-      })
+        }),
+        { headers }
+      )
       .pipe(
         map((x) => this.#defaultMapResultObjToArray(x)),
         map((res) => res.find((r) => r.key === 'counts')?.value as string),
