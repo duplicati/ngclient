@@ -88,7 +88,7 @@ export class FiltersComponent {
   addFilter() {
     const currentFilters = this.filters();
     const newIndex = currentFilters.length;
-    this.filters.set([...currentFilters, '-*']);
+    this.filters.set([...currentFilters, '-*.lock']);
     this.lastAddedIndex.set(newIndex);
 
     // Scroll to the new filter after the view updates
