@@ -700,6 +700,7 @@
     "7708270344948043036": "{$INTERPOLATION}",
     "5008832981244396799": "{$START_TAG_SH_ICON}arrows-left-right{$CLOSE_TAG_SH_ICON}",
     "1124571293447475738": "Extern beheerd",
+    "3473397813900179081": "{$START_TAG_SH_ICON}play-circle{$CLOSE_TAG_SH_ICON} Start",
     "6449258891199330160": "Bewerk in console {$START_TAG_SH_ICON}arrow-up-right{$CLOSE_TAG_SH_ICON}",
     "5195907025136652253": "Volgende geplande uitvoering:",
     "4220765745195024064": "Tijdsduur:",
@@ -935,7 +936,6 @@
     "8164688587898638216": "Cloudopslag zonder configuratie",
     "7520539015518541968": "Gecentraliseerde back-uprapportage en -monitoring",
     "7346639427260614178": "Extern beheer via het dashboard",
-    "646722922189129988": "Notificaties als back-ups niet meer worden uitgevoerd",
     "8053015757633429030": "Krijg een notificatie als uw back-ups stoppen met werken",
     "6459685717242972206": "Krijg toegang tot AI-gestuurde probleemoplossing.",
     "6074073302606069685": "Bekijk al uw back-ups op één plek."

@@ -695,6 +695,7 @@
     "7708270344948043036": "{$INTERPOLATION}",
     "5008832981244396799": "{$START_TAG_SH_ICON}arrows-left-right{$CLOSE_TAG_SH_ICON}",
     "1124571293447475738": "Extern verwaltet",
+    "3473397813900179081": "{$START_TAG_SH_ICON}play-circle{$CLOSE_TAG_SH_ICON} Start",
     "6449258891199330160": "In der Konsole bearbeiten {$START_TAG_SH_ICON}arrow-up-right{$CLOSE_TAG_SH_ICON}",
     "5195907025136652253": "Nächste geplante Ausführung:",
     "4220765745195024064": "Dauer:",
@@ -925,7 +926,6 @@
     "4874153246507548822": "Fortfahren ohne mit der Konsole zu verbinden",
     "2345528476369109922": "Fassen Sie alle Sicherungsberichte an einem Ort zusammen.",
     "65275852390971556": "Fortfahren ohne zu verbinden",
-    "646722922189129988": "Benachrichtigungen wenn Sicherungen anhalten",
     "8053015757633429030": "Sie werden benachrichtigt, wenn Sicherungen anhalten",
     "6074073302606069685": "Alle Sicherungen von einem Ort ansehen"
   }

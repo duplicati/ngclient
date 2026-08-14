@@ -700,6 +700,7 @@
     "7708270344948043036": "{$INTERPOLATION}",
     "5008832981244396799": "{$START_TAG_SH_ICON}arrows-left-right{$CLOSE_TAG_SH_ICON}",
     "1124571293447475738": "Gérée en externe",
+    "3473397813900179081": "{$START_TAG_SH_ICON}play-circle{$CLOSE_TAG_SH_ICON} Démarrer",
     "6449258891199330160": "Modifier dans la console {$START_TAG_SH_ICON}arrow-up-right{$CLOSE_TAG_SH_ICON}",
     "5195907025136652253": "Prochaine exécution programmée :",
     "4220765745195024064": "Durée :",
@@ -935,7 +936,6 @@
     "8164688587898638216": "Stockage Cloud Zéro-configuration",
     "7520539015518541968": "Rapports et supervision centralisés des sauvegardes",
     "7346639427260614178": "Gestion à distance depuis le tableau de bord",
-    "646722922189129988": "Notifications en cas d'arrêt des sauvegardes",
     "8053015757633429030": "Recevez une notification si vos sauvegardes cessent de fonctionner",
     "6459685717242972206": "Accès diagnostics IA",
     "6074073302606069685": "Vue centralisée de toutes les sauvegardes"
