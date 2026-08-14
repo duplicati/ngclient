@@ -83,6 +83,22 @@
               <dt i18n>Personal</dt>
               <dd>{{ result.sites.personal }}</dd>
             </div>
+            @if (result.sites.personalLicensedUser !== null && result.sites.personalUnlicensedUser !== null) {
+              <div class="sub">
+                <dt i18n>
+                  <span class="indent">—</span>
+                  Licensed users
+                </dt>
+                <dd>{{ result.sites.personalLicensedUser }}</dd>
+              </div>
+              <div class="sub">
+                <dt i18n>
+                  <span class="indent">—</span>
+                  Unlicensed users
+                </dt>
+                <dd>{{ result.sites.personalUnlicensedUser }}</dd>
+              </div>
+            }
             <div>
               <dt i18n>Other</dt>
               <dd>{{ result.sites.other }}</dd>

@@ -73,6 +73,17 @@ section {
       &.total {
         font-weight: 700;
       }
+
+      &.sub {
+        dt {
+          color: var(--color-text-secondary, #666);
+          font-size: 0.9em;
+        }
+
+        dd {
+          font-weight: 500;
+        }
+      }
     }
 
     dt {

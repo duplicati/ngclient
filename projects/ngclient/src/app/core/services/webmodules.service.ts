@@ -24,8 +24,7 @@ export type Office365GroupCounts = {
   notUnified: number;
 };
 
-/** The site item-count breakdown. */
-export type Office365SiteCounts = {
+export type Office365LegacySiteCounts = {
   total: number;
   group: number;
   classic: number;
@@ -34,12 +33,63 @@ export type Office365SiteCounts = {
   other: number;
 };
 
-/** The item-count breakdown returned by the office365 `CountItems` operation. */
-export type Office365Counts = {
+export type Office365FutureSiteCounts = {
+  total: number;
+  group: number;
+  classic: number;
+  communication: number;
+  personalLicensedUser: number;
+  personalUnlicensedUser: number;
+  other: number;
+};
+
+export type Office365SiteCountsResponse = Office365LegacySiteCounts | Office365FutureSiteCounts;
+
+/** The site item-count breakdown (normalized). */
+export type Office365SiteCounts = {
+  total: number;
+  group: number;
+  classic: number;
+  communication: number;
+  personal: number | null;
+  personalLicensedUser: number | null;
+  personalUnlicensedUser: number | null;
+  other: number;
+};
+
+export type Office365RawCounts = {
   users: Office365UserCounts;
   groups: Office365GroupCounts;
+  sites: Office365SiteCountsResponse;
+};
+
+/** The item-count breakdown returned by the office365 `CountItems` operation. */
+export type Office365Counts = Omit<Office365RawCounts, 'sites'> & {
   sites: Office365SiteCounts;
 };
+
+export function isOffice365LegacySiteCounts(sites: Office365SiteCountsResponse): sites is Office365LegacySiteCounts {
+  return !('personalLicensedUser' in sites);
+}
+
+export function normalizeOffice365SiteCounts(sites: Office365SiteCountsResponse): Office365SiteCounts {
+  if (isOffice365LegacySiteCounts(sites)) {
+    return {
+      ...sites,
+      personal: sites.personal,
+      personalLicensedUser: null,
+      personalUnlicensedUser: null,
+    };
+  }
+
+  const { personalLicensedUser, personalUnlicensedUser, ...rest } = sites;
+  return {
+    ...rest,
+    personal: personalLicensedUser + personalUnlicensedUser,
+    personalLicensedUser,
+    personalUnlicensedUser,
+  };
+}
 
 @Injectable({
   providedIn: 'root',
@@ -252,7 +302,14 @@ export class WebModulesService {
       .pipe(
         map((x) => this.#defaultMapResultObjToArray(x)),
         map((res) => res.find((r) => r.key === 'counts')?.value as string),
-        map((counts) => JSON.parse(counts) as Office365Counts)
+        map((counts) => {
+          const raw = JSON.parse(counts) as Office365RawCounts;
+          return {
+            users: raw.users,
+            groups: raw.groups,
+            sites: normalizeOffice365SiteCounts(raw.sites),
+          };
+        })
       );
   }
 }
