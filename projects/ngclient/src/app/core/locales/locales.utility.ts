@@ -215,8 +215,13 @@ export const ANGULAR_MJS_LOCALE_MAP: Record<string, string> = {
   'zh-HK': 'zh-Hant',
 };
 
-const SUPPORTED_LOCALES = Array.from(new Set(Object.values(LOCALE_MAP)));
-type Locales = (typeof SUPPORTED_LOCALES)[number];
+const SUPPORTED_LOCALES = new Set(Object.keys(LOCALE_MAP));
+type Locales = string;
+
+export function resolveLocale(locale: string | null | undefined): Locales {
+  const requestedLocale = locale || DEFAULT_LOCALE;
+  return SUPPORTED_LOCALES.has(requestedLocale) ? requestedLocale : DEFAULT_LOCALE;
+}
 
 export function mapLocale(locale: string | null | undefined) {
   if (!locale) return 'en';
@@ -226,7 +231,7 @@ export function mapLocale(locale: string | null | undefined) {
 
 export function getLocale(): Locales {
   const appLang = localStorage.getItem('v1:duplicati:locale') || DEFAULT_LOCALE;
-  const locale = SUPPORTED_LOCALES.find((x) => x === appLang) ?? DEFAULT_LOCALE;
+  const locale = resolveLocale(appLang);
 
   // Try to resolve the mapped locale, falling back to base language
   const mappedLocale =
