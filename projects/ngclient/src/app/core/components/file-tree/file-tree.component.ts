@@ -1560,7 +1560,7 @@ export default class FileTreeComponent {
 
                     if (metadata) {
                       // Avoid traversing the filesystem blocks in the UI
-                      if (metadata['diskimage:Type'] === 'filesystem') {
+                      if (metadata['diskimage:Type'] === 'partition') {
                         if (id.endsWith(this.pathDelimiter())) {
                           id = id.slice(0, -1);
                         }
