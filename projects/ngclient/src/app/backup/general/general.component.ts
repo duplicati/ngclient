@@ -88,6 +88,8 @@ export default class GeneralComponent {
   operationTypeFieldSignal = signal<OperationType>('Backup'); // this.#backupState.operationTypeFieldSignal;
   encryptionOptions = this.#backupState.encryptionOptions;
   isNew = this.#backupState.isNew;
+  isDraft = this.#backupState.isDraft;
+  canEditEncryption = computed(() => this.isNew() || this.isDraft());
   syncModeSupported = this.#sysinfo.hasSyncMode;
 
   showPassword = signal(false);
