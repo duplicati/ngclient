@@ -1546,13 +1546,9 @@ export default class FileTreeComponent {
                       y.Metadata
                     );
 
-                    // Avoid traversing the filesystem blocks in the UI
-                    if (y.Metadata && y.Metadata['diskimage:Type'] === 'filesystem') {
-                      return null;
-                    }
-
                     let id = y.Path;
                     let newRemoteSource: RemoteSource | null = null;
+                    const metadata = y.Metadata;
 
                     if (remote) {
                       id = y.Path.substring(1); // Remove leading @ for the path to match the tree
@@ -1560,6 +1556,20 @@ export default class FileTreeComponent {
                         ...remote,
                         path: y.Path.substring(remote.prefix.length),
                       };
+                    }
+
+                    if (metadata) {
+                      // Avoid traversing the filesystem blocks in the UI
+                      if (metadata['diskimage:Type'] === 'filesystem') {
+                        if (id.endsWith(this.pathDelimiter())) {
+                          id = id.slice(0, -1);
+                        }
+                      }
+
+                      // Don't show geometry
+                      if (metadata['diskimage:Type'] === 'geometry') {
+                        return null;
+                      }
                     }
 
                     return {
