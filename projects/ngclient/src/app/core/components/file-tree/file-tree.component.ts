@@ -1548,6 +1548,7 @@ export default class FileTreeComponent {
 
                     let id = y.Path;
                     let newRemoteSource: RemoteSource | null = null;
+                    let cls = this.#isFolder(y.Path) ? 'folder' : 'file';
                     const metadata = y.Metadata;
 
                     if (remote) {
@@ -1561,21 +1562,19 @@ export default class FileTreeComponent {
                     if (metadata) {
                       // Avoid traversing the filesystem blocks in the UI
                       if (metadata['diskimage:Type'] === 'partition') {
-                        if (id.endsWith(this.pathDelimiter())) {
-                          id = id.slice(0, -1);
-                        }
+                        cls = 'file';
                       }
 
                       // Don't show geometry
-                      if (metadata['diskimage:Type'] === 'geometry') {
-                        return null;
-                      }
+                      if (metadata['diskimage:Type'] === 'geometry') return null;
+                      // Don't show filesystems
+                      if (metadata['diskimage:Type'] === 'filesystem') return null;
                     }
 
                     return {
                       text: text,
                       id: id,
-                      cls: this.#isFolder(y.Path) ? 'folder' : 'file',
+                      cls: cls,
                       leaf: node !== null,
                       resolvedpath: y.Path,
                       hidden: false,
@@ -1592,7 +1591,7 @@ export default class FileTreeComponent {
             const newArray = alignDataArray
               .filter((f: any) => f !== null)
               .map((z: any) => {
-                const cls = this.#isFolder(z.id) ? 'folder' : 'file';
+                const cls = z.cls ?? (this.#isFolder(z.id) ? 'folder' : 'file');
 
                 return {
                   ...z,
