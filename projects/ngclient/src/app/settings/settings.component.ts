@@ -28,6 +28,12 @@ import { CreateSignalOptions, WritableSignal } from '@angular/core';
 import { createSignal, SIGNAL, SignalGetter, signalSetFn, signalUpdateFn } from '@angular/core/primitives/signals';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import { RelayconfigState } from '../core/states/relayconfig.state';
+import {
+  toUsageReporterLevel,
+  toUsageStatisticsControlValue,
+  USAGE_STATISTICS_OPTIONS,
+  UsageStatisticsControlValue,
+} from './usage-statistics-settings';
 
 export function debounceSignal<T>(initialValue: T, time: number, options?: CreateSignalOptions<T>): WritableSignal<T> {
   const [getter] = createSignal<T>(initialValue, options?.equal);
@@ -77,35 +83,6 @@ const TIME_OPTIONS = [
 
 type TimeTypes = (typeof TIME_OPTIONS)[number]['value'];
 
-const USAGE_STATISTICS_OPTIONS = [
-  {
-    value: 'none',
-    label: $localize`System default ($value)`,
-  },
-  {
-    value: 'information',
-    label: $localize`Usage statistics, warnings, errors, and crashes`,
-  },
-  {
-    value: 'warning',
-    label: $localize`Warnings, errors and crashes`,
-  },
-  {
-    value: 'error',
-    label: $localize`Errors and crashes`,
-  },
-  {
-    value: 'crash',
-    label: $localize`Crashes only`,
-  },
-  {
-    value: 'disabled',
-    label: $localize`None / disabled`,
-  },
-];
-
-type UsageStatisticsType = (typeof USAGE_STATISTICS_OPTIONS)[number];
-
 @Component({
   selector: 'app-settings',
   imports: [
@@ -148,7 +125,7 @@ export default class SettingsComponent {
   previousLang = this.#initLang;
   langCtrl = signal<string>(this.#initLang);
   powerModeCtrl = signal<string>('');
-  usageStatistics = signal<UsageStatisticsType['value']>('');
+  usageStatistics = signal<UsageStatisticsControlValue>('default');
   updatingUsageStatistics = signal(false);
   remoteControlStatus = this.#remoteControlState.statusMessage;
   remoteControlState = this.#remoteControlState.state;
@@ -371,15 +348,15 @@ export default class SettingsComponent {
     }, 1000);
   }
 
-  updateUsageStatistics(newUsageStatistics: string) {
+  updateUsageStatistics(newUsageStatistics: UsageStatisticsControlValue) {
     const previousUsageStatistics = this.usageStatistics();
 
-    if (!newUsageStatistics || newUsageStatistics === '' || newUsageStatistics === previousUsageStatistics) return;
+    if (newUsageStatistics === previousUsageStatistics) return;
 
     this.usageStatistics.set(newUsageStatistics);
     this.updatingUsageStatistics.set(true);
 
-    this.#serverSettingsService.setUsageReporterLevel(newUsageStatistics).subscribe();
+    this.#serverSettingsService.setUsageReporterLevel(toUsageReporterLevel(newUsageStatistics)).subscribe();
   }
 
   updatePowerMode(newPowerMode: string) {
@@ -406,9 +383,7 @@ export default class SettingsComponent {
     this.allowedHostnames.set(serverSettings['allowed-hostnames']);
     this.loadedAllowedHostnames.set(serverSettings['allowed-hostnames']);
     this.consoleControlDisabled.set(serverSettings['disable-console-control'] === 'True' ? true : false);
-    this.usageStatistics.set(
-      serverSettings['usage-reporter-level'] === '' ? 'none' : serverSettings['usage-reporter-level']
-    );
+    this.usageStatistics.set(toUsageStatisticsControlValue(serverSettings['usage-reporter-level']));
 
     this.timeType.set(startupDelay == '' ? 'none' : timeUnitOptions.includes(unit) ? unit : 'none');
     this.timeValue.set(startupDelay == '' ? 0 : parseInt(timeStr));
