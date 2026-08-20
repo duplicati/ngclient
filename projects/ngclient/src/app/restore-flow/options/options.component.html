@@ -35,6 +35,16 @@
             formControlName="restoreFrom"
             (click)="chooseCustomRemoteDestination()" />
         </sh-radio>
+      } @else if (extendedDataType() === 'diskimage') {
+        <sh-radio class="raised primary" i18n>
+          Target disk
+          <input
+            type="radio"
+            name="restoreFrom"
+            value="diskimage"
+            formControlName="restoreFrom"
+            (click)="chooseDiskDestination()" />
+        </sh-radio>
       }
 
       <sh-radio class="raised primary" i18n>
@@ -83,7 +93,7 @@
     }
   </app-toggle-card>
 
-  @if (isCustomRemoteRestore()) {
+  @if (isCustomRemoteRestore() && optionsFormSignal()?.restoreFrom !== 'diskimage') {
     <app-toggle-card [disableToggle]="true">
       <ng-container title i18n>Restore settings</ng-container>
 
@@ -92,7 +102,7 @@
         <input type="checkbox" formControlName="customRemoteIgnoreExisting" />
       </sh-toggle>
     </app-toggle-card>
-  } @else {
+  } @else if (optionsFormSignal()?.restoreFrom !== 'diskimage') {
     <app-toggle-card [disableToggle]="true">
       <ng-container title i18n>How do you want to handle existing files?</ng-container>
 

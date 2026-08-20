@@ -18,7 +18,7 @@ const fb = new FormBuilder();
 
 export const createRestoreOptionsForm = () => {
   return fb.group({
-    restoreFrom: fb.control<'original' | 'pickLocation' | 'same-custom' | 'other-custom'>('original'),
+    restoreFrom: fb.control<'original' | 'pickLocation' | 'same-custom' | 'other-custom' | 'diskimage'>('original'),
     restoreFromPath: fb.control<string>(''),
     handleExisting: fb.control<'overwrite' | 'saveTimestamp'>(RESTORE_OPTION_DEFAULTS.handleExisting),
     permissions: fb.control<boolean>(RESTORE_OPTION_DEFAULTS.permissions),
@@ -54,6 +54,8 @@ export default class OptionsComponent {
       return 'o365';
     } else if (type === 'gsuite') {
       return 'gsuite';
+    } else if (type === 'diskimage') {
+      return 'diskimage';
     }
     return null;
   });
@@ -78,6 +80,8 @@ export default class OptionsComponent {
       return this.remoteCustomSourceUrl();
     } else if (mode === 'other-custom' && hasExtendedData) {
       return this.remoteCustomTargetUrl();
+    } else if (mode === 'diskimage') {
+      return 'diskimage://';
     }
 
     return null;
@@ -88,6 +92,9 @@ export default class OptionsComponent {
       return true;
     }
     if (this.optionsFormSignal()?.restoreFrom === 'other-custom' && this.customDestinationUrl()) {
+      return true;
+    }
+    if (this.optionsFormSignal()?.restoreFrom === 'diskimage') {
       return true;
     }
     return false;
@@ -124,6 +131,10 @@ export default class OptionsComponent {
       this.optionsForm.controls.restoreFrom.setValue('other-custom');
     });
     return false;
+  }
+
+  chooseDiskDestination() {
+    return true;
   }
 
   // Handle default selection changes based on data type
@@ -169,6 +180,8 @@ export default class OptionsComponent {
       this.optionsFormSignal()?.restoreFrom === 'same-custom' ||
       this.optionsFormSignal()?.restoreFrom === 'other-custom';
 
+    const restoreToTargetDisk = this.optionsFormSignal()?.restoreFrom === 'diskimage';
+
     if (restoreToCustomRemote) {
       let path = this.optionsFormSignal()?.restoreFromPath;
       if (path && path.startsWith('/')) {
@@ -198,6 +211,29 @@ export default class OptionsComponent {
           ? `@googleworkspace://${encodeURIComponent(path)}${queryParams}&google-ignore-existing=${checkForExisting ? 'true' : 'false'}`
           : `@office365://${encodeURIComponent(path)}${queryParams}&office365-ignore-existing=${checkForExisting ? 'true' : 'false'}`;
       this.#restoreFlowState.setAlternateRestorePath(restorePath, this.remoteCustomSourcePrefix());
+      this.optionsForm.controls.includeMetadata.setValue(true);
+      this.optionsForm.controls.permissions.setValue(true);
+    } else if (restoreToTargetDisk) {
+      let path = this.optionsFormSignal()?.restoreFromPath;
+
+      if (!path || path.trim() === '') {
+        this.#dialog.open(ConfirmDialogComponent, {
+          data: {
+            title: $localize`No path specified`,
+            message: $localize`Please choose a target disk to restore to.`,
+
+            confirmText: $localize`OK`,
+            cancelText: undefined,
+          },
+        });
+        return;
+      }
+
+      if (!path.startsWith('@diskimage://')) {
+        path = `@diskimage://${path}`;
+      }
+
+      this.#restoreFlowState.setAlternateRestorePath(path, null);
       this.optionsForm.controls.includeMetadata.setValue(true);
       this.optionsForm.controls.permissions.setValue(true);
     } else {

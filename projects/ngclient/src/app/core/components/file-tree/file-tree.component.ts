@@ -1493,6 +1493,10 @@ export default class FileTreeComponent {
     if (metadata && metadata['ExtType'] && metadata['ExtType'].length > 0) {
       this.hasExtendedData.emit(metadata['ExtType']);
     }
+    // Backups of disks do not have the ExtType metadata set
+    else if (metadata && metadata['diskimage:Type'] && metadata['diskimage:Type'].length > 0) {
+      this.hasExtendedData.emit('diskimage');
+    }
   }
 
   #isFolder(path: string): boolean {
