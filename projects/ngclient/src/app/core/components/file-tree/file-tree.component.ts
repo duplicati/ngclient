@@ -1564,13 +1564,10 @@ export default class FileTreeComponent {
                     }
 
                     if (metadata) {
-                      // Avoid traversing the filesystem blocks in the UI
-                      if (metadata['diskimage:Type'] === 'partition') {
-                        cls = 'file';
-                      }
-
                       // Don't show geometry
                       if (metadata['diskimage:Type'] === 'geometry') return null;
+                      // Don't show partitioninfo
+                      if (metadata['diskimage:Type'] === 'partitioninfo') return null;
                       // Don't show filesystems
                       if (metadata['diskimage:Type'] === 'filesystem') return null;
                     }
