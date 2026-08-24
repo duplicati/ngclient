@@ -19,6 +19,7 @@ type ListResultFileset = {
   readonly Time: string;
   readonly FileCount?: number | undefined;
   readonly FileSizes?: number | undefined;
+  readonly Label?: string | null | undefined;
 };
 
 @Injectable({
@@ -245,6 +246,7 @@ export class RestoreFlowState {
                 Time: x.Time ?? '<missing>',
                 FileCount: x.FileCount ?? undefined,
                 FileSizes: x.FileSizes ?? undefined,
+                Label: x.Label ?? undefined,
               }))
             );
             this.backup.set(backup);
@@ -300,6 +302,7 @@ export class RestoreFlowState {
                 Time: x.Time ?? '<missing>',
                 FileCount: x.FileCount ?? undefined,
                 FileSizes: x.FileSizes ?? undefined,
+                Label: x.Label ?? undefined,
               }))
             );
             this.backup.set(backup);

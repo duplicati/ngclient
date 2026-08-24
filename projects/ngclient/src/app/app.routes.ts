@@ -185,6 +185,10 @@ export const routes: Routes = [
                     loadComponent: () => import('./backup/delete-versions/delete-versions.component'),
                   },
                   {
+                    path: 'backup/:id/version-labels',
+                    loadComponent: () => import('./backup/version-labels/version-labels.component'),
+                  },
+                  {
                     path: 'backup/:id/broken-files',
                     loadComponent: () => import('./backup/broken-files/broken-files.component'),
                   },

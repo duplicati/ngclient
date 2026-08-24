@@ -332,6 +332,7 @@ export type IListResultFileset = {
   readonly Time?: string;
   readonly FileCount?: number;
   readonly FileSizes?: number;
+  readonly Label?: string | null;
 };
 
 export type ImportBackupFromTempDto = {
@@ -385,6 +386,7 @@ export type IProgressEventData = {
   readonly ActiveTransfers?: Array<ActiveTransfer> | null;
   readonly RemoteSyncDestinationIndex?: number;
   readonly RemoteSyncDestinationCount?: number;
+  readonly EstimatedTimeToCompletion?: string | null;
 };
 
 export type IsBackupActiveDto = {
@@ -468,6 +470,7 @@ export type ListFilesetsResponseItem = {
   IsFullBackup: boolean | null;
   FileCount: number | null;
   FileSizes: number | null;
+  Label?: string | null;
 };
 
 export type ListFileVersionsItemDto = {
@@ -735,6 +738,18 @@ export type SettingInputDto = {
   Filter?: string | null;
   Name: string | null;
   Value?: string | null;
+};
+
+export type SetVersionLabelRequestDto = {
+  BackupId: string | null;
+  Version: number;
+  Label?: string | null;
+};
+
+export type SetVersionLabelResponseDto = {
+  Version: number;
+  Time: string;
+  Label: string | null;
 };
 
 export type SigninInputDto = {
@@ -1529,6 +1544,12 @@ export type PostApiV2BackupSearchData = {
 };
 
 export type PostApiV2BackupSearchResponse = SearchEntriesResponseDto;
+
+export type PostApiV2BackupSetVersionLabelData = {
+  requestBody: SetVersionLabelRequestDto;
+};
+
+export type PostApiV2BackupSetVersionLabelResponse = SetVersionLabelResponseDto;
 
 export type PostApiV2DestinationTestData = {
   requestBody: DestinationTestRequestDto;

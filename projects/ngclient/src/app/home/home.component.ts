@@ -64,6 +64,7 @@ export default class HomeComponent {
   #sysinfo = inject(SysinfoState);
 
   hasDeleteVersions = this.#sysinfo.hasV2DeleteVersions;
+  hasSetVersionLabel = this.#sysinfo.hasV2SetVersionLabel;
   hasBrokenFiles = this.#sysinfo.hasV2BrokenFiles;
 
   MISSING_BACKUP_NAME = $localize`Backup name missing`;

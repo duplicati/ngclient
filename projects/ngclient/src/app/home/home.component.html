@@ -468,6 +468,13 @@
           Commandline
         </button>
 
+        @if (hasSetVersionLabel()) {
+          <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'version-labels']" i18n>
+            <sh-icon>tag</sh-icon>
+            Version labels
+          </button>
+        }
+
         @if (hasDeleteVersions() || hasBrokenFiles()) {
           <sh-divider />
 

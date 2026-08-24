@@ -20,6 +20,10 @@
           @if (option.IsFullBackup === false) {
             <span class="partial" i18n>(partial)</span>
           }
+          @if (option.Label) {
+            <br />
+            <span class="label">{{ option.Label }}</span>
+          }
         </div>
       </ng-template>
     </sh-select>

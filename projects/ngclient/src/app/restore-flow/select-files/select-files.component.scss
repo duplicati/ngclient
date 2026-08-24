@@ -21,6 +21,10 @@ form {
   font-style: italic;
 }
 
+.label {
+  color: var(--base-9);
+}
+
 .search-container {
   display: flex;
   align-items: flex-end;

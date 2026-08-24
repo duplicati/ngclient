@@ -100,9 +100,16 @@ export class SysinfoState {
     return apiExtensions.includes('v2:backup:delete-versions');
   });
 
+  hasV2SetVersionLabel = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v2:backup:set-version-label');
+  });
+
   hasV2BrokenFiles = computed(() => {
     const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
-    return apiExtensions.includes('v2:backup:list-broken-files') && apiExtensions.includes('v2:backup:purge-broken-files');
+    return (
+      apiExtensions.includes('v2:backup:list-broken-files') && apiExtensions.includes('v2:backup:purge-broken-files')
+    );
   });
 
   hasV2TestOperations = computed(() => {

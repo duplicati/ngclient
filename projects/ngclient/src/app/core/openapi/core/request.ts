@@ -1,8 +1,8 @@
+import type { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import type { HttpResponse, HttpErrorResponse } from '@angular/common/http';
+import type { Observable } from 'rxjs';
 import { forkJoin, of, throwError } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import type { Observable } from 'rxjs';
 
 import { ApiError } from './ApiError';
 import type { ApiRequestOptions } from './ApiRequestOptions';

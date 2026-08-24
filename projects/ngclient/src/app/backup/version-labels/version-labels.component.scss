@@ -14,6 +14,10 @@ sh-table {
   padding: p2r(32 0);
 }
 
+.label {
+  width: 100%;
+}
+
 .loading-state,
 .empty-state {
   padding: p2r(32 0);
@@ -27,12 +31,4 @@ sh-table {
   justify-content: flex-end;
   gap: p2r(8);
   padding-top: p2r(32);
-}
-
-.sub-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: p2r(8);
-  padding-top: p2r(8);
-  padding-bottom: p2r(32);
 }
