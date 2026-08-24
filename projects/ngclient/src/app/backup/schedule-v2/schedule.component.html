@@ -31,7 +31,37 @@
         </div>
         <div>
           <dt i18n>Repeats</dt>
-          <dd>{{ summary.repeat }}</dd>
+          <dd>
+            @if (summary.repeatUnit === 's') {
+              <span i18n>
+                {summary.repeatValue, plural, =1 {Every second} other {Every {{summary.repeatValue}} seconds}}
+              </span>
+            } @else if (summary.repeatUnit === 'm') {
+              <span i18n>
+                {summary.repeatValue, plural, =1 {Every minute} other {Every {{summary.repeatValue}} minutes}}
+              </span>
+            } @else if (summary.repeatUnit === 'h') {
+              <span i18n>
+                {summary.repeatValue, plural, =1 {Every hour} other {Every {{summary.repeatValue}} hours}}
+              </span>
+            } @else if (summary.repeatUnit === 'W') {
+              <span i18n>
+                {summary.repeatValue, plural, =1 {Every week} other {Every {{summary.repeatValue}} weeks}}
+              </span>
+            } @else if (summary.repeatUnit === 'M') {
+              <span i18n>
+                {summary.repeatValue, plural, =1 {Every month} other {Every {{summary.repeatValue}} months}}
+              </span>
+            } @else if (summary.repeatUnit === 'Y') {
+              <span i18n>
+                {summary.repeatValue, plural, =1 {Every year} other {Every {{summary.repeatValue}} years}}
+              </span>
+            } @else {
+              <span i18n>
+                {summary.repeatValue, plural, =1 {Every day} other {Every {{summary.repeatValue}} days}}
+              </span>
+            }
+          </dd>
         </div>
         <div>
           <dt i18n>Allowed days</dt>

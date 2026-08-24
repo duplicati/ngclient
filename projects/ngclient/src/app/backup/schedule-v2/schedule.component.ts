@@ -9,8 +9,9 @@ import { ShipSelect } from '@ship-ui/core/ship-select';
 import { ShipToggle } from '@ship-ui/core/ship-toggle';
 import { ShipToggleCard } from '@ship-ui/core/ship-toggle-card';
 import { DayOfWeek, ScheduleInputDto } from '../../core/openapi';
+import { DAYJS } from '../../core/providers/dayjs';
 import { BackupState } from '../backup.state';
-import { formatAllowedDays, formatRepeatInterval } from './schedule-summary';
+import { formatAllowedDays } from './schedule-summary';
 
 const UNIT_OPTIONS = [
   {
@@ -265,6 +266,7 @@ export default class ScheduleComponent {
   #backupState = inject(BackupState);
   #router = inject(Router);
   #route = inject(ActivatedRoute);
+  #dayjs = inject(DAYJS);
 
   unitOptions = UNIT_OPTIONS;
   scheduleFields = this.#backupState.scheduleFields;
@@ -283,11 +285,9 @@ export default class ScheduleComponent {
       autoRun: true as const,
       date: this.scheduleFields.nextTime.date(),
       time: this.scheduleFields.nextTime.time(),
-      repeat: formatRepeatInterval(
-        this.scheduleFields.runAgain.repeatValue(),
-        this.scheduleFields.runAgain.repeatUnit()
-      ),
-      allowedDays: formatAllowedDays({
+      repeatValue: this.scheduleFields.runAgain.repeatValue(),
+      repeatUnit: this.scheduleFields.runAgain.repeatUnit(),
+      allowedDays: formatAllowedDays(this.#dayjs, {
         mon: allowedDays.mon(),
         tue: allowedDays.tue(),
         wed: allowedDays.wed(),
