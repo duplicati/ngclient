@@ -434,10 +434,12 @@
       <ng-container menu>
         <h3 title>Operations</h3>
 
-        <button type="button" [routerLink]="['/restore', backup.Backup.ID]" i18n>
-          <sh-icon>clock-counter-clockwise</sh-icon>
-          Restore
-        </button>
+        @if (backup.Backup.OperationType !== 'Sync') {
+          <button type="button" [routerLink]="['/restore', backup.Backup.ID]" i18n>
+            <sh-icon>clock-counter-clockwise</sh-icon>
+            Restore
+          </button>
+        }
 
         <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'export']" i18n>
           <sh-icon>export</sh-icon>
@@ -458,40 +460,44 @@
           Database
         </button>
 
-        <button type="button" (click)="verifyFiles(backup.Backup.ID!)" i18n>
-          <sh-icon>check-square-offset</sh-icon>
-          Verify files
-        </button>
+        @if (backup.Backup.OperationType !== 'Sync') {
+          <button type="button" (click)="verifyFiles(backup.Backup.ID!)" i18n>
+            <sh-icon>check-square-offset</sh-icon>
+            Verify files
+          </button>
+        }
 
         <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'commandline']" i18n>
           <sh-icon>terminal-window</sh-icon>
           Commandline
         </button>
 
-        @if (hasSetVersionLabel()) {
-          <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'version-labels']" i18n>
-            <sh-icon>tag</sh-icon>
-            Version labels
-          </button>
-        }
-
-        @if (hasDeleteVersions() || hasBrokenFiles()) {
-          <sh-divider />
-
-          <h3 title i18n>Cleanup</h3>
-
-          @if (hasDeleteVersions()) {
-            <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'delete-versions']" i18n>
-              <sh-icon>trash</sh-icon>
-              Delete versions
+        @if (backup.Backup.OperationType !== 'Sync') {
+          @if (hasSetVersionLabel()) {
+            <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'version-labels']" i18n>
+              <sh-icon>tag</sh-icon>
+              Version labels
             </button>
           }
 
-          @if (hasBrokenFiles()) {
-            <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'broken-files']" i18n>
-              <sh-icon>file-x</sh-icon>
-              Purge broken files
-            </button>
+          @if (hasDeleteVersions() || hasBrokenFiles()) {
+            <sh-divider />
+
+            <h3 title i18n>Cleanup</h3>
+
+            @if (hasDeleteVersions()) {
+              <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'delete-versions']" i18n>
+                <sh-icon>trash</sh-icon>
+                Delete versions
+              </button>
+            }
+
+            @if (hasBrokenFiles()) {
+              <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'broken-files']" i18n>
+                <sh-icon>file-x</sh-icon>
+                Purge broken files
+              </button>
+            }
           }
         }
 
