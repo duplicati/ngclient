@@ -22,6 +22,7 @@ import { parseRecursiveObjectOfSignals } from '../core/signals/parse-recursive-s
 import { ConnectionStringsState } from '../core/states/connection-strings.state';
 import { SysinfoState } from '../core/states/sysinfo.state';
 import { ServerSettingsService } from '../settings/server-settings.service';
+import { resolveBackupEncryptionSettings } from './backup-encryption-settings';
 import { FormView, getConfigurationByUrl } from './destination/destination.config-utilities';
 import { createGeneralForm, NONE_OPTION } from './general/general.component';
 import { RetentionType } from './options/options.component';
@@ -334,9 +335,7 @@ export class BackupState {
   mapGeneralToForm(backup: BackupDto) {
     const name = backup.Name ?? '';
     const description = backup.Description ?? '';
-    const encryptionModule = backup.Settings?.find((x) => x.Name === 'encryption-module');
-    const passphrase = backup.Settings?.find((x) => x.Name === 'passphrase')?.Value ?? '';
-    const encryption = encryptionModule?.Value && encryptionModule.Value.length ? encryptionModule.Value : '';
+    const { encryptionDisabled, encryptionModule, passphrase } = resolveBackupEncryptionSettings(backup.Settings);
     const operationType = backup.OperationType ?? 'Backup';
 
     const baseUpdate: Partial<typeof this.generalForm.value> = {
@@ -353,14 +352,14 @@ export class BackupState {
       baseUpdate.description = description;
     }
 
-    if (encryption && encryption !== '') {
-      baseUpdate.encryption = encryption;
+    if (encryptionDisabled) {
+      baseUpdate.encryption = NONE_OPTION.Key;
+    } else if (encryptionModule) {
+      baseUpdate.encryption = encryptionModule;
     }
 
-    if (passphrase && passphrase !== '') {
-      baseUpdate.password = passphrase;
-      baseUpdate.repeatPassword = passphrase;
-    }
+    baseUpdate.password = passphrase;
+    baseUpdate.repeatPassword = passphrase;
 
     this.generalForm.patchValue(baseUpdate);
   }
