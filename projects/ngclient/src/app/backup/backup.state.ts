@@ -5,6 +5,7 @@ import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { finalize, forkJoin, map, Observable, of, switchMap, tap } from 'rxjs';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import { splitSize } from '../core/components/size/size.component';
+import { randomUUID } from '../core/functions/crypto';
 import {
   ArgumentType,
   BackupAndScheduleInputDto,
@@ -38,6 +39,27 @@ const SMART_RETENTION = '1W:1D,4W:1W,12M:1M';
 
 const DEFAULT_SAVE_CONNECTIONSTRING = false;
 
+export type BackupTargetUrl = {
+  uiKey: string;
+  url: string;
+  connectionStringId: number | null;
+  urlKey: string | null;
+  save: boolean;
+};
+
+const createBackupTargetUrl = (
+  url: string,
+  connectionStringId: number | null,
+  urlKey: string | null,
+  save: boolean
+): BackupTargetUrl => ({
+  uiKey: randomUUID(),
+  url,
+  connectionStringId,
+  urlKey,
+  save,
+});
+
 @Injectable({
   providedIn: 'root',
 })
@@ -62,7 +84,7 @@ export class BackupState {
     backupRetentionCustom: signal(''),
   };
 
-  targetUrls = signal<{ url: string; connectionStringId: number | null; urlKey: string | null; save: boolean }[]>([]);
+  targetUrls = signal<BackupTargetUrl[]>([]);
   targetUrlModel = computed(() => this.targetUrls()[0]?.url ?? null);
   connectionStringId = computed(() => this.targetUrls()[0]?.connectionStringId ?? null);
 
@@ -319,15 +341,12 @@ export class BackupState {
     const url = backup.TargetURL ?? '';
     const csId = (backup.ConnectionStringID === -1 ? null : backup.ConnectionStringID) ?? null;
 
-    const firstDestination = url ? [{ url, connectionStringId: csId, urlKey: null, save: !!csId }] : [];
+    const firstDestination = url ? [createBackupTargetUrl(url, csId, null, !!csId)] : [];
 
     const additionalDestinations =
-      (anyBackup.AdditionalTargetURLs as TargetUrlDto[])?.map((t) => ({
-        url: t.TargetUrl!,
-        urlKey: t.UrlKey,
-        connectionStringId: t.ConnectionStringID ?? null,
-        save: !!t.ConnectionStringID,
-      })) ?? [];
+      (anyBackup.AdditionalTargetURLs as TargetUrlDto[])?.map((t) =>
+        createBackupTargetUrl(t.TargetUrl!, t.ConnectionStringID ?? null, t.UrlKey ?? null, !!t.ConnectionStringID)
+      ) ?? [];
 
     this.targetUrls.set([...firstDestination, ...additionalDestinations]);
   }
@@ -729,14 +748,17 @@ export class BackupState {
     this.targetUrls.update((urls) => {
       const newUrls = [...urls];
       if (newUrls.length === 0) {
-        newUrls.push({
-          url: targetUrl,
-          urlKey: targetUrlKey,
-          connectionStringId,
-          save: connectionStringId ? true : DEFAULT_SAVE_CONNECTIONSTRING,
-        });
+        newUrls.push(
+          createBackupTargetUrl(
+            targetUrl,
+            connectionStringId,
+            targetUrlKey,
+            connectionStringId ? true : DEFAULT_SAVE_CONNECTIONSTRING
+          )
+        );
       } else {
         newUrls[0] = {
+          ...newUrls[0],
           url: targetUrl,
           urlKey: targetUrlKey,
           connectionStringId,
@@ -751,7 +773,7 @@ export class BackupState {
   addTargetUrl(url: string, connectionStringId: number | null, urlKey: string | null) {
     this.targetUrls.update((urls) => [
       ...urls,
-      { url, connectionStringId, urlKey, save: connectionStringId ? true : DEFAULT_SAVE_CONNECTIONSTRING },
+      createBackupTargetUrl(url, connectionStringId, urlKey, connectionStringId ? true : DEFAULT_SAVE_CONNECTIONSTRING),
     ]);
   }
 
@@ -763,7 +785,13 @@ export class BackupState {
       // If connectionStringId is provided (meaning we probably saved it or loaded it), save should be true?
       // If it's null, we respect existing save flag?
       // Attempting to preserve user intent.
-      newUrls[index] = { url, connectionStringId, urlKey, save: connectionStringId ? true : existingSave };
+      newUrls[index] = {
+        ...newUrls[index],
+        url,
+        connectionStringId,
+        urlKey,
+        save: connectionStringId ? true : existingSave,
+      };
       return newUrls;
     });
   }

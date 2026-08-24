@@ -9,7 +9,7 @@
 
   <header>
     @if (currentEditingIndex() !== null || (!showCustomList() && !isAddingNew())) {
-      @for (dest of currentTargets; track $index) {
+      @for (dest of currentTargets; track dest.uiKey) {
         @if (showCustomList() && currentEditingIndex() === $index) {
           <sh-card class="destination-card type-c editing">
             <div class="editing-header">
