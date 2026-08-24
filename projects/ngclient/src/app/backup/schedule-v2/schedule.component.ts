@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipButton } from '@ship-ui/core/ship-button';
@@ -10,6 +10,7 @@ import { ShipToggle } from '@ship-ui/core/ship-toggle';
 import { ShipToggleCard } from '@ship-ui/core/ship-toggle-card';
 import { DayOfWeek, ScheduleInputDto } from '../../core/openapi';
 import { BackupState } from '../backup.state';
+import { formatAllowedDays, formatRepeatInterval } from './schedule-summary';
 
 const UNIT_OPTIONS = [
   {
@@ -220,8 +221,6 @@ function getNextMondayAt12PM() {
   return d;
 }
 
-export type Days = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
-
 export const SCHEDULE_FIELD_DEFAULTS = () => {
   return {
     autoRun: signal(true),
@@ -271,6 +270,34 @@ export default class ScheduleComponent {
   scheduleFields = this.#backupState.scheduleFields;
   scheduleType = this.#backupState.scheduleType;
   scheduleOptions = SCHEDULE_DEFAULT_OPTIONS;
+  scheduleSummary = computed(() => {
+    if (!this.scheduleFields.autoRun()) {
+      return {
+        autoRun: false as const,
+      };
+    }
+
+    const allowedDays = this.scheduleFields.runAgain.allowedDays;
+
+    return {
+      autoRun: true as const,
+      date: this.scheduleFields.nextTime.date(),
+      time: this.scheduleFields.nextTime.time(),
+      repeat: formatRepeatInterval(
+        this.scheduleFields.runAgain.repeatValue(),
+        this.scheduleFields.runAgain.repeatUnit()
+      ),
+      allowedDays: formatAllowedDays({
+        mon: allowedDays.mon(),
+        tue: allowedDays.tue(),
+        wed: allowedDays.wed(),
+        thu: allowedDays.thu(),
+        fri: allowedDays.fri(),
+        sat: allowedDays.sat(),
+        sun: allowedDays.sun(),
+      }),
+    };
+  });
 
   updateScheduleType(newType: string) {
     const predefinedType = SCHEDULE_DEFAULT_OPTIONS.find((x) => x.value === newType);
