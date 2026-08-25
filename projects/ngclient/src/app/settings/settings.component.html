@@ -216,6 +216,37 @@
 
   <section>
     <div class="left">
+      <h3 i18n>File tree sorting</h3>
+      <p i18n>Configure how files and folders are sorted in the file tree.</p>
+    </div>
+
+    <div class="right multiple">
+      <sh-toggle
+        class="primary raised"
+        [checked]="fileTreeFoldersFirst()"
+        (checkedChange)="setFileTreeFoldersFirst($event)">
+        @if (fileTreeFoldersFirst()) {
+          <label i18n>Folders are shown before files</label>
+        } @else {
+          <label i18n>Files and folders are mixed together</label>
+        }
+      </sh-toggle>
+
+      <sh-toggle
+        class="primary raised"
+        [checked]="fileTreeCaseSensitiveSort()"
+        (checkedChange)="setFileTreeCaseSensitiveSort($event)">
+        @if (fileTreeCaseSensitiveSort()) {
+          <label i18n>Sorting is case sensitive</label>
+        } @else {
+          <label i18n>Sorting is case insensitive</label>
+        }
+      </sh-toggle>
+    </div>
+  </section>
+
+  <section>
+    <div class="left">
       <h3 i18n>Use legacy interface</h3>
       <p i18n>Use the old user interface, not recommended unless you have a specific reason.</p>
     </div>

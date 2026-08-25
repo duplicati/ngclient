@@ -27,6 +27,7 @@ import { ServerSettingsService } from './server-settings.service';
 import { CreateSignalOptions, WritableSignal } from '@angular/core';
 import { createSignal, SIGNAL, SignalGetter, signalSetFn, signalUpdateFn } from '@angular/core/primitives/signals';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
+import { FileTreeState } from '../core/states/file-tree.state';
 import { RelayconfigState } from '../core/states/relayconfig.state';
 import {
   toUsageReporterLevel,
@@ -115,6 +116,7 @@ export default class SettingsComponent {
   #serverSettingsService = inject(ServerSettingsService);
   #remoteControlState = inject(RemoteControlState);
   #relayConfigState = inject(RelayconfigState);
+  #fileTreeState = inject(FileTreeState);
   #ls = inject(LOCALSTORAGE);
   #initLang = this.#ls.getItem('locale') ?? 'en-US';
 
@@ -179,6 +181,16 @@ export default class SettingsComponent {
   consoleControlDisabled = signal(false);
   hideConsoleConnectionStatus = this.#serverSettingsService.isConsoleConnectionStatusHidden;
   isControllerIpcEnabled = this.#serverSettingsService.isControllerIpcEnabled;
+  fileTreeFoldersFirst = this.#fileTreeState.foldersFirst;
+  fileTreeCaseSensitiveSort = this.#fileTreeState.caseSensitiveSort;
+
+  setFileTreeFoldersFirst($event: boolean) {
+    this.#fileTreeState.setFoldersFirst($event);
+  }
+
+  setFileTreeCaseSensitiveSort($event: boolean) {
+    this.#fileTreeState.setCaseSensitiveSort($event);
+  }
 
   updateRemoteAccess($event: boolean) {
     this.allowRemoteAccess.set($event);

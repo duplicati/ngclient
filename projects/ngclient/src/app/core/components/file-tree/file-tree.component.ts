@@ -34,6 +34,7 @@ import {
   TreeNodeDto,
 } from '../../openapi';
 import { BytesPipe } from '../../pipes/byte.pipe';
+import { FileTreeState } from '../../states/file-tree.state';
 import { SysinfoState } from '../../states/sysinfo.state';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { globMatchesPath, regexMatchesPath } from './file-tree-filter-matcher';
@@ -144,6 +145,7 @@ export default class FileTreeComponent {
   #dupServer = inject(DuplicatiServer);
   #sysInfo = inject(SysinfoState);
   #dialog = inject(ShipDialogService);
+  #fileTreeState = inject(FileTreeState);
 
   multiSelect = input(false);
   disabled = input(false);
@@ -545,19 +547,42 @@ export default class FileTreeComponent {
       }
     }
 
-    // Sort children alphabetically, folders first
-    const sortNodes = (nodes: FileTreeNode[]) => {
-      nodes.sort((a, b) => {
-        if (a.cls === 'folder' && b.cls !== 'folder') return -1;
-        if (a.cls !== 'folder' && b.cls === 'folder') return 1;
-        return (a.text ?? '').localeCompare(b.text ?? '');
-      });
-      nodes.forEach((node) => sortNodes(node.children));
-    };
-    sortNodes(topLevelNodes);
+    this.#sortNodes(topLevelNodes);
 
     return topLevelNodes;
   });
+
+  // Sorts the nodes according to the user's sort preferences.
+  // Children of paginated sources (detected by the presence of a "load more"
+  // node) are paginated and sorted on the server, so they are left in server
+  // order. Unpaginated sources never produce "load more" nodes.
+  #sortNodes(nodes: FileTreeNode[]) {
+    const foldersFirst = this.#fileTreeState.foldersFirst();
+    const caseSensitive = this.#fileTreeState.caseSensitiveSort();
+    const isPaginated = nodes.some((x) => x.isLoadMore);
+
+    if (!isPaginated) {
+      nodes.sort((a, b) => {
+        if (foldersFirst) {
+          if (a.cls === 'folder' && b.cls !== 'folder') return -1;
+          if (a.cls !== 'folder' && b.cls === 'folder') return 1;
+        }
+
+        const aText = a.text ?? '';
+        const bText = b.text ?? '';
+
+        return caseSensitive
+          ? aText < bText
+            ? -1
+            : aText > bText
+              ? 1
+              : 0
+          : aText.localeCompare(bText, undefined, { sensitivity: 'base' });
+      });
+    }
+
+    nodes.forEach((node) => this.#sortNodes(node.children));
+  }
 
   treeStructure = computed<FileTreeNode[]>(() => {
     if (this.searchMode()) {
@@ -684,6 +709,8 @@ export default class FileTreeComponent {
           parentNode.children.push(newNode);
         }
       }
+
+      this.#sortNodes(root.children);
 
       return root;
     });
