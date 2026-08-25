@@ -8,6 +8,7 @@ import { ShipList } from '@ship-ui/core/ship-list';
 import { ShipSidenav } from '@ship-ui/core/ship-sidenav';
 import LogoComponent from '../core/components/logo/logo.component';
 import ServiceHubComponent from '../core/components/service-hub/service-hub.component';
+import { GetApiV1ServersettingsResponse } from '../core/openapi';
 import { AppAuthState } from '../core/states/app-auth.state';
 import { BackupsState } from '../core/states/backups.state';
 import { RelayconfigState } from '../core/states/relayconfig.state';
@@ -55,7 +56,7 @@ export default class LayoutComponent {
   hasShownPasswordDialog = false;
 
   machineName = computed(() => {
-    const serverSettings = this.#serverSettingsState.serverSettings();
+    const serverSettings = this.#serverSettingsState.serverSettings() as GetApiV1ServersettingsResponse | undefined;
     if (serverSettings && serverSettings['--machine-name']) {
       return serverSettings['--machine-name'];
     }

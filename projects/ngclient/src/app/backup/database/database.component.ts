@@ -7,7 +7,7 @@ import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
-import { debounceTime, distinctUntilChanged, finalize, map, take } from 'rxjs';
+import { debounceTime, defer, distinctUntilChanged, finalize, map, take } from 'rxjs';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
 import { DuplicatiServer } from '../../core/openapi';
@@ -55,8 +55,7 @@ export default class DatabaseComponent {
     if (backupFilePath === '') return;
 
     this.isValidatingPath.set(true);
-    this.#dupServer
-      .postApiV1FilesystemValidate({ requestBody: { path: backupFilePath } })
+    defer(() => this.#dupServer.postApiV1FilesystemValidate({ body: { path: backupFilePath } }))
       .pipe(
         take(1),
         finalize(() => this.isValidatingPath.set(false))
@@ -86,8 +85,7 @@ export default class DatabaseComponent {
 
   repairDatabase() {
     this.isRepairing.set(true);
-    this.#dupServer
-      .postApiV1BackupByIdRepair({ id: this.backupId()! })
+    defer(() => this.#dupServer.postApiV1BackupByIdRepair({ path: { id: this.backupId()! } }))
       .pipe(
         take(1),
         finalize(() => this.isRepairing.set(false))
@@ -116,8 +114,7 @@ export default class DatabaseComponent {
 
   private doDeleteDatabase(callback: (() => void) | null = null) {
     this.isDeleting.set(true);
-    this.#dupServer
-      .postApiV1BackupByIdDeletedb({ id: this.backupId()! })
+    defer(() => this.#dupServer.postApiV1BackupByIdDeletedb({ path: { id: this.backupId()! } }))
       .pipe(
         take(1),
         finalize(() => this.isDeleting.set(false))
@@ -140,8 +137,7 @@ export default class DatabaseComponent {
 
   private doRepairDatabase() {
     this.isRestoring.set(true);
-    this.#dupServer
-      .postApiV1BackupByIdRepair({ id: this.backupId()!, requestBody: {} })
+    defer(() => this.#dupServer.postApiV1BackupByIdRepair({ path: { id: this.backupId()! }, body: {} }))
       .pipe(
         take(1),
         finalize(() => this.isRestoring.set(false))
@@ -175,13 +171,14 @@ export default class DatabaseComponent {
   private doSaveDatabasePath(callback: (() => void) | null = null) {
     this.isSavingDbPath.set(true);
     const currentPath = this.backupFilePath();
-    this.#dupServer
-      .postApiV1BackupByIdUpdatedb({
-        id: this.backupId()!,
-        requestBody: {
+    defer(() =>
+      this.#dupServer.postApiV1BackupByIdUpdatedb({
+        path: { id: this.backupId()! },
+        body: {
           path: currentPath,
         },
       })
+    )
       .pipe(finalize(() => this.isSavingDbPath.set(false)))
       .subscribe(() => {
         this.#firstDBPath.set(currentPath);
@@ -192,8 +189,7 @@ export default class DatabaseComponent {
   saveAndRepairDatabasePath() {
     this.saveDatabasePath(() => {
       this.isSavingAndRepairing.set(true);
-      return this.#dupServer
-        .postApiV1BackupByIdRepair({ id: this.backupId()! })
+      return defer(() => this.#dupServer.postApiV1BackupByIdRepair({ path: { id: this.backupId()! } }))
         .pipe(
           take(1),
           finalize(() => this.isSavingAndRepairing.set(false))
@@ -206,13 +202,14 @@ export default class DatabaseComponent {
     this.isMovingDb.set(true);
     const currentPath = this.backupFilePath();
 
-    this.#dupServer
-      .postApiV1BackupByIdMovedb({
-        id: this.backupId()!,
-        requestBody: {
+    defer(() =>
+      this.#dupServer.postApiV1BackupByIdMovedb({
+        path: { id: this.backupId()! },
+        body: {
           path: currentPath,
         },
       })
+    )
       .pipe(finalize(() => this.isMovingDb.set(false)))
       .subscribe(() => {
         this.#movedDbPath.update((x) => !x);
@@ -222,8 +219,7 @@ export default class DatabaseComponent {
 
   createErrorReport() {
     this.isCreatingBugReport.set(true);
-    this.#dupServer
-      .postApiV1BackupByIdCreatereport({ id: this.backupId()! })
+    defer(() => this.#dupServer.postApiV1BackupByIdCreatereport({ path: { id: this.backupId()! } }))
       .pipe(finalize(() => this.isCreatingBugReport.set(false)))
       .subscribe({
         next: () => {
@@ -235,8 +231,7 @@ export default class DatabaseComponent {
 
   compactDatabase() {
     this.isCompacting.set(true);
-    this.#dupServer
-      .postApiV1BackupByIdCompact({ id: this.backupId()! })
+    defer(() => this.#dupServer.postApiV1BackupByIdCompact({ path: { id: this.backupId()! } }))
       .pipe(finalize(() => this.isCompacting.set(false)))
       .subscribe();
   }

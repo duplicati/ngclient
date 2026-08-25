@@ -5,8 +5,8 @@ import { ShipAlertService } from '@ship-ui/core/ship-alert';
 import { catchError, map, switchMap, throwError } from 'rxjs';
 import { ENVIRONMENT_TOKEN } from '../../../environments/environment-token';
 import { mapLocale } from '../locales/locales.utility';
-import { OpenAPI } from '../openapi/core/OpenAPI';
 import { LOCALSTORAGE } from '../services/localstorage.token';
+import { getApiBase } from '../utils/proxy-config.util';
 import { AppAuthState, dummytoken } from '../states/app-auth.state';
 
 export const httpInterceptor: HttpInterceptorFn = (req, next) => {
@@ -17,7 +17,7 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   const locale = ls.getItem('locale');
   const shipAlertService = inject(ShipAlertService);
   const mappedLocale = mapLocale(locale);
-  const prefix = OpenAPI.BASE || '';
+  const prefix = getApiBase();
   const isLoginRequest = req.url === `${prefix}/api/v1/auth/login`;
   const isLogoutRequest = req.url === `${prefix}/api/v1/auth/logout`;
   const isRefreshRequest = req.url === `${prefix}/api/v1/auth/refresh`;

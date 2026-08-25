@@ -3,7 +3,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
-import { finalize } from 'rxjs';
+import { defer, finalize } from 'rxjs';
 import { OptionsListComponent } from '../../backup/options/options-list/options-list.component';
 import { DuplicatiServer, SettingDto } from '../../core/openapi';
 import { ServerSettingsService } from '../server-settings.service';
@@ -78,10 +78,11 @@ export default class AdvancedOptionsSettingsComponent {
       reduced[key] = null;
     });
 
-    this.#dupServer
-      .patchApiV1Serversettings({
-        requestBody: reduced,
+    defer(() =>
+      this.#dupServer.patchApiV1Serversettings({
+        body: reduced,
       })
+    )
       .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
         next: () => {

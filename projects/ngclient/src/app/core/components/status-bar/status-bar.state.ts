@@ -1,6 +1,6 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
-import { finalize, map, of, switchMap } from 'rxjs';
+import { defer, finalize, map, of, switchMap } from 'rxjs';
 import { STATUS_STATES } from '../../constants/status-states.constant';
 import {
   DuplicatiServer,
@@ -128,7 +128,7 @@ export class StatusBarState {
   pauseResume() {
     this.isResuming.set(true);
 
-    return this.#dupServer.postApiV1ServerstateResume().pipe(finalize(() => this.isResuming.set(false)));
+    return defer(() => this.#dupServer.postApiV1ServerstateResume()).pipe(finalize(() => this.isResuming.set(false)));
   }
 
   resumeDialogCheck(cb: Function) {
@@ -158,16 +158,15 @@ export class StatusBarState {
 
   #getProgressState() {
     this.#isFetching.set(true);
-    this.#dupServer
-      .getApiV1Progressstate()
+    defer(() => this.#dupServer.getApiV1Progressstate())
       .pipe(
         switchMap((x) => {
           const taskId = x.TaskID ?? null;
           if (taskId === null) return of(x);
 
-          return this.#dupServer
-            .getApiV1TaskByTaskid({ taskid: taskId })
-            .pipe(map((res) => ({ ...x, task: res ?? null })));
+          return defer(() => this.#dupServer.getApiV1TaskByTaskid({ path: { taskid: taskId } })).pipe(
+            map((res) => ({ ...x, task: res ?? null }))
+          );
         }),
         finalize(() => this.#isFetching.set(false))
       )

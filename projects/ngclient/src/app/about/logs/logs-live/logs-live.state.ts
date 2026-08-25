@@ -1,5 +1,5 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
-import { finalize } from 'rxjs';
+import { defer, finalize } from 'rxjs';
 import { DuplicatiServer, LogEntry, LogMessageType } from '../../../core/openapi';
 
 type LogLevel = {
@@ -104,12 +104,15 @@ export class LogsLiveState {
   loadLogs() {
     this.logsLoading.set(true);
 
-    this.#dupServer
-      .getApiV1LogdataPoll({
-        id: this.id(),
-        level: this.logLevel() as LogMessageType,
-        pagesize: this.pagination().pagesize,
+    defer(() =>
+      this.#dupServer.getApiV1LogdataPoll({
+        query: {
+          id: this.id(),
+          level: this.logLevel() as LogMessageType,
+          pagesize: this.pagination().pagesize,
+        },
       })
+    )
       .pipe(finalize(() => this.logsLoading.set(false)))
       .subscribe({
         next: (res) => {

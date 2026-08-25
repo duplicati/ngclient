@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { finalize, Observable, tap } from 'rxjs';
+import { defer, finalize, Observable, tap } from 'rxjs';
 import { GetApiV1WebmodulesResponse, WebModules } from '../openapi';
 
 @Injectable({
@@ -12,7 +12,7 @@ export class WebModulesState {
   webmodules = signal<GetApiV1WebmodulesResponse | null>(null);
 
   preload(returnObservable = false): Observable<GetApiV1WebmodulesResponse> | void {
-    const obs = this.#webModules.getApiV1Webmodules().pipe(
+    const obs = defer(() => this.#webModules.getApiV1Webmodules()).pipe(
       tap((x) => this.webmodules.set(x)),
       finalize(() => this.isLoaded.set(true))
     );

@@ -2,7 +2,7 @@ import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
-import { finalize, forkJoin, map, Observable, of, switchMap, tap } from 'rxjs';
+import { defer, finalize, forkJoin, map, Observable, of, switchMap, tap } from 'rxjs';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import { splitSize } from '../core/components/size/size.component';
 import { randomUUID } from '../core/functions/crypto';
@@ -12,12 +12,12 @@ import {
   BackupDto,
   DuplicatiServer,
   ICommandLineArgument,
-  OperationType,
   ScheduleDto,
   SettingDto,
   SettingInputDto,
   TargetUrlDto,
 } from '../core/openapi';
+import { OperationType } from '../core/openapi';
 import { TimespanLiteralsService } from '../core/services/timespan-literals.service';
 import { parseRecursiveObjectOfSignals } from '../core/signals/parse-recursive-signals-object';
 import { ConnectionStringsState } from '../core/states/connection-strings.state';
@@ -213,14 +213,18 @@ export class BackupState {
           if (this.isDraft() && backup.Backup) backup.Backup.Metadata = this.backupMetadata();
 
           if (backupId === 'new' || !backupId || this.isDraft()) {
-            return this.#dupServer.postApiV1Backups({
-              requestBody: backup,
-            });
+            return defer(() =>
+              this.#dupServer.postApiV1Backups({
+                body: backup,
+              })
+            );
           } else {
-            return this.#dupServer.putApiV1BackupById({
-              id: backupId,
-              requestBody: backup,
-            });
+            return defer(() =>
+              this.#dupServer.putApiV1BackupById({
+                path: { id: backupId },
+                body: backup,
+              })
+            );
           }
         }),
         finalize(() => this.isSubmitting.set(false))
@@ -431,7 +435,7 @@ export class BackupState {
     const allSettings = (backup.Settings ?? []).map((x) => <SettingInputDto>x);
 
     if (includeGlobalOptions) {
-      const serverSettings = this.#serverSettings.serverSettings() ?? {};
+      const serverSettings: Record<string, string> = this.#serverSettings.serverSettings() ?? {};
       Object.keys(serverSettings)
         .filter((x) => x.startsWith('--'))
         .forEach((key) => {

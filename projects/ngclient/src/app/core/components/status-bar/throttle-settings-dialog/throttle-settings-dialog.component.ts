@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipSelect } from '@ship-ui/core/ship-select';
-import { finalize } from 'rxjs';
+import { defer, finalize } from 'rxjs';
 import { DuplicatiServer } from '../../../openapi';
 
 const UNIT_MAP = {
@@ -114,7 +114,7 @@ export default class ThrottleSettingsDialogComponent implements OnInit {
   }
 
   init() {
-    this.#dupServer.getApiV1Serversettings().subscribe({
+    defer(() => this.#dupServer.getApiV1Serversettings()).subscribe({
       next: (res) => {
         const rawUploadSpeedString = res?.['max-upload-speed'];
         const rawDownloadSpeedString = res?.['max-download-speed'];
@@ -225,13 +225,14 @@ export default class ThrottleSettingsDialogComponent implements OnInit {
       }
     }
 
-    this.#dupServer
-      .patchApiV1Serversettings({
-        requestBody: {
+    defer(() =>
+      this.#dupServer.patchApiV1Serversettings({
+        body: {
           'max-upload-speed': uploadSpeedPayload,
           'max-download-speed': downloadSpeedPayload,
         },
       })
+    )
       .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
         next: () => {

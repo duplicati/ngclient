@@ -6,7 +6,7 @@ import { ShipAlertService } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
-import { finalize, switchMap } from 'rxjs';
+import { defer, finalize, switchMap } from 'rxjs';
 import { BackupAndScheduleInputDto, DuplicatiServer } from '../../core/openapi';
 import { BackupDraft } from '../../core/states/backups.state';
 
@@ -74,10 +74,11 @@ export default class RestoreFromConfigComponent {
   submit() {
     this.isRestoring.set(true);
 
-    this.#dupServer
-      .postApiV1BackupsImport({
-        requestBody: this.importForm.value,
+    defer(() =>
+      this.#dupServer.postApiV1BackupsImport({
+        body: this.importForm.value,
       })
+    )
       .pipe(
         switchMap((res) => {
           const data = res.data as BackupDraft;
@@ -86,8 +87,8 @@ export default class RestoreFromConfigComponent {
           };
 
           return this.#dupServer.postApiV1Backups({
-            requestBody: draft,
-            temporary: true,
+            body: draft,
+            query: { temporary: true },
           });
         }),
         finalize(() => this.isRestoring.set(false))

@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
-import { Subject } from 'rxjs';
+import { defer, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { DisconnectedDialogComponent } from '../components/disconnected-dialog/disconnected-dialog.component';
 import { DuplicatiServer, ServerStatusDto } from '../openapi';
@@ -56,12 +56,15 @@ export class ServerStatusLongPollService {
   #longPoll() {
     this.#connectionStatus.set('connecting');
 
-    this.#dupServer
-      .getApiV1Serverstate({
-        lastEventId: this.#lastEventId(),
-        longpoll: this.#lastEventId() >= 0,
-        duration: this.duration,
+    defer(() =>
+      this.#dupServer.getApiV1Serverstate({
+        query: {
+          lastEventId: this.#lastEventId(),
+          longpoll: this.#lastEventId() >= 0,
+          duration: this.duration,
+        },
       })
+    )
       .pipe(takeUntil(this.#destroy$))
       .subscribe({
         next: (response) => {

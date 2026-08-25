@@ -11,7 +11,7 @@ import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { ShipToggle } from '@ship-ui/core/ship-toggle';
-import { finalize } from 'rxjs';
+import { defer, finalize } from 'rxjs';
 import { DuplicatiServer, RestoreTaskConfigElementDto } from '../../../core/openapi';
 import { BytesPipe } from '../../../core/pipes/byte.pipe';
 import { RelativeTimePipe } from '../../../core/pipes/relative-time.pipe';
@@ -77,8 +77,7 @@ export default class SelectConfigComponent implements OnInit {
       return;
     }
 
-    this.#dupServer
-      .postApiV1BackupByIdRestoreTaskConfig({ id })
+    defer(() => this.#dupServer.postApiV1BackupByIdRestoreTaskConfig({ path: { id } }))
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (result) => {
@@ -138,15 +137,15 @@ export default class SelectConfigComponent implements OnInit {
 
       const item = selected[index];
 
-      this.#dupServer
-        .postApiV1BackupByIdImportfromtemp({
-          requestBody: {
+      defer(() =>
+        this.#dupServer.postApiV1BackupByIdImportfromtemp({
+          body: {
             BackupId: item.BackupId,
             ImportMetadata: importMetadata,
             Direct: isDirect,
           },
         })
-        .subscribe({
+      ).subscribe({
           next: (res) => {
             if (!isDirect) {
               this.isImporting.set(false);

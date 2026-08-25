@@ -6,7 +6,7 @@ import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipToggleCard } from '@ship-ui/core/ship-toggle-card';
-import { finalize } from 'rxjs';
+import { defer, finalize } from 'rxjs';
 import { DuplicatiServer, SettingInputDto } from '../../../core/openapi';
 import { OptionsListComponent } from '../../options/options-list/options-list.component';
 import { ImportDestinationState } from '../import-destination.state';
@@ -87,16 +87,17 @@ export default class EncryptionComponent {
       }
     });
 
-    this.#dupServer
-      .postApiV1Backups({
-        requestBody: {
+    defer(() =>
+      this.#dupServer.postApiV1Backups({
+        body: {
           Backup: {
             TargetURL: currentTargetUrl,
             Settings: settings,
           },
         },
-        temporary: true,
+        query: { temporary: true },
       })
+    )
       .pipe(finalize(() => this.creatingTemporaryBackup.set(false)))
       .subscribe({
         next: (backup) => {

@@ -5,6 +5,7 @@ import { ShipCard } from '@ship-ui/core/ship-card';
 import { ShipDivider } from '@ship-ui/core/ship-divider';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
+import { defer } from 'rxjs';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { BackupAndScheduleOutputDto, DuplicatiServer } from '../core/openapi';
 import { BackupsState } from '../core/states/backups.state';
@@ -28,17 +29,19 @@ export default class RestoreComponent {
   }
 
   restoreNow(backup: BackupAndScheduleOutputDto) {
-    this.#dupServer.postApiV1BackupByIdRestore({
-      id: backup.Backup?.ID!,
-      requestBody: {
+    defer(() =>
+      this.#dupServer.postApiV1BackupByIdRestore({
+        path: { id: backup.Backup?.ID! },
+        body: {
         // paths?: Array<(string)> | null;
         // passphrase?: (string) | null;
         // time?: (string) | null;
         // restore_path?: (string) | null;
         // overwrite?: (boolean) | null;
         // permissions?: (boolean) | null;
-        // skip_metadata?: (boolean) | null;
-      },
-    });
+          // skip_metadata?: (boolean) | null;
+        },
+      })
+    );
   }
 }

@@ -3,7 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
-import { finalize, map } from 'rxjs';
+import { defer, finalize, map } from 'rxjs';
 import { DuplicatiServer } from '../../core/openapi';
 import { ServerStateService } from '../../core/services/server-state.service';
 import { SysinfoState } from '../../core/states/sysinfo.state';
@@ -25,7 +25,7 @@ export default class GeneralComponent {
   serverState = this.#serverState.serverState;
   duplicatiVersion = computed(() => this.#sysinfo.systemInfo()?.ServerVersionName ?? 'Unknown');
   generalInfo = toSignal(
-    this.#dupServer.getApiV1Acknowledgements().pipe(
+    defer(() => this.#dupServer.getApiV1Acknowledgements()).pipe(
       map((x) => x.Acknowledgements), // ? this.#sanitizer.bypassSecurityTrustHtml(x.Acknowledgements) : '')),
       finalize(() => this.isLoading.set(false))
     )
@@ -34,8 +34,7 @@ export default class GeneralComponent {
   checkForUpdates() {
     this.checkingForUpdates.set(true);
 
-    this.#dupServer
-      .postApiV1UpdatesCheck()
+    defer(() => this.#dupServer.postApiV1UpdatesCheck())
       .pipe(finalize(() => this.checkingForUpdates.set(false)))
       .subscribe();
   }

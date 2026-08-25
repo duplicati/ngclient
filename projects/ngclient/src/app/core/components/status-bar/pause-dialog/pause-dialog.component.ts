@@ -4,7 +4,7 @@ import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipCheckbox } from '@ship-ui/core/ship-checkbox';
 import { ShipRadio } from '@ship-ui/core/ship-radio';
-import { finalize } from 'rxjs';
+import { defer, finalize } from 'rxjs';
 import { DuplicatiServer } from '../../../openapi';
 
 const PAUSE_OPTIONS = [
@@ -42,11 +42,14 @@ export class PauseDialogComponent {
     const pauseTransfers = this.pauseTransfers() || null;
     const duration = this.pauseOption();
 
-    this.#dupServer
-      .postApiV1ServerstatePause({
-        duration,
-        pauseTransfers,
+    defer(() =>
+      this.#dupServer.postApiV1ServerstatePause({
+        query: {
+          duration,
+          pauseTransfers,
+        },
       } as any)
+    )
       .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
         next: (_) => {

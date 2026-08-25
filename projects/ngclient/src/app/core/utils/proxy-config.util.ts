@@ -1,4 +1,24 @@
-import { OpenAPI } from '../openapi/core/OpenAPI';
+import { client } from '../openapi/client.gen';
+
+/**
+ * Returns the base URL prefix configured on the API client (e.g. "/duplicati"),
+ * or an empty string when no proxy prefix is configured.
+ */
+export function getApiBase(): string {
+  return client.getConfig().baseUrl ?? '';
+}
+
+/**
+ * Returns the extra headers configured on the API client (e.g. XSRF headers).
+ */
+export function getApiConfigHeaders(): Record<string, string> {
+  const headers = client.getConfig().headers;
+  if (!headers || typeof (headers as any).keys === 'function') {
+    // HttpHeaders instance or unset; we only ever set plain records here
+    return {};
+  }
+  return headers as Record<string, string>;
+}
 
 /**
  * Reads proxy configuration from meta tags in the HTML.
@@ -110,8 +130,8 @@ export function getXsrfHeaders(): { [header: string]: string } {
 }
 
 /**
- * Configures OpenAPI to use the proxy path from meta tag configuration.
- * This is safe to call multiple times; it simply overwrites OpenAPI.BASE.
+ * Configures the API client to use the proxy path from meta tag configuration.
+ * This is safe to call multiple times; it simply overwrites the client's baseUrl.
  */
 export function configureProxySupport(): void {
   const prefix = getProxyConfigFromMetaTag();
@@ -126,15 +146,17 @@ export function configureProxySupport(): void {
       normalizedPath = normalizedPath.slice(0, -1);
     }
 
-    OpenAPI.BASE = normalizedPath;
+    client.setConfig({ baseUrl: normalizedPath });
   } else {
-    OpenAPI.BASE = '';
+    client.setConfig({ baseUrl: '' });
   }
 
   const headerConfig = getXsrfConfigFromMetaTag();
   if (headerConfig) {
-    OpenAPI.HEADERS = {
-      [headerConfig.headerName]: headerConfig.headerValue,
-    };
+    client.setConfig({
+      headers: {
+        [headerConfig.headerName]: headerConfig.headerValue,
+      },
+    });
   }
 }

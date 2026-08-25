@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
-import { Observable, Subscriber } from 'rxjs';
+import { defer, Observable, Subscriber } from 'rxjs';
 import { ConfirmDialogComponent } from '../components/confirm-dialog/confirm-dialog.component';
 import {
   DestinationTestResponseDto,
@@ -83,9 +83,9 @@ export class TestDestinationService {
     readOnlyTest: boolean
   ) {
     return new Observable<TestDestinationResult>((observer) => {
-      this.#dupServer
-        .postApiV2DestinationTest({
-          requestBody: {
+      defer(() =>
+        this.#dupServer.postApiV2DestinationTest({
+          body: {
             DestinationUrl: targetUrl,
             ConnectionStringId: connectionStringId ?? null,
             BackupId: backupId == 'new' ? null : backupId,
@@ -96,6 +96,7 @@ export class TestDestinationService {
             SourcePrefix: backupId == 'new' ? null : sourcePrefix,
           },
         })
+      )
         .subscribe({
           next: (res) => {
             if (res.Success) {
@@ -175,17 +176,20 @@ export class TestDestinationService {
   ) {
     // V1 does not support auto-create folders, but we should retire the use of V1 anyway
     return new Observable<TestDestinationResult>((observer) => {
-      this.#dupServer
-        .postApiV1RemoteoperationTest({
-          readOnlyTest: readOnlyTest,
-          requestBody: {
+      defer(() =>
+        this.#dupServer.postApiV1RemoteoperationTest({
+          query: {
+            readOnlyTest: readOnlyTest,
+            type: urlType,
+          },
+          body: {
             path: targetUrl,
             backupId: backupId == 'new' ? null : backupId,
             connectionStringId: connectionStringId ?? null,
             sourcePrefix: backupId == 'new' ? null : sourcePrefix,
           },
-          type: urlType,
         })
+      )
         .subscribe({
           next: (_) => {
             observer.next({
@@ -254,9 +258,9 @@ export class TestDestinationService {
         }
 
         if (this.#sysinfo.hasV2TestOperations()) {
-          this.#dupServer
-            .postApiV2DestinationTest({
-              requestBody: {
+          defer(() =>
+            this.#dupServer.postApiV2DestinationTest({
+              body: {
                 DestinationUrl: targetUrl,
                 ConnectionStringId: connectionStringId,
                 AutoCreate: true,
@@ -265,6 +269,7 @@ export class TestDestinationService {
                 BackupId: backupId == 'new' ? null : backupId,
               },
             })
+          )
             .subscribe({
               next: (res) => {
                 if (res.Success) {
@@ -289,13 +294,14 @@ export class TestDestinationService {
               },
             });
         } else {
-          this.#dupServer
-            .postApiV1RemoteoperationCreate({
-              requestBody: {
+          defer(() =>
+            this.#dupServer.postApiV1RemoteoperationCreate({
+              body: {
                 path: targetUrl,
                 backupId: backupId == 'new' ? null : backupId,
               },
             })
+          )
             .subscribe({
               next: () => {
                 this.handleFolderCreated(observer, targetUrl, destinationIndex);

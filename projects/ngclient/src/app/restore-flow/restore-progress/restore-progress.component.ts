@@ -5,6 +5,7 @@ import { ShipCard } from '@ship-ui/core/ship-card';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { ShipSpinner } from '@ship-ui/core/ship-spinner';
+import { defer } from 'rxjs';
 import LogsLiveComponent from '../../about/logs/logs-live/logs-live.component';
 import { StatusBarState } from '../../core/components/status-bar/status-bar.state';
 import { DuplicatiServer, GetTaskStateDto } from '../../core/openapi';
@@ -69,8 +70,8 @@ export default class RestoreProgressComponent implements OnInit {
   };
 
   ngOnInit() {
-    const taskid = this.#route.snapshot.params['taskid']?.toString() ?? '';
-    this.#dupServer.getApiV1TaskByTaskid({ taskid }).subscribe({
+    const taskid = Number(this.#route.snapshot.params['taskid'] ?? '');
+    defer(() => this.#dupServer.getApiV1TaskByTaskid({ path: { taskid } })).subscribe({
       next: (res) => {
         if (res.TaskStarted) this.#taskStarted = new Date(res.TaskStarted);
         if (!res.TaskFinished && res.ID) {

@@ -1,5 +1,5 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
-import { catchError, forkJoin, of, take, tap } from 'rxjs';
+import { catchError, defer, forkJoin, of, take, tap } from 'rxjs';
 import { StatusBarState } from '../core/components/status-bar/status-bar.state';
 import { DuplicatiServer, NotificationDto } from '../core/openapi';
 import { ServerStateService } from '../core/services/server-state.service';
@@ -82,8 +82,7 @@ export class NotificationsState {
       return;
     }
 
-    this.#dupServer
-      .getApiV1Notifications()
+    defer(() => this.#dupServer.getApiV1Notifications())
       .pipe(
         take(1),
         tap((notifications) => this.#notificationStream.set(notifications))
@@ -92,10 +91,13 @@ export class NotificationsState {
   }
 
   getNofication(notificationId: number) {
-    this.#dupServer
-      .getApiV1NotificationById({
-        id: notificationId,
+    defer(() =>
+      this.#dupServer.getApiV1NotificationById({
+        path: {
+          id: notificationId,
+        },
       })
+    )
       .pipe(take(1))
       .subscribe();
   }
@@ -109,10 +111,13 @@ export class NotificationsState {
 
     this.#notificationStream.set(notifications);
 
-    this.#dupServer
-      .deleteApiV1NotificationById({
-        id: notification.ID!,
+    defer(() =>
+      this.#dupServer.deleteApiV1NotificationById({
+        path: {
+          id: notification.ID!,
+        },
       })
+    )
       .pipe(take(1))
       .subscribe({
         error: () => {
@@ -129,7 +134,9 @@ export class NotificationsState {
     this.#notificationStream.set([]);
 
     const deletionObservables = notifications.map((notification) =>
-      this.#dupServer.deleteApiV1NotificationById({ id: notification.ID! }).pipe(catchError(() => of(notification)))
+      defer(() => this.#dupServer.deleteApiV1NotificationById({ path: { id: notification.ID! } })).pipe(
+        catchError(() => of(notification))
+      )
     );
 
     forkJoin(deletionObservables)

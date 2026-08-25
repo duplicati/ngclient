@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { finalize } from 'rxjs';
+import { defer, finalize } from 'rxjs';
 import { DuplicatiServer } from '../openapi';
 
 @Injectable({
@@ -13,8 +13,7 @@ export class CrashLogState {
 
   load() {
     if (this.isLoaded()) return;
-    this.#dupServer
-      .getApiV1LogdataCrashlog()
+    defer(() => this.#dupServer.getApiV1LogdataCrashlog())
       .pipe(finalize(() => this.isLoaded.set(true)))
       .subscribe({
         next: (res) => {

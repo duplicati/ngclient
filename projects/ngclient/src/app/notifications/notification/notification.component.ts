@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { defer } from 'rxjs';
 import { ShipAlert, ShipAlertService, ShipAlertType } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer, NotificationType } from '../../core/openapi';
-import { OpenAPI } from '../../core/openapi/core/OpenAPI';
+import { getApiBase } from '../../core/utils/proxy-config.util';
 import { ExtendedNotificationDto } from '../notifications.component';
 import { NotificationsState } from '../notifications.state';
 import { AppAuthState } from '../../core/states/app-auth.state';
@@ -56,7 +57,7 @@ export class NotificationComponent {
   }
 
   doShowLog(backupId: string) {
-    this.#dupServer.getApiV1BackupByIdIsactive({ id: backupId }).subscribe({
+    defer(() => this.#dupServer.getApiV1BackupByIdIsactive({ path: { id: backupId } })).subscribe({
       next: (res) => {
         this.#router.navigate(['/backup/' + backupId + '/log']);
       },
@@ -90,7 +91,7 @@ export class NotificationComponent {
   }
 
   doRepair(backupId: string) {
-    this.#dupServer.postApiV1BackupByIdRepair({ id: backupId }).subscribe({
+    defer(() => this.#dupServer.postApiV1BackupByIdRepair({ path: { id: backupId } })).subscribe({
       next: () => {
         this.#snackbar.success($localize`Backup repaired`);
         this.#router.navigate(['./'], {
@@ -115,18 +116,20 @@ export class NotificationComponent {
   doDownloadBugreport(item: ExtendedNotificationDto) {
     const id = item.Action!.slice('bug-report:created:'.length);
 
-    this.#dupServer
-      .postApiV1AuthIssuetokenByOperation({
-        operation: `bugreport`,
+    defer(() =>
+      this.#dupServer.postApiV1AuthIssuetokenByOperation({
+        path: {
+          operation: `bugreport`,
+        },
       })
-      .subscribe({
+    ).subscribe({
         next: (res) => {
           if (!res.Token) {
             this.#snackbar.error(`Failed to get bug report URL: No token generated`);
             return;
           }
 
-          const prefix = OpenAPI.BASE || '';
+          const prefix = getApiBase();
           const xsrfQuery = this.#auth.xsrfQueryParam();
           const link = `${location.origin}${prefix}/api/v1/bugreport/${id}?token=${res.Token}${xsrfQuery ? `&${xsrfQuery}` : ''}`;
 

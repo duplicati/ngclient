@@ -2,7 +2,7 @@ import { effect, inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
-import { catchError, finalize, forkJoin, Observable, retry, switchMap, take, throwError, timer } from 'rxjs';
+import { catchError, defer, finalize, forkJoin, Observable, retry, switchMap, take, throwError, timer } from 'rxjs';
 import { TestState } from '../backup/source-data/target-url-dialog/test-url/test-url';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer, GetBackupResultDto, ListFilesetsResponseDto } from '../core/openapi';
@@ -99,11 +99,11 @@ export class RestoreFlowState {
     if (isTemporary) {
       // If this is a temporary backup, we have a partial database created for the file picking step.
       // We need to create a fresh temporary backup with no database, so the restore flow creates a partial database for the restore.
-      this.#dupServer
-        .postApiV1BackupByIdCopytotemp({
-          id: this.backupId() ?? '',
+      defer(() =>
+        this.#dupServer.postApiV1BackupByIdCopytotemp({
+          path: { id: this.backupId() ?? '' },
         })
-        .subscribe({
+      ).subscribe({
           next: (res) => {
             this.#submitRestore(res.ID ?? '');
           },
@@ -137,10 +137,10 @@ export class RestoreFlowState {
       (x) => x.Version === (_selectedOption && parseInt(_selectedOption))
     );
 
-    this.#dupServer
-      .postApiV1BackupByIdRestore({
-        id: id ?? '',
-        requestBody: {
+    defer(() =>
+      this.#dupServer.postApiV1BackupByIdRestore({
+        path: { id: id ?? '' },
+        body: {
           paths:
             selectFilesFormValue.filesToRestore
               ?.split('\0')
@@ -155,6 +155,7 @@ export class RestoreFlowState {
           connection_string_id: null,
         },
       })
+    )
       .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
         next: (res) => {
@@ -187,7 +188,7 @@ export class RestoreFlowState {
   }
 
   private loadFilesetsWithRetryv2(id: string, retriesLeft: number = 2): Observable<ListFilesetsResponseDto> {
-    return this.#dupServer.postApiV2BackupListFilesets({ requestBody: { BackupId: id } }).pipe(
+    return defer(() => this.#dupServer.postApiV2BackupListFilesets({ body: { BackupId: id } })).pipe(
       catchError((err) => {
         const statusCode = err?.error?.body?.StatusCode ?? err?.error?.requestBody?.StatusCode;
         const isEncryptedError = statusCode === 'EncryptedStorageNoPassphrase';
@@ -210,9 +211,11 @@ export class RestoreFlowState {
 
     if (this.#sysinfo.hasV2ListOperations()) {
       forkJoin([
-        this.#dupServer.getApiV1BackupById({
-          id,
-        }),
+        defer(() =>
+          this.#dupServer.getApiV1BackupById({
+            path: { id },
+          })
+        ),
         this.loadFilesetsWithRetryv2(id),
       ])
         .pipe(
@@ -280,14 +283,16 @@ export class RestoreFlowState {
         });
     } else {
       forkJoin([
-        this.#dupServer.getApiV1BackupById({
-          id,
-        }),
-        this.#dupServer
-          .getApiV1BackupByIdFilesets({
-            id,
+        defer(() =>
+          this.#dupServer.getApiV1BackupById({
+            path: { id },
           })
-          .pipe(retry(3)),
+        ),
+        defer(() =>
+          this.#dupServer.getApiV1BackupByIdFilesets({
+            path: { id },
+          })
+        ).pipe(retry(3)),
       ])
         .pipe(
           take(1),

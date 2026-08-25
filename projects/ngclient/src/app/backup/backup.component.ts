@@ -3,7 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { ShipStepper } from '@ship-ui/core/ship-stepper';
-import { take } from 'rxjs';
+import { defer, take } from 'rxjs';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { DuplicatiServer, GetBackupResultDto, SettingDto } from '../core/openapi';
 import { BackupsState } from '../core/states/backups.state';
@@ -47,8 +47,7 @@ export default class BackupComponent {
   });
 
   getDefaults() {
-    this.#dupServer
-      .getApiV1Backupdefaults()
+    defer(() => this.#dupServer.getApiV1Backupdefaults())
       .pipe(take(1))
       .subscribe({
         next: (res: any) => {
@@ -96,10 +95,11 @@ export default class BackupComponent {
 
       onBackup(backup.data);
     } else {
-      this.#dupServer
-        .getApiV1BackupById({
-          id,
+      defer(() =>
+        this.#dupServer.getApiV1BackupById({
+          path: { id },
         })
+      )
         .subscribe({
           next: onBackup,
         });
