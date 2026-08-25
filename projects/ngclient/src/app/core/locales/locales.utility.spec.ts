@@ -1,7 +1,23 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { DEFAULT_LOCALE, getLocale, LANGUAGES, mapLocale, resolveLocale } from './locales.utility';
 
+// Node's built-in experimental localStorage shadows the jsdom global, so we stub our own.
+function createLocalStorageStub() {
+  const store = new Map<string, string>();
+
+  return {
+    clear: () => store.clear(),
+    getItem: (key: string) => store.get(key) ?? null,
+    removeItem: (key: string) => store.delete(key),
+    setItem: (key: string, value: string) => store.set(key, String(value)),
+  };
+}
+
 describe('locale utilities', () => {
+  beforeEach(() => {
+    vi.stubGlobal('localStorage', createLocalStorageStub());
+  });
+
   afterEach(() => {
     localStorage.clear();
     vi.unstubAllGlobals();
