@@ -13,7 +13,6 @@ import {
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
@@ -24,7 +23,8 @@ import { ShipSelect } from '@ship-ui/core/ship-select';
 import { ShipSpinner } from '@ship-ui/core/ship-spinner';
 import { ShipToggle } from '@ship-ui/core/ship-toggle';
 import { ShipToggleCard } from '@ship-ui/core/ship-toggle-card';
-import { catchError, distinctUntilChanged, finalize, map, merge, of, switchMap } from 'rxjs';
+import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
+import { catchError, distinctUntilChanged, finalize, map, merge, of, switchMap, tap } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../core/components/confirm-dialog/confirm-dialog.component';
 import { FileDropTextareaComponent } from '../../../core/components/file-drop-textarea/file-drop-textarea.component';
 import FileTreeComponent from '../../../core/components/file-tree/file-tree.component';
@@ -124,37 +124,9 @@ export class SingleDestinationComponent {
   isLoadingRestoreBackupIdOptions = signal(false);
   isRestoreFlow = computed(() => !this.useBackupState());
   reloadTrigger = signal(false);
-  hasLoadedBackupIdOptions = signal(false);
-  restoreBackupIdOptions = toSignal(
-    merge(
-      toObservable(this.targetUrl).pipe(
-        distinctUntilChanged(),
-        map((url) => ({ url, isReload: false }))
-      ),
-      toObservable(this.reloadTrigger).pipe(map(() => ({ url: this.targetUrl(), isReload: true })))
-    ).pipe(
-      switchMap(({ url, isReload }) => {
-        const isValidRequest = url && url.startsWith('duplicati://') && this.hasStorageApiKey() && this.isRestoreFlow();
-        const shouldLoad = isValidRequest && (isReload || !this.hasLoadedBackupIdOptions());
-        if (shouldLoad) {
-          this.hasLoadedBackupIdOptions.set(true);
-          this.isLoadingRestoreBackupIdOptions.set(true);
-          return this.#webmoduleService.getDuplicatiStorageBackups(url).pipe(
-            catchError((err) => {
-              console.error('Error loading Duplicati storage backups', err);
-              return of([] as string[]);
-            }),
-            finalize(() => this.isLoadingRestoreBackupIdOptions.set(false))
-          );
-        } else {
-          return of<string[]>([]);
-        }
-      })
-    ),
-    {
-      initialValue: [] as string[],
-    }
-  );
+  hasAttemptedToLoadBackupIdOptions = signal('');
+  loadedBackupIdOptions = signal<string[]>([]);
+
   isConnectedToConsole = computed(() => {
     return this.#remoteControlState.state() === 'connected';
   });
@@ -166,6 +138,67 @@ export class SingleDestinationComponent {
       form.advanced['duplicati-auth-apiid']
     );
   });
+
+  hasManualStorageOptions = computed(() => {
+    const form = this.destinationForm();
+    return form.advanced['duplicati-auth-apiid'] && form.advanced['duplicati-auth-apikey'];
+  });
+
+  #hasStorageCredentials = computed(() => this.hasStorageApiKey() || this.hasManualStorageOptions());
+
+  restoreBackupIdOptions = toSignal(
+    merge(
+      toObservable(this.targetUrl).pipe(
+        distinctUntilChanged(),
+        map((url) => ({ url, isReload: false }))
+      ),
+      toObservable(this.reloadTrigger).pipe(map(() => ({ url: this.targetUrl(), isReload: true }))),
+      toObservable(this.#hasStorageCredentials).pipe(map(() => ({ url: this.targetUrl(), isReload: false })))
+    ).pipe(
+      switchMap(({ url, isReload }) => {
+        const hasCredentials = this.hasStorageApiKey() || this.hasManualStorageOptions();
+        const isValidRequest = url && url.startsWith('duplicati://') && hasCredentials && this.isRestoreFlow();
+        const loadKey = this.#createLoadKey(url);
+        const shouldLoad = isValidRequest && (isReload || loadKey != this.hasAttemptedToLoadBackupIdOptions());
+        if (shouldLoad) {
+          this.hasAttemptedToLoadBackupIdOptions.set(loadKey);
+          this.isLoadingRestoreBackupIdOptions.set(true);
+          return this.#webmoduleService.getDuplicatiStorageBackups(url).pipe(
+            catchError((err) => {
+              console.error('Error loading Duplicati storage backups', err);
+              return of([] as string[]);
+            }),
+            tap((res) => {
+              this.loadedBackupIdOptions.set(res);
+            }),
+            finalize(() => this.isLoadingRestoreBackupIdOptions.set(false))
+          );
+        } else {
+          return of<string[]>(this.loadedBackupIdOptions());
+        }
+      })
+    ),
+    {
+      initialValue: [] as string[],
+    }
+  );
+
+  #createLoadKey(url: string | null): string {
+    if (!url) return '';
+
+    const queryIndex = url.indexOf('?');
+    if (queryIndex === -1) return url;
+
+    const base = url.substring(0, queryIndex);
+    const params = new URLSearchParams(url.substring(queryIndex + 1));
+    const relevant = ['duplicati-auth-apiid', 'duplicati-auth-apikey', 'duplicati-endpoint'];
+    const kept = relevant
+      .filter((key) => params.has(key))
+      .map((key) => `${key}=${params.get(key)}`)
+      .join('&');
+
+    return kept ? `${base}?${kept}` : base;
+  }
 
   isAuthenticatingFilen = signal(false);
   hasFilenApiKey = computed(() => {

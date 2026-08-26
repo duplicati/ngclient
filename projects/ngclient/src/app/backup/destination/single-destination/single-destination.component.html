@@ -569,7 +569,7 @@
           </label>
         </app-file-drop-textarea>
       } @else if (item.formView.type === 'DuplicatiBackupId') {
-        @if (isConnectedToConsole() && hasStorageApiKey()) {
+        @if (hasManualStorageOptions() || (isConnectedToConsole() && hasStorageApiKey())) {
           <div class="duplicati-backup-id">
             @if (isRestoreFlow()) {
               @if (isLoadingRestoreBackupIdOptions()) {
