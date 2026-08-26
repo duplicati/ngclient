@@ -72,6 +72,15 @@
           <input type="text" id="path" formControlName="restoreFromPath" />
         </app-file-tree>
       }
+
+      @if (canCheckPermissions()) {
+        <div class="check-permissions">
+          <button shButton type="button" class="raised" (click)="checkPermissions()" i18n>
+            <sh-icon>shield-check</sh-icon>
+            Check permissions
+          </button>
+        </div>
+      }
     } @else {
       <sh-radio class="raised primary" i18n>
         Original location

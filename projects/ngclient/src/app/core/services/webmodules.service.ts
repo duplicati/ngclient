@@ -68,6 +68,18 @@ export type Office365Counts = Omit<Office365RawCounts, 'sites'> & {
   sites: Office365SiteCounts;
 };
 
+/** The custom-remote modules that support the `CheckPermissions` operation. */
+export type CustomRemoteModule = 'office365' | 'googleworkspace';
+
+/** A single permission status entry returned by the custom-remote `CheckPermissions` operation. */
+export type CustomRemotePermissionStatus = {
+  name: string;
+  description: string;
+  requiredForBackup: boolean;
+  requiredForRestore: boolean;
+  enabled: boolean;
+};
+
 export function isOffice365LegacySiteCounts(sites: Office365SiteCountsResponse): sites is Office365LegacySiteCounts {
   return !('personalLicensedUser' in sites);
 }
@@ -310,6 +322,43 @@ export class WebModulesService {
             sites: normalizeOffice365SiteCounts(raw.sites),
           };
         })
+      );
+  }
+
+  /**
+   * Checks the Microsoft 365 permissions granted to the app registration
+   * for the given destination URL, indicating which are required for
+   * backup and/or restore and whether they are currently enabled.
+   */
+  getOffice365Permissions(url: string, sourcePrefix: string, backupId: string | null) {
+    return this.#getCustomRemotePermissions('office365', url, sourcePrefix, backupId);
+  }
+
+  /**
+   * Checks the Google Workspace permissions granted to the service account
+   * for the given destination URL, indicating which are required for
+   * backup and/or restore and whether they are currently enabled.
+   */
+  getGsuitePermissions(url: string, sourcePrefix: string, backupId: string | null) {
+    return this.#getCustomRemotePermissions('googleworkspace', url, sourcePrefix, backupId);
+  }
+
+  #getCustomRemotePermissions(module: CustomRemoteModule, url: string, sourcePrefix: string, backupId: string | null) {
+    return this.#http
+      .post<WebModuleOutputDto>(
+        `${OpenAPI.BASE}/api/v1/webmodule/${module}`,
+        JSON.stringify({
+          'backup-id': backupId ?? '',
+          'source-prefix': sourcePrefix,
+          operation: 'CheckPermissions',
+          url,
+        }),
+        { headers: { 'Content-Type': 'application/json' } }
+      )
+      .pipe(
+        map((x) => this.#defaultMapResultObjToArray(x)),
+        map((res) => res.find((r) => r.key === 'permissions')?.value as string),
+        map((permissions) => JSON.parse(permissions) as CustomRemotePermissionStatus[])
       );
   }
 }

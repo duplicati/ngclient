@@ -1,0 +1,59 @@
+<header>
+  @if (data()?.module === 'googleworkspace') {
+    <h3 class="title-30" i18n>Google Workspace permissions</h3>
+  } @else {
+    <h3 class="title-30" i18n>Microsoft 365 permissions</h3>
+  }
+</header>
+
+<section content>
+  @switch (status()) {
+    @case ('loading') {
+      <div class="state loading">
+        <sh-icon>spinner</sh-icon>
+        <span i18n>Loading permissions…</span>
+      </div>
+    }
+    @case ('error') {
+      <div class="state error">
+        <sh-icon>warning</sh-icon>
+        <span>{{ error() }}</span>
+      </div>
+    }
+    @case ('success') {
+      @let result = visiblePermissions()!;
+
+      <table class="permissions">
+        <thead>
+          <tr>
+            <th i18n>Permission</th>
+            <th class="center" i18n>Enabled</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (permission of result; track permission.name) {
+            <tr>
+              <td>
+                <div class="name">{{ permission.name }}</div>
+                <div class="description">{{ permission.description }}</div>
+              </td>
+              <td class="center">
+                <sh-icon [class.enabled]="permission.enabled" [class.disabled]="!permission.enabled">
+                  {{ permission.enabled ? 'check-circle' : 'x-circle' }}
+                </sh-icon>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="2" class="empty" i18n>No permissions are required for this operation.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  }
+</section>
+
+<footer footer>
+  <button shButton type="button" (click)="closed.emit()" i18n>Close</button>
+</footer>
