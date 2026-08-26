@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
@@ -21,7 +22,7 @@ export type CustomRemotePermissionsDialogData = {
 
 @Component({
   selector: 'app-custom-remote-permissions-dialog',
-  imports: [ShipButton, ShipIcon],
+  imports: [NgTemplateOutlet, ShipButton, ShipIcon],
   templateUrl: './custom-remote-permissions-dialog.html',
   styleUrl: './custom-remote-permissions-dialog.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -43,6 +44,14 @@ export class CustomRemotePermissionsDialog {
 
     const mode = this.data()?.mode ?? 'backup';
     return permissions.filter((p) => (mode === 'backup' ? p.requiredForBackup : p.requiredForRestore));
+  });
+
+  /** Permissions that are not required for either operation, listed under a separate header. */
+  additionalPermissions = computed(() => {
+    const permissions = this.permissions();
+    if (!permissions) return null;
+
+    return permissions.filter((p) => !p.requiredForBackup && !p.requiredForRestore);
   });
 
   #loadEffect = effect(() => {

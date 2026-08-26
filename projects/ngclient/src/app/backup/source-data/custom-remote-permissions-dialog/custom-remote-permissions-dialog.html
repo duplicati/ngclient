@@ -22,34 +22,44 @@
     }
     @case ('success') {
       @let result = visiblePermissions()!;
+      @let additional = additionalPermissions()!;
 
-      <table class="permissions">
-        <thead>
-          <tr>
-            <th i18n>Permission</th>
-            <th class="center" i18n>Enabled</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (permission of result; track permission.name) {
+      <ng-template #permissionsTable let-items="items">
+        <table class="permissions">
+          <thead>
             <tr>
-              <td>
-                <div class="name">{{ permission.name }}</div>
-                <div class="description">{{ permission.description }}</div>
-              </td>
-              <td class="center">
-                <sh-icon [class.enabled]="permission.enabled" [class.disabled]="!permission.enabled">
-                  {{ permission.enabled ? 'check-circle' : 'x-circle' }}
-                </sh-icon>
-              </td>
+              <th i18n>Permission</th>
+              <th class="center" i18n>Enabled</th>
             </tr>
-          } @empty {
-            <tr>
-              <td colspan="2" class="empty" i18n>No permissions are required for this operation.</td>
-            </tr>
-          }
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            @for (permission of items; track permission.name) {
+              <tr>
+                <td>
+                  <div class="name">{{ permission.name }}</div>
+                  <div class="description">{{ permission.description }}</div>
+                </td>
+                <td class="center">
+                  <sh-icon [class.enabled]="permission.enabled" [class.disabled]="!permission.enabled">
+                    {{ permission.enabled ? 'check-circle' : 'x-circle' }}
+                  </sh-icon>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="2" class="empty" i18n>No permissions are required for this operation.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </ng-template>
+
+      <ng-container *ngTemplateOutlet="permissionsTable; context: { items: result }" />
+
+      @if (additional.length > 0) {
+        <h4 i18n>Additional permissions</h4>
+        <ng-container *ngTemplateOutlet="permissionsTable; context: { items: additional }" />
+      }
     }
   }
 </section>
