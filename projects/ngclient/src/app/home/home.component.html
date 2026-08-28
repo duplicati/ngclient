@@ -480,7 +480,7 @@
             </button>
           }
 
-          @if (hasDeleteVersions() || hasBrokenFiles()) {
+          @if (hasDeleteVersions() || hasBrokenFiles() || hasPurgeFiles()) {
             <sh-divider />
 
             <h3 title i18n>Cleanup</h3>
@@ -489,6 +489,13 @@
               <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'delete-versions']" i18n>
                 <sh-icon>trash</sh-icon>
                 Delete versions
+              </button>
+            }
+
+            @if (hasPurgeFiles()) {
+              <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'purge-files']" i18n>
+                <sh-icon>eraser</sh-icon>
+                Remove files
               </button>
             }
 

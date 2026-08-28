@@ -598,6 +598,12 @@ export type PurgeBrokenFilesRequestDto = {
   BackupId: string | null;
 };
 
+export type PurgeFilesRequestDto = {
+  BackupId: string | null;
+  Filters: Array<string> | null;
+  Versions?: Array<number> | null;
+};
+
 export type RefreshTokenInputDto = {
   Nonce?: string | null;
 };
@@ -1544,6 +1550,12 @@ export type PostApiV2BackupSearchData = {
 };
 
 export type PostApiV2BackupSearchResponse = SearchEntriesResponseDto;
+
+export type PostApiV2BackupPurgeFilesData = {
+  requestBody: PurgeFilesRequestDto;
+};
+
+export type PostApiV2BackupPurgeFilesResponse = TaskStartedDto;
 
 export type PostApiV2BackupSetVersionLabelData = {
   requestBody: SetVersionLabelRequestDto;

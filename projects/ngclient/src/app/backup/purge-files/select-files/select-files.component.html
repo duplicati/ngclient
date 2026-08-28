@@ -1,0 +1,111 @@
+@if (isLoadingVersions()) {
+  <div class="loading-state">
+    <sh-progress-bar class="primary indeterminate"></sh-progress-bar>
+    <p i18n>Fetching versions from destination...</p>
+  </div>
+} @else if (versions().length === 0) {
+  <div class="empty-state">
+    <p i18n>No versions found for this backup.</p>
+  </div>
+} @else {
+  <div class="version-picker">
+    <sh-select [options]="versions()" [isClearable]="false" value="Version">
+      <label for="version" i18n>Version</label>
+      <input
+        type="text"
+        id="version"
+        i18n-placeholder
+        placeholder="Select a version..."
+        [ngModel]="selectedVersion()"
+        (ngModelChange)="onVersionChange($event)"
+        [ngModelOptions]="{ standalone: true }" />
+
+      <ng-template let-option>
+        <div class="custom-option">
+          {{ option.Version }}: {{ option.Time | date: 'medium' }}
+          @if (option.FileSizes) {
+            ({{ option.FileSizes | bytes }})
+          }
+          @if (option.Label) {
+            <br />
+            <span class="label">{{ option.Label }}</span>
+          }
+        </div>
+      </ng-template>
+    </sh-select>
+  </div>
+
+  @if (loadingRootPath()) {
+    <sh-progress-bar class="indeterminate primary"></sh-progress-bar>
+  }
+
+  @if (showFileTree()) {
+    @if (canSearch()) {
+      <div class="search-container">
+        <sh-form-field>
+          <label for="search" i18n>Search files</label>
+          <input
+            type="text"
+            id="search"
+            [(ngModel)]="searchQuery"
+            [ngModelOptions]="{ standalone: true }"
+            (keydown.enter)="$event.preventDefault(); performSearch()"
+            i18n-placeholder
+            placeholder="Enter search term..." />
+        </sh-form-field>
+        <button
+          shButton
+          type="button"
+          class="small"
+          (click)="performSearch()"
+          [disabled]="isSearching() || !searchQuery().trim()">
+          @if (isSearching()) {
+            <sh-icon class="spinner">spinner</sh-icon>
+          } @else {
+            <sh-icon>magnifying-glass</sh-icon>
+          }
+          <span i18n>Search</span>
+        </button>
+        @if (isSearchMode()) {
+          <button shButton type="button" class="small secondary" (click)="clearSearch()">
+            <sh-icon>x-circle</sh-icon>
+            <span i18n>Clear</span>
+          </button>
+        }
+      </div>
+      @if (isSearchMode() && !isSearching()) {
+        <div class="search-results-info">
+          @if (searchResults().length === 0) {
+            <span i18n>0 results found</span>
+          } @else {
+            <span i18n>Found {{ searchResults().length }} result(s)</span>
+          }
+        </div>
+      }
+    }
+
+    <app-file-tree
+      class="fill"
+      [rootPaths]="rootPaths()"
+      [backupSettings]="backupSettings()"
+      [multiSelect]="true"
+      [showFiles]="true"
+      [searchMode]="isSearchMode()"
+      [searchResults]="searchResults()">
+      <label for="path" i18n>Path</label>
+      <input type="text" id="path" [(ngModel)]="selectedPaths" [ngModelOptions]="{ standalone: true }" />
+    </app-file-tree>
+  }
+}
+
+<div class="form-actions">
+  <button shButton type="button" [routerLink]="['/']" i18n>
+    <sh-icon>arrow-left</sh-icon>
+    Exit
+  </button>
+
+  <button shButton class="raised primary" type="button" (click)="next()" [disabled]="selectedPathsArray().length === 0" i18n>
+    <sh-icon>arrow-right</sh-icon>
+    Continue
+  </button>
+</div>

@@ -1,0 +1,78 @@
+<sh-alert color="primary" i18n>
+  When removing files from a backup, Duplicati will add a new backup version without the removed files, and then remove
+  the existing one. After this, a compaction will remove any data that is no longer needed. This process cannot be
+  reverted.
+</sh-alert>
+
+<div class="version-scope">
+  <p i18n>Choose which versions to remove the selected files from:</p>
+
+  <div class="radios">
+    <sh-radio
+      class="primary raised"
+      [checked]="versionScope() === 'all'"
+      (checkedChange)="versionScope.set('all')"
+      i18n>
+      All versions
+    </sh-radio>
+
+    <sh-radio
+      class="primary raised"
+      [checked]="versionScope() === 'current'"
+      (checkedChange)="versionScope.set('current')"
+      i18n>
+      Active version ({{ selectedVersionItem()?.Time | date: 'medium' }})
+    </sh-radio>
+
+    <sh-radio
+      class="primary raised"
+      [checked]="versionScope() === 'specific'"
+      (checkedChange)="versionScope.set('specific')"
+      i18n>
+      Specific versions
+    </sh-radio>
+  </div>
+
+  @if (versionScope() === 'specific') {
+    <div class="versions-list">
+      @for (version of versions(); track version.Version) {
+        <sh-checkbox
+          class="primary raised"
+          [checked]="isVersionSelected(version.Version)"
+          (checkedChange)="toggleVersion(version.Version, $event)">
+          <span class="version">
+            {{ version.Version }}: {{ version.Time | date: 'medium' }}
+            @if (version.FileSizes) {
+              ({{ version.FileSizes | bytes }})
+            }
+            @if (version.Label) {
+              <span class="label">{{ version.Label }}</span>
+            }
+          </span>
+        </sh-checkbox>
+      }
+    </div>
+  }
+</div>
+
+<div class="form-actions">
+  <button shButton type="button" (click)="goBack()" [disabled]="isPurging()" i18n>
+    <sh-icon>arrow-left</sh-icon>
+    Go back
+  </button>
+
+  <button
+    shButton
+    class="raised error"
+    [class.loading]="isPurging()"
+    (click)="purgeFiles()"
+    [disabled]="
+      isPurging() ||
+      selectedPathsArray().length === 0 ||
+      (versionScope() === 'specific' && specificVersions().length === 0)
+    "
+    i18n>
+    Remove
+    {selectedPathsArray().length, plural, =1 {1 file} other {{{selectedPathsArray().length}} files}}
+  </button>
+</div>

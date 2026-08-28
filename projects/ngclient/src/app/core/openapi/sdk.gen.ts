@@ -173,6 +173,8 @@ import type {
   PostApiV2BackupListVersionsResponse,
   PostApiV2BackupPurgeBrokenFilesData,
   PostApiV2BackupPurgeBrokenFilesResponse,
+  PostApiV2BackupPurgeFilesData,
+  PostApiV2BackupPurgeFilesResponse,
   PostApiV2BackupSearchData,
   PostApiV2BackupSearchResponse,
   PostApiV2BackupSetVersionLabelData,
@@ -1965,6 +1967,21 @@ export class DuplicatiServer {
     return __request(OpenAPI, this.http, {
       method: 'POST',
       url: '/api/v2/backup/search',
+      body: data.requestBody,
+      mediaType: 'application/json',
+    });
+  }
+
+  /**
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns TaskStartedDto OK
+   * @throws ApiError
+   */
+  public postApiV2BackupPurgeFiles(data: PostApiV2BackupPurgeFilesData): Observable<PostApiV2BackupPurgeFilesResponse> {
+    return __request(OpenAPI, this.http, {
+      method: 'POST',
+      url: '/api/v2/backup/purge-files',
       body: data.requestBody,
       mediaType: 'application/json',
     });

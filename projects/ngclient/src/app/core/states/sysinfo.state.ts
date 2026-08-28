@@ -112,6 +112,11 @@ export class SysinfoState {
     );
   });
 
+  hasV2PurgeFiles = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v2:backup:purge-files');
+  });
+
   hasV2TestOperations = computed(() => {
     const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
     return apiExtensions.includes('v2:destination:test');
