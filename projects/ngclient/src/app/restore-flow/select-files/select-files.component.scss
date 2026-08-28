@@ -1,14 +1,19 @@
 @use '@ship-ui/core/styles/helpers' as *;
 
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
   margin-top: p2r(40);
+  flex: 1 0;
+  overflow: hidden;
 }
 
 form {
   display: flex;
   flex-direction: column;
   gap: p2r(24);
+  flex: 1 0;
+  overflow: hidden;
 }
 
 .form-actions {

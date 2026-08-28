@@ -15,6 +15,7 @@ import { RestoreFlowState } from './restore-flow.state';
   providers: [RestoreFlowState, BackupState],
   host: {
     '[class.full-width]': 'isFullWidthPage()',
+    '[class.fill-height]': 'isSelectFilesPage()',
   },
 })
 export default class RestoreFlowComponent {
@@ -29,6 +30,7 @@ export default class RestoreFlowComponent {
   backupId = this.#restoreFlowState.backupId;
   isFileRestore = this.#restoreFlowState.isFileRestore;
   isFullWidthPage = signal(false);
+  isSelectFilesPage = signal(false);
 
   paramsChanged = effect(() => {
     const childRouteUrl = this.#childRouteUrlSignal();
@@ -37,6 +39,7 @@ export default class RestoreFlowComponent {
     const isSelectFilesPage = !!childRouteUrl?.find((x) => x.path === 'select-files');
     const isProgressPage = !!childRouteUrl?.find((x) => x.path === 'progress');
 
+    this.isSelectFilesPage.set(isSelectFilesPage);
     this.isFullWidthPage.set(isProgressPage || isSelectFilesPage);
     this.#restoreFlowState.init(backupId, isFileRestorePage);
   });
@@ -46,6 +49,7 @@ export default class RestoreFlowComponent {
       if (event instanceof NavigationEnd) {
         const newUrl = event.urlAfterRedirects;
 
+        this.isSelectFilesPage.set(newUrl.includes('select-files'));
         this.isFullWidthPage.set(newUrl.includes('progress') || newUrl.includes('select-files'));
       }
     });
