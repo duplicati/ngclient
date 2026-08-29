@@ -1,7 +1,7 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { finalize, map, of, switchMap } from 'rxjs';
-import { STATUS_STATES } from '../../constants/status-states.constant';
+import { resolveStatusText, STATUS_STATES } from '../../constants/status-states.constant';
 import {
   DuplicatiServer,
   GetApiV1ProgressstateResponse,
@@ -292,7 +292,7 @@ export class StatusBarState {
     let text = 'Running …';
 
     if (status.task && status) {
-      text = status.Phase ? (STATUS_STATES[status.Phase] ?? status.Phase) : 'Running …';
+      text = resolveStatusText(status.Phase, 'Running …');
 
       // If there is nothing to process, just return the base text
       // This happens during the initial phases of a backup/restore
