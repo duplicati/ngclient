@@ -108,7 +108,9 @@ export default class OptionsComponent {
 
   canCheckPermissions = computed(() => {
     const type = this.extendedDataType();
-    return (type === 'o365' || type === 'gsuite') && this.isCustomRemoteRestore() && this.customDestinationUrl() !== null;
+    return (
+      (type === 'o365' || type === 'gsuite') && this.isCustomRemoteRestore() && this.customDestinationUrl() !== null
+    );
   });
 
   checkPermissions() {
@@ -181,7 +183,9 @@ export default class OptionsComponent {
   }
 
   submit() {
-    const files = this.#restoreFlowState.selectFilesFormSignal()?.filesToRestore ?? [];
+    const files = (this.#restoreFlowState.selectFilesFormSignal()?.filesToRestore ?? '')
+      .split('\0')
+      .filter((x) => x !== '');
     if (files.length > 0 && this.optionsFormSignal()?.restoreFrom == 'original') {
       const sourceDirSep = files[0].includes('/') ? '/' : '\\';
       if (sourceDirSep !== this.#sysinfoState.systemInfo()?.DirectorySeparator) {
