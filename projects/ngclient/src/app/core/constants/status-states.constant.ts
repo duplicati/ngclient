@@ -59,6 +59,7 @@ export const STATUS_STATES: Record<string, string> = {
   Repair_Running: $localize`Repairing database …`,
   Verify_Running: $localize`Verifying files …`,
   BugReport_Running: $localize`Creating bug report …`,
+  RunScript_Running: $localize`Running script …`,
   Delete_Listing: $localize`Listing remote files …`,
   Delete_Deleting: $localize`Deleting remote files …`,
   PurgeFiles_Begin: $localize`Listing remote files for purge …`,
@@ -73,3 +74,6 @@ export const STATUS_STATES: Record<string, string> = {
   Sync_Complete: $localize`Sync complete!`,
   Error: $localize`Error!`,
 };
+
+export const resolveStatusText = (phase: string | null | undefined, fallback = '') =>
+  phase ? (STATUS_STATES[phase] ?? phase) : fallback;
