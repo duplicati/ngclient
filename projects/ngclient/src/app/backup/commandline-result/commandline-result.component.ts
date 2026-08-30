@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { defer } from 'rxjs';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
@@ -48,13 +49,15 @@ export default class CommandlineResultComponent {
   });
 
   interval = setInterval(() => {
-    this.#dupServer
-      .getApiV1CommandlineByRunid({
-        runid: this.runId()!,
-        offset: this.offset(),
-        pagesize: 100,
+    defer(() =>
+      this.#dupServer.getApiV1CommandlineByRunid({
+        path: { runid: this.runId()! },
+        query: {
+          offset: this.offset(),
+          pagesize: 100,
+        },
       })
-      .subscribe((response) => {
+    ).subscribe((response) => {
         this.offset.set(response.Count!);
         this.evalStatus(response);
         this.messageLog.update((y) => [...y, ...response.Items!]);
@@ -80,7 +83,7 @@ export default class CommandlineResultComponent {
   }
 
   abort() {
-    this.#dupServer.postApiV1CommandlineByRunidAbort({ runid: this.runId() }).subscribe({
+    defer(() => this.#dupServer.postApiV1CommandlineByRunidAbort({ path: { runid: this.runId() } })).subscribe({
       next: (res) => {
         this.status.set('aborted');
         clearInterval(this.interval);

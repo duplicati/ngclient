@@ -3,7 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipDialog } from '@ship-ui/core/ship-dialog';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
-import { map } from 'rxjs';
+import { defer, map } from 'rxjs';
 import { DuplicatiServer, LicenseDto } from '../../core/openapi';
 
 type Data = {
@@ -25,7 +25,7 @@ export default class LibrariesComponent {
   #dupServer = inject(DuplicatiServer);
 
   licenses = toSignal(
-    this.#dupServer.getApiV1Licenses().pipe(
+    defer(() => this.#dupServer.getApiV1Licenses()).pipe(
       map((x) => {
         return x.map((y) => {
           return {

@@ -5,7 +5,7 @@ import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
-import { finalize } from 'rxjs';
+import { defer, finalize } from 'rxjs';
 import { DuplicatiServer } from '../../core/openapi';
 
 @Component({
@@ -28,12 +28,13 @@ export class ChangePassphraseAlertDialogComponent {
 
     this.isUpdating.set(true);
 
-    this.#dupServer
-      .patchApiV1Serversettings({
-        requestBody: {
+    defer(() =>
+      this.#dupServer.patchApiV1Serversettings({
+        body: {
           'server-passphrase': this.passphrase(),
         },
       })
+    )
       .pipe(finalize(() => this.isUpdating.set(false)))
       .subscribe({
         next: () => this.closed.emit(),
@@ -43,12 +44,13 @@ export class ChangePassphraseAlertDialogComponent {
   cancel() {
     this.isUpdating.set(true);
 
-    this.#dupServer
-      .patchApiV1Serversettings({
-        requestBody: {
+    defer(() =>
+      this.#dupServer.patchApiV1Serversettings({
+        body: {
           'has-asked-for-password-change': 'True',
         },
       })
+    )
       .pipe(finalize(() => this.isUpdating.set(false)))
       .subscribe({
         next: () => this.closed.emit(),

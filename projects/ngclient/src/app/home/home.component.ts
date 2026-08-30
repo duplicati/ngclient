@@ -12,7 +12,7 @@ import { ShipMenu } from '@ship-ui/core/ship-menu';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { ShipSort, ShipTable } from '@ship-ui/core/ship-table';
 import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
-import { finalize } from 'rxjs';
+import { defer, finalize } from 'rxjs';
 import { getBackendIcon, getBackendType } from '../backup/destination/destination.config-utilities';
 import { BackupProgressComponent } from '../core/components/backup-progress/backup-progress.component';
 import { PauseDialogComponent } from '../core/components/status-bar/pause-dialog/pause-dialog.component';
@@ -160,13 +160,13 @@ export default class HomeComponent {
     const taskId = this.runningTask();
     if (!taskId) return;
     this.#taskStopRequested.set(taskId);
-    this.#dupServer.postApiV1TaskByTaskidStop({ taskid: taskId }).subscribe();
+    defer(() => this.#dupServer.postApiV1TaskByTaskidStop({ path: { taskid: taskId } })).subscribe();
   }
 
   abort() {
     const taskId = this.runningTask();
     if (!taskId) return;
-    this.#dupServer.postApiV1TaskByTaskidAbort({ taskid: taskId }).subscribe();
+    defer(() => this.#dupServer.postApiV1TaskByTaskidAbort({ path: { taskid: taskId } })).subscribe();
   }
 
   getBackupVersionCount(backup: BackupAndScheduleOutputDto | null): number {
@@ -175,8 +175,7 @@ export default class HomeComponent {
 
   verifyFiles(id: string) {
     this.loadingId.set(id);
-    this.#dupServer
-      .postApiV1BackupByIdVerify({ id })
+    defer(() => this.#dupServer.postApiV1BackupByIdVerify({ path: { id } }))
       .pipe(finalize(() => this.loadingId.set(null)))
       .subscribe({
         next: () => {

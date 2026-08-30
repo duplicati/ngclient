@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { defer } from 'rxjs';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
@@ -74,13 +75,13 @@ export default class StatusBarComponent {
     const taskId = this.runningTask();
     if (!taskId) return;
     this.#taskStopRequested.set(taskId);
-    this.#dupServer.postApiV1TaskByTaskidStop({ taskid: taskId }).subscribe();
+    defer(() => this.#dupServer.postApiV1TaskByTaskidStop({ path: { taskid: taskId } })).subscribe();
   }
 
   abort() {
     const taskId = this.runningTask();
     if (!taskId) return;
-    this.#dupServer.postApiV1TaskByTaskidAbort({ taskid: taskId }).subscribe();
+    defer(() => this.#dupServer.postApiV1TaskByTaskidAbort({ path: { taskid: taskId } })).subscribe();
   }
 
   ngAfterViewInit() {

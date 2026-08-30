@@ -8,11 +8,11 @@ import {
   GetApiV1ServersettingsResponse,
   GetTaskStateDto,
   IProgressEventData,
-  OpenAPI,
   RemoteControlStatusOutput,
   ServerStatusDto,
 } from '../openapi';
 import { AppAuthState } from '../states/app-auth.state';
+import { getApiBase } from '../utils/proxy-config.util';
 import { SysinfoState } from '../states/sysinfo.state';
 
 type ConnectionStatus = 'connected' | 'disconnected' | 'connecting' | 'authenticating';
@@ -143,7 +143,7 @@ export class ServerStatusWebSocketService {
     }
 
     const hostname = window.location.hostname;
-    const prefix = OpenAPI.BASE || '';
+    const prefix = getApiBase();
     const xsrfQuery = this.#auth.xsrfQueryParam();
     const url = this.#sysinfo.hasWebSocketAuth()
       ? `${protocol}//${hostname}${port}${prefix}/notifications${xsrfQuery ? `?${xsrfQuery}` : ''}`
@@ -197,7 +197,7 @@ export class ServerStatusWebSocketService {
                   this.reconnect();
                   this.#isHandlingAuthRefresh = false;
                 },
-                error: (error) => {
+                error: (error: unknown) => {
                   this.#isHandlingAuthRefresh = false;
                   console.error('Error refreshing token after WebSocket auth failed', error);
                 },
@@ -271,7 +271,7 @@ export class ServerStatusWebSocketService {
             this.reconnect();
             this.#isHandlingAuthRefresh = false;
           },
-          error: (error) => {
+          error: (error: unknown) => {
             console.error('Error refreshing token', error);
             this.#isHandlingAuthRefresh = false;
             // Refresh failed — fall back to timed reconnect

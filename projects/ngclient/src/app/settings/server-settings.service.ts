@@ -1,6 +1,6 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { catchError } from 'rxjs';
+import { catchError, defer } from 'rxjs';
 import { DuplicatiServer, GetApiV1ServersettingsResponse } from '../core/openapi';
 import { ServerStateService } from '../core/services/server-state.service';
 import { ServerStatusWebSocketService } from '../core/services/server-status-websocket.service';
@@ -31,7 +31,7 @@ export class ServerSettingsService {
   #sysinfo = inject(SysinfoState);
 
   // This causes an extra request on startup, before we get the websocket connection ready
-  #initialServerSettings = toSignal(this.#dupServer.getApiV1Serversettings());
+  #initialServerSettings = toSignal(defer(() => this.#dupServer.getApiV1Serversettings()));
   #serverSettings = signal<GetApiV1ServersettingsResponse | undefined>(undefined);
 
   // We only write 'True' or 'False' but other code may write different versions
@@ -88,7 +88,7 @@ export class ServerSettingsService {
     // If we have websocket connection, do not refresh via REST
     if (this.#serverState.getConnectionMethod() === 'websocket') return;
 
-    this.#dupServer.getApiV1Serversettings().subscribe({
+    defer(() => this.#dupServer.getApiV1Serversettings()).subscribe({
       next: (res) => {
         this.#serverSettings.set(res);
       },
@@ -116,7 +116,7 @@ export class ServerSettingsService {
       this.#patchObjectWithSettings(this.serverSettings() ?? <GetApiV1ServersettingsResponse>{}, settings)
     );
 
-    return this.#dupServer.patchApiV1Serversettings({ requestBody: settings }).pipe(
+    return defer(() => this.#dupServer.patchApiV1Serversettings({ body: settings })).pipe(
       catchError((err) => {
         // Revert on error
         this.#serverSettings.set(prevsettings);

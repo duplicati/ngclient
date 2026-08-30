@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { finalize } from 'rxjs';
+import { defer, finalize } from 'rxjs';
 import {
   ConnectionStringDto,
   ConnectionStrings,
@@ -18,7 +18,7 @@ export class ConnectionStringsState {
   isSaving = signal(false);
 
   resourceDestinations = rxResource({
-    stream: () => this.#connectionStrings.getApiV2ConnectionStrings(),
+    stream: () => defer(() => this.#connectionStrings.getApiV2ConnectionStrings()),
   });
 
   destinations = revertableSignal(() => {
@@ -33,13 +33,14 @@ export class ConnectionStringsState {
     this.isSaving.set(true);
 
     data.Description = '';
-    const obs =
+    const obs = defer(() =>
       selected === 'new'
-        ? this.#connectionStrings.postApiV2ConnectionStrings({ requestBody: data as CreateConnectionStringDto })
+        ? this.#connectionStrings.postApiV2ConnectionStrings({ body: data as CreateConnectionStringDto })
         : this.#connectionStrings.putApiV2ConnectionStringById({
-            id: selected.ID,
-            requestBody: data as UpdateConnectionStringDto,
-          });
+            path: { id: selected.ID },
+            body: data as UpdateConnectionStringDto,
+          })
+    );
 
     return obs.pipe(
       finalize(() => {
@@ -49,11 +50,11 @@ export class ConnectionStringsState {
   }
 
   getById(id: number) {
-    return this.#connectionStrings.getApiV2ConnectionStringById({ id });
+    return defer(() => this.#connectionStrings.getApiV2ConnectionStringById({ path: { id } }));
   }
 
   delete(id: number) {
-    return this.#connectionStrings.deleteApiV2ConnectionStringById({ id });
+    return defer(() => this.#connectionStrings.deleteApiV2ConnectionStringById({ path: { id } }));
   }
 
   reload() {
@@ -61,9 +62,11 @@ export class ConnectionStringsState {
   }
 
   updateBackups(id: number, backupIds: string[]) {
-    return this.#connectionStrings.postApiV2ConnectionStringByIdUpdateBackups({
-      id,
-      requestBody: { BackupIDs: backupIds },
-    });
+    return defer(() =>
+      this.#connectionStrings.postApiV2ConnectionStringByIdUpdateBackups({
+        path: { id },
+        body: { BackupIDs: backupIds },
+      })
+    );
   }
 }

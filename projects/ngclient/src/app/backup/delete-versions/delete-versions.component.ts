@@ -5,7 +5,7 @@ import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipCheckbox } from '@ship-ui/core/ship-checkbox';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
-import { finalize } from 'rxjs';
+import { defer, finalize } from 'rxjs';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 
 import { ShipTable } from '@ship-ui/core/ship-table';
@@ -41,7 +41,7 @@ export default class DeleteVersionsComponent {
 
   versionsResource = rxResource({
     params: () => ({ id: this.id() }),
-    stream: ({ params }) => this.#dupServer.postApiV2BackupListFilesets({ requestBody: { BackupId: params.id } }),
+    stream: ({ params }) => defer(() => this.#dupServer.postApiV2BackupListFilesets({ body: { BackupId: params.id } })),
   });
 
   isLoading = computed(() => this.versionsResource.isLoading());
@@ -106,14 +106,15 @@ export default class DeleteVersionsComponent {
       closed: (res) => {
         if (!res) return;
         this.isDeleting.set(true);
-        this.#dupServer
-          .postApiV2BackupDeleteVersions({
-            requestBody: {
+        defer(() =>
+          this.#dupServer.postApiV2BackupDeleteVersions({
+            body: {
               BackupId: this.id(),
               Versions: versions,
               SuppressCompact: !this.performCompact(),
             },
           })
+        )
           .pipe(finalize(() => this.isDeleting.set(false)))
           .subscribe({
             next: () => {

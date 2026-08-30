@@ -1,4 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
+import { defer } from 'rxjs';
 import { DuplicatiServer, ListFilesetsResponseItem } from '../../core/openapi';
 
 export type PurgeVersionScope = 'all' | 'current' | 'specific';
@@ -35,7 +36,7 @@ export class PurgeFilesState {
     this.backupId.set(backupId);
     this.isLoadingVersions.set(true);
 
-    this.#dupServer.postApiV2BackupListFilesets({ requestBody: { BackupId: backupId } }).subscribe({
+    defer(() => this.#dupServer.postApiV2BackupListFilesets({ body: { BackupId: backupId } })).subscribe({
       next: (res) => {
         const data = (res.Data ?? []).slice().sort((a, b) => (a.Time < b.Time ? 1 : a.Time > b.Time ? -1 : 0));
         this.versions.set(data);

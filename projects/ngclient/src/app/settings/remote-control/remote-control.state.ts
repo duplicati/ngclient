@@ -1,4 +1,5 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
+import { defer } from 'rxjs';
 
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
@@ -138,7 +139,7 @@ export class RemoteControlState {
     // If we are registering, we need to keep checking until the registration is claimed
     if (currentState === 'registering') {
       this.repeatRegisterTimer = setTimeout(() => {
-        this.#dupServer.postApiV1RemotecontrolRegisterWait().subscribe({
+        defer(() => this.#dupServer.postApiV1RemotecontrolRegisterWait()).subscribe({
           next: (res) => this.#mapRemoteControlStatus(res),
           error: (err) => this.#mapRemoteControlError(err),
         });
@@ -149,7 +150,7 @@ export class RemoteControlState {
     // If we are registered, poll to see if we become disabled
     if (currentState === 'connecting' || currentState === 'registered') {
       this.repeatRegisterTimer = setTimeout(() => {
-        this.#dupServer.getApiV1RemotecontrolStatus().subscribe({
+        defer(() => this.#dupServer.getApiV1RemotecontrolStatus()).subscribe({
           next: (res) => this.#mapRemoteControlStatus(res),
           error: (err) => this.#mapRemoteControlError(err),
         });
@@ -157,7 +158,7 @@ export class RemoteControlState {
     }
 
     if (data.IsRegistering && data.CanEnable) {
-      this.#dupServer.deleteApiV1RemotecontrolRegister().subscribe({
+      defer(() => this.#dupServer.deleteApiV1RemotecontrolRegister()).subscribe({
         next: (res) => this.#mapRemoteControlStatus(res),
       });
     }
@@ -183,7 +184,7 @@ export class RemoteControlState {
 
     this.#errorRetryTimer = setTimeout(() => {
       this.#errorRetryTimer = null;
-      this.#dupServer.getApiV1RemotecontrolStatus().subscribe({
+      defer(() => this.#dupServer.getApiV1RemotecontrolStatus()).subscribe({
         next: (res) => this.#mapRemoteControlStatus(res),
         error: (err) => this.#mapRemoteControlError(err),
       });
@@ -197,7 +198,7 @@ export class RemoteControlState {
       return;
     }
 
-    this.#dupServer.getApiV1RemotecontrolStatus().subscribe({
+    defer(() => this.#dupServer.getApiV1RemotecontrolStatus()).subscribe({
       next: (res) => this.#mapRemoteControlStatus(res),
       error: (err) => this.#mapRemoteControlError(err),
     });
@@ -206,32 +207,32 @@ export class RemoteControlState {
   beginRemoteRegistration(useCustomUrl = false) {
     this.state.set('registering');
 
-    this.#dupServer
-      .postApiV1RemotecontrolRegister({
-        requestBody: { RegistrationUrl: useCustomUrl ? this.customRegisterUrl() : this.registerUrl() },
+    defer(() =>
+      this.#dupServer.postApiV1RemotecontrolRegister({
+        body: { RegistrationUrl: useCustomUrl ? this.customRegisterUrl() : this.registerUrl() },
       })
-      .subscribe({
+    ).subscribe({
         next: (res) => this.#mapRemoteControlStatus(res),
         error: (err) => this.#mapRemoteControlError(err),
       });
   }
 
   cancelRemoteRegistration() {
-    this.#dupServer.deleteApiV1RemotecontrolRegister().subscribe({
+    defer(() => this.#dupServer.deleteApiV1RemotecontrolRegister()).subscribe({
       next: (res) => this.#mapRemoteControlStatus(res),
       error: (err) => this.#mapRemoteControlError(err),
     });
   }
 
   enableRemoteControl() {
-    this.#dupServer.postApiV1RemotecontrolEnable().subscribe({
+    defer(() => this.#dupServer.postApiV1RemotecontrolEnable()).subscribe({
       next: (res) => this.#mapRemoteControlStatus(res),
       error: (err) => this.#mapRemoteControlError(err),
     });
   }
 
   disableRemoteControl() {
-    this.#dupServer.postApiV1RemotecontrolDisable().subscribe({
+    defer(() => this.#dupServer.postApiV1RemotecontrolDisable()).subscribe({
       next: (res) => this.#mapRemoteControlStatus(res),
       error: (err) => this.#mapRemoteControlError(err),
     });
@@ -249,7 +250,7 @@ export class RemoteControlState {
       },
       closed: (res) => {
         if (!res) return;
-        _self.#dupServer.deleteApiV1RemotecontrolRegistration().subscribe({
+        defer(() => _self.#dupServer.deleteApiV1RemotecontrolRegistration()).subscribe({
           next: (res) => _self.#mapRemoteControlStatus(res),
           error: (err) => _self.#mapRemoteControlError(err),
         });

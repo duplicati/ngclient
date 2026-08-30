@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, inject, input, signal } from '@angu
 import { rxResource } from '@angular/core/rxjs-interop';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
-import { map } from 'rxjs';
+import { defer, map } from 'rxjs';
 import { DuplicatiServer } from '../../../core/openapi';
 
 type Data = {
@@ -52,7 +52,9 @@ export class RemoteLogComponent {
   resource = rxResource({
     params: () => ({ id: this.backupId()!, ...this.pagination() }),
     stream: ({ params }) =>
-      this.#dupServer.getApiV1BackupByIdRemotelog({ id: params.id, pagesize: 100 }).pipe(
+      defer(() =>
+        this.#dupServer.getApiV1BackupByIdRemotelog({ path: { id: params.id }, query: { pagesize: 100 } })
+      ).pipe(
         map((x) => {
           return (x as RemoteLogEntry[]).map((y, i) => {
             const newItem = {

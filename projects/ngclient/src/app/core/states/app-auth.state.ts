@@ -1,10 +1,9 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, finalize, map, Observable, of, take, tap, shareReplay } from 'rxjs';
+import { catchError, defer, finalize, map, Observable, of, take, tap, shareReplay } from 'rxjs';
 import { AccessTokenOutputDto, DuplicatiServer, PostApiV1AuthRefreshData } from '../openapi';
-import { OpenAPI } from '../openapi/core/OpenAPI';
-import { getXsrfQueryParam } from '../utils/proxy-config.util';
+import { getApiBase, getApiConfigHeaders, getXsrfQueryParam } from '../utils/proxy-config.util';
 import { RelayconfigState } from './relayconfig.state';
 
 export const dummytoken = 'PROXY_AUTHED_FAKE_TOKEN';
@@ -47,25 +46,25 @@ export class AppAuthState {
     }
   }
 
-  getRefreshNonceBody(): { requestBody: PostApiV1AuthRefreshData | undefined; local: boolean } {
+  getRefreshNonceBody(): { requestBody: PostApiV1AuthRefreshData['body'] | undefined; local: boolean } {
     // Prefer session storage for nonce, if present
     // Note that the local storage is for persistent login and is shared across tabs, so we cannot cache it in a signal
     const sessionStoredNonce = sessionStorage.getItem(SESSION_STORAGE_REFRESH_NONCE_KEY);
     const localStoredNonce = localStorage.getItem(LOCAL_STORAGE_REFRESH_NONCE_KEY);
     const storedNonce = sessionStoredNonce || localStoredNonce;
-    const body = storedNonce ? { requestBody: { Nonce: storedNonce } } : undefined;
+    const body = storedNonce ? { Nonce: storedNonce } : undefined;
     return { requestBody: body, local: storedNonce === localStoredNonce };
   }
 
   login(pass: string, rememberMe: boolean) {
-    return this.#dupServer
-      .postApiV1AuthLogin({
-        requestBody: {
+    return defer(() =>
+      this.#dupServer.postApiV1AuthLogin({
+        body: {
           Password: pass,
           RememberMe: rememberMe,
         },
       })
-      .pipe(
+    ).pipe(
         take(1),
         tap((res) => {
           if (res.AccessToken) {
@@ -93,11 +92,11 @@ export class AppAuthState {
 
     // If we are authenticated via proxy, we just need a websocket token
     if (this.#isProxyAuthed()) {
-      return this.#dupServer
-        .postApiV1AuthIssuetokenByOperation({
-          operation: 'websocket',
+      return defer(() =>
+        this.#dupServer.postApiV1AuthIssuetokenByOperation({
+          path: { operation: 'websocket' },
         })
-        .pipe(
+      ).pipe(
           take(1),
           tap((res) => {
             if (res.Token) {
@@ -115,7 +114,7 @@ export class AppAuthState {
     }
 
     const { requestBody, local } = this.getRefreshNonceBody();
-    this.#refreshRequest$ = this.#dupServer.postApiV1AuthRefresh(requestBody).pipe(
+    this.#refreshRequest$ = defer(() => this.#dupServer.postApiV1AuthRefresh({ body: requestBody })).pipe(
       take(1),
       tap((res) => {
         if (res.AccessToken) {
@@ -135,10 +134,10 @@ export class AppAuthState {
   checkProxyAuthed() {
     const headers = new HttpHeaders({
       'custom-proxy-check': 'true',
-      ...(OpenAPI.HEADERS ?? {}),
+      ...getApiConfigHeaders(),
     });
 
-    const prefix = OpenAPI.BASE || '';
+    const prefix = getApiBase();
 
     return this.#http
       .post<AuthResponse>(`${prefix}/api/v1/auth/status`, null, {
@@ -168,8 +167,7 @@ export class AppAuthState {
     sessionStorage.removeItem(SESSION_STORAGE_REFRESH_NONCE_KEY);
     if (local) localStorage.removeItem(LOCAL_STORAGE_REFRESH_NONCE_KEY);
 
-    this.#dupServer
-      .postApiV1AuthRefreshLogout(requestBody)
+    defer(() => this.#dupServer.postApiV1AuthRefreshLogout({ body: requestBody }))
       .pipe(
         take(1),
         finalize(() => {

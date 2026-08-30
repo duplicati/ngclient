@@ -6,6 +6,7 @@ import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipList } from '@ship-ui/core/ship-list';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
+import { defer } from 'rxjs';
 import LogsLiveComponent from '../about/logs/logs-live/logs-live.component';
 import { PauseDialogComponent } from '../core/components/status-bar/pause-dialog/pause-dialog.component';
 import { StatusBarState } from '../core/components/status-bar/status-bar.state';
@@ -107,12 +108,12 @@ export default class StatusComponent implements OnInit, OnDestroy {
   stop() {
     const taskId = this.statusData()?.TaskID;
     if (!taskId) return;
-    this.#dupServer.postApiV1TaskByTaskidStop({ taskid: taskId }).subscribe();
+    defer(() => this.#dupServer.postApiV1TaskByTaskidStop({ path: { taskid: taskId } })).subscribe();
   }
 
   abort() {
     const taskId = this.statusData()?.TaskID;
     if (!taskId) return;
-    this.#dupServer.postApiV1TaskByTaskidAbort({ taskid: taskId }).subscribe();
+    defer(() => this.#dupServer.postApiV1TaskByTaskidAbort({ path: { taskid: taskId } })).subscribe();
   }
 }

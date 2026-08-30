@@ -7,7 +7,7 @@ import { ShipCheckbox } from '@ship-ui/core/ship-checkbox';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipRadio } from '@ship-ui/core/ship-radio';
-import { finalize } from 'rxjs';
+import { defer, finalize } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer } from '../../../core/openapi';
 import { BytesPipe } from '../../../core/pipes/byte.pipe';
@@ -77,14 +77,15 @@ export default class PurgeVersionScopeComponent {
       closed: (res) => {
         if (!res) return;
         this.isPurging.set(true);
-        this.#dupServer
-          .postApiV2BackupPurgeFiles({
-            requestBody: {
+        defer(() =>
+          this.#dupServer.postApiV2BackupPurgeFiles({
+            body: {
               BackupId: this.#state.backupId()!,
               Filters: paths.map((x) => (x.endsWith('/') || x.endsWith('\\') ? `${x}*` : x)),
               Versions: versions,
             },
           })
+        )
           .pipe(finalize(() => this.isPurging.set(false)))
           .subscribe({
             next: () => {

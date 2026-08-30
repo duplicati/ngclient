@@ -1,5 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { finalize, Observable, tap } from 'rxjs';
+import { defer, finalize, Observable, tap } from 'rxjs';
 import { FormView } from '../../backup/destination/destination.config-utilities';
 import { ArgumentType, DuplicatiServer, ICommandLineArgument, SystemInfoDto } from '../openapi';
 
@@ -209,7 +209,7 @@ export class SysinfoState {
   }
 
   preload(returnObservable = false): Observable<SystemInfoDto> | void {
-    const obs = (this.#dupServer.getApiV1Systeminfo() as Observable<SystemInfoDto>).pipe(
+    const obs = defer(() => this.#dupServer.getApiV1Systeminfo()).pipe(
       tap((systemInfo) => {
         this.systemInfo.set(systemInfo);
       }),
@@ -224,7 +224,7 @@ export class SysinfoState {
   }
 
   preloadFilterGroups(returnObservable = false): Observable<FilterGroups> | void {
-    const obs = (this.#dupServer.getApiV1SysteminfoFiltergroups() as Observable<FilterGroups>).pipe(
+    const obs = (defer(() => this.#dupServer.getApiV1SysteminfoFiltergroups()) as Observable<FilterGroups>).pipe(
       tap((filterGroups) => {
         this.filterGroups.set(filterGroups);
       }),

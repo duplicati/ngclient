@@ -6,7 +6,7 @@ import { ShipDivider } from '@ship-ui/core/ship-divider';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { ShipToggleCard } from '@ship-ui/core/ship-toggle-card';
-import { finalize, firstValueFrom, map, switchMap } from 'rxjs';
+import { defer, finalize, map, switchMap } from 'rxjs';
 import { DuplicatiServer, SettingDto, SettingInputDto } from '../../../core/openapi';
 import { BytesPipe } from '../../../core/pipes/byte.pipe';
 import { DurationFormatPipe } from '../../../core/pipes/duration.pipe';
@@ -70,7 +70,7 @@ export class GeneralLogComponent {
   // Resource to fetch backup data for checking suppressed warnings
   backupResource = resource({
     params: () => ({ id: this.backupId() }),
-    loader: ({ params }) => firstValueFrom(this.#dupServer.getApiV1BackupById({ id: params.id })),
+    loader: ({ params }) => this.#dupServer.getApiV1BackupById({ path: { id: params.id } }),
   });
 
   // Computed signal to get the set of suppressed warning IDs
@@ -98,7 +98,7 @@ export class GeneralLogComponent {
   resource = rxResource({
     params: () => ({ id: this.backupId()!, ...this.pagination() }),
     stream: ({ params }) =>
-      this.#dupServer.getApiV1BackupByIdLog({ id: params.id, pagesize: 100 }).pipe(
+      defer(() => this.#dupServer.getApiV1BackupByIdLog({ path: { id: params.id }, query: { pagesize: 100 } })).pipe(
         map((x) => {
           return (x as LogEntry[]).map((y) => {
             return {
@@ -192,8 +192,7 @@ export class GeneralLogComponent {
     this.isSuppressingWarning.set(true);
 
     // First get the current backup to retrieve existing settings
-    this.#dupServer
-      .getApiV1BackupById({ id: backupId })
+    defer(() => this.#dupServer.getApiV1BackupById({ path: { id: backupId } }))
       .pipe(
         switchMap((backup) => {
           const currentSettings = backup.Backup?.Settings ?? [];
@@ -258,8 +257,8 @@ export class GeneralLogComponent {
 
           // Update the backup with new settings
           return this.#dupServer.putApiV1BackupById({
-            id: backupId,
-            requestBody: {
+            path: { id: backupId },
+            body: {
               Backup: {
                 Name: backup.Backup?.Name,
                 Description: backup.Backup?.Description,

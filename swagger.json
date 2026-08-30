@@ -1,0 +1,6806 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Duplicati API Documentation",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/v1/commandline": {
+      "get": {
+        "tags": [
+          "Commandline"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommandlineTaskStartedDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/connection-strings": {
+      "get": {
+        "tags": [
+          "ConnectionStrings"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionStringDtoArrayResponseEnvelope"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "ConnectionStrings"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateConnectionStringDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionStringDtoResponseEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/connection-string/{id}": {
+      "get": {
+        "tags": [
+          "ConnectionStrings"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionStringDtoResponseEnvelope"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ConnectionStrings"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateConnectionStringDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionStringDtoResponseEnvelope"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ConnectionStrings"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResponseEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/connection-string/{id}/update-backups": {
+      "post": {
+        "tags": [
+          "ConnectionStrings"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkUpdateBackupsRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkUpdateBackupsResponseDtoResponseEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/acknowledgements": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcknowlegdementDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenInputDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessTokenOutputDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/signin": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SigninInputDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessTokenOutputDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginInputDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessTokenOutputDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/issuesignintoken": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IssueSigninTokenInputDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SigninTokenOutputDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/refresh/logout": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenInputDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/issuetoken/{operation}": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "operation",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SingleOperationTokenOutputDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/issue-forever-token": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessTokenOutputDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/status": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/backupdefaults": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backups": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "orderBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BackupAndScheduleOutputDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "temporary",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "existingdb",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BackupAndScheduleInputDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateBackupDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backups/import": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportBackupInputDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportBackupOutputDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/bugreport/{reportid}": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "reportid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/changelog": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "from-update",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangelogDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/commandline/{runid}": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "runid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pagesize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommandLineLogOutputDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/commandline/{runid}/abort": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "runid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/filesystem": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "onlyFolders",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "showHidden",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FilesystemInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TreeNodeDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/filesystem/validate": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FilesystemInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/folderstatus": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FolderStatusDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/folderstatus/{path}": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "path",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FolderStatusDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/licenses": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LicenseDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/logdata/poll": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "level",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/LogMessageType"
+            }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "pagesize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LogEntry"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/logdata/log": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "pagesize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": { }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/logdata/crashlog": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrashLogOutputDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/notification/{id}": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/notifications": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NotificationDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/progressstate": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IProgressEventData"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/remotecontrol/status": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RemoteControlStatusOutput"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/remoteoperation/dbpath": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RemoteOperationInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDbPathDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/remoteoperation/test": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "autocreate",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "readOnlyTest",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/RemoteDestinationType"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RemoteOperationInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/remoteoperation/create": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RemoteOperationInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/serversettings": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": { }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/serversetting/{key}": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/serverstate": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "lastEventId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "longpoll",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "duration",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerStatusDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/serverstate/pause": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "duration",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pauseTransfers",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/serverstate/resume": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/systeminfo": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemInfoDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/systeminfo/filtergroups": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilterGroupsDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GetTaskStateDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/task/{taskid}": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "taskid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTaskStateDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/task/{taskid}/stop": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "taskid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/task/{taskid}/abort": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "taskid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/uisettings": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCertificateInputDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/uisettings/{scheme}": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "scheme",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "scheme",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/updates/check": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/webmodule/{modulekey}": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "modulekey",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebModuleOutputDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backup/{id}": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBackupResultDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BackupAndScheduleInputDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "delete-remote-files",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "delete-local-db",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "force",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteBackupOutputDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backup/{id}/files": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "time",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "all-versions",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "prefix-only",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "folder-contents",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": { }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backup/{id}/log": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "pagesize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": { }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backup/{id}/remotelog": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "pagesize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": { }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backup/{id}/filesets": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "include-metadata",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "from-remote-only",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IListResultFileset"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backup/{id}/export-argsonly": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "export-passwords",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "passphrase",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExportArgsOnlyDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backup/{id}/export-cmdline": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "export-passwords",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "passphrase",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExportCommandlineDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backup/{id}/export": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "export-passwords",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "passphrase",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/backup/{id}/isdbusedelsewhere": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IsDbUsedElsewhereDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backup/{id}/isactive": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IsBackupActiveDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backup/{id}/deletedb": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/backup/{id}/movedb": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDbPathInputDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/backup/{id}/updatedb": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDbPathInputDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/backup/{id}/restore": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RestoreInputDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskStartedDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backup/{id}/createreport": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskStartedDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backup/{id}/repair": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepairInputDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskStartedDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backup/{id}/repairupdate": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepairInputDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskStartedDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backup/{id}/vacuum": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskStartedDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backup/{id}/verify": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskStartedDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backup/{id}/compact": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskStartedDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backup/{id}/start": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "skipQueue",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskStartedDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backup/{id}/run": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "skipQueue",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskStartedDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backup/{id}/report-remote-size": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskStartedDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backup/{id}/copytotemp": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateBackupDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backup/{id}/restore-task-config": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RestoreTaskConfigElementDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/backup/{id}/importfromtemp": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportBackupFromTempDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportBackupOutputDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/remotecontrol/enable": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RemoteControlStatusOutput"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/remotecontrol/disable": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RemoteControlStatusOutput"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/remotecontrol/registration": {
+      "delete": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RemoteControlStatusOutput"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/remotecontrol/register": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartRegistrationInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RemoteControlStatusOutput"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RemoteControlStatusOutput"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/remotecontrol/register/wait": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RemoteControlStatusOutput"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/destination/list": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DestinationListRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DestinationListResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/temp-disk-space": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TempDiskSpaceRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TempDiskSpaceResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/filesystem/test-filter": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TestFilterRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TestFilterResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/backup/list-broken-files": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListBrokenFilesRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListBrokenFilesResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/backup/purge-broken-files": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PurgeBrokenFilesRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskStartedDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/backup/delete-versions": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteVersionsRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskStartedDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/backup/list-filesets": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListFilesetsRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListFilesetsResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/backup/list-folder": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListFolderContentRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListFolderContentResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/backup/list-versions": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListFileVersionsRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListFileVersionsOutputDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/backup/search": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchEntriesRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchEntriesResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/backup/purge-files": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PurgeFilesRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskStartedDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/backup/set-version-label": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetVersionLabelRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SetVersionLabelResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/destination/test": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DestinationTestRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DestinationTestResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/webmodules": {
+      "get": {
+        "tags": [
+          "WebModules"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IWebModule"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AccessTokenOutputDto": {
+        "type": "object",
+        "properties": {
+          "AccessToken": {
+            "type": "string",
+            "nullable": true
+          },
+          "RefreshNonce": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AcknowlegdementDto": {
+        "required": [
+          "Acknowledgements"
+        ],
+        "type": "object",
+        "properties": {
+          "Acknowledgements": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ActiveTransfer": {
+        "type": "object",
+        "properties": {
+          "BackendAction": {
+            "type": "string",
+            "nullable": true
+          },
+          "BackendPath": {
+            "type": "string",
+            "nullable": true
+          },
+          "BackendFileSize": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "BackendFileProgress": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "BackendSpeed": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "BackendIsBlocking": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ArgumentType": {
+        "enum": [
+          "String",
+          "Integer",
+          "Boolean",
+          "Timespan",
+          "DateTime",
+          "Size",
+          "Enumeration",
+          "Path",
+          "Password",
+          "Flags",
+          "Decimal",
+          "Unknown"
+        ],
+        "type": "string"
+      },
+      "BackupAndScheduleInputDto": {
+        "required": [
+          "Backup"
+        ],
+        "type": "object",
+        "properties": {
+          "Backup": {
+            "$ref": "#/components/schemas/BackupInputDto"
+          },
+          "Schedule": {
+            "$ref": "#/components/schemas/ScheduleInputDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "BackupAndScheduleOutputDto": {
+        "required": [
+          "Backup",
+          "Schedule"
+        ],
+        "type": "object",
+        "properties": {
+          "Backup": {
+            "$ref": "#/components/schemas/BackupDto"
+          },
+          "Schedule": {
+            "$ref": "#/components/schemas/ScheduleDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "BackupDto": {
+        "required": [
+          "AdditionalTargetURLs",
+          "DBPath",
+          "DBPathExists",
+          "Description",
+          "ExternalID",
+          "Filters",
+          "ID",
+          "IsTemporary",
+          "IsUnencryptedOrPassphraseStored",
+          "Metadata",
+          "Name",
+          "Settings",
+          "Sources",
+          "Tags",
+          "TargetURL"
+        ],
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "nullable": true
+          },
+          "ExternalID": {
+            "type": "string",
+            "nullable": true
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          },
+          "Tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "TargetURL": {
+            "type": "string",
+            "nullable": true
+          },
+          "ConnectionStringID": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "OperationType": {
+            "$ref": "#/components/schemas/OperationType"
+          },
+          "DBPath": {
+            "type": "string",
+            "nullable": true
+          },
+          "DBPathExists": {
+            "type": "boolean"
+          },
+          "Sources": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "Settings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SettingDto"
+            },
+            "nullable": true
+          },
+          "Filters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FilterDto"
+            },
+            "nullable": true
+          },
+          "Metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "IsTemporary": {
+            "type": "boolean"
+          },
+          "IsUnencryptedOrPassphraseStored": {
+            "type": "boolean"
+          },
+          "AdditionalTargetURLs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TargetUrlDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "BackupInputDto": {
+        "type": "object",
+        "properties": {
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          },
+          "DBPath": {
+            "type": "string",
+            "nullable": true
+          },
+          "Tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "TargetURL": {
+            "type": "string",
+            "nullable": true
+          },
+          "ConnectionStringID": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "OperationType": {
+            "$ref": "#/components/schemas/OperationType"
+          },
+          "Sources": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "Settings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SettingInputDto"
+            },
+            "nullable": true
+          },
+          "Filters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FilterInputDto"
+            },
+            "nullable": true
+          },
+          "Metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "AdditionalTargetURLs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TargetUrlInputDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "BulkUpdateBackupsRequestDto": {
+        "required": [
+          "BackupIDs"
+        ],
+        "type": "object",
+        "properties": {
+          "BackupIDs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "BulkUpdateBackupsResponseDto": {
+        "required": [
+          "UpdatedBackupIDs"
+        ],
+        "type": "object",
+        "properties": {
+          "UpdatedBackupIDs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "BulkUpdateBackupsResponseDtoResponseEnvelope": {
+        "required": [
+          "Error",
+          "StatusCode",
+          "Success"
+        ],
+        "type": "object",
+        "properties": {
+          "Success": {
+            "type": "boolean"
+          },
+          "Error": {
+            "type": "string",
+            "nullable": true
+          },
+          "StatusCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "Data": {
+            "$ref": "#/components/schemas/BulkUpdateBackupsResponseDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ChangelogDto": {
+        "required": [
+          "Changelog",
+          "Version"
+        ],
+        "type": "object",
+        "properties": {
+          "Version": {
+            "type": "string",
+            "nullable": true
+          },
+          "Changelog": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CommandLineLogOutputDto": {
+        "type": "object",
+        "properties": {
+          "Pagesize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Items": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "Finished": {
+            "type": "boolean"
+          },
+          "Started": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CommandlineTaskStartedDto": {
+        "type": "object",
+        "properties": {
+          "Status": {
+            "type": "string",
+            "nullable": true
+          },
+          "ID": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ConnectedBackupDto": {
+        "required": [
+          "ID",
+          "Name"
+        ],
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "nullable": true
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ConnectionStringDto": {
+        "required": [
+          "Backups",
+          "BaseUrl",
+          "CreatedAt",
+          "Description",
+          "ID",
+          "Name",
+          "UpdatedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          },
+          "BaseUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "UpdatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Backups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConnectedBackupDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ConnectionStringDtoArrayResponseEnvelope": {
+        "required": [
+          "Error",
+          "StatusCode",
+          "Success"
+        ],
+        "type": "object",
+        "properties": {
+          "Success": {
+            "type": "boolean"
+          },
+          "Error": {
+            "type": "string",
+            "nullable": true
+          },
+          "StatusCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "Data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConnectionStringDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ConnectionStringDtoResponseEnvelope": {
+        "required": [
+          "Error",
+          "StatusCode",
+          "Success"
+        ],
+        "type": "object",
+        "properties": {
+          "Success": {
+            "type": "boolean"
+          },
+          "Error": {
+            "type": "string",
+            "nullable": true
+          },
+          "StatusCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "Data": {
+            "$ref": "#/components/schemas/ConnectionStringDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CrashLogOutputDto": {
+        "type": "object",
+        "properties": {
+          "Logdata": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateBackupDto": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "nullable": true
+          },
+          "Temporary": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateConnectionStringDto": {
+        "required": [
+          "BaseUrl",
+          "Description",
+          "Name"
+        ],
+        "type": "object",
+        "properties": {
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          },
+          "BaseUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DayOfWeek": {
+        "enum": [
+          "sun",
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat"
+        ],
+        "type": "string"
+      },
+      "DeleteBackupOutputDto": {
+        "type": "object",
+        "properties": {
+          "Status": {
+            "type": "string",
+            "nullable": true
+          },
+          "Reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "ID": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DeleteVersionsRequestDto": {
+        "required": [
+          "BackupId",
+          "Versions"
+        ],
+        "type": "object",
+        "properties": {
+          "BackupId": {
+            "type": "string",
+            "nullable": true
+          },
+          "Versions": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "nullable": true
+          },
+          "AllowFullRemoval": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "SuppressCompact": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DestinationListRequestDto": {
+        "required": [
+          "BackupId",
+          "DestinationUrl",
+          "Limit",
+          "Offset",
+          "Path"
+        ],
+        "type": "object",
+        "properties": {
+          "BackupId": {
+            "type": "string",
+            "nullable": true
+          },
+          "ConnectionStringId": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "DestinationUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "DestinationType": {
+            "$ref": "#/components/schemas/RemoteDestinationType"
+          },
+          "SourcePrefix": {
+            "type": "string",
+            "nullable": true
+          },
+          "Path": {
+            "type": "string",
+            "nullable": true
+          },
+          "Offset": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "Limit": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DestinationListResponesContent": {
+        "required": [
+          "HasMore",
+          "Items",
+          "Offset"
+        ],
+        "type": "object",
+        "properties": {
+          "Items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DestinationListResponseItem"
+            },
+            "nullable": true
+          },
+          "Offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "HasMore": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DestinationListResponseDto": {
+        "required": [
+          "Error",
+          "StatusCode",
+          "Success"
+        ],
+        "type": "object",
+        "properties": {
+          "Success": {
+            "type": "boolean"
+          },
+          "Error": {
+            "type": "string",
+            "nullable": true
+          },
+          "StatusCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "Data": {
+            "$ref": "#/components/schemas/DestinationListResponesContent"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DestinationListResponseItem": {
+        "required": [
+          "Metadata",
+          "Path",
+          "Size"
+        ],
+        "type": "object",
+        "properties": {
+          "Path": {
+            "type": "string",
+            "nullable": true
+          },
+          "Size": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "Metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "nullable": true
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DestinationTestRequestDto": {
+        "required": [
+          "AutoCreate",
+          "DestinationUrl",
+          "Options"
+        ],
+        "type": "object",
+        "properties": {
+          "DestinationUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "BackupId": {
+            "type": "string",
+            "nullable": true
+          },
+          "ConnectionStringId": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "Options": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "AutoCreate": {
+            "type": "boolean"
+          },
+          "ReadOnlyTest": {
+            "type": "boolean"
+          },
+          "DestinationType": {
+            "$ref": "#/components/schemas/RemoteDestinationType"
+          },
+          "SourcePrefix": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DestinationTestResponseDto": {
+        "required": [
+          "Error",
+          "StatusCode",
+          "Success"
+        ],
+        "type": "object",
+        "properties": {
+          "Success": {
+            "type": "boolean"
+          },
+          "Error": {
+            "type": "string",
+            "nullable": true
+          },
+          "StatusCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "Data": {
+            "$ref": "#/components/schemas/DestinationTestResult"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DestinationTestResult": {
+        "required": [
+          "AcceptedHostKey",
+          "AfterConnect",
+          "FolderContainsBackupFiles",
+          "FolderContainsEncryptedBackupFiles",
+          "FolderExists",
+          "FolderIsEmpty",
+          "HostCertificate",
+          "ReportedHostKey"
+        ],
+        "type": "object",
+        "properties": {
+          "FolderExists": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "FolderIsEmpty": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "FolderContainsBackupFiles": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "FolderContainsEncryptedBackupFiles": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "AfterConnect": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "HostCertificate": {
+            "type": "string",
+            "nullable": true
+          },
+          "ReportedHostKey": {
+            "type": "string",
+            "nullable": true
+          },
+          "AcceptedHostKey": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ExportArgsOnlyDto": {
+        "type": "object",
+        "properties": {
+          "Backend": {
+            "type": "string",
+            "nullable": true
+          },
+          "Arguments": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "Options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ExportCommandlineDto": {
+        "type": "object",
+        "properties": {
+          "Command": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FilesystemInput": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FilterDto": {
+        "required": [
+          "Expression",
+          "Include",
+          "Order"
+        ],
+        "type": "object",
+        "properties": {
+          "Order": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "Include": {
+            "type": "boolean"
+          },
+          "Expression": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FilterGroupsDto": {
+        "type": "object",
+        "properties": {
+          "FilterGroups": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FilterInputDto": {
+        "type": "object",
+        "properties": {
+          "Order": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "Include": {
+            "type": "boolean"
+          },
+          "Expression": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FolderStatusDto": {
+        "required": [
+          "Path",
+          "Status"
+        ],
+        "type": "object",
+        "properties": {
+          "Path": {
+            "type": "string",
+            "nullable": true
+          },
+          "Status": {
+            "type": "string",
+            "nullable": true
+          },
+          "BackupName": {
+            "type": "string",
+            "nullable": true
+          },
+          "LastBackupTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "BackupId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetBackupResultDto": {
+        "type": "object",
+        "properties": {
+          "Schedule": {
+            "$ref": "#/components/schemas/ScheduleDto"
+          },
+          "Backup": {
+            "$ref": "#/components/schemas/BackupDto"
+          },
+          "DisplayNames": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetDbPathDto": {
+        "type": "object",
+        "properties": {
+          "Exists": {
+            "type": "boolean"
+          },
+          "Path": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetTaskStateDto": {
+        "type": "object",
+        "properties": {
+          "Status": {
+            "type": "string",
+            "nullable": true
+          },
+          "ID": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "TaskStarted": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "TaskFinished": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ErrorMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "Exception": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ICommandLineArgument": {
+        "type": "object",
+        "properties": {
+          "Aliases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "LongDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "ShortDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "Type": {
+            "$ref": "#/components/schemas/ArgumentType"
+          },
+          "ValidValues": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "DefaultValue": {
+            "type": "string",
+            "nullable": true
+          },
+          "Typename": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "Deprecated": {
+            "type": "boolean"
+          },
+          "DeprecationMessage": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "IDynamicModule": {
+        "type": "object",
+        "properties": {
+          "Key": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "DisplayName": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "Options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ICommandLineArgument"
+            },
+            "nullable": true,
+            "readOnly": true
+          },
+          "Lookups": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "nullable": true,
+            "readOnly": true
+          },
+          "IsDeprecated": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "IsUntested": {
+            "type": "boolean",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "IListResultFileset": {
+        "type": "object",
+        "properties": {
+          "Version": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "IsFullBackup": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "Time": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "FileCount": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "FileSizes": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "Label": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "IProgressEventData": {
+        "type": "object",
+        "properties": {
+          "BackupID": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "TaskID": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "BackendAction": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "BackendPath": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "BackendFileSize": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "BackendFileProgress": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "BackendSpeed": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "BackendIsBlocking": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "CurrentFilename": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "CurrentFilesize": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "CurrentFileoffset": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "CurrentFilecomplete": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "Phase": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "OverallProgress": {
+            "type": "number",
+            "format": "float",
+            "readOnly": true
+          },
+          "ProcessedFileCount": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "ProcessedFileSize": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "TotalFileCount": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "TotalFileSize": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "StillCounting": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "ActiveTransfers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ActiveTransfer"
+            },
+            "nullable": true,
+            "readOnly": true
+          },
+          "RemoteSyncDestinationIndex": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "RemoteSyncDestinationCount": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "EstimatedTimeToCompletion": {
+            "type": "string",
+            "format": "date-span",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "IWebModule": {
+        "type": "object",
+        "properties": {
+          "SupportedCommands": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ICommandLineArgument"
+            },
+            "nullable": true,
+            "readOnly": true
+          },
+          "Key": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "DisplayName": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ImportBackupFromTempDto": {
+        "type": "object",
+        "properties": {
+          "BackupId": {
+            "type": "string",
+            "nullable": true
+          },
+          "ImportMetadata": {
+            "type": "boolean"
+          },
+          "Direct": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ImportBackupInputDto": {
+        "type": "object",
+        "properties": {
+          "config": {
+            "type": "string",
+            "nullable": true
+          },
+          "cmdline": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "import_metadata": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "direct": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "passphrase": {
+            "type": "string",
+            "nullable": true
+          },
+          "temporary": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "replace_settings": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ImportBackupOutputDto": {
+        "type": "object",
+        "properties": {
+          "Id": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Int64StringTuple": {
+        "type": "object",
+        "properties": {
+          "Item1": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "Item2": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "IsBackupActiveDto": {
+        "type": "object",
+        "properties": {
+          "Status": {
+            "type": "string",
+            "nullable": true
+          },
+          "Active": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "IsDbUsedElsewhereDto": {
+        "type": "object",
+        "properties": {
+          "inuse": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "IssueSigninTokenInputDto": {
+        "type": "object",
+        "properties": {
+          "Password": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LicenseDto": {
+        "required": [
+          "Jsondata",
+          "License",
+          "Title",
+          "Url"
+        ],
+        "type": "object",
+        "properties": {
+          "Title": {
+            "type": "string",
+            "nullable": true
+          },
+          "Url": {
+            "type": "string",
+            "nullable": true
+          },
+          "License": {
+            "type": "string",
+            "nullable": true
+          },
+          "Jsondata": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LicenseStatusDto": {
+        "required": [
+          "ExpiresAt",
+          "ExpiresWithGraceAt",
+          "Features",
+          "IsConfigured",
+          "IsInGracePeriod",
+          "IsValid"
+        ],
+        "type": "object",
+        "properties": {
+          "IsConfigured": {
+            "type": "boolean"
+          },
+          "IsValid": {
+            "type": "boolean"
+          },
+          "IsInGracePeriod": {
+            "type": "boolean"
+          },
+          "ExpiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ExpiresWithGraceAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "Features": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ListBrokenFilesFileItem": {
+        "required": [
+          "Path",
+          "Size"
+        ],
+        "type": "object",
+        "properties": {
+          "Path": {
+            "type": "string",
+            "nullable": true
+          },
+          "Size": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ListBrokenFilesFilesetItem": {
+        "required": [
+          "Files",
+          "FilesetID",
+          "FilesetTime"
+        ],
+        "type": "object",
+        "properties": {
+          "FilesetID": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "FilesetTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Files": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ListBrokenFilesFileItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ListBrokenFilesRequestDto": {
+        "required": [
+          "BackupId"
+        ],
+        "type": "object",
+        "properties": {
+          "BackupId": {
+            "type": "string",
+            "nullable": true
+          },
+          "Filters": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ListBrokenFilesResponseDto": {
+        "required": [
+          "Error",
+          "PageInfo",
+          "StatusCode",
+          "Success"
+        ],
+        "type": "object",
+        "properties": {
+          "Success": {
+            "type": "boolean"
+          },
+          "Error": {
+            "type": "string",
+            "nullable": true
+          },
+          "StatusCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "Data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ListBrokenFilesFilesetItem"
+            },
+            "nullable": true
+          },
+          "PageInfo": {
+            "$ref": "#/components/schemas/PageInfo"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ListFileVersionsItemDto": {
+        "required": [
+          "IsDirectory",
+          "IsSymlink",
+          "LastModified",
+          "Path",
+          "Size",
+          "Time",
+          "Version"
+        ],
+        "type": "object",
+        "properties": {
+          "Version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "Time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Path": {
+            "type": "string",
+            "nullable": true
+          },
+          "Size": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "IsDirectory": {
+            "type": "boolean"
+          },
+          "IsSymlink": {
+            "type": "boolean"
+          },
+          "LastModified": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ListFileVersionsOutputDto": {
+        "required": [
+          "Error",
+          "PageInfo",
+          "StatusCode",
+          "Success"
+        ],
+        "type": "object",
+        "properties": {
+          "Success": {
+            "type": "boolean"
+          },
+          "Error": {
+            "type": "string",
+            "nullable": true
+          },
+          "StatusCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "Data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ListFileVersionsItemDto"
+            },
+            "nullable": true
+          },
+          "PageInfo": {
+            "$ref": "#/components/schemas/PageInfo"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ListFileVersionsRequestDto": {
+        "required": [
+          "BackupId",
+          "Page",
+          "PageSize",
+          "Paths"
+        ],
+        "type": "object",
+        "properties": {
+          "PageSize": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "Page": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "BackupId": {
+            "type": "string",
+            "nullable": true
+          },
+          "Paths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ListFilesetsRequestDto": {
+        "required": [
+          "BackupId"
+        ],
+        "type": "object",
+        "properties": {
+          "BackupId": {
+            "type": "string",
+            "nullable": true
+          },
+          "ForceRemoteListing": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ListFilesetsResponseDto": {
+        "required": [
+          "Error",
+          "PageInfo",
+          "StatusCode",
+          "Success"
+        ],
+        "type": "object",
+        "properties": {
+          "Success": {
+            "type": "boolean"
+          },
+          "Error": {
+            "type": "string",
+            "nullable": true
+          },
+          "StatusCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "Data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ListFilesetsResponseItem"
+            },
+            "nullable": true
+          },
+          "PageInfo": {
+            "$ref": "#/components/schemas/PageInfo"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ListFilesetsResponseItem": {
+        "required": [
+          "FileCount",
+          "FileSizes",
+          "IsFullBackup",
+          "Time",
+          "Version"
+        ],
+        "type": "object",
+        "properties": {
+          "Version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "Time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "IsFullBackup": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "FileCount": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "FileSizes": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "Label": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ListFolderContentItemDto": {
+        "required": [
+          "IsDirectory",
+          "IsSymlink",
+          "LastModified",
+          "Metadata",
+          "Path",
+          "Size"
+        ],
+        "type": "object",
+        "properties": {
+          "Path": {
+            "type": "string",
+            "nullable": true
+          },
+          "Size": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "IsDirectory": {
+            "type": "boolean"
+          },
+          "IsSymlink": {
+            "type": "boolean"
+          },
+          "LastModified": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "nullable": true
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ListFolderContentRequestDto": {
+        "required": [
+          "BackupId",
+          "Page",
+          "PageSize",
+          "Paths",
+          "Time"
+        ],
+        "type": "object",
+        "properties": {
+          "PageSize": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "Page": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "BackupId": {
+            "type": "string",
+            "nullable": true
+          },
+          "Paths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "Time": {
+            "type": "string",
+            "nullable": true
+          },
+          "ReturnExtended": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ListFolderContentResponseDto": {
+        "required": [
+          "Error",
+          "PageInfo",
+          "StatusCode",
+          "Success"
+        ],
+        "type": "object",
+        "properties": {
+          "Success": {
+            "type": "boolean"
+          },
+          "Error": {
+            "type": "string",
+            "nullable": true
+          },
+          "StatusCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "Data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ListFolderContentItemDto"
+            },
+            "nullable": true
+          },
+          "PageInfo": {
+            "$ref": "#/components/schemas/PageInfo"
+          }
+        },
+        "additionalProperties": false
+      },
+      "LiveControlState": {
+        "enum": [
+          "Running",
+          "Paused"
+        ],
+        "type": "string"
+      },
+      "LocaleDto": {
+        "required": [
+          "Code",
+          "DisplayName",
+          "EnglishName"
+        ],
+        "type": "object",
+        "properties": {
+          "Code": {
+            "type": "string",
+            "nullable": true
+          },
+          "EnglishName": {
+            "type": "string",
+            "nullable": true
+          },
+          "DisplayName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LogEntry": {
+        "required": [
+          "BackupID",
+          "Exception",
+          "ExceptionID",
+          "ID",
+          "Message",
+          "MessageID",
+          "Tag",
+          "TaskID",
+          "Type",
+          "When"
+        ],
+        "type": "object",
+        "properties": {
+          "When": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ID": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "Message": {
+            "type": "string",
+            "nullable": true
+          },
+          "Tag": {
+            "type": "string",
+            "nullable": true
+          },
+          "MessageID": {
+            "type": "string",
+            "nullable": true
+          },
+          "ExceptionID": {
+            "type": "string",
+            "nullable": true
+          },
+          "Type": {
+            "$ref": "#/components/schemas/LogMessageType"
+          },
+          "Exception": {
+            "type": "string",
+            "nullable": true
+          },
+          "BackupID": {
+            "type": "string",
+            "nullable": true
+          },
+          "TaskID": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LogMessageType": {
+        "enum": [
+          "ExplicitOnly",
+          "Profiling",
+          "Verbose",
+          "Retry",
+          "Information",
+          "DryRun",
+          "Warning",
+          "Error"
+        ],
+        "type": "string"
+      },
+      "LoginInputDto": {
+        "type": "object",
+        "properties": {
+          "Password": {
+            "type": "string",
+            "nullable": true
+          },
+          "RememberMe": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NotificationDto": {
+        "required": [
+          "Action",
+          "BackupID",
+          "Exception",
+          "ID",
+          "LogEntryID",
+          "Message",
+          "MessageID",
+          "MessageLogTag",
+          "Timestamp",
+          "Title",
+          "Type"
+        ],
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "Type": {
+            "$ref": "#/components/schemas/NotificationType"
+          },
+          "Title": {
+            "type": "string",
+            "nullable": true
+          },
+          "Message": {
+            "type": "string",
+            "nullable": true
+          },
+          "Exception": {
+            "type": "string",
+            "nullable": true
+          },
+          "BackupID": {
+            "type": "string",
+            "nullable": true
+          },
+          "Action": {
+            "type": "string",
+            "nullable": true
+          },
+          "Timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "LogEntryID": {
+            "type": "string",
+            "nullable": true
+          },
+          "MessageID": {
+            "type": "string",
+            "nullable": true
+          },
+          "MessageLogTag": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NotificationType": {
+        "enum": [
+          "Information",
+          "Warning",
+          "Error"
+        ],
+        "type": "string"
+      },
+      "ObjectResponseEnvelope": {
+        "required": [
+          "Error",
+          "StatusCode",
+          "Success"
+        ],
+        "type": "object",
+        "properties": {
+          "Success": {
+            "type": "boolean"
+          },
+          "Error": {
+            "type": "string",
+            "nullable": true
+          },
+          "StatusCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "Data": {
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OperationType": {
+        "enum": [
+          "Backup",
+          "Sync"
+        ],
+        "type": "string"
+      },
+      "PageInfo": {
+        "type": "object",
+        "properties": {
+          "Page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "PageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Total": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "Pages": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PurgeBrokenFilesRequestDto": {
+        "required": [
+          "BackupId"
+        ],
+        "type": "object",
+        "properties": {
+          "BackupId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PurgeFilesRequestDto": {
+        "required": [
+          "BackupId",
+          "Filters"
+        ],
+        "type": "object",
+        "properties": {
+          "BackupId": {
+            "type": "string",
+            "nullable": true
+          },
+          "Filters": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "Versions": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RefreshTokenInputDto": {
+        "type": "object",
+        "properties": {
+          "Nonce": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RemoteControlStatusOutput": {
+        "type": "object",
+        "properties": {
+          "CanEnable": {
+            "type": "boolean"
+          },
+          "IsEnabled": {
+            "type": "boolean"
+          },
+          "IsConnected": {
+            "type": "boolean"
+          },
+          "IsRegistering": {
+            "type": "boolean"
+          },
+          "IsRegisteringFaulted": {
+            "type": "boolean"
+          },
+          "IsRegisteringCompleted": {
+            "type": "boolean"
+          },
+          "RegistrationUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RemoteDestinationType": {
+        "enum": [
+          "Backend",
+          "SourceProvider",
+          "RestoreDestinationProvider"
+        ],
+        "type": "string"
+      },
+      "RemoteOperationInput": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "nullable": true
+          },
+          "backupId": {
+            "type": "string",
+            "nullable": true
+          },
+          "connectionStringId": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "sourcePrefix": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RepairInputDto": {
+        "type": "object",
+        "properties": {
+          "only_paths": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "time": {
+            "type": "string",
+            "nullable": true
+          },
+          "version": {
+            "type": "string",
+            "nullable": true
+          },
+          "paths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "refresh_lock_info": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RestoreInputDto": {
+        "type": "object",
+        "properties": {
+          "paths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "passphrase": {
+            "type": "string",
+            "nullable": true
+          },
+          "time": {
+            "type": "string",
+            "nullable": true
+          },
+          "restore_path": {
+            "type": "string",
+            "nullable": true
+          },
+          "overwrite": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "permissions": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "skip_metadata": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "connection_string_id": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "source_prefix": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RestoreTaskConfigElementDto": {
+        "required": [
+          "AdditionalTargetUrls",
+          "BackupId",
+          "DisplayNames",
+          "Metadata",
+          "Name",
+          "TargetURLDisplay"
+        ],
+        "type": "object",
+        "properties": {
+          "BackupId": {
+            "type": "string",
+            "nullable": true
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "TargetURLDisplay": {
+            "type": "string",
+            "nullable": true
+          },
+          "Metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "nullable": true
+            },
+            "nullable": true
+          },
+          "DisplayNames": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "AdditionalTargetUrls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ScheduleDto": {
+        "required": [
+          "AllowedDays",
+          "ID",
+          "LastRun",
+          "Repeat",
+          "Rule",
+          "Tags",
+          "Time"
+        ],
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "Tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "Time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Repeat": {
+            "type": "string",
+            "nullable": true
+          },
+          "LastRun": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Rule": {
+            "type": "string",
+            "nullable": true
+          },
+          "AllowedDays": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DayOfWeek"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ScheduleInputDto": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "Tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "Time": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "Repeat": {
+            "type": "string",
+            "nullable": true
+          },
+          "LastRun": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "Rule": {
+            "type": "string",
+            "nullable": true
+          },
+          "AllowedDays": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DayOfWeek"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SearchEntriesItemDto": {
+        "required": [
+          "IsDirectory",
+          "IsSymlink",
+          "LastModified",
+          "Metadata",
+          "Path",
+          "Size",
+          "Time",
+          "Version"
+        ],
+        "type": "object",
+        "properties": {
+          "Version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "Time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Path": {
+            "type": "string",
+            "nullable": true
+          },
+          "Size": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "IsDirectory": {
+            "type": "boolean"
+          },
+          "IsSymlink": {
+            "type": "boolean"
+          },
+          "LastModified": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "nullable": true
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SearchEntriesRequestDto": {
+        "required": [
+          "BackupId",
+          "Filters",
+          "Page",
+          "PageSize",
+          "Paths"
+        ],
+        "type": "object",
+        "properties": {
+          "PageSize": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "Page": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "BackupId": {
+            "type": "string",
+            "nullable": true
+          },
+          "Paths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "Filters": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "Time": {
+            "type": "string",
+            "nullable": true
+          },
+          "ReturnExtended": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "Version": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "nullable": true
+          },
+          "CaseSensitiveSearch": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "SearchMetadata": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SearchEntriesResponseDto": {
+        "required": [
+          "Error",
+          "PageInfo",
+          "StatusCode",
+          "Success"
+        ],
+        "type": "object",
+        "properties": {
+          "Success": {
+            "type": "boolean"
+          },
+          "Error": {
+            "type": "string",
+            "nullable": true
+          },
+          "StatusCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "Data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SearchEntriesItemDto"
+            },
+            "nullable": true
+          },
+          "PageInfo": {
+            "$ref": "#/components/schemas/PageInfo"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ServerStatusDto": {
+        "required": [
+          "ActiveTask",
+          "EstimatedPauseEnd",
+          "HasError",
+          "HasWarning",
+          "LastDataUpdateID",
+          "LastEventID",
+          "LastNotificationUpdateID",
+          "ProgramState",
+          "ProposedSchedule",
+          "SchedulerQueueIds",
+          "SuggestedStatusIcon",
+          "UpdateDownloadLink",
+          "UpdateDownloadProgress",
+          "UpdatedVersion",
+          "UpdaterState"
+        ],
+        "type": "object",
+        "properties": {
+          "ActiveTask": {
+            "$ref": "#/components/schemas/Int64StringTuple"
+          },
+          "ProgramState": {
+            "$ref": "#/components/schemas/LiveControlState"
+          },
+          "SchedulerQueueIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Int64StringTuple"
+            },
+            "nullable": true
+          },
+          "ProposedSchedule": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StringDateTimeTuple"
+            },
+            "nullable": true
+          },
+          "HasWarning": {
+            "type": "boolean"
+          },
+          "HasError": {
+            "type": "boolean"
+          },
+          "SuggestedStatusIcon": {
+            "$ref": "#/components/schemas/SuggestedStatusIcon"
+          },
+          "EstimatedPauseEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "LastEventID": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "LastDataUpdateID": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "LastNotificationUpdateID": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "UpdatedVersion": {
+            "type": "string",
+            "nullable": true
+          },
+          "UpdaterState": {
+            "$ref": "#/components/schemas/UpdatePollerStates"
+          },
+          "UpdateDownloadLink": {
+            "type": "string",
+            "nullable": true
+          },
+          "UpdateDownloadProgress": {
+            "type": "number",
+            "format": "double"
+          },
+          "Type": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SetVersionLabelRequestDto": {
+        "required": [
+          "BackupId",
+          "Version"
+        ],
+        "type": "object",
+        "properties": {
+          "BackupId": {
+            "type": "string",
+            "nullable": true
+          },
+          "Version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "Label": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SetVersionLabelResponseDto": {
+        "required": [
+          "Label",
+          "Time",
+          "Version"
+        ],
+        "type": "object",
+        "properties": {
+          "Version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "Time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Label": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SettingDto": {
+        "required": [
+          "Argument",
+          "Filter",
+          "Name",
+          "Value"
+        ],
+        "type": "object",
+        "properties": {
+          "Filter": {
+            "type": "string",
+            "nullable": true
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "Value": {
+            "type": "string",
+            "nullable": true
+          },
+          "Argument": {
+            "$ref": "#/components/schemas/ICommandLineArgument"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SettingInputDto": {
+        "required": [
+          "Name"
+        ],
+        "type": "object",
+        "properties": {
+          "Filter": {
+            "type": "string",
+            "nullable": true
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "Value": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SigninInputDto": {
+        "type": "object",
+        "properties": {
+          "SigninToken": {
+            "type": "string",
+            "nullable": true
+          },
+          "RememberMe": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SigninTokenOutputDto": {
+        "type": "object",
+        "properties": {
+          "Token": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SingleOperationTokenOutputDto": {
+        "type": "object",
+        "properties": {
+          "Token": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SpecialFolderDto": {
+        "required": [
+          "ID",
+          "Path"
+        ],
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "nullable": true
+          },
+          "Path": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "StartRegistrationInput": {
+        "type": "object",
+        "properties": {
+          "RegistrationUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "StringDateTimeTuple": {
+        "type": "object",
+        "properties": {
+          "Item1": {
+            "type": "string",
+            "nullable": true
+          },
+          "Item2": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SuggestedStatusIcon": {
+        "enum": [
+          "Ready",
+          "ReadyWarning",
+          "ReadyError",
+          "Paused",
+          "Active",
+          "ActivePaused",
+          "Disconnected"
+        ],
+        "type": "string"
+      },
+      "SystemInfoDto": {
+        "required": [
+          "APIExtensions",
+          "APIScopes",
+          "APIVersion",
+          "BackendModules",
+          "BrowserLocale",
+          "BrowserLocaleSupported",
+          "CaseSensitiveFilesystem",
+          "CLRVersion",
+          "CompressionModules",
+          "ConnectionModules",
+          "DefaultOAuthURL",
+          "DefaultOAuthURLv2",
+          "DefaultUpdateChannel",
+          "DefaultUsageReportLevel",
+          "DirectorySeparator",
+          "EncryptionModules",
+          "GenericModules",
+          "LocalLicenseStatus",
+          "LogLevels",
+          "MachineName",
+          "NewLine",
+          "Options",
+          "OSType",
+          "OSVersion",
+          "PackageTypeId",
+          "PasswordPlaceholder",
+          "PathSeparator",
+          "PowerModeProviders",
+          "RemoteControlDashboardUrl",
+          "RemoteControlRegistrationUrl",
+          "RemoteLicenseStatus",
+          "RestoreDestinationProviderModules",
+          "SecretProviderModules",
+          "ServerModules",
+          "ServerOnlyOptions",
+          "ServerTime",
+          "ServerTimeZone",
+          "ServerVersion",
+          "ServerVersionName",
+          "ServerVersionType",
+          "SourceProviderModules",
+          "SpecialFolders",
+          "StartedBy",
+          "SupportedLocales",
+          "TimeZones",
+          "UserName",
+          "UsingAlternateUpdateURLs",
+          "WebModules"
+        ],
+        "type": "object",
+        "properties": {
+          "APIVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "PasswordPlaceholder": {
+            "type": "string",
+            "nullable": true
+          },
+          "ServerVersion": {
+            "type": "string",
+            "nullable": true
+          },
+          "ServerVersionName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ServerVersionType": {
+            "type": "string",
+            "nullable": true
+          },
+          "RemoteControlRegistrationUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "RemoteControlDashboardUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "StartedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "DefaultUpdateChannel": {
+            "type": "string",
+            "nullable": true
+          },
+          "DefaultUsageReportLevel": {
+            "type": "string",
+            "nullable": true
+          },
+          "ServerTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ServerTimeZone": {
+            "type": "string",
+            "nullable": true
+          },
+          "OSType": {
+            "type": "string",
+            "nullable": true
+          },
+          "OSVersion": {
+            "type": "string",
+            "nullable": true
+          },
+          "DirectorySeparator": {
+            "type": "string"
+          },
+          "PathSeparator": {
+            "type": "string"
+          },
+          "CaseSensitiveFilesystem": {
+            "type": "boolean"
+          },
+          "MachineName": {
+            "type": "string",
+            "nullable": true
+          },
+          "PackageTypeId": {
+            "type": "string",
+            "nullable": true
+          },
+          "UserName": {
+            "type": "string",
+            "nullable": true
+          },
+          "NewLine": {
+            "type": "string",
+            "nullable": true
+          },
+          "CLRVersion": {
+            "type": "string",
+            "nullable": true
+          },
+          "Options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ICommandLineArgument"
+            },
+            "nullable": true
+          },
+          "ServerOnlyOptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ICommandLineArgument"
+            },
+            "nullable": true
+          },
+          "CompressionModules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IDynamicModule"
+            },
+            "nullable": true
+          },
+          "EncryptionModules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IDynamicModule"
+            },
+            "nullable": true
+          },
+          "BackendModules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IDynamicModule"
+            },
+            "nullable": true
+          },
+          "GenericModules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IDynamicModule"
+            },
+            "nullable": true
+          },
+          "WebModules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IDynamicModule"
+            },
+            "nullable": true
+          },
+          "ConnectionModules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IDynamicModule"
+            },
+            "nullable": true
+          },
+          "SourceProviderModules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IDynamicModule"
+            },
+            "nullable": true
+          },
+          "RestoreDestinationProviderModules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IDynamicModule"
+            },
+            "nullable": true
+          },
+          "ServerModules": {
+            "type": "array",
+            "items": { },
+            "nullable": true
+          },
+          "SecretProviderModules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IDynamicModule"
+            },
+            "nullable": true
+          },
+          "UsingAlternateUpdateURLs": {
+            "type": "boolean"
+          },
+          "LogLevels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "SpecialFolders": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SpecialFolderDto"
+            },
+            "nullable": true
+          },
+          "BrowserLocale": {
+            "$ref": "#/components/schemas/LocaleDto"
+          },
+          "SupportedLocales": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocaleDto"
+            },
+            "nullable": true
+          },
+          "BrowserLocaleSupported": {
+            "type": "boolean"
+          },
+          "TimeZones": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TimeZoneDto"
+            },
+            "nullable": true
+          },
+          "APIExtensions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "APIScopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "DefaultOAuthURL": {
+            "type": "string",
+            "nullable": true
+          },
+          "DefaultOAuthURLv2": {
+            "type": "string",
+            "nullable": true
+          },
+          "PowerModeProviders": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "LocalLicenseStatus": {
+            "$ref": "#/components/schemas/LicenseStatusDto"
+          },
+          "RemoteLicenseStatus": {
+            "$ref": "#/components/schemas/LicenseStatusDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TargetUrlDto": {
+        "required": [
+          "ConnectionStringID",
+          "Mode",
+          "Options",
+          "TargetUrl",
+          "UrlKey"
+        ],
+        "type": "object",
+        "properties": {
+          "UrlKey": {
+            "type": "string",
+            "nullable": true
+          },
+          "TargetUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "Mode": {
+            "type": "string",
+            "nullable": true
+          },
+          "Interval": {
+            "type": "string",
+            "nullable": true
+          },
+          "ConnectionStringID": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "Options": {
+            "type": "object",
+            "additionalProperties": { },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TargetUrlInputDto": {
+        "required": [
+          "TargetUrl"
+        ],
+        "type": "object",
+        "properties": {
+          "UrlKey": {
+            "type": "string",
+            "nullable": true
+          },
+          "TargetUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "Mode": {
+            "type": "string",
+            "nullable": true
+          },
+          "Interval": {
+            "type": "string",
+            "nullable": true
+          },
+          "ConnectionStringID": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "Options": {
+            "type": "object",
+            "additionalProperties": { },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TaskStartedDto": {
+        "type": "object",
+        "properties": {
+          "Status": {
+            "type": "string",
+            "nullable": true
+          },
+          "ID": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TempDiskSpaceRequestDto": {
+        "type": "object",
+        "properties": {
+          "BackupId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TempDiskSpaceResponseDto": {
+        "required": [
+          "Error",
+          "StatusCode",
+          "Success"
+        ],
+        "type": "object",
+        "properties": {
+          "Success": {
+            "type": "boolean"
+          },
+          "Error": {
+            "type": "string",
+            "nullable": true
+          },
+          "StatusCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "Data": {
+            "$ref": "#/components/schemas/TempDiskSpaceResult"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TempDiskSpaceResult": {
+        "required": [
+          "DblockSize",
+          "FreeSpace",
+          "RestoreCacheMax",
+          "TempPath",
+          "TotalSpace"
+        ],
+        "type": "object",
+        "properties": {
+          "TempPath": {
+            "type": "string",
+            "nullable": true
+          },
+          "FreeSpace": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "TotalSpace": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "DblockSize": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "RestoreCacheMax": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TestFilterRequestDto": {
+        "type": "object",
+        "properties": {
+          "Paths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "Sources": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "Filters": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TestFilterResponseDto": {
+        "required": [
+          "Error",
+          "StatusCode",
+          "Success"
+        ],
+        "type": "object",
+        "properties": {
+          "Success": {
+            "type": "boolean"
+          },
+          "Error": {
+            "type": "string",
+            "nullable": true
+          },
+          "StatusCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "Data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TestFilterResponseItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TestFilterResponseItem": {
+        "type": "object",
+        "properties": {
+          "Path": {
+            "type": "string",
+            "nullable": true
+          },
+          "Included": {
+            "type": "boolean"
+          },
+          "MatchedFilter": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TimeZoneDto": {
+        "required": [
+          "CurrentUTCOffset",
+          "DisplayName",
+          "ID"
+        ],
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "nullable": true
+          },
+          "DisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "CurrentUTCOffset": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TreeNodeDto": {
+        "required": [
+          "check",
+          "cls",
+          "fileSize",
+          "hidden",
+          "iconCls",
+          "id",
+          "leaf",
+          "resolvedpath",
+          "symlink",
+          "systemFile",
+          "temporary",
+          "text"
+        ],
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "cls": {
+            "type": "string",
+            "nullable": true
+          },
+          "iconCls": {
+            "type": "string",
+            "nullable": true
+          },
+          "check": {
+            "type": "boolean"
+          },
+          "leaf": {
+            "type": "boolean"
+          },
+          "resolvedpath": {
+            "type": "string",
+            "nullable": true
+          },
+          "hidden": {
+            "type": "boolean"
+          },
+          "systemFile": {
+            "type": "boolean"
+          },
+          "temporary": {
+            "type": "boolean"
+          },
+          "symlink": {
+            "type": "boolean"
+          },
+          "fileSize": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateCertificateInputDto": {
+        "type": "object",
+        "properties": {
+          "Certificate": {
+            "type": "string",
+            "nullable": true
+          },
+          "Password": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateConnectionStringDto": {
+        "required": [
+          "BaseUrl",
+          "Description",
+          "Name"
+        ],
+        "type": "object",
+        "properties": {
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          },
+          "BaseUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateDbPathInputDto": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdatePollerStates": {
+        "enum": [
+          "Waiting",
+          "Checking",
+          "Downloading"
+        ],
+        "type": "string"
+      },
+      "WebModuleOutputDto": {
+        "type": "object",
+        "properties": {
+          "Status": {
+            "type": "string",
+            "nullable": true
+          },
+          "Result": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Commandline"
+    },
+    {
+      "name": "Duplicati.Server"
+    },
+    {
+      "name": "ConnectionStrings"
+    },
+    {
+      "name": "WebModules"
+    }
+  ]
+}

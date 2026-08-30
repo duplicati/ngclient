@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@ang
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipTable } from '@ship-ui/core/ship-table';
-import { finalize } from 'rxjs';
+import { defer, finalize } from 'rxjs';
 import { DuplicatiServer } from '../../../core/openapi';
 
 const COLUMNS = ['BackupID', 'Timestamp', 'Message', 'actions'] as const;
@@ -55,11 +55,14 @@ export default class LogsStoredComponent {
 
     const pagination = this.pagination();
 
-    this.#dupServer
-      .getApiV1LogdataLog({
-        pagesize: pagination.pagesize,
-        offset: pagination.offsetTime,
+    defer(() =>
+      this.#dupServer.getApiV1LogdataLog({
+        query: {
+          pagesize: pagination.pagesize,
+          offset: pagination.offsetTime,
+        },
       })
+    )
       .pipe(finalize(() => this.logsIsLoading.set(false)))
       .subscribe({
         next: (res) => {

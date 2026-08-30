@@ -1,5 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { Observable, Subscriber } from 'rxjs';
+import { defer, Observable, Subscriber } from 'rxjs';
 import { DuplicatiServer, GetTaskStateDto } from '../openapi';
 import { SysinfoState } from '../states/sysinfo.state';
 import { ServerStatusLongPollService } from './server-status-longpoll.service';
@@ -135,7 +135,7 @@ export class ServerStateService {
 
     const nextTaskId = Math.min(...taskIds);
 
-    this.#dupServer.getApiV1TaskByTaskid({ taskid: nextTaskId }).subscribe({
+    defer(() => this.#dupServer.getApiV1TaskByTaskid({ path: { taskid: nextTaskId } })).subscribe({
       next: (task) => {
         const finished = task.TaskFinished != null;
 

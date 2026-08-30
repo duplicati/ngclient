@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } 
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { defer } from 'rxjs';
 import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipDivider } from '@ship-ui/core/ship-divider';
@@ -55,7 +56,7 @@ export default class CommandlineComponent {
   osType = computed(() => this.#sysInfo.systemInfo()?.OSType);
 
   #routeParamsSignal = toSignal(this.#route.params);
-  commandOptions = toSignal(this.#commandline.getApiV1Commandline());
+  commandOptions = toSignal(defer(() => this.#commandline.getApiV1Commandline()));
   isSubmitting = signal(false);
   optionsFields = this.#backupState.optionsFields;
 
@@ -91,10 +92,11 @@ export default class CommandlineComponent {
   });
 
   getBackup(id: string) {
-    this.#dupServer
-      .getApiV1BackupById({
-        id,
+    defer(() =>
+      this.#dupServer.getApiV1BackupById({
+        path: { id },
       })
+    )
       .subscribe({
         next: (res: GetBackupResultDto) => {
           this.#backupState.mapScheduleToForm(res.Schedule ?? null);
@@ -158,10 +160,11 @@ export default class CommandlineComponent {
       '--disable-module=console-password-input',
     ];
 
-    this.#dupServer
-      .postApiV1Commandline({
-        requestBody: command,
+    defer(() =>
+      this.#dupServer.postApiV1Commandline({
+        body: command,
       })
+    )
       .subscribe({
         next: (response) => {
           if (response.Status === 'OK') {

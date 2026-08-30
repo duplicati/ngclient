@@ -6,7 +6,7 @@ import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipCheckbox } from '@ship-ui/core/ship-checkbox';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
-import { catchError, finalize, map, of } from 'rxjs';
+import { catchError, defer, finalize, map, of } from 'rxjs';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer } from '../../core/openapi';
 import { BytesPipe } from '../../core/pipes/byte.pipe';
@@ -30,7 +30,7 @@ export default class DeleteBackupComponent {
   noLocalDbResource = rxResource({
     params: () => ({ dbPath: this.backup()?.Backup?.DBPath }),
     stream: ({ params }) =>
-      this.#dupServer.postApiV1FilesystemValidate({ requestBody: { path: params.dbPath } }).pipe(
+      defer(() => this.#dupServer.postApiV1FilesystemValidate({ body: { path: params.dbPath } })).pipe(
         map(() => true),
         catchError(() => of(false))
       ),
@@ -58,9 +58,11 @@ export default class DeleteBackupComponent {
         if (!res) return;
         this.#backupsState
           .deleteBackup({
-            id,
-            deleteLocalDb: deleteLocalDb,
-            deleteRemoteFiles: deleteRemoteFiles,
+            path: { id },
+            query: {
+              'delete-local-db': deleteLocalDb,
+              'delete-remote-files': deleteRemoteFiles,
+            },
           })
           .pipe(finalize(() => this.isDeleting.set(false)))
           .subscribe({

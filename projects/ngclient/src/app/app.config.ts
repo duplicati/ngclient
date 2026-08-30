@@ -9,6 +9,8 @@ import { SHIP_CONFIG } from '@ship-ui/core';
 import { environment } from '../environments/environment';
 import { ENVIRONMENT_TOKEN } from '../environments/environment-token';
 import { routes } from './app.routes';
+import { provideHeyApiClient } from './core/openapi/client/client.gen';
+import { client } from './core/openapi/client.gen';
 import { StatusBarState } from './core/components/status-bar/status-bar.state';
 import { httpInterceptor } from './core/interceptors/http.interceptor';
 import { httpInterceptorWebsocketRelay } from './core/interceptors/websocket.interceptor';
@@ -25,6 +27,7 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideRouter(routes, withComponentInputBinding(), withPreloading(PreloadAllModules)),
     provideHttpClient(withFetch(), withInterceptors([httpInterceptorWebsocketRelay, httpInterceptor])),
+    provideHeyApiClient(client),
 
     LOCALSTORAGE,
 

@@ -1,13 +1,12 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
-import { finalize, take, tap } from 'rxjs';
+import { defer, finalize, take, tap } from 'rxjs';
 import { randomUUID } from '../functions/crypto';
 import { localStorageSignal } from '../functions/localstorage-signal';
-import { DeleteApiV1BackupByIdData, DuplicatiServer } from '../openapi';
+import { DeleteApiV1BackupByIdData, DuplicatiServer, GetApiV1BackupsResponse, Options } from '../openapi';
 import { ServerStateService } from '../services/server-state.service';
-import { Subscribed } from '../types/subscribed';
 import { SysinfoState } from './sysinfo.state';
 
-export type BackupRes = Subscribed<ReturnType<DuplicatiServer['getApiV1Backups']>>;
+export type BackupRes = GetApiV1BackupsResponse;
 export type Backup = BackupRes[0];
 
 export type BackupDraftItem = {
@@ -190,10 +189,11 @@ export class BackupsState {
 
     this.#timestamp = now;
     this.#backupsLoading.set(true);
-    this.#dupServer
-      .getApiV1Backups({
-        orderBy: this.#orderBy(),
+    defer(() =>
+      this.#dupServer.getApiV1Backups({
+        query: { orderBy: this.#orderBy() },
       })
+    )
       .pipe(
         take(1),
         tap((res) => this.#backups.set(res)),
@@ -205,10 +205,11 @@ export class BackupsState {
   startBackup(id: string) {
     this.#startingBackup.set(id);
 
-    this.#dupServer
-      .postApiV1BackupByIdStart({
-        id,
+    defer(() =>
+      this.#dupServer.postApiV1BackupByIdStart({
+        path: { id },
       })
+    )
       .pipe(
         take(1),
         tap(() => this.getBackups(true)),
@@ -217,7 +218,7 @@ export class BackupsState {
       .subscribe();
   }
 
-  deleteBackup(deleteConfig: DeleteApiV1BackupByIdData) {
-    return this.#dupServer.deleteApiV1BackupById(deleteConfig).pipe(take(1));
+  deleteBackup(deleteConfig: Options<DeleteApiV1BackupByIdData>) {
+    return defer(() => this.#dupServer.deleteApiV1BackupById(deleteConfig)).pipe(take(1));
   }
 }

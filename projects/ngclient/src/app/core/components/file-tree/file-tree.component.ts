@@ -22,11 +22,10 @@ import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipList } from '@ship-ui/core/ship-list';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { ShipToggle } from '@ship-ui/core/ship-toggle';
-import { catchError, finalize, forkJoin, map, Observable, of, switchMap, timer } from 'rxjs';
+import { catchError, defer, finalize, forkJoin, map, Observable, of, switchMap, timer } from 'rxjs';
 import { getBackendIcon, getRemotePathDisplayName } from '../../../backup/destination/destination.config-utilities';
 import {
   DuplicatiServer,
-  GetApiV1BackupByIdFilesData,
   GetApiV1BackupByIdFilesResponse,
   PostApiV1FilesystemResponse,
   RemoteDestinationType,
@@ -327,15 +326,15 @@ export default class FileTreeComponent {
 
       return timer(300).pipe(
         switchMap(() =>
-          this.#dupServer
-            .postApiV2FilesystemTestFilter({
-              requestBody: {
+          defer(() =>
+            this.#dupServer.postApiV2FilesystemTestFilter({
+              body: {
                 Paths: params.data?.paths,
                 Sources: params.data?.sources,
                 Filters: params.data?.filters,
               },
             })
-            .pipe(
+          ).pipe(
               map((res) => {
                 if (!res.Success || !res.Data) {
                   console.log('Error evaluating filters', res);
@@ -1140,13 +1139,13 @@ export default class FileTreeComponent {
         const newPath = this.#appendDirSep(path);
         const fullPath = `${resolvedCurrentPath}/${newPath}`;
 
-        this.#dupServer
-          .postApiV1RemoteoperationCreate({
-            requestBody: {
+        defer(() =>
+          this.#dupServer.postApiV1RemoteoperationCreate({
+            body: {
               path: 'file://' + fullPath,
             },
           })
-          .subscribe({
+        ).subscribe({
             next: () => {
               this.currentPath.set(fullPath);
               this.#getPath(null, currentPath);
@@ -1216,13 +1215,17 @@ export default class FileTreeComponent {
   }
 
   #getFilesystemPath(path: string) {
-    return this.#dupServer.postApiV1Filesystem({
-      showHidden: true,
-      requestBody: {
-        path,
-      },
-      onlyFolders: !this.showFiles(),
-    });
+    return defer(() =>
+      this.#dupServer.postApiV1Filesystem({
+        query: {
+          showHidden: true,
+          onlyFolders: !this.showFiles(),
+        },
+        body: {
+          path,
+        },
+      })
+    );
   }
 
   #getBackendFiles(
@@ -1231,9 +1234,9 @@ export default class FileTreeComponent {
     destinationType: RemoteDestinationType,
     offset: number | null = null
   ) {
-    return this.#dupServer
-      .postApiV2DestinationList({
-        requestBody: {
+    return defer(() =>
+      this.#dupServer.postApiV2DestinationList({
+        body: {
           BackupId: this.backupId() ?? null,
           DestinationUrl: remote?.url ?? this.destinationUrl() ?? null,
           ConnectionStringId: this.connectionStringId() ?? null,
@@ -1244,7 +1247,7 @@ export default class FileTreeComponent {
           Limit: 100,
         },
       })
-      .pipe(
+    ).pipe(
         map((res) => {
           const rawItems = res.Data?.Items ?? [];
 
@@ -1265,10 +1268,10 @@ export default class FileTreeComponent {
   }
 
   #getMicrosoft365Files(path: string | null, remote: RemoteSource | null) {
-    return this.#dupServer
-      .postApiV1WebmoduleByModulekey({
-        modulekey: 'office365',
-        requestBody: {
+    return defer(() =>
+      this.#dupServer.postApiV1WebmoduleByModulekey({
+        path: { modulekey: 'office365' },
+        body: {
           'backup-id': this.backupId() ?? '',
           'source-prefix': remote?.prefix ?? this.sourcePrefix() ?? '',
           operation: 'ListDestinationRestoreTargets',
@@ -1276,7 +1279,7 @@ export default class FileTreeComponent {
           path: path ?? '/',
         },
       })
-      .pipe(
+    ).pipe(
         map((res) => {
           const d = res.Result;
           if (!d) {
@@ -1296,10 +1299,10 @@ export default class FileTreeComponent {
   }
 
   #getGoogleWorkspaceFiles(path: string | null, remote: RemoteSource | null) {
-    return this.#dupServer
-      .postApiV1WebmoduleByModulekey({
-        modulekey: 'googleworkspace',
-        requestBody: {
+    return defer(() =>
+      this.#dupServer.postApiV1WebmoduleByModulekey({
+        path: { modulekey: 'googleworkspace' },
+        body: {
           'backup-id': this.backupId() ?? '',
           'source-prefix': remote?.prefix ?? this.sourcePrefix() ?? '',
           operation: 'ListDestinationRestoreTargets',
@@ -1307,7 +1310,7 @@ export default class FileTreeComponent {
           path: path ?? '/',
         },
       })
-      .pipe(
+    ).pipe(
         map((res) => {
           const d = res.Result;
           if (!d) {
@@ -1328,15 +1331,15 @@ export default class FileTreeComponent {
   }
 
   #getDiskImagePaths(path: string | null) {
-    return this.#dupServer
-      .postApiV1WebmoduleByModulekey({
-        modulekey: 'diskimage',
-        requestBody: {
+    return defer(() =>
+      this.#dupServer.postApiV1WebmoduleByModulekey({
+        path: { modulekey: 'diskimage' },
+        body: {
           operation: 'ListDestinationRestoreTargets',
           path: path ?? '/',
         },
       })
-      .pipe(
+    ).pipe(
         map((res) => {
           const d = res.Result as {
             [key: string]: string;
@@ -1354,9 +1357,9 @@ export default class FileTreeComponent {
   #getBackupFiles(path: string | null) {
     const backupSettings = this.backupSettings()!;
     if (this.#sysInfo.hasV2ListOperations()) {
-      return this.#dupServer
-        .postApiV2BackupListFolder({
-          requestBody: {
+      return defer(() =>
+        this.#dupServer.postApiV2BackupListFolder({
+          body: {
             BackupId: backupSettings.id,
             Time: backupSettings.time,
             Paths: path ? [path] : null,
@@ -1365,17 +1368,19 @@ export default class FileTreeComponent {
             ReturnExtended: this.customRemoteMode() !== null || this.loadExtendedData(),
           },
         })
-        .pipe(map((res) => res.Data ?? []));
+      ).pipe(map((res) => res.Data ?? []));
     } else {
-      const params: GetApiV1BackupByIdFilesData = {
-        id: backupSettings.id + '',
-        prefixOnly: false,
-        folderContents: true,
-        time: backupSettings.time,
-        filter: path ? '@' + path : undefined,
-      };
-
-      return this.#dupServer.getApiV1BackupByIdFiles(params).pipe(map((res) => res['Files'] ?? []));
+      return defer(() =>
+        this.#dupServer.getApiV1BackupByIdFiles({
+          path: { id: backupSettings.id + '' },
+          query: {
+            'prefix-only': false,
+            'folder-contents': true,
+            time: backupSettings.time,
+            filter: path ? '@' + path : undefined,
+          },
+        })
+      ).pipe(map((res) => res['Files'] ?? []));
     }
   }
 

@@ -6,7 +6,7 @@ import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { ShipTable } from '@ship-ui/core/ship-table';
-import { concatMap, finalize, from } from 'rxjs';
+import { concatMap, defer, finalize, from } from 'rxjs';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
@@ -51,7 +51,7 @@ export default class VersionLabelsComponent {
 
   versionsResource = rxResource({
     params: () => ({ id: this.id() }),
-    stream: ({ params }) => this.#dupServer.postApiV2BackupListFilesets({ requestBody: { BackupId: params.id } }),
+    stream: ({ params }) => defer(() => this.#dupServer.postApiV2BackupListFilesets({ body: { BackupId: params.id } })),
   });
 
   isLoading = computed(() => this.versionsResource.isLoading());
@@ -87,7 +87,7 @@ export default class VersionLabelsComponent {
       .pipe(
         concatMap((v) =>
           this.#dupServer.postApiV2BackupSetVersionLabel({
-            requestBody: {
+            body: {
               BackupId: this.id(),
               Version: v.Version,
               Label: v.EditedLabel.trim() === '' ? null : v.EditedLabel.trim(),

@@ -12,10 +12,10 @@ import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { ShipToggle } from '@ship-ui/core/ship-toggle';
 import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
-import { finalize, switchMap } from 'rxjs';
+import { defer, finalize, switchMap } from 'rxjs';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer } from '../../core/openapi';
-import { OpenAPI } from '../../core/openapi/core/OpenAPI';
+import { getApiBase, getApiConfigHeaders } from '../../core/utils/proxy-config.util';
 import { PasswordGeneratorService } from '../../core/services/password-generator.service';
 import { BackupsState } from '../../core/states/backups.state';
 import { validateIf, watchField } from '../../core/validators/custom.validators';
@@ -118,10 +118,11 @@ export default class ExportComponent {
     this.isExporting.set(true);
 
     if (this.exportType() === 'file') {
-      this.#dupServer
-        .postApiV1AuthIssuetokenByOperation({
-          operation: 'export',
+      defer(() =>
+        this.#dupServer.postApiV1AuthIssuetokenByOperation({
+          path: { operation: 'export' },
         })
+      )
         .pipe(
           switchMap((x) => {
             const objToQueryString = (obj: any) => {
@@ -139,7 +140,7 @@ export default class ExportComponent {
               ? this.exportFormSignal()?.password
               : undefined;
 
-            const prefix = OpenAPI.BASE || '';
+            const prefix = getApiBase();
             return this.#httpClient.get(
               `${prefix}/api/v1/backup/${this.#route.snapshot.params['id']}/export${objToQueryString({
                 'export-passwords': this.exportFormSignal()?.exportPasswords ?? undefined,
@@ -149,7 +150,7 @@ export default class ExportComponent {
               {
                 responseType: 'blob',
                 headers: new HttpHeaders({
-                  ...(OpenAPI.HEADERS ?? {}),
+                  ...getApiConfigHeaders(),
                 }),
               }
             );
@@ -170,12 +171,15 @@ export default class ExportComponent {
           },
         });
     } else {
-      this.#dupServer
-        .getApiV1BackupByIdExportCmdline({
-          id: this.#route.snapshot.params['id'],
-          exportPasswords: this.exportFormSignal()?.exportPasswords ?? undefined,
-          passphrase: this.exportFormSignal()?.password ?? undefined,
+      defer(() =>
+        this.#dupServer.getApiV1BackupByIdExportCmdline({
+          path: { id: this.#route.snapshot.params['id'] },
+          query: {
+            'export-passwords': this.exportFormSignal()?.exportPasswords ?? undefined,
+            passphrase: this.exportFormSignal()?.password ?? undefined,
+          },
         })
+      )
         .pipe(finalize(() => this.isExporting.set(false)))
         .subscribe({
           next: (res) => {

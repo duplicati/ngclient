@@ -7,7 +7,7 @@ import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { ShipSelect } from '@ship-ui/core/ship-select';
-import { finalize } from 'rxjs';
+import { defer, finalize } from 'rxjs';
 import FileTreeComponent, { BackupSettings } from '../../../core/components/file-tree/file-tree.component';
 import { DuplicatiServer, SearchEntriesItemDto } from '../../../core/openapi';
 import { BytesPipe } from '../../../core/pipes/byte.pipe';
@@ -82,9 +82,9 @@ export default class PurgeSelectFilesComponent {
     this.showFileTree.set(false);
     this.backupSettings.set(backupSettings);
 
-    this.#dupServer
-      .postApiV2BackupListFolder({
-        requestBody: {
+    defer(() =>
+      this.#dupServer.postApiV2BackupListFolder({
+        body: {
           BackupId: backupSettings.id,
           Time: backupSettings.time,
           Paths: null,
@@ -93,6 +93,7 @@ export default class PurgeSelectFilesComponent {
           ReturnExtended: true,
         },
       })
+    )
       .pipe(
         finalize(() => {
           this.loadingRootPath.set(false);
@@ -120,9 +121,9 @@ export default class PurgeSelectFilesComponent {
     this.searchResults.set([]);
     this.hasSearched.set(true);
 
-    this.#dupServer
-      .postApiV2BackupSearch({
-        requestBody: {
+    defer(() =>
+      this.#dupServer.postApiV2BackupSearch({
+        body: {
           BackupId: backupSettings.id,
           Time: null,
           Version: [version],
@@ -134,6 +135,7 @@ export default class PurgeSelectFilesComponent {
           SearchMetadata: false,
         },
       })
+    )
       .pipe(finalize(() => this.isSearching.set(false)))
       .subscribe({
         next: (res) => {

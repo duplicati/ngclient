@@ -7,9 +7,9 @@ import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { ShipSelect } from '@ship-ui/core/ship-select';
-import { finalize, Subject, take, takeUntil } from 'rxjs';
+import { defer, finalize, Subject, take, takeUntil } from 'rxjs';
 import FileTreeComponent, { BackupSettings } from '../../core/components/file-tree/file-tree.component';
-import { DuplicatiServer, GetApiV1BackupByIdFilesData, SearchEntriesItemDto, TreeNodeDto } from '../../core/openapi';
+import { DuplicatiServer, SearchEntriesItemDto, TreeNodeDto } from '../../core/openapi';
 import { BytesPipe } from '../../core/pipes/byte.pipe';
 import { ServerStateService } from '../../core/services/server-state.service';
 import { SysinfoState } from '../../core/states/sysinfo.state';
@@ -146,14 +146,15 @@ export default class SelectFilesComponent {
         return [...ids, versionId];
       });
 
-      this.#dupServer
-        .postApiV1BackupByIdRepairupdate({
-          id: backupId!,
-          requestBody: {
+      defer(() =>
+        this.#dupServer.postApiV1BackupByIdRepairupdate({
+          path: { id: backupId! },
+          body: {
             only_paths: true,
             time: option.Time,
           },
         })
+      )
         .pipe(
           takeUntil(this.abortLoading$),
           finalize(() => {
@@ -179,11 +180,13 @@ export default class SelectFilesComponent {
   });
 
   getRootPath(backupSettings: BackupSettings) {
-    const params: GetApiV1BackupByIdFilesData = {
-      id: backupSettings.id + '',
-      time: backupSettings.time,
-      prefixOnly: true,
-      folderContents: false,
+    const params = {
+      path: { id: backupSettings.id + '' },
+      query: {
+        time: backupSettings.time,
+        'prefix-only': true,
+        'folder-contents': false,
+      },
     };
 
     const requestId = backupSettings.id + '';
@@ -194,9 +197,9 @@ export default class SelectFilesComponent {
     this.showFileTree.set(false);
 
     if (this.#sysinfo.hasV2ListOperations()) {
-      this.#dupServer
-        .postApiV2BackupListFolder({
-          requestBody: {
+      defer(() =>
+        this.#dupServer.postApiV2BackupListFolder({
+          body: {
             BackupId: backupSettings.id,
             Time: backupSettings.time,
             Paths: null,
@@ -205,6 +208,7 @@ export default class SelectFilesComponent {
             ReturnExtended: true,
           },
         })
+      )
         .pipe(
           takeUntil(this.abortLoading$),
           finalize(() => {
@@ -231,8 +235,7 @@ export default class SelectFilesComponent {
           },
         });
     } else {
-      this.#dupServer
-        .getApiV1BackupByIdFiles(params)
+      defer(() => this.#dupServer.getApiV1BackupByIdFiles(params))
         .pipe(
           takeUntil(this.abortLoading$),
           finalize(() => {
@@ -309,9 +312,9 @@ export default class SelectFilesComponent {
     this.searchResults.set([]);
     this.hasSearched.set(true);
 
-    this.#dupServer
-      .postApiV2BackupSearch({
-        requestBody: {
+    defer(() =>
+      this.#dupServer.postApiV2BackupSearch({
+        body: {
           BackupId: backupSettings.id,
           Time: null,
           Version: [version],
@@ -323,6 +326,7 @@ export default class SelectFilesComponent {
           SearchMetadata: needsMetadata,
         },
       })
+    )
       .pipe(
         takeUntil(this.abortLoading$),
         finalize(() => this.isSearching.set(false))

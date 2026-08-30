@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable } from '@angular/core';
-import { map } from 'rxjs';
+import { defer, map } from 'rxjs';
 import { LazySignal } from '../functions/lazy-signal';
 import { DuplicatiServer, WebModuleOutputDto } from '../openapi';
-import { OpenAPI } from '../openapi/core/OpenAPI';
+import { getApiBase } from '../utils/proxy-config.util';
 import { RelayconfigState } from '../states/relayconfig.state';
 
 export type WebModuleOption = { key: string; value: any };
@@ -178,68 +178,72 @@ export class WebModulesService {
   }
 
   private getS3Config(config: 'Providers' | 'Regions' | 'RegionHosts' | 'StorageClasses') {
-    return this.#dupServer
-      .postApiV1WebmoduleByModulekey({
-        modulekey: 's3-getconfig',
-        requestBody: {
+    return defer(() =>
+      this.#dupServer.postApiV1WebmoduleByModulekey({
+        path: { modulekey: 's3-getconfig' },
+        body: {
           's3-config': config,
         },
       })
-      .pipe(map((x) => this.#defaultMapResultObjToArray(x)));
+    ).pipe(map((x) => this.#defaultMapResultObjToArray(x)));
   }
 
   createS3IamUser(username: string, password: string) {
-    return this.#dupServer.postApiV1WebmoduleByModulekey({
-      modulekey: 's3-iamconfig',
-      requestBody: {
-        's3-operation': 'CanCreateUser',
-        's3-username': username,
-        's3-password': password,
-      },
-    });
+    return defer(() =>
+      this.#dupServer.postApiV1WebmoduleByModulekey({
+        path: { modulekey: 's3-iamconfig' },
+        body: {
+          's3-operation': 'CanCreateUser',
+          's3-username': username,
+          's3-password': password,
+        },
+      })
+    );
   }
 
   createS3PolicyIAM(path: string) {
-    return this.#dupServer.postApiV1WebmoduleByModulekey({
-      modulekey: 's3-iamconfig',
-      requestBody: {
-        's3-operation': 'GetPolicyDoc',
-        path, // "${bucketname}/{path on server}"
-      },
-    });
+    return defer(() =>
+      this.#dupServer.postApiV1WebmoduleByModulekey({
+        path: { modulekey: 's3-iamconfig' },
+        body: {
+          's3-operation': 'GetPolicyDoc',
+          path, // "${bucketname}/{path on server}"
+        },
+      })
+    );
   }
 
   private getStorjConfig(config: 'Satellites' | 'AuthenticationMethods') {
-    return this.#dupServer
-      .postApiV1WebmoduleByModulekey({
-        modulekey: 'storj-getconfig',
-        requestBody: {
+    return defer(() =>
+      this.#dupServer.postApiV1WebmoduleByModulekey({
+        path: { modulekey: 'storj-getconfig' },
+        body: {
           'storj-config': config,
         },
       })
-      .pipe(map((x) => this.#defaultMapResultObjToArray(x)));
+    ).pipe(map((x) => this.#defaultMapResultObjToArray(x)));
   }
 
   private getOpenstackConfig(config: 'Providers' | 'Versions') {
-    return this.#dupServer
-      .postApiV1WebmoduleByModulekey({
-        modulekey: 'openstack-getconfig',
-        requestBody: {
+    return defer(() =>
+      this.#dupServer.postApiV1WebmoduleByModulekey({
+        path: { modulekey: 'openstack-getconfig' },
+        body: {
           'openstack-config': config,
         },
       })
-      .pipe(map((x) => this.#defaultMapResultObjToArray(x)));
+    ).pipe(map((x) => this.#defaultMapResultObjToArray(x)));
   }
 
   private getGcsConfig(config: 'Locations' | 'StorageClasses') {
-    return this.#dupServer
-      .postApiV1WebmoduleByModulekey({
-        modulekey: 'gcs-getconfig',
-        requestBody: {
+    return defer(() =>
+      this.#dupServer.postApiV1WebmoduleByModulekey({
+        path: { modulekey: 'gcs-getconfig' },
+        body: {
           'gcs-config': config,
         },
       })
-      .pipe(map((x) => this.#defaultMapResultObjToArray(x)));
+    ).pipe(map((x) => this.#defaultMapResultObjToArray(x)));
   }
 
   #defaultMapResultObjToArray(x: WebModuleOutputDto) {
@@ -253,15 +257,15 @@ export class WebModulesService {
   }
 
   getDuplicatiStorageBackups(url: string) {
-    return this.#dupServer
-      .postApiV1WebmoduleByModulekey({
-        modulekey: 'duplicati-list-backups',
-        requestBody: {
+    return defer(() =>
+      this.#dupServer.postApiV1WebmoduleByModulekey({
+        path: { modulekey: 'duplicati-list-backups' },
+        body: {
           action: 'ListBackups',
           url,
         },
       })
-      .pipe(
+    ).pipe(
         map((x) => this.#defaultMapResultObjToArray(x)),
         map((res) => res.find((r) => r.key === 'folders')?.value as string),
         map((folders) => JSON.parse(folders) as string[])
@@ -269,16 +273,16 @@ export class WebModulesService {
   }
 
   getFilenApiKey(url: string, backupId?: string | null) {
-    return this.#dupServer
-      .postApiV1WebmoduleByModulekey({
-        modulekey: 'filen-get-api-key',
-        requestBody: {
+    return defer(() =>
+      this.#dupServer.postApiV1WebmoduleByModulekey({
+        path: { modulekey: 'filen-get-api-key' },
+        body: {
           'filen-operation': 'GetApiKey',
           'backup-id': backupId ?? '',
           url,
         },
       })
-      .pipe(
+    ).pipe(
         map((x) => this.#defaultMapResultObjToArray(x)),
         map((res) => res.find((r) => r.key === 'api-key')?.value as string)
       );
@@ -301,7 +305,7 @@ export class WebModulesService {
 
     return this.#http
       .post<WebModuleOutputDto>(
-        `${OpenAPI.BASE}/api/v1/webmodule/office365`,
+        `${getApiBase()}/api/v1/webmodule/office365`,
         // The websocket relay only supports string bodies, so serialize here
         JSON.stringify({
           'backup-id': backupId ?? '',
@@ -346,7 +350,7 @@ export class WebModulesService {
   #getCustomRemotePermissions(module: CustomRemoteModule, url: string, sourcePrefix: string, backupId: string | null) {
     return this.#http
       .post<WebModuleOutputDto>(
-        `${OpenAPI.BASE}/api/v1/webmodule/${module}`,
+        `${getApiBase()}/api/v1/webmodule/${module}`,
         JSON.stringify({
           'backup-id': backupId ?? '',
           'source-prefix': sourcePrefix,

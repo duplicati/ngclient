@@ -5,7 +5,7 @@ import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipCard } from '@ship-ui/core/ship-card';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
-import { finalize } from 'rxjs';
+import { defer, finalize } from 'rxjs';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 
 import { DuplicatiServer, ListBrokenFilesFilesetItem } from '../../core/openapi';
@@ -21,17 +21,17 @@ import { BackupsState } from '../../core/states/backups.state';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class BrokenFilesComponent {
-  #dupServer = inject(DuplicatiServer);
   #dialog = inject(ShipDialogService);
   #backupsState = inject(BackupsState);
   #router = inject(Router);
+  #dupServer = inject(DuplicatiServer);
 
   id = input.required<string>();
   backup = computed(() => this.#backupsState.getBackupById(this.id()));
 
   brokenFilesResource = rxResource({
     params: () => ({ id: this.id() }),
-    stream: ({ params }) => this.#dupServer.postApiV2BackupListBrokenFiles({ requestBody: { BackupId: params.id } }),
+    stream: ({ params }) => defer(() => this.#dupServer.postApiV2BackupListBrokenFiles({ body: { BackupId: params.id } })),
   });
 
   isLoading = computed(() => this.brokenFilesResource.isLoading());
@@ -68,12 +68,13 @@ export default class BrokenFilesComponent {
       closed: (res) => {
         if (!res) return;
         this.isPurging.set(true);
-        this.#dupServer
-          .postApiV2BackupPurgeBrokenFiles({
-            requestBody: {
+        defer(() =>
+          this.#dupServer.postApiV2BackupPurgeBrokenFiles({
+            body: {
               BackupId: this.id(),
             },
           })
+        )
           .pipe(finalize(() => this.isPurging.set(false)))
           .subscribe({
             next: () => {

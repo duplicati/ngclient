@@ -8,7 +8,7 @@ import { ShipFileUpload } from '@ship-ui/core/ship-file-upload';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipToggle } from '@ship-ui/core/ship-toggle';
-import { finalize } from 'rxjs';
+import { defer, finalize } from 'rxjs';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer } from '../../core/openapi';
 import { BackupDraft, BackupsState } from '../../core/states/backups.state';
@@ -114,10 +114,11 @@ export default class ImportComponent {
     this.isImporting.set(true);
     const isDirectImport = this.importForm.value.direct ?? false;
 
-    this.#dupServer
-      .postApiV1BackupsImport({
-        requestBody: this.importForm.value,
+    defer(() =>
+      this.#dupServer.postApiV1BackupsImport({
+        body: this.importForm.value,
       })
+    )
       .pipe(finalize(() => this.isImporting.set(false)))
       .subscribe({
         next: (res) => {

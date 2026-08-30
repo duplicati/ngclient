@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DomSanitizer } from '@angular/platform-browser';
-import { map } from 'rxjs';
+import { defer, map } from 'rxjs';
 import { DuplicatiServer } from '../../core/openapi';
 import { Marked, MarkedProvider } from '../../core/providers/marked';
 
@@ -18,7 +18,7 @@ export default class ChangelogComponent {
   #marked = inject(Marked);
 
   changelog = toSignal(
-    this.#dupServer.getApiV1Changelog().pipe(
+    defer(() => this.#dupServer.getApiV1Changelog()).pipe(
       map((x) => {
         const changelog = this.#sanitizer.bypassSecurityTrustHtml(x.Changelog ?? '');
         let stringLog = changelog.toString();
