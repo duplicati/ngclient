@@ -3072,6 +3072,35 @@
         }
       }
     },
+    "/api/v2/backup/purge-files": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PurgeFilesRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskStartedDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v2/backup/set-version-label": {
       "post": {
         "tags": [
@@ -5336,6 +5365,35 @@
         "properties": {
           "BackupId": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PurgeFilesRequestDto": {
+        "required": [
+          "BackupId",
+          "Filters"
+        ],
+        "type": "object",
+        "properties": {
+          "BackupId": {
+            "type": "string",
+            "nullable": true
+          },
+          "Filters": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "Versions": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            },
             "nullable": true
           }
         },

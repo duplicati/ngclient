@@ -1,0 +1,13 @@
+@use '@ship-ui/core/styles/helpers' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  padding: p2r(40);
+  height: 100%;
+}
+
+h3 {
+  font: var(--title-30);
+  margin: 0;
+}

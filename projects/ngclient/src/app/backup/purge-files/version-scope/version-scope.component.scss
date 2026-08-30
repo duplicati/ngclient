@@ -1,0 +1,69 @@
+@use '@ship-ui/core/styles/helpers' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0;
+  min-height: p2r(400);
+  overflow: hidden;
+  gap: p2r(16);
+  padding-top: p2r(32);
+  padding-bottom: p2r(24);
+}
+
+sh-alert {
+  max-width: p2r(500);
+  flex-shrink: 0;
+}
+
+.version-scope {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(16);
+  min-height: 0;
+
+  p {
+    margin: 0;
+    flex-shrink: 0;
+  }
+
+  .radios {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: p2r(8);
+    flex-shrink: 0;
+  }
+}
+
+.versions-list {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(8);
+  flex: 0 1 auto;
+  min-height: 0;
+  max-height: p2r(400);
+  overflow: auto;
+  padding: p2r(8 16);
+  border: 1px solid var(--base-4);
+  border-radius: var(--shape-3);
+  background: var(--base-1);
+
+  .version {
+    display: flex;
+    align-items: center;
+    gap: p2r(8);
+  }
+
+  .label {
+    color: var(--base-9);
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: p2r(16);
+  flex-shrink: 0;
+}

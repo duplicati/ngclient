@@ -127,6 +127,17 @@
                       <sh-icon>info</sh-icon>
                     </button>
                   }
+                  @if (path.includes('|office365://') || path.includes('|googleworkspace://')) {
+                    <button
+                      shButton
+                      type="button"
+                      class="small"
+                      (click)="openCustomRemotePermissions(path)"
+                      i18n-title
+                      title="Check permissions">
+                      <sh-icon>shield-check</sh-icon>
+                    </button>
+                  }
                 } @else {
                   <sh-form-field class="small" [attr.readonly]="true">
                     <input type="text" [ngModel]="path" [ngModelOptions]="{ standalone: true }" />

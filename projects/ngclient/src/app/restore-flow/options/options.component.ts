@@ -6,6 +6,7 @@ import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipRadio } from '@ship-ui/core/ship-radio';
 import { ShipToggle } from '@ship-ui/core/ship-toggle';
+import { CustomRemotePermissionsDialog } from '../../backup/source-data/custom-remote-permissions-dialog/custom-remote-permissions-dialog';
 import { TargetUrlDialog } from '../../backup/source-data/target-url-dialog/target-url-dialog';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
@@ -105,6 +106,32 @@ export default class OptionsComponent {
     return mode === 'same-custom' || mode === 'other-custom';
   });
 
+  canCheckPermissions = computed(() => {
+    const type = this.extendedDataType();
+    return (
+      (type === 'o365' || type === 'gsuite') && this.isCustomRemoteRestore() && this.customDestinationUrl() !== null
+    );
+  });
+
+  checkPermissions() {
+    const url = this.customDestinationUrl();
+    const type = this.extendedDataType();
+    if (!url || (type !== 'o365' && type !== 'gsuite')) return;
+
+    this.#dialog.open(CustomRemotePermissionsDialog, {
+      maxWidth: '700px',
+      width: '100%',
+      closeOnOutsideClick: true,
+      data: {
+        url,
+        sourcePrefix: this.remoteCustomSourcePrefix() ?? '',
+        backupId: this.backupId(),
+        module: type === 'o365' ? 'office365' : 'googleworkspace',
+        mode: 'restore',
+      },
+    });
+  }
+
   chooseCustomRemoteDestination() {
     const defaultUrlPrefix = this.extendedDataType() === 'o365' ? 'office365://' : 'googleworkspace://';
 
@@ -156,7 +183,9 @@ export default class OptionsComponent {
   }
 
   submit() {
-    const files = this.#restoreFlowState.selectFilesFormSignal()?.filesToRestore ?? [];
+    const files = (this.#restoreFlowState.selectFilesFormSignal()?.filesToRestore ?? '')
+      .split('\0')
+      .filter((x) => x !== '');
     if (files.length > 0 && this.optionsFormSignal()?.restoreFrom == 'original') {
       const sourceDirSep = files[0].includes('/') ? '/' : '\\';
       if (sourceDirSep !== this.#sysinfoState.systemInfo()?.DirectorySeparator) {

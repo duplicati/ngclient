@@ -6,6 +6,21 @@
   &.full-width section {
     max-width: p2r(1000);
   }
+
+  &.fill-height {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+
+    section {
+      display: flex;
+      flex-direction: column;
+      flex: 1 0;
+      overflow: hidden;
+      width: 100%;
+    }
+  }
 }
 
 sh-stepper {

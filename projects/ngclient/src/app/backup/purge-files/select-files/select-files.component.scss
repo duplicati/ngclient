@@ -3,31 +3,26 @@
 :host {
   display: flex;
   flex-direction: column;
-  margin-top: p2r(40);
   flex: 1 0;
+  min-height: p2r(400);
   overflow: hidden;
+  gap: p2r(16);
+  padding-top: p2r(32);
+  padding-bottom: p2r(24);
 }
 
-form {
+.loading-state,
+.empty-state {
+  padding: p2r(32 0);
   display: flex;
   flex-direction: column;
-  gap: p2r(24);
-  flex: 1 0;
-  overflow: hidden;
+  gap: p2r(16);
 }
 
-.form-actions {
-  display: flex;
-  justify-content: space-between;
-}
-
-.partial {
-  color: var(--base-9);
-  font-style: italic;
-}
-
-.label {
-  color: var(--base-9);
+.version-picker {
+  .label {
+    color: var(--base-9);
+  }
 }
 
 .search-container {
@@ -43,4 +38,9 @@ form {
 .search-results-info {
   color: var(--base-8);
   font-size: var(--small);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
 }

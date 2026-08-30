@@ -26,6 +26,7 @@ import { SysinfoState } from '../../core/states/sysinfo.state';
 import { BackupState } from '../backup.state';
 import { FiltersComponent } from '../components/filters/filters.component';
 import { getBackendIcon, getRemotePathDisplayName } from '../destination/destination.config-utilities';
+import { CustomRemotePermissionsDialog } from './custom-remote-permissions-dialog/custom-remote-permissions-dialog';
 import { Office365CountsDialog } from './office365-counts-dialog/office365-counts-dialog';
 import { TargetDiskDialog } from './target-disk-dialog/target-disk-dialog';
 import { TargetUrlDialog } from './target-url-dialog/target-url-dialog';
@@ -348,6 +349,35 @@ export default class SourceDataComponent {
         url,
         sourcePrefix,
         backupId: this.backupId,
+      },
+    });
+  }
+
+  openCustomRemotePermissions(path: string) {
+    if (!path || !path.startsWith('@')) return;
+    const parts = path.split('|');
+    if (parts.length !== 2) return;
+
+    const module = parts[1].startsWith('office365://')
+      ? 'office365'
+      : parts[1].startsWith('googleworkspace://')
+        ? 'googleworkspace'
+        : null;
+    if (!module) return;
+
+    const sourcePrefix = parts[0];
+    const url = parts[1];
+
+    this.#dialog.open(CustomRemotePermissionsDialog, {
+      maxWidth: '700px',
+      width: '100%',
+      closeOnOutsideClick: true,
+      data: {
+        url,
+        sourcePrefix,
+        backupId: this.backupId,
+        module,
+        mode: 'backup',
       },
     });
   }

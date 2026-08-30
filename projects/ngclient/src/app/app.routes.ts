@@ -185,6 +185,25 @@ export const routes: Routes = [
                     loadComponent: () => import('./backup/delete-versions/delete-versions.component'),
                   },
                   {
+                    path: 'backup/:id/purge-files',
+                    loadComponent: () => import('./backup/purge-files/purge-files.component'),
+                    children: [
+                      {
+                        path: '',
+                        pathMatch: 'full',
+                        redirectTo: 'select-files',
+                      },
+                      {
+                        path: 'select-files',
+                        loadComponent: () => import('./backup/purge-files/select-files/select-files.component'),
+                      },
+                      {
+                        path: 'version-scope',
+                        loadComponent: () => import('./backup/purge-files/version-scope/version-scope.component'),
+                      },
+                    ],
+                  },
+                  {
                     path: 'backup/:id/version-labels',
                     loadComponent: () => import('./backup/version-labels/version-labels.component'),
                   },

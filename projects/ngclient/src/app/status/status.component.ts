@@ -10,7 +10,7 @@ import { defer } from 'rxjs';
 import LogsLiveComponent from '../about/logs/logs-live/logs-live.component';
 import { PauseDialogComponent } from '../core/components/status-bar/pause-dialog/pause-dialog.component';
 import { StatusBarState } from '../core/components/status-bar/status-bar.state';
-import { STATUS_STATES } from '../core/constants/status-states.constant';
+import { resolveStatusText } from '../core/constants/status-states.constant';
 import { DuplicatiServer } from '../core/openapi';
 import { BytesPipe } from '../core/pipes/byte.pipe';
 import { RelativeTimePipe } from '../core/pipes/relative-time.pipe';
@@ -51,7 +51,7 @@ export default class StatusComponent implements OnInit, OnDestroy {
 
   statusText = computed(() => {
     const phase = this.statusData()?.Phase;
-    return phase ? STATUS_STATES[phase] || phase : '';
+    return resolveStatusText(phase);
   });
 
   progress = computed(() => {

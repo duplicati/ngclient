@@ -66,6 +66,7 @@ export default class HomeComponent {
   hasDeleteVersions = this.#sysinfo.hasV2DeleteVersions;
   hasSetVersionLabel = this.#sysinfo.hasV2SetVersionLabel;
   hasBrokenFiles = this.#sysinfo.hasV2BrokenFiles;
+  hasPurgeFiles = this.#sysinfo.hasV2PurgeFiles;
 
   MISSING_BACKUP_NAME = $localize`Backup name missing`;
   sortOrderOptions = this.#backupsState.orderByOptions;

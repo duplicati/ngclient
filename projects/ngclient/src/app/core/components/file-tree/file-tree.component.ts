@@ -381,6 +381,11 @@ export default class FileTreeComponent {
     for (const searchEntry of searchResults) {
       const resultPath = searchEntry.Path ?? '';
       const pathDelimiter = this.#getPathDelimiter(resultPath);
+      // Preserve the leading separators of the original path (Posix or UNC)
+      let rootPrefix = '';
+      while (pathDelimiter !== '' && resultPath.startsWith(rootPrefix + pathDelimiter)) {
+        rootPrefix += pathDelimiter;
+      }
       const parts = resultPath.split(pathDelimiter).filter((p) => p !== '');
 
       let currentPath = '';
@@ -395,7 +400,7 @@ export default class FileTreeComponent {
             ? currentPath.slice(0, -pathDelimiter.length)
             : currentPath
           : '';
-        currentPath = prefix ? `${prefix}${pathDelimiter}${part}` : `${pathDelimiter}${part}`;
+        currentPath = prefix ? `${prefix}${pathDelimiter}${part}` : `${rootPrefix}${part}`;
         if (isFolder && !currentPath.endsWith(pathDelimiter)) {
           currentPath += pathDelimiter;
         }
@@ -455,6 +460,7 @@ export default class FileTreeComponent {
 
       // Build collapsed text if this folder starts a single-child chain
       // Walk down the chain and concatenate names
+      const chainDelimiter = this.#getPathDelimiter(path);
       let chainText = info.part;
       let chainPath = path;
       while (true) {
@@ -465,7 +471,7 @@ export default class FileTreeComponent {
         const nextInfo = pathInfoMap.get(nextPath);
         if (!nextInfo || !nextInfo.isFolder) break;
 
-        chainText += '/' + nextInfo.part;
+        chainText += chainDelimiter + nextInfo.part;
         chainPath = nextPath;
       }
 
@@ -483,10 +489,11 @@ export default class FileTreeComponent {
     const topLevelNodes: FileTreeNode[] = [];
     const nodeMap = new Map<string, FileTreeNode>();
 
-    // Sort visible paths by depth
+    // Sort visible paths by depth, so a parent is always created before its children
+    const pathDepth = (path: string) => path.split(this.#getPathDelimiter(path)).filter((x) => x !== '').length;
     const sortedPaths = Array.from(visiblePaths)
       .filter((p) => p !== ROOTPATH)
-      .sort((a, b) => a.split('/').length - b.split('/').length || a.localeCompare(b));
+      .sort((a, b) => pathDepth(a) - pathDepth(b) || a.localeCompare(b));
 
     for (const path of sortedPaths) {
       const info = pathInfoMap.get(path);

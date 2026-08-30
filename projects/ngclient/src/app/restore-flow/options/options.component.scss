@@ -14,3 +14,9 @@ form {
   display: flex;
   justify-content: space-between;
 }
+
+.check-permissions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: p2r(8);
+}
