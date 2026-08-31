@@ -557,7 +557,6 @@ export class BackupState {
     const legacyOptionValues = ['dblock-size', 'compression-module'];
     const modulesToIgnore = [
       '--no-encryption',
-      '--exclude-files-attributes',
       '--skip-files-larger-than',
       'encryption-module',
       'passphrase',
