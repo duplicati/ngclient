@@ -169,7 +169,34 @@ export const SCHEDULE_DEFAULT_OPTIONS = [
 
 type ScheduleOption = (typeof SCHEDULE_DEFAULT_OPTIONS)[number];
 
-export function scheduleOptionToSchedule(schedule: ScheduleOption['data']): ScheduleInputDto | null {
+type ScheduleFormValue = Omit<ScheduleOption['data'], 'nextTime'> & {
+  nextTime: {
+    time: string;
+    date: string | Date;
+  };
+};
+
+function getLocalDateParts(value: string | Date) {
+  if (typeof value === 'string') {
+    const canonicalDate = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+    if (canonicalDate) {
+      return {
+        year: parseInt(canonicalDate[1]),
+        month: parseInt(canonicalDate[2]) - 1,
+        day: parseInt(canonicalDate[3]),
+      };
+    }
+  }
+
+  const date = value instanceof Date ? value : new Date(value);
+  return {
+    year: date.getFullYear(),
+    month: date.getMonth(),
+    day: date.getDate(),
+  };
+}
+
+export function scheduleOptionToSchedule(schedule: ScheduleFormValue): ScheduleInputDto | null {
   if (!schedule.autoRun) {
     return null;
   }
@@ -184,15 +211,10 @@ export function scheduleOptionToSchedule(schedule: ScheduleOption['data']): Sche
     schedule.runAgain.allowedDays.sun ? 'Sunday' : null,
   ].filter((x) => x !== null) as DayOfWeek[];
 
-  // The DatePicker sets a full date object, and we need it in UTC
-  // We need to make sure we get the LOCAL date + time,
-  // before we turn it to UTC for submission
-  const parsedDate = new Date(schedule.nextTime.date);
+  // Loaded schedules use YYYY-MM-DD strings, which the Date constructor treats as UTC.
+  // DatePicker selections are Date objects and already represent the selected local day.
+  const { year, month, day } = getLocalDateParts(schedule.nextTime.date);
   const timeParts = schedule.nextTime.time.split(':');
-
-  const year = parsedDate.getFullYear();
-  const month = parsedDate.getMonth();
-  const day = parsedDate.getDate();
 
   const hours = parseInt(timeParts[0] ?? '0');
   const minutes = parseInt(timeParts[1] ?? '0');
@@ -227,7 +249,7 @@ export const SCHEDULE_FIELD_DEFAULTS = () => {
     autoRun: signal(true),
     nextTime: {
       time: signal<string>('13:00'),
-      date: signal<string>(new Date().toISOString().split('T')[0]),
+      date: signal<string | Date>(new Date().toISOString().split('T')[0]),
     },
     runAgain: {
       repeatValue: signal(1),
