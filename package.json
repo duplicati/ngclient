@@ -30,6 +30,7 @@
     "tx:pull": "tx pull -a --mode translated --minimum-perc 20",
     "tx:sync": "ng extract-i18n --output-path projects/ngclient/src/locale --format xlf && tx push -s && tx pull -a --minimum-perc 20 && ng build ngclient --localize && npx tsx scripts/convert-xlf-to-json.ts && npx tsx scripts/check-locale-placeholders.ts",
     "gen:openapi": "openapi-ts",
+    "update:openapi": "bun scripts/update-openapi.ts && bun run gen:openapi",
     "test": "ng test ngclient",
     "test:ci": "ng test ngclient --watch=false"
   },
