@@ -109,6 +109,10 @@ describe('destination URL utilities', () => {
       expect(concatPaths(...paths)).toBe(expected);
     });
 
+    it('does not create a double slash when a path starts with a slash', () => {
+      expect(concatPaths('server:443', '/Sicherung/nuc/config')).toBe('server:443/Sicherung/nuc/config');
+    });
+
     it('encodes path segments without encoding slashes', () => {
       expect(encodePathPreservingSlashes('folder name/file#1/日本語')).toBe(
         'folder%20name/file%231/%E6%97%A5%E6%9C%AC%E8%AA%9E'

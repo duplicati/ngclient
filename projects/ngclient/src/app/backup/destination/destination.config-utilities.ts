@@ -162,7 +162,7 @@ export function concatPaths(...paths: (string | null | undefined)[]) {
   let result = '';
   for (const path of paths) {
     if (path === null || path === undefined || path === '') continue;
-    result += result.endsWith('/') || result == '' ? path : '/' + path;
+    result += result.endsWith('/') || result == '' || path.startsWith('/') ? path : '/' + path;
   }
   return result;
 }
