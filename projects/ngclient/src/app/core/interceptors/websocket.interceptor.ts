@@ -19,10 +19,18 @@ type CallState = {
   relayWebsocket: RelayWebsocketService;
 };
 
-function bufferToStringBase64(str: any) {
+function bufferToStringBase64(body: any) {
   // TODO - Handle files... (Probably a buffer already and should just be returned as is)
-  if (typeof str !== 'string') {
-    console.log('Unexpected body type: ', typeof str);
+  if (body instanceof FormData || body instanceof Blob || body instanceof ArrayBuffer) {
+    console.log('Unexpected body type: ', typeof body);
+    return null;
+  }
+
+  // The hey-api client passes JSON bodies as raw objects (no bodySerializer
+  // is configured), so serialize them like the legacy client did
+  const str = typeof body === 'string' ? body : body == null ? null : JSON.stringify(body);
+
+  if (str === null) {
     return null;
   }
 
