@@ -22,6 +22,7 @@ type CallState = {
 function bufferToStringBase64(str: any) {
   // TODO - Handle files... (Probably a buffer already and should just be returned as is)
   if (typeof str !== 'string') {
+    console.log('Unexpected body type: ', typeof str);
     return null;
   }
 
