@@ -411,7 +411,7 @@ export default class SourceDataComponent {
   }
 
   goBack() {
-    this.#router.navigate(['destination'], { relativeTo: this.#route.parent });
+    this.#router.navigate(['general'], { relativeTo: this.#route.parent });
   }
 
   next() {
@@ -419,6 +419,6 @@ export default class SourceDataComponent {
       this.#backupState.submit(true);
     }
 
-    this.#router.navigate(['schedule'], { relativeTo: this.#route.parent });
+    this.#router.navigate(['destination'], { relativeTo: this.#route.parent });
   }
 }

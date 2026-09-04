@@ -179,6 +179,6 @@ export default class GeneralComponent {
     if (this.#backupState.shouldAutoSave()) {
       this.#backupState.submit(true);
     }
-    this.#router.navigate(['destination'], { relativeTo: this.#route.parent });
+    this.#router.navigate(['source-data'], { relativeTo: this.#route.parent });
   }
 }

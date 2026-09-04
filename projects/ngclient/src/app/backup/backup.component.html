@@ -15,16 +15,16 @@
     <div
       tabindex="-1"
       routerLinkActive="active"
-      [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'destination']"
+      [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'source-data']"
       i18n>
-      Destination
+      Source Data
     </div>
     <div
       tabindex="-1"
       routerLinkActive="active"
-      [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'source-data']"
+      [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'destination']"
       i18n>
-      Source Data
+      Destination
     </div>
     <div
       tabindex="-1"

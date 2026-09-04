@@ -11,12 +11,12 @@ export default <Routes>[
     loadComponent: () => import('./general/general.component'),
   },
   {
-    path: 'destination',
-    loadComponent: () => import('./destination/destination.component'),
-  },
-  {
     path: 'source-data',
     loadComponent: () => import('./source-data/source-data.component'),
+  },
+  {
+    path: 'destination',
+    loadComponent: () => import('./destination/destination.component'),
   },
   {
     path: 'schedule',
