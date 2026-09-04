@@ -59,6 +59,12 @@ describe('destination URL utilities', () => {
         'file:///C%3A%5CUsers%5CExample%5Cfile.txt'
       );
     });
+
+    it('passes a leading slash in the path through as a double slash', () => {
+      // buildUrl is destination-agnostic: leading-slash normalization happens in
+      // the destination mappers (e.g. webdav strips it, ftp keeps it as an absolute path)
+      expect(buildUrl('ftp', 'server', 21, '/absolute/path', [])).toBe('ftp://server:21//absolute/path');
+    });
   });
 
   describe('buildUrlFromFields', () => {
@@ -105,6 +111,10 @@ describe('destination URL utilities', () => {
       [['server', 'folder', 'file'], 'server/folder/file'],
       [['server/', 'folder', 'file'], 'server/folder/file'],
       [['server', null, '', undefined, 'folder'], 'server/folder'],
+      // A leading slash in a segment is preserved as a double slash: FTP backends
+      // rely on this to express absolute paths (see the aftp/ftp `doubleSlash` config)
+      [['server', '/absolute/path'], 'server//absolute/path'],
+      [['server/', '/absolute/path'], 'server//absolute/path'],
     ] as const)('concatenates path segments from %j', (paths, expected) => {
       expect(concatPaths(...paths)).toBe(expected);
     });
