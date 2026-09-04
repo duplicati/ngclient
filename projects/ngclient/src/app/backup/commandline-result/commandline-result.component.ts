@@ -5,6 +5,7 @@ import {
   computed,
   ElementRef,
   inject,
+  OnDestroy,
   signal,
   viewChild,
 } from '@angular/core';
@@ -18,6 +19,19 @@ import { CommandLineLogOutputDto, DuplicatiServer } from '../../core/openapi';
 
 type Status = 'starting' | 'started' | 'finished' | 'aborted';
 
+const getErrorStatus = (error: unknown): number | undefined => {
+  if (typeof error !== 'object' || error === null) return undefined;
+
+  const errorWithStatus = error as { status?: unknown; error?: unknown };
+  if (typeof errorWithStatus.status === 'number') return errorWithStatus.status;
+
+  const nestedError = errorWithStatus.error;
+  if (typeof nestedError !== 'object' || nestedError === null) return undefined;
+
+  const nestedStatus = (nestedError as { status?: unknown }).status;
+  return typeof nestedStatus === 'number' ? nestedStatus : undefined;
+};
+
 @Component({
   selector: 'app-commandline-result',
   imports: [StatusBarComponent, ShipIcon, ShipButton, RouterLink],
@@ -25,7 +39,7 @@ type Status = 'starting' | 'started' | 'finished' | 'aborted';
   styleUrl: './commandline-result.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class CommandlineResultComponent {
+export default class CommandlineResultComponent implements OnDestroy {
   #dupServer = inject(DuplicatiServer);
   #route = inject(ActivatedRoute);
   #routeParamsSignal = toSignal(this.#route.params);
@@ -48,7 +62,9 @@ export default class CommandlineResultComponent {
     logOutput.scrollTop = logOutput.scrollHeight;
   });
 
-  interval = setInterval(() => {
+  interval = setInterval(() => this.#poll(), 1000);
+
+  #poll() {
     defer(() =>
       this.#dupServer.getApiV1CommandlineByRunid({
         path: { runid: this.runId()! },
@@ -57,22 +73,30 @@ export default class CommandlineResultComponent {
           pagesize: 100,
         },
       })
-    ).subscribe((response) => {
-        this.offset.set(response.Count!);
+    ).subscribe({
+      next: (response) => {
+        const items = response.Items ?? [];
+        const nextOffset = (response.Offset ?? this.offset()) + items.length;
+
+        this.messageLog.update((messages) => [...messages, ...items]);
+        this.offset.set(nextOffset);
         this.evalStatus(response);
-        this.messageLog.update((y) => [...y, ...response.Items!]);
-      });
-  }, 1000);
+      },
+      error: (error) => this.#handleError(error),
+    });
+  }
 
   evalStatus(res: CommandLineLogOutputDto) {
-    if (res.Started === true && res.Finished === true) {
+    if (res.Started !== true) return;
+
+    const caughtUp = this.offset() >= (res.Count ?? this.offset());
+    if (res.Finished === true && caughtUp) {
       this.status.set('finished');
-      clearInterval(this.interval);
+      this.#stopPolling();
+      return;
     }
 
-    if (res.Started === true && res.Finished === false) {
-      this.status.set('started');
-    }
+    this.status.set('started');
   }
 
   updateAutoScroll() {
@@ -84,10 +108,27 @@ export default class CommandlineResultComponent {
 
   abort() {
     defer(() => this.#dupServer.postApiV1CommandlineByRunidAbort({ path: { runid: this.runId() } })).subscribe({
-      next: (res) => {
+      next: () => {
         this.status.set('aborted');
-        clearInterval(this.interval);
+        this.#stopPolling();
       },
+      error: (error) => this.#handleError(error, 'finished'),
     });
+  }
+
+  #handleError(error: unknown, notFoundStatus?: Status) {
+    if (getErrorStatus(error) !== 404) return;
+
+    // A missing run is terminal: the server only removes runs that have finished
+    if (notFoundStatus) this.status.set(notFoundStatus);
+    this.#stopPolling();
+  }
+
+  #stopPolling() {
+    clearInterval(this.interval);
+  }
+
+  ngOnDestroy() {
+    this.#stopPolling();
   }
 }
