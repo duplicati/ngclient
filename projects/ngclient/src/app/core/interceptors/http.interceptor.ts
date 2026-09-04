@@ -18,13 +18,15 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   const shipAlertService = inject(ShipAlertService);
   const mappedLocale = mapLocale(locale);
   const prefix = getApiBase();
-  const isLoginRequest = req.url === `${prefix}/api/v1/auth/login`;
-  const isLogoutRequest = req.url === `${prefix}/api/v1/auth/logout`;
-  const isRefreshRequest = req.url === `${prefix}/api/v1/auth/refresh`;
-  const isProgressStateRequest = req.url === `${prefix}/api/v1/progressstate`;
-  const isConnectionTestRequest = req.url === `${prefix}/api/v1/remoteoperation/test`;
-  const isValidateFsTestRequest = req.url === `${prefix}/api/v1/filesystem/validate`;
-  const isV2Request = req.url.startsWith(`${prefix}/api/v2/`);
+  const apiBaseUrl = prefix + env.baseUrl;
+  const isApiRequest = req.url === apiBaseUrl || req.url.startsWith(`${apiBaseUrl}/`);
+  const isLoginRequest = req.url === `${apiBaseUrl}/v1/auth/login`;
+  const isLogoutRequest = req.url === `${apiBaseUrl}/v1/auth/logout`;
+  const isRefreshRequest = req.url === `${apiBaseUrl}/v1/auth/refresh`;
+  const isProgressStateRequest = req.url === `${apiBaseUrl}/v1/progressstate`;
+  const isConnectionTestRequest = req.url === `${apiBaseUrl}/v1/remoteoperation/test`;
+  const isValidateFsTestRequest = req.url === `${apiBaseUrl}/v1/filesystem/validate`;
+  const isV2Request = req.url.startsWith(`${apiBaseUrl}/v2/`);
   const token = auth.token();
 
   let modifiedRequest = req;
@@ -32,7 +34,7 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   const hasCustomProxyHeader = req.headers.has('custom-proxy-check');
   const IS_PROXY_DETECT_REQUEST = hasCustomProxyHeader || token === dummytoken;
 
-  if (token && req.url.startsWith(prefix + env.baseUrl) && !IS_PROXY_DETECT_REQUEST) {
+  if (token && isApiRequest && !IS_PROXY_DETECT_REQUEST) {
     let newHeaders = req.headers.set('Authorization', `Bearer ${token}`);
 
     if (locale && locale !== 'en-US') {
@@ -86,14 +88,14 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
         }
 
         if (!isLoginRequest && !isRefreshRequest && !isLogoutRequest) {
-          if (error.status === 401) {
+          if (isApiRequest && error.status === 401) {
             notifyUser = false;
 
             return auth.refreshToken().pipe(
               switchMap(() => {
                 return next(
-                  req.clone({
-                    headers: req.headers.set('Authorization', `Bearer ${auth.token()}`),
+                  modifiedRequest.clone({
+                    headers: modifiedRequest.headers.set('Authorization', `Bearer ${auth.token()}`),
                   })
                 );
               })

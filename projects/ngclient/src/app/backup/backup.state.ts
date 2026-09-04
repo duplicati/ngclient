@@ -12,12 +12,12 @@ import {
   BackupDto,
   DuplicatiServer,
   ICommandLineArgument,
+  OperationType,
   ScheduleDto,
   SettingDto,
   SettingInputDto,
   TargetUrlDto,
 } from '../core/openapi';
-import { OperationType } from '../core/openapi';
 import { TimespanLiteralsService } from '../core/services/timespan-literals.service';
 import { parseRecursiveObjectOfSignals } from '../core/signals/parse-recursive-signals-object';
 import { ConnectionStringsState } from '../core/states/connection-strings.state';
@@ -557,7 +557,6 @@ export class BackupState {
     const legacyOptionValues = ['dblock-size', 'compression-module'];
     const modulesToIgnore = [
       '--no-encryption',
-      '--exclude-files-attributes',
       '--skip-files-larger-than',
       'encryption-module',
       'passphrase',

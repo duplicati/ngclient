@@ -1554,7 +1554,8 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     mapper: {
       to: (fields: ValueOfDestinationFormGroup): string => {
         const { server, port, path } = fields.custom;
-        return buildUrlFromFields(fields, server, port, path);
+        const normalizedPath = typeof path === 'string' ? path.replace(/^\/+/, '') : path;
+        return buildUrlFromFields(fields, server, port, normalizedPath);
       },
       from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         const { server, port, path } = fromUrlObj(urlObj);

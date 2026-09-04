@@ -7,6 +7,7 @@ import { DuplicatiServer, RemoteControlStatusOutput } from '../../core/openapi';
 import { WINDOW } from '../../core/providers/window';
 import { ServerStateService } from '../../core/services/server-state.service';
 import { ServerStatusWebSocketService } from '../../core/services/server-status-websocket.service';
+import { RelayconfigState } from '../../core/states/relayconfig.state';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 import { ServerSettingsService } from '../server-settings.service';
 
@@ -33,6 +34,7 @@ export class RemoteControlState {
   #wsService = inject(ServerStatusWebSocketService);
   #serverState = inject(ServerStateService);
   #serverSettings = inject(ServerSettingsService);
+  #relayconfigState = inject(RelayconfigState);
 
   constructor() {
     this.#wsService.subscribe('remotecontrol');
@@ -79,6 +81,13 @@ export class RemoteControlState {
     if (!remoteControlState) return;
 
     this.#mapRemoteControlStatus(remoteControlState);
+  });
+
+  // When the UI is served through the console relay, the relay channel
+  // itself rides on the machine's console connection, so the machine is
+  // known to be connected and no status lookup is needed.
+  relayEffect = effect(() => {
+    if (this.#relayconfigState.relayIsEnabled()) this.state.set('connected');
   });
 
   pendingRefreshEffect = effect(() => {

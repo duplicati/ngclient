@@ -38,13 +38,23 @@ import { SysinfoState } from '../../states/sysinfo.state';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { globMatchesPath, regexMatchesPath } from './file-tree-filter-matcher';
 
-enum TreeEvalEnum {
+export enum TreeEvalEnum {
   ExcludedByParent = -2,
   Excluded = -1,
   None = 0,
   Included = 1,
   IncludedByParent = 2,
 }
+
+export const getInheritedExclusionState = (
+  parentState: TreeEvalEnum | null | undefined
+): TreeEvalEnum.ExcludedByParent | null => {
+  if (parentState === TreeEvalEnum.Excluded || parentState === TreeEvalEnum.ExcludedByParent) {
+    return TreeEvalEnum.ExcludedByParent;
+  }
+
+  return null;
+};
 
 type TreeNode = TreeNodeDto & {
   accepted?: boolean;
@@ -764,7 +774,8 @@ export default class FileTreeComponent {
     currentPaths: string[],
     nodeType: string
   ): TreeEvalEnum {
-    if (parentNode && parentNode.evalState === TreeEvalEnum.Excluded) return TreeEvalEnum.ExcludedByParent;
+    const inheritedExclusion = getInheritedExclusionState(parentNode?.evalState);
+    if (inheritedExclusion !== null) return inheritedExclusion;
 
     const evalMap = this.#remoteFilterResource.value();
     if (evalMap && evalMap.has(nodeId)) {
@@ -781,7 +792,8 @@ export default class FileTreeComponent {
     nodeType: string,
     parentNode: FileTreeNode | null | undefined
   ): TreeEvalEnum {
-    if (parentNode && parentNode.evalState === TreeEvalEnum.Excluded) return TreeEvalEnum.ExcludedByParent;
+    const inheritedExclusion = getInheritedExclusionState(parentNode?.evalState);
+    if (inheritedExclusion !== null) return inheritedExclusion;
 
     let result = TreeEvalEnum.None;
 
