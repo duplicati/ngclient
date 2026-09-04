@@ -29,7 +29,7 @@ type _ExpressionType =
   | 'File'
   | 'Unknown';
 
-type ExpressionType = `${ExpressionDirection}${_ExpressionType}`;
+export type ExpressionType = `${ExpressionDirection}${_ExpressionType}`;
 type ExpressionTypeMap = {
   key: string;
   value: ExpressionType;
@@ -137,6 +137,87 @@ const EXPRESSION_OPTIONS: ExpressionTypeMap[] = [
   },
 ] as const;
 
+export type ParsedFilterPath = {
+  type: ExpressionType;
+  expression: string;
+};
+
+const getPathDelimiter = (osType?: string) => (osType === 'Windows' ? '\\' : '/');
+
+const removeFolderSyntaxDelimiter = (path: string, pathDelimiter: string) => {
+  let normalizedPath = path;
+
+  while (
+    normalizedPath.endsWith(pathDelimiter) &&
+    normalizedPath !== pathDelimiter &&
+    !/^[A-Za-z]:\\$/.test(normalizedPath)
+  ) {
+    normalizedPath = normalizedPath.slice(0, -1);
+  }
+
+  return normalizedPath;
+};
+
+export const parseFilterPath = (path: string, osType?: string): ParsedFilterPath => {
+  const expression = path.slice(1);
+  const direction: ExpressionDirection = path.startsWith('-') ? '-' : '+';
+  const pathDelimiter = getPathDelimiter(osType);
+  const isWindows = osType === 'Windows';
+  const isShortCut = expression.startsWith('%');
+
+  if (
+    (isShortCut && expression.endsWith(pathDelimiter)) ||
+    (isWindows && expression.slice(2).startsWith(pathDelimiter) && expression.endsWith(pathDelimiter)) ||
+    (expression.startsWith(pathDelimiter) && expression.endsWith(pathDelimiter))
+  ) {
+    return {
+      type: `${direction}Folder`,
+      expression: removeFolderSyntaxDelimiter(expression, pathDelimiter),
+    };
+  }
+
+  if (expression.startsWith('*') && expression.endsWith(`*${pathDelimiter}`)) {
+    return { type: `${direction}FolderName`, expression: expression.slice(1, -2) };
+  }
+
+  if (expression.startsWith('[.*') && expression.endsWith(`[^\\${pathDelimiter}]*]`)) {
+    return { type: `${direction}FileName`, expression: expression.slice(3, -7) };
+  }
+
+  if (expression.startsWith('{') && expression.endsWith('}')) {
+    return { type: `${direction}FileGroup`, expression: expression.slice(1, -1) };
+  }
+
+  if (expression.startsWith('[') && expression.endsWith(']')) {
+    return { type: `${direction}Regex`, expression: expression.slice(1, -1) };
+  }
+
+  if (expression.startsWith('*.')) {
+    return { type: `${direction}Extension`, expression: expression.slice(2) };
+  }
+
+  return { type: `${direction}Expression`, expression };
+};
+
+export const serializeFilterPath = (
+  type: ExpressionType,
+  expression: string,
+  osType?: string,
+  startsWith = '',
+  endsWith = ''
+) => {
+  const direction = type.slice(0, 1);
+
+  if (type.endsWith('Folder')) {
+    const pathDelimiter = getPathDelimiter(osType);
+    const normalizedExpression = removeFolderSyntaxDelimiter(expression, pathDelimiter);
+
+    return `${direction}${normalizedExpression}${normalizedExpression.endsWith(pathDelimiter) ? '' : pathDelimiter}`;
+  }
+
+  return `${direction}${startsWith}${expression}${endsWith}`;
+};
+
 @Component({
   selector: 'app-new-filter',
   imports: [FormsModule, ShipSelect, ShipFormField, ShipIcon],
@@ -217,38 +298,10 @@ export class NewFilterComponent {
 
   pathEffect = effect(() => {
     const newPath = this.path();
-    const x = newPath.slice(1);
-    const direction = newPath.startsWith('-') ? '-' : '+';
-    const isWindows = this.osType() === 'Windows';
-    const pathDelimiter = isWindows ? '\\' : '/';
-    const isShortCut = x.startsWith('%');
+    const parsedPath = parseFilterPath(newPath, this.osType());
 
-    if (
-      (isShortCut && x.endsWith(pathDelimiter)) ||
-      (isWindows && x.slice(2).startsWith(pathDelimiter) && x.endsWith(pathDelimiter)) ||
-      (x.startsWith(pathDelimiter) && x.endsWith(pathDelimiter))
-    ) {
-      this.pathType.set(`${direction}Folder`);
-      this.internalPath.set(x);
-    } else if (x.startsWith('*') && x.endsWith(`*${pathDelimiter}`)) {
-      this.pathType.set(`${direction}FolderName`);
-      this.internalPath.set(x.slice(1, -2));
-    } else if (x.startsWith('[.*') && x.endsWith(`[^\\${pathDelimiter}]*]`)) {
-      this.pathType.set(`${direction}FileName`);
-      this.internalPath.set(x.slice(3, -7));
-    } else if (x.startsWith('{') && x.endsWith('}')) {
-      this.pathType.set(`${direction}FileGroup`);
-      this.internalPath.set(x.slice(1, -1));
-    } else if (x.startsWith('[') && x.endsWith(']')) {
-      this.pathType.set(`${direction}Regex`);
-      this.internalPath.set(x.slice(1, -1));
-    } else if (x.startsWith('*.')) {
-      this.pathType.set(`${direction}Extension`);
-      this.internalPath.set(x.slice(2));
-    } else {
-      this.pathType.set(`${direction}Expression`);
-      this.internalPath.set(x);
-    }
+    this.pathType.set(parsedPath.type);
+    this.internalPath.set(parsedPath.expression);
 
     // Focus the input if this is a newly added filter
     if (this.isNew()) {
@@ -278,8 +331,16 @@ export class NewFilterComponent {
       newPath = '';
     }
 
+    if (!expressionOption) return;
+
     this.pathChange.emit(
-      `${expressionOption?.value.slice(0, 1)}${expressionOption?.startsWith ?? ''}${newPath}${expressionOption?.endsWith ?? ''}`
+      serializeFilterPath(
+        expressionOption.value,
+        newPath,
+        this.osType(),
+        expressionOption.startsWith,
+        expressionOption.endsWith
+      )
     );
   }
 
