@@ -86,4 +86,26 @@ describe('BackupState', () => {
     expect(state.scheduleFields.runAgain.allowedDays.fri()).toBe(true);
     expect(state.getScheduleFormValue()?.Time).toBe('2026-06-14T12:50:00.000Z');
   });
+
+  it('preserves file attribute exclusions when options are loaded and saved', () => {
+    state.mapOptionsToForms({
+      Settings: [{ Name: '--exclude-files-attributes', Value: 'hidden' }],
+    } as BackupDto);
+
+    expect(state.mapFormsToSettings()).toContainEqual({
+      Name: '--exclude-files-attributes',
+      Value: 'hidden',
+    });
+  });
+
+  it('continues to round-trip the managed keep-versions option', () => {
+    state.mapOptionsToForms({
+      Settings: [{ Name: 'keep-versions', Value: '5' }],
+    } as BackupDto);
+
+    expect(state.mapFormsToSettings()).toContainEqual({
+      Name: 'keep-versions',
+      Value: '5',
+    });
+  });
 });

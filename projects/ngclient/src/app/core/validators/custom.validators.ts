@@ -15,7 +15,14 @@ export function validateWhen(
     if (predicate(control.parent)) {
       const validatorArr = Array.isArray(validators) ? validators : [validators];
 
-      error = validatorArr.find((validator) => validator(control) !== null) ?? null;
+      for (const validator of validatorArr) {
+        const validationResult = validator(control);
+
+        if (validationResult !== null) {
+          error = validationResult;
+          break;
+        }
+      }
     }
 
     if (errorNamespace && error) {
@@ -30,14 +37,18 @@ export function validateWhen(
 
 export function watchField() {
   return (control: AbstractControl): null => {
-    if (!control.parent) {
+    const parent = control.parent;
+
+    if (!parent) {
       return null;
     }
 
-    Object.values(control.parent.controls).forEach((ctrl) => {
-      if (ctrl !== control) {
-        ctrl.updateValueAndValidity();
-      }
+    queueMicrotask(() => {
+      Object.values(parent.controls).forEach((ctrl) => {
+        if (ctrl !== control) {
+          ctrl.updateValueAndValidity();
+        }
+      });
     });
 
     return null;
@@ -55,7 +66,7 @@ export function validateIf<T>(
       return null;
     }
 
-    let error: ValidationErrors = {};
+    let error: ValidationErrors | null = null;
 
     const conditionalFormCtrl = control.parent.get(conditionalFieldName);
 
@@ -68,16 +79,15 @@ export function validateIf<T>(
 
     if (
       isConditionalValueArray
-        ? conditionalFormCtrl.value?.includes(conditionalValue)
+        ? conditionalValue.includes(conditionalFormCtrl.value)
         : conditionalFormCtrl.value === conditionalValue
     ) {
       const validatorArr = Array.isArray(validators) ? validators : [validators];
       for (const validator of validatorArr) {
         const validationResult = validator(control);
-        const _currentErrors = error ? error : {};
 
         if (validationResult !== null) {
-          error = { ..._currentErrors, ...validationResult };
+          error = validationResult;
           break;
         }
       }
