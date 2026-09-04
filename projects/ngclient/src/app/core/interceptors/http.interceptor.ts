@@ -20,13 +20,13 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   const prefix = getApiBase();
   const apiBaseUrl = prefix + env.baseUrl;
   const isApiRequest = req.url === apiBaseUrl || req.url.startsWith(`${apiBaseUrl}/`);
-  const isLoginRequest = req.url === `${prefix}/api/v1/auth/login`;
-  const isLogoutRequest = req.url === `${prefix}/api/v1/auth/logout`;
-  const isRefreshRequest = req.url === `${prefix}/api/v1/auth/refresh`;
-  const isProgressStateRequest = req.url === `${prefix}/api/v1/progressstate`;
-  const isConnectionTestRequest = req.url === `${prefix}/api/v1/remoteoperation/test`;
-  const isValidateFsTestRequest = req.url === `${prefix}/api/v1/filesystem/validate`;
-  const isV2Request = req.url.startsWith(`${prefix}/api/v2/`);
+  const isLoginRequest = req.url === `${apiBaseUrl}/v1/auth/login`;
+  const isLogoutRequest = req.url === `${apiBaseUrl}/v1/auth/logout`;
+  const isRefreshRequest = req.url === `${apiBaseUrl}/v1/auth/refresh`;
+  const isProgressStateRequest = req.url === `${apiBaseUrl}/v1/progressstate`;
+  const isConnectionTestRequest = req.url === `${apiBaseUrl}/v1/remoteoperation/test`;
+  const isValidateFsTestRequest = req.url === `${apiBaseUrl}/v1/filesystem/validate`;
+  const isV2Request = req.url.startsWith(`${apiBaseUrl}/v2/`);
   const token = auth.token();
 
   let modifiedRequest = req;
