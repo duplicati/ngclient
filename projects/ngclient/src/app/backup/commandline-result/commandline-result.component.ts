@@ -112,12 +112,16 @@ export default class CommandlineResultComponent implements OnDestroy {
         this.status.set('aborted');
         this.#stopPolling();
       },
-      error: (error) => this.#handleError(error),
+      error: (error) => this.#handleError(error, 'finished'),
     });
   }
 
-  #handleError(error: unknown) {
-    if (getErrorStatus(error) === 404) this.#stopPolling();
+  #handleError(error: unknown, notFoundStatus?: Status) {
+    if (getErrorStatus(error) !== 404) return;
+
+    // A missing run is terminal: the server only removes runs that have finished
+    if (notFoundStatus) this.status.set(notFoundStatus);
+    this.#stopPolling();
   }
 
   #stopPolling() {

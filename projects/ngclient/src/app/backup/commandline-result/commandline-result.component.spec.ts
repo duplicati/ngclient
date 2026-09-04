@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, config, of, throwError } from 'rxjs';
+import { BehaviorSubject, of, throwError } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { CommandLineLogOutputDto, DuplicatiServer } from '../../core/openapi';
 import CommandlineResultComponent from './commandline-result.component';
@@ -21,12 +21,9 @@ describe('CommandlineResultComponent', () => {
   let logOutput: HTMLElement;
   let getCommandline: ReturnType<typeof vi.fn>;
   let abortCommandline: ReturnType<typeof vi.fn>;
-  let previousUnhandledError: typeof config.onUnhandledError;
 
   beforeEach(() => {
     vi.useFakeTimers();
-    previousUnhandledError = config.onUnhandledError;
-    config.onUnhandledError = vi.fn();
     getCommandline = vi.fn(() => of(commandlineResponse()));
     abortCommandline = vi.fn(() => of({}));
 
@@ -71,7 +68,6 @@ describe('CommandlineResultComponent', () => {
 
   afterEach(() => {
     if (!fixture.componentRef.hostView.destroyed) fixture.destroy();
-    config.onUnhandledError = previousUnhandledError;
     vi.useRealTimers();
     vi.restoreAllMocks();
   });
@@ -141,7 +137,7 @@ describe('CommandlineResultComponent', () => {
     expect(getCommandline).toHaveBeenCalledTimes(1);
   });
 
-  it('stops polling when aborting a missing command returns 404', async () => {
+  it('stops polling and marks the run finished when aborting a missing command returns 404', async () => {
     abortCommandline.mockReturnValue(throwError(() => ({ error: { status: 404 } })));
 
     component.abort();
@@ -149,7 +145,7 @@ describe('CommandlineResultComponent', () => {
 
     expect(abortCommandline).toHaveBeenCalledTimes(1);
     expect(getCommandline).not.toHaveBeenCalled();
-    expect(component.status()).toBe('starting');
+    expect(component.status()).toBe('finished');
   });
 
   it('stops polling when the component is destroyed', async () => {
