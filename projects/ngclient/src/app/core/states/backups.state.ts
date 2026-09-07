@@ -130,7 +130,10 @@ export class BackupsState {
   );
   #backupListUpdatedEffect = effect(() => {
     const backupList = this.#serverState.backupListState();
-    if (backupList) this.#backups.set(backupList);
+    if (backupList) {
+      this.#backups.set(backupList);
+      this.#backupsLoading.set(false);
+    }
   });
 
   addDraftBackup(backup: BackupDraft) {
@@ -152,8 +155,12 @@ export class BackupsState {
     // Prevent fetching backups if the connection method is not yet set
     if (!this.#serverState.isConnectionMethodSet()) return;
 
-    if (this.#hasWebsocketBackupListUpdate()) this.#serverState.subscribe('backuplist', orderBy);
-    else this.getBackups(true);
+    if (this.#hasWebsocketBackupListUpdate()) {
+      // Only show loading if no backup list has been received yet, as
+      // re-subscribing with the same data does not trigger a new push
+      if (this.#serverState.backupListState() == null) this.#backupsLoading.set(true);
+      this.#serverState.subscribe('backuplist', orderBy);
+    } else this.getBackups(true);
   }
 
   setTimeType(timeType: TimeType) {
@@ -170,10 +177,16 @@ export class BackupsState {
 
   getBackups(forceRefresh = false) {
     // Prevent fetching backups if the connection method is not yet set
-    if (!this.#serverState.isConnectionMethodSet()) return;
+    if (!this.#serverState.isConnectionMethodSet()) {
+      this.#backupsLoading.set(true);
+      return;
+    }
 
     // Subscribe to backup list updates via WebSocket if the server supports it
     if (this.#hasWebsocketBackupListUpdate()) {
+      // Only show loading if no backup list has been received yet, as
+      // re-subscribing with the same data does not trigger a new push
+      if (this.#serverState.backupListState() == null) this.#backupsLoading.set(true);
       this.#serverState.subscribe('backuplist', this.#orderBy());
       return;
     }

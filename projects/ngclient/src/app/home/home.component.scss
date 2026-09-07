@@ -87,6 +87,18 @@ sh-menu {
   align-items: center;
 }
 
+.loading-list {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(16);
+  align-items: center;
+  padding: p2r(64);
+
+  .text {
+    text-align: center;
+  }
+}
+
 .backup {
   display: flex;
   align-items: center;
