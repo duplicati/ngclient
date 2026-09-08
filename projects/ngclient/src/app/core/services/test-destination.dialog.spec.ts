@@ -3,7 +3,7 @@ import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { Subject, Subscription } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ConfirmDialogComponent } from '../components/confirm-dialog/confirm-dialog.component';
-import { DestinationTestResponseDto, DuplicatiServer } from '../openapi';
+import { DestinationTestResponseDto, DuplicatiServer, RemoteDestinationType } from '../openapi';
 import { SysinfoState } from '../states/sysinfo.state';
 import { FolderHandlingOption, TestDestinationResult, TestDestinationService } from './test-destination.service';
 
@@ -26,7 +26,17 @@ describe('TestDestinationService dialogs', () => {
     TestBed.resetTestingModule();
   });
 
-  const setup = (v2: boolean, folderHandling: FolderHandlingOption = 'prompt', url = targetUrl) => {
+  const setup = (
+    v2: boolean,
+    folderHandling: FolderHandlingOption = 'prompt',
+    url = targetUrl,
+    context: {
+      destinationType?: RemoteDestinationType;
+      backupId?: string | null;
+      sourcePrefix?: string | null;
+      readOnlyTest?: boolean;
+    } = {}
+  ) => {
     const testRequest = new Subject<unknown>();
     const createRequest = new Subject<unknown>();
     requests.push(testRequest, createRequest);
@@ -53,7 +63,17 @@ describe('TestDestinationService dialogs', () => {
     const next = vi.fn<(result: TestDestinationResult) => void>();
     subscriptions.push(
       TestBed.inject(TestDestinationService)
-        .testDestination(url, 'backup-1', 42, 'source-prefix', destinationIndex, 'Backend', false, folderHandling, true)
+        .testDestination(
+          url,
+          context.backupId === undefined ? 'backup-1' : context.backupId,
+          42,
+          context.sourcePrefix === undefined ? 'source-prefix' : context.sourcePrefix,
+          destinationIndex,
+          context.destinationType ?? 'Backend',
+          false,
+          folderHandling,
+          context.readOnlyTest ?? true
+        )
         .subscribe(next)
     );
     const failMissingFolder = () =>
@@ -97,6 +117,45 @@ describe('TestDestinationService dialogs', () => {
       destinationIndex,
       testAgain: true,
     });
+  });
+
+  it.each([
+    { destinationType: 'Backend', backupId: 'backup-1', sourcePrefix: 'source-prefix', readOnlyTest: false },
+    { destinationType: 'SourceProvider', backupId: 'backup-1', sourcePrefix: 'source-prefix', readOnlyTest: true },
+    {
+      destinationType: 'RestoreDestinationProvider',
+      backupId: 'backup-1',
+      sourcePrefix: 'restore-prefix',
+      readOnlyTest: false,
+    },
+    { destinationType: 'SourceProvider', backupId: 'new', sourcePrefix: 'unused-prefix', readOnlyTest: true },
+    { destinationType: 'Backend', backupId: null, sourcePrefix: null, readOnlyTest: false },
+  ] satisfies {
+    destinationType: RemoteDestinationType;
+    backupId: string | null;
+    sourcePrefix: string | null;
+    readOnlyTest: boolean;
+  }[])('preserves $destinationType context when retrying for backup $backupId', (context) => {
+    const { server, dialogs, failMissingFolder } = setup(true, 'prompt', targetUrl, context);
+    const expectedBody = {
+      DestinationUrl: targetUrl,
+      ConnectionStringId: 42,
+      BackupId: context.backupId === 'new' ? null : context.backupId,
+      SourcePrefix: context.backupId === 'new' ? null : context.sourcePrefix,
+      DestinationType: context.destinationType,
+      ReadOnlyTest: context.readOnlyTest,
+      Options: null,
+      AutoCreate: false,
+    };
+    expect(server.postApiV2DestinationTest).toHaveBeenCalledExactlyOnceWith({ body: expectedBody });
+    const initialBody = server.postApiV2DestinationTest.mock.calls[0][0].body;
+    failMissingFolder();
+    expect(server.postApiV2DestinationTest).toHaveBeenCalledTimes(1);
+    dialogs[0].closed(true);
+    expect(server.postApiV2DestinationTest).toHaveBeenCalledTimes(2);
+    expect(server.postApiV2DestinationTest).toHaveBeenLastCalledWith({ body: { ...expectedBody, AutoCreate: true } });
+    expect(initialBody).toEqual(expectedBody);
+    expect(server.postApiV2DestinationTest.mock.calls[1][0].body).not.toBe(initialBody);
   });
 
   it('retries V2 with AutoCreate after approval and returns folder metadata', () => {
