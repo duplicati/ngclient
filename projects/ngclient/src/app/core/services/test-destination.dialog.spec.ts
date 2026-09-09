@@ -51,10 +51,11 @@ describe('TestDestinationService dialogs', () => {
       ],
     });
     const next = vi.fn<(result: TestDestinationResult) => void>();
+    const complete = vi.fn();
     subscriptions.push(
       TestBed.inject(TestDestinationService)
         .testDestination(url, 'backup-1', 42, 'source-prefix', destinationIndex, 'Backend', false, folderHandling, true)
-        .subscribe(next)
+        .subscribe({ next, complete })
     );
     const failMissingFolder = () =>
       testRequest.error(v2 ? { error: { body: { StatusCode: 'missing-folder' } } } : { message: 'missing-folder' });
@@ -62,34 +63,70 @@ describe('TestDestinationService dialogs', () => {
       expect(server.postApiV1RemoteoperationCreate).not.toHaveBeenCalled();
       expect(server.postApiV2DestinationTest).toHaveBeenCalledTimes(v2 ? 1 : 0);
     };
-    return { server, dialog, dialogs, testRequest, createRequest, next, failMissingFolder, expectNoCreation };
+    const expectCompleted = () => {
+      expect(next).toHaveBeenCalledTimes(1);
+      expect(complete).toHaveBeenCalledTimes(1);
+      expect(next.mock.invocationCallOrder[0]).toBeLessThan(complete.mock.invocationCallOrder[0]);
+    };
+    const expectPending = () => {
+      expect(next).not.toHaveBeenCalled();
+      expect(complete).not.toHaveBeenCalled();
+    };
+    return {
+      server,
+      dialog,
+      dialogs,
+      testRequest,
+      createRequest,
+      next,
+      failMissingFolder,
+      expectNoCreation,
+      expectCompleted,
+      expectPending,
+    };
   };
 
+  it.each([false, true])('emits a result and completes on ordinary success (V2=%s)', (v2) => {
+    const { testRequest, dialog, next, expectPending, expectCompleted } = setup(v2);
+    expectPending();
+    testRequest.next(v2 ? { Success: true, Data: { FolderIsEmpty: true } } : {});
+    expect(next).toHaveBeenCalledWith(expect.objectContaining({ action: 'success', targetUrl, destinationIndex }));
+    expectCompleted();
+    testRequest.complete();
+    expectCompleted();
+    expect(dialog.open).not.toHaveBeenCalled();
+  });
+
   it.each([false, true])('waits for folder confirmation and handles refusal (V2=%s)', (v2) => {
-    const { dialog, dialogs, next, failMissingFolder, expectNoCreation } = setup(v2);
+    const { dialog, dialogs, next, failMissingFolder, expectNoCreation, expectPending, expectCompleted } = setup(v2);
     failMissingFolder();
     expect(dialog.open).toHaveBeenCalledExactlyOnceWith(ConfirmDialogComponent, expect.any(Object));
     expect(next).not.toHaveBeenCalled();
     expectNoCreation();
+    expectPending();
     dialogs[0].closed(false);
     expectNoCreation();
     expect(next).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({ action: 'generic-error', targetUrl, destinationIndex, testAgain: false })
     );
+    expectCompleted();
   });
 
   it('creates a V1 folder only after approval and waits for the success dialog', () => {
-    const { server, dialogs, next, createRequest, failMissingFolder } = setup(false);
+    const { server, dialogs, next, createRequest, failMissingFolder, expectPending, expectCompleted } = setup(false);
     failMissingFolder();
+    expectPending();
     dialogs[0].closed(true);
     expect(server.postApiV1RemoteoperationCreate).toHaveBeenCalledExactlyOnceWith({
       body: { path: targetUrl, backupId: 'backup-1' },
     });
     expect(next).not.toHaveBeenCalled();
+    expectPending();
     createRequest.next({});
     createRequest.complete();
     expect(dialogs).toHaveLength(2);
     expect(next).not.toHaveBeenCalled();
+    expectPending();
     dialogs[1].closed();
     expect(next).toHaveBeenCalledExactlyOnceWith({
       action: 'test-again',
@@ -97,11 +134,13 @@ describe('TestDestinationService dialogs', () => {
       destinationIndex,
       testAgain: true,
     });
+    expectCompleted();
   });
 
   it('retries V2 with AutoCreate after approval and returns folder metadata', () => {
-    const { server, dialogs, next, createRequest, failMissingFolder } = setup(true);
+    const { server, dialogs, next, createRequest, failMissingFolder, expectPending, expectCompleted } = setup(true);
     failMissingFolder();
+    expectPending();
     dialogs[0].closed(true);
     expect(server.postApiV2DestinationTest).toHaveBeenCalledTimes(2);
     expect(server.postApiV2DestinationTest).toHaveBeenLastCalledWith({
@@ -114,6 +153,7 @@ describe('TestDestinationService dialogs', () => {
       }),
     });
     expect(next).not.toHaveBeenCalled();
+    expectPending();
     createRequest.next({
       Success: true,
       Error: null,
@@ -140,6 +180,7 @@ describe('TestDestinationService dialogs', () => {
       containsBackup: true,
       containsEncryptedBackupFiles: true,
     });
+    expectCompleted();
   });
 
   it.each([
@@ -147,9 +188,10 @@ describe('TestDestinationService dialogs', () => {
     { name: 'V2 HTTP error', v2: true, httpError: true },
     { name: 'V2 unsuccessful response', v2: true, httpError: false },
   ])('waits for the error dialog after $name during creation', ({ v2, httpError }) => {
-    const { dialogs, next, createRequest, failMissingFolder } = setup(v2);
+    const { dialogs, next, createRequest, failMissingFolder, expectPending, expectCompleted } = setup(v2);
     failMissingFolder();
     dialogs[0].closed(true);
+    expectPending();
     if (httpError) createRequest.error({ message: 'Access denied' });
     else {
       createRequest.next({ Success: false, Error: 'Access denied', StatusCode: null });
@@ -158,6 +200,7 @@ describe('TestDestinationService dialogs', () => {
     expect(dialogs).toHaveLength(2);
     expect(dialogs[1].data.message).toContain('Access denied');
     expect(next).not.toHaveBeenCalled();
+    expectPending();
     dialogs[1].closed();
     expect(next).toHaveBeenCalledExactlyOnceWith({
       action: 'generic-error',
@@ -165,16 +208,18 @@ describe('TestDestinationService dialogs', () => {
       destinationIndex,
       testAgain: false,
     });
+    expectCompleted();
   });
 
   it.each([false, true])('returns missing-folder without prompting when folderHandling is error (V2=%s)', (v2) => {
-    const { dialog, next, failMissingFolder, expectNoCreation } = setup(v2, 'error');
+    const { dialog, next, failMissingFolder, expectNoCreation, expectCompleted } = setup(v2, 'error');
     failMissingFolder();
     expect(dialog.open).not.toHaveBeenCalled();
     expectNoCreation();
     expect(next).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({ action: 'missing-folder', targetUrl, destinationIndex, testAgain: false })
     );
+    expectCompleted();
   });
 
   describe.each([false, true])('trust confirmation (V2=%s)', (v2) => {
@@ -182,7 +227,7 @@ describe('TestDestinationService dialogs', () => {
       const changed = kind === 'changed SSH key';
       const cert = kind === 'certificate';
       const url = targetUrl + (changed ? '&ssh-fingerprint=old-key' : '');
-      const { dialogs, testRequest, next, expectNoCreation } = setup(v2, 'prompt', url);
+      const { dialogs, testRequest, next, expectNoCreation, expectPending, expectCompleted } = setup(v2, 'prompt', url);
       const data = cert
         ? { HostCertificate: 'cert-hash' }
         : { ReportedHostKey: 'new-key', AcceptedHostKey: changed ? 'old-key' : null };
@@ -197,6 +242,7 @@ describe('TestDestinationService dialogs', () => {
       );
       expect(dialogs).toHaveLength(1);
       expect(next).not.toHaveBeenCalled();
+      expectPending();
       dialogs[0].closed(true);
       expect(next).toHaveBeenCalledTimes(1);
       const result = next.mock.calls[0][0];
@@ -212,12 +258,13 @@ describe('TestDestinationService dialogs', () => {
       );
       expect(suggested.searchParams.get('auth-username')).toBe('user');
       expectNoCreation();
+      expectCompleted();
     });
 
     it.each(['certificate', 'missing SSH key', 'changed SSH key'])('rejects %s without suggesting a retry', (kind) => {
       const changed = kind === 'changed SSH key';
       const cert = kind === 'certificate';
-      const { dialogs, testRequest, next, expectNoCreation } = setup(v2);
+      const { dialogs, testRequest, next, expectNoCreation, expectPending, expectCompleted } = setup(v2);
       const data = cert
         ? { HostCertificate: 'cert-hash' }
         : { ReportedHostKey: 'new-key', AcceptedHostKey: changed ? 'old-key' : null };
@@ -231,21 +278,24 @@ describe('TestDestinationService dialogs', () => {
             }
       );
       expect(next).not.toHaveBeenCalled();
+      expectPending();
       dialogs[0].closed(false);
       expect(next).toHaveBeenCalledExactlyOnceWith(
         expect.objectContaining({ action: 'generic-error', targetUrl, destinationIndex, testAgain: false })
       );
       expect(next.mock.calls[0][0].suggestedUrl).toBeUndefined();
       expectNoCreation();
+      expectCompleted();
     });
   });
 
   it.each([false, true])('waits for the generic error dialog to close (V2=%s)', (v2) => {
-    const { testRequest, dialogs, next, expectNoCreation } = setup(v2);
+    const { testRequest, dialogs, next, expectNoCreation, expectPending, expectCompleted } = setup(v2);
     testRequest.error({ message: 'Connection refused' });
     expect(dialogs).toHaveLength(1);
     expect(dialogs[0].data.message).toBe('Connection refused');
     expect(next).not.toHaveBeenCalled();
+    expectPending();
     dialogs[0].closed();
     expect(next).toHaveBeenCalledExactlyOnceWith({
       action: 'generic-error',
@@ -255,5 +305,6 @@ describe('TestDestinationService dialogs', () => {
       errorMessage: 'Connection refused',
     });
     expectNoCreation();
+    expectCompleted();
   });
 });
