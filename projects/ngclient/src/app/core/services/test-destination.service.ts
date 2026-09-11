@@ -3,6 +3,7 @@ import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { defer, Observable, Subscriber } from 'rxjs';
 import { ConfirmDialogComponent } from '../components/confirm-dialog/confirm-dialog.component';
 import {
+  DestinationTestRequestDto,
   DestinationTestResponseDto,
   DuplicatiServer,
   PostApiV2DestinationTestResponse,
@@ -83,18 +84,19 @@ export class TestDestinationService {
     readOnlyTest: boolean
   ) {
     return new Observable<TestDestinationResult>((observer) => {
+      const initialBody: DestinationTestRequestDto = {
+        DestinationUrl: targetUrl,
+        ConnectionStringId: connectionStringId ?? null,
+        BackupId: backupId == 'new' ? null : backupId,
+        AutoCreate: folderHandling === 'create',
+        ReadOnlyTest: readOnlyTest,
+        Options: null,
+        DestinationType: urlType,
+        SourcePrefix: backupId == 'new' ? null : sourcePrefix,
+      };
       defer(() =>
         this.#dupServer.postApiV2DestinationTest({
-          body: {
-            DestinationUrl: targetUrl,
-            ConnectionStringId: connectionStringId ?? null,
-            BackupId: backupId == 'new' ? null : backupId,
-            AutoCreate: folderHandling === 'create',
-            ReadOnlyTest: readOnlyTest,
-            Options: null,
-            DestinationType: urlType,
-            SourcePrefix: backupId == 'new' ? null : sourcePrefix,
-          },
+          body: initialBody,
         })
       ).subscribe({
         next: (res) => {
@@ -122,7 +124,8 @@ export class TestDestinationService {
               destinationIndex,
               suppressErrorDialogs,
               folderHandling,
-              readOnlyTest
+              readOnlyTest,
+              initialBody
             );
             return;
           }
@@ -225,7 +228,8 @@ export class TestDestinationService {
     destinationIndex: number,
     suppressErrorDialogs: boolean,
     folderHandling: FolderHandlingOption,
-    readOnlyTest: boolean
+    readOnlyTest: boolean,
+    initialBody?: DestinationTestRequestDto
   ) {
     function sendError() {
       observer.next({
@@ -256,16 +260,12 @@ export class TestDestinationService {
           return;
         }
 
-        if (this.#sysinfo.hasV2TestOperations()) {
+        if (initialBody) {
           defer(() =>
             this.#dupServer.postApiV2DestinationTest({
               body: {
-                DestinationUrl: targetUrl,
-                ConnectionStringId: connectionStringId,
+                ...initialBody,
                 AutoCreate: true,
-                ReadOnlyTest: readOnlyTest,
-                Options: null,
-                BackupId: backupId == 'new' ? null : backupId,
               },
             })
           ).subscribe({
