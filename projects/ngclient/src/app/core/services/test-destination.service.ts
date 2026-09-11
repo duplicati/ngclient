@@ -211,8 +211,9 @@ export class TestDestinationService {
             suppressErrorDialogs,
             folderHandling,
             readOnlyTest
-          ).subscribe((res) => {
-            observer.next(res);
+          ).subscribe({
+            next: (res) => observer.next(res),
+            complete: () => observer.complete(),
           });
         },
       });
