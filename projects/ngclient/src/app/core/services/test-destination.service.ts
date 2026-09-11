@@ -94,7 +94,7 @@ export class TestDestinationService {
         DestinationType: urlType,
         SourcePrefix: backupId == 'new' ? null : sourcePrefix,
       };
-      defer(() =>
+      const request = defer(() =>
         this.#dupServer.postApiV2DestinationTest({
           body: initialBody,
         })
@@ -162,6 +162,7 @@ export class TestDestinationService {
           );
         },
       });
+      observer.add(request);
     });
   }
 
@@ -178,7 +179,7 @@ export class TestDestinationService {
   ) {
     // V1 does not support auto-create folders, but we should retire the use of V1 anyway
     return new Observable<TestDestinationResult>((observer) => {
-      defer(() =>
+      const request = defer(() =>
         this.#dupServer.postApiV1RemoteoperationTest({
           query: {
             readOnlyTest: readOnlyTest,
@@ -202,21 +203,24 @@ export class TestDestinationService {
           observer.complete();
         },
         error: (err) => {
-          this.handleDestinationErrorv1(
-            err.message,
-            targetUrl,
-            backupId,
-            connectionStringId,
-            destinationIndex,
-            suppressErrorDialogs,
-            folderHandling,
-            readOnlyTest
-          ).subscribe({
-            next: (res) => observer.next(res),
-            complete: () => observer.complete(),
-          });
+          observer.add(
+            this.handleDestinationErrorv1(
+              err.message,
+              targetUrl,
+              backupId,
+              connectionStringId,
+              destinationIndex,
+              suppressErrorDialogs,
+              folderHandling,
+              readOnlyTest
+            ).subscribe({
+              next: (res) => observer.next(res),
+              complete: () => observer.complete(),
+            })
+          );
         },
       });
+      observer.add(request);
     });
   }
 
@@ -255,13 +259,14 @@ export class TestDestinationService {
         cancelText: $localize`Cancel`,
       },
       closed: (res) => {
+        if (observer.closed) return;
         if (!res) {
           this.reportNoAction(observer, targetUrl, destinationIndex, $localize`The remote folder does not exist.`);
           return;
         }
 
         if (initialBody) {
-          defer(() =>
+          const request = defer(() =>
             this.#dupServer.postApiV2DestinationTest({
               body: {
                 ...initialBody,
@@ -291,8 +296,9 @@ export class TestDestinationService {
               );
             },
           });
+          observer.add(request);
         } else {
-          defer(() =>
+          const request = defer(() =>
             this.#dupServer.postApiV1RemoteoperationCreate({
               body: {
                 path: targetUrl,
@@ -312,6 +318,7 @@ export class TestDestinationService {
               );
             },
           });
+          observer.add(request);
         }
       },
     });
@@ -331,6 +338,7 @@ export class TestDestinationService {
         cancelText: null,
       },
       closed: () => {
+        if (observer.closed) return;
         observer.next({
           action: 'generic-error',
           targetUrl,
@@ -373,6 +381,7 @@ export class TestDestinationService {
         cancelText: null,
       },
       closed: () => {
+        if (observer.closed) return;
         observer.next({
           action: 'test-again',
           targetUrl,
@@ -441,6 +450,7 @@ export class TestDestinationService {
         cancelText: $localize`Cancel`,
       },
       closed: (res) => {
+        if (observer.closed) return;
         if (!res) {
           this.reportNoAction(observer, targetUrl, destinationIndex, $localize`The server certificate is not trusted.`);
           return;
@@ -489,6 +499,7 @@ export class TestDestinationService {
           cancelText: $localize`Cancel`,
         },
         closed: (res) => {
+          if (observer.closed) return;
           if (!res) {
             this.reportNoAction(observer, targetUrl, destinationIndex, $localize`The host key was not approved.`);
             return;
@@ -544,6 +555,7 @@ with the REPORTED host key: ${reportedhostkey}?`;
           cancelText: $localize`Cancel`,
         },
         closed: (res) => {
+          if (observer.closed) return;
           if (!res) {
             this.reportNoAction(observer, targetUrl, destinationIndex, $localize`The host key was not approved.`);
             return;
@@ -585,7 +597,10 @@ with the REPORTED host key: ${reportedhostkey}?`;
         message: errorMessage,
         cancelText: $localize`OK`,
       },
-      closed: (_) => sendError(),
+      closed: (_) => {
+        if (observer.closed) return;
+        sendError();
+      },
     });
   }
 
