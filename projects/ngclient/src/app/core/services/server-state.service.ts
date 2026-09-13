@@ -137,7 +137,7 @@ export class ServerStateService {
 
     defer(() => this.#dupServer.getApiV1TaskByTaskid({ path: { taskid: nextTaskId } })).subscribe({
       next: (task) => {
-        const finished = task.TaskFinished != null;
+        const finished = task.Status === 'Completed' || task.Status === 'Failed';
 
         if (finished) {
           this.#recentCompletedTasks.unshift(task);
