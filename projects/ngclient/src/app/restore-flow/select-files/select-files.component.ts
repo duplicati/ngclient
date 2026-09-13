@@ -1,14 +1,16 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, untracked } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { ShipSelect } from '@ship-ui/core/ship-select';
 import { defer, finalize, Subject, take, takeUntil } from 'rxjs';
 import FileTreeComponent, { BackupSettings } from '../../core/components/file-tree/file-tree.component';
+import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer, SearchEntriesItemDto, TreeNodeDto } from '../../core/openapi';
 import { BytesPipe } from '../../core/pipes/byte.pipe';
 import { ServerStateService } from '../../core/services/server-state.service';
@@ -51,6 +53,7 @@ export default class SelectFilesComponent {
   #router = inject(Router);
   #route = inject(ActivatedRoute);
   #datePipe = inject(DatePipe);
+  #dialog = inject(ShipDialogService);
 
   // Prevent effects from hammering the API
   #requestedRootPathLoadId: string | null = null;
@@ -136,48 +139,71 @@ export default class SelectFilesComponent {
       if (option === undefined) return;
 
       const backupId = this.backupId();
-      const versionId = `${backupId}+${option.Time}`;
-
-      if (this.#requestedRepairVersion === versionId) return;
-
-      this.#requestedRepairVersion = versionId;
-      if (this.#activeRepairIds().includes(versionId)) return;
-      this.#activeRepairIds.update((ids) => {
-        return [...ids, versionId];
-      });
-
-      defer(() =>
-        this.#dupServer.postApiV1BackupByIdRepairupdate({
-          path: { id: backupId! },
-          body: {
-            only_paths: true,
-            time: option.Time,
-          },
-        })
-      )
-        .pipe(
-          takeUntil(this.abortLoading$),
-          finalize(() => {
-            this.#requestedRepairVersion = null;
-          })
-        )
-        .subscribe((res) => {
-          const taskId = res.ID!;
-          this.#serverState
-            .waitForTaskToComplete(taskId)
-            .pipe(take(1))
-            .subscribe(() => {
-              this.#activeRepairIds.update((ids) => {
-                return ids.filter((x) => x !== versionId);
-              });
-              this.loadedVersions.update((x) => {
-                x[versionId] = true;
-                return x;
-              });
-            });
-        });
+      if (!backupId) return;
+      untracked(() => this.#repairVersion(backupId, option.Time));
     }
   });
+
+  #repairVersion(backupId: string, time: string) {
+    const versionId = `${backupId}+${time}`;
+    if (
+      this.loadedVersions()[versionId] ||
+      this.#requestedRepairVersion === versionId ||
+      this.#activeRepairIds().includes(versionId)
+    )
+      return;
+    this.#requestedRepairVersion = versionId;
+    this.#activeRepairIds.update((ids) => {
+      return [...ids, versionId];
+    });
+
+    defer(() =>
+      this.#dupServer.postApiV1BackupByIdRepairupdate({
+        path: { id: backupId! },
+        body: {
+          only_paths: true,
+          time,
+        },
+      })
+    )
+      .pipe(
+        takeUntil(this.abortLoading$),
+        finalize(() => {
+          if (this.#requestedRepairVersion === versionId) this.#requestedRepairVersion = null;
+        })
+      )
+      .subscribe((res) => {
+        const taskId = res.ID!;
+        this.#serverState
+          .waitForTaskToComplete(taskId)
+          .pipe(take(1))
+          .subscribe((task) => {
+            this.#activeRepairIds.update((ids) => {
+              return ids.filter((x) => x !== versionId);
+            });
+            if (this.#requestedRepairVersion === versionId) this.#requestedRepairVersion = null;
+            if (task.Status === 'Completed') {
+              this.loadedVersions.update((versions) => ({ ...versions, [versionId]: true }));
+            } else if (task.Status === 'Failed') {
+              this.#dialog.open(ConfirmDialogComponent, {
+                data: {
+                  title: $localize`Restore database repair failed`,
+                  message: task.ErrorMessage || task.Exception || $localize`The restore database repair failed.`,
+                  confirmText: $localize`Retry`,
+                  cancelText: $localize`Cancel`,
+                },
+                closed: (retry: boolean) => {
+                  if (!retry || this.backupId() !== backupId) return;
+                  const selected = this.versionOptions().find(
+                    (option) => option.Version.toString() === this.selectOption()
+                  );
+                  if (selected?.Time === time) this.#repairVersion(backupId, time);
+                },
+              });
+            }
+          });
+      });
+  }
 
   getRootPath(backupSettings: BackupSettings) {
     const params = {
