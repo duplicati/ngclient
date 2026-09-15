@@ -20,6 +20,7 @@ export class ServerStatusLongPollService {
   #failedConnectionAttempts = signal(0);
   #awaitingPoll = signal(false);
   #destroy$ = new Subject<void>();
+  #retryTimeout: ReturnType<typeof setTimeout> | null = null;
 
   connectionStatus = this.#connectionStatus.asReadonly();
   serverState = this.#serverState.asReadonly();
@@ -35,9 +36,11 @@ export class ServerStatusLongPollService {
   }
 
   stop() {
+    this.#awaitingPoll.set(false);
     this.#destroy$.next();
     this.#destroy$.complete();
-    this.#awaitingPoll.set(false);
+    this.#clearRetryTimeout();
+    this.#closeDisconnectedDialog();
   }
 
   reconnect() {
@@ -90,9 +93,7 @@ export class ServerStatusLongPollService {
           }
 
           this.#disconnectedDialog.component.reconnectTimer.set(5000);
-          setTimeout(() => {
-            this.#longPoll();
-          }, 5000);
+          this.#scheduleRetry();
         },
       });
   }
@@ -103,10 +104,7 @@ export class ServerStatusLongPollService {
     this.#lastEventId.set(response.LastEventID ?? -1);
     this.#failedConnectionAttempts.set(0);
 
-    if (this.#disconnectedDialog) {
-      this.#disconnectedDialog.close();
-      this.#disconnectedDialog = undefined;
-    }
+    this.#closeDisconnectedDialog();
   }
 
   #scheduleNextPoll() {
@@ -115,5 +113,27 @@ export class ServerStatusLongPollService {
     if (!awaitingPoll) return;
 
     this.#longPoll();
+  }
+
+  #scheduleRetry() {
+    this.#clearRetryTimeout();
+    this.#retryTimeout = setTimeout(() => {
+      this.#retryTimeout = null;
+      if (this.#awaitingPoll()) this.#longPoll();
+    }, 5000);
+  }
+
+  #clearRetryTimeout() {
+    if (this.#retryTimeout === null) return;
+
+    clearTimeout(this.#retryTimeout);
+    this.#retryTimeout = null;
+  }
+
+  #closeDisconnectedDialog() {
+    if (!this.#disconnectedDialog) return;
+
+    this.#disconnectedDialog.close();
+    this.#disconnectedDialog = undefined;
   }
 }
