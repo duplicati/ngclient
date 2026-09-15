@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
-import { Subject, Subscription } from 'rxjs';
+import { finalize, Observable, of, Subject, Subscription } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ConfirmDialogComponent } from '../components/confirm-dialog/confirm-dialog.component';
 import { DestinationTestResponseDto, DuplicatiServer, RemoteDestinationType } from '../openapi';
@@ -35,15 +35,21 @@ describe('TestDestinationService dialogs', () => {
       backupId?: string | null;
       sourcePrefix?: string | null;
       readOnlyTest?: boolean;
+      synchronousSuccess?: boolean;
     } = {}
   ) => {
     const testRequest = new Subject<unknown>();
     const createRequest = new Subject<unknown>();
     requests.push(testRequest, createRequest);
+    const testFinalized = vi.fn();
+    const createFinalized = vi.fn();
+    const testSource: Observable<unknown> = context.synchronousSuccess ? of(v2 ? { Success: true } : {}) : testRequest;
+    const testResponse = testSource.pipe(finalize(testFinalized));
+    const createResponse = createRequest.pipe(finalize(createFinalized));
     const server = {
-      postApiV1RemoteoperationTest: vi.fn(() => testRequest),
-      postApiV1RemoteoperationCreate: vi.fn(() => createRequest),
-      postApiV2DestinationTest: vi.fn().mockReturnValueOnce(testRequest).mockReturnValue(createRequest),
+      postApiV1RemoteoperationTest: vi.fn(() => testResponse),
+      postApiV1RemoteoperationCreate: vi.fn(() => createResponse),
+      postApiV2DestinationTest: vi.fn().mockReturnValueOnce(testResponse).mockReturnValue(createResponse),
     };
     const dialogs: DialogOptions[] = [];
     const dialog = {
@@ -62,21 +68,20 @@ describe('TestDestinationService dialogs', () => {
     });
     const next = vi.fn<(result: TestDestinationResult) => void>();
     const complete = vi.fn();
-    subscriptions.push(
-      TestBed.inject(TestDestinationService)
-        .testDestination(
-          url,
-          context.backupId === undefined ? 'backup-1' : context.backupId,
-          42,
-          context.sourcePrefix === undefined ? 'source-prefix' : context.sourcePrefix,
-          destinationIndex,
-          context.destinationType ?? 'Backend',
-          false,
-          folderHandling,
-          context.readOnlyTest ?? true
-        )
-        .subscribe({ next, complete })
-    );
+    const subscription = TestBed.inject(TestDestinationService)
+      .testDestination(
+        url,
+        context.backupId === undefined ? 'backup-1' : context.backupId,
+        42,
+        context.sourcePrefix === undefined ? 'source-prefix' : context.sourcePrefix,
+        destinationIndex,
+        context.destinationType ?? 'Backend',
+        false,
+        folderHandling,
+        context.readOnlyTest ?? true
+      )
+      .subscribe({ next, complete });
+    subscriptions.push(subscription);
     const failMissingFolder = () =>
       testRequest.error(v2 ? { error: { body: { StatusCode: 'missing-folder' } } } : { message: 'missing-folder' });
     const expectNoCreation = () => {
@@ -99,12 +104,104 @@ describe('TestDestinationService dialogs', () => {
       testRequest,
       createRequest,
       next,
+      complete,
+      subscription,
+      testFinalized,
+      createFinalized,
       failMissingFolder,
       expectNoCreation,
       expectCompleted,
       expectPending,
     };
   };
+
+  describe.each([false, true])('subscription lifecycle (V2=%s)', (v2) => {
+    it.each(['success', 'error'])('releases the initial request and ignores a late %s', (response) => {
+      const { subscription, testRequest, testFinalized, dialog, expectPending } = setup(v2);
+      subscription.unsubscribe();
+      if (response === 'success') testRequest.next(v2 ? { Success: true } : {});
+      else testRequest.error({ message: 'Connection refused' });
+      expect(testFinalized).toHaveBeenCalledTimes(1);
+      expect(dialog.open).not.toHaveBeenCalled();
+      expectPending();
+    });
+
+    it('does not create a folder after unsubscription while awaiting approval', () => {
+      const { subscription, dialogs, failMissingFolder, expectNoCreation, expectPending } = setup(v2);
+      failMissingFolder();
+      expect(dialogs).toHaveLength(1);
+      subscription.unsubscribe();
+      dialogs[0].closed(true);
+      expectNoCreation();
+      expectPending();
+    });
+
+    it.each(['success', 'error'])('releases the creation request and ignores a late %s', (response) => {
+      const { subscription, dialogs, dialog, failMissingFolder, createRequest, createFinalized, expectPending } =
+        setup(v2);
+      failMissingFolder();
+      dialogs[0].closed(true);
+      expect(createFinalized).not.toHaveBeenCalled();
+      subscription.unsubscribe();
+      if (response === 'success') createRequest.next(v2 ? { Success: true } : {});
+      else createRequest.error({ message: 'Creation failed' });
+      expect(createFinalized).toHaveBeenCalledTimes(1);
+      expect(dialog.open).toHaveBeenCalledTimes(1);
+      expectPending();
+    });
+
+    it.each(['certificate', 'missing SSH key', 'changed SSH key', 'generic error'])(
+      'ignores a late %s dialog answer after unsubscription',
+      (kind) => {
+        const { subscription, testRequest, dialogs, dialog, expectNoCreation, expectPending } = setup(v2);
+        const changed = kind === 'changed SSH key';
+        const error =
+          kind === 'generic error'
+            ? { message: 'Connection refused' }
+            : v2
+              ? {
+                  error: {
+                    body: {
+                      Data:
+                        kind === 'certificate'
+                          ? { HostCertificate: 'cert-hash' }
+                          : { ReportedHostKey: 'new-key', AcceptedHostKey: changed ? 'old-key' : null },
+                    },
+                  },
+                }
+              : {
+                  message:
+                    kind === 'certificate'
+                      ? 'incorrect-cert:cert-hash'
+                      : `incorrect-host-key:"new-key", accepted-host-key:"${changed ? 'old-key' : ''}",`,
+                };
+        testRequest.error(error);
+        expect(dialogs).toHaveLength(1);
+        subscription.unsubscribe();
+        dialogs[0].closed(true);
+        expectPending();
+        expectNoCreation();
+        expect(dialog.open).toHaveBeenCalledTimes(1);
+      }
+    );
+
+    it('releases the request when a result completes the operation', () => {
+      const { testRequest, testFinalized, subscription, expectCompleted } = setup(v2);
+      testRequest.next(v2 ? { Success: true } : {});
+      expectCompleted();
+      expect(subscription.closed).toBe(true);
+      expect(testFinalized).toHaveBeenCalledTimes(1);
+    });
+
+    it('releases synchronous requests even when completion precedes subscription registration', () => {
+      const { testFinalized, subscription, expectCompleted } = setup(v2, 'prompt', targetUrl, {
+        synchronousSuccess: true,
+      });
+      expectCompleted();
+      expect(subscription.closed).toBe(true);
+      expect(testFinalized).toHaveBeenCalledTimes(1);
+    });
+  });
 
   it.each([false, true])('emits a result and completes on ordinary success (V2=%s)', (v2) => {
     const { testRequest, dialog, next, expectPending, expectCompleted } = setup(v2);
