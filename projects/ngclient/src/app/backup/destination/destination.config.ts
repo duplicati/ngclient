@@ -9,6 +9,7 @@ import {
   CreateCustomS3ProviderEntry,
   DestinationConfig,
   DestinationConfigEntry,
+  DestinationFormValues,
   DoubleSlashConfig,
   fromSearchParams,
   fromUrlObj,
@@ -81,6 +82,48 @@ export const DESTINATION_CONFIG_DEFAULT = {
   },
 };
 
+/** Backend option that turns off AWS chunked (streaming SigV4) uploads in the AWS S3 client. */
+export const S3_DISABLE_CHUNK_ENCODING_OPTION = 's3-disable-chunk-encoding';
+
+/**
+ * Hostname suffixes of S3 providers known to reject AWS chunked uploads
+ * (`Content-Encoding: aws-chunked` / `x-amz-content-sha256: STREAMING-AWS4-HMAC-SHA256-PAYLOAD`).
+ * New connections to these hosts get `s3-disable-chunk-encoding=true` set automatically.
+ *
+ * Sources:
+ * - Wasabi: docs.wasabi.com "AWS SDK for .NET With Wasabi" recommends UseChunkEncoding = false
+ * - Cloudflare R2: returns "STREAMING-AWS4-HMAC-SHA256-PAYLOAD not implemented"
+ * - Infomaniak (Swiss Backup / Public Cloud): Swift s3api, "aws-chunked is not supported"
+ * - Poli Systems: their Duplicati guide requires ticking s3-disable-chunk-encoding
+ * - Alibaba OSS: "Aws MultiChunkedEncoding is not supported" (duplicati/duplicati#4994)
+ */
+export const S3_NO_CHUNK_ENCODING_HOST_SUFFIXES: readonly string[] = [
+  '.wasabisys.com',
+  '.r2.cloudflarestorage.com',
+  '.infomaniak.com',
+  '.infomaniak.cloud',
+  '.polisystems.ch',
+  '.aliyuncs.com',
+];
+
+/** True when the given S3 server name belongs to a provider that does not support chunked uploads. */
+export function s3HostRequiresDisabledChunkEncoding(serverName: string | null | undefined): boolean {
+  const host = (serverName ?? '').trim().toLowerCase();
+  if (!host) return false;
+  return S3_NO_CHUNK_ENCODING_HOST_SUFFIXES.some((suffix) => host.endsWith(suffix));
+}
+
+/**
+ * Field hook for the `s3-server-name` field: when the chosen server is known not to
+ * support chunked uploads, set `s3-disable-chunk-encoding=true` unless the user has
+ * already configured that option themselves.
+ */
+export function applyS3ChunkEncodingDefault(serverName: string | null | undefined, form: DestinationFormValues) {
+  if (!s3HostRequiresDisabledChunkEncoding(serverName)) return;
+  if (form.advanced[S3_DISABLE_CHUNK_ENCODING_OPTION] !== undefined) return;
+  form.advanced[S3_DISABLE_CHUNK_ENCODING_OPTION] = 'true';
+}
+
 export const S3_BASE: DestinationConfigEntry = {
   key: 's3',
   displayName: $localize`S3 Compatible`,
@@ -115,6 +158,7 @@ export const S3_BASE: DestinationConfigEntry = {
       loadOptions: (injector) => injector.get(WebModulesService).getS3AllProviders(),
       isMandatory: true,
       formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      onValueChange: applyS3ChunkEncodingDefault,
     },
     {
       name: 'auth-username',
@@ -368,6 +412,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         loadOptions: (injector) => injector.get(WebModulesService).getS3AllProviders(),
         isMandatory: true,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+        onValueChange: applyS3ChunkEncodingDefault,
       },
       {
         name: 'use-ssl',

@@ -3,7 +3,15 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ArgumentType, ICommandLineArgument, SettingInputDto } from '../../core/openapi';
 import { WebModuleOption, WebModulesService } from '../../core/services/webmodules.service';
 import { DestinationFormGroupValue } from './destination.component';
-import { DESTINATION_CONFIG, DESTINATION_CONFIG_DEFAULT, S3_BASE, S3_HOST_SUFFIX_MAP } from './destination.config';
+import {
+  applyS3ChunkEncodingDefault,
+  DESTINATION_CONFIG,
+  DESTINATION_CONFIG_DEFAULT,
+  S3_BASE,
+  S3_DISABLE_CHUNK_ENCODING_OPTION,
+  S3_HOST_SUFFIX_MAP,
+  s3HostRequiresDisabledChunkEncoding,
+} from './destination.config';
 
 const fb = new FormBuilder();
 
@@ -86,6 +94,19 @@ export type FormView = {
   order?: number;
   isMandatory?: boolean;
   validate?: (value: string) => { type: 'error' | 'warning'; message: string } | null;
+  /**
+   * Invoked when the user changes the value of this field in the destination form.
+   * Receives the new value and the mutable form values, so a field can adjust
+   * other fields (e.g. set a required advanced option for a chosen provider).
+   */
+  onValueChange?: (value: any, form: DestinationFormValues) => void;
+};
+
+/** The plain values of the destination form, grouped like the form itself. */
+export type DestinationFormValues = {
+  custom: Record<string, any>;
+  dynamic: Record<string, any>;
+  advanced: Record<string, any>;
 };
 
 export type CustomFormView = FormView & {
@@ -469,6 +490,7 @@ export function CreateCustomS3ProviderEntry(
             .getS3ProvidersFiltered((option) => hostnameEndsWith.some((suffix) => option.value.endsWith(suffix))),
         isMandatory: true,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+        onValueChange: applyS3ChunkEncodingDefault,
       },
     ],
     mapper: {
@@ -480,7 +502,12 @@ export function CreateCustomS3ProviderEntry(
         return buildUrlFromFields(fields, bucket, null, path);
       },
       default: (backupName: string): string => {
-        return `s3-${customKey}://?use-ssl=true`;
+        // Providers that do not support AWS chunked (streaming SigV4) uploads
+        // get the AWS client's chunk encoding disabled on new connections.
+        const disableChunkEncoding = hostnameEndsWith.some((suffix) => s3HostRequiresDisabledChunkEncoding(suffix))
+          ? `&${S3_DISABLE_CHUNK_ENCODING_OPTION}=true`
+          : '';
+        return `s3-${customKey}://?use-ssl=true${disableChunkEncoding}`;
       },
       intercept: (urlObj: UrlLike): boolean => {
         return hostnameEndsWith.some((suffix) => urlObj.searchParams.get('s3-server-name')?.endsWith(suffix)) ?? false;
