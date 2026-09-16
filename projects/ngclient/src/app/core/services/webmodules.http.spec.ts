@@ -6,10 +6,16 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { DuplicatiServer } from '../openapi';
 import { client } from '../openapi/client.gen';
 import { RelayconfigState } from '../states/relayconfig.state';
-import { CustomRemotePermissionStatus, Office365RawCounts, WebModulesService } from './webmodules.service';
+import {
+  CustomRemotePermissionStatus,
+  GoogleWorkspaceCounts,
+  Office365RawCounts,
+  WebModulesService,
+} from './webmodules.service';
 
 const operations = [
   { method: 'getOffice365Counts', module: 'office365', operation: 'CountItems', result: 'counts' },
+  { method: 'getGoogleWorkspaceCounts', module: 'googleworkspace', operation: 'CountItems', result: 'counts' },
   {
     method: 'getOffice365Permissions',
     module: 'office365',
@@ -28,6 +34,13 @@ const counts: Office365RawCounts = {
   users: { total: 10, licensed: 4, unlicensed: 3, sharedMailboxWithStorage: 2, sharedMailboxWithoutStorage: 1 },
   groups: { total: 5, unified: 2, notUnified: 3 },
   sites: { total: 15, group: 1, classic: 2, communication: 3, personal: 4, other: 5 },
+};
+
+const googleCounts: GoogleWorkspaceCounts = {
+  users: { total: 10, active: 6, suspended: 3, archived: 1 },
+  groups: { total: 5 },
+  sharedDrives: { total: 2 },
+  sites: { total: 7 },
 };
 
 const permissions: CustomRemotePermissionStatus[] = [
@@ -96,7 +109,8 @@ describe('WebModulesService HTTP operations', () => {
       expect(observer.next).not.toHaveBeenCalled();
       expect(observer.complete).not.toHaveBeenCalled();
 
-      request.flush({ Result: { [result]: JSON.stringify(result === 'counts' ? counts : permissions) } });
+      const payload = result !== 'counts' ? permissions : module === 'office365' ? counts : googleCounts;
+      request.flush({ Result: { [result]: JSON.stringify(payload) } });
 
       expect(observer.next).toHaveBeenCalledTimes(1);
       expect(observer.complete).toHaveBeenCalledTimes(1);
@@ -130,15 +144,33 @@ describe('WebModulesService HTTP operations', () => {
     });
   });
 
-  it.each([false, true])('sets the count timeout header only with relay enabled (%s)', (relayEnabled) => {
-    const service = setup(relayEnabled);
-    const observer = observe(service.getOffice365Counts('office365://tenant', 'source-1', null));
-    const request = http.expectOne('/test-proxy/api/v1/webmodule/office365');
+  describe.each(operations.filter((operation) => operation.result === 'counts'))(
+    '$method headers',
+    ({ method, module }) => {
+      it.each([false, true])('sets the count timeout header only with relay enabled (%s)', (relayEnabled) => {
+        const service = setup(relayEnabled);
+        const observer = observe(service[method](`${module}://tenant`, 'source-1', null));
+        const request = http.expectOne(`/test-proxy/api/v1/webmodule/${module}`);
 
-    expect(request.request.headers.get('timeout')).toBe(relayEnabled ? '300000' : null);
-    request.flush({ Result: { counts: JSON.stringify(counts) } });
-    expect(observer.error).not.toHaveBeenCalled();
+        expect(request.request.headers.get('timeout')).toBe(relayEnabled ? '300000' : null);
+        request.flush({ Result: { counts: JSON.stringify(module === 'office365' ? counts : googleCounts) } });
+        expect(observer.error).not.toHaveBeenCalled();
+        expect(observer.complete).toHaveBeenCalledTimes(1);
+      });
+    }
+  );
+
+  it('parses Google Workspace counts without transformation', () => {
+    const service = setup();
+    const observer = observe(service.getGoogleWorkspaceCounts('googleworkspace://tenant', 'source-1', null));
+
+    http.expectOne('/test-proxy/api/v1/webmodule/googleworkspace').flush({
+      Result: { counts: JSON.stringify(googleCounts) },
+    });
+
+    expect(observer.next).toHaveBeenCalledExactlyOnceWith(googleCounts);
     expect(observer.complete).toHaveBeenCalledTimes(1);
+    expect(observer.error).not.toHaveBeenCalled();
   });
 
   it.each([
