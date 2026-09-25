@@ -1,5 +1,12 @@
 import { effect, inject, Injectable, signal } from '@angular/core';
 import { ENVIRONMENT_TOKEN } from '../../../environments/environment-token';
+import {
+  createReplyKeyPair,
+  decryptCommandResponse,
+  encryptCommandRequest,
+  requiresEncryptedCommands,
+  type ReplyKeyPair,
+} from '../functions/command-payload-encryption';
 import { randomUUID } from '../functions/crypto';
 import { ConnectingScreenService } from './connecting-screen.service';
 
@@ -43,6 +50,17 @@ type PromiseResolver = {
   reject: (reason?: any) => void;
   timer: number;
   binaryBody: boolean;
+  /** Set when the request was encrypted; the response must then be encrypted to this key. */
+  replyPrivateKey: CryptoKey | null;
+};
+
+/** The client a command is addressed to, with what is needed to encrypt for it. */
+export type RelayTarget = {
+  clientId: string;
+  /** The client's public key (SubjectPublicKeyInfo PEM), as listed by the machine server. */
+  publicKey: string | null;
+  /** The protocol version the client authenticated with; 2 and later require encrypted commands. */
+  protocolVersion: number | null;
 };
 
 export type CommandResponse = {
@@ -78,6 +96,11 @@ export class RelayWebsocketService {
   #ws: WebSocket | null = null;
   #textDecoder = new TextDecoder('utf-8');
   #activeInterval: number | null = null;
+  /**
+   * The key responses are encrypted to. One per page load, kept only in memory, and shared across
+   * reconnects so a command queued before a reconnect can still have its response decrypted.
+   */
+  #replyKeyPair: Promise<ReplyKeyPair> | null = null;
 
   #e = effect(() => {
     const isReconnecting = this.#isReconnecting();
@@ -118,6 +141,21 @@ export class RelayWebsocketService {
     const stringifiedJson = this.#textDecoder.decode(decodedData);
     if (stringifiedJson) return JSON.parse(stringifiedJson);
     else return null;
+  }
+
+  /** Decodes a base64 body as text, for error messages that are not JSON. Returns the input when it is not base64. */
+  #bodyAsText(body: string | null): string | null {
+    if (body == null) return null;
+    try {
+      return this.#textDecoder.decode(Uint8Array.from(atob(body), (c) => c.charCodeAt(0)));
+    } catch {
+      return body;
+    }
+  }
+
+  #getReplyKeyPair(): Promise<ReplyKeyPair> {
+    this.#replyKeyPair ??= createReplyKeyPair();
+    return this.#replyKeyPair;
   }
 
   connectToMachineServer(token: string, machineServerUrl: string, options?: { reconnect?: boolean }) {
@@ -204,27 +242,42 @@ export class RelayWebsocketService {
 
         const f = this.#pendingCommands[data.messageId];
         if (f) {
+          delete this.#pendingCommands[data.messageId];
+          window.clearTimeout(f.timer);
+
           if (data.errorMessage) {
             this.#showInitialCommandError(data.errorMessage);
             f.reject(data.errorMessage);
           } else {
-            const payload = JSON.parse(data.payload ?? '') as CommandResponse;
-            if (payload.statusCode >= 400) {
-              this.#showInitialCommandError(
-                payload.body || `Initial request failed with status code ${payload.statusCode}`
-              );
-            } else {
-              this.#markInitialCommandHandled();
-            }
-            payload.body = payload?.body == null ? null : f.binaryBody ? payload.body : this.utf8Atob(payload.body);
-            f.resolve(payload);
+            this.#readResponse(data, f).then(
+              (payload) => this.#completeCommand(payload, f),
+              (err) => f.reject(err instanceof Error ? err.message : String(err))
+            );
           }
-
-          delete this.#pendingCommands[data.messageId];
-          window.clearTimeout(f.timer);
         }
       }
     };
+  }
+
+  /** Reads the response payload, decrypting it when the request was encrypted. */
+  async #readResponse(data: MessageEnvelope, f: PromiseResolver): Promise<CommandResponse> {
+    // A response to an encrypted request is only accepted encrypted, whatever it claims to contain
+    if (f.replyPrivateKey !== null)
+      return decryptCommandResponse<CommandResponse>(data.payload, f.replyPrivateKey, data.messageId);
+
+    return JSON.parse(data.payload ?? '') as CommandResponse;
+  }
+
+  #completeCommand(payload: CommandResponse, f: PromiseResolver) {
+    if (payload.statusCode >= 400) {
+      this.#showInitialCommandError(
+        this.#bodyAsText(payload.body) || `Initial request failed with status code ${payload.statusCode}`
+      );
+    } else {
+      this.#markInitialCommandHandled();
+    }
+    payload.body = payload?.body == null ? null : f.binaryBody ? payload.body : this.utf8Atob(payload.body);
+    f.resolve(payload);
   }
 
   private disconnectFromMachineServer(errorMessage: string | null = null) {
@@ -250,7 +303,7 @@ export class RelayWebsocketService {
 
   sendCommand(
     token: string,
-    clientId: string,
+    target: RelayTarget,
     machineServerUrl: string,
     method: RequestMethod,
     path: string,
@@ -274,18 +327,11 @@ export class RelayWebsocketService {
         headers,
       };
 
-      const message: MessageEnvelope = {
-        from: ClientId,
-        to: clientId,
-        type: 'command',
-        messageId: messageId,
-        payload: JSON.stringify(request),
-      };
-
       const f: PromiseResolver = {
         resolve,
         reject,
         binaryBody,
+        replyPrivateKey: null,
         timer: window.setTimeout(() => {
           const f = this.#pendingCommands[messageId];
           if (f) {
@@ -298,10 +344,52 @@ export class RelayWebsocketService {
 
       this.#pendingCommands[messageId] = f;
 
-      // If we are not yet connected to the machine server, queue the command
-      if (this.#isConnectedToMachineServer()) this.activateCommand(message);
-      else this.#queuedCommands.push(message);
+      this.#preparePayload(messageId, target, request, f).then(
+        (payload) => {
+          // The command may have timed out while the payload was prepared
+          if (!this.#pendingCommands[messageId]) return;
+
+          const message: MessageEnvelope = {
+            from: ClientId,
+            to: target.clientId,
+            type: 'command',
+            messageId: messageId,
+            payload,
+          };
+
+          // If we are not yet connected to the machine server, queue the command
+          if (this.#isConnectedToMachineServer()) this.activateCommand(message);
+          else this.#queuedCommands.push(message);
+        },
+        (err) => {
+          delete this.#pendingCommands[messageId];
+          window.clearTimeout(f.timer);
+          const message = err instanceof Error ? err.message : String(err);
+          this.#showInitialCommandError(message);
+          reject(message);
+        }
+      );
     });
+  }
+
+  /**
+   * Serializes the request for the target: encrypted end-to-end for clients that require it, so the machine
+   * server never sees the content, and plain text for older clients that only understand that.
+   */
+  async #preparePayload(
+    messageId: string,
+    target: RelayTarget,
+    request: CommandRequest,
+    f: PromiseResolver
+  ): Promise<string> {
+    if (!requiresEncryptedCommands(target)) return JSON.stringify(request);
+
+    if (!target.publicKey) throw new Error('The client requires encrypted commands, but its public key is not known.');
+
+    const replyKeyPair = await this.#getReplyKeyPair();
+    const payload = await encryptCommandRequest(messageId, request, target.publicKey, replyKeyPair.publicJwk);
+    f.replyPrivateKey = replyKeyPair.privateKey;
+    return payload;
   }
 
   private activateCommand(message: MessageEnvelope) {

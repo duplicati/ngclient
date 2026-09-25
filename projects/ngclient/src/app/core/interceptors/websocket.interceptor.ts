@@ -71,7 +71,11 @@ function handleRequest(state: CallState, req: HttpRequest<unknown>, next: HttpHa
 
   const p = state.relayWebsocket.sendCommand(
     relayconfig.accessToken,
-    relayconfig.clientId,
+    {
+      clientId: relayconfig.clientId,
+      publicKey: relayconfig.agentPublicKey ?? null,
+      protocolVersion: relayconfig.agentProtocolVersion ?? null,
+    },
     relayconfig.machineServerUrl,
     req.method as RequestMethod,
     req.url,
