@@ -12,7 +12,7 @@ import { ConnectingScreenService } from './connecting-screen.service';
 
 type SocketProtocolState = 'disconnected' | 'connecting' | 'connect' | 'welcome' | 'authenticated' | 'error';
 
-type MessageType = 'authportal' | 'list' | 'welcome' | 'command' | 'warning' | 'auth';
+type MessageType = 'authportal' | 'list' | 'listrunners' | 'welcome' | 'command' | 'warning' | 'auth';
 
 type MessageEnvelope = {
   from: string;
@@ -236,6 +236,10 @@ export class RelayWebsocketService {
         }
       } else if (this.wsState() === 'authenticated') {
         if (data.type !== 'command') {
+          // The machine server pushes list updates to every portal when a client connects or disconnects;
+          // this client never asked for them and has no use for them
+          if (data.type === 'list' || data.type === 'listrunners') return;
+
           console.warn(`Unexpected message type, expected 'command' but got '${data.type}'`);
           return;
         }
@@ -251,7 +255,12 @@ export class RelayWebsocketService {
           } else {
             this.#readResponse(data, f).then(
               (payload) => this.#completeCommand(payload, f),
-              (err) => f.reject(err instanceof Error ? err.message : String(err))
+              (err) => {
+                // Shown on the connecting screen, so a response that cannot be read does not look like a stall
+                const message = err instanceof Error ? err.message : String(err);
+                this.#showInitialCommandError(message);
+                f.reject(message);
+              }
             );
           }
         }
@@ -357,8 +366,11 @@ export class RelayWebsocketService {
             payload,
           };
 
-          // If we are not yet connected to the machine server, queue the command
-          if (this.#isConnectedToMachineServer()) this.activateCommand(message);
+          // Only an authenticated connection may carry commands; the machine server drops anything sent
+          // before authportal completes without a reply. The payload is prepared asynchronously, so the
+          // socket can have opened, but not yet authenticated, in the meantime. Queued commands are sent
+          // once authentication completes.
+          if (this.wsState() === 'authenticated') this.activateCommand(message);
           else this.#queuedCommands.push(message);
         },
         (err) => {
