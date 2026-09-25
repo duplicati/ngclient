@@ -292,6 +292,15 @@ export default class ScheduleComponent {
 
   unitOptions = UNIT_OPTIONS;
   scheduleFields = this.#backupState.scheduleFields;
+  datepickerDate = computed(() => {
+    const value = this.scheduleFields.nextTime.date();
+    if (!value) return null;
+
+    // The picker parses strings with new Date(), treating YYYY-MM-DD as UTC.
+    // Pass the selected calendar day as a local Date instead.
+    const { year, month, day } = getLocalDateParts(value);
+    return new Date(year, month, day);
+  });
   scheduleType = this.#backupState.scheduleType;
   scheduleOptions = SCHEDULE_DEFAULT_OPTIONS;
   scheduleSummary = computed(() => {
