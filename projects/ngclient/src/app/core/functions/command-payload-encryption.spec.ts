@@ -2,6 +2,7 @@ import { compactDecrypt, CompactEncrypt, exportSPKI, generateKeyPair, importJWK,
 import { beforeAll, describe, expect, it } from 'vitest';
 import {
   CommandPayloadError,
+  COMPRESSION_THRESHOLD_BYTES,
   createReplyKeyPair,
   decryptCommandResponse,
   encryptCommandRequest,
@@ -11,16 +12,38 @@ import {
   type ReplyKeyPair,
 } from './command-payload-encryption';
 
-/**
- * The client side is simulated here with the same primitives, following the format pinned by the Duplicati
- * client's own tests: RSA-OAEP-256 + A256GCM, wrapper `{"v":2,"jwe":...}`, request plaintext
- * `{"replyKey":<JWK>,"request":...}`.
- */
 /** jsdom's TextEncoder returns a Uint8Array from another realm, which jose rejects; normalize like the helper does. */
 function toBytes(text: string): Uint8Array {
   return new Uint8Array(new TextEncoder().encode(text));
 }
 
+/** What the client does for large plaintexts. */
+async function gzip(bytes: Uint8Array): Promise<Uint8Array> {
+  const stream = new ReadableStream<BufferSource>({
+    start(controller) {
+      controller.enqueue(new Uint8Array(bytes));
+      controller.close();
+    },
+  }).pipeThrough(new CompressionStream('gzip'));
+  return new Uint8Array(await new Response(stream).arrayBuffer());
+}
+
+/** What the client does for compressed requests. */
+async function gunzip(bytes: Uint8Array): Promise<Uint8Array> {
+  const stream = new ReadableStream<BufferSource>({
+    start(controller) {
+      controller.enqueue(new Uint8Array(bytes));
+      controller.close();
+    },
+  }).pipeThrough(new DecompressionStream('gzip'));
+  return new Uint8Array(await new Response(stream).arrayBuffer());
+}
+
+/**
+ * The client side is simulated here with the same primitives, following the format pinned by the Duplicati
+ * client's own tests: RSA-OAEP-256 + A256GCM, wrapper `{"v":2,"jwe":...}` with optional `"zip":"gzip"`, request
+ * plaintext `{"messageId":...,"replyKey":<JWK>,"request":...}`, response plaintext `{"messageId":...,"response":...}`.
+ */
 describe('command payload encryption', () => {
   let clientPrivateKey: CryptoKey;
   let clientPublicKeyPem: string;
@@ -35,22 +58,32 @@ describe('command payload encryption', () => {
     headers: { Accept: 'application/json' },
   };
 
-  /** What the client does: decrypt the request, read the reply key, encrypt the response to it. */
-  async function clientRoundTrip(payload: string, response: object, respondUnderMessageId?: string) {
+  /** What the client does: decrypt the request, read the reply key, answer encrypted to it under the same message id. */
+  async function clientRoundTrip(
+    payload: string,
+    response: object,
+    respondUnderMessageId?: string,
+    options?: { compress?: boolean; zip?: string }
+  ) {
     const wrapper = parseEncryptedPayload(payload)!;
-    const { plaintext, protectedHeader } = await compactDecrypt(wrapper.jwe, clientPrivateKey);
+    let { plaintext } = await compactDecrypt(wrapper.jwe, clientPrivateKey);
+    const { protectedHeader } = await compactDecrypt(wrapper.jwe, clientPrivateKey);
+    if (wrapper.zip === 'gzip') plaintext = await gunzip(plaintext);
     const decoded = JSON.parse(new TextDecoder().decode(plaintext)) as {
       messageId: string;
       replyKey: JWK;
       request: unknown;
     };
     const replyKey = await importJWK(decoded.replyKey, 'RSA-OAEP-256');
-    const jwe = await new CompactEncrypt(
-      toBytes(JSON.stringify({ messageId: respondUnderMessageId ?? decoded.messageId, response }))
-    )
+    let responsePlaintext = toBytes(
+      JSON.stringify({ messageId: respondUnderMessageId ?? decoded.messageId, response })
+    );
+    if (options?.compress) responsePlaintext = await gzip(responsePlaintext);
+    const jwe = await new CompactEncrypt(responsePlaintext)
       .setProtectedHeader({ alg: 'RSA-OAEP-256', enc: 'A256GCM' })
       .encrypt(replyKey);
-    return { protectedHeader, decoded, responsePayload: JSON.stringify({ v: 2, jwe }) };
+    const zip = options?.zip ?? (options?.compress ? 'gzip' : undefined);
+    return { protectedHeader, decoded, responsePayload: JSON.stringify(zip ? { v: 2, jwe, zip } : { v: 2, jwe }) };
   }
 
   beforeAll(async () => {
@@ -74,6 +107,7 @@ describe('command payload encryption', () => {
     const wrapper = parseEncryptedPayload(payload);
     expect(wrapper).not.toBeNull();
     expect(wrapper!.v).toBe(2);
+    expect(wrapper!.zip).toBeUndefined();
     expect(wrapper!.jwe.split('.')).toHaveLength(5);
     expect(isEncryptedPayload(payload)).toBe(true);
 
@@ -93,6 +127,73 @@ describe('command payload encryption', () => {
     await expect(decryptCommandResponse(responsePayload, replyKeyPair.privateKey, MESSAGE_ID)).resolves.toEqual(
       response
     );
+  });
+
+  it('compresses a large request, such as a restore with many paths, and leaves small ones plain', async () => {
+    const paths = Array.from(
+      { length: 500 },
+      (_, i) => `/home/user/documents/project-${i}/report-final-v${i % 7}.docx`
+    );
+    const restore = {
+      method: 'POST',
+      path: '/api/v1/backup/1/restore',
+      body: btoa(JSON.stringify({ paths })),
+      headers: null,
+    };
+
+    const payload = await encryptCommandRequest(MESSAGE_ID, restore, clientPublicKeyPem, replyKeyPair.publicJwk);
+    const wrapper = parseEncryptedPayload(payload)!;
+    expect(wrapper.zip).toBe('gzip');
+    expect(payload.length).toBeLessThan(JSON.stringify(restore).length / 2);
+
+    const { decoded } = await clientRoundTrip(payload, {});
+    expect(decoded.request).toEqual(restore);
+    expect(decoded.messageId).toBe(MESSAGE_ID);
+
+    // The small request stays plain, so the threshold is what decides
+    const small = await encryptCommandRequest(MESSAGE_ID, request, clientPublicKeyPem, replyKeyPair.publicJwk);
+    expect(parseEncryptedPayload(small)!.zip).toBeUndefined();
+    expect(JSON.stringify({ messageId: MESSAGE_ID, replyKey: replyKeyPair.publicJwk, request }).length).toBeLessThan(
+      COMPRESSION_THRESHOLD_BYTES
+    );
+  });
+
+  it('decrypts a gzip compressed response, and one that is not compressed, alike', async () => {
+    const payload = await encryptCommandRequest(MESSAGE_ID, request, clientPublicKeyPem, replyKeyPair.publicJwk);
+    const items = Array.from({ length: 2000 }, (_, i) => `{"name":"option-${i}","description":"repeats a lot"}`);
+    const body = btoa(`[${items.join(',')}]`);
+    const response = { statusCode: 200, body, headers: { 'Content-Type': 'application/json' } };
+
+    const compressed = await clientRoundTrip(payload, response, undefined, { compress: true });
+    expect(parseEncryptedPayload(compressed.responsePayload)!.zip).toBe('gzip');
+    expect(compressed.responsePayload.length).toBeLessThan(body.length / 4);
+    await expect(
+      decryptCommandResponse(compressed.responsePayload, replyKeyPair.privateKey, MESSAGE_ID)
+    ).resolves.toEqual(response);
+
+    const plain = await clientRoundTrip(payload, response);
+    expect(parseEncryptedPayload(plain.responsePayload)!.zip).toBeUndefined();
+    await expect(decryptCommandResponse(plain.responsePayload, replyKeyPair.privateKey, MESSAGE_ID)).resolves.toEqual(
+      response
+    );
+  });
+
+  it('refuses unsupported or corrupt compression', async () => {
+    const payload = await encryptCommandRequest(MESSAGE_ID, request, clientPublicKeyPem, replyKeyPair.publicJwk);
+
+    const unsupported = await clientRoundTrip(payload, { statusCode: 200 }, undefined, { zip: 'br' });
+    await expect(
+      decryptCommandResponse(unsupported.responsePayload, replyKeyPair.privateKey, MESSAGE_ID)
+    ).rejects.toThrow('unsupported compression');
+
+    // Says gzip, but the plaintext was never compressed
+    const corrupt = await clientRoundTrip(payload, { statusCode: 200 }, undefined, { zip: 'gzip' });
+    await expect(decryptCommandResponse(corrupt.responsePayload, replyKeyPair.privateKey, MESSAGE_ID)).rejects.toThrow(
+      'could not be decompressed'
+    );
+
+    expect(isEncryptedPayload('{"v":2,"jwe":"a.b.c.d.e","zip":7}')).toBe(false);
+    expect(isEncryptedPayload('{"v":2,"jwe":"a.b.c.d.e","zip":"gzip"}')).toBe(true);
   });
 
   it('refuses a response that is not encrypted, or encrypted to another key', async () => {

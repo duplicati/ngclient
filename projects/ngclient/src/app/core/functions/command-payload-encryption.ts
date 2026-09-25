@@ -12,6 +12,10 @@ import { compactDecrypt, CompactEncrypt, exportJWK, generateKeyPair, importSPKI,
  * key is never visible to the machine server either. The message id inside the ciphertext binds each payload
  * to its envelope: a relay cannot move a payload to another message, or replay an old response, unnoticed.
  *
+ * Either side gzip compresses a plaintext above `COMPRESSION_THRESHOLD_BYTES` before encryption and says so with
+ * `"zip":"gzip"` in the wrapper, so large requests (a restore with many paths) and large responses (a file
+ * listing) are both small on the wire. Receivers accept compressed and plain plaintexts alike.
+ *
  * This mirrors `CommandPayloadEncryption` in the Duplicati client; the two must stay in step.
  */
 
@@ -30,8 +34,17 @@ const CONTENT_ENCRYPTION = 'A256GCM';
 /** The size of the reply key. */
 const REPLY_KEY_BITS = 2048;
 
-/** The wrapper placed in the envelope payload. */
-export type EncryptedPayload = { v: number; jwe: string };
+/** The only compression the wrapper may name. */
+const GZIP_COMPRESSION = 'gzip';
+
+/** Plaintexts larger than this are compressed before encryption; smaller ones are not worth it. */
+export const COMPRESSION_THRESHOLD_BYTES = 2 * 1024;
+
+/** The most a compressed plaintext may inflate to, so a malformed response cannot exhaust memory. */
+const MAX_DECOMPRESSED_BYTES = 64 * 1024 * 1024;
+
+/** The wrapper placed in the envelope payload. `zip` names the compression of the plaintext, absent for none. */
+export type EncryptedPayload = { v: number; jwe: string; zip?: string };
 
 /**
  * Encodes text as bytes in this realm's Uint8Array. A TextEncoder from another realm (an iframe, or jsdom
@@ -91,12 +104,18 @@ export async function encryptCommandRequest(
     throw new CommandPayloadError('The client public key could not be read');
   }
 
-  const plaintext = toBytes(JSON.stringify({ messageId, replyKey: replyPublicJwk, request }));
+  let plaintext = toBytes(JSON.stringify({ messageId, replyKey: replyPublicJwk, request }));
+  // Compress when large enough to be worth it, and when this browser can; the client accepts either form
+  const compress = plaintext.byteLength > COMPRESSION_THRESHOLD_BYTES && typeof CompressionStream !== 'undefined';
+  if (compress) plaintext = await gzip(plaintext);
+
   const jwe = await new CompactEncrypt(plaintext)
     .setProtectedHeader({ alg: KEY_ALGORITHM, enc: CONTENT_ENCRYPTION })
     .encrypt(clientKey);
 
-  const wrapper: EncryptedPayload = { v: COMMAND_PAYLOAD_VERSION, jwe };
+  const wrapper: EncryptedPayload = compress
+    ? { v: COMMAND_PAYLOAD_VERSION, jwe, zip: GZIP_COMPRESSION }
+    : { v: COMMAND_PAYLOAD_VERSION, jwe };
   return JSON.stringify(wrapper);
 }
 
@@ -115,8 +134,12 @@ export function parseEncryptedPayload(payload: string | null | undefined): Encry
   const candidate = parsed as Partial<EncryptedPayload>;
   if (candidate.v !== COMMAND_PAYLOAD_VERSION || typeof candidate.jwe !== 'string' || candidate.jwe.length === 0)
     return null;
+  // The value is checked on decryption, so the reason can be reported; here it only has to be a string
+  if (candidate.zip != null && typeof candidate.zip !== 'string') return null;
 
-  return { v: candidate.v, jwe: candidate.jwe };
+  return candidate.zip == null
+    ? { v: candidate.v, jwe: candidate.jwe }
+    : { v: candidate.v, jwe: candidate.jwe, zip: candidate.zip };
 }
 
 /** True when the payload carries the encrypted wrapper, without decrypting it. */
@@ -130,7 +153,7 @@ export function isEncryptedPayload(payload: string | null | undefined): boolean 
  * @param replyPrivateKey The private half of the reply key pair
  * @param expectedMessageId The envelope's message id; the response must be bound to the same id
  * @returns The parsed response
- * @throws CommandPayloadError when the payload is not encrypted, cannot be decrypted, is malformed, or belongs to another message
+ * @throws CommandPayloadError when the payload is not encrypted, cannot be decrypted or decompressed, is malformed, or belongs to another message
  */
 export async function decryptCommandResponse<T>(
   payload: string | null | undefined,
@@ -139,6 +162,8 @@ export async function decryptCommandResponse<T>(
 ): Promise<T> {
   const wrapper = parseEncryptedPayload(payload);
   if (wrapper === null) throw new CommandPayloadError('The response is not end-to-end encrypted');
+  if (wrapper.zip !== undefined && wrapper.zip !== GZIP_COMPRESSION)
+    throw new CommandPayloadError('The response uses an unsupported compression');
 
   let plaintext: Uint8Array;
   try {
@@ -150,6 +175,8 @@ export async function decryptCommandResponse<T>(
   } catch {
     throw new CommandPayloadError('The response could not be decrypted');
   }
+
+  if (wrapper.zip === GZIP_COMPRESSION) plaintext = await gunzip(plaintext);
 
   let decoded: { messageId?: unknown; response?: unknown };
   try {
@@ -164,4 +191,66 @@ export async function decryptCommandResponse<T>(
   if (decoded.messageId !== expectedMessageId) throw new CommandPayloadError('The response belongs to another message');
 
   return decoded.response as T;
+}
+
+/** Gzip compresses a plaintext. */
+async function gzip(plaintext: Uint8Array): Promise<Uint8Array> {
+  const source = new ReadableStream<BufferSource>({
+    start(controller) {
+      controller.enqueue(new Uint8Array(plaintext));
+      controller.close();
+    },
+  });
+  const chunks: Uint8Array[] = [];
+  const reader = source.pipeThrough(new CompressionStream(GZIP_COMPRESSION)).getReader();
+  for (;;) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    chunks.push(value);
+  }
+  return concat(chunks);
+}
+
+/** Joins chunks into one array. */
+function concat(chunks: Uint8Array[]): Uint8Array {
+  const result = new Uint8Array(chunks.reduce((total, chunk) => total + chunk.byteLength, 0));
+  let offset = 0;
+  for (const chunk of chunks) {
+    result.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return result;
+}
+
+/** Inflates a gzip plaintext, refusing to grow beyond {@link MAX_DECOMPRESSED_BYTES}. */
+async function gunzip(compressed: Uint8Array): Promise<Uint8Array> {
+  if (typeof DecompressionStream === 'undefined')
+    throw new CommandPayloadError('The response is compressed, but this browser cannot decompress it');
+
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  try {
+    const source = new ReadableStream<BufferSource>({
+      start(controller) {
+        controller.enqueue(new Uint8Array(compressed));
+        controller.close();
+      },
+    });
+    const reader = source.pipeThrough(new DecompressionStream(GZIP_COMPRESSION)).getReader();
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      total += value.byteLength;
+      if (total > MAX_DECOMPRESSED_BYTES) {
+        await reader.cancel();
+        throw new CommandPayloadError('The decompressed response is too large');
+      }
+      chunks.push(value);
+    }
+  } catch (err) {
+    if (err instanceof CommandPayloadError) throw err;
+    throw new CommandPayloadError('The response could not be decompressed');
+  }
+
+  return concat(chunks);
 }
