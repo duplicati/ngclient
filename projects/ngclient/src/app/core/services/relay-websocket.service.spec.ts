@@ -52,9 +52,10 @@ function toBytes(text: string): Uint8Array {
   return new Uint8Array(new TextEncoder().encode(text));
 }
 
-/** Waits for pending promise chains (key generation, encryption) without fake timers. */
-async function settle() {
-  for (let i = 0; i < 20; i++) await new Promise((resolve) => setTimeout(resolve, 5));
+/** Wait for the command, not an assumed duration of Web Crypto key generation. */
+async function waitForCommand(socket: RelaySocket) {
+  await vi.waitFor(() => expect(socket.sent().at(-1)?.type).toBe('command'), { timeout: 4000 });
+  return socket.sent().at(-1);
 }
 
 describe('RelayWebsocketService', () => {
@@ -119,11 +120,12 @@ describe('RelayWebsocketService', () => {
   }
 
   it('queues a command prepared while the socket is open but not yet authenticated, and sends it after authportal', async () => {
+    const encryption = vi.spyOn(CompactEncrypt.prototype, 'encrypt');
     const pending = send(agentTarget);
     const socket = RelaySocket.instances[0];
     socket.open();
     // Key generation and encryption finish while the handshake is still in flight
-    await settle();
+    await vi.waitFor(() => expect(encryption.mock.settledResults[0]?.type).toBe('fulfilled'), { timeout: 4000 });
     expect(socket.sent()).toEqual([]);
 
     completeHandshake(socket);
@@ -149,9 +151,7 @@ describe('RelayWebsocketService', () => {
     const socket = RelaySocket.instances[0];
     socket.open();
     completeHandshake(socket);
-    await settle();
-
-    const command = socket.sent().at(-1);
+    const command = await waitForCommand(socket);
     expect(command.type).toBe('command');
     expect(JSON.parse(command.payload)).toEqual({
       method: 'GET',
@@ -166,8 +166,7 @@ describe('RelayWebsocketService', () => {
     const socket = RelaySocket.instances[0];
     socket.open();
     completeHandshake(socket);
-    await settle();
-    const command = socket.sent().at(-1);
+    const command = await waitForCommand(socket);
 
     const { envelope } = await agentAnswer(command, { statusCode: 200, body: null, headers: null }, 'another-message');
     socket.receive(envelope);
@@ -181,8 +180,7 @@ describe('RelayWebsocketService', () => {
     const socket = RelaySocket.instances[0];
     socket.open();
     completeHandshake(socket);
-    await settle();
-    const command = socket.sent().at(-1);
+    const command = await waitForCommand(socket);
 
     socket.receive({
       from: 'agent-v2',
