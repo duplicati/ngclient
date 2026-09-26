@@ -123,71 +123,82 @@ describe('SelectFilesComponent restore database repair', () => {
   });
 
   it.each([
-    { error: 'Wrong passphrase', exception: 'Less useful exception', expected: 'Wrong passphrase' },
-    { error: null, exception: 'Repair exception details', expected: 'Repair exception details' },
-    { error: '', exception: '', expected: 'The restore database repair failed.' },
-  ])('shows the repair failure without loading folders: $expected', ({ error, exception, expected }) => {
-    const { component, repair, listFolder, open, startTask, finishTask } = setup();
-    startTask();
-    finishTask({ Status: 'Failed', ErrorMessage: error, Exception: exception });
+    { status: 'Failed', error: 'Wrong passphrase', exception: 'Less useful exception', expected: 'Wrong passphrase' },
+    { status: 'Failed', error: null, exception: 'Repair exception details', expected: 'Repair exception details' },
+    { status: 'Failed', error: '', exception: '', expected: 'The restore database repair failed.' },
+    { status: 'Completed', error: 'Repair reported errors', exception: null, expected: 'Repair reported errors' },
+    { status: 'Completed', error: '', exception: '', expected: 'The restore database repair failed.' },
+  ] as const)(
+    'shows the $status repair failure without loading folders: $expected',
+    ({ status, error, exception, expected }) => {
+      const { component, repair, listFolder, open, startTask, finishTask } = setup();
+      startTask();
+      finishTask({ Status: status, ErrorMessage: error, Exception: exception });
 
-    expect(component.loadedVersions()[versionId]).toBeUndefined();
-    expect(component.isRepairing()).toBe(false);
-    expect(listFolder).not.toHaveBeenCalled();
-    expect(open).toHaveBeenCalledExactlyOnceWith(
-      ConfirmDialogComponent,
-      expect.objectContaining({
-        data: {
-          title: 'Restore database repair failed',
-          message: expected,
-          confirmText: 'Retry',
-          cancelText: 'Cancel',
-        },
-      })
-    );
-    fixture.detectChanges();
-    expect(repair).toHaveBeenCalledTimes(1);
-    open.mock.calls[0][1].closed(false);
-    fixture.detectChanges();
-    expect(repair).toHaveBeenCalledTimes(1);
-    expect(listFolder).not.toHaveBeenCalled();
-  });
+      expect(component.loadedVersions()[versionId]).toBeUndefined();
+      expect(component.isRepairing()).toBe(false);
+      expect(listFolder).not.toHaveBeenCalled();
+      expect(open).toHaveBeenCalledExactlyOnceWith(
+        ConfirmDialogComponent,
+        expect.objectContaining({
+          data: {
+            title: 'Restore database repair failed',
+            message: expected,
+            confirmText: 'Retry',
+            cancelText: 'Cancel',
+          },
+        })
+      );
+      fixture.detectChanges();
+      expect(repair).toHaveBeenCalledTimes(1);
+      open.mock.calls[0][1].closed(false);
+      fixture.detectChanges();
+      expect(repair).toHaveBeenCalledTimes(1);
+      expect(listFolder).not.toHaveBeenCalled();
+    }
+  );
 
-  it('retries only after approval and lists folders after the retry succeeds', () => {
-    const { component, repair, listFolder, open, startTask, finishTask } = setup();
-    startTask();
-    finishTask({ Status: 'Failed', ErrorMessage: 'Network interrupted' });
-    expect(open).toHaveBeenCalledTimes(1);
-    expect(repair).toHaveBeenCalledTimes(1);
-    expect(listFolder).not.toHaveBeenCalled();
-    open.mock.calls[0][1].closed(true);
-    fixture.detectChanges();
-    expect(repair).toHaveBeenCalledTimes(2);
-    expect(repair.mock.calls[1]).toEqual(repair.mock.calls[0]);
-    expect(component.isRepairing()).toBe(true);
-    startTask(1);
-    const before = component.loadedVersions();
-    finishTask({ Status: 'Completed' }, 1);
-    expect(component.loadedVersions()).not.toBe(before);
-    expect(component.loadedVersions()[versionId]).toBe(true);
-    expect(component.isRepairing()).toBe(false);
-    expect(listFolder).toHaveBeenCalledTimes(1);
-    fixture.detectChanges();
-    expect(repair).toHaveBeenCalledTimes(2);
-    expect(open).toHaveBeenCalledTimes(1);
-  });
+  it.each(['Failed', 'Completed'] as const)(
+    'retries a %s repair with errors only after approval and lists folders after the retry succeeds',
+    (status) => {
+      const { component, repair, listFolder, open, startTask, finishTask } = setup();
+      startTask();
+      finishTask({ Status: status, ErrorMessage: 'Network interrupted' });
+      expect(open).toHaveBeenCalledTimes(1);
+      expect(repair).toHaveBeenCalledTimes(1);
+      expect(listFolder).not.toHaveBeenCalled();
+      open.mock.calls[0][1].closed(true);
+      fixture.detectChanges();
+      expect(repair).toHaveBeenCalledTimes(2);
+      expect(repair.mock.calls[1]).toEqual(repair.mock.calls[0]);
+      expect(component.isRepairing()).toBe(true);
+      startTask(1);
+      const before = component.loadedVersions();
+      finishTask({ Status: 'Completed' }, 1);
+      expect(component.loadedVersions()).not.toBe(before);
+      expect(component.loadedVersions()[versionId]).toBe(true);
+      expect(component.isRepairing()).toBe(false);
+      expect(listFolder).toHaveBeenCalledTimes(1);
+      fixture.detectChanges();
+      expect(repair).toHaveBeenCalledTimes(2);
+      expect(open).toHaveBeenCalledTimes(1);
+    }
+  );
 
-  it('loads a successfully repaired version without repairing it again', () => {
-    const { component, flow, repair, listFolder, open, startTask, finishTask } = setup();
-    startTask();
-    finishTask({ Status: 'Completed' });
-    expect(component.loadedVersions()[versionId]).toBe(true);
-    expect(listFolder).toHaveBeenCalledTimes(1);
-    expect(open).not.toHaveBeenCalled();
-    flow.versionOptions.set([...flow.versionOptions()]);
-    fixture.detectChanges();
-    expect(repair).toHaveBeenCalledTimes(1);
-  });
+  it.each([undefined, null])(
+    'loads a successfully repaired version with ErrorMessage=%s without repairing it again',
+    (error) => {
+      const { component, flow, repair, listFolder, open, startTask, finishTask } = setup();
+      startTask();
+      finishTask({ Status: 'Completed', ErrorMessage: error });
+      expect(component.loadedVersions()[versionId]).toBe(true);
+      expect(listFolder).toHaveBeenCalledTimes(1);
+      expect(open).not.toHaveBeenCalled();
+      flow.versionOptions.set([...flow.versionOptions()]);
+      fixture.detectChanges();
+      expect(repair).toHaveBeenCalledTimes(1);
+    }
+  );
 
   it.each(['version', 'backup'] as const)('ignores an old retry dialog after the selected %s changes', (change) => {
     const { flow, repair, open, listFolder, startTask, finishTask } = setup();
