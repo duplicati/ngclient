@@ -5,7 +5,7 @@ export type LastRunField = 'finished' | 'duration';
 
 type JobWithMetadata = {
   OperationType?: OperationType;
-  Metadata?: { [key: string]: string } | null;
+  Metadata?: { [key: string]: string | null } | null;
 };
 
 const BACKUP_KEYS: Record<LastRunField, string> = {
