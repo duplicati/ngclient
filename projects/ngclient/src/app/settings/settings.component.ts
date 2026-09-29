@@ -179,6 +179,14 @@ export default class SettingsComponent {
   updatingAllowedHosts = signal(false);
   updatingConsoleControl = signal(false);
   consoleControlDisabled = signal(false);
+
+  updatingReducedReporting = signal(false);
+  reducedReporting = this.#serverSettingsService.reducedReporting;
+  reducedReportingTooltip = computed(() =>
+    this.reducedReporting().console
+      ? $localize`Reduced reporting is enforced by the console for this machine and cannot be switched off here.`
+      : $localize`When switched on, every report leaving this machine carries log message ids, counters and dates only: no message text, file names or error messages. Bug reports cannot be created while it is on.`
+  );
   hideConsoleConnectionStatus = this.#serverSettingsService.isConsoleConnectionStatusHidden;
   isControllerIpcEnabled = this.#serverSettingsService.isControllerIpcEnabled;
   fileTreeFoldersFirst = this.#fileTreeState.foldersFirst;
@@ -218,6 +226,17 @@ export default class SettingsComponent {
     this.#serverSettingsService
       .setDisableConsoleControl(!$event)
       .pipe(finalize(() => this.updatingConsoleControl.set(false)))
+      .subscribe();
+  }
+
+  toggleReducedReporting($event: boolean) {
+    // A console-enforced value cannot be switched off; the toggle is disabled in that state
+    if (!$event && !this.reducedReporting().canDisable) return;
+
+    this.updatingReducedReporting.set(true);
+    this.#serverSettingsService
+      .setReducedReporting($event)
+      .pipe(finalize(() => this.updatingReducedReporting.set(false)))
       .subscribe();
   }
 
