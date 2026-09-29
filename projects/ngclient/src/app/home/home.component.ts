@@ -22,6 +22,7 @@ import { localStorageSignal } from '../core/functions/localstorage-signal';
 import { BackupAndScheduleOutputDto, DuplicatiServer } from '../core/openapi';
 import { BytesPipe } from '../core/pipes/byte.pipe';
 import { DurationFormatPipe } from '../core/pipes/duration.pipe';
+import { LastRunPipe } from '../core/pipes/last-run.pipe';
 import { RelativeTimePipe } from '../core/pipes/relative-time.pipe';
 import { ServerStateService } from '../core/services/server-state.service';
 import { Backup, BackupsState, OrderBy, TimeType } from '../core/states/backups.state';
@@ -46,6 +47,7 @@ import { RemoteControlState } from '../settings/remote-control/remote-control.st
     ShipSort,
     ShipTooltip,
     DurationFormatPipe,
+    LastRunPipe,
     BytesPipe,
     RelativeTimePipe,
     BackupProgressComponent,
