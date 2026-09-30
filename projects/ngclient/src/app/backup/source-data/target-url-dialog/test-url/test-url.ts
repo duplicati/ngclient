@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, model } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, input, model } from '@angular/core';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipSpinner } from '@ship-ui/core/ship-spinner';
+import { Subscription } from 'rxjs';
 import { RemoteDestinationType } from '../../../../core/openapi';
 import { TestDestinationResult, TestDestinationService } from '../../../../core/services/test-destination.service';
 import { fromTargetPath } from '../../../destination/destination.config-utilities';
@@ -19,6 +20,7 @@ export type TestState = 'testing' | TestDestinationResult | null;
 })
 export class TestUrl {
   #testDestination = inject(TestDestinationService);
+  #destroyRef = inject(DestroyRef);
 
   targetUrl = model.required<string | null>();
   testSignal = model.required<TestState>();
@@ -97,6 +99,7 @@ export class TestUrl {
   }
 
   testDestination(autoCreateFolders: boolean) {
+    if (this.#destroyRef.destroyed) return;
     const targetUrl = this.targetUrl();
 
     if (!targetUrl) return;
@@ -105,52 +108,68 @@ export class TestUrl {
 
     const folderHandling = autoCreateFolders ? 'create' : this.askToCreate() ? 'prompt' : 'error';
 
-    return new Promise<TestDestinationResult>((resolve) => {
-      this.#testDestination
-        .testDestination(
-          targetUrl,
-          this.backupId(),
-          this.connectionStringId(),
-          this.sourcePrefix(),
-          0,
-          this.moduleType(),
-          this.suppressErrorDialogs(),
-          folderHandling,
-          this.readOnlyTest()
-        )
-        ?.subscribe({
-          next: (res) => {
-            if (!this.suppressErrorDialogs() && res.testAgain) {
-              const suggestedUrl = res.suggestedUrl;
-              if (suggestedUrl) this.targetUrl.set(suggestedUrl);
+    return new Promise<TestDestinationResult | undefined>((resolve) => {
+      const subscriptions = new Subscription();
+      const unregister = this.#destroyRef.onDestroy(() => {
+        subscriptions.unsubscribe();
+        resolve(undefined);
+      });
+      const finish = (result: TestDestinationResult) => {
+        this.testSignal.set(result);
+        unregister();
+        subscriptions.unsubscribe();
+        resolve(result);
+      };
 
-              this.testSignal.set('testing');
+      subscriptions.add(
+        this.#testDestination
+          .testDestination(
+            targetUrl,
+            this.backupId(),
+            this.connectionStringId(),
+            this.sourcePrefix(),
+            0,
+            this.moduleType(),
+            this.suppressErrorDialogs(),
+            folderHandling,
+            this.readOnlyTest()
+          )
+          ?.subscribe({
+            next: (res) => {
+              if (subscriptions.closed) return;
+              if (!this.suppressErrorDialogs() && res.testAgain) {
+                const suggestedUrl = res.suggestedUrl;
+                if (suggestedUrl) this.targetUrl.set(suggestedUrl);
 
-              this.#testDestination
-                .testDestination(
-                  suggestedUrl ?? targetUrl,
-                  this.backupId(),
-                  this.connectionStringId(),
-                  this.sourcePrefix(),
-                  0,
-                  this.moduleType(),
-                  this.suppressErrorDialogs(),
-                  folderHandling,
-                  this.readOnlyTest()
-                )
-                ?.subscribe({
-                  // We only support one level of re-test for now
-                  next: (res) => {
-                    this.testSignal.set(res);
-                    resolve(res);
-                  },
-                });
-            } else {
-              this.testSignal.set(res);
-              resolve(res);
-            }
-          },
-        });
+                this.testSignal.set('testing');
+
+                subscriptions.add(
+                  this.#testDestination
+                    .testDestination(
+                      suggestedUrl ?? targetUrl,
+                      this.backupId(),
+                      this.connectionStringId(),
+                      this.sourcePrefix(),
+                      0,
+                      this.moduleType(),
+                      this.suppressErrorDialogs(),
+                      folderHandling,
+                      this.readOnlyTest()
+                    )
+                    ?.subscribe({
+                      // We only support one level of re-test for now
+                      next: (res) => {
+                        if (subscriptions.closed) return;
+                        finish(res);
+                      },
+                    })
+                );
+              } else {
+                finish(res);
+              }
+            },
+          })
+      );
     });
   }
 }
