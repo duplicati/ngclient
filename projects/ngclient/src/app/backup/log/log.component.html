@@ -18,54 +18,66 @@
         </h3>
 
         <p>
-          <span i18n>Last successful backup:</span>
-          {{ _backup.Backup.Metadata?.['LastBackupFinished'] | date: 'short' }}
-          @if (_backup.Backup.Metadata?.['LastBackupDuration']) {
+          @if (_backup.Backup.OperationType === 'Sync') {
+            <span i18n>Last successful sync:</span>
+          } @else {
+            <span i18n>Last successful backup:</span>
+          }
+          {{ (_backup.Backup | lastRun) | date: 'short' }}
+          @if ((_backup.Backup | lastRun: 'duration')) {
             -
             <ng-container i18n>took</ng-container>
-            {{ _backup.Backup.Metadata?.['LastBackupDuration'] | durationFormat }}
+            {{ (_backup.Backup | lastRun: 'duration') | durationFormat }}
           } @else {
             <ng-container i18n>N/A</ng-container>
           }
         </p>
 
-        <p>
-          <span i18n>Source:</span>
-          @if (_backup.Backup.Metadata?.['SourceFilesSize']) {
-            {{ _backup.Backup.Metadata?.['SourceFilesSize'] | bytes }}
-          } @else {
-            <ng-container i18n>N/A</ng-container>
-          }
-        </p>
+        @if (!isSync()) {
+          <p>
+            <span i18n>Source:</span>
+            @if (_backup.Backup.Metadata?.['SourceFilesSize']) {
+              {{ _backup.Backup.Metadata?.['SourceFilesSize'] | bytes }}
+            } @else {
+              <ng-container i18n>N/A</ng-container>
+            }
+          </p>
 
-        <p>
-          <span i18n>Destination:</span>
-          @if (_backup.Backup.Metadata?.['TargetFilesSize']) {
-            {{ _backup.Backup.Metadata?.['TargetFilesSize'] | bytes }}
-          } @else {
-            <ng-container i18n>N/A</ng-container>
-          }
-        </p>
+          <p>
+            <span i18n>Destination:</span>
+            @if (_backup.Backup.Metadata?.['TargetFilesSize']) {
+              {{ _backup.Backup.Metadata?.['TargetFilesSize'] | bytes }}
+            } @else {
+              <ng-container i18n>N/A</ng-container>
+            }
+          </p>
+        }
       </div>
 
-      @if (_backup.Backup.Metadata?.['BackupListCount']) {
-        <sh-chip class="simple success" i18n>{{ _backup.Backup.Metadata?.['BackupListCount'] }} Version</sh-chip>
-      } @else {
-        <sh-chip class="simple" i18n>No version yet</sh-chip>
+      @if (!isSync()) {
+        @if (_backup.Backup.Metadata?.['BackupListCount']) {
+          <sh-chip class="simple success" i18n>{{ _backup.Backup.Metadata?.['BackupListCount'] }} Version</sh-chip>
+        } @else {
+          <sh-chip class="simple" i18n>No version yet</sh-chip>
+        }
       }
     </div>
   }
 
-  <sh-tabs class="primary" [(value)]="activeTab">
-    <button value="general" i18n>General</button>
-    <button value="destination" i18n>Destination</button>
-  </sh-tabs>
-
-  @if (activeTab() === 'general') {
+  @if (isSync()) {
     <app-general-log [backupId]="backupId()!" />
-  }
+  } @else {
+    <sh-tabs class="primary" [(value)]="activeTab">
+      <button value="general" i18n>General</button>
+      <button value="destination" i18n>Destination</button>
+    </sh-tabs>
 
-  @if (activeTab() === 'destination') {
-    <app-remote-log [backupId]="backupId()!" />
+    @if (activeTab() === 'general') {
+      <app-general-log [backupId]="backupId()!" />
+    }
+
+    @if (activeTab() === 'destination') {
+      <app-remote-log [backupId]="backupId()!" />
+    }
   }
 </section>
