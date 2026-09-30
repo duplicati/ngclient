@@ -1754,8 +1754,8 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   // Validated against the old destination test url
   {
     key: 'sia',
-    displayName: $localize`Sia Decentrilized Cloud`,
-    description: $localize`Store backups in Sia Decentrilized Cloud.`,
+    displayName: $localize`Sia Decentralized Cloud`,
+    description: $localize`Store backups in Sia Decentralized Cloud.`,
     sourceDescription: $localize`Use files from Sia Decentralized Cloud as a remote source.`,
     icon: 'assets/dest-icons/sia-cloud.png',
     customFields: {
@@ -2513,4 +2513,5 @@ export const S3_HOST_SUFFIX_MAP: Record<string, string> = {
   '.storage.selcloud.ru': 'Selectel S3',
   '.srvstorage.uz': 'Selectel S3',
   '.srvstorage.kz': 'Selectel S3',
+  '.relaix.net': 'RelAix S3',
 };

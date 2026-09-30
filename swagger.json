@@ -5550,6 +5550,7 @@
           "DisplayNames",
           "Metadata",
           "Name",
+          "OperationType",
           "TargetURLDisplay"
         ],
         "type": "object",
@@ -5561,6 +5562,9 @@
           "Name": {
             "type": "string",
             "nullable": true
+          },
+          "OperationType": {
+            "$ref": "#/components/schemas/OperationType"
           },
           "TargetURLDisplay": {
             "type": "string",
