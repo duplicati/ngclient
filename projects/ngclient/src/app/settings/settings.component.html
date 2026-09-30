@@ -437,6 +437,35 @@
     </div>
   </section>
 
+  <section>
+    <div class="left">
+      <h3 i18n>Reduced reporting</h3>
+      <p i18n>
+        Switch this on when the machine handles confidential or protected information. Every report leaving the machine
+        then carries log message ids, counters and dates only.
+      </p>
+    </div>
+
+    <div class="right">
+      <div class="info-holder">
+        <sh-toggle
+          class="primary raised"
+          [checked]="reducedReporting().active"
+          [disabled]="updatingReducedReporting() || !reducedReporting().canDisable"
+          (checkedChange)="toggleReducedReporting($event)">
+          @if (reducedReporting().console) {
+            <label i18n>Reduced reporting enforced by the console</label>
+          } @else if (reducedReporting().active) {
+            <label i18n>Reduced reporting enabled</label>
+          } @else {
+            <label i18n>Reduced reporting disabled</label>
+          }
+        </sh-toggle>
+        <sh-icon suffix [shTooltip]="reducedReportingTooltip()">info</sh-icon>
+      </div>
+    </div>
+  </section>
+
   @if (!usageStatisticsDisabled()) {
     <section>
       <div class="left">

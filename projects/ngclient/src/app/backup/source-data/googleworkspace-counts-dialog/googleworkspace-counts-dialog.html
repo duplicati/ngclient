@@ -1,0 +1,81 @@
+<header>
+  <h3 class="title-30" i18n>Google Workspace items found</h3>
+</header>
+
+<section content>
+  @switch (status()) {
+    @case ('loading') {
+      <div class="state loading">
+        <sh-icon>spinner</sh-icon>
+        <span i18n>Loading counts…</span>
+      </div>
+    }
+    @case ('error') {
+      <div class="state error">
+        <sh-icon>warning</sh-icon>
+        <span>{{ error() }}</span>
+      </div>
+    }
+    @case ('success') {
+      @let result = counts()!;
+
+      <div class="counts">
+        <section class="group">
+          <h4 i18n>Users</h4>
+          <dl>
+            <div>
+              <dt i18n>Active</dt>
+              <dd>{{ result.users.active }}</dd>
+            </div>
+            <div>
+              <dt i18n>Suspended</dt>
+              <dd>{{ result.users.suspended }}</dd>
+            </div>
+            <div>
+              <dt i18n>Archived</dt>
+              <dd>{{ result.users.archived }}</dd>
+            </div>
+            <div class="total">
+              <dt i18n>Total</dt>
+              <dd>{{ result.users.total }}</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="group">
+          <h4 i18n>Groups</h4>
+          <dl>
+            <div class="total">
+              <dt i18n>Total</dt>
+              <dd>{{ result.groups.total }}</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="group">
+          <h4 i18n>Shared drives</h4>
+          <dl>
+            <div class="total">
+              <dt i18n>Total</dt>
+              <dd>{{ result.sharedDrives.total }}</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="group">
+          <h4 i18n>Sites</h4>
+          <dl>
+            <div class="total">
+              <dt i18n>Total</dt>
+              <dd>{{ result.sites.total }}</dd>
+            </div>
+          </dl>
+        </section>
+      </div>
+    }
+  }
+</section>
+
+<footer footer>
+  <button shButton type="button" (click)="closed.emit()" i18n>Close</button>
+</footer>

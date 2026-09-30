@@ -68,7 +68,28 @@ export type Office365Counts = Omit<Office365RawCounts, 'sites'> & {
   sites: Office365SiteCounts;
 };
 
-/** The custom-remote modules that support the `CheckPermissions` operation. */
+/** The user item-count breakdown. Only `active` accounts require a license seat; `suspended` and `archived` do not. */
+export type GoogleWorkspaceUserCounts = {
+  total: number;
+  active: number;
+  suspended: number;
+  archived: number;
+};
+
+/** The item count for a top-level type where every item requires a seat. */
+export type GoogleWorkspaceTotalCounts = {
+  total: number;
+};
+
+/** The item-count breakdown returned by the googleworkspace `CountItems` operation. */
+export type GoogleWorkspaceCounts = {
+  users: GoogleWorkspaceUserCounts;
+  groups: GoogleWorkspaceTotalCounts;
+  sharedDrives: GoogleWorkspaceTotalCounts;
+  sites: GoogleWorkspaceTotalCounts;
+};
+
+/** The custom-remote modules that support the `CheckPermissions` and `CountItems` operations. */
 export type CustomRemoteModule = 'office365' | 'googleworkspace';
 
 /** A single permission status entry returned by the custom-remote `CheckPermissions` operation. */
@@ -266,10 +287,10 @@ export class WebModulesService {
         },
       })
     ).pipe(
-        map((x) => this.#defaultMapResultObjToArray(x)),
-        map((res) => res.find((r) => r.key === 'folders')?.value as string),
-        map((folders) => JSON.parse(folders) as string[])
-      );
+      map((x) => this.#defaultMapResultObjToArray(x)),
+      map((res) => res.find((r) => r.key === 'folders')?.value as string),
+      map((folders) => JSON.parse(folders) as string[])
+    );
   }
 
   getFilenApiKey(url: string, backupId?: string | null) {
@@ -283,20 +304,41 @@ export class WebModulesService {
         },
       })
     ).pipe(
-        map((x) => this.#defaultMapResultObjToArray(x)),
-        map((res) => res.find((r) => r.key === 'api-key')?.value as string)
-      );
+      map((x) => this.#defaultMapResultObjToArray(x)),
+      map((res) => res.find((r) => r.key === 'api-key')?.value as string)
+    );
   }
 
   /**
    * Counts the number of top-level Microsoft 365 items (users, groups, sites)
    * for the given destination URL, broken down by license seat usage and sub-type.
+   */
+  getOffice365Counts(url: string, sourcePrefix: string, backupId: string | null) {
+    return this.#getCustomRemoteCounts<Office365RawCounts>('office365', url, sourcePrefix, backupId).pipe(
+      map((raw) => ({
+        users: raw.users,
+        groups: raw.groups,
+        sites: normalizeOffice365SiteCounts(raw.sites),
+      }))
+    );
+  }
+
+  /**
+   * Counts the number of top-level Google Workspace items (users, groups, shared drives, sites)
+   * for the given destination URL, with users broken down by license seat usage.
+   */
+  getGoogleWorkspaceCounts(url: string, sourcePrefix: string, backupId: string | null) {
+    return this.#getCustomRemoteCounts<GoogleWorkspaceCounts>('googleworkspace', url, sourcePrefix, backupId);
+  }
+
+  /**
+   * Runs the `CountItems` operation for a custom-remote module and parses the JSON result.
    *
    * Counting items in a large tenant can take a while, so when the websocket
    * relay proxy is active a `timeout` header is sent to extend the relayed
    * request timeout beyond the default.
    */
-  getOffice365Counts(url: string, sourcePrefix: string, backupId: string | null) {
+  #getCustomRemoteCounts<T>(module: CustomRemoteModule, url: string, sourcePrefix: string, backupId: string | null) {
     // The websocket relay interceptor reads the timeout from this header
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
     if (this.#relayconfigState.relayIsEnabled()) {
@@ -305,7 +347,7 @@ export class WebModulesService {
 
     return this.#http
       .post<WebModuleOutputDto>(
-        `${getApiBase()}/api/v1/webmodule/office365`,
+        `${getApiBase()}/api/v1/webmodule/${module}`,
         // The websocket relay only supports string bodies, so serialize here
         JSON.stringify({
           'backup-id': backupId ?? '',
@@ -318,14 +360,7 @@ export class WebModulesService {
       .pipe(
         map((x) => this.#defaultMapResultObjToArray(x)),
         map((res) => res.find((r) => r.key === 'counts')?.value as string),
-        map((counts) => {
-          const raw = JSON.parse(counts) as Office365RawCounts;
-          return {
-            users: raw.users,
-            groups: raw.groups,
-            sites: normalizeOffice365SiteCounts(raw.sites),
-          };
-        })
+        map((counts) => JSON.parse(counts) as T)
       );
   }
 

@@ -27,6 +27,7 @@ import { BackupState } from '../backup.state';
 import { FiltersComponent } from '../components/filters/filters.component';
 import { getBackendIcon, getRemotePathDisplayName } from '../destination/destination.config-utilities';
 import { CustomRemotePermissionsDialog } from './custom-remote-permissions-dialog/custom-remote-permissions-dialog';
+import { GoogleWorkspaceCountsDialog } from './googleworkspace-counts-dialog/googleworkspace-counts-dialog';
 import { Office365CountsDialog } from './office365-counts-dialog/office365-counts-dialog';
 import { TargetDiskDialog } from './target-disk-dialog/target-disk-dialog';
 import { TargetUrlDialog } from './target-url-dialog/target-url-dialog';
@@ -333,15 +334,15 @@ export default class SourceDataComponent {
     return getRemotePathDisplayName(url);
   }
 
-  openOffice365Counts(path: string) {
+  openCustomRemoteCounts(path: string) {
     if (!path || !path.startsWith('@')) return;
     const parts = path.split('|');
-    if (parts.length !== 2 || !parts[1].startsWith('office365://')) return;
+    if (parts.length !== 2) return;
 
     const sourcePrefix = parts[0];
     const url = parts[1];
 
-    this.#dialog.open(Office365CountsDialog, {
+    const options = {
       maxWidth: '500px',
       width: '100%',
       closeOnOutsideClick: true,
@@ -350,7 +351,13 @@ export default class SourceDataComponent {
         sourcePrefix,
         backupId: this.backupId,
       },
-    });
+    };
+
+    if (url.startsWith('office365://')) {
+      this.#dialog.open(Office365CountsDialog, options);
+    } else if (url.startsWith('googleworkspace://')) {
+      this.#dialog.open(GoogleWorkspaceCountsDialog, options);
+    }
   }
 
   openCustomRemotePermissions(path: string) {

@@ -116,12 +116,12 @@
                     <img class="provider-icon" [src]="getBackendIcon(path)" alt="Provider icon" />
                     {{ getRemotePathDisplayName(path) }}
                   </sh-chip>
-                  @if (path.includes('|office365://')) {
+                  @if (path.includes('|office365://') || path.includes('|googleworkspace://')) {
                     <button
                       shButton
                       type="button"
                       class="small"
-                      (click)="openOffice365Counts(path)"
+                      (click)="openCustomRemoteCounts(path)"
                       i18n-title
                       title="Show item counts">
                       <sh-icon>info</sh-icon>

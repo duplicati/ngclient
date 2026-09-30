@@ -12,6 +12,7 @@ import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/con
 import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
 import { DuplicatiServer } from '../../core/openapi';
 import { BackupsState } from '../../core/states/backups.state';
+import { ServerSettingsService } from '../../settings/server-settings.service';
 
 function debouncedSignal<T>(source: Signal<T>, wait: number) {
   const observable = toObservable(source).pipe(debounceTime(wait), distinctUntilChanged());
@@ -216,6 +217,10 @@ export default class DatabaseComponent {
         this.#firstDBPath.set(currentPath);
       });
   }
+
+  #serverSettingsService = inject(ServerSettingsService);
+  // Bug report archives carry data the scrubbing does not cover, so the server refuses them under reduced reporting
+  reducedReportingActive = computed(() => this.#serverSettingsService.reducedReporting().active);
 
   createErrorReport() {
     this.isCreatingBugReport.set(true);

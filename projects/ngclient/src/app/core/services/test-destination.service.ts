@@ -3,6 +3,7 @@ import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { defer, Observable, Subscriber } from 'rxjs';
 import { ConfirmDialogComponent } from '../components/confirm-dialog/confirm-dialog.component';
 import {
+  DestinationTestRequestDto,
   DestinationTestResponseDto,
   DuplicatiServer,
   PostApiV2DestinationTestResponse,
@@ -83,83 +84,85 @@ export class TestDestinationService {
     readOnlyTest: boolean
   ) {
     return new Observable<TestDestinationResult>((observer) => {
-      defer(() =>
+      const initialBody: DestinationTestRequestDto = {
+        DestinationUrl: targetUrl,
+        ConnectionStringId: connectionStringId ?? null,
+        BackupId: backupId == 'new' ? null : backupId,
+        AutoCreate: folderHandling === 'create',
+        ReadOnlyTest: readOnlyTest,
+        Options: null,
+        DestinationType: urlType,
+        SourcePrefix: backupId == 'new' ? null : sourcePrefix,
+      };
+      const request = defer(() =>
         this.#dupServer.postApiV2DestinationTest({
-          body: {
-            DestinationUrl: targetUrl,
-            ConnectionStringId: connectionStringId ?? null,
-            BackupId: backupId == 'new' ? null : backupId,
-            AutoCreate: folderHandling === 'create',
-            ReadOnlyTest: readOnlyTest,
-            Options: null,
-            DestinationType: urlType,
-            SourcePrefix: backupId == 'new' ? null : sourcePrefix,
-          },
+          body: initialBody,
         })
-      )
-        .subscribe({
-          next: (res) => {
-            if (res.Success) {
-              this.emitSuccessV2(observer, targetUrl, destinationIndex, res);
-              return;
-            }
+      ).subscribe({
+        next: (res) => {
+          if (res.Success) {
+            this.emitSuccessV2(observer, targetUrl, destinationIndex, res);
+            return;
+          }
 
-            this.handleGenericError(
+          this.handleGenericError(
+            observer,
+            targetUrl,
+            destinationIndex,
+            res.Error ?? 'Unknown error',
+            suppressErrorDialogs
+          );
+        },
+        error: (err) => {
+          const res = (err?.error?.body ?? err?.error?.requestBody) as PostApiV2DestinationTestResponse;
+          if (res?.Data?.FolderExists === false || res?.StatusCode === 'missing-folder') {
+            this.handleMissingFolder(
+              observer,
+              targetUrl,
+              backupId,
+              connectionStringId,
+              destinationIndex,
+              suppressErrorDialogs,
+              folderHandling,
+              readOnlyTest,
+              initialBody
+            );
+            return;
+          }
+
+          if (res?.Data?.HostCertificate) {
+            this.handleMissingCertificate(
               observer,
               targetUrl,
               destinationIndex,
-              res.Error ?? 'Unknown error',
+              res.Data?.HostCertificate,
               suppressErrorDialogs
             );
-          },
-          error: (err) => {
-            const res = (err?.error?.body ?? err?.error?.requestBody) as PostApiV2DestinationTestResponse;
-            if (res?.Data?.FolderExists === false || res?.StatusCode === 'missing-folder') {
-              this.handleMissingFolder(
-                observer,
-                targetUrl,
-                backupId,
-                connectionStringId,
-                destinationIndex,
-                suppressErrorDialogs,
-                folderHandling,
-                readOnlyTest
-              );
-              return;
-            }
+            return;
+          }
 
-            if (res?.Data?.HostCertificate) {
-              this.handleMissingCertificate(
-                observer,
-                targetUrl,
-                destinationIndex,
-                res.Data?.HostCertificate,
-                suppressErrorDialogs
-              );
-              return;
-            }
-
-            if (res?.Data?.ReportedHostKey) {
-              this.handleIncorrectKey(
-                observer,
-                targetUrl,
-                destinationIndex,
-                res.Data.ReportedHostKey,
-                res.Data.AcceptedHostKey ?? null,
-                suppressErrorDialogs
-              );
-              return;
-            }
-
-            this.handleGenericError(
+          if (res?.Data?.ReportedHostKey) {
+            this.handleIncorrectKey(
               observer,
               targetUrl,
               destinationIndex,
-              err?.message ?? 'Unknown error',
+              res.Data.ReportedHostKey,
+              res.Data.AcceptedHostKey ?? null,
               suppressErrorDialogs
             );
-          },
-        });
+            return;
+          }
+
+          this.handleGenericError(
+            observer,
+            targetUrl,
+            destinationIndex,
+            err?.message ?? 'Unknown error',
+            suppressErrorDialogs
+          );
+        },
+      });
+      observer.add(request);
     });
   }
 
@@ -176,7 +179,7 @@ export class TestDestinationService {
   ) {
     // V1 does not support auto-create folders, but we should retire the use of V1 anyway
     return new Observable<TestDestinationResult>((observer) => {
-      defer(() =>
+      const request = defer(() =>
         this.#dupServer.postApiV1RemoteoperationTest({
           query: {
             readOnlyTest: readOnlyTest,
@@ -189,18 +192,18 @@ export class TestDestinationService {
             sourcePrefix: backupId == 'new' ? null : sourcePrefix,
           },
         })
-      )
-        .subscribe({
-          next: (_) => {
-            observer.next({
-              action: 'success',
-              targetUrl,
-              testAgain: false,
-              destinationIndex,
-            });
-            observer.complete();
-          },
-          error: (err) => {
+      ).subscribe({
+        next: (_) => {
+          observer.next({
+            action: 'success',
+            targetUrl,
+            testAgain: false,
+            destinationIndex,
+          });
+          observer.complete();
+        },
+        error: (err) => {
+          observer.add(
             this.handleDestinationErrorv1(
               err.message,
               targetUrl,
@@ -210,11 +213,14 @@ export class TestDestinationService {
               suppressErrorDialogs,
               folderHandling,
               readOnlyTest
-            ).subscribe((res) => {
-              observer.next(res);
-            });
-          },
-        });
+            ).subscribe({
+              next: (res) => observer.next(res),
+              complete: () => observer.complete(),
+            })
+          );
+        },
+      });
+      observer.add(request);
     });
   }
 
@@ -226,7 +232,8 @@ export class TestDestinationService {
     destinationIndex: number,
     suppressErrorDialogs: boolean,
     folderHandling: FolderHandlingOption,
-    readOnlyTest: boolean
+    readOnlyTest: boolean,
+    initialBody?: DestinationTestRequestDto
   ) {
     function sendError() {
       observer.next({
@@ -252,69 +259,66 @@ export class TestDestinationService {
         cancelText: $localize`Cancel`,
       },
       closed: (res) => {
+        if (observer.closed) return;
         if (!res) {
           this.reportNoAction(observer, targetUrl, destinationIndex, $localize`The remote folder does not exist.`);
           return;
         }
 
-        if (this.#sysinfo.hasV2TestOperations()) {
-          defer(() =>
+        if (initialBody) {
+          const request = defer(() =>
             this.#dupServer.postApiV2DestinationTest({
               body: {
-                DestinationUrl: targetUrl,
-                ConnectionStringId: connectionStringId,
+                ...initialBody,
                 AutoCreate: true,
-                ReadOnlyTest: readOnlyTest,
-                Options: null,
-                BackupId: backupId == 'new' ? null : backupId,
               },
             })
-          )
-            .subscribe({
-              next: (res) => {
-                if (res.Success) {
-                  this.emitSuccessV2(observer, targetUrl, destinationIndex, res);
-                  return;
-                } else {
-                  this.handleFolderCreateFailure(
-                    observer,
-                    targetUrl,
-                    destinationIndex,
-                    res.Error ?? $localize`Unknown error`
-                  );
-                }
-              },
-              error: (err) => {
+          ).subscribe({
+            next: (res) => {
+              if (res.Success) {
+                this.emitSuccessV2(observer, targetUrl, destinationIndex, res);
+                return;
+              } else {
                 this.handleFolderCreateFailure(
                   observer,
                   targetUrl,
                   destinationIndex,
-                  err.message ?? $localize`Unknown error`
+                  res.Error ?? $localize`Unknown error`
                 );
-              },
-            });
+              }
+            },
+            error: (err) => {
+              this.handleFolderCreateFailure(
+                observer,
+                targetUrl,
+                destinationIndex,
+                err.message ?? $localize`Unknown error`
+              );
+            },
+          });
+          observer.add(request);
         } else {
-          defer(() =>
+          const request = defer(() =>
             this.#dupServer.postApiV1RemoteoperationCreate({
               body: {
                 path: targetUrl,
                 backupId: backupId == 'new' ? null : backupId,
               },
             })
-          )
-            .subscribe({
-              next: () => {
-                this.handleFolderCreated(observer, targetUrl, destinationIndex);
-              },
-              error: (err) => {
-                this.handleFolderCreateFailure(
-                  observer,
-                  targetUrl,
-                  destinationIndex,
-                  err.message ?? $localize`Unknown error`
-                );
-              },
-            });
+          ).subscribe({
+            next: () => {
+              this.handleFolderCreated(observer, targetUrl, destinationIndex);
+            },
+            error: (err) => {
+              this.handleFolderCreateFailure(
+                observer,
+                targetUrl,
+                destinationIndex,
+                err.message ?? $localize`Unknown error`
+              );
+            },
+          });
+          observer.add(request);
         }
       },
     });
@@ -334,6 +338,7 @@ export class TestDestinationService {
         cancelText: null,
       },
       closed: () => {
+        if (observer.closed) return;
         observer.next({
           action: 'generic-error',
           targetUrl,
@@ -376,6 +381,7 @@ export class TestDestinationService {
         cancelText: null,
       },
       closed: () => {
+        if (observer.closed) return;
         observer.next({
           action: 'test-again',
           targetUrl,
@@ -444,6 +450,7 @@ export class TestDestinationService {
         cancelText: $localize`Cancel`,
       },
       closed: (res) => {
+        if (observer.closed) return;
         if (!res) {
           this.reportNoAction(observer, targetUrl, destinationIndex, $localize`The server certificate is not trusted.`);
           return;
@@ -492,6 +499,7 @@ export class TestDestinationService {
           cancelText: $localize`Cancel`,
         },
         closed: (res) => {
+          if (observer.closed) return;
           if (!res) {
             this.reportNoAction(observer, targetUrl, destinationIndex, $localize`The host key was not approved.`);
             return;
@@ -547,6 +555,7 @@ with the REPORTED host key: ${reportedhostkey}?`;
           cancelText: $localize`Cancel`,
         },
         closed: (res) => {
+          if (observer.closed) return;
           if (!res) {
             this.reportNoAction(observer, targetUrl, destinationIndex, $localize`The host key was not approved.`);
             return;
@@ -588,7 +597,10 @@ with the REPORTED host key: ${reportedhostkey}?`;
         message: errorMessage,
         cancelText: $localize`OK`,
       },
-      closed: (_) => sendError(),
+      closed: (_) => {
+        if (observer.closed) return;
+        sendError();
+      },
     });
   }
 

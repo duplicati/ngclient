@@ -1,4 +1,4 @@
-FROM node:22-bullseye-slim AS base
+FROM node:22-trixie-slim AS base
 
 # Create app directory
 WORKDIR /app

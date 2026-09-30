@@ -448,6 +448,9 @@ export class SingleDestinationComponent {
 
     form[fieldGroup][fieldName] = newValue;
 
+    // Let the field configuration react to the change (e.g. set provider-specific defaults)
+    this.getFormView(fieldGroup, fieldName)?.onValueChange?.(newValue, form);
+
     this.destinationForm.set({ ...form });
   }
 

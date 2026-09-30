@@ -146,3 +146,9 @@ section {
   flex-direction: column;
   gap: p2r(16);
 }
+
+.info-holder {
+  display: flex;
+  flex-direction: row;
+  gap: p2r(8);
+}

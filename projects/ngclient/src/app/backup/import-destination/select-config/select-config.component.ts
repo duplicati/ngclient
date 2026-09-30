@@ -14,6 +14,7 @@ import { ShipToggle } from '@ship-ui/core/ship-toggle';
 import { defer, finalize } from 'rxjs';
 import { DuplicatiServer, RestoreTaskConfigElementDto } from '../../../core/openapi';
 import { BytesPipe } from '../../../core/pipes/byte.pipe';
+import { LastRunPipe } from '../../../core/pipes/last-run.pipe';
 import { RelativeTimePipe } from '../../../core/pipes/relative-time.pipe';
 import { BackupDraft, BackupsState } from '../../../core/states/backups.state';
 import { getBackendIcon, getBackendType } from '../../destination/destination.config-utilities';
@@ -35,6 +36,7 @@ type ConfigOption = RestoreTaskConfigElementDto & {
     ShipTooltip,
     ShipIcon,
     BytesPipe,
+    LastRunPipe,
     RelativeTimePipe,
     ShipChip,
     ShipFormField,

@@ -25,6 +25,9 @@
       bug report button can be used to create a copy of the database with path information removed. This should only be
       used if a developer requests to investigate an issue with your database.
     </p>
+    @if (reducedReportingActive()) {
+      <p i18n>Bug report databases cannot be created while reduced reporting is active on this machine.</p>
+    }
 
     <div class="actions maintenance">
       <button
@@ -52,15 +55,17 @@
         Recreate (delete and repair)
       </button>
 
-      <button
-        shButton
-        i18n
-        [class.loading]="isCreatingBugReport()"
-        [disabled]="isCreatingBugReport() || !isValidatedPath() || pathHasChanged()"
-        (click)="createErrorReport()">
-        <sh-icon>file-plus</sh-icon>
-        Create bug report database
-      </button>
+      @if (!reducedReportingActive()) {
+        <button
+          shButton
+          i18n
+          [class.loading]="isCreatingBugReport()"
+          [disabled]="isCreatingBugReport() || !isValidatedPath() || pathHasChanged()"
+          (click)="createErrorReport()">
+          <sh-icon>file-plus</sh-icon>
+          Create bug report database
+        </button>
+      }
 
       <button
         shButton

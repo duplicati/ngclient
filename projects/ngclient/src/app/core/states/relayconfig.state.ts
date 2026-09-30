@@ -8,6 +8,10 @@ export type Relayconfig = {
   clientId: string;
   machineServerUrl: string;
   locale: string;
+  /** The agent's public key (SubjectPublicKeyInfo PEM), used to encrypt commands end-to-end; absent for older consoles. */
+  agentPublicKey?: string | null;
+  /** The protocol version the agent authenticated with; 2 and later require encrypted commands. Absent for older consoles. */
+  agentProtocolVersion?: number | null;
 };
 
 @Injectable({
@@ -62,6 +66,19 @@ export class RelayconfigState {
           }
 
           if (typeof parsed['machineServerUrl'] !== 'string') {
+            this.#sendMessageToParent('error:invalid-config');
+            this.#relayIsEnabled.set(false);
+            return;
+          }
+
+          // Optional, so a console that does not know about end-to-end encryption still works with older agents
+          if (parsed['agentPublicKey'] != null && typeof parsed['agentPublicKey'] !== 'string') {
+            this.#sendMessageToParent('error:invalid-config');
+            this.#relayIsEnabled.set(false);
+            return;
+          }
+
+          if (parsed['agentProtocolVersion'] != null && typeof parsed['agentProtocolVersion'] !== 'number') {
             this.#sendMessageToParent('error:invalid-config');
             this.#relayIsEnabled.set(false);
             return;

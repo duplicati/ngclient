@@ -109,7 +109,7 @@ describe('ServerStateService', () => {
     const firstComplete = vi.fn();
     const secondNext = vi.fn();
     const secondComplete = vi.fn();
-    const task = { ID: 7, TaskFinished: '2026-09-04T12:00:00Z' } as GetTaskStateDto;
+    const task = { ID: 7, Status: 'Completed', TaskFinished: '2026-09-04T12:00:00Z' } as GetTaskStateDto;
 
     service.waitForTaskToComplete(7).subscribe({ next: firstNext, complete: firstComplete });
     service.waitForTaskToComplete(7).subscribe({ next: secondNext, complete: secondComplete });
@@ -126,7 +126,7 @@ describe('ServerStateService', () => {
 
   it('returns an already completed websocket task from the recent cache', () => {
     const { service, taskCompleted, getTask } = setup(true);
-    const task = { ID: 8, TaskFinished: '2026-09-04T12:00:00Z' } as GetTaskStateDto;
+    const task = { ID: 8, Status: 'Completed', TaskFinished: '2026-09-04T12:00:00Z' } as GetTaskStateDto;
     const next = vi.fn();
     const complete = vi.fn();
 
@@ -144,7 +144,7 @@ describe('ServerStateService', () => {
 
     expect(getTask).toHaveBeenCalledWith({ path: { taskid: 9 } });
 
-    requests[0].next({ ID: 9, TaskFinished: null } as GetTaskStateDto);
+    requests[0].next({ ID: 9, Status: 'Running', TaskFinished: null } as GetTaskStateDto);
     requests[0].complete();
 
     await vi.advanceTimersByTimeAsync(999);
@@ -162,7 +162,7 @@ describe('ServerStateService', () => {
     const secondNext = vi.fn();
     const secondComplete = vi.fn();
     const cachedNext = vi.fn();
-    const task = { ID: 10, TaskFinished: '2026-09-04T12:00:00Z' } as GetTaskStateDto;
+    const task = { ID: 10, Status: 'Completed', TaskFinished: '2026-09-04T12:00:00Z' } as GetTaskStateDto;
 
     service.waitForTaskToComplete(10).subscribe({ next: firstNext, complete: firstComplete });
     service.waitForTaskToComplete(10).subscribe({ next: secondNext, complete: secondComplete });
@@ -194,6 +194,83 @@ describe('ServerStateService', () => {
     await vi.advanceTimersByTimeAsync(1);
     expect(getTask).toHaveBeenCalledTimes(2);
     expect(getTask).toHaveBeenLastCalledWith({ path: { taskid: 11 } });
+  });
+
+  it.each(['Completed', 'Failed'])('waits for %s after Running with a finish timestamp', async (status) => {
+    const { service, requests, getTask } = setup();
+    const next = vi.fn();
+    const complete = vi.fn();
+    const secondNext = vi.fn();
+    service.waitForTaskToComplete(13).subscribe({ next, complete });
+    requests[0].next({ ID: 13, Status: 'Running', TaskFinished: '2026-09-13T04:14:47.898Z', ErrorMessage: null });
+    requests[0].complete();
+
+    expect(next).not.toHaveBeenCalled();
+    expect(complete).not.toHaveBeenCalled();
+    service.waitForTaskToComplete(13).subscribe(secondNext);
+    expect(secondNext).not.toHaveBeenCalled();
+    await vi.advanceTimersByTimeAsync(999);
+    expect(getTask).toHaveBeenCalledTimes(1);
+    await vi.advanceTimersByTimeAsync(1);
+    expect(getTask).toHaveBeenCalledTimes(2);
+
+    const task = {
+      ID: 13,
+      Status: status,
+      TaskFinished: '2026-09-13T04:14:47.898Z',
+      ErrorMessage: status === 'Failed' ? 'Wrong passphrase' : null,
+    };
+    requests[1].next(task);
+    requests[1].complete();
+    expect(next).toHaveBeenCalledExactlyOnceWith(task);
+    expect(secondNext).toHaveBeenCalledExactlyOnceWith(task);
+    expect(complete).toHaveBeenCalledTimes(1);
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(getTask).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not finish a Waiting task even when a finish timestamp is present', async () => {
+    const { service, requests, getTask } = setup();
+    const next = vi.fn();
+    const complete = vi.fn();
+    service.waitForTaskToComplete(14).subscribe({ next, complete });
+    requests[0].next({ ID: 14, Status: 'Waiting', TaskFinished: '2026-09-13T04:14:47.898Z' });
+    requests[0].complete();
+    expect(next).not.toHaveBeenCalled();
+    expect(complete).not.toHaveBeenCalled();
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(getTask).toHaveBeenCalledTimes(2);
+  });
+
+  it.each(['longpoll', 'websocket'] as const)('delivers and caches a Failed task through %s', (transport) => {
+    const { service, requests, taskCompleted, getTask } = setup(transport === 'websocket');
+    service.setConnectionMethod(transport);
+    const next = vi.fn();
+    const complete = vi.fn();
+    const error = vi.fn();
+    const cachedNext = vi.fn();
+    const cachedComplete = vi.fn();
+    const task: GetTaskStateDto = {
+      ID: 15,
+      Status: 'Failed',
+      TaskFinished: '2026-09-13T04:14:47.898Z',
+      ErrorMessage: 'Wrong passphrase',
+      Exception: 'Repair exception details',
+    };
+    service.waitForTaskToComplete(15).subscribe({ next, complete, error });
+    if (transport === 'websocket') {
+      taskCompleted.next(task);
+    } else {
+      requests[0].next(task);
+      requests[0].complete();
+    }
+    expect(next).toHaveBeenCalledExactlyOnceWith(task);
+    expect(complete).toHaveBeenCalledTimes(1);
+    expect(error).not.toHaveBeenCalled();
+    service.waitForTaskToComplete(15).subscribe({ next: cachedNext, complete: cachedComplete });
+    expect(cachedNext).toHaveBeenCalledExactlyOnceWith(task);
+    expect(cachedComplete).toHaveBeenCalledTimes(1);
+    expect(getTask).toHaveBeenCalledTimes(transport === 'websocket' ? 0 : 1);
   });
 
   it('does not poll when websocket task completion notifications are available', async () => {
