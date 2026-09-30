@@ -22,7 +22,7 @@ export class Office365CountsDialog {
   error = signal<string | null>(null);
   counts = signal<Office365Counts | null>(null);
 
-  #loadEffect = effect(() => {
+  #loadEffect = effect((onCleanup) => {
     const data = this.data();
     const url = data?.url;
     const sourcePrefix = data?.sourcePrefix;
@@ -35,7 +35,7 @@ export class Office365CountsDialog {
 
     this.status.set('loading');
 
-    this.#webModules.getOffice365Counts(url, sourcePrefix, backupId).subscribe({
+    const subscription = this.#webModules.getOffice365Counts(url, sourcePrefix, backupId).subscribe({
       next: (result) => {
         this.counts.set(result);
         this.status.set('success');
@@ -45,5 +45,6 @@ export class Office365CountsDialog {
         this.status.set('error');
       },
     });
+    onCleanup(() => subscription.unsubscribe());
   });
 }
