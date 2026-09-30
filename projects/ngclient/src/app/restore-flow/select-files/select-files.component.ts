@@ -182,9 +182,9 @@ export default class SelectFilesComponent {
               return ids.filter((x) => x !== versionId);
             });
             if (this.#requestedRepairVersion === versionId) this.#requestedRepairVersion = null;
-            if (task.Status === 'Completed') {
+            if (task.Status === 'Completed' && task.ErrorMessage == null) {
               this.loadedVersions.update((versions) => ({ ...versions, [versionId]: true }));
-            } else if (task.Status === 'Failed') {
+            } else if (task.Status === 'Failed' || (task.Status === 'Completed' && task.ErrorMessage != null)) {
               this.#dialog.open(ConfirmDialogComponent, {
                 data: {
                   title: $localize`Restore database repair failed`,
