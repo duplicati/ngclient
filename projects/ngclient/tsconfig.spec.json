@@ -4,7 +4,7 @@
     "outDir": "../../out-tsc/spec",
     "types": ["@angular/localize"]
   },
-  "include": ["src/**/*.spec.ts", "src/**/*.d.ts"],
+  "include": ["src/**/*.spec.ts", "src/**/*.d.ts", "src/test-setup.ts"],
   "angularCompilerOptions": {
     "extendedDiagnostics": {
       "checks": {
