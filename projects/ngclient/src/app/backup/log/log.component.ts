@@ -10,6 +10,7 @@ import { map } from 'rxjs';
 import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
 import { BytesPipe } from '../../core/pipes/byte.pipe';
 import { DurationFormatPipe } from '../../core/pipes/duration.pipe';
+import { LastRunPipe } from '../../core/pipes/last-run.pipe';
 import { BackupsState } from '../../core/states/backups.state';
 import { GeneralLogComponent } from './general-log/general-log.component';
 import { RemoteLogComponent } from './remote-log/remote-log.component';
@@ -23,6 +24,7 @@ import { RemoteLogComponent } from './remote-log/remote-log.component';
     RouterLink,
     BytesPipe,
     DurationFormatPipe,
+    LastRunPipe,
     DatePipe,
     StatusBarComponent,
     ShipIcon,
@@ -47,4 +49,6 @@ export default class LogComponent {
     }
     return null;
   });
+  // Sync jobs do not record a remote operation log, so the destination tab is hidden
+  isSync = computed(() => this.backup()?.Backup?.OperationType === 'Sync');
 }
