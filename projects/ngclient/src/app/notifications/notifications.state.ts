@@ -106,10 +106,7 @@ export class NotificationsState {
     const notifications = this.#notificationStream();
     const notification = notifications[notificationIndex];
 
-    this.#tempStream.set(notifications);
-    notifications.splice(notificationIndex, 1);
-
-    this.#notificationStream.set(notifications);
+    this.#notificationStream.set(notifications.filter((_, index) => index !== notificationIndex));
 
     defer(() =>
       this.#dupServer.deleteApiV1NotificationById({
@@ -121,8 +118,7 @@ export class NotificationsState {
       .pipe(take(1))
       .subscribe({
         error: () => {
-          this.#notificationStream.set(this.#tempStream());
-          this.#tempStream.set([]);
+          this.#notificationStream.set(notifications);
         },
       });
   }
