@@ -37,6 +37,11 @@
           <sh-checkbox class="primary raised" [(checked)]="config.Selected">
             <h3>
               {{ config.Name }}
+              @if (config.OperationType === 'Sync') {
+                <sh-chip class="simple accent" [shTooltip]="'Synchronization job'" i18n>
+                  <sh-icon>arrows-left-right</sh-icon>
+                </sh-chip>
+              }
               <sh-chip class="small provider">
                 <img class="provider-icon" [src]="getBackendIcon(config.TargetURLDisplay)" alt="" />
                 {{ getBackendType(config.TargetURLDisplay) }}
@@ -57,11 +62,18 @@
                 {{ config.Metadata?.['TargetFilesSize'] | bytes }}
               </div>
             }
-            @if (config.Metadata?.['LastBackupFinished']) {
-              <div i18n>
-                Last backup:
-                {{ config.Metadata?.['LastBackupFinished'] | relativeTime: false }}
-              </div>
+            @if (config | lastRun; as lastRun) {
+              @if (config.OperationType === 'Sync') {
+                <div i18n>
+                  Last sync:
+                  {{ lastRun | relativeTime: false }}
+                </div>
+              } @else {
+                <div i18n>
+                  Last backup:
+                  {{ lastRun | relativeTime: false }}
+                </div>
+              }
             }
           </div>
         </sh-card>

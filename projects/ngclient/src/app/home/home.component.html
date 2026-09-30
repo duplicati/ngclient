@@ -169,8 +169,12 @@
 
                     @if (runningBackupId() !== backup.Backup.ID) {
                       <p>
-                        <span i18n>Last successful backup:</span>
-                        {{ backup.Backup.Metadata?.['LastBackupFinished'] | relativeTime: timeType() === 'actual' }}
+                        @if (backup.Backup.OperationType === 'Sync') {
+                          <span i18n>Last successful sync:</span>
+                        } @else {
+                          <span i18n>Last successful backup:</span>
+                        }
+                        {{ (backup.Backup | lastRun) | relativeTime: timeType() === 'actual' }}
                       </p>
 
                       @let next = scheduledTimes()[backup.Backup.ID ?? ''];
@@ -183,8 +187,8 @@
 
                       <p>
                         <span i18n>Duration:</span>
-                        @if (backup.Backup.Metadata?.['LastBackupDuration']) {
-                          {{ backup.Backup.Metadata?.['LastBackupDuration'] | durationFormat: timeType() === 'actual' }}
+                        @if ((backup.Backup | lastRun: 'duration')) {
+                          {{ (backup.Backup | lastRun: 'duration') | durationFormat: timeType() === 'actual' }}
                         } @else {
                           <ng-container>-</ng-container>
                         }
@@ -301,8 +305,8 @@
                 }
               </td>
               <td>
-                @if (backup.Backup.Metadata?.['LastBackupFinished']) {
-                  {{ backup.Backup.Metadata?.['LastBackupFinished'] | relativeTime: timeType() === 'actual' }}
+                @if ((backup.Backup | lastRun)) {
+                  {{ (backup.Backup | lastRun) | relativeTime: timeType() === 'actual' }}
                 } @else {
                   <ng-container>-</ng-container>
                 }
@@ -316,8 +320,8 @@
                 }
               </td>
               <td>
-                @if (backup.Backup.Metadata?.['LastBackupDuration']) {
-                  {{ backup.Backup.Metadata?.['LastBackupDuration'] | durationFormat: timeType() === 'actual' }}
+                @if ((backup.Backup | lastRun: 'duration')) {
+                  {{ (backup.Backup | lastRun: 'duration') | durationFormat: timeType() === 'actual' }}
                 } @else {
                   <ng-container>-</ng-container>
                 }
