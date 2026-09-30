@@ -144,6 +144,7 @@ export default class DestinationComponent {
             this.testUrlComponent()
               ?.testDestination(false)
               ?.then((res) => {
+                if (!res) return;
                 if (res.action === 'success' && res.containsBackup) {
                   this.#navigateToNext();
                 } else {
