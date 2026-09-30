@@ -634,6 +634,7 @@ export type RestoreInputDto = {
 export type RestoreTaskConfigElementDto = {
     BackupId: string | null;
     Name: string | null;
+    OperationType: OperationType;
     TargetURLDisplay: string | null;
     Metadata: {
         [key: string]: string | null;
