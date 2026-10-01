@@ -21,6 +21,7 @@
     "ng": "ng",
     "start": "bun run watch:font & ng serve",
     "start:windows": "bun run watch:font & ng serve --configuration windows",
+    "preview": "bun --bun sirv dist/ngclient/browser --single --host 127.0.0.1 --port 3000 --ignores ^/api --ignores ^/notifications",
     "build": "bun run gen:font & ng build",
     "build:dev": "bun run gen:font && ng build ngclient --configuration development",
     "build:prod": "bun run gen:font & ng build ngclient --configuration production",
@@ -59,6 +60,7 @@
     "istanbul-lib-instrument": "^6.0.3",
     "jsdom": "^28.0.0",
     "prettier": "^3.7.4",
+    "sirv-cli": "3.0.1",
     "typescript": "~6.0.3",
     "vitest": "^4.0.8",
     "xml2js": "^0.6.2"
