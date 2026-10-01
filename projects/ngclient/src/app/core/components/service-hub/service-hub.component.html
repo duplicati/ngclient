@@ -14,7 +14,7 @@
 @if (_shownMessage) {
   <div class="preview-alert-wrap">
     @if (_shownMessage.type === 'notification') {
-      <app-notification [index]="0" [notification]="_shownMessage.content"></app-notification>
+      <app-notification [notification]="_shownMessage.content"></app-notification>
     } @else {
       <sh-alert [class]="_shownMessage.content.type || 'error'">
         <div ship-alert-title>{{ _shownMessage.content.title }}</div>
