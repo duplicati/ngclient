@@ -39,6 +39,26 @@ The server binds to loopback by default. The underlying CLI's `HOST` and `PORT`
 environment variables override the configured host and port; leave `HOST` unset
 to keep the preview local.
 
+### Browser tests
+
+Browser tests run against the production build, not `ng serve`. Build once using
+the commands in "Preview a production build", then run:
+
+```sh
+bunx playwright install --only-shell chromium
+bun run test:e2e
+```
+
+Playwright starts and stops `bun run preview` itself. Leave port 3000 available.
+Tests use isolated browser contexts and controlled API responses; no Duplicati
+server or account is required. These are frontend browser integration tests,
+not end-to-end tests of the backend. Vitest tests remain separate.
+
+The Production Build workflow passes the built files to a Chromium test job;
+the browser job does not rebuild the application. On failure, its artifacts
+include the HTML report, traces, and screenshots. Node.js runs the Playwright
+CLI; Bun remains the package manager and script launcher.
+
 ### Testing the client on windows
 
 - Open windows on parallels then run backend on port 8200

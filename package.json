@@ -33,7 +33,8 @@
     "gen:openapi": "openapi-ts",
     "update:openapi": "bun scripts/update-openapi.ts && bun run gen:openapi",
     "test": "ng test ngclient",
-    "test:ci": "ng test ngclient --watch=false"
+    "test:ci": "ng test ngclient --watch=false",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@angular/common": "22.0.4",
@@ -56,6 +57,8 @@
     "@angular/cli": "22.1.7",
     "@angular/compiler-cli": "22.0.4",
     "@hey-api/openapi-ts": "^0.99.0",
+    "@playwright/test": "1.63.0",
+    "@types/node": "24",
     "baseline-browser-mapping": "^2.9.18",
     "istanbul-lib-instrument": "^6.0.3",
     "jsdom": "^28.0.0",
