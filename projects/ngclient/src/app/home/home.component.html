@@ -139,6 +139,7 @@
                       Edit in console
                       <sh-icon>arrow-up-right</sh-icon>
                     </button>
+                    <ng-container *ngTemplateOutlet="menu; context: { $implicit: backup }"></ng-container>
                   </div>
                   <app-backup-progress [backupId]="backup.Backup.ID" />
                 </div>
@@ -416,26 +417,26 @@
       </button>
     }
 
-    <sh-menu>
-      @if (backup.Backup.ExternalID) {
-        <button type="button" shButton [shTooltip]="'Externally managed'" [disabled]="true">
-          <sh-icon>dots-three-vertical</sh-icon>
-        </button>
-      } @else {
-        <button
-          type="button"
-          shButton
-          [class.loading]="loadingId() === backup.Backup.ID"
-          [class.success]="successId() === backup.Backup.ID">
-          @if (successId() === backup.Backup.ID) {
-            <sh-icon>check</sh-icon>
-          } @else {
-            <sh-icon>dots-three-vertical</sh-icon>
-          }
-        </button>
-      }
+    <ng-container *ngTemplateOutlet="menu; context: { $implicit: backup }"></ng-container>
+  }
+</ng-template>
 
-      <ng-container menu>
+<ng-template #menu let-backup>
+  <sh-menu>
+    <button
+      type="button"
+      shButton
+      [class.loading]="loadingId() === backup.Backup.ID"
+      [class.success]="successId() === backup.Backup.ID">
+      @if (successId() === backup.Backup.ID) {
+        <sh-icon>check</sh-icon>
+      } @else {
+        <sh-icon>dots-three-vertical</sh-icon>
+      }
+    </button>
+
+    <ng-container menu>
+      @if (backup.Backup.OperationType !== 'Sync' || !backup.Backup.ExternalID) {
         <h3 title>Operations</h3>
 
         @if (backup.Backup.OperationType !== 'Sync') {
@@ -445,84 +446,86 @@
           </button>
         }
 
-        <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'export']" i18n>
-          <sh-icon>export</sh-icon>
-          Export
-        </button>
+        @if (!backup.Backup.ExternalID) {
+          <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'export']" i18n>
+            <sh-icon>export</sh-icon>
+            Export
+          </button>
 
-        <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'delete']" i18n>
-          <sh-icon>x-circle</sh-icon>
-          Delete
-        </button>
-
-        <sh-divider />
-
-        <h3 title i18n>Advanced</h3>
-
-        <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'database']" i18n>
-          <sh-icon>database</sh-icon>
-          Database
-        </button>
-
-        @if (backup.Backup.OperationType !== 'Sync') {
-          <button type="button" (click)="verifyFiles(backup.Backup.ID!)" i18n>
-            <sh-icon>check-square-offset</sh-icon>
-            Verify files
+          <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'delete']" i18n>
+            <sh-icon>x-circle</sh-icon>
+            Delete
           </button>
         }
 
-        <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'commandline']" i18n>
-          <sh-icon>terminal-window</sh-icon>
-          Commandline
-        </button>
+        <sh-divider />
+      }
 
-        @if (backup.Backup.OperationType !== 'Sync') {
-          @if (hasSetVersionLabel()) {
-            <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'version-labels']" i18n>
-              <sh-icon>tag</sh-icon>
-              Version labels
+      <h3 title i18n>Advanced</h3>
+
+      <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'database']" i18n>
+        <sh-icon>database</sh-icon>
+        Database
+      </button>
+
+      @if (backup.Backup.OperationType !== 'Sync') {
+        <button type="button" (click)="verifyFiles(backup.Backup.ID!)" i18n>
+          <sh-icon>check-square-offset</sh-icon>
+          Verify files
+        </button>
+      }
+
+      <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'commandline']" i18n>
+        <sh-icon>terminal-window</sh-icon>
+        Commandline
+      </button>
+
+      @if (backup.Backup.OperationType !== 'Sync') {
+        @if (hasSetVersionLabel()) {
+          <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'version-labels']" i18n>
+            <sh-icon>tag</sh-icon>
+            Version labels
+          </button>
+        }
+
+        @if (hasDeleteVersions() || hasBrokenFiles() || hasPurgeFiles()) {
+          <sh-divider />
+
+          <h3 title i18n>Cleanup</h3>
+
+          @if (hasDeleteVersions()) {
+            <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'delete-versions']" i18n>
+              <sh-icon>trash</sh-icon>
+              Delete versions
             </button>
           }
 
-          @if (hasDeleteVersions() || hasBrokenFiles() || hasPurgeFiles()) {
-            <sh-divider />
+          @if (hasPurgeFiles()) {
+            <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'purge-files']" i18n>
+              <sh-icon>eraser</sh-icon>
+              Remove files
+            </button>
+          }
 
-            <h3 title i18n>Cleanup</h3>
-
-            @if (hasDeleteVersions()) {
-              <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'delete-versions']" i18n>
-                <sh-icon>trash</sh-icon>
-                Delete versions
-              </button>
-            }
-
-            @if (hasPurgeFiles()) {
-              <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'purge-files']" i18n>
-                <sh-icon>eraser</sh-icon>
-                Remove files
-              </button>
-            }
-
-            @if (hasBrokenFiles()) {
-              <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'broken-files']" i18n>
-                <sh-icon>file-x</sh-icon>
-                Purge broken files
-              </button>
-            }
+          @if (hasBrokenFiles()) {
+            <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'broken-files']" i18n>
+              <sh-icon>file-x</sh-icon>
+              Purge broken files
+            </button>
           }
         }
+      }
 
-        <sh-divider />
+      <sh-divider />
 
-        <h3 title i18n>Reporting</h3>
+      <h3 title i18n>Reporting</h3>
 
-        <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'log']" i18n>
-          <sh-icon>notepad</sh-icon>
-          Log
-        </button>
-      </ng-container>
-    </sh-menu>
-  }
+      <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'log']" i18n>
+        <sh-icon>notepad</sh-icon>
+        Log
+      </button>
+    </ng-container>
+  </sh-menu>
 </ng-template>
 
 <ng-template #sortIcons>
