@@ -1,7 +1,7 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
-import { Subject } from 'rxjs';
+import { finalize, Subject } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { StatusBarState } from '../../core/components/status-bar/status-bar.state';
 import { DuplicatiServer, GetTaskStateDto, NotificationDto } from '../../core/openapi';
@@ -40,7 +40,7 @@ describe('RestoreProgressComponent', () => {
   let completion: Subject<GetTaskStateDto>;
 
   afterEach(() => {
-    fixture?.destroy();
+    if (fixture && !fixture.componentRef.hostView.destroyed) fixture.destroy();
     task?.complete();
     completion?.complete();
     TestBed.resetTestingModule();
@@ -50,8 +50,10 @@ describe('RestoreProgressComponent', () => {
   function setup(metadataStarted?: string) {
     task = new Subject<GetTaskStateDto>();
     completion = new Subject<GetTaskStateDto>();
-    const getTask = vi.fn(() => task.asObservable());
-    const wait = vi.fn(() => completion.asObservable());
+    const taskFinalized = vi.fn();
+    const completionFinalized = vi.fn();
+    const getTask = vi.fn(() => task.pipe(finalize(taskFinalized)));
+    const wait = vi.fn(() => completion.pipe(finalize(completionFinalized)));
     const backupId = signal('backup-42');
     const statusData = signal({
       backup: { Backup: { Metadata: metadataStarted ? { LastRestoreStarted: metadataStarted } : {} } },
@@ -72,7 +74,17 @@ describe('RestoreProgressComponent', () => {
     TestBed.overrideComponent(RestoreProgressComponent, { set: { template: '', imports: [] } });
     fixture = TestBed.createComponent(RestoreProgressComponent);
     fixture.detectChanges();
-    return { component: fixture.componentInstance, getTask, wait, backupId, statusData, alert, consoleError };
+    return {
+      component: fixture.componentInstance,
+      getTask,
+      wait,
+      backupId,
+      statusData,
+      alert,
+      consoleError,
+      taskFinalized,
+      completionFinalized,
+    };
   }
 
   it('requests the route task and remains pending before its response', () => {
@@ -129,6 +141,66 @@ describe('RestoreProgressComponent', () => {
     expect(wait).not.toHaveBeenCalled();
     expect(consoleError).toHaveBeenCalledExactlyOnceWith('Error fetching task:', error);
     expect(alert).toHaveBeenCalledExactlyOnceWith('Failed to fetch task details. Please try again later.');
+  });
+
+  it('releases a pending task request on destroy and ignores its late completed response', () => {
+    const { component, taskFinalized, wait } = setup();
+    expect(taskFinalized).not.toHaveBeenCalled();
+
+    fixture.destroy();
+
+    expect(taskFinalized).toHaveBeenCalledTimes(1);
+    task.next({ ID: 42, Status: 'Completed', TaskFinished: finished });
+    expect(component.restoreResult()).toBe('');
+    expect(wait).not.toHaveBeenCalled();
+  });
+
+  it('does not start a completion wait from a task response received after destroy', () => {
+    const { component, wait } = setup();
+    fixture.destroy();
+
+    task.next({ ID: 42, Status: 'Running', TaskFinished: null });
+
+    expect(wait).not.toHaveBeenCalled();
+    expect(component.restoreResult()).toBe('');
+  });
+
+  it('does not show an alert or update state for a task-fetch error after destroy', () => {
+    const { component, alert, consoleError } = setup();
+    fixture.destroy();
+
+    task.error(new Error('Late task-fetch failure'));
+
+    expect(component.restoreResult()).toBe('');
+    expect(alert).not.toHaveBeenCalled();
+    expect(consoleError).not.toHaveBeenCalled();
+  });
+
+  it.each(['Completed', 'Failed'])('releases the completion wait on destroy and ignores a late $0 result', (status) => {
+    const { component, wait, completionFinalized } = setup();
+    task.next({ ID: 84, Status: 'Running', TaskFinished: null });
+    task.complete();
+    expect(wait).toHaveBeenCalledExactlyOnceWith(84);
+    expect(completionFinalized).not.toHaveBeenCalled();
+
+    fixture.destroy();
+
+    expect(completionFinalized).toHaveBeenCalledTimes(1);
+    completion.next({ ID: 84, Status: status, TaskFinished: finished });
+    expect(component.restoreResult()).toBe('');
+  });
+
+  it('still releases both subscriptions when a restore completes normally', () => {
+    const { component, taskFinalized, completionFinalized } = setup();
+    task.next({ ID: 84, Status: 'Running', TaskFinished: null });
+    task.complete();
+    expect(taskFinalized).toHaveBeenCalledTimes(1);
+
+    completion.next({ ID: 84, Status: 'Completed', TaskFinished: finished });
+    completion.complete();
+
+    expect(component.restoreResult()).toBe('success');
+    expect(completionFinalized).toHaveBeenCalledTimes(1);
   });
 
   it('uses the task start time instead of older backup metadata', () => {

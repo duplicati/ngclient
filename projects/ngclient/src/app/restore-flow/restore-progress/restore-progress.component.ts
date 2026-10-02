@@ -1,5 +1,6 @@
 import { DecimalPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { ShipCard } from '@ship-ui/core/ship-card';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
@@ -36,6 +37,7 @@ export default class RestoreProgressComponent implements OnInit {
   #statusBarState = inject(StatusBarState);
   #restoreFlowState = inject(RestoreFlowState);
   #route = inject(ActivatedRoute);
+  #destroyRef = inject(DestroyRef);
 
   statusData = this.#statusBarState.statusData;
   backupId = this.#restoreFlowState.backupId;
@@ -71,27 +73,32 @@ export default class RestoreProgressComponent implements OnInit {
 
   ngOnInit() {
     const taskid = Number(this.#route.snapshot.params['taskid'] ?? '');
-    defer(() => this.#dupServer.getApiV1TaskByTaskid({ path: { taskid } })).subscribe({
-      next: (res) => {
-        if (res.TaskStarted) this.#taskStarted = new Date(res.TaskStarted);
-        if (!res.TaskFinished && res.ID) {
-          this.#waitForTaskToComplete(res.ID);
-          return;
-        }
-        this.#setTaskResult(res);
-      },
-      error: (err) => {
-        console.error('Error fetching task:', err);
-        this.restoreResult.set('error');
-        alert('Failed to fetch task details. Please try again later.');
-      },
-    });
+    defer(() => this.#dupServer.getApiV1TaskByTaskid({ path: { taskid } }))
+      .pipe(takeUntilDestroyed(this.#destroyRef))
+      .subscribe({
+        next: (res) => {
+          if (res.TaskStarted) this.#taskStarted = new Date(res.TaskStarted);
+          if (!res.TaskFinished && res.ID) {
+            this.#waitForTaskToComplete(res.ID);
+            return;
+          }
+          this.#setTaskResult(res);
+        },
+        error: (err) => {
+          console.error('Error fetching task:', err);
+          this.restoreResult.set('error');
+          alert('Failed to fetch task details. Please try again later.');
+        },
+      });
   }
 
   #waitForTaskToComplete(taskId: number) {
-    this.#serverState.waitForTaskToComplete(taskId).subscribe((res) => {
-      this.#setTaskResult(res);
-    });
+    this.#serverState
+      .waitForTaskToComplete(taskId)
+      .pipe(takeUntilDestroyed(this.#destroyRef))
+      .subscribe((res) => {
+        this.#setTaskResult(res);
+      });
   }
 
   #setTaskResult(task: GetTaskStateDto) {
