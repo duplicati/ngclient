@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Subject } from 'rxjs';
+import { finalize, of, Subject } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { RemoteDestinationType } from '../../../../core/openapi';
 import { TestDestinationResult, TestDestinationService } from '../../../../core/services/test-destination.service';
@@ -15,9 +15,11 @@ function result(overrides: Partial<TestDestinationResult> = {}): TestDestination
 describe('TestUrl connection testing', () => {
   let fixture: ComponentFixture<TestUrl>;
   const requests: Subject<TestDestinationResult>[] = [];
+  const released: ReturnType<typeof vi.fn>[] = [];
 
   afterEach(() => {
     requests.splice(0).forEach((request) => request.complete());
+    released.splice(0);
     fixture?.destroy();
     TestBed.resetTestingModule();
     vi.restoreAllMocks();
@@ -36,7 +38,9 @@ describe('TestUrl connection testing', () => {
     const testDestination = vi.fn<TestDestinationService['testDestination']>(() => {
       const request = new Subject<TestDestinationResult>();
       requests.push(request);
-      return request.asObservable();
+      const release = vi.fn();
+      released.push(release);
+      return request.pipe(finalize(release));
     });
     TestBed.configureTestingModule({
       imports: [TestUrl],
@@ -66,6 +70,76 @@ describe('TestUrl connection testing', () => {
     requests[index].next(response);
     requests[index].complete();
   }
+
+  it.each([false, true])('cancels a pending request on destroy (retry=%s)', async (retry) => {
+    const { component, testDestination } = setup();
+    const pending = component.testDestination(false)!;
+    const settled = vi.fn();
+    void pending.then(settled);
+    if (retry) respond(0, result({ action: 'test-again', testAgain: true, suggestedUrl }));
+    const index = retry ? 1 : 0;
+    const state = component.testSignal();
+    const url = component.targetUrl();
+
+    fixture.destroy();
+    await Promise.resolve();
+    expect(released[index]).toHaveBeenCalledTimes(1);
+    expect(settled).toHaveBeenCalledExactlyOnceWith(undefined);
+    requests[index].next(result({ action: 'test-again', testAgain: true, suggestedUrl }));
+    requests[index].error(new Error('late failure'));
+    expect(component.testSignal()).toBe(state);
+    expect(component.targetUrl()).toBe(url);
+    expect(testDestination).toHaveBeenCalledTimes(retry ? 2 : 1);
+    expect(settled).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not start a request after destruction', () => {
+    const { component, testDestination } = setup();
+    fixture.destroy();
+    expect(component.testDestination(false)).toBeUndefined();
+    expect(testDestination).not.toHaveBeenCalled();
+  });
+
+  it('keeps a successful result when destroyed after completion', async () => {
+    const { component } = setup();
+    const pending = component.testDestination(false)!;
+    const settled = vi.fn();
+    void pending.then(settled);
+    const response = result();
+    respond(0, response);
+    await pending;
+    fixture.destroy();
+    expect(settled).toHaveBeenCalledExactlyOnceWith(response);
+    expect(component.testSignal()).toBe(response);
+    expect(released[0]).toHaveBeenCalledTimes(1);
+  });
+
+  it('settles and releases every pending test on destruction', async () => {
+    const { component } = setup();
+    const first = component.testDestination(false)!;
+    const second = component.testDestination(false)!;
+    fixture.destroy();
+    await expect(first).resolves.toBeUndefined();
+    await expect(second).resolves.toBeUndefined();
+    released.forEach((release) => expect(release).toHaveBeenCalledTimes(1));
+  });
+
+  it('releases synchronous initial and retry subscriptions without changing the result', async () => {
+    const { component, testDestination } = setup();
+    const initialReleased = vi.fn();
+    const retryReleased = vi.fn();
+    const response = result({ targetUrl: suggestedUrl });
+    testDestination
+      .mockReturnValueOnce(
+        of(result({ action: 'test-again', testAgain: true, suggestedUrl })).pipe(finalize(initialReleased))
+      )
+      .mockReturnValueOnce(of(response).pipe(finalize(retryReleased)));
+    await expect(component.testDestination(false)).resolves.toBe(response);
+    fixture.destroy();
+    expect(component.testSignal()).toBe(response);
+    expect(initialReleased).toHaveBeenCalledTimes(1);
+    expect(retryReleased).toHaveBeenCalledTimes(1);
+  });
 
   it.each(['Backend', 'SourceProvider', 'RestoreDestinationProvider'] as const)(
     'forwards the connection context for %s',
