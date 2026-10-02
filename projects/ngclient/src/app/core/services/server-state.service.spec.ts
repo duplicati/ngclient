@@ -1,6 +1,6 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Subject } from 'rxjs';
+import { finalize, Observable, of, Subject } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { DuplicatiServer, GetTaskStateDto, ServerStatusDto } from '../openapi';
 import { SysinfoState } from '../states/sysinfo.state';
@@ -43,7 +43,7 @@ describe('ServerStateService', () => {
       stop: vi.fn(),
     };
     const requests: Subject<GetTaskStateDto>[] = [];
-    const getTask = vi.fn(() => {
+    const getTask = vi.fn((): Observable<GetTaskStateDto> => {
       const request = new Subject<GetTaskStateDto>();
       requests.push(request);
       return request;
@@ -281,5 +281,142 @@ describe('ServerStateService', () => {
     await vi.advanceTimersByTimeAsync(5000);
 
     expect(getTask).not.toHaveBeenCalled();
+  });
+
+  it.each(['response', 'error'])('clears the pending %s timer when the last waiter unsubscribes', async (outcome) => {
+    const { service, requests, getTask } = setup();
+    const subscription = service.waitForTaskToComplete(20).subscribe();
+    if (outcome === 'response') {
+      requests[0].next({ ID: 20, Status: 'Running' });
+      requests[0].complete();
+    } else {
+      requests[0].error(new Error('temporary failure'));
+    }
+    expect(vi.getTimerCount()).toBe(1);
+    subscription.unsubscribe();
+    expect(vi.getTimerCount()).toBe(0);
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(getTask).toHaveBeenCalledTimes(1);
+  });
+
+  it('releases an in-flight request and ignores late events after the last waiter unsubscribes', async () => {
+    const { service, getTask } = setup();
+    const response = new Subject<GetTaskStateDto>();
+    const released = vi.fn();
+    getTask.mockReturnValue(response.pipe(finalize(released)));
+    const next = vi.fn();
+    const complete = vi.fn();
+    const subscription = service.waitForTaskToComplete(21).subscribe({ next, complete });
+    subscription.unsubscribe();
+    expect(released).toHaveBeenCalledTimes(1);
+    response.next({ ID: 21, Status: 'Completed' });
+    response.error(new Error('late error'));
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(next).not.toHaveBeenCalled();
+    expect(complete).not.toHaveBeenCalled();
+    expect(getTask).toHaveBeenCalledTimes(1);
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it.each(['longpoll', 'websocket'] as const)('keeps the other waiter for the same task through %s', (transport) => {
+    const { service, requests, taskCompleted } = setup(transport === 'websocket');
+    service.setConnectionMethod(transport);
+    const cancelledNext = vi.fn();
+    const cancelledComplete = vi.fn();
+    const next = vi.fn();
+    const complete = vi.fn();
+    const subscription = service
+      .waitForTaskToComplete(22)
+      .subscribe({ next: cancelledNext, complete: cancelledComplete });
+    service.waitForTaskToComplete(22).subscribe({ next, complete });
+    subscription.unsubscribe();
+    const task: GetTaskStateDto = { ID: 22, Status: 'Completed' };
+    if (transport === 'websocket') taskCompleted.next(task);
+    else {
+      requests[0].next(task);
+      requests[0].complete();
+    }
+    expect(cancelledNext).not.toHaveBeenCalled();
+    expect(cancelledComplete).not.toHaveBeenCalled();
+    expect(next).toHaveBeenCalledExactlyOnceWith(task);
+    expect(complete).toHaveBeenCalledTimes(1);
+  });
+
+  it('moves polling to another task when the in-flight task loses its last waiter', async () => {
+    const { service, requests, getTask } = setup();
+    const cancelled = service.waitForTaskToComplete(23).subscribe();
+    const next = vi.fn();
+    const complete = vi.fn();
+    service.waitForTaskToComplete(24).subscribe({ next, complete });
+    cancelled.unsubscribe();
+    expect(getTask).toHaveBeenCalledTimes(2);
+    expect(getTask).toHaveBeenLastCalledWith({ path: { taskid: 24 } });
+    requests[0].next({ ID: 23, Status: 'Completed' });
+    requests[0].complete();
+    expect(next).not.toHaveBeenCalled();
+    const task: GetTaskStateDto = { ID: 24, Status: 'Completed' };
+    requests[1].next(task);
+    requests[1].complete();
+    expect(next).toHaveBeenCalledExactlyOnceWith(task);
+    expect(complete).toHaveBeenCalledTimes(1);
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(getTask).toHaveBeenCalledTimes(2);
+  });
+
+  it('retains the one-second polling interval between normally completed tasks', async () => {
+    const { service, requests, getTask } = setup();
+    service.waitForTaskToComplete(30).subscribe();
+    const next = vi.fn();
+    service.waitForTaskToComplete(31).subscribe(next);
+    requests[0].next({ ID: 30, Status: 'Completed' });
+    requests[0].complete();
+    await vi.advanceTimersByTimeAsync(999);
+    expect(getTask).toHaveBeenCalledTimes(1);
+    await vi.advanceTimersByTimeAsync(1);
+    expect(getTask).toHaveBeenCalledTimes(2);
+    expect(getTask).toHaveBeenLastCalledWith({ path: { taskid: 31 } });
+    const task: GetTaskStateDto = { ID: 31, Status: 'Completed' };
+    requests[1].next(task);
+    requests[1].complete();
+    expect(next).toHaveBeenCalledExactlyOnceWith(task);
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it('starts a fresh wait after cancellation without reviving the old request', async () => {
+    const { service, requests, getTask } = setup();
+    service.waitForTaskToComplete(25).subscribe().unsubscribe();
+    const next = vi.fn();
+    service.waitForTaskToComplete(26).subscribe(next);
+    expect(getTask).toHaveBeenCalledTimes(2);
+    requests[0].error(new Error('stale request'));
+    requests[1].next({ ID: 26, Status: 'Running' });
+    requests[1].complete();
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(getTask).toHaveBeenCalledTimes(3);
+    expect(getTask).toHaveBeenLastCalledWith({ path: { taskid: 26 } });
+    const task: GetTaskStateDto = { ID: 26, Status: 'Completed' };
+    requests[2].next(task);
+    requests[2].complete();
+    expect(next).toHaveBeenCalledExactlyOnceWith(task);
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(getTask).toHaveBeenCalledTimes(3);
+  });
+
+  it('releases synchronous successful requests and can start another task', async () => {
+    const { service, getTask } = setup();
+    const released = vi.fn();
+    getTask.mockImplementation(() => of({ ID: 27, Status: 'Completed' }).pipe(finalize(released)));
+    const next = vi.fn();
+    const complete = vi.fn();
+    service.waitForTaskToComplete(27).subscribe({ next, complete });
+    expect(next).toHaveBeenCalledExactlyOnceWith({ ID: 27, Status: 'Completed' });
+    expect(complete).toHaveBeenCalledTimes(1);
+    expect(released).toHaveBeenCalledTimes(1);
+    expect(vi.getTimerCount()).toBe(0);
+    getTask.mockImplementation(() => of({ ID: 28, Status: 'Completed' }));
+    service.waitForTaskToComplete(28).subscribe();
+    expect(getTask).toHaveBeenCalledTimes(2);
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(getTask).toHaveBeenCalledTimes(2);
   });
 });
