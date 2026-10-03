@@ -165,6 +165,8 @@ export default class FileTreeComponent {
   startingPath = input<string | null>(null);
   rootPaths = input<string[]>([]);
   initialNodes = input<TreeNodeDto[]>([]);
+  // Metadata for the root paths, keyed by path, used to resolve display names
+  rootMetadata = input<{ [path: string]: { [key: string]: string | null } | null | undefined }>({});
   backupSettings = input<BackupSettings | null>(null);
   pathRefreshTrigger = input(false);
   showHiddenNodes = input(false);
@@ -181,6 +183,8 @@ export default class FileTreeComponent {
   hasExtendedData = output<string>();
   searchMode = input(false);
   searchResults = input<SearchEntriesItemDto[]>([]);
+  // Metadata for the folders above the search results, keyed by path, used to resolve display names
+  searchParentMetadata = input<{ [path: string]: { [key: string]: string | null } | null | undefined }>({});
 
   _showHiddenNodes = signal(false);
   createFolderDialogOpen = signal(false);
@@ -382,6 +386,22 @@ export default class FileTreeComponent {
     const currentPaths = this.currentPathArray();
     const showHiddenNodes = this.showHiddenNodes();
 
+    // Display names already known from the browsed tree, used for folders that
+    // are only present in the results as the parent of a match
+    const rootMetadata = this.rootMetadata();
+    const knownNames = new Map<string, string>();
+    for (const rootPath of this.rootPaths()) {
+      const name = this.#getDisplayName(null, rootMetadata[rootPath]);
+      if (name) knownNames.set(rootPath, name);
+    }
+    for (const node of this.treeNodes()) {
+      if (node.id && node.text && !node.isLoadMore) knownNames.set(node.id, node.text);
+    }
+    for (const [path, metadata] of Object.entries(this.searchParentMetadata())) {
+      const name = this.#getDisplayName(null, metadata);
+      if (name) knownNames.set(path, name);
+    }
+
     // Build path info map from search results
     const pathInfoMap = new Map<
       string,
@@ -438,6 +458,9 @@ export default class FileTreeComponent {
       childrenMap.get(info.parentPath)!.push(path);
     }
 
+    const nameOf = (path: string, info: { part: string; match: SearchEntriesItemDto | null }) =>
+      this.#getDisplayName(knownNames.get(path) ?? info.part, info.match?.Metadata) ?? info.part;
+
     // Determine which paths are "visible" (not collapsed into a parent chain)
     // and what their collapsed display text should be
     const visiblePaths = new Set<string>();
@@ -471,7 +494,7 @@ export default class FileTreeComponent {
       // Build collapsed text if this folder starts a single-child chain
       // Walk down the chain and concatenate names
       const chainDelimiter = this.#getPathDelimiter(path);
-      let chainText = info.part;
+      let chainText = nameOf(path, info);
       let chainPath = path;
       while (true) {
         const chainChildren = childrenMap.get(chainPath) || [];
@@ -481,7 +504,7 @@ export default class FileTreeComponent {
         const nextInfo = pathInfoMap.get(nextPath);
         if (!nextInfo || !nextInfo.isFolder) break;
 
-        chainText += chainDelimiter + nextInfo.part;
+        chainText += chainDelimiter + nameOf(nextPath, nextInfo);
         chainPath = nextPath;
       }
 
@@ -519,7 +542,7 @@ export default class FileTreeComponent {
       // Check if a node with this id already exists
       if (nodeMap.has(path)) continue;
 
-      const displayText = this.#getDisplayName(collapsedTextMap.get(path), info.match?.Metadata) ?? info.part;
+      const displayText = collapsedTextMap.get(path) ?? nameOf(path, info);
       const isGenerated = info.match === null;
 
       const evalState =
@@ -612,6 +635,7 @@ export default class FileTreeComponent {
 
     const nodes = this.searchableTreeNodes();
     const rootPaths = this.rootPaths();
+    const rootMetadata = this.rootMetadata();
     const accepts = this.accepts();
 
     let roots: FileTreeNode[] = [];
@@ -625,7 +649,7 @@ export default class FileTreeComponent {
         return {
           id: rootPath,
           resolvedpath: rootPath,
-          text: rootPath,
+          text: this.#getDisplayName(rootPath, rootMetadata[rootPath]),
           parentPath: '',
           children: [],
           evalState: evalState,
@@ -1533,7 +1557,9 @@ export default class FileTreeComponent {
         metadata['o365:DisplayName'] ||
         metadata['gsuite:Name'] ||
         metadata['gsuite:DisplayName'] ||
-        metadata['diskimage:Name'];
+        metadata['diskimage:Name'] ||
+        metadata['hyperv:Name'] ||
+        metadata['mssql:Name'];
       if (name) return name;
     }
     return text;

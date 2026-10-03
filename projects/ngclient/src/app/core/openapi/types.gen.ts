@@ -697,6 +697,11 @@ export type SearchEntriesResponseDto = {
     StatusCode: string | null;
     Data?: Array<SearchEntriesItemDto> | null;
     PageInfo: PageInfo;
+    ParentMetadata?: {
+        [key: string]: {
+            [key: string]: string | null;
+        };
+    } | null;
 };
 
 export type ServerStatusDto = {

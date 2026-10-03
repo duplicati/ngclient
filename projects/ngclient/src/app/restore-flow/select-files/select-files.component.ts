@@ -75,6 +75,9 @@ export default class SelectFilesComponent {
   backupSettings = signal<BackupSettings | null>(null);
   rootPaths = signal<string[]>([]);
   initialNodes = signal<TreeNodeDto[]>([]);
+  rootMetadata = signal<{ [path: string]: { [key: string]: string | null } | null | undefined }>({});
+  // Hyper-V and MSSQL sources are restored as files, but have display names in the metadata
+  hasVirtualSources = signal(false);
   loadingRootPath = signal(false);
   isRepairing = computed(() => this.#activeRepairIds().length > 0);
   loadedVersions = signal<{ [key: string]: boolean }>({});
@@ -84,6 +87,7 @@ export default class SelectFilesComponent {
   searchQuery = signal<string>('');
   isSearching = signal(false);
   searchResults = signal<SearchEntriesItemDto[]>([]);
+  searchParentMetadata = signal<{ [path: string]: { [key: string]: string | null } }>({});
   hasSearched = signal(false);
   isSearchMode = computed(() => this.searchQuery().length > 0 && this.hasSearched());
 
@@ -250,6 +254,11 @@ export default class SelectFilesComponent {
             );
             if (extType) this.extendedDataType.set(extType.Metadata!['ExtType']);
 
+            this.rootMetadata.set(Object.fromEntries((res.Data ?? []).map((x) => [x.Path ?? '', x.Metadata])));
+            this.hasVirtualSources.set(
+              (res.Data ?? []).some((x) => x.Metadata && (x.Metadata['hyperv:v'] || x.Metadata['mssql:v']))
+            );
+
             const paths = (res.Data ?? []).map((x) => x.Path ?? '');
             if (paths.length > 0) {
               this.initialNodes.set([]);
@@ -325,7 +334,7 @@ export default class SelectFilesComponent {
   performSearch() {
     const query = this.searchQuery().trim();
     const backupSettings = this.backupSettings();
-    const needsMetadata = (this.#restoreFlowState.extendedDataType() ?? '').length > 0;
+    const needsMetadata = (this.#restoreFlowState.extendedDataType() ?? '').length > 0 || this.hasVirtualSources();
 
     if (!query || !backupSettings) return;
 
@@ -336,6 +345,7 @@ export default class SelectFilesComponent {
 
     this.isSearching.set(true);
     this.searchResults.set([]);
+    this.searchParentMetadata.set({});
     this.hasSearched.set(true);
 
     defer(() =>
@@ -359,6 +369,8 @@ export default class SelectFilesComponent {
       )
       .subscribe({
         next: (res) => {
+          // Older servers do not return the metadata for the parent folders
+          this.searchParentMetadata.set(res.ParentMetadata ?? {});
           this.searchResults.set(res.Data ?? []);
         },
         error: () => {
@@ -370,6 +382,7 @@ export default class SelectFilesComponent {
   clearSearch() {
     this.searchQuery.set('');
     this.searchResults.set([]);
+    this.searchParentMetadata.set({});
     this.hasSearched.set(false);
   }
 }
