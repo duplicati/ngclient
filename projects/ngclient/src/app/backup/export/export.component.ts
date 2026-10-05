@@ -15,9 +15,9 @@ import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { defer, finalize, switchMap } from 'rxjs';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer } from '../../core/openapi';
-import { getApiBase, getApiConfigHeaders } from '../../core/utils/proxy-config.util';
 import { PasswordGeneratorService } from '../../core/services/password-generator.service';
 import { BackupsState } from '../../core/states/backups.state';
+import { getApiBase, getApiConfigHeaders } from '../../core/utils/proxy-config.util';
 import { validateIf, watchField } from '../../core/validators/custom.validators';
 
 const fb = new FormBuilder();
@@ -230,7 +230,7 @@ export default class ExportComponent {
   generatePassword() {
     this.copiedPassword.set(false);
 
-    const newPass = this.#passwordGeneratorService.generate(16);
+    const newPass = this.#passwordGeneratorService.generate(41);
     this.exportForm.controls.password.setValue(newPass);
     this.exportForm.controls.repeatPassword.setValue(newPass);
 
