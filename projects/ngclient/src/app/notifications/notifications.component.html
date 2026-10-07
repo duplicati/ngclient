@@ -1,5 +1,5 @@
 @for (notification of notifications(); track notification.ID) {
-  <app-notification [index]="$index" [notification]="notification"></app-notification>
+  <app-notification [notification]="notification"></app-notification>
 } @empty {
   <div class="notification-list">
     <p i18n>No more notifications</p>

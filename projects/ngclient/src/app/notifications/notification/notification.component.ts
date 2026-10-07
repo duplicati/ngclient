@@ -37,15 +37,17 @@ export class NotificationComponent {
 
   serverState = this.#notificationState.serverState;
 
-  index = input.required<number>();
   notification = input.required<ExtendedNotificationDto>();
 
   downloadLink = computed(() => {
     return this.#generatedDownloadLink() || this.notification().DownloadLink || '';
   });
 
-  deleteNotificationByIndex() {
-    this.#notificationState.deleteNotification(this.index());
+  dismissNotification() {
+    const id = this.notification().ID;
+    const index = this.#notificationState.notifications().findIndex((notification) => notification.ID === id);
+    if (index === -1) return;
+    this.#notificationState.deleteNotification(index);
   }
 
   deleteAllNotifications() {
