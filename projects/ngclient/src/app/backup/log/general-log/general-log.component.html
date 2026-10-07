@@ -44,37 +44,46 @@
           </ng-container>
         </sh-toggle-card>
 
-        <sh-toggle-card [disableToggle]="true">
-          <ng-container title>
-            <h3 i18n>Source files</h3>
-          </ng-container>
+        @if (item.data?.MainOperation === 'Sync') {
+          <sh-toggle-card [disableToggle]="true">
+            <ng-container title>
+              <h3 i18n>Synced files</h3>
+            </ng-container>
 
-          <ng-container content>
-            <p i18n>
-              Evaluated: {{ item.data?.ExaminedFiles }} ({{
-                item.data?.SizeOfExaminedFiles | bytes: true : true
-              }})
-            </p>
-            <p i18n>
-              Opened: {{ item.data?.OpenedFiles }} ({{
-                item.data?.SizeOfOpenedFiles | bytes: true : true
-              }})
-            </p>
-            <p i18n>
-              Added: {{ item.data?.AddedFiles }} ({{
-                item.data?.SizeOfAddedFiles | bytes: true : true
-              }})
-            </p>
-            <p i18n>
-              Modified: {{ item.data?.ModifiedFiles }} ({{
-                item.data?.SizeOfModifiedFiles | bytes: true : true
-              }})
-            </p>
-            <p i18n>Deleted: {{ item.data?.DeletedFiles }}</p>
-            <p i18n>Too large: {{ item.data?.TooLargeFiles }}</p>
-            <p i18n>Files with error: {{ item.data?.FilesWithError }}</p>
-          </ng-container>
-        </sh-toggle-card>
+            <ng-container content>
+              <p i18n>Source: {{ item.data?.SourceFiles }} ({{ item.data?.SizeOfSourceFiles | bytes: true : true }})</p>
+              <p i18n>
+                Uploaded: {{ item.data?.FilesUploaded }} ({{ item.data?.SizeOfUploadedFiles | bytes: true : true }})
+              </p>
+              <p i18n>Unchanged: {{ item.data?.UnchangedFiles }}</p>
+              <p i18n>
+                Deleted: {{ item.data?.FilesDeleted }} ({{ item.data?.SizeOfDeletedFiles | bytes: true : true }})
+              </p>
+              <p i18n>Folders created: {{ item.data?.FoldersCreated }}</p>
+              <p i18n>Folders deleted: {{ item.data?.FoldersDeleted }}</p>
+            </ng-container>
+          </sh-toggle-card>
+        } @else {
+          <sh-toggle-card [disableToggle]="true">
+            <ng-container title>
+              <h3 i18n>Source files</h3>
+            </ng-container>
+
+            <ng-container content>
+              <p i18n>
+                Evaluated: {{ item.data?.ExaminedFiles }} ({{ item.data?.SizeOfExaminedFiles | bytes: true : true }})
+              </p>
+              <p i18n>Opened: {{ item.data?.OpenedFiles }} ({{ item.data?.SizeOfOpenedFiles | bytes: true : true }})</p>
+              <p i18n>Added: {{ item.data?.AddedFiles }} ({{ item.data?.SizeOfAddedFiles | bytes: true : true }})</p>
+              <p i18n>
+                Modified: {{ item.data?.ModifiedFiles }} ({{ item.data?.SizeOfModifiedFiles | bytes: true : true }})
+              </p>
+              <p i18n>Deleted: {{ item.data?.DeletedFiles }}</p>
+              <p i18n>Too large: {{ item.data?.TooLargeFiles }}</p>
+              <p i18n>Files with error: {{ item.data?.FilesWithError }}</p>
+            </ng-container>
+          </sh-toggle-card>
+        }
 
         <div class="extra-info">
           <sh-divider />
@@ -114,9 +123,7 @@
               <div class="content">
                 <p i18n>Start: {{ item.data?.CompactResults?.BeginTime | date: 'medium' }}</p>
                 <p i18n>End: {{ item.data?.CompactResults?.EndTime | date: 'medium' }}</p>
-                <p i18n>
-                  Duration: {{ item.data?.CompactResults?.Duration | durationFormat }}
-                </p>
+                <p i18n>Duration: {{ item.data?.CompactResults?.Duration | durationFormat }}</p>
                 <sh-divider />
                 <p i18n>
                   Deleted files: {{ item.data?.CompactResults?.DeletedFileCount }} ({{

@@ -11,7 +11,7 @@ import { DuplicatiServer, SettingDto, SettingInputDto } from '../../../core/open
 import { BytesPipe } from '../../../core/pipes/byte.pipe';
 import { DurationFormatPipe } from '../../../core/pipes/duration.pipe';
 import { BackupsState } from '../../../core/states/backups.state';
-import { BackupResult } from '../log.types';
+import { BackupResult, SyncResult } from '../log.types';
 
 interface WarningItem {
   Message?: string;
@@ -36,7 +36,7 @@ type LogEntryEvaluated = {
   operationId: number;
   timestamp: number;
   type: string;
-  data: BackupResult;
+  data: BackupResult & Partial<SyncResult>;
   exception: unknown;
 };
 
@@ -120,14 +120,17 @@ export class GeneralLogComponent {
 
     const summary = [];
 
-    if (item.data?.MainOperation == 'Backup') {
-      if (item.data?.Duration) {
-        let durationString = this.#durationPipe.transform(item.data?.Duration, true) as string;
-        if (durationString.startsWith('0h ')) durationString = durationString.slice(3);
-        if (durationString.startsWith('0m ')) durationString = durationString.slice(3);
+    if (item.data?.MainOperation == 'Sync') {
+      if (item.data?.Duration) summary.push($localize`took ${this.#shortDuration(item.data.Duration)}`);
+      if (item.data?.FilesUploaded)
+        summary.push(
+          $localize`uploaded ${item.data.FilesUploaded} file(s) (${this.#sizePipe.transform(item.data.SizeOfUploadedFiles)})`
+        );
+      if (item.data?.FilesDeleted) summary.push($localize`deleted ${item.data.FilesDeleted} file(s)`);
+    }
 
-        summary.push($localize`took ${durationString}`);
-      }
+    if (item.data?.MainOperation == 'Backup') {
+      if (item.data?.Duration) summary.push($localize`took ${this.#shortDuration(item.data.Duration)}`);
       if (item.data?.BackendStatistics?.BytesUploaded)
         summary.push($localize`uploaded ${this.#sizePipe.transform(item.data?.BackendStatistics?.BytesUploaded)}`);
       if (item.data?.BackendStatistics?.KnownFileSize)
@@ -142,6 +145,13 @@ export class GeneralLogComponent {
     if (summary.length === 0) return '';
 
     return `(${summary.join(', ')})`;
+  }
+
+  #shortDuration(duration: string): string {
+    let durationString = this.#durationPipe.transform(duration, true) as string;
+    if (durationString.startsWith('0h ')) durationString = durationString.slice(3);
+    if (durationString.startsWith('0m ')) durationString = durationString.slice(3);
+    return durationString;
   }
 
   toggleOpenEntry(item: Partial<LogEntryEvaluated>) {

@@ -145,6 +145,21 @@ export interface BackupResult {
   BackendStatistics: BackendStatistics;
 }
 
+/**
+ * The fields a sync run adds to its result, next to the common result fields.
+ */
+export interface SyncResult {
+  FoldersCreated: number;
+  FoldersDeleted: number;
+  FilesUploaded: number;
+  UnchangedFiles: number;
+  FilesDeleted: number;
+  SourceFiles: number;
+  SizeOfSourceFiles: number;
+  SizeOfUploadedFiles: number;
+  SizeOfDeletedFiles: number;
+}
+
 interface VerificationItem {
   Key: string;
   Value: any[];
