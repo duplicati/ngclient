@@ -33,10 +33,11 @@ describe('PasswordGeneratorService', () => {
 
   it.each([
     ['', 1],
-    ['abcdefgh', 2],
-    ['abcdEFGH', 3],
-    ['abcdEF12', 4],
-    ['abcdEF1!', 5],
+    ['abcdefgh', 1],
+    ['a'.repeat(32), 2],
+    ['abcdEFGH', 2],
+    ['abcdEF12', 3],
+    ['abcdEF1!', 4],
     ['VeryLongPassword123!WithMoreCharacters', 5],
   ])('assigns strength %s to %s', (password, expectedStrength) => {
     expect(service.calculatePasswordStrength(password)).toBe(expectedStrength);
@@ -65,12 +66,12 @@ describe('PasswordGeneratorService', () => {
   it('retries until a strong password is generated', () => {
     const generatePassword = vi
       .spyOn(service, 'generatePassword')
-      .mockReturnValueOnce('abcdefgh')
-      .mockReturnValueOnce('Abcdef1!');
+      .mockReturnValueOnce('Abcdef1!')
+      .mockReturnValueOnce('Abcdef1!Abcdef1!Abcdef1!Abcdef1!');
 
-    expect(service.generate(8)).toBe('Abcdef1!');
+    expect(service.generate(32)).toBe('Abcdef1!Abcdef1!Abcdef1!Abcdef1!');
     expect(generatePassword).toHaveBeenCalledTimes(2);
-    expect(generatePassword).toHaveBeenNthCalledWith(1, 8, expect.any(RegExp));
-    expect(generatePassword).toHaveBeenNthCalledWith(2, 8, expect.any(RegExp));
+    expect(generatePassword).toHaveBeenNthCalledWith(1, 32, expect.any(RegExp));
+    expect(generatePassword).toHaveBeenNthCalledWith(2, 32, expect.any(RegExp));
   });
 });
