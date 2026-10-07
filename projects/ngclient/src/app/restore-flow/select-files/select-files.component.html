@@ -82,12 +82,14 @@
         class="fill"
         [rootPaths]="rootPaths()"
         [initialNodes]="initialNodes()"
+        [rootMetadata]="rootMetadata()"
         [backupSettings]="backupSettings()"
         [multiSelect]="true"
         [showFiles]="true"
         [loadExtendedData]="true"
         [searchMode]="isSearchMode()"
         [searchResults]="searchResults()"
+        [searchParentMetadata]="searchParentMetadata()"
         (hasExtendedData)="extendedDataType.set($event)">
         <label for="path" i18n>Path</label>
         <input type="text" id="path" formControlName="filesToRestore" />

@@ -34,7 +34,7 @@ export class PasswordGeneratorService {
   calculatePasswordStrength(password: string) {
     let strength = 1;
 
-    if (password.length >= 8) {
+    if (password.length >= 32) {
       strength++;
     }
 
