@@ -54,7 +54,7 @@ export class CustomRemotePermissionsDialog {
     return permissions.filter((p) => !p.requiredForBackup && !p.requiredForRestore);
   });
 
-  #loadEffect = effect(() => {
+  #loadEffect = effect((onCleanup) => {
     const data = this.data();
     const url = data?.url;
     const sourcePrefix = data?.sourcePrefix;
@@ -73,7 +73,7 @@ export class CustomRemotePermissionsDialog {
         ? this.#webModules.getGsuitePermissions(url, sourcePrefix, backupId)
         : this.#webModules.getOffice365Permissions(url, sourcePrefix, backupId);
 
-    request.subscribe({
+    const subscription = request.subscribe({
       next: (result) => {
         this.permissions.set(result);
         this.status.set('success');
@@ -83,5 +83,6 @@ export class CustomRemotePermissionsDialog {
         this.status.set('error');
       },
     });
+    onCleanup(() => subscription.unsubscribe());
   });
 }

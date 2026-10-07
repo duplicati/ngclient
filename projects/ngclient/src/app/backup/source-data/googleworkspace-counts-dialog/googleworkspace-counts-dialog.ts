@@ -22,7 +22,7 @@ export class GoogleWorkspaceCountsDialog {
   error = signal<string | null>(null);
   counts = signal<GoogleWorkspaceCounts | null>(null);
 
-  #loadEffect = effect(() => {
+  #loadEffect = effect((onCleanup) => {
     const data = this.data();
     const url = data?.url;
     const sourcePrefix = data?.sourcePrefix;
@@ -35,7 +35,7 @@ export class GoogleWorkspaceCountsDialog {
 
     this.status.set('loading');
 
-    this.#webModules.getGoogleWorkspaceCounts(url, sourcePrefix, backupId).subscribe({
+    const subscription = this.#webModules.getGoogleWorkspaceCounts(url, sourcePrefix, backupId).subscribe({
       next: (result) => {
         this.counts.set(result);
         this.status.set('success');
@@ -45,5 +45,6 @@ export class GoogleWorkspaceCountsDialog {
         this.status.set('error');
       },
     });
+    onCleanup(() => subscription.unsubscribe());
   });
 }
