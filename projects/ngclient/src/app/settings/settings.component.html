@@ -489,7 +489,7 @@
       <div class="right">
         <sh-select
           [options]="usageStatisticsOptions()"
-          [isLoading]="updatingUsageStatistics()"
+          [disabled]="updatingUsageStatistics()"
           label="label"
           value="value">
           <input
@@ -501,6 +501,10 @@
           <ng-template let-option>
             {{ option.label }}
           </ng-template>
+
+          @if (updatingUsageStatistics()) {
+            <sh-spinner prefix class="primary" aria-label="Saving usage statistics" i18n-aria-label />
+          }
         </sh-select>
       </div>
     </section>

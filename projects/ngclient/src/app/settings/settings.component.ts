@@ -11,6 +11,7 @@ import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { ShipRadio } from '@ship-ui/core/ship-radio';
 import { ShipRangeSlider } from '@ship-ui/core/ship-range-slider';
 import { ShipSelect } from '@ship-ui/core/ship-select';
+import { ShipSpinner } from '@ship-ui/core/ship-spinner';
 import { ShipToggle } from '@ship-ui/core/ship-toggle';
 import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { finalize } from 'rxjs';
@@ -103,6 +104,7 @@ type TimeTypes = (typeof TIME_OPTIONS)[number]['value'];
     ShipDivider,
     ShipAlert,
     ShipSelect,
+    ShipSpinner,
     ShipChip,
   ],
   templateUrl: './settings.component.html',
@@ -382,12 +384,18 @@ export default class SettingsComponent {
   updateUsageStatistics(newUsageStatistics: UsageStatisticsControlValue) {
     const previousUsageStatistics = this.usageStatistics();
 
-    if (newUsageStatistics === previousUsageStatistics) return;
+    if (this.updatingUsageStatistics() || newUsageStatistics === previousUsageStatistics) return;
 
     this.usageStatistics.set(newUsageStatistics);
     this.updatingUsageStatistics.set(true);
 
-    this.#serverSettingsService.setUsageReporterLevel(toUsageReporterLevel(newUsageStatistics)).subscribe();
+    this.#serverSettingsService
+      .setUsageReporterLevel(toUsageReporterLevel(newUsageStatistics))
+      .pipe(finalize(() => this.updatingUsageStatistics.set(false)))
+      .subscribe({
+        // The service restores the previous settings and the HTTP interceptor reports the error.
+        error: () => {},
+      });
   }
 
   updatePowerMode(newPowerMode: string) {
