@@ -1,15 +1,17 @@
-import { expect, test as base, type Page, type Request, type Route } from '@playwright/test';
+import { expect, test as base, type Page, type Request, type Route, type WebSocketRoute } from '@playwright/test';
 
 export const sessionNonceKey = 'refreshNonce';
 export const persistentNonceKey = 'v1:persist:duplicati:refreshNonce';
 
-async function setupAuthentication(page: Page) {
+async function setupAuthentication(page: Page, initialBackups: unknown[]) {
   const loginRequests: Route[] = [];
   const refreshRequests: Route[] = [];
   const requests: Request[] = [];
   const unexpectedRequests: string[] = [];
   const socketTokens: string[] = [];
   const pageErrors: string[] = [];
+  const sockets = new Set<WebSocketRoute>();
+  const subscriptions: string[] = [];
   page.on('pageerror', (error) => pageErrors.push(error.message));
 
   // Each test has a fresh browser context. Do not clear storage on reload:
@@ -52,7 +54,7 @@ async function setupAuthentication(page: Page) {
     },
     '/api/v1/systeminfo/filtergroups': { FilterGroups: {} },
     '/api/v1/webmodules': [],
-    '/api/v1/backups': [],
+    '/api/v1/backups': initialBackups,
     '/api/v1/serversettings': serverSettings,
     '/api/v1/notifications': [],
     '/api/v1/remotecontrol/status': { State: 'inactive', CanEnable: false },
@@ -90,13 +92,16 @@ async function setupAuthentication(page: Page) {
   const subscriptionResponses: Record<string, unknown> = {
     legacystatus: serverStatus,
     serversettings: serverSettings,
-    backuplist: [],
+    backuplist: initialBackups,
     notifications: [],
     remotecontrol: { State: 'inactive', CanEnable: false },
   };
   await page.routeWebSocket('**/notifications*', (socket) => {
+    sockets.add(socket);
+    socket.onClose(() => sockets.delete(socket));
     socket.onMessage((message) => {
       const request = JSON.parse(String(message));
+      if (request.Action === 'sub') subscriptions.push(request.Service);
       if (request.Action === 'auth') {
         socketTokens.push(request.Token);
         socket.send(JSON.stringify({ Version: 1, Success: true }));
@@ -119,14 +124,32 @@ async function setupAuthentication(page: Page) {
     });
   });
 
-  return { loginRequests, refreshRequests, requests, unexpectedRequests, socketTokens, pageErrors };
+  const sendBackupList = (backups: unknown[]) => {
+    getResponses['/api/v1/backups'] = backups;
+    subscriptionResponses.backuplist = backups;
+    for (const socket of sockets) {
+      socket.send(JSON.stringify({ Type: 'backuplist', ApiVersion: 1, Data: backups }));
+    }
+  };
+
+  return {
+    loginRequests,
+    refreshRequests,
+    requests,
+    unexpectedRequests,
+    socketTokens,
+    pageErrors,
+    subscriptions,
+    sendBackupList,
+  };
 }
 
 type ServerApi = Awaited<ReturnType<typeof setupAuthentication>>;
 
-export const test = base.extend<{ serverApi: ServerApi; authenticatedPage: Page }>({
-  serverApi: async ({ page }, use) => {
-    const api = await setupAuthentication(page);
+export const test = base.extend<{ serverApi: ServerApi; authenticatedPage: Page; initialBackups: unknown[] }>({
+  initialBackups: [[], { option: true }],
+  serverApi: async ({ page, initialBackups }, use) => {
+    const api = await setupAuthentication(page, initialBackups);
     await use(api);
     expect(api.unexpectedRequests, 'Unexpected API or WebSocket requests').toEqual([]);
     expect(api.pageErrors, 'Unhandled browser errors').toEqual([]);
