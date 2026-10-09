@@ -1462,6 +1462,11 @@ export default class FileTreeComponent {
       return this.#getDiskImagePaths(path);
     }
 
+    // Any other remote source (e.g. smb, sftp) has no v1 fallback, so use the v2 list endpoint when available
+    if (remote && this.#sysInfo.hasV2ListBackendOperations() && usev2Listing) {
+      return this.#getBackendFiles(remote.path, remote, 'SourceProvider', offset);
+    }
+
     if (this.isByBackupSettings()) {
       return this.#getBackupFiles(path);
     }
