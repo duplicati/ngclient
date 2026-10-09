@@ -141,6 +141,25 @@
     </app-toggle-card>
   }
 
+  @if (hasRestoreOptions()) {
+    <app-toggle-card>
+      <ng-container title i18n>Advanced options</ng-container>
+
+      <app-options-list
+        [(options)]="advancedOptions"
+        [hasFreeTextSettings]="true"
+        [hiddenOptions]="[
+          'restore-path',
+          'overwrite',
+          'restore-permissions',
+          'skip-metadata',
+          'passphrase',
+          'time',
+          'version',
+        ]" />
+    </app-toggle-card>
+  }
+
   <div class="form-actions">
     <button shButton type="button" (click)="goBack()" i18n>
       <sh-icon>arrow-left</sh-icon>

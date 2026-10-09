@@ -5,7 +5,7 @@ import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { catchError, defer, finalize, forkJoin, Observable, retry, switchMap, take, throwError, timer } from 'rxjs';
 import { TestState } from '../backup/source-data/target-url-dialog/test-url/test-url';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
-import { DuplicatiServer, GetBackupResultDto, ListFilesetsResponseDto } from '../core/openapi';
+import { DuplicatiServer, GetBackupResultDto, ListFilesetsResponseDto, SettingInputDto } from '../core/openapi';
 import { SysinfoState } from '../core/states/sysinfo.state';
 import { ServerSettingsService } from '../settings/server-settings.service';
 import { createRestoreOptionsForm } from './options/options.component';
@@ -52,6 +52,7 @@ export class RestoreFlowState {
   extendedDataType = signal<string | null>(null);
   alternateRestorePath = signal<string | null>(null);
   alternateRestorePathSourcePrefix = signal<string | null>(null);
+  advancedOptions = signal<SettingInputDto[]>([]);
 
   #initializeRestoreOptions = effect(() => {
     const backupId = this.backupId();
@@ -72,6 +73,7 @@ export class RestoreFlowState {
     this.isFileRestore.set(isFileRestore);
     this.alternateRestorePath.set(null);
     this.extendedDataType.set(null);
+    this.advancedOptions.set([]);
 
     if (isFileRestore) {
       this.#router.navigate(['/restore-from-files/destination']);
@@ -153,6 +155,7 @@ export class RestoreFlowState {
           skip_metadata: !optionsValue.includeMetadata,
           source_prefix: this.alternateRestorePathSourcePrefix(),
           connection_string_id: null,
+          options: this.#getAdvancedOptions(),
         },
       })
     )
@@ -165,6 +168,19 @@ export class RestoreFlowState {
           console.error('restore error', err);
         },
       });
+  }
+
+  #getAdvancedOptions() {
+    if (!this.#sysinfo.hasRestoreOptions()) return undefined;
+
+    const options: Record<string, string | null> = {};
+
+    for (const setting of this.advancedOptions()) {
+      const name = setting.Name?.trim().replace(/^-+/, '');
+      if (name) options[name] = setting.Value ?? '';
+    }
+
+    return Object.keys(options).length > 0 ? options : null;
   }
 
   exit() {
@@ -319,5 +335,6 @@ export class RestoreFlowState {
   #resetAllForms() {
     this.selectFilesForm.reset();
     this.optionsForm.reset();
+    this.advancedOptions.set([]);
   }
 }

@@ -6,6 +6,7 @@ import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipRadio } from '@ship-ui/core/ship-radio';
 import { ShipToggle } from '@ship-ui/core/ship-toggle';
+import { OptionsListComponent } from '../../backup/options/options-list/options-list.component';
 import { CustomRemotePermissionsDialog } from '../../backup/source-data/custom-remote-permissions-dialog/custom-remote-permissions-dialog';
 import { TargetUrlDialog } from '../../backup/source-data/target-url-dialog/target-url-dialog';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
@@ -30,7 +31,16 @@ export const createRestoreOptionsForm = () => {
 
 @Component({
   selector: 'app-advanced-options-settings',
-  imports: [ReactiveFormsModule, ToggleCardComponent, FileTreeComponent, ShipToggle, ShipRadio, ShipButton, ShipIcon],
+  imports: [
+    ReactiveFormsModule,
+    ToggleCardComponent,
+    FileTreeComponent,
+    OptionsListComponent,
+    ShipToggle,
+    ShipRadio,
+    ShipButton,
+    ShipIcon,
+  ],
   templateUrl: './options.component.html',
   styleUrl: './options.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -46,6 +56,8 @@ export default class OptionsComponent {
   optionsFormSignal = this.#restoreFlowState.optionsFormSignal;
   isSubmitting = this.#restoreFlowState.isSubmitting;
   extendedData = this.#restoreFlowState.extendedDataType;
+  advancedOptions = this.#restoreFlowState.advancedOptions;
+  hasRestoreOptions = this.#sysinfoState.hasRestoreOptions;
 
   remoteCustomTargetUrl = signal<string | null>(null);
   backupId = computed(() => this.#restoreFlowState.backup()?.Backup?.ID ?? null);
