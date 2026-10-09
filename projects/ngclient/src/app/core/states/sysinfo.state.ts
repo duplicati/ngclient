@@ -110,6 +110,13 @@ export class SysinfoState {
     return apiExtensions.includes('v1:backup:restore-options');
   });
 
+  // Registering restored items (e.g. Hyper-V machines) is set through the restore options,
+  // so it needs both the restore options and a server that reports the option
+  hasRegisterRestoredItems = computed(() => {
+    const options = this.systemInfo()?.Options ?? [];
+    return this.hasRestoreOptions() && options.some((x) => x.Name === 'register-restored-items');
+  });
+
   hasV2BrokenFiles = computed(() => {
     const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
     return (

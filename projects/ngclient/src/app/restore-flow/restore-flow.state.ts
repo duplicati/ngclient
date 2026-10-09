@@ -1,4 +1,4 @@
-import { effect, inject, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
@@ -53,6 +53,23 @@ export class RestoreFlowState {
   alternateRestorePath = signal<string | null>(null);
   alternateRestorePathSourcePrefix = signal<string | null>(null);
   advancedOptions = signal<SettingInputDto[]>([]);
+
+  // Hyper-V machines are stored below this virtual root in a backup
+  #hyperVRoot = '\\\\duplicati\\hyperv\\';
+
+  hasHyperVItemsSelected = computed(() => {
+    const files = (this.selectFilesFormSignal()?.filesToRestore ?? this.selectFilesForm.value.filesToRestore ?? '')
+      .split('\0')
+      .filter((x) => x !== '');
+
+    // Restoring without a selection restores everything in the backup
+    if (files.length === 0)
+      return (this.backup()?.Backup?.Sources ?? []).some((x) => x.toUpperCase().startsWith('%HYPERV%'));
+
+    return files.some((x) => x.toLowerCase().startsWith(this.#hyperVRoot));
+  });
+
+  canRegisterRestoredItems = computed(() => this.#sysinfo.hasRegisterRestoredItems() && this.hasHyperVItemsSelected());
 
   #initializeRestoreOptions = effect(() => {
     const backupId = this.backupId();
@@ -155,7 +172,9 @@ export class RestoreFlowState {
           skip_metadata: !optionsValue.includeMetadata,
           source_prefix: this.alternateRestorePathSourcePrefix(),
           connection_string_id: null,
-          options: this.#getAdvancedOptions(),
+          options: this.#getRestoreOptions(
+            this.canRegisterRestoredItems() && (optionsValue.registerRestoredItems ?? false)
+          ),
         },
       })
     )
@@ -170,7 +189,7 @@ export class RestoreFlowState {
       });
   }
 
-  #getAdvancedOptions() {
+  #getRestoreOptions(registerRestoredItems: boolean) {
     if (!this.#sysinfo.hasRestoreOptions()) return undefined;
 
     const options: Record<string, string | null> = {};
@@ -179,6 +198,8 @@ export class RestoreFlowState {
       const name = setting.Name?.trim().replace(/^-+/, '');
       if (name) options[name] = setting.Value ?? '';
     }
+
+    if (registerRestoredItems) options['register-restored-items'] = 'true';
 
     return Object.keys(options).length > 0 ? options : null;
   }

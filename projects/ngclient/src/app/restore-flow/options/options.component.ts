@@ -26,6 +26,7 @@ export const createRestoreOptionsForm = () => {
     permissions: fb.control<boolean>(RESTORE_OPTION_DEFAULTS.permissions),
     includeMetadata: fb.control<boolean>(RESTORE_OPTION_DEFAULTS.includeMetadata),
     customRemoteIgnoreExisting: fb.control<boolean>(false),
+    registerRestoredItems: fb.control<boolean>(false),
   });
 };
 
@@ -58,6 +59,7 @@ export default class OptionsComponent {
   extendedData = this.#restoreFlowState.extendedDataType;
   advancedOptions = this.#restoreFlowState.advancedOptions;
   hasRestoreOptions = this.#sysinfoState.hasRestoreOptions;
+  canRegisterRestoredItems = this.#restoreFlowState.canRegisterRestoredItems;
 
   remoteCustomTargetUrl = signal<string | null>(null);
   backupId = computed(() => this.#restoreFlowState.backup()?.Backup?.ID ?? null);

@@ -139,6 +139,22 @@
         <input type="checkbox" formControlName="permissions" />
       </sh-toggle>
     </app-toggle-card>
+
+    @if (canRegisterRestoredItems()) {
+      <app-toggle-card [disableToggle]="true">
+        <ng-container title i18n>Hyper-V virtual machines</ng-container>
+
+        <sh-toggle class="primary raised" i18n>
+          Register the restored virtual machines with Hyper-V
+          <input type="checkbox" formControlName="registerRestoredItems" />
+        </sh-toggle>
+
+        <p i18n>
+          A machine restored to its original location is registered with its own ID. A machine restored to another
+          folder is registered as a copy with a new ID. Only machines with all of their files selected are registered.
+        </p>
+      </app-toggle-card>
+    }
   }
 
   @if (hasRestoreOptions()) {
@@ -153,6 +169,7 @@
           'overwrite',
           'restore-permissions',
           'skip-metadata',
+          'register-restored-items',
           'passphrase',
           'time',
           'version',
