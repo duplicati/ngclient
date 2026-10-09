@@ -5539,6 +5539,14 @@
           "source_prefix": {
             "type": "string",
             "nullable": true
+          },
+          "options": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "nullable": true
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -5830,6 +5838,16 @@
           },
           "PageInfo": {
             "$ref": "#/components/schemas/PageInfo"
+          },
+          "ParentMetadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false

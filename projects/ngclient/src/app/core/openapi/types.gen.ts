@@ -629,6 +629,9 @@ export type RestoreInputDto = {
     skip_metadata?: boolean | null;
     connection_string_id?: number | null;
     source_prefix?: string | null;
+    options?: {
+        [key: string]: string | null;
+    } | null;
 };
 
 export type RestoreTaskConfigElementDto = {
@@ -699,7 +702,7 @@ export type SearchEntriesResponseDto = {
     PageInfo: PageInfo;
     ParentMetadata?: {
         [key: string]: {
-            [key: string]: string | null;
+            [key: string]: string;
         };
     } | null;
 };
