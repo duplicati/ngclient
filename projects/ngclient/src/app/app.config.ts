@@ -6,6 +6,7 @@ import { PreloadAllModules, provideRouter, withComponentInputBinding, withPreloa
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { SHIP_CONFIG } from '@ship-ui/core';
+import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { environment } from '../environments/environment';
 import { ENVIRONMENT_TOKEN } from '../environments/environment-token';
 import { routes } from './app.routes';
@@ -20,6 +21,7 @@ import { DurationFormatPipe } from './core/pipes/duration.pipe';
 import { RelativeTimePipe } from './core/pipes/relative-time.pipe';
 import { DayJsProvider } from './core/providers/dayjs';
 import { LOCALSTORAGE } from './core/services/localstorage.token';
+import { StackingDialogService } from './core/services/stacking-dialog.service';
 import { NotificationsState } from './notifications/notifications.state';
 
 export const appConfig: ApplicationConfig = {
@@ -39,6 +41,9 @@ export const appConfig: ApplicationConfig = {
         alertVariant: 'simple',
       },
     },
+    // ShipUI's dialog service only supports one open dialog at a time; opening a second
+    // dialog destroys the first. See StackingDialogService for details.
+    { provide: ShipDialogService, useClass: StackingDialogService },
     NotificationsState,
     StatusBarState,
     DayJsProvider,
