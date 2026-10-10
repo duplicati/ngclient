@@ -1,5 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { defer, Observable, Subscriber } from 'rxjs';
+import { defer, Observable, Subscriber, Subscription } from 'rxjs';
 import { DuplicatiServer, GetTaskStateDto } from '../openapi';
 import { SysinfoState } from '../states/sysinfo.state';
 import { ServerStatusLongPollService } from './server-status-longpoll.service';
@@ -24,6 +24,8 @@ export class ServerStateService {
 
   #waitForTaskItems: Record<number, Subscriber<GetTaskStateDto>[]> = {};
   #pollingTimerId: number | null = null;
+  #pollingRequest: Subscription | null = null;
+  #pollingTaskId: number | null = null;
   #isPolling: boolean = false;
   #recentCompletedTasks: GetTaskStateDto[] = [];
 
@@ -37,11 +39,12 @@ export class ServerStateService {
       const entry = this.#waitForTaskItems[task.ID];
 
       if (entry) {
+        delete this.#waitForTaskItems[task.ID];
         entry.forEach((subscriber) => {
           subscriber.next(task);
           subscriber.complete();
         });
-        delete this.#waitForTaskItems[task.ID!];
+        if (Object.keys(this.#waitForTaskItems).length === 0) this.#stopPolling();
       }
     });
   }
@@ -116,6 +119,21 @@ export class ServerStateService {
       this.#waitForTaskItems[taskId] = this.#waitForTaskItems[taskId] || [];
       this.#waitForTaskItems[taskId].push(subscriber);
       this.#startPollingIfNeeded();
+      return () => {
+        const entry = this.#waitForTaskItems[taskId];
+        if (entry) {
+          const remaining = entry.filter((item) => item !== subscriber);
+          if (remaining.length) this.#waitForTaskItems[taskId] = remaining;
+          else delete this.#waitForTaskItems[taskId];
+        }
+
+        if (Object.keys(this.#waitForTaskItems).length === 0) {
+          this.#stopPolling();
+        } else if (this.#pollingTaskId === taskId && !this.#waitForTaskItems[taskId]) {
+          this.#stopPolling();
+          this.#startPollingIfNeeded();
+        }
+      };
     });
   }
 
@@ -134,40 +152,62 @@ export class ServerStateService {
     }
 
     const nextTaskId = Math.min(...taskIds);
+    // Own the subscription before subscribing, including synchronous responses.
+    const request = new Subscription();
+    this.#pollingRequest = request;
+    this.#pollingTaskId = nextTaskId;
 
-    defer(() => this.#dupServer.getApiV1TaskByTaskid({ path: { taskid: nextTaskId } })).subscribe({
-      next: (task) => {
-        const finished = task.Status === 'Completed' || task.Status === 'Failed';
+    request.add(
+      defer(() => this.#dupServer.getApiV1TaskByTaskid({ path: { taskid: nextTaskId } })).subscribe({
+        next: (task) => {
+          if (this.#pollingRequest !== request) return;
+          const finished = task.Status === 'Completed' || task.Status === 'Failed';
 
-        if (finished) {
-          this.#recentCompletedTasks.unshift(task);
-          if (this.#recentCompletedTasks.length > RECENT_COMPLETED_TASKS) this.#recentCompletedTasks.pop();
+          if (finished) {
+            this.#recentCompletedTasks.unshift(task);
+            if (this.#recentCompletedTasks.length > RECENT_COMPLETED_TASKS) this.#recentCompletedTasks.pop();
 
-          this.#waitForTaskItems[nextTaskId].forEach((subscriber) => {
-            subscriber.next(task);
-            subscriber.complete();
-          });
-          delete this.#waitForTaskItems[nextTaskId];
-        }
-      },
-      complete: () => {
-        this.#pollingTimerId = window.setTimeout(() => {
-          this.#pollOnceAndReschedule();
-        }, 1000);
-      },
-      error: (err) => {
-        this.#pollingTimerId = window.setTimeout(() => {
-          this.#pollOnceAndReschedule();
-        }, 3000);
-      },
-    });
+            const entry = this.#waitForTaskItems[nextTaskId] ?? [];
+            this.#pollingTaskId = null;
+            // Completion invokes waiter teardowns; detach the list before notifying.
+            delete this.#waitForTaskItems[nextTaskId];
+            entry.forEach((subscriber) => {
+              subscriber.next(task);
+              subscriber.complete();
+            });
+            if (Object.keys(this.#waitForTaskItems).length === 0) this.#stopPolling();
+          }
+        },
+        complete: () => {
+          this.#schedulePolling(request, 1000);
+        },
+        error: () => {
+          this.#schedulePolling(request, 3000);
+        },
+      })
+    );
+  }
+
+  #schedulePolling(request: Subscription, delay: number) {
+    if (this.#pollingRequest !== request) return;
+    this.#pollingRequest = null;
+    this.#pollingTaskId = null;
+    request.unsubscribe();
+    this.#pollingTimerId = window.setTimeout(() => {
+      this.#pollingTimerId = null;
+      this.#pollOnceAndReschedule();
+    }, delay);
   }
 
   #stopPolling() {
+    this.#isPolling = false;
     if (this.#pollingTimerId !== null) {
       clearTimeout(this.#pollingTimerId);
       this.#pollingTimerId = null;
     }
-    this.#isPolling = false;
+    const request = this.#pollingRequest;
+    this.#pollingRequest = null;
+    this.#pollingTaskId = null;
+    request?.unsubscribe();
   }
 }
