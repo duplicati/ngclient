@@ -29,3 +29,56 @@ jobs:
 
       - name: Build production application
         run: bun run ng -- build ngclient --configuration production
+
+      - name: Upload production application
+        uses: actions/upload-artifact@v7
+        with:
+          name: production-browser
+          path: dist/ngclient/browser
+          retention-days: 1
+          if-no-files-found: error
+
+  browser-tests:
+    needs: production-build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Download production application
+        uses: actions/download-artifact@v8
+        with:
+          name: production-browser
+          path: dist/ngclient/browser
+
+      - name: Install Chromium
+        run: bunx playwright install --with-deps --only-shell chromium
+
+      - name: Check browser test types
+        run: bunx tsc --project e2e/tsconfig.json
+
+      - name: Test production application in Chromium
+        run: bun run test:e2e
+
+      - name: Upload browser test diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-diagnostics
+          path: |
+            playwright-report
+            test-results
+          retention-days: 7
