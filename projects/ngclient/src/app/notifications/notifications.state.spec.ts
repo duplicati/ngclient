@@ -99,3 +99,63 @@ describe('NotificationsState single deletion', () => {
     expect(ids()).toEqual([11, 22, 33]);
   });
 });
+
+describe('NotificationsState deleting all notifications', () => {
+  const requests: Subject<void>[] = [];
+
+  afterEach(() => {
+    requests.splice(0).forEach((request) => request.complete());
+    TestBed.resetTestingModule();
+    vi.restoreAllMocks();
+  });
+
+  function setup(count: number) {
+    const original = Array.from({ length: count }, (_, index) => notification(index + 1));
+    const request = new Subject<void>();
+    requests.push(request);
+    const deleteAll = vi.fn(() => request);
+    const deleteOne = vi.fn(() => new Subject<void>());
+    TestBed.configureTestingModule({
+      providers: [
+        NotificationsState,
+        {
+          provide: DuplicatiServer,
+          useValue: { deleteApiV1Notifications: deleteAll, deleteApiV1NotificationById: deleteOne },
+        },
+        { provide: StatusBarState, useValue: { serverState: signal(null) } },
+        {
+          provide: ServerStateService,
+          useValue: { isConnectionMethodSet: signal(false), getConnectionMethod: signal('longpoll') },
+        },
+        { provide: SysinfoState, useValue: { hasWsRemoteControl: signal(false) } },
+        {
+          provide: ServerStatusWebSocketService,
+          useValue: { subscribe: vi.fn(), notificationState: signal(original) },
+        },
+      ],
+    });
+    const state = TestBed.inject(NotificationsState);
+    TestBed.tick();
+    return { state, original, request, deleteAll, deleteOne };
+  }
+
+  // Thousands of notifications must not turn into thousands of requests (duplicati#4719)
+  it('sends one request for 2000 notifications and clears the list', () => {
+    const { state, request, deleteAll, deleteOne } = setup(2000);
+    state.deleteAllNotifications();
+    expect(state.notifications()).toEqual([]);
+    expect(deleteAll).toHaveBeenCalledTimes(1);
+    expect(deleteOne).not.toHaveBeenCalled();
+    request.next(undefined);
+    request.complete();
+    expect(state.notifications()).toEqual([]);
+  });
+
+  it('restores the notifications after an API error', () => {
+    const { state, original, request } = setup(3);
+    state.deleteAllNotifications();
+    expect(state.notifications()).toEqual([]);
+    request.error(new Error('Deletion failed'));
+    expect(state.notifications()).toEqual(original);
+  });
+});

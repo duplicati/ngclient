@@ -1,5 +1,5 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
-import { catchError, defer, forkJoin, of, take, tap } from 'rxjs';
+import { defer, take, tap } from 'rxjs';
 import { StatusBarState } from '../core/components/status-bar/status-bar.state';
 import { DuplicatiServer, NotificationDto } from '../core/openapi';
 import { ServerStateService } from '../core/services/server-state.service';
@@ -28,7 +28,6 @@ export class NotificationsState {
 
   #lastNotificationEventId = -1;
   #notificationStream = signal<NotificationDto[]>([]);
-  #tempStream = signal<NotificationDto[]>([]);
 
   notifications = this.#notificationStream.asReadonly();
   pendingRefresh = false;
@@ -126,30 +125,14 @@ export class NotificationsState {
   deleteAllNotifications() {
     const notifications = this.#notificationStream();
 
-    this.#tempStream.set(notifications);
     this.#notificationStream.set([]);
 
-    const deletionObservables = notifications.map((notification) =>
-      defer(() => this.#dupServer.deleteApiV1NotificationById({ path: { id: notification.ID! } })).pipe(
-        catchError(() => of(notification))
-      )
-    );
-
-    forkJoin(deletionObservables)
+    // One request for all notifications, as one request per notification floods the browser (duplicati#4719)
+    defer(() => this.#dupServer.deleteApiV1Notifications())
       .pipe(take(1))
       .subscribe({
-        next: (results) => {
-          const remainingNotifications = (results as (NotificationDto | undefined | null)[]).filter(
-            (result) => result !== undefined && result !== null && 'ID' in result
-          ) as NotificationDto[];
-
-          this.#notificationStream.set(remainingNotifications);
-          this.#tempStream.set([]);
-        },
         error: () => {
-          // Restore original notifications if something goes wrong
-          this.#notificationStream.set(this.#tempStream());
-          this.#tempStream.set([]);
+          this.#notificationStream.set(notifications);
         },
       });
   }
