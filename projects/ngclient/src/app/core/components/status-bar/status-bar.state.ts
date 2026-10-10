@@ -218,7 +218,7 @@ export class StatusBarState {
           const unaccountedbytes = status.CurrentFilecomplete ? 0 : status.CurrentFileoffset;
           const filesleft = status.TotalFileCount! - status.ProcessedFileCount!;
           const sizeleft = status.TotalFileSize! - status.ProcessedFileSize! - unaccountedbytes!;
-          pg = (status.ProcessedFileSize! + unaccountedbytes!) / status.TotalFileSize!;
+          pg = status.TotalFileSize! > 0 ? (status.ProcessedFileSize! + unaccountedbytes!) / status.TotalFileSize! : 0;
 
           if (status.ProcessedFileCount === 0) {
             pg = 0;
@@ -307,8 +307,8 @@ export class StatusBarState {
           text = `Counting (${status.TotalFileCount} files found, ${this.#bytesPipe.transform(status.TotalFileSize)})`;
         } else {
           const unaccountedbytes = status.CurrentFilecomplete ? 0 : status.CurrentFileoffset;
-          const filesleft = status.TotalFileCount! - status.ProcessedFileCount!;
-          const sizeleft = status.TotalFileSize! - status.ProcessedFileSize! - unaccountedbytes!;
+          const filesleft = Math.max(0, status.TotalFileCount! - status.ProcessedFileCount!);
+          const sizeleft = Math.max(0, status.TotalFileSize! - status.ProcessedFileSize! - unaccountedbytes!);
           const restoringText = status.Phase === 'Restore_DownloadingRemoteFiles' ? 'Restoring: ' : '';
           const speedTxt = this.#constructSpeedText(status);
 
@@ -325,8 +325,8 @@ export class StatusBarState {
         const destIndex = status.RemoteSyncDestinationIndex ?? 0;
         const destLabel = destCount > 1 ? ` (${destIndex}/${destCount})` : '';
         if (status.TotalFileCount! > 0) {
-          const filesleft = status.TotalFileCount! - status.ProcessedFileCount!;
-          const sizeleft = status.TotalFileSize! - status.ProcessedFileSize!;
+          const filesleft = Math.max(0, status.TotalFileCount! - status.ProcessedFileCount!);
+          const sizeleft = Math.max(0, status.TotalFileSize! - status.ProcessedFileSize!);
           const speedTxt = this.#constructSpeedText(status);
           text = `Synchronizing secondary destination${destLabel}: ${filesleft} files (${this.#bytesPipe.transform(sizeleft)}) to go ${speedTxt}`;
         } else if (destLabel) {

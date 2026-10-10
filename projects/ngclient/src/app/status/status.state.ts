@@ -104,8 +104,8 @@ export class StatusPageState {
     const filesPerSecond = filesProcessedSinceStart / elapsedSeconds;
     const bytesPerSecond = bytesProcessedSinceStart / elapsedSeconds;
 
-    const remainingFiles = (statusData.TotalFileCount || 0) - currentProcessedFiles;
-    const remainingBytes = (statusData.TotalFileSize || 0) - currentProcessedBytes;
+    const remainingFiles = Math.max(0, (statusData.TotalFileCount || 0) - currentProcessedFiles);
+    const remainingBytes = Math.max(0, (statusData.TotalFileSize || 0) - currentProcessedBytes);
 
     let etaFiles: number | null = null;
     let etaBytes: number | null = null;
