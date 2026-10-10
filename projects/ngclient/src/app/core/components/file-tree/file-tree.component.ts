@@ -1168,14 +1168,20 @@ export default class FileTreeComponent {
     return false;
   }
 
+  // The full path of the folder to be created, joined with the separator used by the parent path
+  createFolderFullPath = computed(() => {
+    const parentPath = this.#appendDirSep(this.currentPathResolved());
+    const folderName = this.createFolderPath()?.trim();
+    if (!folderName) return parentPath;
+    return parentPath + folderName;
+  });
+
   closeCreateFolderDialog(save: boolean) {
     if (save && this.createFolderPath()?.length && this.isCurrentPathFolder()) {
       const path = this.createFolderPath()?.trim();
       if (path) {
         const currentPath = this.currentPath();
-        const resolvedCurrentPath = this.currentPathResolved();
-        const newPath = this.#appendDirSep(path);
-        const fullPath = `${resolvedCurrentPath}/${newPath}`;
+        const fullPath = this.#appendDirSep(this.createFolderFullPath());
 
         defer(() =>
           this.#dupServer.postApiV1RemoteoperationCreate({
