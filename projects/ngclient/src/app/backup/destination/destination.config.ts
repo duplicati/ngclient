@@ -239,7 +239,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
         const hasLeadingSlash = plainPath.startsWith('file:///');
         const _tempPath = decodeURIComponent(
-          hasLeadingSlash ? plainPath.split('file:///')[1] : plainPath.split('file://')[1]
+          (hasLeadingSlash ? plainPath.split('file:///')[1] : plainPath.split('file://')[1]).split('?')[0]
         );
         const isWindows =
           _tempPath.slice(1).startsWith(':\\') || _tempPath.slice(1).startsWith(':/') || _tempPath.startsWith('\\\\'); // Check for drive letter or UNC path
@@ -249,7 +249,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         return <ValueOfDestinationFormGroup>{
           destinationType,
           custom: {
-            path: path.split('?')[0],
+            path,
           },
           ...fromSearchParams(destinationType, urlObj),
         };
