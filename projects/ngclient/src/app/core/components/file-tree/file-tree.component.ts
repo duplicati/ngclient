@@ -179,6 +179,8 @@ export default class FileTreeComponent {
   connectionStringId = input<number | null | undefined>(null);
   sourcePrefix = input<string | null | undefined>('');
   destinationUrl = input<string | null | undefined>('');
+  // Which kind of remote the destinationUrl refers to when browsing in 'backend' mode
+  destinationType = input<RemoteDestinationType>('Backend');
   loadExtendedData = input(true);
   hasExtendedData = output<string>();
   searchMode = input(false);
@@ -1472,7 +1474,7 @@ export default class FileTreeComponent {
     }
 
     if (this.customRemoteMode() === 'backend') {
-      return this.#getBackendFiles(path, null, 'Backend', offset);
+      return this.#getBackendFiles(path, null, this.destinationType(), offset);
     }
 
     return this.#getFilesystemPath(path);

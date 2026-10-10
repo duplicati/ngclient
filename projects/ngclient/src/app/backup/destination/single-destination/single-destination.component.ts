@@ -30,7 +30,7 @@ import { FileDropTextareaComponent } from '../../../core/components/file-drop-te
 import FileTreeComponent from '../../../core/components/file-tree/file-tree.component';
 import { SizeComponent } from '../../../core/components/size/size.component';
 import { TimespanComponent } from '../../../core/components/timespan/timespan.component';
-import { ArgumentType, ICommandLineArgument } from '../../../core/openapi';
+import { ArgumentType, ICommandLineArgument, RemoteDestinationType } from '../../../core/openapi';
 import { WebModulesService } from '../../../core/services/webmodules.service';
 import { DestinationConfigState } from '../../../core/states/destinationconfig.state';
 import { SysinfoState } from '../../../core/states/sysinfo.state';
@@ -38,6 +38,7 @@ import { RemoteControlState } from '../../../settings/remote-control/remote-cont
 import { ServerSettingsService } from '../../../settings/server-settings.service';
 import { BackupState } from '../../backup.state';
 import {
+  concatPaths,
   CustomFormView,
   FormView,
   fromTargetPath,
@@ -96,6 +97,12 @@ export class SingleDestinationComponent {
   injector = inject(Injector);
   targetUrl = model.required<string | null>();
   useBackupState = input(false);
+  // Identifiers used when browsing/authenticating against the remote.
+  // When useBackupState is true these are read from the backup state instead.
+  backupId = input<string | null>(null);
+  connectionStringId = input<number | null>(null);
+  sourcePrefix = input<string | null>(null);
+  remoteType = input<RemoteDestinationType>('Backend');
 
   #destType: string | null = null;
   destinationType = computed(() => {
@@ -491,29 +498,42 @@ export class SingleDestinationComponent {
 
   #oauthInProgress = signal(false);
 
-  browse(fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string, newValue: any) {
-    const backupId = this.useBackupState() ? this.#backupState.backupId() : null;
-    const connectionStringId = this.useBackupState() ? this.#backupState.connectionStringId() : null;
+  #resolveBackupId() {
+    return this.useBackupState() ? this.#backupState.backupId() : this.backupId();
+  }
 
+  #resolveConnectionStringId() {
+    return this.useBackupState() ? this.#backupState.connectionStringId() : this.connectionStringId();
+  }
+
+  browse(fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string, newValue: any) {
     const dialogRef = this.#dialogService.open(BrowsePathDialog, {
       maxWidth: '700px',
       maxHeight: '80vh',
       width: '100%',
       closeOnOutsideClick: false,
       data: {
-        backupId: backupId,
+        backupId: this.#resolveBackupId(),
         destinationUrl: this.targetUrl(),
-        connectionStringId: connectionStringId,
+        connectionStringId: this.#resolveConnectionStringId(),
+        sourcePrefix: this.sourcePrefix(),
+        destinationType: this.remoteType(),
       },
     });
+
+    // The tree lists folders relative to the current target URL, so the picked
+    // path must be appended to the path that was already configured.
+    const basePath = (this.destinationForm()[fieldGroup][fieldName] ?? '') as string;
 
     dialogRef.closed.subscribe((destination) => {
       if (!destination) return;
 
       destination = destination.replace(/^\/+/, '');
 
+      const fullPath = concatPaths(basePath, destination);
+
       this.destinationForm.update((y) => {
-        y[fieldGroup][fieldName] = destination;
+        y[fieldGroup][fieldName] = fullPath;
         return { ...y };
       });
     });
@@ -619,7 +639,7 @@ export class SingleDestinationComponent {
   }
 
   #performFilenAuth(url: string) {
-    var backupId = this.useBackupState() ? this.#backupState.backupId() : null;
+    const backupId = this.#resolveBackupId();
     this.isAuthenticatingFilen.set(true);
     this.#webmoduleService
       .getFilenApiKey(url, backupId)

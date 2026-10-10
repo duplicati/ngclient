@@ -28,7 +28,11 @@
       [readOnlyTest]="true"
       [moduleType]="moduleType()"></app-test-url>
 
-    <app-single-destination [(targetUrl)]="targetUrlModel" />
+    <app-single-destination
+      [(targetUrl)]="targetUrlModel"
+      [backupId]="backupId()"
+      [sourcePrefix]="sourcePrefix()"
+      [remoteType]="moduleType()" />
   }
 </section>
 
