@@ -179,7 +179,9 @@ export class GeneralLogComponent {
 
   parseWarning(warning: string): WarningItem | null {
     // Parse non-JSON format: "<timestamp> - [<LogLevel>-<Source>-<MessageId>]: <message>"
-    const match = warning.match(/^(.*?) - \[(.*?)-(.*?)-(.*?)\]: (.*)$/);
+    // The message may span multiple lines (e.g. exception details), and the source may
+    // contain hyphens, so the message id is taken as the last hyphen-separated segment.
+    const match = warning.match(/^(.*?) - \[([^\]-]+)-(.+)-([^\]-]+)\]: ([\s\S]*)$/);
     if (!match) return null;
     const [, timestamp, logLevel, source, messageId, message] = match;
     return {

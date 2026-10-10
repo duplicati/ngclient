@@ -173,13 +173,24 @@ details {
   background-color: var(--base-2);
 
   code {
+    flex: 1 1 auto;
+    min-width: 0;
     margin: 0;
     white-space: pre-wrap;
     word-break: break-word;
   }
 
+  .actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: p2r(8);
+    flex: 0 0 auto;
+  }
+
   button {
     align-self: flex-start;
+    flex: 0 0 auto;
     white-space: nowrap;
   }
 }
