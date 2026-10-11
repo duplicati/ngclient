@@ -218,6 +218,10 @@ export const ANGULAR_MJS_LOCALE_MAP: Record<string, string> = {
 const SUPPORTED_LOCALES = new Set(Object.keys(LOCALE_MAP));
 type Locales = string;
 
+let translationsReady: Promise<void> = Promise.resolve();
+
+export const whenTranslationsReady = () => translationsReady;
+
 export function resolveLocale(locale: string | null | undefined): Locales {
   const requestedLocale = locale || DEFAULT_LOCALE;
   return SUPPORTED_LOCALES.has(requestedLocale) ? requestedLocale : DEFAULT_LOCALE;
@@ -239,7 +243,10 @@ export function getLocale(): Locales {
     LOCALE_MAP[locale.split('-')[0]] ?? // Map unknown specific locales to base language
     DEFAULT_LOCALE;
 
-  if (locale === DEFAULT_LOCALE) return locale;
+  if (locale === DEFAULT_LOCALE) {
+    translationsReady = Promise.resolve();
+    return locale;
+  }
 
   // Angular mjs locales are different from the standard locales
   const mjsLocale = ANGULAR_MJS_LOCALE_MAP[mappedLocale] ?? mappedLocale;
@@ -255,11 +262,17 @@ export function getLocale(): Locales {
   const mappedFileLocale = mappedLocale == 'zh-Hant' ? 'zh-Hant' : mappedLocale.replace(/-/g, '_');
   const tempLocale = locale === 'en' ? '' : '.' + mappedFileLocale;
 
-  fetch(`locale/messages${tempLocale}.json`)
-    .then((r) => r.json())
+  translationsReady = fetch(`locale/messages${tempLocale}.json`)
+    .then((r) => {
+      if (!r.ok) throw new Error(`Translation request failed: ${r.status}`);
+      return r.json();
+    })
     .then((json) => {
       loadTranslations(json.translations);
       ($localize as any).locale = locale;
+    })
+    .catch((error) => {
+      console.warn('Failed to load translations; using English messages.', error);
     });
 
   return locale;
