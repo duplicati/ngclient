@@ -52,7 +52,7 @@ export const SCHEDULE_DEFAULT_OPTIONS = [
       autoRun: true,
       nextTime: {
         time: '13:00:00',
-        date: new Date().toISOString().split('T')[0],
+        date: toLocalDateString(new Date()),
       },
       runAgain: {
         repeatValue: 1,
@@ -76,7 +76,7 @@ export const SCHEDULE_DEFAULT_OPTIONS = [
       autoRun: true,
       nextTime: {
         time: '13:00:00',
-        date: new Date().toISOString().split('T')[0],
+        date: toLocalDateString(new Date()),
       },
       runAgain: {
         repeatValue: 1,
@@ -100,7 +100,7 @@ export const SCHEDULE_DEFAULT_OPTIONS = [
       autoRun: true,
       nextTime: {
         time: '13:00:00',
-        date: getNextMondayAt12PM().toISOString().split('T')[0],
+        date: toLocalDateString(getNextMondayAt12PM()),
       },
       runAgain: {
         repeatValue: 1,
@@ -124,7 +124,7 @@ export const SCHEDULE_DEFAULT_OPTIONS = [
       autoRun: false,
       nextTime: {
         time: '13:00:00',
-        date: new Date().toISOString().split('T')[0],
+        date: toLocalDateString(new Date()),
       },
       runAgain: {
         repeatValue: 1,
@@ -148,7 +148,7 @@ export const SCHEDULE_DEFAULT_OPTIONS = [
       autoRun: true,
       nextTime: {
         time: '13:00:00',
-        date: new Date().toISOString().split('T')[0],
+        date: toLocalDateString(new Date()),
       },
       runAgain: {
         repeatValue: 1,
@@ -175,6 +175,14 @@ type ScheduleFormValue = Omit<ScheduleOption['data'], 'nextTime'> & {
     date: string | Date;
   };
 };
+
+// Formats the local calendar day as YYYY-MM-DD; toISOString() would give the UTC day instead.
+export function toLocalDateString(date: Date) {
+  const year = String(date.getFullYear()).padStart(4, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
 
 function getLocalDateParts(value: string | Date) {
   if (typeof value === 'string') {
@@ -249,7 +257,7 @@ export const SCHEDULE_FIELD_DEFAULTS = () => {
     autoRun: signal(true),
     nextTime: {
       time: signal<string>('13:00'),
-      date: signal<string | Date>(new Date().toISOString().split('T')[0]),
+      date: signal<string | Date>(toLocalDateString(new Date())),
     },
     runAgain: {
       repeatValue: signal(1),
@@ -340,7 +348,7 @@ export default class ScheduleComponent {
 
       this.scheduleFields.autoRun.set(data.autoRun ?? false);
       this.scheduleFields.nextTime.time.set(data.nextTime?.time ?? '13:00');
-      this.scheduleFields.nextTime.date.set(data.nextTime?.date ?? new Date().toISOString().split('T')[0]);
+      this.scheduleFields.nextTime.date.set(data.nextTime?.date ?? toLocalDateString(new Date()));
       this.scheduleFields.runAgain.repeatValue.set(data.runAgain?.repeatValue ?? 1);
       this.scheduleFields.runAgain.repeatUnit.set(data.runAgain?.repeatUnit ?? 'D');
       this.scheduleFields.runAgain.allowedDays.mon.set(data.runAgain?.allowedDays?.mon ?? true);
