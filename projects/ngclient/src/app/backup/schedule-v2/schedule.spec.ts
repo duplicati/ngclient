@@ -78,3 +78,41 @@ describe('scheduleOptionToSchedule', () => {
     expect(scheduleOptionToSchedule(input)).toBeNull();
   });
 });
+
+describe('default schedule date', () => {
+  // 2026-10-11 08:00 in Tokyo, which is still 2026-10-10 in UTC.
+  const tokyoMorning = new Date('2026-10-10T23:00:00.000Z');
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.unstubAllEnvs();
+    vi.resetModules();
+  });
+
+  it('uses the local date for the field defaults', async () => {
+    vi.stubEnv('TZ', 'Asia/Tokyo');
+    vi.useFakeTimers({ now: tokyoMorning });
+    const { SCHEDULE_FIELD_DEFAULTS } = await import('./schedule.component');
+
+    expect(SCHEDULE_FIELD_DEFAULTS().nextTime.date()).toBe('2026-10-11');
+  });
+
+  it('uses the local date for the predefined options', async () => {
+    vi.stubEnv('TZ', 'Asia/Tokyo');
+    vi.useFakeTimers({ now: tokyoMorning });
+    vi.resetModules();
+    const { SCHEDULE_DEFAULT_OPTIONS } = await import('./schedule.component');
+
+    expect(SCHEDULE_DEFAULT_OPTIONS.find((x) => x.value === 'daily')?.data.nextTime.date).toBe('2026-10-11');
+  });
+
+  it('uses the local date for the next Monday', async () => {
+    // 12:00 on Monday 2026-10-12 in Kiritimati (UTC+14) is still Sunday in UTC.
+    vi.stubEnv('TZ', 'Pacific/Kiritimati');
+    vi.useFakeTimers({ now: tokyoMorning });
+    vi.resetModules();
+    const { SCHEDULE_DEFAULT_OPTIONS } = await import('./schedule.component');
+
+    expect(SCHEDULE_DEFAULT_OPTIONS.find((x) => x.value === 'weekly')?.data.nextTime.date).toBe('2026-10-12');
+  });
+});
