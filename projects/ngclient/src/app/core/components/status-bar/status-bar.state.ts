@@ -278,6 +278,9 @@ export class StatusBarState {
     const fileName =
       status.CurrentFilename.length > 42 ? '...' + status.CurrentFilename.slice(-42) : status.CurrentFilename;
 
+    if (fileSize <= 0)
+      return $localize`${fileName} | File processed: ${this.#bytesPipe.transform(fileOffset)}/${this.#bytesPipe.transform(fileSize)}`;
+
     const percentage = ((fileOffset / fileSize) * 100).toFixed(1);
 
     return $localize`${fileName} | File processed: ${this.#bytesPipe.transform(fileOffset)}/${this.#bytesPipe.transform(fileSize)} - ${percentage}%`;
