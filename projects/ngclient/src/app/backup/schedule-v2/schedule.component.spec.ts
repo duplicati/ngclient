@@ -74,6 +74,27 @@ describe('ScheduleComponent date picker', () => {
     vi.useRealTimers();
   });
 
+  it.each([
+    ['Monday before 13:00', '2026-10-12T01:00:00.000Z', '2026-10-12'],
+    ['Monday exactly at 13:00', '2026-10-12T04:00:00.000Z', '2026-10-19'],
+    ['Monday after 13:00', '2026-10-12T06:00:00.000Z', '2026-10-19'],
+    ['Tuesday', '2026-10-13T01:00:00.000Z', '2026-10-19'],
+  ])('starts the weekly preset on the next eligible Monday: %s', async (_, now, expectedDate) => {
+    vi.stubEnv('TZ', 'Asia/Tokyo');
+    vi.useFakeTimers({ now: new Date(now), toFake: ['Date'] });
+    await renderSchedule('2026-09-06T12:20:00.000Z');
+
+    fixture.componentInstance.updateScheduleType('weekly');
+
+    expect(state.scheduleFields.nextTime.date()).toBe(expectedDate);
+    expect(state.scheduleFields.nextTime.time()).toBe('13:00:00');
+    expect(state.getScheduleFormValue()).toEqual({
+      Time: expectedDate + 'T04:00:00.000Z',
+      Repeat: '1W',
+      AllowedDays: ['Monday'],
+    });
+  });
+
   it('starts a predefined schedule at its next future run', async () => {
     vi.stubEnv('TZ', 'Asia/Tokyo');
     // Tuesday 2026-10-20 15:00 in Tokyo, after the 13:00 preset time
