@@ -1030,6 +1030,16 @@
             }
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/v1/progressstate": {
