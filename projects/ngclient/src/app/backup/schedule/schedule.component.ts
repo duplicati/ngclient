@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BackupState } from '../backup.state';
+import { toLocalDateString } from '../schedule-v2/schedule.component';
 
 const UNIT_OPTIONS = [
   {
@@ -38,7 +39,7 @@ export type Days = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
 
 export const SCHEDULE_FIELD_DEFAULTS = {
   autoRun: true,
-  nextTime: { time: '13:00', date: new Date().toISOString().split('T')[0] },
+  nextTime: { time: '13:00', date: toLocalDateString(new Date()) },
   runAgain: {
     repeatValue: 1,
     repeatUnit: 'D' as string,
