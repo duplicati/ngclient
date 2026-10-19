@@ -1670,6 +1670,20 @@ export type GetApiV1NotificationByIdResponses = {
 
 export type GetApiV1NotificationByIdResponse = GetApiV1NotificationByIdResponses[keyof GetApiV1NotificationByIdResponses];
 
+export type DeleteApiV1NotificationsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/notifications';
+};
+
+export type DeleteApiV1NotificationsResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
 export type GetApiV1NotificationsData = {
     body?: never;
     path?: never;
