@@ -109,11 +109,6 @@
                   <div class="text">
                     <h3>
                       {{ backup.Backup.Name ?? MISSING_BACKUP_NAME }}
-                      @if (backup.Backup.OperationType === 'Sync') {
-                        <sh-chip class="simple accent" [shTooltip]="'Synchronization job'" i18n>
-                          <sh-icon>arrows-left-right</sh-icon>
-                        </sh-chip>
-                      }
                       <sh-chip>
                         <img class="provider-icon" [src]="getBackendIcon(backup.Backup.TargetURL)" alt="" />
                         <!-- <sh-icon>{{ getBackendIcon(backup.Backup.TargetURL) }}</sh-icon> -->
@@ -123,6 +118,12 @@
                   </div>
 
                   <div class="tags">
+                    @if (backup.Backup.OperationType === 'Sync') {
+                      <sh-chip class="simple accent" [shTooltip]="'Synchronization job'" i18n>
+                        <sh-icon>arrows-left-right</sh-icon>
+                        Sync
+                      </sh-chip>
+                    }
                     <sh-chip class="simple primary" i18n>Externally managed</sh-chip>
                   </div>
 
@@ -148,11 +149,6 @@
                   <div class="text">
                     <h3>
                       {{ backup.Backup.Name ?? MISSING_BACKUP_NAME }}
-                      @if (backup.Backup.OperationType === 'Sync') {
-                        <sh-chip class="simple accent" i18n [shTooltip]="'Synchronization job'" i18n>
-                          <sh-icon>arrows-left-right</sh-icon>
-                        </sh-chip>
-                      }
                       <sh-chip>
                         <img class="provider-icon" [src]="getBackendIcon(backup.Backup.TargetURL)" alt="" />
                         <!-- <sh-icon>{{ getBackendIcon(backup.Backup.TargetURL) }}</sh-icon> -->
@@ -204,24 +200,33 @@
                         }
                       </p>
 
-                      <p>
-                        <span i18n>Destination:</span>
-                        @if (backup.Backup.Metadata?.['TargetFilesSize']) {
-                          {{ backup.Backup.Metadata?.['TargetFilesSize'] | bytes }}
-                        } @else {
-                          <ng-container>-</ng-container>
-                        }
-                      </p>
+                      @if (backup.Backup.OperationType !== 'Sync') {
+                        <p>
+                          <span i18n>Destination:</span>
+                          @if (backup.Backup.Metadata?.['TargetFilesSize']) {
+                            {{ backup.Backup.Metadata?.['TargetFilesSize'] | bytes }}
+                          } @else {
+                            <ng-container>-</ng-container>
+                          }
+                        </p>
+                      }
                     } @else {
                       <app-backup-progress [backupId]="backup.Backup.ID" />
                     }
                   </div>
 
                   <div class="tags">
-                    @let versions = getBackupVersionCount(backup);
-                    <sh-chip class="simple success" i18n>
-                      {versions, plural, =0 {No version yet} =1 {1 Version} other {{{ versions }} Versions}}
-                    </sh-chip>
+                    @if (backup.Backup.OperationType === 'Sync') {
+                      <sh-chip class="simple accent" [shTooltip]="'Synchronization job'" i18n>
+                        <sh-icon>arrows-left-right</sh-icon>
+                        Sync
+                      </sh-chip>
+                    } @else {
+                      @let versions = getBackupVersionCount(backup);
+                      <sh-chip class="simple success" i18n>
+                        {versions, plural, =0 {No version yet} =1 {1 Version} other {{{ versions }} Versions}}
+                      </sh-chip>
+                    }
 
                     @if (backup.Backup.ExternalID) {
                       <sh-chip class="simple primary" i18n>Externally managed</sh-chip>
@@ -284,11 +289,6 @@
             <tr>
               <td>
                 {{ backup.Backup.Name ?? MISSING_BACKUP_NAME }}
-                @if (backup.Backup.OperationType === 'Sync') {
-                  <sh-chip class="small accent" [shTooltip]="'Synchronization job'" i18n>
-                    <sh-icon>arrows-left-right</sh-icon>
-                  </sh-chip>
-                }
               </td>
               <td>
                 <sh-chip class="small">
@@ -342,10 +342,17 @@
                 }
               </td>
               <td>
-                @let versions = getBackupVersionCount(backup);
-                <span i18n>
-                  {versions, plural, =0 {No versions} =1 {1 Version} other {{{ versions }} Versions}}
-                </span>
+                @if (backup.Backup.OperationType === 'Sync') {
+                  <sh-chip class="small accent" [shTooltip]="'Synchronization job'" i18n>
+                    <sh-icon>arrows-left-right</sh-icon>
+                    Sync
+                  </sh-chip>
+                } @else {
+                  @let versions = getBackupVersionCount(backup);
+                  <span i18n>
+                    {versions, plural, =0 {No versions} =1 {1 Version} other {{{ versions }} Versions}}
+                  </span>
+                }
               </td>
 
               <td>
