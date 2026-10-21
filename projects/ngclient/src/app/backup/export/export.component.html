@@ -150,10 +150,10 @@
       }
     </div>
   }
-
-  @if (exportedCmd()) {
-    <div class="cmd-output">
-      <code>{{ exportedCmd() }}</code>
-    </div>
-  }
 </form>
+
+@if (exportedCmd()) {
+  <div class="cmd-output">
+    <code>{{ exportedCmd() }}</code>
+  </div>
+}
