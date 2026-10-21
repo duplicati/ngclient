@@ -632,7 +632,7 @@ export default class FileTreeComponent {
 
     const remoteEvals = this.#remoteFilterResource.value(); // read dependency
 
-    const showHiddenNodes = this.showHiddenNodes();
+    const showHiddenNodes = this._showHiddenNodes();
     const currentPaths = this.#resolveFilterGroups(this.currentPathArray());
 
     const nodes = this.searchableTreeNodes();

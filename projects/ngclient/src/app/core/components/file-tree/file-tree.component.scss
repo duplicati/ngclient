@@ -115,6 +115,11 @@
         border-color: var(--primary-4);
       }
 
+      &.excluded .text {
+        text-decoration: line-through;
+        color: var(--base-7);
+      }
+
       &.usually-hidden {
         opacity: 0.6;
       }

@@ -42,6 +42,9 @@
               [class.accepted]="node.accepted === true"
               [class.active]="node.evalState === TreeEvalEnum.Included"
               [class.indeterminate]="node.isIndeterminate"
+              [class.excluded]="
+                node.evalState === TreeEvalEnum.Excluded || node.evalState === TreeEvalEnum.ExcludedByParent
+              "
               [class.open]="node.children.length"
               [class.usually-hidden]="node.hidden"
               [class.root]="data.level === 0"
