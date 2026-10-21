@@ -2469,6 +2469,13 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     '.srvstorage.uz',
     '.srvstorage.kz',
   ]),
+  CreateCustomS3ProviderEntry(
+    'neon',
+    'Neon Object Storage',
+    $localize`Store backups in Neon Object Storage.`,
+    'assets/dest-icons/neon.png',
+    ['.neon.tech']
+  ),
 ];
 
 export const S3_HOST_SUFFIX_MAP: Record<string, string> = {
@@ -2514,4 +2521,5 @@ export const S3_HOST_SUFFIX_MAP: Record<string, string> = {
   '.srvstorage.uz': 'Selectel S3',
   '.srvstorage.kz': 'Selectel S3',
   '.relaix.net': 'RelAix S3',
+  '.neon.tech': 'Neon S3',
 };
