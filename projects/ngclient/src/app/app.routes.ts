@@ -1,6 +1,7 @@
 import { inject, Injector } from '@angular/core';
 import { Routes } from '@angular/router';
 import { map, of, switchMap, zip } from 'rxjs';
+import { RestoreJobGuard } from './core/guards/restore-job.guard';
 import { StatusBarState } from './core/components/status-bar/status-bar.state';
 import { LOCALSTORAGE } from './core/services/localstorage.token';
 import { AppAuthState } from './core/states/app-auth.state';
@@ -182,10 +183,12 @@ export const routes: Routes = [
                   },
                   {
                     path: 'backup/:id/delete-versions',
+                    canActivate: [RestoreJobGuard],
                     loadComponent: () => import('./backup/delete-versions/delete-versions.component'),
                   },
                   {
                     path: 'backup/:id/purge-files',
+                    canActivate: [RestoreJobGuard],
                     loadComponent: () => import('./backup/purge-files/purge-files.component'),
                     children: [
                       {
@@ -205,10 +208,12 @@ export const routes: Routes = [
                   },
                   {
                     path: 'backup/:id/version-labels',
+                    canActivate: [RestoreJobGuard],
                     loadComponent: () => import('./backup/version-labels/version-labels.component'),
                   },
                   {
                     path: 'backup/:id/broken-files',
+                    canActivate: [RestoreJobGuard],
                     loadComponent: () => import('./backup/broken-files/broken-files.component'),
                   },
                   {
@@ -231,11 +236,13 @@ export const routes: Routes = [
                   },
                   {
                     path: 'restore-draft/:id',
+                    canActivate: [RestoreJobGuard],
                     loadComponent: () => import('./restore-flow/restore-flow.component'),
                     loadChildren: () => import('./restore-flow/restore-flow.routes'),
                   },
                   {
                     path: 'restore/:id',
+                    canActivate: [RestoreJobGuard],
                     loadComponent: () => import('./restore-flow/restore-flow.component'),
                     loadChildren: () => import('./restore-flow/restore-flow.routes'),
                   },

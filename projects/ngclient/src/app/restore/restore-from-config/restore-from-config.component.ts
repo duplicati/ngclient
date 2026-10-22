@@ -82,6 +82,9 @@ export default class RestoreFromConfigComponent {
       .pipe(
         switchMap((res) => {
           const data = res.data as BackupDraft;
+          if (data.Backup?.OperationType === 'Sync') {
+            throw new Error($localize`Sync jobs cannot be restored.`);
+          }
           const draft: BackupAndScheduleInputDto = {
             Backup: data.Backup,
           };
