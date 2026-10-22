@@ -27,6 +27,7 @@ export default class DeleteBackupComponent {
 
   id = input.required<string>();
   backup = computed(() => this.#backupsState.getBackupById(this.id()));
+  isSyncMode = computed(() => this.backup()?.Backup?.OperationType === 'Sync');
   noLocalDbResource = rxResource({
     params: () => ({ dbPath: this.backup()?.Backup?.DBPath }),
     stream: ({ params }) =>
@@ -44,7 +45,7 @@ export default class DeleteBackupComponent {
   deleteBackup() {
     const id = this.id();
     const deleteLocalDb = this.deleteLocalDb();
-    const deleteRemoteFiles = this.deleteRemoteFiles();
+    const deleteRemoteFiles = this.isSyncMode() ? undefined : this.deleteRemoteFiles();
 
     this.isDeleting.set(true);
     this.#dialog.open(ConfirmDialogComponent, {
@@ -61,7 +62,7 @@ export default class DeleteBackupComponent {
             path: { id },
             query: {
               'delete-local-db': deleteLocalDb,
-              'delete-remote-files': deleteRemoteFiles,
+              ...(deleteRemoteFiles === undefined ? {} : { 'delete-remote-files': deleteRemoteFiles }),
             },
           })
           .pipe(finalize(() => this.isDeleting.set(false)))

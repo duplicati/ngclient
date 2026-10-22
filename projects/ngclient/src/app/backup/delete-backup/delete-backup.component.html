@@ -29,7 +29,7 @@
   </button>
 </section>
 
-@if (noLocalDb) {
+@if (noLocalDb && !isSyncMode()) {
   <section>
     @let fileSize = _backup?.Backup?.Metadata?.['TargetFilesSize'] ?? 0;
 
