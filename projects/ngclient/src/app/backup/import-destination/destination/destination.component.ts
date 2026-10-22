@@ -131,6 +131,7 @@ export default class DestinationComponent {
 
   next() {
     const testSignalValue = this.testSignal();
+    if (testSignalValue === 'testing') return;
     if (testSignalValue === null) {
       this.#dialog.open(ConfirmDialogComponent, {
         data: {
