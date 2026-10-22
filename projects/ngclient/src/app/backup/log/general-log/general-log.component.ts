@@ -38,6 +38,7 @@ type LogEntryEvaluated = {
   type: string;
   data: BackupResult & Partial<SyncResult>;
   exception: unknown;
+  rawMessage?: string;
 };
 
 @Component({
@@ -101,12 +102,22 @@ export class GeneralLogComponent {
       defer(() => this.#dupServer.getApiV1BackupByIdLog({ path: { id: params.id }, query: { pagesize: 100 } })).pipe(
         map((x) => {
           return (x as LogEntry[]).map((y) => {
+            let data: LogEntryEvaluated['data'] | undefined;
+            if (y.Type === 'Result') {
+              try {
+                const parsed = JSON.parse(y.Message);
+                if (parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed)) data = parsed;
+              } catch {
+                // Preserve old or unstructured rows without failing the whole page.
+              }
+            }
             return {
               id: y.ID,
               operationId: y.OperationID,
               timestamp: y.Timestamp * 1000,
               type: y.Type,
-              data: JSON.parse(y.Message),
+              data,
+              rawMessage: data === undefined ? y.Message : undefined,
               exception: JSON.stringify(y.Exception) === '{}' ? null : y.Exception,
             } as Partial<LogEntryEvaluated>;
           });
