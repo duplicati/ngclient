@@ -162,6 +162,25 @@ sh-menu {
   display: flex;
   align-items: center;
   gap: p2r(8);
+
+  @include breakpoint(-milli) {
+    flex-wrap: wrap;
+  }
+}
+
+.search {
+  width: p2r(240);
+}
+
+.clear-search {
+  opacity: 0.6;
+  cursor: pointer;
+}
+
+.no-matches {
+  padding: p2r(32);
+  text-align: center;
+  color: var(--base-8);
 }
 
 .sortable {

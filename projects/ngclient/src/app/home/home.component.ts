@@ -1,5 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipButtonGroup } from '@ship-ui/core/ship-button-group';
@@ -7,6 +8,7 @@ import { ShipCard } from '@ship-ui/core/ship-card';
 import { ShipChip } from '@ship-ui/core/ship-chip';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { ShipDivider } from '@ship-ui/core/ship-divider';
+import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipMenu } from '@ship-ui/core/ship-menu';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
@@ -34,12 +36,14 @@ import { RemoteControlState } from '../settings/remote-control/remote-control.st
   imports: [
     RouterLink,
     NgTemplateOutlet,
+    FormsModule,
     StatusBarComponent,
     ShipCard,
     ShipButton,
     ShipIcon,
     ShipChip,
     ShipDivider,
+    ShipFormField,
     ShipMenu,
     ShipProgressBar,
     ShipButtonGroup,
@@ -75,6 +79,15 @@ export default class HomeComponent {
   orderBy = this.#backupsState.orderBy;
   backups = this.#backupsState.backups;
   backupsLoading = this.#backupsState.backupsLoading;
+  searchTerm = signal('');
+  showSearch = computed(() => this.backups().length > 3);
+  filteredBackups = computed(() => {
+    const backups = this.backups();
+    const searchTerm = this.searchTerm().trim().toLowerCase();
+    if (!this.showSearch() || !searchTerm) return backups;
+
+    return backups.filter((x) => x.Backup.Name?.toLowerCase().includes(searchTerm));
+  });
   startingBackup = this.#backupsState.startingBackup;
   deletingBackup = this.#backupsState.deletingBackup;
   runningBackupId = this.#statusBarState.runningBackupId;

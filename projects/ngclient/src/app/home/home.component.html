@@ -41,6 +41,16 @@
 
       @if (backups().length > 0) {
         <div class="actions">
+          @if (showSearch()) {
+            <sh-form-field class="small search">
+              <input type="text" i18n-placeholder placeholder="Search backups..." [(ngModel)]="searchTerm" />
+              <sh-icon prefix>magnifying-glass</sh-icon>
+              @if (searchTerm()) {
+                <sh-icon class="clear-search" suffix (click)="searchTerm.set('')">x-circle</sh-icon>
+              }
+            </sh-form-field>
+          }
+
           <sh-button-group class="small type-b" [(value)]="viewMode">
             <button value="list" i18n>
               <sh-icon>rows</sh-icon>
@@ -103,7 +113,7 @@
       @if (viewMode() === 'list') {
         <div class="backups" [class.fallback]="backups().length === 0">
           @if (backups().length) {
-            @for (backup of backups(); track $index) {
+            @for (backup of filteredBackups(); track $index) {
               @if (backup.Backup.ExternalID) {
                 <div class="backup externaly-managed">
                   <div class="text">
@@ -238,6 +248,8 @@
                   </div>
                 </div>
               }
+            } @empty {
+              <div class="no-matches" i18n>No backups match "{{ searchTerm() }}"</div>
             }
           } @else {
             <div class="no-backups" i18n>
@@ -251,7 +263,7 @@
           }
         </div>
       } @else if (viewMode() === 'details') {
-        <sh-table class="type-b" [data]="backups()" [loading]="backupsLoading()" [(sortByColumn)]="sortByColumn">
+        <sh-table class="type-b" [data]="filteredBackups()" [loading]="backupsLoading()" [(sortByColumn)]="sortByColumn">
           <tr thead>
             <th i18n shSort="name">
               Backup
@@ -285,7 +297,7 @@
             <th i18n>Actions</th>
           </tr>
 
-          @for (backup of backups(); track $index) {
+          @for (backup of filteredBackups(); track $index) {
             <tr>
               <td>
                 {{ backup.Backup.Name ?? MISSING_BACKUP_NAME }}
