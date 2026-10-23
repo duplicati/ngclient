@@ -46,10 +46,6 @@ export default class LogsStoredComponent {
     this.getLogs();
   });
 
-  ngOnInit() {
-    this.getLogs();
-  }
-
   getLogs() {
     this.logsIsLoading.set(true);
 
