@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { scheduleOptionToSchedule } from './schedule.component';
+import { getNextRunDate, scheduleOptionToSchedule } from './schedule.component';
 
 describe('scheduleOptionToSchedule', () => {
   const createSchedule = (date: string | Date, time = '08:50:30') => ({
@@ -114,5 +114,21 @@ describe('default schedule date', () => {
     const { SCHEDULE_DEFAULT_OPTIONS } = await import('./schedule.component');
 
     expect(SCHEDULE_DEFAULT_OPTIONS.find((x) => x.value === 'weekly')?.data.nextTime.date).toBe('2026-10-12');
+  });
+});
+
+describe('getNextRunDate', () => {
+  afterEach(() => vi.unstubAllEnvs());
+
+  it('keeps today while the time is still ahead', () => {
+    vi.stubEnv('TZ', 'Asia/Tokyo');
+
+    expect(getNextRunDate('13:00', new Date(2026, 9, 31, 12, 59, 59))).toBe('2026-10-31');
+  });
+
+  it('moves to the next day once the time is reached', () => {
+    vi.stubEnv('TZ', 'Asia/Tokyo');
+
+    expect(getNextRunDate('13:00:00', new Date(2026, 9, 31, 13, 0, 0))).toBe('2026-11-01');
   });
 });

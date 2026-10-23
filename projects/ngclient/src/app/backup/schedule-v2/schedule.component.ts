@@ -184,6 +184,19 @@ export function toLocalDateString(date: Date) {
   return `${year}-${month}-${day}`;
 }
 
+// Returns the local date on which a time of day next occurs: today if it is still ahead, otherwise tomorrow.
+// A past start time would make the server run the backup as soon as it is saved.
+export function getNextRunDate(time: string, now = new Date()) {
+  const [hours = 0, minutes = 0, seconds = 0] = time.split(':').map((x) => parseInt(x) || 0);
+  const next = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, seconds);
+
+  if (next <= now) {
+    next.setDate(next.getDate() + 1);
+  }
+
+  return toLocalDateString(next);
+}
+
 function getLocalDateParts(value: string | Date) {
   if (typeof value === 'string') {
     const canonicalDate = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
@@ -347,8 +360,13 @@ export default class ScheduleComponent {
       const data = predefinedType.data;
 
       this.scheduleFields.autoRun.set(data.autoRun ?? false);
-      this.scheduleFields.nextTime.time.set(data.nextTime?.time ?? '13:00');
-      this.scheduleFields.nextTime.date.set(data.nextTime?.date ?? toLocalDateString(new Date()));
+      const time = data.nextTime?.time ?? '13:00';
+
+      // Compute the start when the preset is picked, as the page may have been open since an earlier day
+      this.scheduleFields.nextTime.time.set(time);
+      this.scheduleFields.nextTime.date.set(
+        predefinedType.value === 'weekly' ? toLocalDateString(getNextMondayAt12PM()) : getNextRunDate(time)
+      );
       this.scheduleFields.runAgain.repeatValue.set(data.runAgain?.repeatValue ?? 1);
       this.scheduleFields.runAgain.repeatUnit.set(data.runAgain?.repeatUnit ?? 'D');
       this.scheduleFields.runAgain.allowedDays.mon.set(data.runAgain?.allowedDays?.mon ?? true);

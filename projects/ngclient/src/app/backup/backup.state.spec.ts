@@ -87,6 +87,39 @@ describe('BackupState', () => {
     expect(state.getScheduleFormValue()?.Time).toBe('2026-06-14T12:50:00.000Z');
   });
 
+  describe('server schedule defaults', () => {
+    // Same shape as newbackup.json served by /api/v1/backupdefaults: a time without a date
+    const serverDefault = {
+      Repeat: '1D',
+      Time: '13:00:00',
+      AllowedDays: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'],
+    } as unknown as ScheduleDto;
+
+    afterEach(() => vi.useRealTimers());
+
+    it('starts today when the default time is still ahead', () => {
+      vi.stubEnv('TZ', 'Asia/Tokyo');
+      vi.useFakeTimers({ now: new Date('2026-10-20T01:00:00.000Z'), toFake: ['Date'] });
+
+      state.mapScheduleToForm(serverDefault);
+
+      expect(state.scheduleFields.nextTime.date()).toBe('2026-10-20');
+      expect(state.getScheduleFormValue()?.Time).toBe('2026-10-20T04:00:00.000Z');
+      expect(state.scheduleType()).toBe('daily');
+    });
+
+    it('starts tomorrow when the default time has already passed', () => {
+      vi.stubEnv('TZ', 'Asia/Tokyo');
+      vi.useFakeTimers({ now: new Date('2026-10-20T06:00:00.000Z'), toFake: ['Date'] });
+
+      state.mapScheduleToForm(serverDefault);
+
+      expect(state.scheduleFields.nextTime.date()).toBe('2026-10-21');
+      expect(state.getScheduleFormValue()?.Time).toBe('2026-10-21T04:00:00.000Z');
+      expect(state.scheduleType()).toBe('daily');
+    });
+  });
+
   it('preserves file attribute exclusions when options are loaded and saved', () => {
     state.mapOptionsToForms({
       Settings: [{ Name: '--exclude-files-attributes', Value: 'hidden' }],

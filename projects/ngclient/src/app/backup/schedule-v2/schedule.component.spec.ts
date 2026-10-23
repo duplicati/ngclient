@@ -71,6 +71,20 @@ describe('ScheduleComponent date picker', () => {
     fixture?.destroy();
     TestBed.resetTestingModule();
     vi.unstubAllEnvs();
+    vi.useRealTimers();
+  });
+
+  it('starts a predefined schedule at its next future run', async () => {
+    vi.stubEnv('TZ', 'Asia/Tokyo');
+    // Tuesday 2026-10-20 15:00 in Tokyo, after the 13:00 preset time
+    vi.useFakeTimers({ now: new Date('2026-10-20T06:00:00.000Z'), toFake: ['Date'] });
+    await renderSchedule('2026-09-06T12:20:00.000Z');
+
+    fixture.componentInstance.updateScheduleType('daily');
+    expect(state.scheduleFields.nextTime.date()).toBe('2026-10-21');
+
+    fixture.componentInstance.updateScheduleType('weekly');
+    expect(state.scheduleFields.nextTime.date()).toBe('2026-10-26');
   });
 
   it.each([

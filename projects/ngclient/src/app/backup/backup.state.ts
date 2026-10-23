@@ -28,6 +28,7 @@ import { FormView, getConfigurationByUrl } from './destination/destination.confi
 import { createGeneralForm, NONE_OPTION } from './general/general.component';
 import { RetentionType } from './options/options.component';
 import {
+  getNextRunDate,
   SCHEDULE_DEFAULT_OPTIONS,
   SCHEDULE_FIELD_DEFAULTS,
   scheduleOptionToSchedule,
@@ -400,7 +401,8 @@ export class BackupState {
 
     this.scheduleFields.autoRun.set(true);
 
-    nextTime.date && this.scheduleFields.nextTime.date.set(nextTime.date);
+    // A time without a date (the server's new backup default) starts at its next occurrence
+    this.scheduleFields.nextTime.date.set(nextTime.date ?? getNextRunDate(nextTime.time));
     this.scheduleFields.nextTime.time.set(nextTime.time);
     this.scheduleFields.runAgain.repeatUnit.set(res?.unit ?? 'D');
     this.scheduleFields.runAgain.repeatValue.set(res?.value ?? 1);
@@ -412,8 +414,11 @@ export class BackupState {
     this.scheduleFields.runAgain.allowedDays.sat.set(schedule.AllowedDays?.includes('sat') ?? false);
     this.scheduleFields.runAgain.allowedDays.sun.set(schedule.AllowedDays?.includes('sun') ?? false);
 
+    // The date is only the first run and depends on when the form was filled, so leave it out of the match
+    const withoutDate = (x: { nextTime: object }) =>
+      JSON.stringify({ ...x, nextTime: { ...x.nextTime, date: undefined } });
     const test = parseRecursiveObjectOfSignals(this.scheduleFields);
-    const matchPredefined = SCHEDULE_DEFAULT_OPTIONS.find((x) => JSON.stringify(x.data) === JSON.stringify(test));
+    const matchPredefined = SCHEDULE_DEFAULT_OPTIONS.find((x) => withoutDate(x.data) === withoutDate(test));
 
     if (matchPredefined) {
       this.scheduleType.set(matchPredefined.value);
