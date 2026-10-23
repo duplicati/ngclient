@@ -45,14 +45,17 @@ export class FileDropTextareaComponent implements ControlValueAccessor {
   }
 
   private readFile(file: File): void {
+    if (this.readonly()) return;
     const reader = new FileReader();
     reader.onload = () => {
+      if (this.readonly()) return;
       this.content.set(reader.result as string);
     };
     reader.readAsText(file);
   }
 
   triggerBrowse() {
+    if (this.readonly()) return false;
     this.fileInputRef()?.nativeElement.click();
     return false;
   }

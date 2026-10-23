@@ -1,6 +1,6 @@
 <ng-content select="label" ngProjectAs="label" />
 <div class="browse-btn">
-  <button shButton type="button" class="small outlined" (click)="triggerBrowse()">
+  <button shButton type="button" class="small outlined" (click)="triggerBrowse()" [disabled]="readonly()">
     <sh-icon>upload</sh-icon>
   </button>
 </div>
@@ -9,4 +9,4 @@
   <textarea [placeholder]="placeholder()" [(ngModel)]="content" [disabled]="readonly()" rows="10"></textarea>
 </div>
 
-<input #fileInput type="file" class="hidden" (change)="onFileSelected($event)" />
+<input #fileInput type="file" class="hidden" [disabled]="readonly()" (change)="onFileSelected($event)" />
