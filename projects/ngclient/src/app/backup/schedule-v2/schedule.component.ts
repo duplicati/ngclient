@@ -100,7 +100,9 @@ export const SCHEDULE_DEFAULT_OPTIONS = [
       autoRun: true,
       nextTime: {
         time: '13:00:00',
-        date: toLocalDateString(getNextMondayAt12PM()),
+        get date() {
+          return getNextRunDate(this.time, new Date(), 1);
+        },
       },
       runAgain: {
         repeatValue: 1,
@@ -184,14 +186,18 @@ export function toLocalDateString(date: Date) {
   return `${year}-${month}-${day}`;
 }
 
-// Returns the local date on which a time of day next occurs: today if it is still ahead, otherwise tomorrow.
+// Returns the next future local date for a time, optionally restricted to a weekday (0 = Sunday).
 // A past start time would make the server run the backup as soon as it is saved.
-export function getNextRunDate(time: string, now = new Date()) {
+export function getNextRunDate(time: string, now = new Date(), dayOfWeek?: number) {
   const [hours = 0, minutes = 0, seconds = 0] = time.split(':').map((x) => parseInt(x) || 0);
   const next = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, seconds);
 
+  if (dayOfWeek !== undefined) {
+    next.setDate(next.getDate() + ((dayOfWeek - next.getDay() + 7) % 7));
+  }
+
   if (next <= now) {
-    next.setDate(next.getDate() + 1);
+    next.setDate(next.getDate() + (dayOfWeek === undefined ? 1 : 7));
   }
 
   return toLocalDateString(next);
@@ -252,17 +258,6 @@ export function scheduleOptionToSchedule(schedule: ScheduleFormValue): ScheduleI
     Repeat: `${repeatValue}${repeatUnit}`,
     AllowedDays: allowedDays,
   };
-}
-
-function getNextMondayAt12PM() {
-  const d = new Date();
-  const today = d.getDay();
-  const daysUntilMonday = today === 1 ? 7 : (8 - today) % 7;
-
-  d.setDate(d.getDate() + daysUntilMonday);
-  d.setHours(12, 0, 0, 0);
-
-  return d;
 }
 
 export const SCHEDULE_FIELD_DEFAULTS = () => {
@@ -365,7 +360,7 @@ export default class ScheduleComponent {
       // Compute the start when the preset is picked, as the page may have been open since an earlier day
       this.scheduleFields.nextTime.time.set(time);
       this.scheduleFields.nextTime.date.set(
-        predefinedType.value === 'weekly' ? toLocalDateString(getNextMondayAt12PM()) : getNextRunDate(time)
+        getNextRunDate(time, new Date(), predefinedType.value === 'weekly' ? 1 : undefined)
       );
       this.scheduleFields.runAgain.repeatValue.set(data.runAgain?.repeatValue ?? 1);
       this.scheduleFields.runAgain.repeatUnit.set(data.runAgain?.repeatUnit ?? 'D');
