@@ -327,7 +327,8 @@ export class NewFilterComponent {
     const expressionOption = this.currentExpressionOption();
 
     if (newPath === '') return;
-    if (newPath === '*') {
+    // A wildcard is the complete pattern for raw expression filters.
+    if (newPath === '*' && !expressionOption?.value.endsWith('Expression')) {
       newPath = '';
     }
 
