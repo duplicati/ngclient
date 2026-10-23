@@ -8,7 +8,7 @@ import { DAYJS } from '../providers/dayjs';
 export class DurationFormatPipe implements PipeTransform {
   #dayjs = inject(DAYJS);
 
-  transform(value: string | undefined | null, forceActualDuration = false, ...args: unknown[]): unknown {
+  transform(value: string | undefined | null, forceActualDuration = false, ...args: unknown[]): string {
     if (!value) return '';
 
     // Match: [days.]HH:MM:SS[.fraction]

@@ -181,21 +181,21 @@
                         } @else {
                           <span i18n>Last successful backup:</span>
                         }
-                        {{ (backup.Backup | lastRun) | relativeTime: timeType() === 'actual' }}
+                        <span class="time-value" [shTooltip]="(backup.Backup | lastRun) | relativeTime: timeType() !== 'actual'">{{ (backup.Backup | lastRun) | relativeTime: timeType() === 'actual' }}</span>
                       </p>
 
                       @let next = scheduledTimes()[backup.Backup.ID ?? ''];
                       @if (next) {
                         <p>
                           <span i18n>Next scheduled run:</span>
-                          {{ next | relativeTime: timeType() === 'actual' }}
+                          <span class="time-value" [shTooltip]="next | relativeTime: timeType() !== 'actual'">{{ next | relativeTime: timeType() === 'actual' }}</span>
                         </p>
                       }
 
                       <p>
                         <span i18n>Duration:</span>
                         @if ((backup.Backup | lastRun: 'duration')) {
-                          {{ (backup.Backup | lastRun: 'duration') | durationFormat: timeType() === 'actual' }}
+                          <span class="time-value" [shTooltip]="(backup.Backup | lastRun: 'duration') | durationFormat: timeType() !== 'actual'">{{ (backup.Backup | lastRun: 'duration') | durationFormat: timeType() === 'actual' }}</span>
                         } @else {
                           <ng-container>-</ng-container>
                         }
@@ -319,7 +319,7 @@
               </td>
               <td>
                 @if ((backup.Backup | lastRun)) {
-                  {{ (backup.Backup | lastRun) | relativeTime: timeType() === 'actual' }}
+                  <span class="time-value" [shTooltip]="(backup.Backup | lastRun) | relativeTime: timeType() !== 'actual'">{{ (backup.Backup | lastRun) | relativeTime: timeType() === 'actual' }}</span>
                 } @else {
                   <ng-container>-</ng-container>
                 }
@@ -327,14 +327,14 @@
               <td>
                 @let next = scheduledTimes()[backup.Backup.ID ?? ''];
                 @if (next) {
-                  {{ next | relativeTime: timeType() === 'actual' }}
+                  <span class="time-value" [shTooltip]="next | relativeTime: timeType() !== 'actual'">{{ next | relativeTime: timeType() === 'actual' }}</span>
                 } @else {
                   <ng-container>-</ng-container>
                 }
               </td>
               <td>
                 @if ((backup.Backup | lastRun: 'duration')) {
-                  {{ (backup.Backup | lastRun: 'duration') | durationFormat: timeType() === 'actual' }}
+                  <span class="time-value" [shTooltip]="(backup.Backup | lastRun: 'duration') | durationFormat: timeType() !== 'actual'">{{ (backup.Backup | lastRun: 'duration') | durationFormat: timeType() === 'actual' }}</span>
                 } @else {
                   <ng-container>-</ng-container>
                 }

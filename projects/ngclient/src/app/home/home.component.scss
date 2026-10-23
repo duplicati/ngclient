@@ -142,6 +142,11 @@ sh-menu {
       span {
         color: var(--base-12);
       }
+
+      .time-value {
+        margin-left: 0.25em;
+        color: inherit;
+      }
     }
   }
 
@@ -151,6 +156,11 @@ sh-menu {
     flex-direction: column;
     gap: p2r(8);
   }
+}
+
+// ShipTooltip globally sets `.tooltip { display: flex }`, keep the values inline
+.time-value.tooltip {
+  display: inline;
 }
 
 .provider-icon {

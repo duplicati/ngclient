@@ -20,7 +20,7 @@ export class RelativeTimePipe implements PipeTransform {
     return input;
   }
 
-  transform(value: string | number | Date | undefined | null, forceActualDate = false, ...args: unknown[]): unknown {
+  transform(value: string | number | Date | undefined | null, forceActualDate = false, ...args: unknown[]): string | null {
     if (!value) return 'N/A';
 
     if (forceActualDate) {
