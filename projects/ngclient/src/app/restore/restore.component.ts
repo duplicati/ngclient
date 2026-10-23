@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipCard } from '@ship-ui/core/ship-card';
@@ -21,7 +21,7 @@ export default class RestoreComponent {
   #backupsState = inject(BackupsState);
   #dupServer = inject(DuplicatiServer);
 
-  backups = this.#backupsState.backups;
+  backups = computed(() => this.#backupsState.backups().filter((job) => job.Backup?.OperationType !== 'Sync'));
   backupsLoading = this.#backupsState.backupsLoading;
 
   ngOnInit() {
@@ -33,12 +33,12 @@ export default class RestoreComponent {
       this.#dupServer.postApiV1BackupByIdRestore({
         path: { id: backup.Backup?.ID! },
         body: {
-        // paths?: Array<(string)> | null;
-        // passphrase?: (string) | null;
-        // time?: (string) | null;
-        // restore_path?: (string) | null;
-        // overwrite?: (boolean) | null;
-        // permissions?: (boolean) | null;
+          // paths?: Array<(string)> | null;
+          // passphrase?: (string) | null;
+          // time?: (string) | null;
+          // restore_path?: (string) | null;
+          // overwrite?: (boolean) | null;
+          // permissions?: (boolean) | null;
           // skip_metadata?: (boolean) | null;
         },
       })
