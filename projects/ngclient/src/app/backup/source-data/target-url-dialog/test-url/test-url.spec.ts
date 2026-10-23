@@ -319,14 +319,16 @@ describe('TestUrl connection testing', () => {
     expect(component.testSignal()).toBe(previous);
   });
 
-  it('does not reset the testing state when the URL changes during a request', async () => {
+  it('settles and clears a pending test when the URL changes', async () => {
     const { component } = setup();
     const pending = component.testDestination(false);
     fixture.componentRef.setInput('targetUrl', suggestedUrl);
     fixture.detectChanges();
-    expect(component.testSignal()).toBe('testing');
+    expect(component.testSignal()).toBeNull();
+    await expect(pending).resolves.toBeUndefined();
+    expect(released[0]).toHaveBeenCalledTimes(1);
     respond(0, result());
-    await pending;
+    expect(component.testSignal()).toBeNull();
   });
 
   it.each([
@@ -337,5 +339,46 @@ describe('TestUrl connection testing', () => {
     const test = vi.spyOn(component, 'testDestination').mockResolvedValue(result());
     expect(component[method]()).toBe(false);
     expect(test).toHaveBeenCalledExactlyOnceWith(autoCreate);
+  });
+  it('shares a running folder creation test with Continue and other test buttons', async () => {
+    const { component, testDestination } = setup();
+    const creating = component.testDestination(true)!;
+    const continuing = component.testDestination(false)!;
+    const repeated = component.testDestination(true)!;
+    expect(continuing).toBe(creating);
+    expect(repeated).toBe(creating);
+    expect(testDestination).toHaveBeenCalledTimes(1);
+    const response = result();
+    respond(0, response);
+    await expect(continuing).resolves.toBe(response);
+    await expect(repeated).resolves.toBe(response);
+  });
+
+  it.each(['error', 'empty'] as const)('settles all waiters and allows retry after %s', async (ending) => {
+    const { component, testDestination } = setup();
+    const first = component.testDestination(false)!;
+    const second = component.testDestination(false)!;
+    if (ending === 'error') requests[0].error(new Error('network failure'));
+    else requests[0].complete();
+    await Promise.all([first, second]);
+    expect(component.testSignal()).not.toBe('testing');
+    const retry = component.testDestination(false)!;
+    expect(testDestination).toHaveBeenCalledTimes(2);
+    respond(1, result());
+    await expect(retry).resolves.toEqual(result());
+  });
+
+  it('does not reuse an old result when a new URL is tested before the URL effect runs', async () => {
+    const { component, testDestination } = setup();
+    const old = component.testDestination(false)!;
+    fixture.componentRef.setInput('targetUrl', suggestedUrl);
+    const current = component.testDestination(false)!;
+    await expect(old).resolves.toBeUndefined();
+    expect(testDestination).toHaveBeenCalledTimes(2);
+    expect(released[0]).toHaveBeenCalledTimes(1);
+    fixture.detectChanges();
+    expect(component.testSignal()).toBe('testing');
+    respond(1, result({ targetUrl: suggestedUrl }));
+    await expect(current).resolves.toEqual(result({ targetUrl: suggestedUrl }));
   });
 });

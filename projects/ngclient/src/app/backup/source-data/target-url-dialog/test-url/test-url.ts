@@ -3,7 +3,7 @@ import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipSpinner } from '@ship-ui/core/ship-spinner';
-import { Subscription } from 'rxjs';
+import { defer, EMPTY, Subscription } from 'rxjs';
 import { RemoteDestinationType } from '../../../../core/openapi';
 import { TestDestinationResult, TestDestinationService } from '../../../../core/services/test-destination.service';
 import { fromTargetPath } from '../../../destination/destination.config-utilities';
@@ -21,6 +21,11 @@ export type TestState = 'testing' | TestDestinationResult | null;
 export class TestUrl {
   #testDestination = inject(TestDestinationService);
   #destroyRef = inject(DestroyRef);
+  #activeTest?: {
+    targetUrl: string;
+    promise: Promise<TestDestinationResult | undefined>;
+    cancel: () => void;
+  };
 
   targetUrl = model.required<string | null>();
   testSignal = model.required<TestState>();
@@ -67,8 +72,8 @@ export class TestUrl {
 
     this.prevTargetUrl = url;
 
-    // If we change the target url during testing, don't reset the test state
-    if (this.testSignal() === 'testing') return;
+    // An old URL must not keep Continue waiting or later validate the new URL.
+    if (this.#activeTest && this.#activeTest.targetUrl !== url) this.#activeTest.cancel();
     // If we are just loading for the first time, don't reset the test state
     if (prevUrl === null) return;
 
@@ -102,74 +107,80 @@ export class TestUrl {
     if (this.#destroyRef.destroyed) return;
     const targetUrl = this.targetUrl();
 
+    if (this.#activeTest?.targetUrl === targetUrl) return this.#activeTest.promise;
+    this.#activeTest?.cancel();
     if (!targetUrl) return;
 
-    this.testSignal.set('testing');
-
-    const folderHandling = autoCreateFolders ? 'create' : this.askToCreate() ? 'prompt' : 'error';
-
-    return new Promise<TestDestinationResult | undefined>((resolve) => {
-      const subscriptions = new Subscription();
-      const unregister = this.#destroyRef.onDestroy(() => {
-        subscriptions.unsubscribe();
-        resolve(undefined);
-      });
-      const finish = (result: TestDestinationResult) => {
-        this.testSignal.set(result);
-        unregister();
-        subscriptions.unsubscribe();
-        resolve(result);
-      };
-
-      subscriptions.add(
-        this.#testDestination
-          .testDestination(
-            targetUrl,
-            this.backupId(),
-            this.connectionStringId(),
-            this.sourcePrefix(),
-            0,
-            this.moduleType(),
-            this.suppressErrorDialogs(),
-            folderHandling,
-            this.readOnlyTest()
-          )
-          ?.subscribe({
-            next: (res) => {
-              if (subscriptions.closed) return;
-              if (!this.suppressErrorDialogs() && res.testAgain) {
-                const suggestedUrl = res.suggestedUrl;
-                if (suggestedUrl) this.targetUrl.set(suggestedUrl);
-
-                this.testSignal.set('testing');
-
-                subscriptions.add(
-                  this.#testDestination
-                    .testDestination(
-                      suggestedUrl ?? targetUrl,
-                      this.backupId(),
-                      this.connectionStringId(),
-                      this.sourcePrefix(),
-                      0,
-                      this.moduleType(),
-                      this.suppressErrorDialogs(),
-                      folderHandling,
-                      this.readOnlyTest()
-                    )
-                    ?.subscribe({
-                      // We only support one level of re-test for now
-                      next: (res) => {
-                        if (subscriptions.closed) return;
-                        finish(res);
-                      },
-                    })
-                );
-              } else {
-                finish(res);
-              }
-            },
-          })
-      );
+    let resolve!: (result: TestDestinationResult | undefined) => void;
+    const promise = new Promise<TestDestinationResult | undefined>((done) => {
+      resolve = done;
     });
+    const subscriptions = new Subscription();
+    const active = { targetUrl, promise, cancel: () => finish(undefined) };
+    this.#activeTest = active;
+    const unregister = this.#destroyRef.onDestroy(() => finish(undefined, false));
+    const finish = (result: TestDestinationResult | undefined, updateState = true) => {
+      if (subscriptions.closed) return;
+      if (this.#activeTest === active) this.#activeTest = undefined;
+      if (updateState) this.testSignal.set(result ?? null);
+      unregister();
+      subscriptions.unsubscribe();
+      resolve(result);
+    };
+
+    this.prevTargetUrl = targetUrl;
+    this.testSignal.set('testing');
+    const folderHandling = autoCreateFolders ? 'create' : this.askToCreate() ? 'prompt' : 'error';
+    const run = (url: string, canRetry: boolean) => {
+      let emitted = false;
+      subscriptions.add(
+        defer(
+          () =>
+            this.#testDestination.testDestination(
+              url,
+              this.backupId(),
+              this.connectionStringId(),
+              this.sourcePrefix(),
+              0,
+              this.moduleType(),
+              this.suppressErrorDialogs(),
+              folderHandling,
+              this.readOnlyTest()
+            ) ?? EMPTY
+        ).subscribe({
+          next: (res) => {
+            if (subscriptions.closed) return;
+            if (this.targetUrl() !== active.targetUrl) {
+              finish(undefined);
+              return;
+            }
+            emitted = true;
+            if (canRetry && !this.suppressErrorDialogs() && res.testAgain) {
+              const retryUrl = res.suggestedUrl ?? url;
+              // This URL change is part of this test (certificate/host-key approval).
+              active.targetUrl = retryUrl;
+              this.prevTargetUrl = retryUrl;
+              if (res.suggestedUrl) this.targetUrl.set(retryUrl);
+              run(retryUrl, false);
+            } else {
+              finish(res);
+            }
+          },
+          error: (error: unknown) =>
+            finish({
+              action: 'generic-error',
+              targetUrl: url,
+              testAgain: false,
+              destinationIndex: 0,
+              errorMessage: error instanceof Error ? error.message : String(error),
+            }),
+          complete: () => {
+            if (!emitted) finish(undefined);
+          },
+        })
+      );
+    };
+    run(targetUrl, true);
+    return promise;
   }
 }
