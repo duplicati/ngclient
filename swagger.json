@@ -2450,6 +2450,35 @@
         }
       }
     },
+    "/api/v1/backup/{id}/restore-test": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskStartedDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/backup/{id}/compact": {
       "post": {
         "tags": [
@@ -2814,6 +2843,25 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/DestinationListResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/status": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemStatusDtoResponseEnvelope"
                 }
               }
             }
@@ -3217,6 +3265,24 @@
           "Acknowledgements": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ActiveFile": {
+        "type": "object",
+        "properties": {
+          "Path": {
+            "type": "string",
+            "nullable": true
+          },
+          "Size": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "Offset": {
+            "type": "integer",
+            "format": "int64"
           }
         },
         "additionalProperties": false
@@ -4490,6 +4556,32 @@
             "items": {
               "$ref": "#/components/schemas/ActiveTransfer"
             },
+            "nullable": true,
+            "readOnly": true
+          },
+          "ActiveFiles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ActiveFile"
+            },
+            "nullable": true,
+            "readOnly": true
+          },
+          "SourceBytesRead": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true,
+            "readOnly": true
+          },
+          "BackendBytesUploaded": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true,
+            "readOnly": true
+          },
+          "BackendBytesDownloaded": {
+            "type": "integer",
+            "format": "int64",
             "nullable": true,
             "readOnly": true
           },
@@ -5862,6 +5954,38 @@
         },
         "additionalProperties": false
       },
+      "SecretProviderDto": {
+        "required": [
+          "CachingLevel",
+          "DisplayName",
+          "IsSetSupported",
+          "Key",
+          "Pattern"
+        ],
+        "type": "object",
+        "properties": {
+          "Key": {
+            "type": "string",
+            "nullable": true
+          },
+          "DisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "IsSetSupported": {
+            "type": "boolean"
+          },
+          "CachingLevel": {
+            "type": "string",
+            "nullable": true
+          },
+          "Pattern": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ServerStatusDto": {
         "required": [
           "ActiveTask",
@@ -6133,6 +6257,7 @@
       },
       "SystemInfoDto": {
         "required": [
+          "ActiveSecretProvider",
           "APIExtensions",
           "APIScopes",
           "APIVersion",
@@ -6145,6 +6270,7 @@
           "ConnectionModules",
           "DefaultOAuthURL",
           "DefaultOAuthURLv2",
+          "DefaultSecretProvider",
           "DefaultUpdateChannel",
           "DefaultUsageReportLevel",
           "DirectorySeparator",
@@ -6351,6 +6477,12 @@
             },
             "nullable": true
           },
+          "ActiveSecretProvider": {
+            "$ref": "#/components/schemas/SecretProviderDto"
+          },
+          "DefaultSecretProvider": {
+            "$ref": "#/components/schemas/SecretProviderDto"
+          },
           "UsingAlternateUpdateURLs": {
             "type": "boolean"
           },
@@ -6422,6 +6554,162 @@
           },
           "RemoteLicenseStatus": {
             "$ref": "#/components/schemas/LicenseStatusDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SystemStatusDto": {
+        "type": "object",
+        "properties": {
+          "Timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "IntervalMs": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Machine": {
+            "$ref": "#/components/schemas/SystemStatusMachineDto"
+          },
+          "Processes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SystemStatusProcessDto"
+            },
+            "nullable": true
+          },
+          "Queue": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SystemStatusQueueItemDto"
+            },
+            "nullable": true
+          },
+          "Progress": {
+            "$ref": "#/components/schemas/IProgressEventData"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SystemStatusDtoResponseEnvelope": {
+        "required": [
+          "Error",
+          "StatusCode",
+          "Success"
+        ],
+        "type": "object",
+        "properties": {
+          "Success": {
+            "type": "boolean"
+          },
+          "Error": {
+            "type": "string",
+            "nullable": true
+          },
+          "StatusCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "Data": {
+            "$ref": "#/components/schemas/SystemStatusDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SystemStatusMachineDto": {
+        "type": "object",
+        "properties": {
+          "ProcessorCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "CpuUsage": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TotalMemory": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "AvailableMemory": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SystemStatusProcessDto": {
+        "type": "object",
+        "properties": {
+          "Role": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProcessId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "StartTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "CpuUsage": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "WorkingSet": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "PrivateMemory": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "ManagedHeapSize": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "ThreadCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SystemStatusQueueItemDto": {
+        "type": "object",
+        "properties": {
+          "TaskID": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "BackupID": {
+            "type": "string",
+            "nullable": true
+          },
+          "BackupName": {
+            "type": "string",
+            "nullable": true
+          },
+          "Operation": {
+            "type": "string",
+            "nullable": true
+          },
+          "Status": {
+            "type": "string",
+            "nullable": true
+          },
+          "TaskStarted": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
           }
         },
         "additionalProperties": false
