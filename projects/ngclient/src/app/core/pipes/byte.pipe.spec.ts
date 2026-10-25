@@ -42,6 +42,13 @@ describe('BytesPipe', () => {
     expect(pipe.transform(1500)).toBe('1.5 KB');
   });
 
+  it('shows at most three significant digits in compact mode', () => {
+    expect(pipe.transform(176.29 * 1024 * 1024, false, false, true)).toBe('176 MiB');
+    expect(pipe.transform(17.629 * 1024 * 1024, false, false, true)).toBe('17.6 MiB');
+    expect(pipe.transform(7.156 * 1024 * 1024 * 1024, false, false, true)).toBe('7.16 GiB');
+    expect(pipe.transform(176.29 * 1024 * 1024)).toBe('176.29 MiB');
+  });
+
   it('accepts numeric strings', () => {
     expect(pipe.transform('2048')).toBe('2 KiB');
   });

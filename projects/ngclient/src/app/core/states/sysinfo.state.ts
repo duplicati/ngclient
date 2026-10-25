@@ -177,6 +177,11 @@ export class SysinfoState {
     const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
     return apiExtensions.includes('v1:subscribe:remotecontrol');
   });
+  /** The system status websocket subscription and REST endpoint, with active files and transfer totals in the progress */
+  hasSystemStatus = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v2:systemstatus');
+  });
   hasWsNotifications = computed(() => {
     const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
     return apiExtensions.includes('v1:subscribe:notifications');

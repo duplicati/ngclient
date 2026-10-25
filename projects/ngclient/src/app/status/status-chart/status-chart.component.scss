@@ -1,0 +1,72 @@
+@use '@ship-ui/core/styles/helpers' as *;
+
+:host {
+  display: block;
+  height: p2r(140);
+}
+
+.chart {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: p2r(8);
+  height: 100%;
+}
+
+.y-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-bottom: p2r(18);
+  font: var(--paragraph-40);
+  color: var(--base-8);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+
+  span {
+    line-height: 1;
+  }
+}
+
+.plot {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+
+  svg {
+    flex: 1;
+    width: 100%;
+    min-height: 0;
+    overflow: visible;
+  }
+}
+
+.grid {
+  stroke: var(--base-4);
+  stroke-width: 1;
+}
+
+.limit {
+  stroke: var(--error-8);
+  stroke-width: 1;
+  stroke-dasharray: 4 4;
+}
+
+.area {
+  opacity: 0.15;
+}
+
+.line {
+  fill: none;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.x-axis {
+  display: flex;
+  justify-content: space-between;
+  height: p2r(18);
+  padding-top: p2r(4);
+  font: var(--paragraph-40);
+  color: var(--base-8);
+}

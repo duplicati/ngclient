@@ -1,0 +1,44 @@
+<div class="chart">
+  <div class="y-axis">
+    @for (tick of yTicks(); track $index) {
+      <span>{{ tick.label }}</span>
+    }
+  </div>
+
+  <div class="plot">
+    <svg [attr.viewBox]="'0 0 ' + width + ' ' + height" preserveAspectRatio="none" aria-hidden="true">
+      @for (tick of yTicks(); track $index) {
+        <line
+          class="grid"
+          x1="0"
+          [attr.x2]="width"
+          [attr.y1]="(height * $index) / 2"
+          [attr.y2]="(height * $index) / 2"
+          vector-effect="non-scaling-stroke" />
+      }
+
+      @if (limitY() !== null) {
+        <line
+          class="limit"
+          x1="0"
+          [attr.x2]="width"
+          [attr.y1]="limitY()"
+          [attr.y2]="limitY()"
+          vector-effect="non-scaling-stroke" />
+      }
+
+      @for (path of paths(); track path.label) {
+        @if (path.area) {
+          <path class="area" [attr.d]="path.area" [style.fill]="path.color" />
+        }
+        <path class="line" [attr.d]="path.line" [style.stroke]="path.color" vector-effect="non-scaling-stroke" />
+      }
+    </svg>
+
+    <div class="x-axis">
+      @for (label of xTicks(); track $index) {
+        <span>{{ label }}</span>
+      }
+    </div>
+  </div>
+</div>

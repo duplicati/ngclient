@@ -65,6 +65,7 @@ export class ServerStateService {
 
   progressState = this.#wsService.serverProgress;
   taskQueueState = this.#wsService.serverTaskQueue;
+  systemStatusState = this.#wsService.systemStatusState;
 
   activeTaskQueueState = computed(() => {
     const method = this.#connectionMethod();

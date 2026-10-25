@@ -4,6 +4,7 @@ import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipList } from '@ship-ui/core/ship-list';
 import { ShipTable } from '@ship-ui/core/ship-table';
+import { LogMessageType } from '../../../core/openapi';
 import { LogsLiveState } from './logs-live.state';
 
 @Component({
@@ -22,6 +23,8 @@ export default class LogsLiveComponent {
   whenFilter = input<number | null>();
   backupIdFilter = input<string | null>();
   polling = input<boolean>();
+  /** The log level to show; when not set, logs are shown at verbose level only when filtered */
+  level = input<LogMessageType | null>();
 
   logLevel = this.#logsLiveState.logLevel;
   logLevelByLabel = this.#logsLiveState.logLevelByLabel;
@@ -36,18 +39,14 @@ export default class LogsLiveComponent {
 
   openRowId = signal<number | null>(null);
 
-  whenEffect = effect(() => {
+  filterEffect = effect(() => {
     const whenFilter = this.whenFilter() ?? null;
+    const backupIdFilter = this.backupIdFilter() ?? null;
+    const level = this.level() ?? null;
 
     this.#logsLiveState.setWhenFilter(whenFilter);
-    this.#logsLiveState.logLevel.set(whenFilter ? 'Verbose' : 'Disabled');
-  });
-
-  backupIdEffect = effect(() => {
-    const backupIdFilter = this.backupIdFilter() ?? null;
-
     this.#logsLiveState.setBackupIdFilter(backupIdFilter);
-    this.#logsLiveState.logLevel.set(backupIdFilter ? 'Verbose' : 'Disabled');
+    this.#logsLiveState.logLevel.set(level ?? (whenFilter || backupIdFilter ? 'Verbose' : 'Disabled'));
   });
 
   toggleRow(id: number | null | undefined) {

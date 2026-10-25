@@ -12,6 +12,7 @@ import {
   ServerStatusDto,
 } from '../openapi';
 import { AppAuthState } from '../states/app-auth.state';
+import { SystemStatusSnapshot } from '../types/system-status';
 import { getApiBase } from '../utils/proxy-config.util';
 import { SysinfoState } from '../states/sysinfo.state';
 
@@ -26,7 +27,8 @@ export type SubscriptionService =
   | 'notifications'
   | 'legacystatus'
   | 'serversettings'
-  | 'remotecontrol';
+  | 'remotecontrol'
+  | 'systemstatus';
 type RequestAction = 'sub' | 'unsub';
 type ResponseAction = 'reply';
 type ResponseType = SubscriptionService | ResponseAction;
@@ -96,6 +98,7 @@ export class ServerStatusWebSocketService {
   #backupListState = signal<GetApiV1BackupsResponse | null>(null);
   #notificationState = signal<GetApiV1NotificationsResponse | null>(null);
   #remoteControlState = signal<RemoteControlStatusOutput | null>(null);
+  #systemStatusState = signal<SystemStatusSnapshot | null>(null);
   #disconnectedDialog: ReturnType<typeof this.dialog.open<DisconnectedDialogComponent>> | undefined = undefined;
   #isHandlingAuthRefresh = false;
   #subscriptions = signal<Partial<{ [key in SubscriptionService]: any }>>({ legacystatus: true });
@@ -110,6 +113,7 @@ export class ServerStatusWebSocketService {
   backupListState = this.#backupListState.asReadonly();
   notificationState = this.#notificationState.asReadonly();
   remoteControlState = this.#remoteControlState.asReadonly();
+  systemStatusState = this.#systemStatusState.asReadonly();
   #taskCompletedSubscriber: Subscriber<GetTaskStateDto> | null = null;
   taskCompleted = new Observable<GetTaskStateDto>((subscriber) => {
     this.#taskCompletedSubscriber = subscriber;
@@ -258,6 +262,10 @@ export class ServerStatusWebSocketService {
           const evobj = respobj as WebsocketEventMessage<RemoteControlStatusOutput>;
           if (LOGGING_ENABLED) console.log('Received remote control update:', evobj.Data);
           this.#remoteControlState.set(evobj.Data);
+        } else if (type === 'systemstatus') {
+          const evobj = respobj as WebsocketEventMessage<SystemStatusSnapshot>;
+          if (LOGGING_ENABLED) console.log('Received system status update:', evobj.Data);
+          this.#systemStatusState.set(evobj.Data);
         } else {
           console.warn('Unknown WebSocket message type:', type);
         }

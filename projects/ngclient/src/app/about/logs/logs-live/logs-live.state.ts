@@ -102,6 +102,9 @@ export class LogsLiveState {
   }
 
   loadLogs() {
+    // The server rejects polling at the disabled level
+    if (this.logLevel() === 'Disabled') return;
+
     this.logsLoading.set(true);
 
     defer(() =>

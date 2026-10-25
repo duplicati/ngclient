@@ -17,7 +17,15 @@ type UserAgentData = {
 export class BytesPipe implements PipeTransform {
   decimalPipe = inject(DecimalPipe);
 
-  transform(bytes: number | string | undefined | null, longForm: boolean = false, allowZero: boolean = false): string {
+  /**
+   * @param compact Show at most three significant digits, such as 176 MB or 7.16 GB, for narrow places
+   */
+  transform(
+    bytes: number | string | undefined | null,
+    longForm: boolean = false,
+    allowZero: boolean = false,
+    compact: boolean = false
+  ): string {
     if (allowZero && bytes === 0) return longForm ? '0 Bytes' : '0B';
     if (!bytes || bytes === 0) return '';
 
@@ -38,7 +46,8 @@ export class BytesPipe implements PipeTransform {
     power = Math.min(power, units.length - 1);
 
     const size = bytes / Math.pow(isMac ? 1000 : 1024, power);
-    const formattedSize = this.decimalPipe.transform(size, '1.0-2');
+    const digits = !compact ? '1.0-2' : size >= 100 ? '1.0-0' : size >= 10 ? '1.0-1' : '1.0-2';
+    const formattedSize = this.decimalPipe.transform(size, digits);
     if (!formattedSize) return '';
 
     return `${formattedSize} ${longForm ? units[power] : units[power].replace('Bytes', 'B')}`;

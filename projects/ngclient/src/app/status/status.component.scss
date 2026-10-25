@@ -1,447 +1,564 @@
+@use '@ship-ui/core/styles/helpers' as *;
+
 :host {
   display: block;
-  padding: 24px;
-  max-width: 1400px;
-  margin: 0 auto;
 }
 
 .status-page {
+  display: block;
+  padding: p2r(24 20);
+  max-width: p2r(1600);
+  margin: 0 auto;
+}
+
+.page-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: p2r(16);
+  flex-wrap: wrap;
+  margin-bottom: p2r(20);
+
+  .sub {
+    margin: p2r(4 0 0);
+    color: var(--base-8);
+    font: var(--paragraph-30);
+  }
+
+  .head-actions {
+    display: flex;
+    align-items: center;
+    gap: p2r(10);
+  }
+}
+
+.state-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: p2r(6);
+  padding: p2r(4 10);
+  border-radius: p2r(999);
+  font: var(--paragraph-40);
+  font-weight: 600;
+  background: var(--warn-2);
+  color: var(--warn-9);
+
+  &::before {
+    content: '';
+    width: p2r(7);
+    height: p2r(7);
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  &.running {
+    background: var(--success-2);
+    color: var(--success-9);
+  }
+}
+
+.status-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 24px;
+  gap: p2r(20);
 
-  @media (min-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
+  @media (min-width: 900px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    .span-2,
+    .span-3 {
+      grid-column: 1 / -1;
+    }
+
+    // With two columns the task shares its row with the queue, which would otherwise be alone
+    .task-card {
+      grid-column: auto;
+    }
   }
 
-  @media (min-width: 1200px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  @media (min-width: 1300px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
 
-  @media (min-width: 1200px) {
-    .logs-card {
+    .span-2 {
       grid-column: span 2;
     }
 
-    &.idle {
-      .idle-hero-card {
-        grid-column: span 2;
-      }
-      .next-task-hero {
-        grid-column: 3;
-      }
-      .server-state-card {
-        grid-column: 3;
-      }
-      .activity-card {
-        grid-column: 1 / -1;
-      }
-      .logs-card {
-        grid-column: 1 / -1;
-      }
+    .span-3 {
+      grid-column: 1 / -1;
     }
   }
 }
 
 sh-card {
-  height: 100%;
   display: flex;
   flex-direction: column;
-  --sh-card-padding: 24px;
+  min-width: 0;
 }
 
-.card-header {
+.card-head {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  justify-content: space-between;
+  gap: p2r(12);
+  margin-bottom: p2r(16);
 
-  .header-titl-group {
+  h3 {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: p2r(10);
+    font-weight: 600;
 
     sh-icon {
-      color: var(--primary-color);
-      font-size: 24px;
-    }
-
-    h2,
-    h3 {
-      margin: 0;
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-  }
-}
-
-// Progress Section (Active)
-.progress-content {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-
-  .percentage-display {
-    text-align: center;
-
-    .percentage-value {
-      font-size: 3rem;
-      font-weight: 800;
-      color: var(--primary-color);
-      line-height: 1;
+      color: var(--primary-8);
     }
   }
 
-  sh-progress-bar {
-    height: 8px;
-    border-radius: 4px;
-    --sh-progress-bar-track-color: var(--bg-secondary);
-  }
-
-  .stat-item {
+  .card-actions {
     display: flex;
-    justify-content: space-between;
-    width: 100%;
-
-    .label {
-      color: var(--text-secondary);
-      font-size: 0.9rem;
-    }
-
-    .value {
-      font-weight: 600;
-    }
+    gap: p2r(8);
   }
 }
 
-// Files Section (Active)
-.files-content {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+.muted {
+  color: var(--base-8);
+  font: var(--paragraph-30);
+}
 
-  .label {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    color: var(--text-secondary);
+.na {
+  color: var(--base-8);
+  font: var(--paragraph-30);
+  font-style: italic;
+}
+
+.label {
+  display: flex;
+  justify-content: space-between;
+  font: var(--paragraph-40);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--base-8);
+}
+
+.section-label {
+  margin-top: p2r(18);
+  margin-bottom: p2r(4);
+}
+
+.empty,
+.unavailable {
+  color: var(--base-8);
+  font: var(--paragraph-30);
+  font-style: italic;
+  padding: p2r(8 0);
+}
+
+.unavailable {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: p2r(140);
+}
+
+.tag {
+  flex: none;
+  padding: p2r(2 8);
+  border-radius: var(--shape-1, 6px);
+  font: var(--paragraph-40);
+  font-weight: 600;
+  background: var(--base-3);
+  color: var(--base-9);
+
+  &.backup {
+    background: var(--primary-2);
+    color: var(--primary-9);
+  }
+
+  &.restore {
+    background: var(--success-2);
+    color: var(--success-9);
+  }
+
+  &.verify {
+    background: var(--accent-2);
+    color: var(--accent-9);
+  }
+
+  &.maintenance {
+    background: var(--warn-2);
+    color: var(--warn-9);
+  }
+}
+
+// Active task
+.task-title {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: p2r(12);
+}
+
+.task-name {
+  font: var(--title-30);
+}
+
+.phase-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: p2r(16);
+  margin: p2r(14 0 10);
+
+  .phase {
+    margin-top: p2r(2);
+    font: var(--paragraph-10);
     font-weight: 600;
-    margin-bottom: 4px;
-    display: block;
-    padding-left: 12px;
   }
 
-  .file-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-
-    &.current {
-      gap: 12px;
-      justify-content: flex-start;
-
-      sh-icon {
-        color: var(--primary-color);
-      }
-
-      .file-details {
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-      }
-    }
-
-    .filename {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-right: 12px;
-      font-size: 0.9rem;
-      font-weight: 500;
-      flex: 1;
-    }
-
-    .filesize {
-      color: var(--text-secondary);
-      font-size: 0.85rem;
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
-    }
-  }
-
-  .empty-state {
-    color: var(--text-secondary);
-    font-style: italic;
-    text-align: center;
-    width: 100%;
+  .pct {
+    font-size: p2r(40);
+    font-weight: 800;
+    line-height: 1;
+    color: var(--primary-8);
+    font-variant-numeric: tabular-nums;
   }
 }
 
-// Performance Section (Active)
-.performance-content {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(p2r(150), 1fr));
+  gap: p2r(16);
+  margin-top: p2r(18);
+  padding-top: p2r(16);
+  border-top: 1px solid var(--base-4);
 
-  .aggregate-speed {
-    font-size: 1.2rem;
+  .value {
+    margin-top: p2r(2);
+    font: var(--paragraph-10);
     font-weight: 700;
-    color: var(--text-primary);
     font-variant-numeric: tabular-nums;
   }
 
-  .eta-item,
-  .metric-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
+  .sub {
+    color: var(--base-8);
+    font: var(--paragraph-40);
+  }
+}
 
-    .label {
-      color: var(--text-secondary);
-      font-size: 0.9rem;
+.idle {
+  display: flex;
+  align-items: center;
+  gap: p2r(20);
+  padding: p2r(16 0);
+
+  .idle-icon {
+    font-size: p2r(56);
+    color: var(--success-8);
+  }
+
+  p {
+    margin: p2r(4 0 0);
+  }
+
+  .warning {
+    color: var(--error-8);
+    font: var(--paragraph-30);
+    font-weight: 500;
+  }
+}
+
+// Queue
+.queue {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: p2r(8);
+}
+
+.queue-item {
+  display: flex;
+  align-items: center;
+  gap: p2r(12);
+  padding: p2r(10 12);
+  border: 1px solid var(--base-4);
+  border-radius: var(--shape-2);
+
+  &.active {
+    border-color: var(--primary-4);
+    background: var(--primary-1);
+
+    .pos {
+      background: var(--primary-8);
+      color: var(--base-1);
+    }
+  }
+
+  .pos {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: p2r(24);
+    height: p2r(24);
+    border-radius: 50%;
+    background: var(--base-3);
+    color: var(--base-9);
+    font: var(--paragraph-40);
+    font-weight: 700;
+  }
+
+  .queue-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .queue-name {
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .queue-detail {
+    color: var(--base-8);
+    font: var(--paragraph-40);
+  }
+}
+
+.next-scheduled {
+  display: flex;
+  justify-content: space-between;
+  gap: p2r(12);
+  margin-top: auto;
+  padding-top: p2r(14);
+  border-top: 1px dashed var(--base-4);
+  font: var(--paragraph-30);
+
+  .muted {
+    white-space: nowrap;
+  }
+
+  span:last-child {
+    text-align: right;
+  }
+}
+
+// Files and transfers
+.file-row,
+.transfer-row {
+  display: grid;
+  grid-template-columns: p2r(20) minmax(0, 1fr) p2r(160) p2r(130);
+  align-items: center;
+  gap: p2r(12);
+  padding: p2r(8 0);
+  border-bottom: 1px solid var(--base-3);
+  font: var(--paragraph-30);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  sh-icon {
+    color: var(--primary-8);
+  }
+
+  .name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  // The folder is shortened first, so the filename stays visible
+  .path {
+    display: flex;
+    min-width: 0;
+    white-space: nowrap;
+
+    .dir {
+      flex: 0 1 auto;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .name {
+      flex: 0 0 auto;
+      max-width: 100%;
+    }
+  }
+
+  .dir {
+    color: var(--base-8);
+  }
+
+  .meta {
+    color: var(--base-8);
+    font: var(--paragraph-40);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+}
+
+.file-row.recent {
+  grid-template-columns: p2r(20) minmax(0, 1fr) p2r(90) p2r(90);
+
+  sh-icon {
+    color: var(--success-8);
+  }
+}
+
+.recent-files {
+  max-height: p2r(240);
+  overflow: auto;
+}
+
+.transfer-row {
+  grid-template-columns: p2r(20) minmax(0, 1fr) p2r(140) p2r(130) p2r(90);
+
+  .name {
+    font-family: monospace;
+    font-size: 0.85em;
+  }
+
+  sh-icon {
+    color: var(--accent-8);
+
+    &.upload {
+      color: var(--success-8);
+    }
+  }
+}
+
+sh-progress-bar.thin {
+  height: p2r(4);
+}
+
+@media (max-width: 700px) {
+  .file-row,
+  .file-row.recent,
+  .transfer-row {
+    grid-template-columns: p2r(20) minmax(0, 1fr) auto;
+
+    sh-progress-bar {
+      grid-column: 2 / -1;
+    }
+  }
+}
+
+// Charts and metrics
+.metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: p2r(8 22);
+  margin-bottom: p2r(12);
+
+  .key {
+    display: flex;
+    align-items: center;
+    gap: p2r(6);
+    color: var(--base-8);
+    font: var(--paragraph-40);
+  }
+
+  .value {
+    font: var(--title-30);
+    font-variant-numeric: tabular-nums;
+  }
+
+  // Upload and download on the first row and the transferred total on the second, whatever the width
+  &.two-rows {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: p2r(8 22);
+
+    .metric {
+      min-width: 0;
+    }
+
+    .wide {
+      grid-column: 1 / -1;
+    }
+
+    .key,
+    .value {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  // The resource cards sit side by side, so their metrics keep to one row of the same height
+  &.compact {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: p2r(12);
+
+    .metric {
+      min-width: 0;
+    }
+
+    .key,
+    .value {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .value {
-      font-weight: 600;
+      font: var(--paragraph-10);
+      font-weight: 700;
       font-variant-numeric: tabular-nums;
-
-      .sub-text {
-        color: var(--text-secondary);
-        font-weight: 400;
-        font-size: 0.85rem;
-        margin-left: 4px;
-      }
-    }
-  }
-
-  .transfers-section {
-    .toggle-btn {
-      width: 100%;
-      margin-bottom: 12px;
     }
 
-    .transfer-item {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      gap: 4px;
-
-      .transfer-header {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.85rem;
-
-        .path {
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          margin-right: 12px;
-        }
-
-        .speed {
-          color: var(--text-secondary);
-          font-variant-numeric: tabular-nums;
-        }
-      }
-
-      .mini-progress {
-        height: 4px;
-      }
+    // Speeds are wider than percentages and sizes, so they get fewer, wider columns
+    &.cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 }
 
-// Logs Section
-.logs-content {
-  app-logs-live {
-    height: 350px;
-    display: block;
+.dot {
+  display: inline-block;
+  width: p2r(8);
+  height: p2r(8);
+  border-radius: p2r(2);
+
+  &.upload,
+  &.primary {
+    background: var(--primary-8);
+  }
+
+  &.download {
+    background: var(--accent-8);
+  }
+
+  &.warn {
+    background: var(--warn-8);
+  }
+
+  &.success {
+    background: var(--success-8);
+  }
+
+  &.base {
+    background: var(--base-7);
   }
 }
 
-// Server Status
-.status-badge {
-  padding: 4px 12px;
-  border-radius: 12px;
-  background: var(--bg-secondary);
-  color: var(--text-secondary);
-  font-size: 0.8rem;
-  font-weight: 500;
-  text-transform: uppercase;
-
-  &.running {
-    background: rgba(var(--primary-rgb), 0.1);
-    color: var(--primary-color);
-  }
+app-status-chart.tall {
+  height: p2r(200);
 }
 
-.actions-grid {
-  margin-top: auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 12px;
-
-  .action-btn {
-    width: 100%;
-    justify-content: center;
-  }
+.foot {
+  margin-top: p2r(10);
+  font: var(--paragraph-40);
 }
 
-// --- IDLE STATE SPECIFIC ---
-
-.idle-hero-card {
-  .idle-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 32px 0;
-    gap: 32px;
-
-    @media (min-width: 768px) {
-      flex-direction: row;
-      text-align: left;
-      justify-content: space-around;
-      padding: 48px 0;
-    }
-
-    .status-visual {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .status-info {
-      h2 {
-        font-size: 2rem;
-        font-weight: 700;
-        margin-bottom: 8px;
-        color: var(--text-primary);
-      }
-      .status-description {
-        color: var(--text-secondary);
-        font-size: 1.1rem;
-        max-width: 300px;
-      }
-    }
-
-    .idle-actions {
-      display: flex;
-      align-items: center;
-
-      button {
-        padding-left: 32px;
-        padding-right: 32px;
-      }
-    }
-  }
-}
-
-.complete-status {
-  position: relative;
-  width: 120px;
-  height: 120px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--primary-color);
-
-  .status-icon {
-    font-size: 48px;
-    opacity: 0;
-    animation: reveal-icon 200ms linear forwards;
-    animation-delay: 1s;
-  }
-}
-
-.border-svg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.border-circle {
-  fill: none;
-  stroke: var(--primary-color);
-  stroke-width: 5px;
-  stroke-dasharray: 282.74;
-  stroke-dashoffset: 282.74;
-  animation: draw-border 1.2s linear forwards;
-}
-
-@keyframes draw-border {
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
-@keyframes reveal-icon {
-  to {
-    opacity: 1;
-  }
-}
-
-.next-task-hero {
-  .next-task-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 0;
-
-    .task-main {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-
-      .task-name {
-        font-size: 1.2rem;
-        font-weight: 700;
-        color: var(--primary-color);
-      }
-
-      .task-time-group {
-        display: flex;
-        flex-direction: column;
-        color: var(--text-secondary);
-        font-size: 0.95rem;
-      }
-    }
-
-    .chevron {
-      color: var(--text-secondary);
-      opacity: 0.5;
-    }
-  }
-}
-
-.server-state-card {
-  .state-content {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-
-    .label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      color: var(--text-secondary);
-      font-weight: 600;
-    }
-
-    .state-line {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-
-      .warning-text {
-        font-size: 0.85rem;
-        color: var(--error-color);
-        font-weight: 500;
-      }
-    }
-  }
+.logs-card app-logs-live {
+  display: block;
+  max-height: p2r(420);
+  overflow: auto;
 }

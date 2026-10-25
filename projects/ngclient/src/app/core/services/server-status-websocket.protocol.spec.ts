@@ -173,6 +173,7 @@ describe('ServerStatusWebSocketService protocol', () => {
     ['backuplist', 'backupListState', [{ Backup: { ID: '7', Name: 'Test backup' } }]],
     ['notifications', 'notificationState', [{ ID: 3, Message: 'Test notification' }]],
     ['remotecontrol', 'remoteControlState', { IsEnabled: true }],
+    ['systemstatus', 'systemStatusState', { Timestamp: '2026-10-25T12:00:00Z', IntervalMs: 1000, Queue: [] }],
   ] as const)('routes %s data to %s', (type, state, data) => {
     setup();
     const socket = connect();
