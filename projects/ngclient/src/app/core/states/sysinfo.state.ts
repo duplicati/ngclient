@@ -105,6 +105,11 @@ export class SysinfoState {
     return apiExtensions.includes('v2:backup:set-version-label');
   });
 
+  hasV2RestoreTest = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v2:backup:restore-test');
+  });
+
   hasRestoreOptions = computed(() => {
     const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
     return apiExtensions.includes('v1:backup:restore-options');

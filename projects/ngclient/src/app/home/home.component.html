@@ -492,6 +492,13 @@
           <sh-icon>check-square-offset</sh-icon>
           Verify files
         </button>
+
+        @if (hasRestoreTest()) {
+          <button type="button" (click)="testRestore(backup.Backup.ID!)" i18n>
+            <sh-icon>flask</sh-icon>
+            Test restore
+          </button>
+        }
       }
 
       <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'commandline']" i18n>

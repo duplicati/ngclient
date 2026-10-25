@@ -72,6 +72,7 @@ export default class HomeComponent {
   hasDeleteVersions = this.#sysinfo.hasV2DeleteVersions;
   hasSetVersionLabel = this.#sysinfo.hasV2SetVersionLabel;
   hasBrokenFiles = this.#sysinfo.hasV2BrokenFiles;
+  hasRestoreTest = this.#sysinfo.hasV2RestoreTest;
   hasPurgeFiles = this.#sysinfo.hasV2PurgeFiles;
 
   MISSING_BACKUP_NAME = $localize`Backup name missing`;
@@ -191,6 +192,19 @@ export default class HomeComponent {
   verifyFiles(id: string) {
     this.loadingId.set(id);
     defer(() => this.#dupServer.postApiV1BackupByIdVerify({ path: { id } }))
+      .pipe(finalize(() => this.loadingId.set(null)))
+      .subscribe({
+        next: () => {
+          this.successId.set(id);
+
+          setTimeout(() => this.successId.set(null), 2000);
+        },
+      });
+  }
+
+  testRestore(id: string) {
+    this.loadingId.set(id);
+    defer(() => this.#dupServer.postApiV2BackupRestoreTest({ body: { BackupId: id } }))
       .pipe(finalize(() => this.loadingId.set(null)))
       .subscribe({
         next: () => {

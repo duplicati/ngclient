@@ -2450,35 +2450,6 @@
         }
       }
     },
-    "/api/v1/backup/{id}/restore-test": {
-      "post": {
-        "tags": [
-          "Duplicati.Server"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TaskStartedDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v1/backup/{id}/compact": {
       "post": {
         "tags": [
@@ -2995,6 +2966,35 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/DeleteVersionsRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskStartedDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/backup/restore-test": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RestoreTestRequestDto"
               }
             }
           },
@@ -5700,6 +5700,19 @@
             "items": {
               "type": "string"
             },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RestoreTestRequestDto": {
+        "required": [
+          "BackupId"
+        ],
+        "type": "object",
+        "properties": {
+          "BackupId": {
+            "type": "string",
             "nullable": true
           }
         },

@@ -658,6 +658,10 @@ export type RestoreTaskConfigElementDto = {
     AdditionalTargetUrls: Array<string> | null;
 };
 
+export type RestoreTestRequestDto = {
+    BackupId: string | null;
+};
+
 export type ScheduleDto = {
     ID: number;
     Tags: Array<string> | null;
@@ -2583,24 +2587,6 @@ export type PostApiV1BackupByIdVerifyResponses = {
 
 export type PostApiV1BackupByIdVerifyResponse = PostApiV1BackupByIdVerifyResponses[keyof PostApiV1BackupByIdVerifyResponses];
 
-export type PostApiV1BackupByIdRestoreTestData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/api/v1/backup/{id}/restore-test';
-};
-
-export type PostApiV1BackupByIdRestoreTestResponses = {
-    /**
-     * OK
-     */
-    200: TaskStartedDto;
-};
-
-export type PostApiV1BackupByIdRestoreTestResponse = PostApiV1BackupByIdRestoreTestResponses[keyof PostApiV1BackupByIdRestoreTestResponses];
-
 export type PostApiV1BackupByIdCompactData = {
     body?: never;
     path: {
@@ -2936,6 +2922,22 @@ export type PostApiV2BackupDeleteVersionsResponses = {
 };
 
 export type PostApiV2BackupDeleteVersionsResponse = PostApiV2BackupDeleteVersionsResponses[keyof PostApiV2BackupDeleteVersionsResponses];
+
+export type PostApiV2BackupRestoreTestData = {
+    body: RestoreTestRequestDto;
+    path?: never;
+    query?: never;
+    url: '/api/v2/backup/restore-test';
+};
+
+export type PostApiV2BackupRestoreTestResponses = {
+    /**
+     * OK
+     */
+    200: TaskStartedDto;
+};
+
+export type PostApiV2BackupRestoreTestResponse = PostApiV2BackupRestoreTestResponses[keyof PostApiV2BackupRestoreTestResponses];
 
 export type PostApiV2BackupListFilesetsData = {
     body: ListFilesetsRequestDto;
