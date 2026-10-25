@@ -13,6 +13,12 @@ export type AcknowlegdementDto = {
     Acknowledgements: string | null;
 };
 
+export type ActiveFile = {
+    Path?: string | null;
+    Size?: number;
+    Offset?: number;
+};
+
 export type ActiveTransfer = {
     BackendAction?: string | null;
     BackendPath?: string | null;
@@ -348,6 +354,10 @@ export type IProgressEventData = {
     readonly TotalFileSize?: number;
     readonly StillCounting?: boolean;
     readonly ActiveTransfers?: Array<ActiveTransfer> | null;
+    readonly ActiveFiles?: Array<ActiveFile> | null;
+    readonly SourceBytesRead?: number | null;
+    readonly BackendBytesUploaded?: number | null;
+    readonly BackendBytesDownloaded?: number | null;
     readonly RemoteSyncDestinationIndex?: number;
     readonly RemoteSyncDestinationCount?: number;
     readonly EstimatedTimeToCompletion?: string | null;
@@ -707,6 +717,14 @@ export type SearchEntriesResponseDto = {
     } | null;
 };
 
+export type SecretProviderDto = {
+    Key: string | null;
+    DisplayName: string | null;
+    IsSetSupported: boolean;
+    CachingLevel: string | null;
+    Pattern: string | null;
+};
+
 export type ServerStatusDto = {
     ActiveTask: Int64StringTuple;
     ProgramState: LiveControlState;
@@ -815,6 +833,8 @@ export type SystemInfoDto = {
     RestoreDestinationProviderModules: Array<IDynamicModule> | null;
     ServerModules: Array<unknown> | null;
     SecretProviderModules: Array<IDynamicModule> | null;
+    ActiveSecretProvider: SecretProviderDto;
+    DefaultSecretProvider: SecretProviderDto;
     UsingAlternateUpdateURLs: boolean;
     LogLevels: Array<string> | null;
     SpecialFolders: Array<SpecialFolderDto> | null;
@@ -829,6 +849,49 @@ export type SystemInfoDto = {
     PowerModeProviders: Array<string> | null;
     LocalLicenseStatus: LicenseStatusDto;
     RemoteLicenseStatus: LicenseStatusDto;
+};
+
+export type SystemStatusDto = {
+    Timestamp?: string;
+    IntervalMs?: number;
+    Machine?: SystemStatusMachineDto;
+    Processes?: Array<SystemStatusProcessDto> | null;
+    Queue?: Array<SystemStatusQueueItemDto> | null;
+    Progress?: IProgressEventData;
+};
+
+export type SystemStatusDtoResponseEnvelope = {
+    Success: boolean;
+    Error: string | null;
+    StatusCode: string | null;
+    Data?: SystemStatusDto;
+};
+
+export type SystemStatusMachineDto = {
+    ProcessorCount?: number;
+    CpuUsage?: number | null;
+    TotalMemory?: number | null;
+    AvailableMemory?: number | null;
+};
+
+export type SystemStatusProcessDto = {
+    Role?: string | null;
+    ProcessId?: number;
+    StartTime?: string | null;
+    CpuUsage?: number | null;
+    WorkingSet?: number;
+    PrivateMemory?: number;
+    ManagedHeapSize?: number | null;
+    ThreadCount?: number;
+};
+
+export type SystemStatusQueueItemDto = {
+    TaskID?: number;
+    BackupID?: string | null;
+    BackupName?: string | null;
+    Operation?: string | null;
+    Status?: string | null;
+    TaskStarted?: string | null;
 };
 
 export type TargetUrlDto = {
@@ -1060,6 +1123,8 @@ export type SystemInfoDtoWritable = {
     RestoreDestinationProviderModules: Array<IDynamicModuleWritable> | null;
     ServerModules: Array<unknown> | null;
     SecretProviderModules: Array<IDynamicModuleWritable> | null;
+    ActiveSecretProvider: SecretProviderDto;
+    DefaultSecretProvider: SecretProviderDto;
     UsingAlternateUpdateURLs: boolean;
     LogLevels: Array<string> | null;
     SpecialFolders: Array<SpecialFolderDto> | null;
@@ -1074,6 +1139,22 @@ export type SystemInfoDtoWritable = {
     PowerModeProviders: Array<string> | null;
     LocalLicenseStatus: LicenseStatusDto;
     RemoteLicenseStatus: LicenseStatusDto;
+};
+
+export type SystemStatusDtoWritable = {
+    Timestamp?: string;
+    IntervalMs?: number;
+    Machine?: SystemStatusMachineDto;
+    Processes?: Array<SystemStatusProcessDto> | null;
+    Queue?: Array<SystemStatusQueueItemDto> | null;
+    Progress?: IProgressEventDataWritable;
+};
+
+export type SystemStatusDtoResponseEnvelopeWritable = {
+    Success: boolean;
+    Error: string | null;
+    StatusCode: string | null;
+    Data?: SystemStatusDtoWritable;
 };
 
 export type GetApiV1CommandlineData = {
@@ -2502,6 +2583,24 @@ export type PostApiV1BackupByIdVerifyResponses = {
 
 export type PostApiV1BackupByIdVerifyResponse = PostApiV1BackupByIdVerifyResponses[keyof PostApiV1BackupByIdVerifyResponses];
 
+export type PostApiV1BackupByIdRestoreTestData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/backup/{id}/restore-test';
+};
+
+export type PostApiV1BackupByIdRestoreTestResponses = {
+    /**
+     * OK
+     */
+    200: TaskStartedDto;
+};
+
+export type PostApiV1BackupByIdRestoreTestResponse = PostApiV1BackupByIdRestoreTestResponses[keyof PostApiV1BackupByIdRestoreTestResponses];
+
 export type PostApiV1BackupByIdCompactData = {
     body?: never;
     path: {
@@ -2741,6 +2840,22 @@ export type PostApiV2DestinationListResponses = {
 };
 
 export type PostApiV2DestinationListResponse = PostApiV2DestinationListResponses[keyof PostApiV2DestinationListResponses];
+
+export type GetApiV2SystemStatusData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v2/system/status';
+};
+
+export type GetApiV2SystemStatusResponses = {
+    /**
+     * OK
+     */
+    200: SystemStatusDtoResponseEnvelope;
+};
+
+export type GetApiV2SystemStatusResponse = GetApiV2SystemStatusResponses[keyof GetApiV2SystemStatusResponses];
 
 export type PostApiV2SystemTempDiskSpaceData = {
     body: TempDiskSpaceRequestDto;
