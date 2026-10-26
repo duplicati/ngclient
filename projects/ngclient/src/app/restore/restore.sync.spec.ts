@@ -36,6 +36,7 @@ describe('Restore job selection excludes Sync', () => {
       remove: { imports: [StatusBarComponent] },
       add: { imports: [StatusBarStub] },
     });
+    await TestBed.compileComponents();
     const fixture = TestBed.createComponent(RestoreComponent);
     fixture.detectChanges();
     const blocks = await fixture.getDeferBlocks();
