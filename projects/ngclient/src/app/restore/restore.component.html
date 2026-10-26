@@ -5,7 +5,17 @@
 
   @defer (when !backupsLoading()) {
     @if (backups().length) {
-      @for (backup of backups(); track $index) {
+      @if (showSearch()) {
+        <sh-form-field class="small search">
+          <input type="text" i18n-placeholder placeholder="Search backups..." [(ngModel)]="searchTerm" />
+          <sh-icon prefix>magnifying-glass</sh-icon>
+          @if (searchTerm()) {
+            <sh-icon class="clear-search" suffix (click)="searchTerm.set('')">x-circle</sh-icon>
+          }
+        </sh-form-field>
+      }
+
+      @for (backup of filteredBackups(); track $index) {
         <sh-card
           class="type-a actionable"
           [routerLink]="['/restore', backup.Backup.ID]"
@@ -26,6 +36,8 @@
             <sh-icon>arrow-right</sh-icon>
           </button>
         </sh-card>
+      } @empty {
+        <div class="no-matches" i18n>No backups match "{{ searchTerm() }}"</div>
       }
     }
   } @placeholder {

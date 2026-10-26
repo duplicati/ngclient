@@ -23,6 +23,22 @@ sh-divider {
   color: var(--base-8);
 }
 
+.search {
+  align-self: flex-end;
+  width: p2r(240);
+}
+
+.clear-search {
+  opacity: 0.6;
+  cursor: pointer;
+}
+
+.no-matches {
+  padding: p2r(32);
+  text-align: center;
+  color: var(--base-8);
+}
+
 sh-card {
   display: flex;
   align-items: center;
