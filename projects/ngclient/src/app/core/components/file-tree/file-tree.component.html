@@ -8,20 +8,40 @@
 <div class="section" [class.hidden]="!searchMode() && pathDiscoveryMethod() !== 'browse'">
   <ng-content select="label" ngProjectAs="label"></ng-content>
 
-  <div class="browse-files" [class.visualize-accepted]="accepts()" #treeContainer>
+  <div
+    class="browse-files"
+    [class.visualize-accepted]="accepts()"
+    #treeContainer
+    role="tree"
+    aria-label="Files and folders"
+    i18n-aria-label
+    [attr.aria-multiselectable]="multiSelect()"
+    [attr.aria-disabled]="disabled() || null"
+    [attr.aria-busy]="isLoading() !== null">
     @if (isLoading() != null) {
       <sh-progress-bar class="indeterminate primary" />
     }
 
     <ng-template #recursiveTree let-data>
-      <sh-list [style.padding-left.rem]="data.level * 0.25">
-        @for (node of data.children; track node.id) {
+      <sh-list role="presentation" [style.padding-left.rem]="data.level * 0.25">
+        @let children = visibleTreeChildren(data.children);
+        @for (node of children; track node.id; let position = $index) {
           @if (node.isLoadMore) {
             <div
               action
+              role="treeitem"
+              [attr.data-tree-path]="node.id"
+              [attr.aria-label]="node.text ?? node.id"
+              [attr.aria-level]="data.level + 1"
+              [attr.aria-posinset]="position + 1"
+              [attr.aria-setsize]="treeSetSize(children)"
+              [attr.tabindex]="!disabled() && activeTreePath() === node.id ? 0 : -1"
+              (focus)="rememberTreeFocus(node)"
+              (keydown)="onTreeKeydown($event, node)"
+              [attr.aria-disabled]="disabled() || isLoading() !== null || null"
               class="load-more"
               [class.loading]="isLoading() === node.id"
-              (click)="loadMore($event, node)">
+              (click)="activateTreeNode($event, node)">
               <div class="icon file">
                 <sh-icon class="small"></sh-icon>
                 @if (isLoading() === node.id) {
@@ -39,6 +59,19 @@
             <div
               action
               #treeNode
+              role="treeitem"
+              [attr.data-tree-path]="node.id"
+              [attr.aria-label]="node.text ?? node.id"
+              [attr.aria-level]="data.level + 1"
+              [attr.aria-posinset]="position + 1"
+              [attr.aria-setsize]="treeSetSize(children)"
+              [attr.tabindex]="!disabled() && activeTreePath() === node.id ? 0 : -1"
+              (focus)="rememberTreeFocus(node)"
+              (keydown)="onTreeKeydown($event, node)"
+              [attr.aria-expanded]="node.cls === 'folder' ? node.children.length > 0 : null"
+              [attr.aria-owns]="node.children.length ? treeGroupId(node) : null"
+              [attr.aria-selected]="!multiSelect() ? treeSelectionState(node) : null"
+              [attr.aria-checked]="multiSelect() ? treeSelectionState(node) : null"
               [class.accepted]="node.accepted === true"
               [class.active]="node.evalState === TreeEvalEnum.Included"
               [class.indeterminate]="node.isIndeterminate"
@@ -51,8 +84,8 @@
               [class.loading]="isLoading() === node.id"
               [class.generated]="node.isGenerated"
               [class.search-match]="node.isSearchMatch"
-              (click)="toggleSelectedNode($event, node)">
-              <div class="icon" [class.file]="node.cls === 'file'" (click)="toggleNode($event, node.id, node)">
+              (click)="activateTreeNode($event, node)">
+              <div class="icon" [class.file]="node.cls === 'file'" (click)="toggleTreeNode($event, node)">
                 @if (node.id !== '/') {
                   @if (node.children.length) {
                     <sh-icon class="small">caret-down</sh-icon>
@@ -89,11 +122,13 @@
             </div>
 
             @if (node.children.length > 0) {
-              <ng-container
-                *ngTemplateOutlet="
-                  recursiveTree;
-                  context: { $implicit: { children: node.children, level: data.level + 1 } }
-                "></ng-container>
+              <div role="group" [id]="treeGroupId(node)">
+                <ng-container
+                  *ngTemplateOutlet="
+                    recursiveTree;
+                    context: { $implicit: { children: node.children, level: data.level + 1 } }
+                  "></ng-container>
+              </div>
             }
           }
         }

@@ -32,6 +32,7 @@ import {
   SearchEntriesItemDto,
   TreeNodeDto,
 } from '../../openapi';
+import { randomUUID } from '../../functions/crypto';
 import { BytesPipe } from '../../pipes/byte.pipe';
 import { FileTreeState } from '../../states/file-tree.state';
 import { SysinfoState } from '../../states/sysinfo.state';
@@ -1087,6 +1088,167 @@ export default class FileTreeComponent {
 
     const parent = parts.join(sep);
     return parent + sep;
+  }
+
+  #treeId = randomUUID();
+  #focusedTreePath = signal<string | null>(null);
+  #typeAhead = '';
+  #typeAheadTime = 0;
+
+  visibleTreeRows = computed(() => {
+    const rows: { node: FileTreeNode; parent: string | null }[] = [];
+    const visit = (nodes: FileTreeNode[], parent: string | null) => {
+      for (const node of this.visibleTreeChildren(nodes)) {
+        rows.push({ node, parent });
+        visit(node.children, node.id ?? null);
+      }
+    };
+    visit(this.treeStructure(), null);
+    return rows;
+  });
+
+  activeTreePath = computed(() => {
+    const rows = this.visibleTreeRows();
+    const focused = this.#focusedTreePath();
+    if (rows.some(({ node }) => node.id === focused)) return focused;
+    return (
+      rows.find(({ node }) => this.canSelectTreeNode(node) && node.evalState === TreeEvalEnum.Included)?.node.id ??
+      rows[0]?.node.id ??
+      null
+    );
+  });
+
+  visibleTreeChildren(nodes: FileTreeNode[]) {
+    return nodes.filter((node) => node.isLoadMore || !node.hidden || this._showHiddenNodes());
+  }
+
+  treeSetSize(nodes: FileTreeNode[]) {
+    return nodes.some((node) => node.isLoadMore) ? -1 : nodes.length;
+  }
+
+  treeGroupId(node: FileTreeNode) {
+    return this.#treeId + '-' + encodeURIComponent(node.id ?? '');
+  }
+
+  canSelectTreeNode(node: FileTreeNode) {
+    return (
+      !this.disabled() &&
+      !node.isLoadMore &&
+      node.id !== ROOTPATH &&
+      !this.#unrootedSources().some((source) => this.#parseRemotePath(source.id)?.mount === node.id) &&
+      (!this.searchMode() || node.isSearchMatch === true) &&
+      node.evalState !== TreeEvalEnum.ExcludedByParent &&
+      !(this.selectFiles() && node.cls === 'folder') &&
+      !(this.onlySelectFolder() && node.cls !== 'folder') &&
+      (!this.accepts() || node.accepted === true)
+    );
+  }
+
+  treeSelectionState(node: FileTreeNode): boolean | 'mixed' | null {
+    if (!this.canSelectTreeNode(node)) return null;
+    if (!this.multiSelect()) return node.evalState === TreeEvalEnum.Included;
+    if (node.evalState === TreeEvalEnum.Included || node.evalState === TreeEvalEnum.IncludedByParent) return true;
+    const path = this.#resolveNodeId(node);
+    const hasSelectedDescendant =
+      node.cls === 'folder' &&
+      path != null &&
+      this.#resolveWithRemoteSource(this.currentPathArray()).some(
+        (source) => source !== path && source.startsWith(path)
+      );
+    return node.isIndeterminate || hasSelectedDescendant ? 'mixed' : false;
+  }
+
+  rememberTreeFocus(node: FileTreeNode) {
+    this.#focusedTreePath.set(node.id ?? null);
+  }
+
+  #focusTreePath(path: string | null | undefined) {
+    if (path == null) return;
+    this.#focusedTreePath.set(path);
+    const items = this.treeContainerRef()?.nativeElement.querySelectorAll<HTMLElement>('[role=treeitem]');
+    const element = Array.from(items ?? []).find((item) => item.getAttribute('data-tree-path') === path);
+    element?.focus({ preventScroll: true });
+    element?.scrollIntoView?.({ block: 'nearest' });
+  }
+
+  activateTreeNode(event: Event, node: FileTreeNode) {
+    if (this.disabled()) return;
+    this.#focusTreePath(node.id);
+    if (node.isLoadMore) {
+      if (this.isLoading() !== null) return;
+      // The pagination row may disappear when the last page arrives.
+      this.#focusTreePath(
+        this.visibleTreeRows().find((row) => row.node.id === node.parentPath)?.node.id ??
+          this.visibleTreeRows()[0]?.node.id
+      );
+      this.loadMore(event, node);
+    } else {
+      this.toggleSelectedNode(event, node);
+    }
+  }
+
+  toggleTreeNode(event: Event, node: FileTreeNode) {
+    if (this.disabled()) return;
+    this.#focusTreePath(node.id);
+    this.toggleNode(event, node.id ?? '', node);
+  }
+
+  onTreeKeydown(event: KeyboardEvent, node: FileTreeNode) {
+    if (this.disabled() || event.altKey || event.ctrlKey || event.metaKey) return;
+    const rows = this.visibleTreeRows();
+    const index = rows.findIndex((row) => row.node.id === node.id);
+    if (index < 0) return;
+    const children = this.visibleTreeChildren(node.children);
+    const handled = ['ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft', 'Home', 'End', ' ', 'Enter'].includes(
+      event.key
+    );
+    if (!handled && event.key.length !== 1) return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (handled) this.#typeAhead = '';
+    switch (event.key) {
+      case 'ArrowDown':
+        this.#focusTreePath(rows[Math.min(index + 1, rows.length - 1)]?.node.id);
+        break;
+      case 'ArrowUp':
+        this.#focusTreePath(rows[Math.max(index - 1, 0)]?.node.id);
+        break;
+      case 'Home':
+        this.#focusTreePath(rows[0]?.node.id);
+        break;
+      case 'End':
+        this.#focusTreePath(rows.at(-1)?.node.id);
+        break;
+      case 'ArrowRight':
+        if (node.cls !== 'folder') break;
+        if (children.length) this.#focusTreePath(children[0].id);
+        else if (this.isLoading() !== node.id) this.toggleNode(event, node.id ?? '', node);
+        break;
+      case 'ArrowLeft':
+        if (node.cls === 'folder' && node.children.length) this.toggleNode(event, node.id ?? '', node);
+        else this.#focusTreePath(rows[index].parent);
+        break;
+      case ' ':
+      case 'Enter':
+        if (event.repeat) break;
+        if (event.key === 'Enter' && node.id === ROOTPATH) this.toggleTreeNode(event, node);
+        else this.activateTreeNode(event, node);
+        break;
+      default: {
+        const now = Date.now();
+        this.#typeAhead =
+          now - this.#typeAheadTime > 700 ? event.key.toLowerCase() : this.#typeAhead + event.key.toLowerCase();
+        this.#typeAheadTime = now;
+        const query = [...this.#typeAhead].every((char) => char === this.#typeAhead[0])
+          ? this.#typeAhead[0]
+          : this.#typeAhead;
+        const ordered = [...rows.slice(index + 1), ...rows.slice(0, index + 1)];
+        const match = ordered.find(
+          (row) => !row.node.isLoadMore && (row.node.text ?? '').toLowerCase().startsWith(query)
+        );
+        if (match) this.#focusTreePath(match.node.id);
+      }
+    }
   }
 
   toggleSelectedNode($event: Event, node: FileTreeNode) {
