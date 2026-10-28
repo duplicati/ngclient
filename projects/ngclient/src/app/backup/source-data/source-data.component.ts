@@ -9,7 +9,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipChip } from '@ship-ui/core/ship-chip';
@@ -19,7 +19,8 @@ import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipMenu } from '@ship-ui/core/ship-menu';
 import { ShipToggle } from '@ship-ui/core/ship-toggle';
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
-import { SizeComponent, splitSize } from '../../core/components/size/size.component';
+import { SizeComponent } from '../../core/components/size/size.component';
+import { splitSize } from '../../core/functions/parse-size';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { WebModulesService } from '../../core/services/webmodules.service';
 import { SysinfoState } from '../../core/states/sysinfo.state';
@@ -31,28 +32,6 @@ import { GoogleWorkspaceCountsDialog } from './googleworkspace-counts-dialog/goo
 import { Office365CountsDialog } from './office365-counts-dialog/office365-counts-dialog';
 import { TargetDiskDialog } from './target-disk-dialog/target-disk-dialog';
 import { TargetUrlDialog } from './target-url-dialog/target-url-dialog';
-
-const fb = new FormBuilder();
-
-export const createSourceDataForm = (
-  defaults = {
-    path: '',
-    filters: [],
-    excludes: {
-      filesLargerThan: null,
-    },
-  }
-) => {
-  return fb.group({
-    path: fb.control<string>(defaults.path),
-    excludes: fb.group({
-      filesLargerThan: fb.group({
-        size: fb.control<number | null>(null),
-        unit: fb.control<string | null>(null),
-      }),
-    }),
-  });
-};
 
 @Component({
   selector: 'app-source-data',

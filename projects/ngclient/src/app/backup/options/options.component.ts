@@ -9,7 +9,7 @@ import { TimespanComponent } from '../../core/components/timespan/timespan.compo
 import { BackupState } from '../backup.state';
 import { OptionsListComponent } from './options-list/options-list.component';
 
-export type RetentionType = 'all' | 'time' | 'versions' | 'smart' | 'custom';
+import { RetentionType } from '../models/backup-options';
 
 const RETENTION_OPTIONS: { value: RetentionType; name: string }[] = [
   {
