@@ -63,26 +63,34 @@ export class SizeComponent implements ControlValueAccessor {
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};
 
+  #lastValue = this.getValue();
+  #pendingWrite = 0;
+  #writingValue = false;
+
   onChangeEffect = effect(() => {
-    this.onChange(this.getValue());
+    const value = this.getValue();
+    if (this.#writingValue || value === this.#lastValue) return;
+    this.#lastValue = value;
+    this.onChange(value);
   });
 
   writeValue(value: string): void {
+    const write = ++this.#pendingWrite;
     if (value) {
-      const match = splitSize(value);
-
-      if (match) {
-        queueMicrotask(() => {
-          this.timespan.set(match.size);
-          this.unit.set(match.unit);
-        });
-      } else {
-        this.timespan.set(0);
-        this.unit.set('MB');
-      }
+      const parsed = splitSize(value);
+      this.#writingValue = true;
+      queueMicrotask(() => {
+        if (write !== this.#pendingWrite) return;
+        this.timespan.set(parsed.size);
+        this.unit.set(parsed.unit);
+        this.#lastValue = this.getValue();
+        this.#writingValue = false;
+      });
     } else {
+      this.#writingValue = false;
       this.timespan.set(0);
       this.unit.set('MB');
+      this.#lastValue = this.getValue();
     }
   }
 

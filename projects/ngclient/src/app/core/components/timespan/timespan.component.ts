@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, signal, untracked } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
@@ -93,15 +93,24 @@ export class TimespanComponent implements ControlValueAccessor {
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};
 
+  #lastValue = this.getValue();
+  #hasWrittenValue = false;
+
   onChangeEffect = effect(() => {
-    this.onChange(this.getValue());
+    const value = this.getValue();
+    if (value === this.#lastValue) return;
+    this.#lastValue = value;
+    this.onChange(value);
   });
 
   inputTypeEffect = effect(() => {
     const _ = this.timeOptions();
     const overrideDefaultUnit = this.isShortTime() ? 's' : 'D';
     this.#defaultUnit = overrideDefaultUnit;
-    this.unit.set(overrideDefaultUnit);
+    if (!this.#hasWrittenValue) {
+      this.unit.set(overrideDefaultUnit);
+      this.#lastValue = untracked(() => this.getValue());
+    }
   });
 
   updateUnit(unit: string) {
@@ -109,7 +118,9 @@ export class TimespanComponent implements ControlValueAccessor {
   }
 
   writeValue(value: string): void {
+    this.#hasWrittenValue = true;
     const isShortTime = this.isShortTime();
+    this.#defaultUnit = isShortTime ? 's' : 'D';
 
     if (value) {
       const regex = isShortTime ? /(\d+)([smh])/i : /^(\d+)([YMWD])$/i;
@@ -126,6 +137,7 @@ export class TimespanComponent implements ControlValueAccessor {
       this.timespan.set(0);
       this.unit.set(this.#defaultUnit);
     }
+    this.#lastValue = this.getValue();
   }
 
   registerOnChange(fn: (value: string) => void): void {

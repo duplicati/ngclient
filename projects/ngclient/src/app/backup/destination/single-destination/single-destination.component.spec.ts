@@ -2,7 +2,7 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { Subject } from 'rxjs';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { WebModulesService } from '../../../core/services/webmodules.service';
 import { DestinationConfigState } from '../../../core/states/destinationconfig.state';
 import { SysinfoState } from '../../../core/states/sysinfo.state';
@@ -12,7 +12,7 @@ import { BackupState } from '../../backup.state';
 import { BrowsePathDialog } from './browse-path-dialog/browse-path-dialog';
 import { SingleDestinationComponent } from './single-destination.component';
 
-describe('SingleDestinationComponent browse', () => {
+describe('SingleDestinationComponent editor', () => {
   let dialogClosed: Subject<string | null>;
   let dialogOpen: ReturnType<typeof vi.fn>;
 
@@ -35,13 +35,15 @@ describe('SingleDestinationComponent browse', () => {
     TestBed.overrideComponent(SingleDestinationComponent, { set: { template: '' } });
   });
 
+  afterEach(() => TestBed.resetTestingModule());
+
   function create(targetUrl: string, inputs: Record<string, unknown> = {}) {
     const fixture = TestBed.createComponent(SingleDestinationComponent);
     fixture.componentRef.setInput('targetUrl', targetUrl);
     for (const [key, value] of Object.entries(inputs)) fixture.componentRef.setInput(key, value);
-    fixture.detectChanges();
-    // The real template reads destinationType(), which primes the URL mapper
+    // The real template reads destinationType() before the effects run.
     fixture.componentInstance.destinationType();
+    fixture.detectChanges();
     return fixture;
   }
 
@@ -98,5 +100,54 @@ describe('SingleDestinationComponent browse', () => {
         data: expect.objectContaining({ backupId: '42', connectionStringId: 7, destinationType: 'Backend' }),
       })
     );
+  });
+
+  const savedUrl = 'ssh://Example.COM/archive%2fpart?auth-password=p%2525&future=a+b&future=two&flag';
+
+  it('does not rewrite an existing URL when the editor loads', () => {
+    const fixture = create(savedUrl);
+    expect(fixture.componentInstance.targetUrl()).toBe(savedUrl);
+  });
+
+  it('preserves the untouched authority, credentials, query spelling and repeated options when one option changes', () => {
+    const fixture = create(savedUrl);
+    fixture.componentInstance.updateFieldValue('advanced', 'retry-count', '8');
+    fixture.detectChanges();
+    expect(fixture.componentInstance.targetUrl()).toBe(savedUrl + '&retry-count=8');
+  });
+
+  it('preserves unrelated options when the destination path changes', () => {
+    const fixture = create(savedUrl);
+    fixture.componentInstance.updateFieldValue('custom', 'path', 'archive/new folder');
+    fixture.detectChanges();
+    expect(fixture.componentInstance.targetUrl()).toBe(
+      'ssh://Example.COM/archive/new%20folder?auth-password=p%2525&future=a+b&future=two&flag'
+    );
+  });
+
+  it('keeps the original URL when the browse dialog is cancelled', () => {
+    const fixture = create(savedUrl);
+    fixture.componentInstance.browse('custom', 'path', null);
+    dialogClosed.next(null);
+    fixture.detectChanges();
+    expect(fixture.componentInstance.targetUrl()).toBe(savedUrl);
+  });
+
+  it('clears old form values when an externally supplied URL cannot be parsed', () => {
+    const fixture = create(savedUrl);
+    fixture.componentRef.setInput('targetUrl', 'ssh://');
+    fixture.detectChanges();
+    expect(fixture.componentInstance.destinationForm()).toEqual({ custom: {}, dynamic: {}, advanced: {} });
+    expect(fixture.componentInstance.targetUrl()).toBe('ssh://');
+  });
+
+  it('does not rewrite an external URL or emit a change when module metadata reloads', () => {
+    const fixture = create(savedUrl);
+    const changed = vi.fn();
+    fixture.componentInstance.targetUrl.subscribe(changed);
+    (TestBed.inject(DestinationConfigState).allModules as ReturnType<typeof signal<any[]>>).set([]);
+    fixture.detectChanges();
+    expect(fixture.componentInstance.targetUrl()).toBe(savedUrl);
+    expect(changed).not.toHaveBeenCalled();
   });
 });
