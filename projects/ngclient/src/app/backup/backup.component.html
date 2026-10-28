@@ -4,7 +4,7 @@
   @if (!isNew()) {
     <p>Editing: {{ backupName() }}</p>
   }
-  <sh-stepper class="primary">
+  <sh-stepper class="primary" [inert]="isSubmitting()">
     <div
       tabindex="-1"
       routerLinkActive="active"
@@ -43,10 +43,22 @@
   </sh-stepper>
 </header>
 
+@if (saveState().status === 'pending') {
+  <p role="status" i18n>Saving backup settings…</p>
+} @else if (saveState().status === 'error') {
+  <sh-alert color="error" i18n>
+    Could not save the backup settings. Your changes have been kept. Please try again.
+  </sh-alert>
+} @else if (saveState().status === 'success') {
+  <p role="status" i18n>Backup settings saved.</p>
+} @else if (saveState().status === 'cancelled') {
+  <p role="status" i18n>Save interrupted. Check the backup settings before trying again.</p>
+}
+
 @if (!finishedLoading()) {
   <sh-progress-bar class="indeterminate primary"></sh-progress-bar>
 } @else {
-  <section>
+  <section [inert]="isSubmitting()" [attr.aria-busy]="isSubmitting()">
     <router-outlet></router-outlet>
   </section>
 }
