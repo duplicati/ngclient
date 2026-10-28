@@ -24,5 +24,8 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      - name: Check build script ordering and failure handling
+        run: bun run test:build
+
       - name: Run unit tests
         run: bun run test:ci

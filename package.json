@@ -22,9 +22,9 @@
     "start": "bun run watch:font & ng serve",
     "start:windows": "bun run watch:font & ng serve --configuration windows",
     "preview": "bun --bun sirv dist/ngclient/browser --single --host 127.0.0.1 --port 3000 --ignores ^/api --ignores ^/notifications",
-    "build": "bun run gen:font & ng build",
+    "build": "bun run gen:font && ng build",
     "build:dev": "bun run gen:font && ng build ngclient --configuration development",
-    "build:prod": "bun run gen:font & ng build ngclient --configuration production",
+    "build:prod": "bun run gen:font && ng build ngclient --configuration production",
     "watch": "bun run watch:font & ng build --watch --configuration development",
     "gen:tx": "ng extract-i18n --output-path projects/ngclient/src/locale --format xlf",
     "tx:push": "tx push -s",
@@ -34,7 +34,8 @@
     "update:openapi": "bun scripts/update-openapi.ts && bun run gen:openapi",
     "test": "ng test ngclient",
     "test:ci": "ng test ngclient --watch=false",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:build": "bun test ./scripts/build.test.ts"
   },
   "dependencies": {
     "@angular/common": "22.2.1",
@@ -67,5 +68,6 @@
     "typescript": "~6.0.3",
     "vitest": "^5.0.3",
     "xml2js": "^0.6.2"
-  }
+  },
+  "packageManager": "bun@1.4.4"
 }
