@@ -1,13 +1,13 @@
-<form [formGroup]="generalForm" autocomplete="off" #formRef (submit)="next()">
+<form autocomplete="off" #formRef (submit)="$event.preventDefault(); next()">
   <h3 class="title-30" i18n>General backup settings</h3>
 
   @if (!isNew()) {
-    @if (generalFormSignal()?.operationType === 'Sync') {
+    @if (operationTypeFieldSignal() === 'Sync') {
       <sh-alert class="primary accent" i18n>
         <sh-icon icon>arrows-left-right</sh-icon>
         Synchronization job - files are not encrypted
       </sh-alert>
-    } @else if (!canEditEncryption() && generalFormSignal()?.encryption !== '') {
+    } @else if (!canEditEncryption() && encryptionFieldSignal() !== '') {
       <sh-alert class="primary" i18n>
         <sh-icon icon>lock</sh-icon>
         Encrypted backup
@@ -20,7 +20,13 @@
       Backup name
       <sup>*</sup>
     </label>
-    <input type="text" i18n-placeholder placeholder="Your backup name" id="backupName" formControlName="name" />
+    <input
+      type="text"
+      id="backupName"
+      i18n-placeholder
+      placeholder="Your backup name"
+      appNullableText
+      [formField]="generalForm.name" />
   </sh-form-field>
 
   <sh-form-field>
@@ -29,13 +35,14 @@
       id="backupDescription"
       i18n-placeholder
       placeholder="Your backup description"
-      formControlName="description"></textarea>
+      appNullableText
+      [formField]="generalForm.description"></textarea>
   </sh-form-field>
 
   @if (isNew() && syncModeSupported()) {
     <div class="mode-toggle">
       <label i18n>Operation mode</label>
-      <sh-button-group [(value)]="operationTypeFieldSignal">
+      <sh-button-group [value]="operationTypeFieldSignal()" (valueChange)="updateOperationType($event)">
         <button value="Backup" type="button" i18n>
           Backup
           <sh-icon [shTooltip]="'Store backups with version history, deduplication, compression and encryption'">
@@ -52,7 +59,7 @@
     </div>
   }
 
-  @if (generalFormSignal()?.operationType === 'Sync') {
+  @if (operationTypeFieldSignal() === 'Sync') {
     @if (isNew()) {
       <sh-alert class="accent" i18n>
         <sh-icon icon>info</sh-icon>
@@ -63,7 +70,13 @@
     @if (canEditEncryption()) {
       <sh-select [options]="encryptionOptions()" [isClearable]="false" value="Key" label="DisplayName">
         <label for="encryption" i18n>Encryption</label>
-        <input type="text" id="encryption" i18n-placeholder placeholder="Encryption" formControlName="encryption" />
+        <input
+          type="text"
+          id="encryption"
+          i18n-placeholder
+          placeholder="Encryption"
+          appNullableText
+          [formField]="generalForm.encryption" />
 
         <ng-template let-option>
           {{ option.DisplayName }}
@@ -84,10 +97,11 @@
               autocomplete="off"
               i18n-placeholder
               placeholder="Password"
-              formControlName="password" />
+              appNullableText
+              [formField]="generalForm.password" />
           </sh-form-field>
 
-          @if (generalForm.value.password) {
+          @if (generalForm.password().value()) {
             <sh-progress-bar
               class="raised"
               [class.error]="calculatePasswordStrength() === 1"
@@ -104,9 +118,13 @@
               autocomplete="off"
               i18n-placeholder
               placeholder="Repeat password"
-              formControlName="repeatPassword" />
+              appNullableText
+              [formField]="generalForm.repeatPassword" />
 
-            @if (generalForm.value.repeatPassword && generalForm.value.repeatPassword !== generalForm.value.password) {
+            @if (
+              generalForm.repeatPassword().value() &&
+              generalForm.repeatPassword().value() !== generalForm.password().value()
+            ) {
               <span error i18n>Passwords do not match</span>
             }
           </sh-form-field>
@@ -140,7 +158,9 @@
             }
           </div>
 
-          @if (generalForm.value.password && generalForm.value.password === generalForm.value.repeatPassword) {
+          @if (
+            generalForm.password().value() && generalForm.password().value() === generalForm.repeatPassword().value()
+          ) {
             <sh-alert type="primary" i18n>
               Tip: Be sure to save your password. If you lose it, you will lose access to your backups.
             </sh-alert>
@@ -156,9 +176,7 @@
       Exit
     </button>
 
-    @if (
-      generalFormSignal()?.operationType === 'Sync' || encryptionFieldSignal() === noneOptionKey || !canEditEncryption()
-    ) {
+    @if (operationTypeFieldSignal() === 'Sync' || encryptionFieldSignal() === noneOptionKey || !canEditEncryption()) {
       <button shButton class="raised primary" type="submit" [disabled]="nameAndDescriptionValid() === false" i18n>
         Continue
         <sh-icon>arrow-right</sh-icon>
@@ -171,7 +189,7 @@
         i18n
         i18n-shTooltip
         shTooltip="Remember to copy the password"
-        [disabled]="generalForm.invalid || (showCopyPassword() && !copiedPassword())">
+        [disabled]="generalForm().invalid() || (showCopyPassword() && !copiedPassword())">
         Continue
         <sh-icon>arrow-right</sh-icon>
       </button>

@@ -8,7 +8,8 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormField, provideSignalFormsConfig } from '@angular/forms/signals';
+import { compatForm, NG_STATUS_CLASSES } from '@angular/forms/signals/compat';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
@@ -18,16 +19,18 @@ import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { ShipSelect } from '@ship-ui/core/ship-select';
 import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
-import { OperationType } from '../../core/openapi';
 import { PasswordGeneratorService } from '../../core/services/password-generator.service';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 import { BackupState } from '../backup.state';
 import { NONE_OPTION } from '../models/general-form';
+import { NullableTextControl } from './nullable-text-control';
 
 @Component({
   selector: 'app-general',
+  providers: [provideSignalFormsConfig({ classes: NG_STATUS_CLASSES })],
   imports: [
-    ReactiveFormsModule,
+    FormField,
+    NullableTextControl,
     ShipFormField,
     ShipSelect,
     ShipButton,
@@ -50,10 +53,10 @@ export default class GeneralComponent {
   #sysinfo = inject(SysinfoState);
 
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
-  generalForm = this.#backupState.generalForm;
-  generalFormSignal = this.#backupState.generalFormSignal;
-  encryptionFieldSignal = this.#backupState.encryptionFieldSignal;
-  operationTypeFieldSignal = signal<OperationType>('Backup'); // this.#backupState.operationTypeFieldSignal;
+  // Keep the existing controls as the single source of truth during the staged migration.
+  generalForm = compatForm(signal(this.#backupState.generalForm.controls));
+  encryptionFieldSignal = computed(() => this.generalForm.encryption().value());
+  operationTypeFieldSignal = computed(() => this.generalForm.operationType().value() ?? 'Backup');
   encryptionOptions = this.#backupState.encryptionOptions;
   isNew = this.#backupState.isNew;
   isDraft = this.#backupState.isDraft;
@@ -74,29 +77,15 @@ export default class GeneralComponent {
     }
   });
 
-  #operationTypeEffect1 = effect(() => {
-    const operationType = this.#backupState.operationTypeFieldSignal();
-    this.operationTypeFieldSignal.set(operationType ?? 'Backup');
-  });
+  updateOperationType(value: string | number | null) {
+    if (value === 'Backup' || value === 'Sync') this.generalForm.operationType().value.set(value);
+  }
 
-  #operationTypeEffect2 = effect(() => {
-    const operationType = this.operationTypeFieldSignal();
-    this.generalForm.controls.operationType.setValue(operationType);
-  });
+  nameAndDescriptionValid = computed(() => this.generalForm.name().valid() && this.generalForm.description().valid());
 
-  nameAndDescriptionValid = computed(() => {
-    const _ = this.generalFormSignal();
-    const formControls = this.generalForm.controls;
-
-    return formControls?.name && formControls.name.valid && formControls?.description && formControls.description.valid;
-  });
-
-  calculatePasswordStrength = computed(() => {
-    const form = this.generalFormSignal();
-    const password = form?.password ?? '';
-
-    return this.#passwordGeneratorService.calculatePasswordStrength(password);
-  });
+  calculatePasswordStrength = computed(() =>
+    this.#passwordGeneratorService.calculatePasswordStrength(this.generalForm.password().value() ?? '')
+  );
 
   ngOnInit() {
     this.formRef().nativeElement.focus();
@@ -107,7 +96,7 @@ export default class GeneralComponent {
   }
 
   async copyPassword() {
-    const pass = this.generalForm.controls.password.value;
+    const pass = this.generalForm.password().value();
 
     await this.#copyToClipboard(pass ?? '');
 
@@ -137,8 +126,8 @@ export default class GeneralComponent {
     this.copiedPassword.set(false);
 
     const newPass = this.#passwordGeneratorService.generate(41);
-    this.generalForm.controls.password.setValue(newPass);
-    this.generalForm.controls.repeatPassword.setValue(newPass);
+    this.generalForm.password().value.set(newPass);
+    this.generalForm.repeatPassword().value.set(newPass);
 
     this.showCopyPassword.set(true);
   }
