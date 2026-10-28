@@ -306,7 +306,12 @@
         [minMax]="1024"
         [formatValue]="formatSpeed" />
 
-      <div class="foot muted" i18n>Peak upload in window: {{ peakUpload() | bytes: false : true }}/s</div>
+      <div class="foot muted">
+        <ng-container i18n>Peak upload: {{ peakUpload() | bytes: false : true }}/s</ng-container>
+        @if (throttleText(); as throttleText) {
+          <span> · {{ throttleText }}</span>
+        }
+      </div>
     </sh-card>
 
     <!-- CPU -->

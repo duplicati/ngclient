@@ -2,17 +2,38 @@
 
 ### Prerequisites
 
-- Node.js 22 - https://formulae.brew.sh/formula/node
-- bun latest - https://bun.sh/docs/installation (Could be removed as a dependency requires changing a few commands in the package.json scripts)
+- Node.js 24 (used by the publishing and browser-test workflows) - https://nodejs.org/en/download
+- Bun - https://bun.sh/docs/installation (required by the package scripts)
 
 ### Dependencies
 
 - ShipUI - https://shipui.com/ - ([Docs](https://docs.shipui.com/), [GitHub](https://github.com/shipuicom/core))
-- Angular 21 - https://angular.dev
+- Angular 22 - https://angular.dev
 - Dayjs - https://day.js.org/en/
 - Phosphor Icons - https://phosphoricons.com/
 
 ### Run the project
+
+Install dependencies and start the Angular development server:
+
+```sh
+bun install --frozen-lockfile
+bun run start
+```
+
+Open http://localhost:4200. The default development configuration proxies backend
+requests using `projects/ngclient/src/proxy-localhost.conf.mjs`. Run a local
+Duplicati backend when using this configuration.
+
+### Unit tests
+
+Run the unit suite once, as in CI:
+
+```sh
+bun run test:ci
+```
+
+Use `bun run test` for watch mode.
 
 ### Preview a production build
 

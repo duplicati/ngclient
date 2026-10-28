@@ -15,8 +15,10 @@ import { BytesPipe } from '../core/pipes/byte.pipe';
 import { RelativeTimePipe } from '../core/pipes/relative-time.pipe';
 import { BackupsState } from '../core/states/backups.state';
 import { SystemStatusQueueItem } from '../core/types/system-status';
+import { ServerSettingsService } from '../settings/server-settings.service';
 import StatusChartComponent, { StatusChartSeries } from './status-chart/status-chart.component';
 import { StatusPageState, TelemetrySample } from './status.state';
+import { parseThrottleSpeed } from './throttle-speed';
 
 const OPERATION_LABELS: Record<string, string> = {
   BackupOrSync: $localize`Backup`,
@@ -75,6 +77,28 @@ export default class StatusComponent implements OnInit, OnDestroy {
   #backupsState = inject(BackupsState);
   #dupServer = inject(DuplicatiServer);
   #bytesPipe = inject(BytesPipe);
+  #serverSettings = inject(ServerSettingsService);
+
+  /** The active transfer throttles in bytes per second, or null for a direction that is not throttled */
+  throttle = computed(() => {
+    const settings = this.#serverSettings.serverSettings();
+    return {
+      upload: parseThrottleSpeed(settings?.['max-upload-speed']),
+      download: parseThrottleSpeed(settings?.['max-download-speed']),
+    };
+  });
+
+  /** The active throttles as one line of text, or null when no throttle is set */
+  throttleText = computed(() => {
+    const { upload, download } = this.throttle();
+    const limits: string[] = [];
+    if (upload) limits.push(`${this.#bytesPipe.transform(upload)}/s ↑`);
+    if (download) limits.push(`${this.#bytesPipe.transform(download)}/s ↓`);
+    if (limits.length === 0) return null;
+
+    const joined = limits.join(' ');
+    return $localize`Throttled to ${joined}:limits:`;
+  });
 
   statusData = this.#statusBarState.statusData;
   serverState = this.#statusBarState.serverState;
@@ -218,6 +242,8 @@ export default class StatusComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.#clock = setInterval(() => this.now.set(Date.now()), 10_000);
     this.#statusPageState.activateView();
+    // Without a websocket the cached settings do not learn of a throttle set from the status bar
+    this.#serverSettings.refreshServerSettings();
   }
 
   ngOnDestroy(): void {

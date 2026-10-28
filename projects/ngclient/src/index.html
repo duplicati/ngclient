@@ -6,7 +6,8 @@
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="assets/duplicati-logo.png" />
-    <link rel="stylesheet" href="assets/ship.css" />
+    <!-- Generated icon CSS is copied as an asset; keep it as an external stylesheet. -->
+    <link rel="stylesheet" href="assets/ship.css" data-beasties-skip />
     <script>
       let theme = localStorage.getItem('v1:persist:duplicati:darkTheme') === 'true' ? 'dark' : 'light';
       document.documentElement.classList.add(theme);
