@@ -76,6 +76,7 @@ export class StatusBarState {
   isFetching = this.#isFetching.asReadonly();
   connectionStatus = this.#serverState.connectionStatus;
   pollingInterval: number | undefined;
+  #activeTaskId: number | null = null;
 
   #serverStateEffect = effect(() => {
     const serverState = this.#serverState.serverState();
@@ -84,6 +85,13 @@ export class StatusBarState {
     if (this.hasProgressOnWebsocket()) {
       this.#serverState.subscribe('progress');
       this.#serverState.subscribe('taskqueue');
+    }
+
+    // A new task must not show the previous task's final state while its first progress fetch is pending
+    const activeTaskId = serverState?.ActiveTask?.Item1 ?? null;
+    if (activeTaskId !== this.#activeTaskId) {
+      this.#activeTaskId = activeTaskId;
+      if (activeTaskId !== null) this.#statusData.set(null);
     }
 
     if (serverState?.ActiveTask && this.pollingInterval === undefined) {
@@ -118,7 +126,11 @@ export class StatusBarState {
   }
 
   stopPollingProgress() {
+    if (this.pollingInterval === undefined) return;
+
+    // The handle is reset so the next active task starts polling again
     clearInterval(this.pollingInterval);
+    this.pollingInterval = undefined;
   }
 
   fetchProgressState() {

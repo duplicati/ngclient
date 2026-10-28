@@ -3,9 +3,14 @@ import { expect, test as base, type Page, type Request, type Route, type WebSock
 export const sessionNonceKey = 'refreshNonce';
 export const persistentNonceKey = 'v1:persist:duplicati:refreshNonce';
 
-async function setupAuthentication(page: Page, initialBackups: unknown[]) {
+async function setupAuthentication(
+  page: Page,
+  initialBackups: unknown[],
+  initialServerSettings: Record<string, string>
+) {
   const loginRequests: Route[] = [];
   const refreshRequests: Route[] = [];
+  const settingsRequests: Route[] = [];
   const requests: Request[] = [];
   const unexpectedRequests: string[] = [];
   const socketTokens: string[] = [];
@@ -22,6 +27,8 @@ async function setupAuthentication(page: Page, initialBackups: unknown[]) {
     'shown-welcome-page-v1': 'True',
     'has-asked-for-password-change': 'True',
     'machine-name': 'Browser test server',
+    'startup-delay': '',
+    ...initialServerSettings,
   };
   const serverStatus = {
     Type: 'legacystatus',
@@ -36,6 +43,7 @@ async function setupAuthentication(page: Page, initialBackups: unknown[]) {
   const getResponses: Record<string, unknown> = {
     '/api/v1/systeminfo': {
       Version: 'Browser test',
+      DefaultUsageReportLevel: 'information',
       StartedBy: 'TrayIcon',
       BackendModules: [],
       EncryptionModules: [],
@@ -74,6 +82,10 @@ async function setupAuthentication(page: Page, initialBackups: unknown[]) {
     }
     if (request.method() === 'POST' && endpoint === '/api/v1/auth/status') {
       await route.fulfill({ status: 200, json: { authorized: false } });
+      return;
+    }
+    if (request.method() === 'PATCH' && endpoint === '/api/v1/serversettings') {
+      settingsRequests.push(route);
       return;
     }
     if (request.method() === 'GET' && endpoint === '/api/v1/serverstate') {
@@ -135,6 +147,7 @@ async function setupAuthentication(page: Page, initialBackups: unknown[]) {
   return {
     loginRequests,
     refreshRequests,
+    settingsRequests,
     requests,
     unexpectedRequests,
     socketTokens,
@@ -146,10 +159,16 @@ async function setupAuthentication(page: Page, initialBackups: unknown[]) {
 
 type ServerApi = Awaited<ReturnType<typeof setupAuthentication>>;
 
-export const test = base.extend<{ serverApi: ServerApi; authenticatedPage: Page; initialBackups: unknown[] }>({
+export const test = base.extend<{
+  serverApi: ServerApi;
+  authenticatedPage: Page;
+  initialBackups: unknown[];
+  initialServerSettings: Record<string, string>;
+}>({
   initialBackups: [[], { option: true }],
-  serverApi: async ({ page, initialBackups }, use) => {
-    const api = await setupAuthentication(page, initialBackups);
+  initialServerSettings: [{}, { option: true }],
+  serverApi: async ({ page, initialBackups, initialServerSettings }, use) => {
+    const api = await setupAuthentication(page, initialBackups, initialServerSettings);
     await use(api);
     expect(api.unexpectedRequests, 'Unexpected API or WebSocket requests').toEqual([]);
     expect(api.pageErrors, 'Unhandled browser errors').toEqual([]);
