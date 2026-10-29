@@ -120,9 +120,23 @@ export function s3HostRequiresDisabledChunkEncoding(serverName: string | null | 
  */
 export function applyS3ChunkEncodingDefault(serverName: string | null | undefined, form: DestinationFormValues) {
   if (!s3HostRequiresDisabledChunkEncoding(serverName)) return;
-  if (form.advanced[S3_DISABLE_CHUNK_ENCODING_OPTION] !== undefined) return;
-  form.advanced[S3_DISABLE_CHUNK_ENCODING_OPTION] = 'true';
+  if (form.dynamic[S3_DISABLE_CHUNK_ENCODING_OPTION] !== undefined) return;
+  form.dynamic[S3_DISABLE_CHUNK_ENCODING_OPTION] = 'true';
 }
+
+const S3_USE_TLS_FIELD = {
+  name: 'use-ssl',
+  order: 2,
+  shortDescription: $localize`Use TLS (https)`,
+  longDescription: $localize`Use TLS (https) to encrypt the connection to the server`,
+};
+
+const S3_DISABLE_CHUNK_ENCODING_FIELD = {
+  name: S3_DISABLE_CHUNK_ENCODING_OPTION,
+  order: 3,
+  shortDescription: $localize`Disable chunk encoding`,
+  longDescription: $localize`Disable chunked (streaming) uploads. Required by some S3 compatible providers that do not support chunk encoding.`,
+};
 
 export const S3_BASE: DestinationConfigEntry = {
   key: 's3',
@@ -168,9 +182,8 @@ export const S3_BASE: DestinationConfigEntry = {
       name: 'auth-password',
       isMandatory: true,
     },
-    {
-      name: 'use-ssl',
-    },
+    S3_USE_TLS_FIELD,
+    S3_DISABLE_CHUNK_ENCODING_FIELD,
   ],
   advancedFields: [
     {
@@ -414,10 +427,8 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
         onValueChange: applyS3ChunkEncodingDefault,
       },
-      {
-        name: 'use-ssl',
-        order: 2,
-      },
+      S3_USE_TLS_FIELD,
+      S3_DISABLE_CHUNK_ENCODING_FIELD,
       {
         name: 'auth-username',
         isMandatory: true,
@@ -471,6 +482,9 @@ export const DESTINATION_CONFIG: DestinationConfig = [
           ...fromSearchParams(destinationType, urlObj),
         };
       },
+      default: (backupName: string): string => {
+        return `s3://?use-ssl=true&${S3_DISABLE_CHUNK_ENCODING_OPTION}=true`;
+      },
     },
   },
   {
@@ -511,10 +525,8 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         isMandatory: true,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       },
-      {
-        name: 'use-ssl',
-        order: 2,
-      },
+      S3_USE_TLS_FIELD,
+      S3_DISABLE_CHUNK_ENCODING_FIELD,
       {
         name: 'auth-username',
         isMandatory: true,
@@ -570,7 +582,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         };
       },
       default: (backupName: string): string => {
-        return `s3-aws://?use-ssl=true`;
+        return `s3-aws://?use-ssl=true&${S3_DISABLE_CHUNK_ENCODING_OPTION}=false`;
       },
       intercept: (urlObj: UrlLike): boolean => {
         return urlObj.searchParams.get('s3-server-name')?.endsWith('.amazonaws.com') ?? false;
