@@ -312,47 +312,46 @@ export default class DestinationComponent {
     this.#router.navigate(['source-data'], { relativeTo: this.#route.parent });
   }
 
+  isAdvancing = signal(false);
+
   async next() {
-    const isNew = this.#backupState.isNew();
+    if (this.isAdvancing()) return;
+    this.isAdvancing.set(true);
+    try {
+      const isNew = this.#backupState.isNew();
 
-    if (!isNew) {
-      this.#navigateToNext();
-      return;
-    }
-
-    const components = this.testUrlComponents();
-    const testStates = this.testStates(); // We use this to check initial state, but relying on component.testDestination is safer for latest ref
-
-    // Sequential validation
-    for (let i = 0; i < components.length; i++) {
-      const component = components[i];
-
-      // We can check if it's already successful to skip re-testing
-      // logic: if testStates[i] is success, continue
-      // BUT: user might have changed something? The component's internal logic should handle "if dirty, reset state".
-      // If state is 'success', it means it's valid for the CURRENT url.
-
-      const currentState = this.testStates()[i];
-
-      if (currentState && typeof currentState !== 'string' && currentState.action === 'success') {
-        continue;
-      }
-
-      // Test it
-      // We pass false to autoCreateFolders because we want the prompt to happen if needed (handled by TestUrl component if we configured it so?
-      // destination.component.html says: [askToCreate]="true".
-      // TestUrl.testDestination(false) => folderHandling = askToCreate ? 'prompt' : 'error' => 'prompt'.
-      // So it will prompt the user.
-
-      const result = await component.testDestination(false);
-
-      if (result?.action !== 'success') {
-        // Stop here. The component shows the error.
+      if (!isNew) {
+        this.#navigateToNext();
         return;
       }
-    }
 
-    this.#navigateToNext();
+      const components = this.testUrlComponents();
+
+      // Sequential validation
+      for (let i = 0; i < components.length; i++) {
+        const component = components[i];
+
+        // TestUrl resets the state when the URL changes, so 'success' is valid for the current URL
+        const currentState = this.testStates()[i];
+
+        if (currentState && typeof currentState !== 'string' && currentState.action === 'success') {
+          continue;
+        }
+
+        // With [askToCreate]="true" this prompts before creating a missing folder,
+        // and waits for an already running test (e.g. Create folder) of the same URL
+        const result = await component.testDestination(false);
+
+        if (result?.action !== 'success' || result.targetUrl !== component.targetUrl()) {
+          // Stop here. The component shows the error.
+          return;
+        }
+      }
+
+      this.#navigateToNext();
+    } finally {
+      this.isAdvancing.set(false);
+    }
   }
 
   #navigateToNext() {
