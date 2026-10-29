@@ -158,7 +158,7 @@
             }
 
             @if (item.data?.RemoteSynchronizationResults) {
-              @for (syncResult of item.data?.RemoteSynchronizationResults; track $index) {
+              @for (syncResult of item.data?.RemoteSynchronizationResults; track $index; let syncIndex = $index) {
                 <details name="details">
                   <summary i18n>
                     <sh-icon>arrows-clockwise</sh-icon>
@@ -203,19 +203,14 @@
                           <p>No messages</p>
                         }
 
-                        @for (msg of syncResult.Messages; track $index) {
-                          <div class="warning-item">
-                            <code>{{ msg }}</code>
-                            <button shButton class="small" (click)="copyToClipboard($event, msg, msg)" i18n>
-                              Copy
-                              @if (copied() == msg) {
-                                <sh-icon>check</sh-icon>
-                              } @else {
-                                <sh-icon>copy</sh-icon>
-                              }
-                            </button>
-                          </div>
-                        }
+                        <ng-container
+                          *ngTemplateOutlet="
+                            logLinesTemplate;
+                            context: {
+                              lines: item.logLines?.sync?.[syncIndex]?.messages,
+                              key: 'sync-' + syncIndex + '-messages',
+                            }
+                          " />
                       </div>
                     </details>
 
@@ -234,19 +229,14 @@
                           <p>No warnings</p>
                         }
 
-                        @for (warning of syncResult.Warnings; track $index) {
-                          <div class="warning-item">
-                            <code>{{ warning }}</code>
-                            <button shButton class="small" (click)="copyToClipboard($event, warning, warning)" i18n>
-                              Copy
-                              @if (copied() == warning) {
-                                <sh-icon>check</sh-icon>
-                              } @else {
-                                <sh-icon>copy</sh-icon>
-                              }
-                            </button>
-                          </div>
-                        }
+                        <ng-container
+                          *ngTemplateOutlet="
+                            logLinesTemplate;
+                            context: {
+                              lines: item.logLines?.sync?.[syncIndex]?.warnings,
+                              key: 'sync-' + syncIndex + '-warnings',
+                            }
+                          " />
                       </div>
                     </details>
 
@@ -265,19 +255,14 @@
                           <p>No errors</p>
                         }
 
-                        @for (err of syncResult.Errors; track $index) {
-                          <div class="warning-item">
-                            <code>{{ err }}</code>
-                            <button shButton class="small" (click)="copyToClipboard($event, err, err)" i18n>
-                              Copy
-                              @if (copied() == err) {
-                                <sh-icon>check</sh-icon>
-                              } @else {
-                                <sh-icon>copy</sh-icon>
-                              }
-                            </button>
-                          </div>
-                        }
+                        <ng-container
+                          *ngTemplateOutlet="
+                            logLinesTemplate;
+                            context: {
+                              lines: item.logLines?.sync?.[syncIndex]?.errors,
+                              key: 'sync-' + syncIndex + '-errors',
+                            }
+                          " />
                       </div>
                     </details>
 
@@ -340,47 +325,11 @@
               </summary>
 
               <div class="content">
-                @for (warning of item.data?.Warnings; track $index) {
-                  @let parsedWarning = parseWarning(warning);
-                  <div class="warning-item">
-                    <code>{{ warning }}</code>
-                    <div class="actions">
-                      <button shButton class="small" (click)="copyToClipboard($event, warning, warning)" i18n>
-                        Copy
-                        @if (copied() == warning) {
-                          <sh-icon>check</sh-icon>
-                        } @else {
-                          <sh-icon>copy</sh-icon>
-                        }
-                      </button>
-                      @if (parsedWarning?.MessageId) {
-                        @let isSuppressed = isWarningSuppressed(parsedWarning!.MessageId!);
-                        <button
-                          shButton
-                          class="small"
-                          (click)="toggleWarningSuppression(parsedWarning!.MessageId!)"
-                          [disabled]="isSuppressingWarning()">
-                          @if (isSuppressingWarning()) {
-                            <ng-container i18n>
-                              Updating
-                              <sh-icon>spinner</sh-icon>
-                            </ng-container>
-                          } @else if (isSuppressed) {
-                            <ng-container i18n>
-                              Un-suppress
-                              <sh-icon>bell</sh-icon>
-                            </ng-container>
-                          } @else {
-                            <ng-container i18n>
-                              Suppress
-                              <sh-icon>bell-slash</sh-icon>
-                            </ng-container>
-                          }
-                        </button>
-                      }
-                    </div>
-                  </div>
-                }
+                <ng-container
+                  *ngTemplateOutlet="
+                    logLinesTemplate;
+                    context: { lines: item.logLines?.warnings, key: 'warnings', suppressible: true }
+                  " />
               </div>
             </details>
 
@@ -399,19 +348,8 @@
                   <p>No errors</p>
                 }
 
-                @for (item of item.data?.Errors; track $index) {
-                  <div class="warning-item">
-                    <code>{{ item }}</code>
-                    <button shButton class="small" (click)="copyToClipboard($event, item, item)" i18n>
-                      Copy
-                      @if (copied() == item) {
-                        <sh-icon>check</sh-icon>
-                      } @else {
-                        <sh-icon>copy</sh-icon>
-                      }
-                    </button>
-                  </div>
-                }
+                <ng-container
+                  *ngTemplateOutlet="logLinesTemplate; context: { lines: item.logLines?.errors, key: 'errors' }" />
               </div>
             </details>
             <sh-divider />
@@ -445,3 +383,70 @@
     }
   </article>
 }
+
+<ng-template #logLinesTemplate let-lines="lines" let-key="key" let-suppressible="suppressible">
+  @if (lines?.length) {
+    <div class="log-lines">
+      @for (line of $any(lines); track $index) {
+        @let lineKey = key + '-' + $index;
+        @let expanded = expandedLogLines().has(lineKey);
+        <div class="log-line" [class.expanded]="expanded">
+          <button type="button" class="log-line-row" (click)="toggleLogLine(lineKey)" [attr.aria-expanded]="expanded">
+            <sh-icon class="log-caret">caret-right</sh-icon>
+            @if (line.time) {
+              <span class="log-time" [shTooltip]="line.timestamp">{{ line.time }}</span>
+            }
+            <sh-icon class="log-level {{ line.level }}" [shTooltip]="logLevelDisplay(line).label">
+              {{ logLevelDisplay(line).icon }}
+            </sh-icon>
+            @if (line.tag) {
+              <span class="log-tag" [shTooltip]="line.source ?? ''">{{ line.tag }}</span>
+            }
+            <span class="log-summary">{{ line.summary }}</span>
+          </button>
+
+          @if (expanded) {
+            <div class="log-details">
+              <pre>{{ line.details }}</pre>
+              <div class="actions">
+                <button shButton class="small" (click)="copyToClipboard($event, line.raw, lineKey)" i18n>
+                  Copy
+                  @if (copied() == lineKey) {
+                    <sh-icon>check</sh-icon>
+                  } @else {
+                    <sh-icon>copy</sh-icon>
+                  }
+                </button>
+                @if (suppressible && line.tag) {
+                  @let isSuppressed = isWarningSuppressed(line.tag);
+                  <button
+                    shButton
+                    class="small"
+                    (click)="toggleWarningSuppression(line.tag)"
+                    [disabled]="isSuppressingWarning()">
+                    @if (isSuppressingWarning()) {
+                      <ng-container i18n>
+                        Updating
+                        <sh-icon>spinner</sh-icon>
+                      </ng-container>
+                    } @else if (isSuppressed) {
+                      <ng-container i18n>
+                        Un-suppress
+                        <sh-icon>bell</sh-icon>
+                      </ng-container>
+                    } @else {
+                      <ng-container i18n>
+                        Suppress
+                        <sh-icon>bell-slash</sh-icon>
+                      </ng-container>
+                    }
+                  </button>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</ng-template>

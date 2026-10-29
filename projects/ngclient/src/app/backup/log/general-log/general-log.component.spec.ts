@@ -7,70 +7,6 @@ import { DayJsProvider } from '../../../core/providers/dayjs';
 import { BackupsState } from '../../../core/states/backups.state';
 import { GeneralLogComponent } from './general-log.component';
 
-describe('GeneralLogComponent.parseWarning', () => {
-  function setup(): GeneralLogComponent {
-    TestBed.configureTestingModule({
-      imports: [GeneralLogComponent],
-      providers: [
-        DecimalPipe,
-        DayJsProvider,
-        {
-          provide: DuplicatiServer,
-          useValue: {
-            getApiV1BackupById: () => Promise.resolve({}),
-            getApiV1BackupByIdLog: () => of([]),
-          },
-        },
-        { provide: BackupsState, useValue: {} },
-      ],
-    });
-    const fixture = TestBed.createComponent(GeneralLogComponent);
-    fixture.componentRef.setInput('backupId', '1');
-    return fixture.componentInstance;
-  }
-
-  it('parses a single-line warning', () => {
-    const component = setup();
-    const parsed = component.parseWarning(
-      '2026-10-10 17:26:02 +00 - [Warning-Duplicati.Library.SourceProvider.FileRestoreDestinationProvider-SymlinkTargetOutside]: Skipping creation of symlink'
-    );
-
-    expect(parsed).toEqual({
-      Timestamp: '2026-10-10 17:26:02 +00',
-      LogLevel: 'Warning',
-      Source: 'Duplicati.Library.SourceProvider.FileRestoreDestinationProvider',
-      MessageId: 'SymlinkTargetOutside',
-      Message: 'Skipping creation of symlink',
-    });
-  });
-
-  it('parses a warning whose message spans multiple lines', () => {
-    const component = setup();
-    const parsed = component.parseWarning(
-      '2026-10-09 16.13.00 +02 - [Warning-Duplicati.Library.Main.Operation.Backup.FileBlockProcessor.FileEntry-FileProcessingFailed]: Failed to process path: /tmp/x\nHttpRequestException: Item not found (HTTP 404 NotFound)'
-    );
-
-    expect(parsed?.MessageId).toBe('FileProcessingFailed');
-    expect(parsed?.Source).toBe('Duplicati.Library.Main.Operation.Backup.FileBlockProcessor.FileEntry');
-    expect(parsed?.Message).toBe(
-      'Failed to process path: /tmp/x\nHttpRequestException: Item not found (HTTP 404 NotFound)'
-    );
-  });
-
-  it('uses the last segment as message id when the source contains hyphens', () => {
-    const component = setup();
-    const parsed = component.parseWarning('ts - [Warning-Some-Hyphenated.Source-TheId]: msg');
-
-    expect(parsed?.Source).toBe('Some-Hyphenated.Source');
-    expect(parsed?.MessageId).toBe('TheId');
-  });
-
-  it('returns null for text that is not a log line', () => {
-    const component = setup();
-    expect(component.parseWarning('just some text')).toBeNull();
-  });
-});
-
 describe('GeneralLogComponent mixed log rows', () => {
   type Row = { ID: number; Type: string; Message: string; Exception?: unknown };
 
@@ -168,5 +104,39 @@ describe('GeneralLogComponent mixed log rows', () => {
       { ID: 5, Type: 'Warning', Message: 'careful' },
     ]);
     expect(statusClasses(fixture)).toEqual(['status', 'status warn', 'status unknown', 'status error', 'status warn']);
+  });
+
+  it('shows warnings as compact rows that expand to the full message', async () => {
+    const warning =
+      '2026-10-09 16.13.00 +02 - [Warning-Duplicati.Library.Main.FileEntry-FileProcessingFailed]: Failed to process path: /tmp/x\nHttpRequestException: Item not found';
+    const fixture = await render([
+      {
+        ID: 8,
+        Type: 'Result',
+        Message: JSON.stringify({
+          MainOperation: 'Backup',
+          ParsedResult: 'Warning',
+          WarningsActualLength: 1,
+          Warnings: [warning, 'unstructured warning'],
+        }),
+      },
+    ]);
+    fixture.componentInstance.openEntry.set(8);
+    fixture.detectChanges();
+
+    const rows = fixture.nativeElement.querySelectorAll('.log-line-row') as NodeListOf<HTMLButtonElement>;
+    expect(rows).toHaveLength(2);
+    expect(rows[0].querySelector('.log-time')?.textContent?.trim()).toBe('16:13:00');
+    expect(rows[0].querySelector('.log-tag')?.textContent?.trim()).toBe('FileProcessingFailed');
+    expect(rows[0].querySelector('.log-summary')?.textContent?.trim()).toBe('Failed to process path: /tmp/x');
+    expect(rows[1].querySelector('.log-tag')).toBeNull();
+    expect(rows[1].querySelector('.log-summary')?.textContent?.trim()).toBe('unstructured warning');
+    expect(fixture.nativeElement.querySelector('.log-details')).toBeNull();
+
+    rows[0].click();
+    fixture.detectChanges();
+    const details = fixture.nativeElement.querySelector('.log-details') as HTMLElement;
+    expect(details.querySelector('pre')?.textContent).toContain('HttpRequestException: Item not found');
+    expect(details.textContent).toContain('Suppress');
   });
 });

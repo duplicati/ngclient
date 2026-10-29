@@ -193,15 +193,106 @@ details {
   }
 }
 
-.warning-item {
+.log-lines {
   display: flex;
-  flex-direction: row;
-  gap: p2r(8);
-  padding: p2r(12);
+  flex-direction: column;
+  border: 1px solid var(--base-4);
   border-radius: var(--shape-2);
-  background-color: var(--base-2);
+  overflow: hidden;
+}
 
-  code {
+.log-line {
+  border-top: 1px solid var(--base-4);
+
+  &:first-child {
+    border-top: none;
+  }
+
+  &.expanded .log-caret {
+    transform: rotate(90deg);
+  }
+}
+
+.log-line-row {
+  // Compact row: caret, time, level icon, tag, and the start of the message filling the rest
+  display: flex;
+  align-items: center;
+  gap: p2r(8);
+  width: 100%;
+  padding: p2r(6 12);
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--base-2);
+  }
+}
+
+.log-caret {
+  flex: none;
+  color: var(--base-9);
+  transition: transform 125ms linear;
+}
+
+.log-time {
+  flex: none;
+  font-family: monospace;
+  font-variant-numeric: tabular-nums;
+  color: var(--base-10);
+}
+
+.log-level {
+  flex: none;
+
+  &.information {
+    color: var(--primary-8);
+  }
+
+  &.warning,
+  &.retry {
+    color: var(--warn-8);
+  }
+
+  &.error {
+    color: var(--error-8);
+  }
+
+  &.verbose,
+  &.profiling,
+  &.dryrun,
+  &.unknown {
+    color: var(--base-9);
+  }
+}
+
+.log-tag {
+  flex: none;
+  font-weight: 500;
+  color: var(--base-12);
+  white-space: nowrap;
+}
+
+.log-summary {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.log-details {
+  // The full message keeps its line breaks, with the actions beside it
+  display: flex;
+  gap: p2r(8);
+  padding: p2r(8 12 12 40);
+  background: var(--base-2);
+  border-top: 1px solid var(--base-4);
+
+  pre {
     flex: 1 1 auto;
     min-width: 0;
     margin: 0;
@@ -218,8 +309,6 @@ details {
   }
 
   button {
-    align-self: flex-start;
-    flex: 0 0 auto;
     white-space: nowrap;
   }
 }

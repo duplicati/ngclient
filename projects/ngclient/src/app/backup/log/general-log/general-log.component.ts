@@ -1,4 +1,4 @@
-import { DatePipe, JsonPipe } from '@angular/common';
+import { DatePipe, JsonPipe, NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input, resource, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { ShipButton } from '@ship-ui/core/ship-button';
@@ -6,21 +6,32 @@ import { ShipDivider } from '@ship-ui/core/ship-divider';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { ShipToggleCard } from '@ship-ui/core/ship-toggle-card';
+import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { defer, finalize, map, switchMap } from 'rxjs';
 import { DuplicatiServer, SettingDto, SettingInputDto } from '../../../core/openapi';
 import { BytesPipe } from '../../../core/pipes/byte.pipe';
 import { DurationFormatPipe } from '../../../core/pipes/duration.pipe';
 import { BackupsState } from '../../../core/states/backups.state';
+import { LogLevel, ParsedLogLine, parseLogLine } from '../log-line';
 import { BackupResult, SyncResult } from '../log.types';
 
-interface WarningItem {
-  Message?: string;
-  Type?: string;
-  Timestamp?: string;
-  LogLevel?: string;
-  Source?: string;
-  MessageId?: string;
-}
+/** Icon and label for each log level, shown on the log line rows */
+export const LOG_LEVEL_DISPLAY: Record<LogLevel, { icon: string; label: string }> = {
+  information: { icon: 'info', label: $localize`Information` },
+  warning: { icon: 'warning', label: $localize`Warning` },
+  error: { icon: 'x-circle', label: $localize`Error` },
+  retry: { icon: 'arrow-clockwise', label: $localize`Retry` },
+  verbose: { icon: 'circle-dashed', label: $localize`Verbose` },
+  profiling: { icon: 'circle-dashed', label: $localize`Profiling` },
+  dryrun: { icon: 'circle-dashed', label: $localize`Dry run` },
+  unknown: { icon: 'dots-three-circle', label: $localize`Unknown level` },
+};
+
+type ParsedLogLines = {
+  messages: ParsedLogLine[];
+  warnings: ParsedLogLine[];
+  errors: ParsedLogLine[];
+};
 
 type LogEntry = {
   ID: number;
@@ -40,7 +51,17 @@ type LogEntryEvaluated = {
   data?: BackupResult & Partial<SyncResult>;
   rawMessage?: string;
   exception: unknown;
+  // The Warnings and Errors of data, and of each secondary destination, split into time, level, tag and message
+  logLines?: ParsedLogLines & { sync: ParsedLogLines[] };
 };
+
+function parseLogLines(result: { Messages?: string[] | null; Warnings?: string[] | null; Errors?: string[] | null }) {
+  return {
+    messages: (result.Messages ?? []).map((line) => parseLogLine(line, 'information')),
+    warnings: (result.Warnings ?? []).map((line) => parseLogLine(line, 'warning')),
+    errors: (result.Errors ?? []).map((line) => parseLogLine(line, 'error')),
+  };
+}
 
 @Component({
   selector: 'app-general-log',
@@ -50,10 +71,12 @@ type LogEntryEvaluated = {
     ShipProgressBar,
     ShipButton,
     ShipIcon,
+    ShipTooltip,
     BytesPipe,
     DatePipe,
     DurationFormatPipe,
     JsonPipe,
+    NgTemplateOutlet,
   ],
   templateUrl: './general-log.component.html',
   styleUrl: './general-log.component.scss',
@@ -91,6 +114,8 @@ export class GeneralLogComponent {
   });
 
   openEntry = signal<number | null>(null);
+  // Keys of the log line rows the user has expanded, cleared when another entry is opened
+  expandedLogLines = signal<ReadonlySet<string>>(new Set());
   openSection = signal<'errors' | 'warnings' | null>(null);
   pagination = signal({
     offset: 0,
@@ -118,6 +143,10 @@ export class GeneralLogComponent {
               timestamp: y.Timestamp * 1000,
               type: y.Type,
               data,
+              logLines: data && {
+                ...parseLogLines(data),
+                sync: (data.RemoteSynchronizationResults ?? []).map(parseLogLines),
+              },
               rawMessage: data === undefined ? y.Message : undefined,
               exception: JSON.stringify(y.Exception) === '{}' ? null : y.Exception,
             };
@@ -176,6 +205,7 @@ export class GeneralLogComponent {
 
   toggleOpenEntry(item: LogEntryEvaluated) {
     const id = item.id;
+    this.expandedLogLines.set(new Set());
     if (this.openEntry() === id) {
       this.openEntry.set(null);
       this.openSection.set(null);
@@ -197,20 +227,17 @@ export class GeneralLogComponent {
     this.openEntry.set(id);
   }
 
-  parseWarning(warning: string): WarningItem | null {
-    // Parse non-JSON format: "<timestamp> - [<LogLevel>-<Source>-<MessageId>]: <message>"
-    // The message may span multiple lines (e.g. exception details), and the source may
-    // contain hyphens, so the message id is taken as the last hyphen-separated segment.
-    const match = warning.match(/^(.*?) - \[([^\]-]+)-(.+)-([^\]-]+)\]: ([\s\S]*)$/);
-    if (!match) return null;
-    const [, timestamp, logLevel, source, messageId, message] = match;
-    return {
-      Timestamp: timestamp,
-      LogLevel: logLevel,
-      Source: source,
-      MessageId: messageId,
-      Message: message,
-    };
+  // Typed accessor for the template, whose row context is untyped
+  logLevelDisplay(line: ParsedLogLine) {
+    return LOG_LEVEL_DISPLAY[line.level];
+  }
+
+  toggleLogLine(key: string) {
+    this.expandedLogLines.update((expanded) => {
+      const next = new Set(expanded);
+      if (!next.delete(key)) next.add(key);
+      return next;
+    });
   }
 
   isWarningSuppressed(messageId: string): boolean {
