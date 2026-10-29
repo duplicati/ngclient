@@ -1,3 +1,4 @@
+import { KeyboardActionDirective } from '../../../core/directives/keyboard-action.directive';
 import {
   afterNextRender,
   ChangeDetectionStrategy,
@@ -220,7 +221,7 @@ export const serializeFilterPath = (
 
 @Component({
   selector: 'app-new-filter',
-  imports: [FormsModule, ShipSelect, ShipFormField, ShipIcon],
+  imports: [KeyboardActionDirective, FormsModule, ShipSelect, ShipFormField, ShipIcon],
   templateUrl: './new-filter.component.html',
   styleUrl: './new-filter.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

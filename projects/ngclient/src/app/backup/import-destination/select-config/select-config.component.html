@@ -22,7 +22,15 @@
           <input type="text" i18n-placeholder placeholder="Search for destination..." [(ngModel)]="searchTerm" />
           <sh-icon prefix>magnifying-glass</sh-icon>
           @if (searchTerm()) {
-            <sh-icon class="clear-search" suffix (click)="searchTerm.set('')">x-circle</sh-icon>
+            <sh-icon
+              appKeyboardAction
+              aria-label="Clear search"
+              i18n-aria-label
+              class="clear-search"
+              suffix
+              (click)="$event.stopPropagation(); searchTerm.set('')">
+              x-circle
+            </sh-icon>
           }
         </sh-form-field>
       </div>
@@ -36,6 +44,7 @@
     <div class="config-list">
       @for (config of configsSorted(); track config.BackupId) {
         <sh-card
+          appKeyboardAction
           class="type-a actionable full-width"
           [class.unmatched]="config.Match === false"
           (click)="toggleSelected(config.BackupId)">

@@ -1,6 +1,8 @@
 <section class="left">
   <div class="actionables">
-    <div class="without-connecting" (click)="openSkipDialog()" i18n>Proceed without connecting to console</div>
+    <div appKeyboardAction class="without-connecting" (click)="openSkipDialog()" i18n>
+      Proceed without connecting to console
+    </div>
 
     <div class="benefits">
       @for (benefit of primaryBenefits; track benefit) {

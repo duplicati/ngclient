@@ -19,43 +19,43 @@
       }
     </div>
   }
-  <sh-stepper class="primary" [inert]="isSubmitting()">
-    <div
-      tabindex="-1"
+  <nav class="backup-stepper" aria-label="Backup steps" i18n-aria-label [inert]="isSubmitting()">
+    <a
       routerLinkActive="active"
+      ariaCurrentWhenActive="step"
       [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'general']"
       i18n>
       General
-    </div>
-    <div
-      tabindex="-1"
+    </a>
+    <a
       routerLinkActive="active"
+      ariaCurrentWhenActive="step"
       [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'source-data']"
       i18n>
       Source Data
-    </div>
-    <div
-      tabindex="-1"
+    </a>
+    <a
       routerLinkActive="active"
+      ariaCurrentWhenActive="step"
       [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'destination']"
       i18n>
       Destination
-    </div>
-    <div
-      tabindex="-1"
+    </a>
+    <a
       routerLinkActive="active"
+      ariaCurrentWhenActive="step"
       [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'schedule']"
       i18n>
       Schedule
-    </div>
-    <div
-      tabindex="-1"
+    </a>
+    <a
       routerLinkActive="active"
+      ariaCurrentWhenActive="step"
       [routerLink]="[isDraft() ? '/backup-draft' : '/backup', backupId(), 'options']"
       i18n>
       Options
-    </div>
-  </sh-stepper>
+    </a>
+  </nav>
 </header>
 
 @if (saveState().status === 'pending') {

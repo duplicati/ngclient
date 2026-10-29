@@ -93,12 +93,7 @@
           </div>
         </div>
       } @else {
-        <sh-card
-          class="type-a actionable add-new"
-          (click)="toggleCustomList()"
-          tabindex="0"
-          (keydown.enter)="$any($event.target).click()"
-          (keydown.space)="$any($event.target).click()">
+        <sh-card appKeyboardAction class="type-a actionable add-new" (click)="toggleCustomList()">
           <sh-icon>plus-circle</sh-icon>
           <div class="text">
             <h3 i18n>Configure a new destination</h3>
@@ -112,13 +107,11 @@
 
         @for (option of destinations(); track $index) {
           <app-destination-list-item
+            appKeyboardAction
             class="actionable"
             variant="type-a"
             [targetUrl]="option.BaseUrl"
-            (click)="selectSavedDestination(option)"
-            tabindex="0"
-            (keydown.enter)="$any($event.target).click()"
-            (keydown.space)="$any($event.target).click()">
+            (click)="selectSavedDestination(option)">
             <h3 displayName>{{ option.Name || option.BaseUrl }}</h3>
             @if (option.Description) {
               <p description>{{ option.Description }}</p>
@@ -136,7 +129,7 @@
         </button>
       </div>
 
-      <sh-card class="type-a actionable add-new" (click)="toggleCustomList()">
+      <sh-card appKeyboardAction class="type-a actionable add-new" (click)="toggleCustomList()">
         <sh-icon>plus-circle</sh-icon>
         <div class="text">
           <h3 i18n>Configure a new destination</h3>

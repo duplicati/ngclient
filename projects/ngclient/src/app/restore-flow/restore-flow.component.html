@@ -1,32 +1,43 @@
 <app-status-bar />
 
 @if (!isFullWidthPage()) {
-  <sh-stepper class="primary">
+  <nav class="backup-stepper" aria-label="Restore steps" i18n-aria-label>
     @if (isFileRestore()) {
-      <div tabindex="-1" routerLinkActive="active" [routerLink]="['/restore-from-files/destination']" i18n>
+      <a routerLinkActive="active" ariaCurrentWhenActive="step" [routerLink]="['/restore-from-files/destination']" i18n>
         Destination
-      </div>
-      <div tabindex="-1" routerLinkActive="active" [routerLink]="['/restore-from-files/encryption']" i18n>
+      </a>
+      <a routerLinkActive="active" ariaCurrentWhenActive="step" [routerLink]="['/restore-from-files/encryption']" i18n>
         Encryption
-      </div>
-      <div
-        tabindex="-1"
+      </a>
+      <a
         routerLinkActive="active"
+        ariaCurrentWhenActive="step"
         class="inactive"
         [routerLink]="['/restore-from-files/select-files']"
         i18n>
         Select files
-      </div>
-      <div tabindex="-1" routerLinkActive="active" class="inactive" [routerLink]="['/restore-from-files/options']" i18n>
+      </a>
+      <a
+        routerLinkActive="active"
+        ariaCurrentWhenActive="step"
+        class="inactive"
+        [routerLink]="['/restore-from-files/options']"
+        i18n>
         Options
-      </div>
+      </a>
     } @else {
-      <div tabindex="-1" routerLinkActive="active" [routerLink]="['/restore', backupId(), 'select-files']" i18n>
+      <a
+        routerLinkActive="active"
+        ariaCurrentWhenActive="step"
+        [routerLink]="['/restore', backupId(), 'select-files']"
+        i18n>
         Select files
-      </div>
-      <div tabindex="-1" routerLinkActive="active" [routerLink]="['/restore', backupId(), 'options']" i18n>Options</div>
+      </a>
+      <a routerLinkActive="active" ariaCurrentWhenActive="step" [routerLink]="['/restore', backupId(), 'options']" i18n>
+        Options
+      </a>
     }
-  </sh-stepper>
+  </nav>
 }
 
 <section>

@@ -43,7 +43,7 @@
     }
 
     @if (additionalReportingUrl() !== '' && state() !== 'registered') {
-      <sh-chip class="reporting-url primary simple" (click)="copyReportingUrl()" i18n>
+      <sh-chip appKeyboardAction class="reporting-url primary simple" (click)="copyReportingUrl()" i18n>
         Reporting configured by server
         @if (copiedReportingUrl() === true) {
           <sh-icon>check</sh-icon>

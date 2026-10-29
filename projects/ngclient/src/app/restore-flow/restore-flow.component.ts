@@ -1,14 +1,13 @@
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { ShipStepper } from '@ship-ui/core/ship-stepper';
 import { BackupState } from '../backup/backup.state';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { RestoreFlowState } from './restore-flow.state';
 
 @Component({
   selector: 'app-restore-flow',
-  imports: [ShipStepper, StatusBarComponent, RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [StatusBarComponent, RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './restore-flow.component.html',
   styleUrl: './restore-flow.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

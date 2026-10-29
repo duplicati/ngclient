@@ -1,3 +1,4 @@
+import { KeyboardActionDirective } from '../../core/directives/keyboard-action.directive';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -68,6 +69,7 @@ export type DestinationFormGroupValue = ReturnType<typeof createDestinationFormG
 @Component({
   selector: 'app-destination',
   imports: [
+    KeyboardActionDirective,
     SingleDestinationComponent,
     DestinationListComponent,
     DestinationListItemComponent,

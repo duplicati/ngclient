@@ -31,9 +31,15 @@
           autocomplete="current-password"
           i18n-placeholder
           placeholder="Enter your password"
-          tabindex="1"
           formControlName="pass" />
-        <sh-icon suffix (click)="showPassword.set(!showPassword())">{{ showPassword() ? 'eye' : 'eye-slash' }}</sh-icon>
+        <sh-icon
+          appKeyboardAction
+          aria-label="Toggle password visibility"
+          i18n-aria-label
+          suffix
+          (click)="$event.stopPropagation(); showPassword.set(!showPassword())">
+          {{ showPassword() ? 'eye' : 'eye-slash' }}
+        </sh-icon>
       </sh-form-field>
 
       <button shButton class="raised primary login-button" [class.loading]="isLoading()" type="submit" i18n>
@@ -44,7 +50,7 @@
 
     <sh-checkbox class="raised primary" i18n>
       Keep me logged in
-      <input type="checkbox" id="rememberMe" tabindex="2" formControlName="rememberMe" />
+      <input type="checkbox" id="rememberMe" formControlName="rememberMe" />
     </sh-checkbox>
 
     <div class="login-row checkbox">

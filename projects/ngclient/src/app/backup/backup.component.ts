@@ -5,7 +5,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
-import { ShipStepper } from '@ship-ui/core/ship-stepper';
 import { defer, take } from 'rxjs';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { DuplicatiServer, GetBackupResultDto, SettingDto } from '../core/openapi';
@@ -22,7 +21,6 @@ import { BackupState } from './backup.state';
     RouterLink,
     RouterLinkActive,
     StatusBarComponent,
-    ShipStepper,
     ShipProgressBar,
   ],
   templateUrl: './backup.component.html',

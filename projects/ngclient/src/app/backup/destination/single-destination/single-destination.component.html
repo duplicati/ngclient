@@ -300,21 +300,15 @@
           } @else {
             <sh-icon prefix>password</sh-icon>
           }
-          @if ($any(item.formView).showPassword) {
-            <sh-icon
-              class="clickable"
-              suffix
-              (click)="$any(item.formView).showPassword = !$any(item.formView).showPassword">
-              eye
-            </sh-icon>
-          } @else {
-            <sh-icon
-              class="clickable"
-              suffix
-              (click)="$any(item.formView).showPassword = !$any(item.formView).showPassword">
-              eye-slash
-            </sh-icon>
-          }
+          <sh-icon
+            appKeyboardAction
+            aria-label="Toggle password visibility"
+            i18n-aria-label
+            class="clickable"
+            suffix
+            (click)="$event.stopPropagation(); $any(item.formView).showPassword = !$any(item.formView).showPassword">
+            {{ $any(item.formView).showPassword ? 'eye' : 'eye-slash' }}
+          </sh-icon>
         </sh-form-field>
       } @else if (item.formView.type === 'Enumeration') {
         @let options = mapOptions(item.formView);

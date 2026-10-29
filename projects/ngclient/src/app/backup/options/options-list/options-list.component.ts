@@ -1,3 +1,4 @@
+import { KeyboardActionDirective } from '../../../core/directives/keyboard-action.directive';
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input, model, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -36,6 +37,7 @@ type SizeSettingItem = {
 @Component({
   selector: 'app-options-list',
   imports: [
+    KeyboardActionDirective,
     FormsModule,
     FileTreeComponent,
     SizeComponent,
