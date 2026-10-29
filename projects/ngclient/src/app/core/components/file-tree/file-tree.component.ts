@@ -1308,8 +1308,42 @@ export default class FileTreeComponent {
     }
   }
 
+  #rangeAnchor: string | null = null;
+
+  #rangeRows(): FileTreeNode[] {
+    const rows: FileTreeNode[] = [];
+    const visit = (nodes: FileTreeNode[]) => {
+      for (const node of nodes) {
+        if (node.hidden && !this._showHiddenNodes()) continue;
+        if (!node.isLoadMore) rows.push(node);
+        visit(node.children);
+      }
+    };
+    visit(this.treeStructure());
+    return rows;
+  }
+
+  #selectRange(event: MouseEvent, target: FileTreeNode): boolean {
+    const rows = this.#rangeRows();
+    const start = rows.findIndex((row) => row.id === this.#rangeAnchor);
+    const end = rows.findIndex((row) => row.id === target.id);
+    if (start < 0 || end < 0) return false;
+    const anchor = this.#rangeAnchor;
+    event.preventDefault();
+    for (const row of rows.slice(Math.min(start, end), Math.max(start, end) + 1)) {
+      // Re-evaluate after each selection: a selected folder includes its descendants.
+      const current = this.#rangeRows().find((candidate) => candidate.id === row.id);
+      if (!current || current.id === ROOTPATH || current.isLoadMore) continue;
+      if (this.selectFiles() && current.cls === 'folder') continue;
+      if (current.evalState === TreeEvalEnum.Included || current.evalState === TreeEvalEnum.IncludedByParent) continue;
+      this.toggleSelectedNode(new Event('click'), current);
+    }
+    this.#rangeAnchor = anchor;
+    return true;
+  }
+
   toggleSelectedNode($event: Event, node: FileTreeNode) {
-    if (!this.#isTreeNodeActionable(node)) return;
+    if (this.disabled() || !this.#isTreeNodeActionable(node)) return;
 
     $event.stopPropagation();
 
@@ -1322,6 +1356,10 @@ export default class FileTreeComponent {
 
     // Same eligibility rules as the aria-checked/aria-selected state of the row
     if (!this.canSelectTreeNode(node)) return;
+
+    if (this.multiSelect() && $event instanceof MouseEvent && $event.shiftKey && this.#selectRange($event, node))
+      return;
+    this.#rangeAnchor = node.id ?? null;
 
     const currentPaths = this.currentPathArray();
     const currentPathsWithRemotes = this.#resolveWithRemoteSource(currentPaths);
