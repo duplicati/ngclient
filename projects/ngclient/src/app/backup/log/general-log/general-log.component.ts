@@ -36,7 +36,9 @@ type LogEntryEvaluated = {
   operationId: number;
   timestamp: number;
   type: string;
-  data: BackupResult & Partial<SyncResult>;
+  // Exactly one of data (parsed Result rows) or rawMessage (everything else) is set
+  data?: BackupResult & Partial<SyncResult>;
+  rawMessage?: string;
   exception: unknown;
 };
 
@@ -100,21 +102,31 @@ export class GeneralLogComponent {
     stream: ({ params }) =>
       defer(() => this.#dupServer.getApiV1BackupByIdLog({ path: { id: params.id }, query: { pagesize: 100 } })).pipe(
         map((x) => {
-          return (x as LogEntry[]).map((y) => {
+          return (x as LogEntry[]).map((y): LogEntryEvaluated => {
+            let data: LogEntryEvaluated['data'] | undefined;
+            if (y.Type === 'Result') {
+              try {
+                const parsed = JSON.parse(y.Message);
+                if (parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed)) data = parsed;
+              } catch {
+                // Preserve old or unstructured rows without failing the whole page.
+              }
+            }
             return {
               id: y.ID,
               operationId: y.OperationID,
               timestamp: y.Timestamp * 1000,
               type: y.Type,
-              data: JSON.parse(y.Message),
+              data,
+              rawMessage: data === undefined ? y.Message : undefined,
               exception: JSON.stringify(y.Exception) === '{}' ? null : y.Exception,
-            } as Partial<LogEntryEvaluated>;
+            };
           });
         })
       ),
   });
 
-  getLocalizedSummary(item: Partial<LogEntryEvaluated>): string {
+  getLocalizedSummary(item: LogEntryEvaluated): string {
     const errorCount = item.data?.ErrorsActualLength ?? 0;
     const warningCount = item.data?.WarningsActualLength ?? 0;
 
@@ -154,8 +166,16 @@ export class GeneralLogComponent {
     return durationString;
   }
 
-  toggleOpenEntry(item: Partial<LogEntryEvaluated>) {
-    const id = item.id!;
+  getStatusClass(item: LogEntryEvaluated): string {
+    // Raw rows have no ParsedResult, so fall back to the row type and never show them as successful
+    const status = item.data ? item.data.ParsedResult : item.type;
+    if (status === 'Fatal' || status === 'Error') return 'error';
+    if (status === 'Warning') return 'warn';
+    return item.data ? '' : 'unknown';
+  }
+
+  toggleOpenEntry(item: LogEntryEvaluated) {
+    const id = item.id;
     if (this.openEntry() === id) {
       this.openEntry.set(null);
       this.openSection.set(null);
@@ -327,6 +347,10 @@ export class GeneralLogComponent {
     setTimeout(() => {
       this.copied.set(null);
     }, 2000);
+  }
+
+  formatException(exception: unknown): string {
+    return typeof exception === 'string' ? exception : this.stringify(exception);
   }
 
   stringify(obj: any) {

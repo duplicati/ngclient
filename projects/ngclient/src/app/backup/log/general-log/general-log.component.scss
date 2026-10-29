@@ -148,6 +148,31 @@ details {
   gap: p2r(16);
 }
 
+.raw-log {
+  grid-column: 1/-1;
+  position: relative;
+  min-width: 0;
+  border-radius: var(--shape-2);
+  background-color: var(--base-2);
+
+  code {
+    display: block;
+    padding: p2r(16 96 16 16);
+    white-space: pre-wrap;
+    word-break: break-word;
+
+    &.exception {
+      border-top: 1px solid var(--base-4);
+    }
+  }
+
+  button {
+    position: absolute;
+    top: p2r(12);
+    right: p2r(12);
+  }
+}
+
 .status {
   display: block;
   width: p2r(16);
@@ -161,6 +186,10 @@ details {
 
   &.warn {
     background-color: var(--warn-8);
+  }
+
+  &.unknown {
+    background-color: var(--base-6);
   }
 }
 
