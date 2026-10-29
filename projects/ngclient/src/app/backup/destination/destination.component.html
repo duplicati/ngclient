@@ -193,9 +193,9 @@
     <button
       shButton
       class="raised primary"
-      [class.loading]="isNew() && testStates().length > 0 && testStates()[0] === 'testing'"
+      [class.loading]="isAdvancing() || (isNew() && testStates().length > 0 && testStates()[0] === 'testing')"
       type="submit"
-      [disabled]="!hasDestination"
+      [disabled]="!hasDestination || isAdvancing()"
       i18n>
       <sh-icon>arrow-right</sh-icon>
       Continue

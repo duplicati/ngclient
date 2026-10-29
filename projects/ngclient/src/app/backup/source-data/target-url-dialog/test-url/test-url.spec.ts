@@ -256,6 +256,17 @@ describe('TestUrl connection testing', () => {
     expect(testDestination).toHaveBeenCalledTimes(2);
   });
 
+  it('keeps the testing state when the parent resets it on the retry URL change', () => {
+    const { component } = setup();
+    // Mirrors DestinationComponent.updateTargetUrl, which clears the test state on URL changes
+    component.targetUrl.subscribe(() => component.testSignal.set(null));
+    void component.testDestination(false);
+    respond(0, result({ action: 'trust-cert', testAgain: true, suggestedUrl }));
+
+    expect(component.targetUrl()).toBe(suggestedUrl);
+    expect(component.testSignal()).toBe('testing');
+  });
+
   it('returns a retry suggestion without automatically retrying when dialogs are suppressed', async () => {
     const { component, testDestination } = setup({ suppressErrorDialogs: true });
     const pending = component.testDestination(false);
@@ -352,6 +363,20 @@ describe('TestUrl connection testing', () => {
     respond(0, response);
     await expect(continuing).resolves.toBe(response);
     await expect(repeated).resolves.toBe(response);
+  });
+
+  it('does not share a running test that would not create the requested folder', async () => {
+    const { component, testDestination } = setup({ askToCreate: false });
+    const testing = component.testDestination(false)!;
+    const creating = component.testDestination(true)!;
+    expect(creating).not.toBe(testing);
+    await expect(testing).resolves.toBeUndefined();
+    expect(released[0]).toHaveBeenCalledTimes(1);
+    expect(testDestination).toHaveBeenCalledTimes(2);
+    expect(testDestination.mock.calls[1][7]).toBe('create');
+    const response = result();
+    respond(1, response);
+    await expect(creating).resolves.toBe(response);
   });
 
   it.each(['error', 'empty'] as const)('settles all waiters and allows retry after %s', async (ending) => {
