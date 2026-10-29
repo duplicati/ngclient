@@ -1,0 +1,770 @@
+{
+  "defaultLocale": "en-US",
+  "languages": [
+    {
+      "value": "en",
+      "label": "English (en-US)"
+    },
+    {
+      "value": "en-GB",
+      "label": "English (en-GB)"
+    },
+    {
+      "value": "cs",
+      "label": "Czech (cs)"
+    },
+    {
+      "value": "da",
+      "label": "Danish (da)"
+    },
+    {
+      "value": "de",
+      "label": "German (de)"
+    },
+    {
+      "value": "es",
+      "label": "Spanish (es)"
+    },
+    {
+      "value": "fi",
+      "label": "Finnish (fi)"
+    },
+    {
+      "value": "fr",
+      "label": "French (fr)"
+    },
+    {
+      "value": "hu",
+      "label": "Hungarian (hu)"
+    },
+    {
+      "value": "it",
+      "label": "Italian (it)"
+    },
+    {
+      "value": "ja-JP",
+      "label": "Japanese (ja-JP)"
+    },
+    {
+      "value": "ko",
+      "label": "Korean (ko)"
+    },
+    {
+      "value": "nl-NL",
+      "label": "Dutch (nl-NL)"
+    },
+    {
+      "value": "pl",
+      "label": "Polish (pl)"
+    },
+    {
+      "value": "pt-BR",
+      "label": "Portuguese (pt-BR)"
+    },
+    {
+      "value": "pt",
+      "label": "Portuguese (pt)"
+    },
+    {
+      "value": "ru",
+      "label": "Russian (ru)"
+    },
+    {
+      "value": "sr-RS",
+      "label": "Serbian (sr-RS)"
+    },
+    {
+      "value": "sv-SE",
+      "label": "Swedish (sv-SE)"
+    },
+    {
+      "value": "tr",
+      "label": "Turkish (tr)"
+    },
+    {
+      "value": "zh-CN",
+      "label": "Chinese (zh-CN)"
+    },
+    {
+      "value": "zh-TW",
+      "label": "Chinese (zh-TW)"
+    },
+    {
+      "value": "de-CH",
+      "label": "German (de-CH)"
+    },
+    {
+      "value": "de-DE",
+      "label": "German (de-DE)"
+    },
+    {
+      "value": "es-AR",
+      "label": "Spanish (es-AR)"
+    },
+    {
+      "value": "fr-CA",
+      "label": "French (fr-CA)"
+    },
+    {
+      "value": "fr-FR",
+      "label": "French (fr-FR)"
+    },
+    {
+      "value": "it-IT",
+      "label": "Italian (it-IT)"
+    },
+    {
+      "value": "ja",
+      "label": "Japanese (ja)"
+    },
+    {
+      "value": "nl-BE",
+      "label": "Dutch (nl-BE)"
+    },
+    {
+      "value": "zh-Hant",
+      "label": "Chinese (zh-Hant)"
+    },
+    {
+      "value": "zh",
+      "label": "Chinese (zh)"
+    },
+    {
+      "value": "zh-HK",
+      "label": "Chinese (zh-HK)"
+    }
+  ],
+  "mjs": {
+    "ja-JP": "ja",
+    "nl-NL": "nl",
+    "sr-RS": "sr",
+    "sv-SE": "sv",
+    "zh-CN": "zh-Hans",
+    "zh-TW": "zh-Hant",
+    "zh-HK": "zh-Hant"
+  },
+  "cases": [
+    {
+      "input": "en",
+      "mapped": "en",
+      "resolved": "en",
+      "translation": "locale/messages.json",
+      "angular": {
+        "locale": "en",
+        "data": "en",
+        "extra": null
+      }
+    },
+    {
+      "input": "en-US",
+      "mapped": "en",
+      "resolved": "en-US",
+      "translation": null,
+      "angular": null
+    },
+    {
+      "input": "en-GB",
+      "mapped": "en-GB",
+      "resolved": "en-GB",
+      "translation": "locale/messages.en_GB.json",
+      "angular": {
+        "locale": "en-GB",
+        "data": "en-GB",
+        "extra": null
+      }
+    },
+    {
+      "input": "en-AU",
+      "mapped": "en",
+      "resolved": "en-AU",
+      "translation": "locale/messages.en.json",
+      "angular": {
+        "locale": "en",
+        "data": "en",
+        "extra": null
+      }
+    },
+    {
+      "input": "en-CA",
+      "mapped": "en",
+      "resolved": "en-CA",
+      "translation": "locale/messages.en.json",
+      "angular": {
+        "locale": "en",
+        "data": "en",
+        "extra": null
+      }
+    },
+    {
+      "input": "cs",
+      "mapped": "cs",
+      "resolved": "cs",
+      "translation": "locale/messages.cs.json",
+      "angular": {
+        "locale": "cs",
+        "data": "cs",
+        "extra": null
+      }
+    },
+    {
+      "input": "cs-CZ",
+      "mapped": "cs",
+      "resolved": "cs-CZ",
+      "translation": "locale/messages.cs.json",
+      "angular": {
+        "locale": "cs",
+        "data": "cs",
+        "extra": null
+      }
+    },
+    {
+      "input": "da",
+      "mapped": "da",
+      "resolved": "da",
+      "translation": "locale/messages.da.json",
+      "angular": {
+        "locale": "da",
+        "data": "da",
+        "extra": null
+      }
+    },
+    {
+      "input": "da-DK",
+      "mapped": "da",
+      "resolved": "da-DK",
+      "translation": "locale/messages.da.json",
+      "angular": {
+        "locale": "da",
+        "data": "da",
+        "extra": null
+      }
+    },
+    {
+      "input": "de",
+      "mapped": "de",
+      "resolved": "de",
+      "translation": "locale/messages.de.json",
+      "angular": {
+        "locale": "de",
+        "data": "de",
+        "extra": null
+      }
+    },
+    {
+      "input": "de-DE",
+      "mapped": "de-DE",
+      "resolved": "de-DE",
+      "translation": "locale/messages.de_DE.json",
+      "angular": {
+        "locale": "de-DE",
+        "data": "de",
+        "extra": null
+      }
+    },
+    {
+      "input": "de-AT",
+      "mapped": "de",
+      "resolved": "de-AT",
+      "translation": "locale/messages.de.json",
+      "angular": {
+        "locale": "de",
+        "data": "de",
+        "extra": null
+      }
+    },
+    {
+      "input": "de-CH",
+      "mapped": "de-CH",
+      "resolved": "de-CH",
+      "translation": "locale/messages.de_CH.json",
+      "angular": {
+        "locale": "de-CH",
+        "data": "de-CH",
+        "extra": null
+      }
+    },
+    {
+      "input": "es",
+      "mapped": "es",
+      "resolved": "es",
+      "translation": "locale/messages.es.json",
+      "angular": {
+        "locale": "es",
+        "data": "es",
+        "extra": null
+      }
+    },
+    {
+      "input": "es-ES",
+      "mapped": "es",
+      "resolved": "es-ES",
+      "translation": "locale/messages.es.json",
+      "angular": {
+        "locale": "es",
+        "data": "es",
+        "extra": null
+      }
+    },
+    {
+      "input": "es-MX",
+      "mapped": "es",
+      "resolved": "es-MX",
+      "translation": "locale/messages.es.json",
+      "angular": {
+        "locale": "es",
+        "data": "es",
+        "extra": null
+      }
+    },
+    {
+      "input": "es-AR",
+      "mapped": "es-AR",
+      "resolved": "es-AR",
+      "translation": "locale/messages.es_AR.json",
+      "angular": {
+        "locale": "es-AR",
+        "data": "es",
+        "extra": null
+      }
+    },
+    {
+      "input": "fi",
+      "mapped": "fi",
+      "resolved": "fi",
+      "translation": "locale/messages.fi.json",
+      "angular": {
+        "locale": "fi",
+        "data": "fi",
+        "extra": null
+      }
+    },
+    {
+      "input": "fi-FI",
+      "mapped": "fi",
+      "resolved": "fi-FI",
+      "translation": "locale/messages.fi.json",
+      "angular": {
+        "locale": "fi",
+        "data": "fi",
+        "extra": null
+      }
+    },
+    {
+      "input": "fr",
+      "mapped": "fr",
+      "resolved": "fr",
+      "translation": "locale/messages.fr.json",
+      "angular": {
+        "locale": "fr",
+        "data": "fr",
+        "extra": null
+      }
+    },
+    {
+      "input": "fr-FR",
+      "mapped": "fr-FR",
+      "resolved": "fr-FR",
+      "translation": "locale/messages.fr_FR.json",
+      "angular": {
+        "locale": "fr-FR",
+        "data": "fr",
+        "extra": null
+      }
+    },
+    {
+      "input": "fr-CA",
+      "mapped": "fr-CA",
+      "resolved": "fr-CA",
+      "translation": "locale/messages.fr_CA.json",
+      "angular": {
+        "locale": "fr-CA",
+        "data": "fr-CA",
+        "extra": null
+      }
+    },
+    {
+      "input": "hu",
+      "mapped": "hu",
+      "resolved": "hu",
+      "translation": "locale/messages.hu.json",
+      "angular": {
+        "locale": "hu",
+        "data": "hu",
+        "extra": null
+      }
+    },
+    {
+      "input": "hu-HU",
+      "mapped": "hu",
+      "resolved": "hu-HU",
+      "translation": "locale/messages.hu.json",
+      "angular": {
+        "locale": "hu",
+        "data": "hu",
+        "extra": null
+      }
+    },
+    {
+      "input": "it",
+      "mapped": "it",
+      "resolved": "it",
+      "translation": "locale/messages.it.json",
+      "angular": {
+        "locale": "it",
+        "data": "it",
+        "extra": null
+      }
+    },
+    {
+      "input": "it-IT",
+      "mapped": "it-IT",
+      "resolved": "it-IT",
+      "translation": "locale/messages.it_IT.json",
+      "angular": {
+        "locale": "it-IT",
+        "data": "it",
+        "extra": null
+      }
+    },
+    {
+      "input": "ja",
+      "mapped": "ja",
+      "resolved": "ja",
+      "translation": "locale/messages.ja.json",
+      "angular": {
+        "locale": "ja",
+        "data": "ja",
+        "extra": null
+      }
+    },
+    {
+      "input": "ja-JP",
+      "mapped": "ja",
+      "resolved": "ja-JP",
+      "translation": "locale/messages.ja.json",
+      "angular": {
+        "locale": "ja",
+        "data": "ja",
+        "extra": null
+      }
+    },
+    {
+      "input": "ko",
+      "mapped": "ko",
+      "resolved": "ko",
+      "translation": "locale/messages.ko.json",
+      "angular": {
+        "locale": "ko",
+        "data": "ko",
+        "extra": null
+      }
+    },
+    {
+      "input": "ko-KR",
+      "mapped": "ko",
+      "resolved": "ko-KR",
+      "translation": "locale/messages.ko.json",
+      "angular": {
+        "locale": "ko",
+        "data": "ko",
+        "extra": null
+      }
+    },
+    {
+      "input": "nl",
+      "mapped": "nl-NL",
+      "resolved": "nl",
+      "translation": "locale/messages.nl_NL.json",
+      "angular": {
+        "locale": "nl",
+        "data": "nl",
+        "extra": null
+      }
+    },
+    {
+      "input": "nl-NL",
+      "mapped": "nl-NL",
+      "resolved": "nl-NL",
+      "translation": "locale/messages.nl_NL.json",
+      "angular": {
+        "locale": "nl",
+        "data": "nl",
+        "extra": null
+      }
+    },
+    {
+      "input": "nl-BE",
+      "mapped": "nl-BE",
+      "resolved": "nl-BE",
+      "translation": "locale/messages.nl_BE.json",
+      "angular": {
+        "locale": "nl-BE",
+        "data": "nl-BE",
+        "extra": null
+      }
+    },
+    {
+      "input": "pl",
+      "mapped": "pl",
+      "resolved": "pl",
+      "translation": "locale/messages.pl.json",
+      "angular": {
+        "locale": "pl",
+        "data": "pl",
+        "extra": null
+      }
+    },
+    {
+      "input": "pl-PL",
+      "mapped": "pl",
+      "resolved": "pl-PL",
+      "translation": "locale/messages.pl.json",
+      "angular": {
+        "locale": "pl",
+        "data": "pl",
+        "extra": null
+      }
+    },
+    {
+      "input": "pt",
+      "mapped": "pt",
+      "resolved": "pt",
+      "translation": "locale/messages.pt.json",
+      "angular": {
+        "locale": "pt",
+        "data": "pt",
+        "extra": null
+      }
+    },
+    {
+      "input": "pt-BR",
+      "mapped": "pt-BR",
+      "resolved": "pt-BR",
+      "translation": "locale/messages.pt_BR.json",
+      "angular": {
+        "locale": "pt-BR",
+        "data": "pt",
+        "extra": null
+      }
+    },
+    {
+      "input": "pt-PT",
+      "mapped": "pt",
+      "resolved": "pt-PT",
+      "translation": "locale/messages.pt.json",
+      "angular": {
+        "locale": "pt",
+        "data": "pt",
+        "extra": null
+      }
+    },
+    {
+      "input": "ru",
+      "mapped": "ru",
+      "resolved": "ru",
+      "translation": "locale/messages.ru.json",
+      "angular": {
+        "locale": "ru",
+        "data": "ru",
+        "extra": null
+      }
+    },
+    {
+      "input": "ru-RU",
+      "mapped": "ru",
+      "resolved": "ru-RU",
+      "translation": "locale/messages.ru.json",
+      "angular": {
+        "locale": "ru",
+        "data": "ru",
+        "extra": null
+      }
+    },
+    {
+      "input": "sr",
+      "mapped": "sr-RS",
+      "resolved": "sr",
+      "translation": "locale/messages.sr_RS.json",
+      "angular": {
+        "locale": "sr",
+        "data": "sr",
+        "extra": null
+      }
+    },
+    {
+      "input": "sr-RS",
+      "mapped": "sr-RS",
+      "resolved": "sr-RS",
+      "translation": "locale/messages.sr_RS.json",
+      "angular": {
+        "locale": "sr",
+        "data": "sr",
+        "extra": null
+      }
+    },
+    {
+      "input": "sv",
+      "mapped": "sv-SE",
+      "resolved": "sv",
+      "translation": "locale/messages.sv_SE.json",
+      "angular": {
+        "locale": "sv",
+        "data": "sv",
+        "extra": null
+      }
+    },
+    {
+      "input": "sv-SE",
+      "mapped": "sv-SE",
+      "resolved": "sv-SE",
+      "translation": "locale/messages.sv_SE.json",
+      "angular": {
+        "locale": "sv",
+        "data": "sv",
+        "extra": null
+      }
+    },
+    {
+      "input": "sv-FI",
+      "mapped": "sv-SE",
+      "resolved": "sv-FI",
+      "translation": "locale/messages.sv_SE.json",
+      "angular": {
+        "locale": "sv",
+        "data": "sv",
+        "extra": null
+      }
+    },
+    {
+      "input": "tr",
+      "mapped": "tr",
+      "resolved": "tr",
+      "translation": "locale/messages.tr.json",
+      "angular": {
+        "locale": "tr",
+        "data": "tr",
+        "extra": null
+      }
+    },
+    {
+      "input": "tr-TR",
+      "mapped": "tr",
+      "resolved": "tr-TR",
+      "translation": "locale/messages.tr.json",
+      "angular": {
+        "locale": "tr",
+        "data": "tr",
+        "extra": null
+      }
+    },
+    {
+      "input": "zh",
+      "mapped": "zh",
+      "resolved": "zh",
+      "translation": "locale/messages.zh.json",
+      "angular": {
+        "locale": "zh",
+        "data": "zh-Hans",
+        "extra": null
+      }
+    },
+    {
+      "input": "zh-CN",
+      "mapped": "zh",
+      "resolved": "zh-CN",
+      "translation": "locale/messages.zh.json",
+      "angular": {
+        "locale": "zh",
+        "data": "zh-Hans",
+        "extra": null
+      }
+    },
+    {
+      "input": "zh-SG",
+      "mapped": "zh",
+      "resolved": "zh-SG",
+      "translation": "locale/messages.zh.json",
+      "angular": {
+        "locale": "zh",
+        "data": "zh-Hans",
+        "extra": null
+      }
+    },
+    {
+      "input": "zh-TW",
+      "mapped": "zh-TW",
+      "resolved": "zh-TW",
+      "translation": "locale/messages.zh_TW.json",
+      "angular": {
+        "locale": "zh-Hant",
+        "data": "zh-Hant",
+        "extra": "extra/zh-Hant"
+      }
+    },
+    {
+      "input": "zh-HK",
+      "mapped": "zh-HK",
+      "resolved": "zh-HK",
+      "translation": "locale/messages.zh_HK.json",
+      "angular": {
+        "locale": "zh-Hant",
+        "data": "zh-Hant",
+        "extra": "extra/zh-Hant"
+      }
+    },
+    {
+      "input": "zh-Hans",
+      "mapped": "zh",
+      "resolved": "zh-Hans",
+      "translation": "locale/messages.zh.json",
+      "angular": {
+        "locale": "zh",
+        "data": "zh-Hans",
+        "extra": null
+      }
+    },
+    {
+      "input": "zh-Hant",
+      "mapped": "zh-Hant",
+      "resolved": "zh-Hant",
+      "translation": "locale/messages.zh-Hant.json",
+      "angular": {
+        "locale": "zh-Hant",
+        "data": "zh-Hant",
+        "extra": "extra/zh-Hant"
+      }
+    }
+  ],
+  "dayjs": {
+    "en-us": "en",
+    "en-gb": "en-gb",
+    "cs": "cs",
+    "da": "da",
+    "de": "de",
+    "es": "es",
+    "fi": "fi",
+    "fr": "fr",
+    "hu": "hu",
+    "it": "it",
+    "ja": "ja",
+    "ko": "ko",
+    "nl": "nl",
+    "pl": "pl",
+    "pt": "pt",
+    "ru": "ru",
+    "sr": "sr",
+    "sv": "sv",
+    "tr": "tr",
+    "zh": "zh-cn",
+    "zh-tw": "zh-tw",
+    "de-ch": "de-ch",
+    "de-de": "de",
+    "es-ar": "es",
+    "fr-ca": "fr-ca",
+    "fr-fr": "fr",
+    "it-it": "it",
+    "nl-be": "nl-be",
+    "zh-hant": "zh-tw",
+    "zh-hk": "zh-hk"
+  }
+}

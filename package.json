@@ -34,7 +34,10 @@
     "update:openapi": "bun scripts/update-openapi.ts && bun run gen:openapi",
     "test": "ng test ngclient",
     "test:ci": "ng test ngclient --watch=false",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "gen:locales": "bun scripts/generate-locales.ts",
+    "check:locales": "bun scripts/generate-locales.ts --check",
+    "test:locales": "bun test ./scripts/locale-catalog.test.ts"
   },
   "dependencies": {
     "@angular/common": "22.2.1",

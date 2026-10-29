@@ -87,3 +87,25 @@ CLI; Bun remains the package manager and script launcher.
   - `dotnet run -- --webservice-password=helloworld --webservice-interface=any` (insert your test password)
 - `npm run start:windows`
 - Debug on your mac in `localhost:4200`
+
+### Locale definitions
+
+Edit `scripts/locale-catalog.ts` when changing supported locale identifiers,
+selector labels, aliases, or locale data. It is the build-time source for the
+runtime tables, Angular locale imports, Day.js registrations, and the locale
+sections of `angular.json`. Existing aliases and regional fallbacks are explicit
+in the catalog; language selection and provider lookup remain unchanged.
+
+After editing the catalog or updating translation files, run:
+
+```sh
+bun run gen:locales
+bun run check:locales
+bun run test:locales
+```
+
+Commit the catalog and generated files together. `check:locales` verifies that
+JSON/XLF translations and imported Angular/Day.js locale modules exist and that
+the generated files are current. CI runs this check before building. The catalog
+is used only during generation, so the application loads static tables and does
+not need to generate configuration at startup.
