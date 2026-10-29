@@ -8,6 +8,7 @@ export default <Routes>[
   },
   {
     path: 'general',
+    data: { preload: 'authenticated' },
     loadComponent: () => import('./general/general.component'),
   },
   {
