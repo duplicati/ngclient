@@ -3,19 +3,9 @@
 }
 
 @for (item of resource.value(); track $index) {
-  @let result = item.data?.ParsedResult || 'Unknown';
-
   <article class="log-entry">
     <header (click)="toggleOpenEntry(item)">
-      @if (result == 'Fatal') {
-        <div class="status error"></div>
-      } @else if (result == 'Error') {
-        <div class="status error"></div>
-      } @else if (result == 'Warning') {
-        <div class="status warn"></div>
-      } @else {
-        <div class="status"></div>
-      }
+      <div class="status" [class]="getStatusClass(item)"></div>
       <h3>{{ item.timestamp | date: 'medium' }}</h3>
       <p>
         {{ item.data?.MainOperation || item.type }}
@@ -33,7 +23,20 @@
     @if (item.id === openEntry()) {
       <section class="log-content">
         @if (item.rawMessage !== undefined) {
-          <pre><code>{{ item.rawMessage }}</code></pre>
+          <div class="raw-log">
+            <code>{{ item.rawMessage }}</code>
+            @if (item.exception) {
+              <code class="exception">{{ formatException(item.exception) }}</code>
+            }
+            <button shButton class="small" (click)="copyToClipboard($event, item.rawMessage, 'raw')" i18n>
+              Copy
+              @if (copied() == 'raw') {
+                <sh-icon>check</sh-icon>
+              } @else {
+                <sh-icon>copy</sh-icon>
+              }
+            </button>
+          </div>
         } @else {
           <sh-toggle-card [disableToggle]="true">
             <ng-container title>
