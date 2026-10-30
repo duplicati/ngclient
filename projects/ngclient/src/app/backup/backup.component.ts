@@ -1,6 +1,8 @@
+import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { ShipStepper } from '@ship-ui/core/ship-stepper';
@@ -12,7 +14,17 @@ import { BackupState } from './backup.state';
 
 @Component({
   selector: 'app-backup',
-  imports: [ShipAlert, RouterOutlet, RouterLink, RouterLinkActive, StatusBarComponent, ShipStepper, ShipProgressBar],
+  imports: [
+    ShipButton,
+    ShipIcon,
+    ShipAlert,
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
+    StatusBarComponent,
+    ShipStepper,
+    ShipProgressBar,
+  ],
   templateUrl: './backup.component.html',
   styleUrl: './backup.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,6 +32,7 @@ import { BackupState } from './backup.state';
 })
 export default class BackupComponent {
   #route = inject(ActivatedRoute);
+  #router = inject(Router);
   #backupState = inject(BackupState);
   #backupsState = inject(BackupsState); // List
   #dupServer = inject(DuplicatiServer);
@@ -48,6 +61,17 @@ export default class BackupComponent {
       this.getDefaults();
     }
   });
+
+  saveChanges() {
+    if (!this.finishedLoading() || this.isSubmitting() || this.isNew() || this.isDraft()) return;
+    const validation = this.#backupState.validateBeforeSubmit();
+    if (validation) {
+      const step = validation === 'source' ? 'source-data' : validation;
+      this.#router.navigate([step], { relativeTo: this.#route });
+      return;
+    }
+    this.#backupState.submit(true);
+  }
 
   getDefaults() {
     defer(() => this.#dupServer.getApiV1Backupdefaults())
