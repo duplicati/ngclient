@@ -4,6 +4,20 @@
   display: block;
 }
 
+.log-pagination,
+.log-load-error {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: p2r(16);
+  padding: p2r(16);
+}
+
+.log-empty {
+  padding: p2r(16);
+}
+
 .log-entry {
   display: flex;
   flex-direction: column;
