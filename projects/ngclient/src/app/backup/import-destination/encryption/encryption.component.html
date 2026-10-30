@@ -1,26 +1,35 @@
-<form [formGroup]="encryptionForm" (submit)="next()">
-  @if (!hasEncryptedBackup()) {
-    <p i18n>The backup does not contain encrypted files.</p>
+<form [formGroup]="encryptionForm" (submit)="next()" [attr.aria-busy]="creatingTemporaryBackup()">
+  <div class="encryption-fields" [attr.inert]="creatingTemporaryBackup() ? '' : null">
+    @if (!hasEncryptedBackup()) {
+      <p i18n>The backup does not contain encrypted files.</p>
+    }
+
+    @if (hasEncryptedBackup() || showEncryptionField()) {
+      <sh-form-field>
+        <label for="password" i18n>Password</label>
+        <input
+          type="password"
+          id="password"
+          autocomplete="disabled"
+          i18n-placeholder
+          placeholder="Enter backup passphrase if defined."
+          formControlName="passphrase" />
+      </sh-form-field>
+    }
+
+    <sh-toggle-card>
+      <ng-container title i18n>Advanced options</ng-container>
+
+      <app-options-list [(options)]="settings" [hasFreeTextSettings]="true" />
+    </sh-toggle-card>
+  </div>
+
+  @if (creatingTemporaryBackup()) {
+    <p role="status" i18n>Preparing configuration import…</p>
   }
-
-  @if (hasEncryptedBackup() || showEncryptionField()) {
-    <sh-form-field>
-      <label for="password" i18n>Password</label>
-      <input
-        type="password"
-        id="password"
-        autocomplete="disabled"
-        i18n-placeholder
-        placeholder="Enter backup passphrase if defined."
-        formControlName="passphrase" />
-    </sh-form-field>
+  @if (preparationState().status === 'error') {
+    <p role="alert" i18n>Could not prepare the configuration import. Please try again.</p>
   }
-
-  <sh-toggle-card>
-    <ng-container title i18n>Advanced options</ng-container>
-
-    <app-options-list [(options)]="settings" [hasFreeTextSettings]="true" />
-  </sh-toggle-card>
 
   <div class="form-actions">
     <button shButton type="button" (click)="back()" i18n>
@@ -28,7 +37,12 @@
       Back
     </button>
 
-    <button shButton class="raised primary" type="submit" [disabled]="!isValidConfig()" i18n>
+    <button
+      shButton
+      class="raised primary"
+      type="submit"
+      [disabled]="!isValidConfig() || creatingTemporaryBackup()"
+      i18n>
       <sh-icon>arrow-right</sh-icon>
       Continue
     </button>
