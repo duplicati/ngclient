@@ -62,6 +62,12 @@ form {
   justify-content: space-between;
 }
 
+.saved-destinations {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(12);
+}
+
 .clickable {
   cursor: pointer;
   color: var(--primary-8);

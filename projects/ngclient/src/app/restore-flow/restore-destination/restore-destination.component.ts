@@ -23,7 +23,8 @@ import { getConfigurationByKey, getConfigurationByUrl } from '../../backup/desti
 import { SingleDestinationComponent } from '../../backup/destination/single-destination/single-destination.component';
 import { TestUrl } from '../../backup/source-data/target-url-dialog/test-url/test-url';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
-import { IDynamicModule } from '../../core/openapi';
+import { ConnectionStringDto, IDynamicModule } from '../../core/openapi';
+import { ConnectionStringsState } from '../../core/states/connection-strings.state';
 import { DestinationTypeOption } from '../../core/states/destinationconfig.state';
 import { RestoreFlowState } from '../restore-flow.state';
 
@@ -53,12 +54,21 @@ export default class RestoreDestinationComponent {
   #dialog = inject(ShipDialogService);
   injector = inject(Injector);
   #restoreFlowState = inject(RestoreFlowState);
+  #connectionStringsState = inject(ConnectionStringsState);
 
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
   testUrlComponent = viewChild.required<TestUrl>('testUrl');
 
   testSignal = this.#restoreFlowState.destinationTestSignal;
   targetUrlModel = this.#restoreFlowState.destinationTargetUrl;
+  connectionStringId = this.#restoreFlowState.destinationConnectionStringId;
+  savedDestinationsLoading = this.#connectionStringsState.resourceDestinations.isLoading;
+  savedDestinationsError = this.#connectionStringsState.resourceDestinations.error;
+  savedDestinations = computed(() =>
+    this.#connectionStringsState.resourceDestinations.hasValue()
+      ? this.#connectionStringsState.destinations().filter((d) => d.ID > 0 && !!d.BaseUrl?.trim())
+      : []
+  );
   targetUrlCtrl = signal<string | null>(null);
   targetUrlInitial = signal<string | null>(null);
   targetUrlDialogOpen = signal(false);
@@ -119,6 +129,19 @@ export default class RestoreDestinationComponent {
     }
 
     this.#restoreFlowState.updateTargetUrl(`${key}://`);
+  }
+
+  selectSavedDestination(destination: ConnectionStringDto) {
+    if (destination.ID <= 0 || !destination.BaseUrl?.trim()) return;
+    this.#restoreFlowState.updateTargetUrl(destination.BaseUrl, destination.ID);
+  }
+
+  savedDestinationLabel(name: string | null) {
+    return $localize`Use saved destination ${name || $localize`Unnamed destination`}`;
+  }
+
+  retrySavedDestinations() {
+    this.#connectionStringsState.reload();
   }
 
   removeDestination() {

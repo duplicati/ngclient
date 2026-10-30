@@ -45,6 +45,7 @@ export default class RestoreEncryptionComponent {
 
   next() {
     const currentTargetUrl = this.#restoreFlowState.destinationTargetUrl();
+    const connectionStringId = this.#restoreFlowState.destinationConnectionStringId();
     if (!currentTargetUrl) {
       throw new Error('No target URL');
     }
@@ -76,6 +77,7 @@ export default class RestoreEncryptionComponent {
         body: {
           Backup: {
             TargetURL: currentTargetUrl,
+            ...(connectionStringId !== null ? { ConnectionStringID: connectionStringId } : {}),
             Settings: settings,
           },
         },
