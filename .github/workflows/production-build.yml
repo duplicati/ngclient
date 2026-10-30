@@ -24,6 +24,12 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      - name: Check generated locale definitions and assets
+        run: bun run check:locales
+
+      - name: Generate font assets
+        run: bun run gen:font
+
       - name: Build production application
         run: bun run build:prod
 
