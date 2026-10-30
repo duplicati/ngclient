@@ -48,8 +48,8 @@
       </sh-form-field>
     } @else if (optionsFields.backupRetention() === 'smart') {
       <p i18n>
-        Over time backups will be deleted automatically. There will remain one backup for each of the last 7 days, each of
-        the last 4 weeks, each of the last 12 months. There will always be at least one remaining backup.
+        Over time backups will be deleted automatically. There will remain one backup for each of the last 7 days, each
+        of the last 4 weeks, each of the last 12 months. There will always be at least one remaining backup.
       </p>
     } @else if (optionsFields.backupRetention() === 'custom') {
       <p i18n>
@@ -86,7 +86,13 @@
       Go back
     </button>
 
-    <button shButton class="raised primary" [class.loading]="isSubmitting()" (click)="submit()" i18n>
+    <button
+      shButton
+      class="raised primary"
+      [class.loading]="isSubmitting()"
+      [disabled]="isSubmitting()"
+      (click)="submit()"
+      i18n>
       <sh-icon>arrow-right</sh-icon>
       Submit
     </button>

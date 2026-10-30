@@ -1,8 +1,20 @@
-import { computed, effect, inject, Injectable, signal } from '@angular/core';
+import { computed, DestroyRef, effect, inject, Injectable, signal, untracked } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
-import { defer, finalize, forkJoin, map, Observable, of, switchMap, tap } from 'rxjs';
+import {
+  catchError,
+  defer,
+  EMPTY,
+  finalize,
+  forkJoin,
+  map,
+  Observable,
+  of,
+  switchMap,
+  takeWhile,
+  throwError,
+} from 'rxjs';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import { splitSize } from '../core/components/size/size.component';
 import { randomUUID } from '../core/functions/crypto';
@@ -19,6 +31,7 @@ import {
   TargetUrlDto,
 } from '../core/openapi';
 import { TimespanLiteralsService } from '../core/services/timespan-literals.service';
+import { AsyncOperation } from '../core/signals/async-operation';
 import { parseRecursiveObjectOfSignals } from '../core/signals/parse-recursive-signals-object';
 import { ConnectionStringsState } from '../core/states/connection-strings.state';
 import { SysinfoState } from '../core/states/sysinfo.state';
@@ -46,6 +59,12 @@ export type BackupTargetUrl = {
   connectionStringId: number | null;
   urlKey: string | null;
   save: boolean;
+};
+
+type BackupSaveContext = {
+  backupId: string | null;
+  isDraft: boolean;
+  targets: BackupTargetUrl[];
 };
 
 const createBackupTargetUrl = (
@@ -95,7 +114,26 @@ export class BackupState {
   isDraft = signal(false);
   backupId = signal<'new' | 'string' | null>(null);
   backupName = computed(() => this.generalFormSignal()?.name ?? '');
-  isSubmitting = signal(false);
+  #saveOperation = new AsyncOperation<unknown>();
+  #saveContext: BackupSaveContext | null = null;
+  saveState = this.#saveOperation.state;
+  isSubmitting = this.#saveOperation.pending;
+
+  constructor() {
+    inject(DestroyRef).onDestroy(() => {
+      this.#saveContext = null;
+      this.#saveOperation.destroy();
+    });
+  }
+
+  #cancelStaleSave = effect(() => {
+    this.backupId();
+    this.isDraft();
+    this.targetUrls();
+    untracked(() => {
+      if (this.#saveContext && !this.#isCurrentSave(this.#saveContext)) this.cancelSubmit();
+    });
+  });
   finishedLoading = signal(false);
   backupDefaults = signal<Record<string, string> | null>(null);
   applicationOptions = signal<SettingDto[] | null>(null);
@@ -176,66 +214,86 @@ export class BackupState {
       .filter((x) => this.selectedOptions()?.findIndex((y) => y.name === x.name) === -1);
   });
 
+  #isCurrentSave(context: BackupSaveContext) {
+    const targets = this.targetUrls();
+    return (
+      context === this.#saveContext &&
+      context.backupId === this.backupId() &&
+      context.isDraft === this.isDraft() &&
+      targets.length === context.targets.length &&
+      targets.every((target, index) => {
+        const saved = context.targets[index];
+        return (
+          target.uiKey === saved.uiKey &&
+          target.url === saved.url &&
+          target.connectionStringId === saved.connectionStringId &&
+          target.urlKey === saved.urlKey &&
+          target.save === saved.save
+        );
+      })
+    );
+  }
+
+  cancelSubmit() {
+    this.#saveContext = null;
+    this.#saveOperation.cancel();
+  }
+
   submit(withoutExit = false) {
-    this.isSubmitting.set(true);
+    this.#saveOperation.run(
+      () => {
+        // Capture what was submitted before any connection-string requests finish.
+        const backup = this.#mapFormsToBackup();
+        const context: BackupSaveContext = {
+          backupId: this.backupId(),
+          isDraft: this.isDraft(),
+          targets: this.targetUrls().map((target) => ({ ...target })),
+        };
+        this.#saveContext = context;
+        if (context.isDraft) backup.Backup.Metadata = this.backupMetadata() ? { ...this.backupMetadata() } : null;
 
-    this.#saveConnectionStringIfNeeded()
-      .pipe(
-        switchMap((csIds) => {
-          const backup = this.#mapFormsToBackup();
-          const backupId = this.backupId();
+        return this.#saveConnectionStringIfNeeded(context.targets).pipe(
+          switchMap((csIds) => {
+            if (!this.#isCurrentSave(context)) return EMPTY;
+            const targets = context.targets;
+            if (csIds.length) backup.Backup.ConnectionStringID = csIds[0] ?? undefined;
+            const additional = targets.slice(1).map((target, index) => ({
+              TargetUrl: target.url,
+              ConnectionStringID: csIds[index + 1] ?? undefined,
+              UrlKey: target.urlKey,
+            }));
+            if (additional.length) backup.Backup.AdditionalTargetURLs = additional;
 
-          const anyBackup = backup;
-          if (anyBackup.Backup) {
-            if (csIds.length > 0 && csIds[0] !== null) {
-              backup.Backup.ConnectionStringID = csIds[0]!;
-            } else {
-              if (csIds.length > 0 && csIds[0] === null) {
-                backup.Backup.ConnectionStringID = undefined;
-              }
+            // Retain IDs for retry if saving the backup fails, without applying an old
+            // destination's result to a replacement or a different editor.
+            context.targets = targets.map((target, index) => ({
+              ...target,
+              connectionStringId: csIds[index] ?? target.connectionStringId,
+            }));
+            if (
+              context.targets.some((target, index) => target.connectionStringId !== targets[index].connectionStringId)
+            ) {
+              this.targetUrls.set(context.targets);
+              this.#connectionStringsState.reload();
             }
 
-            const targetUrls = this.targetUrls();
-
-            const options = targetUrls.slice(1).map((t, i) => {
-              const id = csIds[i + 1];
-              return {
-                TargetUrl: t.url,
-                ConnectionStringID: id ?? undefined,
-                UrlKey: t.urlKey,
-              };
-            });
-
-            if (options.length > 0) {
-              anyBackup.Backup.AdditionalTargetURLs = options;
-            }
-          }
-
-          if (this.isDraft() && backup.Backup) backup.Backup.Metadata = this.backupMetadata();
-
-          if (backupId === 'new' || !backupId || this.isDraft()) {
             return defer(() =>
-              this.#dupServer.postApiV1Backups({
-                body: backup,
-              })
+              context.backupId === 'new' || !context.backupId || context.isDraft
+                ? this.#dupServer.postApiV1Backups({ body: backup })
+                : this.#dupServer.putApiV1BackupById({ path: { id: context.backupId }, body: backup })
             );
-          } else {
-            return defer(() =>
-              this.#dupServer.putApiV1BackupById({
-                path: { id: backupId },
-                body: backup,
-              })
-            );
-          }
-        }),
-        finalize(() => this.isSubmitting.set(false))
-      )
-      .subscribe({
-        next: () => {
-          if (!withoutExit) this.exit(false);
-        },
-        error: () => {},
-      });
+          }),
+          catchError((error) => (this.#isCurrentSave(context) ? throwError(() => error) : EMPTY)),
+          takeWhile(() => this.#isCurrentSave(context)),
+          finalize(() => {
+            if (this.#saveContext === context) this.#saveContext = null;
+          })
+        );
+      },
+      () => {
+        if (!withoutExit) this.exit(false);
+      }
+    );
   }
 
   validateBeforeSubmit() {
@@ -304,6 +362,7 @@ export class BackupState {
 
   exit(confirm: boolean) {
     if (!confirm) {
+      this.cancelSubmit();
       this.#resetAllForms();
       this.#router.navigate(['/']);
       return;
@@ -319,6 +378,7 @@ export class BackupState {
       closed: (res) => {
         if (!res) return;
 
+        this.cancelSubmit();
         this.#resetAllForms();
         this.#router.navigate(['/']);
       },
@@ -665,8 +725,7 @@ export class BackupState {
     return [...encryption, ...legacyOptions, ...optionFields, ...settings];
   }
 
-  #saveConnectionStringIfNeeded(): Observable<(number | null)[]> {
-    const targetUrls = this.targetUrls();
+  #saveConnectionStringIfNeeded(targetUrls: BackupTargetUrl[]): Observable<(number | null)[]> {
     if (targetUrls.length === 0) return of([]);
 
     const obs = targetUrls.map((t) => {
@@ -700,29 +759,12 @@ export class BackupState {
         BaseUrl: targetUrl,
       };
 
-      return this.#connectionStringsState.save('new', requestBody).pipe(map((res) => res.Data?.ID ?? null));
+      return defer(() => this.#connectionStringsState.save('new', requestBody)).pipe(
+        map((res) => res.Data?.ID ?? null)
+      );
     });
 
-    // ForkJoin to do them all
-    return forkJoin(obs).pipe(
-      tap((ids) => {
-        // Update local state with new IDs
-        const currentUrls = this.targetUrls();
-        ids.forEach((id, index) => {
-          if (id && index < currentUrls.length) {
-            this.#connectionStringsState.reload(); // Reload to get new names/etc
-            // updateTargetUrl triggers effect, might be noisy but correct
-            // We don't want to trigger "updateTargetUrl" public method potentially?
-            // modifying signal directly inside tap is side-effecty but fine here.
-            // We will update them via the standard update method to stay consistent.
-            if (currentUrls[index].connectionStringId !== id) {
-              const currentKey = currentUrls[index].urlKey;
-              this.updateTargetUrl(index, currentUrls[index].url, id, currentKey);
-            }
-          }
-        });
-      })
-    );
+    return forkJoin(obs);
   }
 
   #evaluateTimeString(t: string | undefined) {
