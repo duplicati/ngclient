@@ -1,11 +1,13 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
   effect,
   ElementRef,
   inject,
+  Injector,
   input,
   output,
   signal,
@@ -156,6 +158,7 @@ export default class FileTreeComponent {
   #sysInfo = inject(SysinfoState);
   #dialog = inject(ShipDialogService);
   #fileTreeState = inject(FileTreeState);
+  #injector = inject(Injector);
 
   multiSelect = input(false);
   disabled = input(false);
@@ -954,8 +957,13 @@ export default class FileTreeComponent {
     return result;
   }
 
+  // A folder is partially selected when any selected path (folder or file) lies inside it.
+  // A file only counts as partially selected through a selected folder path (legacy behavior).
   isIndeterminate(currentPaths: string[], nodeId: string) {
-    return currentPaths.filter((x) => !x.startsWith('-') && this.#isFolder(x)).some((x) => x.startsWith(nodeId));
+    const isFolder = this.#isFolder(nodeId);
+    return this.#resolveWithRemoteSource(currentPaths)
+      .filter((x) => !x.startsWith('-'))
+      .some((x) => x.startsWith(nodeId) && (isFolder || this.#isFolder(x)));
   }
 
   isCurrentPathFolder() {
@@ -1092,6 +1100,8 @@ export default class FileTreeComponent {
 
   #treeId = randomUUID();
   #focusedTreePath = signal<string | null>(null);
+  // Folders whose listing has been fetched, so an empty folder still counts as expanded.
+  #expandedPaths = signal<ReadonlySet<string>>(new Set());
   #typeAhead = '';
   #typeAheadTime = 0;
 
@@ -1107,6 +1117,41 @@ export default class FileTreeComponent {
     return rows;
   });
 
+  // Selection state per visible row: null when the row cannot be selected under the current
+  // inputs, otherwise the checked/selected value. Computed once per tree change instead of per row.
+  #treeSelection = computed(() => {
+    const states = new Map<string, boolean | 'mixed' | null>();
+    const disabled = this.disabled();
+    const multiSelect = this.multiSelect();
+    const searchMode = this.searchMode();
+    const selectFiles = this.selectFiles();
+    const onlySelectFolder = this.onlySelectFolder();
+    const accepts = !!this.accepts();
+    const mounts = this.#unrootedMounts();
+
+    for (const { node } of this.visibleTreeRows()) {
+      const id = node.id ?? '';
+      const selectable =
+        !disabled &&
+        this.#isTreeNodeActionable(node, mounts) &&
+        (!searchMode || node.isSearchMatch === true) &&
+        node.evalState !== TreeEvalEnum.ExcludedByParent &&
+        !(selectFiles && node.cls === 'folder') &&
+        !(onlySelectFolder && node.cls !== 'folder') &&
+        (!accepts || node.accepted === true);
+
+      let state: boolean | 'mixed' | null = null;
+      if (selectable) {
+        if (!multiSelect) state = node.evalState === TreeEvalEnum.Included;
+        else if (node.evalState === TreeEvalEnum.Included || node.evalState === TreeEvalEnum.IncludedByParent)
+          state = true;
+        else state = node.isIndeterminate ? 'mixed' : false;
+      }
+      states.set(id, state);
+    }
+    return states;
+  });
+
   activeTreePath = computed(() => {
     const rows = this.visibleTreeRows();
     const focused = this.#focusedTreePath();
@@ -1118,6 +1163,21 @@ export default class FileTreeComponent {
     );
   });
 
+  #unrootedMounts = computed(
+    () =>
+      new Set(
+        this.#unrootedSources()
+          .map((x) => this.#parseRemotePath(x.id)?.mount)
+          .filter((x): x is string => !!x)
+      )
+  );
+
+  // Rows that are neither selectable nor expandable through selection: pagination, the virtual root
+  // and the mount folders of unrooted sources.
+  #isTreeNodeActionable(node: FileTreeNode, mounts = this.#unrootedMounts()) {
+    return !node.isLoadMore && node.id !== ROOTPATH && !mounts.has(node.id ?? '');
+  }
+
   visibleTreeChildren(nodes: FileTreeNode[]) {
     return nodes.filter((node) => node.isLoadMore || !node.hidden || this._showHiddenNodes());
   }
@@ -1126,36 +1186,28 @@ export default class FileTreeComponent {
     return nodes.some((node) => node.isLoadMore) ? -1 : nodes.length;
   }
 
+  treeItemId(node: FileTreeNode) {
+    return this.#treeItemIdFor(node.id ?? '');
+  }
+
+  #treeItemIdFor(path: string) {
+    return this.#treeId + '-item-' + encodeURIComponent(path);
+  }
+
   treeGroupId(node: FileTreeNode) {
-    return this.#treeId + '-' + encodeURIComponent(node.id ?? '');
+    return this.#treeId + '-group-' + encodeURIComponent(node.id ?? '');
+  }
+
+  isTreeNodeExpanded(node: FileTreeNode) {
+    return node.cls === 'folder' && (node.children.length > 0 || this.#expandedPaths().has(node.id ?? ''));
   }
 
   canSelectTreeNode(node: FileTreeNode) {
-    return (
-      !this.disabled() &&
-      !node.isLoadMore &&
-      node.id !== ROOTPATH &&
-      !this.#unrootedSources().some((source) => this.#parseRemotePath(source.id)?.mount === node.id) &&
-      (!this.searchMode() || node.isSearchMatch === true) &&
-      node.evalState !== TreeEvalEnum.ExcludedByParent &&
-      !(this.selectFiles() && node.cls === 'folder') &&
-      !(this.onlySelectFolder() && node.cls !== 'folder') &&
-      (!this.accepts() || node.accepted === true)
-    );
+    return this.treeSelectionState(node) !== null;
   }
 
   treeSelectionState(node: FileTreeNode): boolean | 'mixed' | null {
-    if (!this.canSelectTreeNode(node)) return null;
-    if (!this.multiSelect()) return node.evalState === TreeEvalEnum.Included;
-    if (node.evalState === TreeEvalEnum.Included || node.evalState === TreeEvalEnum.IncludedByParent) return true;
-    const path = this.#resolveNodeId(node);
-    const hasSelectedDescendant =
-      node.cls === 'folder' &&
-      path != null &&
-      this.#resolveWithRemoteSource(this.currentPathArray()).some(
-        (source) => source !== path && source.startsWith(path)
-      );
-    return node.isIndeterminate || hasSelectedDescendant ? 'mixed' : false;
+    return this.#treeSelection().get(node.id ?? '') ?? null;
   }
 
   rememberTreeFocus(node: FileTreeNode) {
@@ -1165,26 +1217,29 @@ export default class FileTreeComponent {
   #focusTreePath(path: string | null | undefined) {
     if (path == null) return;
     this.#focusedTreePath.set(path);
-    const items = this.treeContainerRef()?.nativeElement.querySelectorAll<HTMLElement>('[role=treeitem]');
-    const element = Array.from(items ?? []).find((item) => item.getAttribute('data-tree-path') === path);
-    element?.focus({ preventScroll: true });
-    element?.scrollIntoView?.({ block: 'nearest' });
+    const container = this.treeContainerRef()?.nativeElement;
+    const element = container?.ownerDocument.getElementById(this.#treeItemIdFor(path));
+    if (!element || !container?.contains(element)) return;
+    element.focus({ preventScroll: true });
+    element.scrollIntoView?.({ block: 'nearest' });
+  }
+
+  // After the last page arrives the pagination row is gone; move focus to the last loaded sibling.
+  #restoreFocusAfterLoadMore(parentPath: string) {
+    afterNextRender(
+      () => {
+        const siblings = this.visibleTreeRows().filter((row) => row.parent === parentPath);
+        this.#focusTreePath(siblings.at(-1)?.node.id ?? parentPath);
+      },
+      { injector: this.#injector }
+    );
   }
 
   activateTreeNode(event: Event, node: FileTreeNode) {
     if (this.disabled()) return;
     this.#focusTreePath(node.id);
-    if (node.isLoadMore) {
-      if (this.isLoading() !== null) return;
-      // The pagination row may disappear when the last page arrives.
-      this.#focusTreePath(
-        this.visibleTreeRows().find((row) => row.node.id === node.parentPath)?.node.id ??
-          this.visibleTreeRows()[0]?.node.id
-      );
-      this.loadMore(event, node);
-    } else {
-      this.toggleSelectedNode(event, node);
-    }
+    if (node.isLoadMore) this.loadMore(event, node);
+    else this.toggleSelectedNode(event, node);
   }
 
   toggleTreeNode(event: Event, node: FileTreeNode) {
@@ -1198,7 +1253,6 @@ export default class FileTreeComponent {
     const rows = this.visibleTreeRows();
     const index = rows.findIndex((row) => row.node.id === node.id);
     if (index < 0) return;
-    const children = this.visibleTreeChildren(node.children);
     const handled = ['ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft', 'Home', 'End', ' ', 'Enter'].includes(
       event.key
     );
@@ -1219,20 +1273,23 @@ export default class FileTreeComponent {
       case 'End':
         this.#focusTreePath(rows.at(-1)?.node.id);
         break;
-      case 'ArrowRight':
+      case 'ArrowRight': {
         if (node.cls !== 'folder') break;
-        if (children.length) this.#focusTreePath(children[0].id);
-        else if (this.isLoading() !== node.id) this.toggleNode(event, node.id ?? '', node);
+        const firstChild = this.visibleTreeChildren(node.children)[0];
+        if (firstChild) this.#focusTreePath(firstChild.id);
+        else if (!this.isTreeNodeExpanded(node) && this.isLoading() !== node.id) {
+          this.toggleNode(event, node.id ?? '', node);
+        }
         break;
+      }
       case 'ArrowLeft':
-        if (node.cls === 'folder' && node.children.length) this.toggleNode(event, node.id ?? '', node);
+        if (this.isTreeNodeExpanded(node)) this.toggleNode(event, node.id ?? '', node);
         else this.#focusTreePath(rows[index].parent);
         break;
       case ' ':
       case 'Enter':
         if (event.repeat) break;
-        if (event.key === 'Enter' && node.id === ROOTPATH) this.toggleTreeNode(event, node);
-        else this.activateTreeNode(event, node);
+        this.activateTreeNode(event, node);
         break;
       default: {
         const now = Date.now();
@@ -1252,33 +1309,19 @@ export default class FileTreeComponent {
   }
 
   toggleSelectedNode($event: Event, node: FileTreeNode) {
-    if (node.isLoadMore) return;
-    if (node.id === ROOTPATH) return;
-    if (
-      this.#unrootedSources()
-        .map((x) => this.#parseRemotePath(x.id)?.mount)
-        .filter((x) => x)
-        .includes(node.id ?? '')
-    )
-      return;
+    if (!this.#isTreeNodeActionable(node)) return;
 
     $event.stopPropagation();
 
-    // In search mode, only allow selecting search matches
-    if (this.searchMode() && !node.isSearchMatch) return;
-
-    if (node.evalState === TreeEvalEnum.ExcludedByParent) return;
-
+    // When only files can be selected, activating a folder expands or collapses it instead
     if (this.selectFiles() && node.cls === 'folder') {
-      this.toggleNode($event, node.id as string, node);
+      const reachable = (!this.searchMode() || node.isSearchMatch) && node.evalState !== TreeEvalEnum.ExcludedByParent;
+      if (reachable) this.toggleNode($event, node.id as string, node);
       return;
     }
 
-    if (this.onlySelectFolder() && node.cls !== 'folder') return;
-
-    const accepts = this.accepts();
-
-    if (accepts && !node.accepted) return;
+    // Same eligibility rules as the aria-checked/aria-selected state of the row
+    if (!this.canSelectTreeNode(node)) return;
 
     const currentPaths = this.currentPathArray();
     const currentPathsWithRemotes = this.#resolveWithRemoteSource(currentPaths);
@@ -1320,12 +1363,13 @@ export default class FileTreeComponent {
 
   toggleNode($event: Event, path: string, node: FileTreeNode | null = null) {
     $event.stopPropagation();
-    if (node?.cls === 'folder') {
-      if (node?.children.length) {
-        this.treeNodes.update((y) => y.filter((z) => !z.id?.startsWith(node.id as string) || z.id === node.id));
-      } else {
-        this.#getPath(node, path);
-      }
+    if (node?.cls !== 'folder') return;
+    if (this.isTreeNodeExpanded(node)) {
+      const prefix = node.id as string;
+      this.#expandedPaths.update((paths) => new Set([...paths].filter((x) => !x.startsWith(prefix))));
+      this.treeNodes.update((y) => y.filter((z) => !z.id?.startsWith(prefix) || z.id === node.id));
+    } else {
+      this.#getPath(node, path);
     }
   }
 
@@ -1669,6 +1713,12 @@ export default class FileTreeComponent {
               return arrayUniqueByKey as TreeNode[];
             }
           });
+
+          this.#expandedPaths.update((paths) => (paths.has(newPath) ? paths : new Set([...paths, newPath])));
+
+          if (node?.isLoadMore && !result.hasMore && this.#focusedTreePath() === node.id) {
+            this.#restoreFocusAfterLoadMore(newPath);
+          }
         },
         error: (err) => {
           this.errorMessage.set(err.message);

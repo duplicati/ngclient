@@ -4,6 +4,7 @@ import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { of } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { DuplicatiServer } from '../../openapi';
+import { FileTreeListingService } from './file-tree-listing.service';
 import { FileTreeState } from '../../states/file-tree.state';
 import { SysinfoState } from '../../states/sysinfo.state';
 import FileTreeComponent from './file-tree.component';
@@ -14,23 +15,20 @@ describe('file tree keyboard navigation', () => {
     fixture?.destroy();
     TestBed.resetTestingModule();
   });
-  function setup(inputs: Record<string, unknown> = {}) {
-    const list = vi.fn(({ body }: { body: { path: string } }) =>
-      of(
-        body.path === '/Documents/'
-          ? [{ id: '/Documents/notes.txt', text: 'notes.txt', cls: 'file', leaf: true }]
-          : [
-              { id: '/Documents/', text: 'Documents', cls: 'folder', leaf: false },
-              { id: '/Music/', text: 'Music', cls: 'folder', leaf: false },
-              { id: '/readme.txt', text: 'readme.txt', cls: 'file', leaf: true },
-              { id: '/.hidden/', text: '.hidden', cls: 'folder', hidden: true, leaf: false },
-            ]
-      )
-    );
+  const defaultListing: Record<string, unknown[]> = {
+    '/': [
+      { id: '/Documents/', text: 'Documents', cls: 'folder', leaf: false },
+      { id: '/Music/', text: 'Music', cls: 'folder', leaf: false },
+      { id: '/readme.txt', text: 'readme.txt', cls: 'file', leaf: true },
+      { id: '/.hidden/', text: '.hidden', cls: 'folder', hidden: true, leaf: false },
+    ],
+    '/Documents/': [{ id: '/Documents/notes.txt', text: 'notes.txt', cls: 'file', leaf: true }],
+  };
+  function configure(providers: unknown[], inputs: Record<string, unknown>) {
     TestBed.configureTestingModule({
       imports: [FileTreeComponent],
       providers: [
-        { provide: DuplicatiServer, useValue: { postApiV1Filesystem: list } },
+        ...providers,
         {
           provide: SysinfoState,
           useValue: {
@@ -50,7 +48,27 @@ describe('file tree keyboard navigation', () => {
     fixture.componentRef.setInput('showFiles', true);
     for (const [key, value] of Object.entries(inputs)) fixture.componentRef.setInput(key, value);
     fixture.detectChanges();
-    return { component: fixture.componentInstance, list };
+    return fixture.componentInstance;
+  }
+  function setup(inputs: Record<string, unknown> = {}, listing: Record<string, unknown[]> = {}) {
+    const entries = { ...defaultListing, ...listing };
+    const list = vi.fn(({ body }: { body: { path: string } }) => of(entries[body.path] ?? []));
+    const component = configure([{ provide: DuplicatiServer, useValue: { postApiV1Filesystem: list } }], inputs);
+    return { component, list };
+  }
+  // Pages of the root listing, keyed by the offset the component asks for.
+  function setupPaged(pages: Record<string, { items: unknown[]; hasMore: boolean; nextOffset: number }>) {
+    const list = vi.fn((_path: string, _remote: unknown, _context: unknown, offset: number | null) =>
+      of(pages[String(offset)])
+    );
+    const component = configure(
+      [
+        { provide: DuplicatiServer, useValue: {} },
+        { provide: FileTreeListingService, useValue: { list } },
+      ],
+      {}
+    );
+    return { component, list };
   }
   function row(name: string): HTMLElement {
     const element = [...fixture.nativeElement.querySelectorAll('[role=treeitem]')].find(
@@ -179,6 +197,71 @@ describe('file tree keyboard navigation', () => {
     fixture.detectChanges();
     press(row('readme.txt'), 'Enter');
     expect(component.currentPath()).toBe('/Documents/notes.txt');
+  });
+
+  it('keeps a folder with only hidden children expanded on ArrowRight', () => {
+    const { list } = setup(
+      {},
+      { '/Music/': [{ id: '/Music/.cache/', text: '.cache', cls: 'folder', hidden: true, leaf: false }] }
+    );
+    press(row('Music'), 'ArrowRight');
+    expect(row('Music').getAttribute('aria-expanded')).toBe('true');
+    press(row('Music'), 'ArrowRight');
+    expect(row('Music').getAttribute('aria-expanded')).toBe('true');
+    expect(document.activeElement).toBe(row('Music'));
+    expect(list).toHaveBeenCalledTimes(2);
+    press(row('Music'), 'ArrowLeft');
+    expect(row('Music').getAttribute('aria-expanded')).toBe('false');
+  });
+
+  it('treats an empty folder as expanded until it is collapsed', () => {
+    const { list } = setup({}, { '/Music/': [] });
+    press(row('Music'), 'ArrowRight');
+    expect(row('Music').getAttribute('aria-expanded')).toBe('true');
+    press(row('Music'), 'ArrowRight');
+    expect(list).toHaveBeenCalledTimes(2);
+    press(row('Music'), 'ArrowLeft');
+    expect(row('Music').getAttribute('aria-expanded')).toBe('false');
+    expect(document.activeElement).toBe(row('Music'));
+    press(row('Music'), 'ArrowRight');
+    expect(list).toHaveBeenCalledTimes(3);
+  });
+
+  it('ignores Enter and Space on the root row', () => {
+    const { component, list } = setup();
+    press(row('Computer'), 'Enter');
+    press(row('Computer'), ' ');
+    expect(row('Documents').getAttribute('aria-level')).toBe('2');
+    expect(component.currentPath()).toBe('');
+    expect(list).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps focus on the pagination row and moves it to the last loaded row after the final page', async () => {
+    const { list } = setupPaged({
+      null: {
+        items: [{ id: '/Documents/', text: 'Documents', cls: 'folder', leaf: false }],
+        hasMore: true,
+        nextOffset: 1,
+      },
+      '1': { items: [{ id: '/Music/', text: 'Music', cls: 'folder', leaf: false }], hasMore: true, nextOffset: 2 },
+      '2': {
+        items: [{ id: '/readme.txt', text: 'readme.txt', cls: 'file', leaf: true }],
+        hasMore: false,
+        nextOffset: 3,
+      },
+    });
+    press(row('Documents'), 'ArrowDown');
+    expect(document.activeElement).toBe(row('Load more'));
+    press(row('Load more'), ' ');
+    expect(list).toHaveBeenLastCalledWith('/', undefined, expect.anything(), 1);
+    expect(row('Music').getAttribute('aria-level')).toBe('2');
+    expect(document.activeElement).toBe(row('Load more'));
+    press(row('Load more'), 'Enter');
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('[aria-label="Load more"]')).toBeNull();
+    expect(document.activeElement).toBe(row('readme.txt'));
+    expect(fixture.nativeElement.querySelectorAll('[role=treeitem][tabindex="0"]')).toHaveLength(1);
   });
 
   it('does not consume Tab or modified browser shortcuts', () => {
