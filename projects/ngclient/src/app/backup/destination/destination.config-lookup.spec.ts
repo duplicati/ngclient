@@ -180,6 +180,21 @@ describe('destination configuration lookup', () => {
       });
     });
 
+    it('decodes percent-encoded option values exactly once', () => {
+      // "%25" is an encoded "%"; a second decode would throw or corrupt the value
+      const url = new UrlLike('smb://server/share?auth-username=user&auth-password=pa%25ss%2525word&custom=100%25');
+
+      expect(fromSearchParams('smb', url)).toEqual({
+        dynamic: {
+          'auth-username': 'user',
+          'auth-password': 'pa%ss%25word',
+        },
+        advanced: {
+          custom: '100%',
+        },
+      });
+    });
+
     it('treats every option as advanced for an unknown destination', () => {
       const url = new UrlLike('custombackend://server?first=value&second=other');
 

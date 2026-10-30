@@ -304,12 +304,14 @@ export function fromSearchParams(destinationType: string, urlObj: UrlLike) {
   const dynamic: { [key: string]: any } = {};
   const config = getConfigurationByKey(destinationType);
 
+  // URLSearchParams already percent-decodes the values, so they must not be decoded again:
+  // a second decode corrupts values containing "%25" and throws on values with a bare "%".
   urlObj.searchParams.forEach((value, key) => {
     const isDynamic = config?.dynamicFields?.some((x) => x === key || (<any>x)?.name === key);
     if (isDynamic) {
-      dynamic[key] = decodeURIComponent(value);
+      dynamic[key] = value;
     } else {
-      advanced[key] = decodeURIComponent(value);
+      advanced[key] = value;
     }
   });
 
