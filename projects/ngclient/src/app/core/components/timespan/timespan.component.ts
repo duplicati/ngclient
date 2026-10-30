@@ -94,7 +94,6 @@ export class TimespanComponent implements ControlValueAccessor {
   private onTouched: () => void = () => {};
 
   #lastValue = this.getValue();
-  #hasWrittenValue = false;
 
   onChangeEffect = effect(() => {
     const value = this.getValue();
@@ -104,10 +103,12 @@ export class TimespanComponent implements ControlValueAccessor {
   });
 
   inputTypeEffect = effect(() => {
-    const _ = this.timeOptions();
+    const options = this.timeOptions();
     const overrideDefaultUnit = this.isShortTime() ? 's' : 'D';
     this.#defaultUnit = overrideDefaultUnit;
-    if (!this.#hasWrittenValue) {
+    // A written value keeps its unit; only a unit that is not offered for this input type is replaced.
+    // The replacement is not reported as a change, so initialization never rewrites the model.
+    if (!options.some((x) => x.value === untracked(this.unit))) {
       this.unit.set(overrideDefaultUnit);
       this.#lastValue = untracked(() => this.getValue());
     }
@@ -118,7 +119,6 @@ export class TimespanComponent implements ControlValueAccessor {
   }
 
   writeValue(value: string): void {
-    this.#hasWrittenValue = true;
     const isShortTime = this.isShortTime();
     this.#defaultUnit = isShortTime ? 's' : 'D';
 

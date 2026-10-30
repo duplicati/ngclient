@@ -1,7 +1,12 @@
 @let _destinationType = destinationType();
 @let config = destinationFormConfig();
 
-@if (_destinationType && config) {
+@if (_destinationType && config && !canEditFields()) {
+  <sh-alert class="simple warn" i18n>
+    The destination URL could not be read into the fields below, so they cannot be edited here. Use the raw URL editor
+    to change it.
+  </sh-alert>
+} @else if (_destinationType && config) {
   @let form = destinationForm();
 
   <!-- <pre>{{ targetUrl() }}</pre> -->

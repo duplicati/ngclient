@@ -13,6 +13,7 @@ import {
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
@@ -71,6 +72,7 @@ type DestinationConfig = {
     TimespanComponent,
     FileDropTextareaComponent,
 
+    ShipAlert,
     ShipFormField,
     ShipButton,
     ShipIcon,
@@ -105,6 +107,8 @@ export class SingleDestinationComponent {
   remoteType = input<RemoteDestinationType>('Backend');
 
   #editSession = new DestinationEditSession();
+  /** False when the URL cannot be parsed into fields; edits would be lost, so the field editor is hidden. */
+  canEditFields = signal(true);
   destinationType = computed(() => {
     const targetUrl = this.targetUrl();
 
@@ -228,6 +232,7 @@ export class SingleDestinationComponent {
     const targetUrl = this.targetUrl();
     if (targetUrl !== this.#editSession.url) {
       this.destinationForm.set(this.#editSession.load(targetUrl));
+      this.canEditFields.set(this.#editSession.canEdit);
     }
 
     const destinationConfig = getConfigurationByUrl(targetUrl ?? '');

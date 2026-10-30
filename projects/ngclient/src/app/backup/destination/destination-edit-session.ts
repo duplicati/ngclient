@@ -9,6 +9,8 @@ export function copyDestinationForm(form: DestinationFormValues): DestinationFor
   return { custom: { ...form.custom }, dynamic: { ...form.dynamic }, advanced: { ...form.advanced } };
 }
 
+// RFC 3986 semantics: a "#" starts the fragment, which is carried over untouched.
+// Values the editor writes are percent-encoded, so an edited value never contains a raw "#".
 function splitUrl(url: string) {
   const hashIndex = url.indexOf('#');
   const fragment = hashIndex === -1 ? '' : url.slice(hashIndex);
@@ -95,46 +97,62 @@ export function mergeDestinationUrlEdits(original: string, before: string, after
   ) {
     base = oldBase.protocol + base.slice(savedBase.protocol.length);
   }
+  // The form never shows credentials embedded in the authority, so an explicit
+  // credential edit must not leave the stale ones in place next to the new option.
+  if (changed.has('auth-username') || changed.has('auth-password')) {
+    const parts = splitBase(base);
+    if (parts) {
+      const { host, port } = splitAuthority(parts.authority);
+      base = parts.protocol + host + port + parts.path;
+    }
+  }
   return base + (query || keepEmptyQuery ? '?' + query : '') + saved.fragment;
 }
 
 /** Reading the editor never writes its URL. Only commit() applies explicit edits. */
 export class DestinationEditSession {
   url: string | null | undefined;
-  #baseline: DestinationFormValues | null = null;
+  /** Mapper output for the values currently shown; null when the URL could not be parsed. */
+  #before: string | null = null;
   #destinationType = '';
+
+  /** False when the loaded URL cannot be represented by the form, so edits cannot be applied. */
+  get canEdit() {
+    return this.#before !== null;
+  }
 
   load(url: string | null): DestinationFormValues {
     this.url = url;
-    this.#baseline = null;
+    this.#before = null;
     const empty = { custom: {}, dynamic: {}, advanced: {} };
     if (!url) return empty;
     const config = getConfigurationByUrl(url);
     this.#destinationType = config.customKey ?? config.key;
     try {
       const parsed = fromTargetPath(url);
-      if (parsed)
-        this.#baseline = copyDestinationForm({
-          custom: parsed.custom ?? {},
-          dynamic: parsed.dynamic ?? {},
-          advanced: parsed.advanced ?? {},
-        });
-      else if (/^[^:]+:\/\/$/.test(url)) this.#baseline = empty;
+      const form = parsed
+        ? { custom: parsed.custom ?? {}, dynamic: parsed.dynamic ?? {}, advanced: parsed.advanced ?? {} }
+        : /^[^:]+:\/\/$/.test(url)
+          ? empty
+          : null;
+      if (form) {
+        this.#before = toTargetPath({ destinationType: this.#destinationType, ...copyDestinationForm(form) });
+        return copyDestinationForm(form);
+      }
     } catch {
       // Keep an unparseable URL intact; it can still be corrected in the raw URL editor.
     }
-    return copyDestinationForm(this.#baseline ?? empty);
+    return empty;
   }
 
   commit(form: DestinationFormValues): string | null {
-    if (!this.url || !this.#baseline) return null;
+    if (!this.url || this.#before === null) return null;
     try {
-      const before = toTargetPath({ destinationType: this.#destinationType, ...copyDestinationForm(this.#baseline) });
       const after = toTargetPath({ destinationType: this.#destinationType, ...copyDestinationForm(form) });
       if (!after) return null;
-      const url = mergeDestinationUrlEdits(this.url, before, after);
+      const url = mergeDestinationUrlEdits(this.url, this.#before, after);
       this.url = url;
-      this.#baseline = copyDestinationForm(form);
+      this.#before = after;
       return url;
     } catch {
       // A broken mapper must not replace the last valid connection string.

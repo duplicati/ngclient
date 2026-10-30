@@ -62,4 +62,25 @@ describe('form control initialization', () => {
     expect(changed).toHaveBeenCalledTimes(1);
     fixture.destroy();
   });
+
+  it('replaces a unit that the new input type does not offer, without reporting a change', () => {
+    TestBed.configureTestingModule({ imports: [TimespanComponent] });
+    const fixture = TestBed.createComponent(TimespanComponent);
+    fixture.componentRef.setInput('inputType', 'retention-policy');
+    const changed = vi.fn();
+    fixture.componentInstance.registerOnChange(changed);
+    fixture.componentInstance.writeValue('2W');
+    fixture.detectChanges();
+    expect(fixture.componentInstance.unit()).toBe('W');
+    fixture.componentRef.setInput('inputType', 'web-timeout');
+    fixture.detectChanges();
+    expect(fixture.componentInstance.unit()).toBe('s');
+    expect(changed).not.toHaveBeenCalled();
+    fixture.componentInstance.writeValue('3m');
+    fixture.componentRef.setInput('inputType', 'read-write-timeout');
+    fixture.detectChanges();
+    expect(fixture.componentInstance.unit()).toBe('m');
+    expect(changed).not.toHaveBeenCalled();
+    fixture.destroy();
+  });
 });

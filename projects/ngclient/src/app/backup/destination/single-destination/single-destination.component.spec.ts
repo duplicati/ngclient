@@ -41,8 +41,6 @@ describe('SingleDestinationComponent editor', () => {
     const fixture = TestBed.createComponent(SingleDestinationComponent);
     fixture.componentRef.setInput('targetUrl', targetUrl);
     for (const [key, value] of Object.entries(inputs)) fixture.componentRef.setInput(key, value);
-    // The real template reads destinationType() before the effects run.
-    fixture.componentInstance.destinationType();
     fixture.detectChanges();
     return fixture;
   }
@@ -139,6 +137,20 @@ describe('SingleDestinationComponent editor', () => {
     fixture.detectChanges();
     expect(fixture.componentInstance.destinationForm()).toEqual({ custom: {}, dynamic: {}, advanced: {} });
     expect(fixture.componentInstance.targetUrl()).toBe('ssh://');
+  });
+
+  it('hides the field editor instead of swallowing edits when the URL cannot be parsed', () => {
+    const fixture = create(savedUrl);
+    expect(fixture.componentInstance.canEditFields()).toBe(true);
+    fixture.componentRef.setInput('targetUrl', 'ssh://12345/path');
+    fixture.detectChanges();
+    expect(fixture.componentInstance.canEditFields()).toBe(false);
+    fixture.componentInstance.updateFieldValue('custom', 'path', 'changed');
+    fixture.detectChanges();
+    expect(fixture.componentInstance.targetUrl()).toBe('ssh://12345/path');
+    fixture.componentRef.setInput('targetUrl', savedUrl);
+    fixture.detectChanges();
+    expect(fixture.componentInstance.canEditFields()).toBe(true);
   });
 
   it('does not rewrite an external URL or emit a change when module metadata reloads', () => {

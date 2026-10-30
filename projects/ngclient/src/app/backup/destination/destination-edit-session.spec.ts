@@ -60,11 +60,32 @@ describe('DestinationEditSession', () => {
   it('keeps unparseable URLs intact even if a stale editor attempts to commit', () => {
     const session = new DestinationEditSession();
     session.load('ssh://example/path?auth-password=secret');
+    expect(session.canEdit).toBe(true);
     const form = session.load('ssh://undefined/path');
+    expect(session.canEdit).toBe(false);
     expect(form).toEqual({ custom: {}, dynamic: {}, advanced: {} });
     form.custom['path'] = 'changed';
     expect(session.commit(form)).toBeNull();
     expect(session.url).toBe('ssh://undefined/path');
+  });
+
+  it('treats a raw # as the start of a fragment and carries the fragment over untouched', () => {
+    const session = new DestinationEditSession();
+    const url = 'ssh://example/path?auth-password=p#frag&not=query';
+    const form = session.load(url);
+    expect(form.dynamic['auth-password']).toBe('p');
+    expect(session.commit(form)).toBe(url);
+    form.dynamic['auth-password'] = 'new#1';
+    expect(session.commit(form)).toBe('ssh://example/path?auth-password=new%231#frag&not=query');
+  });
+
+  it('drops credentials embedded in the authority when the credential fields are edited', () => {
+    const session = new DestinationEditSession();
+    const form = session.load('ssh://user:old@Example.COM:022/path?future=a+b');
+    form.custom['path'] = 'other';
+    expect(session.commit(form)).toBe('ssh://user:old@Example.COM:022/other?future=a+b');
+    form.dynamic['auth-password'] = 'new';
+    expect(session.commit(form)).toBe('ssh://Example.COM:022/other?future=a+b&auth-password=new');
   });
 
   it('keeps the saved URL when the mapper fails during an explicit edit', () => {
