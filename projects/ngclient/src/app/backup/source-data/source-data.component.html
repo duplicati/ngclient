@@ -139,9 +139,7 @@
                     </button>
                   }
                 } @else {
-                  <sh-form-field class="small" [attr.readonly]="true">
-                    <input type="text" [ngModel]="path" [ngModelOptions]="{ standalone: true }" />
-                  </sh-form-field>
+                  <span class="source-path-text" [title]="path">{{ path }}</span>
                 }
 
                 <button shButton type="button" class="small" (click)="editPath(path)">
