@@ -140,7 +140,7 @@ jobs:
           run-id: ${{ inputs.startup_baseline_run || github.run_id }}
           github-token: ${{ github.token }}
       - name: Measure isolated production startup and navigation
-        run: bunx playwright test --config playwright.startup.config.ts
+        run: bun run measure:startup
         env:
           STARTUP_BASELINE_DIR: ${{ github.workspace }}/tmp/startup-baseline
           STARTUP_CANDIDATE_DIR: ${{ github.workspace }}/tmp/startup-candidate
