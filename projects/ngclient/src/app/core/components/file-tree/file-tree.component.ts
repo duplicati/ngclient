@@ -58,6 +58,26 @@ export const getInheritedExclusionState = (
   return null;
 };
 
+export const isFolderPath = (path: string): boolean =>
+  (path.startsWith('%') && path.endsWith('%') && !path.includes('/') && !path.includes('\\')) ||
+  path.endsWith('/') ||
+  path.endsWith('\\');
+
+// Filters only ever apply to paths that the backup enumerates, i.e. the selected
+// sources and everything below a selected source folder. A node outside every
+// source is never backed up, no matter what the filters say.
+export const isPathWithinSources = (
+  nodeId: string,
+  resolvedNodeId: string | null | undefined,
+  sources: string[]
+): boolean =>
+  sources.some(
+    (source) =>
+      nodeId === source ||
+      resolvedNodeId === source ||
+      (isFolderPath(source) && (nodeId.startsWith(source) || (resolvedNodeId?.startsWith(source) ?? false)))
+  );
+
 type TreeNode = TreeNodeDto & {
   accepted?: boolean;
   parentPath: string;
@@ -783,6 +803,9 @@ export default class FileTreeComponent {
     const inheritedExclusion = getInheritedExclusionState(parentNode?.evalState);
     if (inheritedExclusion !== null) return inheritedExclusion;
 
+    // Nodes outside every source are never backed up, so filters cannot apply to them
+    if (!this.#isNodeWithinSources(currentPaths, nodeId)) return TreeEvalEnum.None;
+
     const evalMap = this.#remoteFilterResource.value();
     if (evalMap && evalMap.has(nodeId)) {
       return evalMap.get(nodeId)!;
@@ -790,6 +813,12 @@ export default class FileTreeComponent {
 
     // If the remote does not have the node, fall back to local evaluation
     return this.#eval(currentPaths, nodeId, nodeType, parentNode);
+  }
+
+  #isNodeWithinSources(currentPaths: string[], nodeId: string): boolean {
+    const sources = this.#resolveWithRemoteSource(currentPaths.filter((x) => !this.#isFilter(x)));
+    const resolvedNodeId = this.#resolveNodeId(this.treeNodes().find((x) => x.id === nodeId)) ?? nodeId;
+    return isPathWithinSources(nodeId, resolvedNodeId, sources);
   }
 
   #eval(
@@ -829,6 +858,10 @@ export default class FileTreeComponent {
     }
 
     if (filters.length === 0) return result;
+
+    // Filters only apply to paths the backup enumerates, so a node outside every
+    // selected source keeps its state no matter what the filters match (#580)
+    if (!isPathWithinSources(nodeId, resolvedNodeId, sources)) return result;
 
     for (let i = 0; i < filters.length; i++) {
       const pathPart = filters[i];
@@ -1360,11 +1393,7 @@ export default class FileTreeComponent {
   }
 
   #isFolder(path: string): boolean {
-    return (
-      (path.startsWith('%') && path.endsWith('%') && !path.includes('/') && !path.includes('\\')) ||
-      path.endsWith('/') ||
-      path.endsWith('\\')
-    );
+    return isFolderPath(path);
   }
 
   #isFilter(path: string): boolean {
