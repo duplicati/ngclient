@@ -26,3 +26,24 @@ section {
   flex: 1 0;
   @include overflowScrolling();
 }
+
+.editor-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+
+  p {
+    margin: 0;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .editor-save {
+    flex-shrink: 0;
+  }
+  .editor-save:focus-visible {
+    outline: 2px solid var(--primary-8);
+    outline-offset: 2px;
+  }
+}

@@ -2,7 +2,22 @@
 
 <header>
   @if (!isNew()) {
-    <p>Editing: {{ backupName() }}</p>
+    <div class="editor-title">
+      <p>Editing: {{ backupName() }}</p>
+      @if (!isDraft()) {
+        <button
+          shButton
+          type="button"
+          class="primary raised editor-save"
+          [class.loading]="isSubmitting()"
+          [disabled]="!finishedLoading() || isSubmitting()"
+          (click)="saveChanges()"
+          i18n>
+          <sh-icon>floppy-disk</sh-icon>
+          Save changes
+        </button>
+      }
+    </div>
   }
   <sh-stepper class="primary" [inert]="isSubmitting()">
     <div
