@@ -8,7 +8,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
@@ -21,40 +21,8 @@ import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { OperationType } from '../../core/openapi';
 import { PasswordGeneratorService } from '../../core/services/password-generator.service';
 import { SysinfoState } from '../../core/states/sysinfo.state';
-import { validateWhen, watchField } from '../../core/validators/custom.validators';
 import { BackupState } from '../backup.state';
-
-const fb = new FormBuilder();
-
-export const createGeneralForm = (
-  defaults = {
-    name: '',
-    description: '',
-    encryption: '',
-    password: '',
-    repeatPassword: '',
-    compression: '',
-    operationType: 'Backup' as OperationType,
-  }
-) => {
-  return fb.group({
-    name: fb.control<string>(defaults.name, [Validators.required]),
-    description: fb.control<string>(defaults.description),
-    encryption: fb.control<string>(defaults.encryption, [watchField()]),
-    password: fb.control<string>(defaults.password, [
-      validateWhen((t) => t?.value.encryption !== '-', [Validators.required]),
-    ]),
-    repeatPassword: fb.control<string>(defaults.repeatPassword, [
-      validateWhen((t) => t?.value.encryption !== '-', [Validators.required]),
-    ]),
-    operationType: fb.control<OperationType>(defaults.operationType),
-  });
-};
-
-export const NONE_OPTION = {
-  Key: '-',
-  DisplayName: 'None',
-};
+import { NONE_OPTION } from '../models/general-form';
 
 @Component({
   selector: 'app-general',

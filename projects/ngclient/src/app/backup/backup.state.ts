@@ -16,15 +16,12 @@ import {
   throwError,
 } from 'rxjs';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
-import { splitSize } from '../core/components/size/size.component';
 import { randomUUID } from '../core/functions/crypto';
 import {
   ArgumentType,
-  BackupAndScheduleInputDto,
   BackupDto,
   DuplicatiServer,
   ICommandLineArgument,
-  OperationType,
   ScheduleDto,
   SettingDto,
   SettingInputDto,
@@ -36,30 +33,30 @@ import { parseRecursiveObjectOfSignals } from '../core/signals/parse-recursive-s
 import { ConnectionStringsState } from '../core/states/connection-strings.state';
 import { SysinfoState } from '../core/states/sysinfo.state';
 import { ServerSettingsService } from '../settings/server-settings.service';
-import { resolveBackupEncryptionSettings } from './backup-encryption-settings';
 import { FormView, getConfigurationByUrl } from './destination/destination.config-utilities';
-import { createGeneralForm, NONE_OPTION } from './general/general.component';
-import { RetentionType } from './options/options.component';
+import { createGeneralForm, NONE_OPTION } from './models/general-form';
+import { RetentionType } from './models/backup-options';
+import {
+  BackupTargetUrl,
+  mapBackupToGeneralForm,
+  mapBackupToSourceDataForm,
+  mapBackupToOptionsForm,
+  mapBackupFormToSettings,
+  mapBackupFormToDto,
+} from './models/backup-form-mappers';
 import {
   getNextRunDate,
+  evaluateTimeString,
   SCHEDULE_DEFAULT_OPTIONS,
   SCHEDULE_FIELD_DEFAULTS,
   scheduleOptionToSchedule,
-} from './schedule-v2/schedule.component';
-import { createSourceDataForm } from './source-data/source-data.component';
-import { TestState } from './source-data/target-url-dialog/test-url/test-url';
+} from './models/schedule-form';
+import { createSourceDataForm } from './models/source-data-form';
+import type { TestState } from './source-data/target-url-dialog/test-url/test-url';
 
-const SMART_RETENTION = '1W:1D,4W:1W,12M:1M';
+export type { BackupTargetUrl } from './models/backup-form-mappers';
 
 const DEFAULT_SAVE_CONNECTIONSTRING = false;
-
-export type BackupTargetUrl = {
-  uiKey: string;
-  url: string;
-  connectionStringId: number | null;
-  urlKey: string | null;
-  save: boolean;
-};
 
 type BackupSaveContext = {
   backupId: string | null;
@@ -386,19 +383,7 @@ export class BackupState {
   }
 
   mapSourceDataToForm(backup: BackupDto) {
-    const path = backup.Sources ?? '';
-    const filters = backup.Filters?.map((x) => `${x.Include ? '+' : '-'}${x.Expression}`) ?? [];
-    const filesLargerThan =
-      backup.Settings?.find((x) => x.Name === '--skip-files-larger-than')?.Value?.toUpperCase() ?? null;
-
-    const sourceObj = {
-      path: [...path, ...filters].join('\0'),
-      excludes: {
-        filesLargerThan: filesLargerThan === null ? undefined : splitSize(filesLargerThan),
-      },
-    };
-
-    this.sourceDataForm.patchValue(sourceObj);
+    this.sourceDataForm.patchValue(mapBackupToSourceDataForm(backup));
   }
 
   mapDestinationToForm(backup: BackupDto) {
@@ -417,35 +402,7 @@ export class BackupState {
   }
 
   mapGeneralToForm(backup: BackupDto) {
-    const name = backup.Name ?? '';
-    const description = backup.Description ?? '';
-    const { encryptionDisabled, encryptionModule, passphrase } = resolveBackupEncryptionSettings(backup.Settings);
-    const operationType = backup.OperationType ?? 'Backup';
-
-    const baseUpdate: Partial<typeof this.generalForm.value> = {
-      name: backup.Name ?? '',
-      description: backup.Description ?? '',
-      operationType,
-    };
-
-    if (name && name !== '') {
-      baseUpdate.name = name;
-    }
-
-    if (description && description !== '') {
-      baseUpdate.description = description;
-    }
-
-    if (encryptionDisabled) {
-      baseUpdate.encryption = NONE_OPTION.Key;
-    } else if (encryptionModule) {
-      baseUpdate.encryption = encryptionModule;
-    }
-
-    baseUpdate.password = passphrase;
-    baseUpdate.repeatPassword = passphrase;
-
-    this.generalForm.patchValue(baseUpdate);
+    this.generalForm.patchValue(mapBackupToGeneralForm(backup));
   }
 
   mapScheduleToForm(schedule: ScheduleDto | null) {
@@ -457,7 +414,7 @@ export class BackupState {
     }
 
     const res = this.#timespanLiteralService.fromString(schedule.Repeat) ?? null;
-    const nextTime = this.#evaluateTimeString(schedule.Time);
+    const nextTime = evaluateTimeString(schedule.Time);
 
     this.scheduleFields.autoRun.set(true);
 
@@ -488,78 +445,22 @@ export class BackupState {
   }
 
   mapOptionsToForms(backup: BackupDto, includeGlobalOptions: boolean = false) {
-    const settingsToExclude = [
-      '--no-encryption',
-      '--skip-files-larger-than',
-      'passphrase',
-      'keep-time',
-      'keep-versions',
-      'retention-policy',
-    ];
-
-    const allSettings = (backup.Settings ?? []).map((x) => <SettingInputDto>x);
-
-    if (includeGlobalOptions) {
-      const serverSettings: Record<string, string> = this.#serverSettings.serverSettings() ?? {};
-      Object.keys(serverSettings)
-        .filter((x) => x.startsWith('--'))
-        .forEach((key) => {
-          const settingExists = allSettings.find((x) => x.Name === key);
-          if (!settingExists) {
-            allSettings.push({
-              Name: key,
-              Value: serverSettings[key],
-              Filter: null,
-            });
-          }
-        });
-    }
-
-    const settingsWithoutIgnored = allSettings.filter((x) => !settingsToExclude.includes(x.Name!));
-    const excludedSettings = allSettings.filter((x) => settingsToExclude.includes(x.Name!));
-
-    this.settings.set(settingsWithoutIgnored ?? []);
-    settingsWithoutIgnored?.forEach((x) => {
-      if (x.Name === 'encryption-module' && this.isNew()) {
-        return this.generalForm.controls.encryption.setValue(x.Value ?? '');
-      }
-    });
-
-    var retentionValue: RetentionType = 'all';
-    excludedSettings?.forEach((x) => {
-      if (x.Name === 'keep-time') {
-        // If this is not filled correctly, revert to 'all'
-        const v = x.Value ?? '';
-        if (v !== '') {
-          retentionValue = 'time';
-          return this.optionsFields.backupRetentionTime.set(x.Value ?? '');
-        }
-      }
-
-      if (x.Name === 'keep-versions') {
-        // If this is not filled correctly, revert to 'all'
-        const v = x.Value ?? '';
-        if (v !== '') {
-          retentionValue = 'versions';
-          return this.optionsFields.backupRetentionVersions.set(x.Value ? parseInt(x.Value) : null);
-        }
-      }
-
-      if (x.Name === 'retention-policy') {
-        // If this is not filled correctly, revert to 'all'
-        const v = x.Value ?? '';
-        if (v !== '') {
-          if (x.Value === SMART_RETENTION) {
-            retentionValue = 'smart';
-          } else {
-            retentionValue = 'custom';
-            return this.optionsFields.backupRetentionCustom.set(x.Value ?? '');
-          }
-        }
-      }
-    });
-
-    this.optionsFields.backupRetention.set(retentionValue);
+    const result = mapBackupToOptionsForm(
+      backup,
+      includeGlobalOptions ? this.#serverSettings.serverSettings() : undefined,
+      includeGlobalOptions,
+      this.isNew()
+    );
+    this.settings.set(result.settings);
+    result.encryptionValues.forEach((value) => this.generalForm.controls.encryption.setValue(value));
+    const fields = result.fields;
+    if (fields.backupRetentionTime !== undefined)
+      this.optionsFields.backupRetentionTime.set(fields.backupRetentionTime);
+    if (fields.backupRetentionVersions !== undefined)
+      this.optionsFields.backupRetentionVersions.set(fields.backupRetentionVersions);
+    if (fields.backupRetentionCustom !== undefined)
+      this.optionsFields.backupRetentionCustom.set(fields.backupRetentionCustom);
+    this.optionsFields.backupRetention.set(fields.backupRetention);
   }
 
   storeMetadata(backup: BackupDto, isDraft: boolean) {
@@ -574,155 +475,28 @@ export class BackupState {
   }
 
   #mapFormsToBackup() {
-    const generalFormValue = this.generalForm.value;
-    const scheduleFormValue = this.getScheduleFormValue();
-    const sourceDataFormValue = this.sourceDataForm.value;
-
-    const targetUrls = this.targetUrls();
-    const firstTarget = targetUrls[0];
-    const targetUrl = firstTarget?.url ?? null;
-
-    const pathFilters = sourceDataFormValue.path?.split('\0') ?? [];
-    const settings = this.mapFormsToSettings();
-
-    const filesLargerThan = sourceDataFormValue.excludes?.filesLargerThan;
-
-    if (filesLargerThan && filesLargerThan.size !== null && filesLargerThan.unit !== null) {
-      settings.push({
-        Name: '--skip-files-larger-than',
-        Value: `${filesLargerThan.size}${filesLargerThan.unit}`,
-      });
-    }
-
-    return <BackupAndScheduleInputDto>{
-      Backup: {
-        Name: generalFormValue.name,
-        Description: generalFormValue.description,
-        TargetURL: targetUrl ?? null,
-        ConnectionStringID: firstTarget?.connectionStringId ?? null,
-        OperationType: (generalFormValue.operationType as OperationType) ?? 'Backup',
-        Sources: pathFilters.filter((x) => !(x.startsWith('-') || x.startsWith('+'))),
-        Settings: settings,
-        Filters: pathFilters
-          .filter((x) => x.startsWith('-') || x.startsWith('+'))
-          .map((x, index) => ({
-            Order: index,
-            Include: x.startsWith('+'),
-            Expression: x.slice(1),
-          })),
-      },
-      Schedule: scheduleFormValue,
-    };
+    return mapBackupFormToDto({
+      general: this.generalForm.value,
+      sourceData: this.sourceDataForm.value,
+      schedule: this.getScheduleFormValue(),
+      targetUrls: this.targetUrls(),
+      settings: this.mapFormsToSettings(),
+    });
   }
 
   mapFormsToSettings(settingsIgnoreList: string[] = []) {
-    const generalFormValue = this.generalForm.value;
-    // These are stored different the in ngax client, so for compatibility we
-    // store them without the -- prefix
-    const legacyOptionValues = ['dblock-size', 'compression-module'];
-    const modulesToIgnore = [
-      '--no-encryption',
-      '--skip-files-larger-than',
-      'encryption-module',
-      'passphrase',
-      'keep-time',
-      'keep-versions',
-      'retention-policy',
-      ...legacyOptionValues,
-      ...legacyOptionValues.map((x) => `--${x}`),
-    ];
-
-    let encryption = [
+    return mapBackupFormToSettings(
+      this.generalForm.value,
       {
-        Name: '--no-encryption',
-        Value: 'True',
+        backupRetention: this.optionsFields.backupRetention(),
+        backupRetentionTime: this.optionsFields.backupRetentionTime(),
+        backupRetentionVersions: this.optionsFields.backupRetentionVersions(),
+        backupRetentionCustom: this.optionsFields.backupRetentionCustom(),
       },
-    ];
-
-    const isSyncMode = generalFormValue.operationType === 'Sync';
-
-    if (!isSyncMode && generalFormValue.encryption !== '' && generalFormValue.encryption !== NONE_OPTION.Key) {
-      encryption = [
-        {
-          Name: 'encryption-module',
-          Value: generalFormValue.encryption! ?? null,
-        },
-        {
-          Name: 'passphrase',
-          Value: generalFormValue.password! ?? null,
-        },
-      ];
-    }
-
-    let legacyOptions = legacyOptionValues
-      .map((legacyOption) => {
-        const matchingSetting = this.settings().find((x) => x.Name === legacyOption || x.Name === '--' + legacyOption);
-
-        if (matchingSetting)
-          return {
-            Name: legacyOption,
-            Value: matchingSetting.Value,
-          };
-
-        return null;
-      })
-      .filter((x) => x !== null);
-
-    const optionFields = [];
-
-    if (!this.isSyncMode()) {
-      switch (this.optionsFields.backupRetention()) {
-        case 'time':
-          optionFields.push({
-            Name: 'keep-time',
-            Value: this.optionsFields.backupRetentionTime(),
-          });
-          break;
-
-        case 'versions':
-          optionFields.push({
-            Name: 'keep-versions',
-            Value: this.optionsFields.backupRetentionVersions()?.toString() ?? '',
-          });
-          break;
-
-        case 'custom':
-          optionFields.push({
-            Name: 'retention-policy',
-            Value: this.optionsFields.backupRetentionCustom(),
-          });
-          break;
-
-        case 'smart':
-          optionFields.push({
-            Name: 'retention-policy',
-            Value: SMART_RETENTION,
-          });
-          break;
-      }
-    }
-
-    const _settingsIgnoreList = [...settingsIgnoreList, ...modulesToIgnore];
-    const settings = this.settings()
-      .filter((x) => !_settingsIgnoreList.includes(x.Name!))
-      .map((y) => {
-        let Value = y.Value;
-
-        if (typeof y.Value === 'number') {
-          Value = (y.Value as number).toString();
-        }
-
-        if (typeof y.Value === 'boolean') {
-          Value = (y.Value as Boolean) ? 'True' : 'False';
-        }
-
-        return {
-          Name: y.Name?.startsWith('--') ? y.Name : `--${y.Name}`,
-          Value,
-        };
-      });
-
-    return [...encryption, ...legacyOptions, ...optionFields, ...settings];
+      this.settings(),
+      this.isSyncMode(),
+      settingsIgnoreList
+    );
   }
 
   #saveConnectionStringIfNeeded(targetUrls: BackupTargetUrl[]): Observable<(number | null)[]> {
@@ -765,21 +539,6 @@ export class BackupState {
     });
 
     return forkJoin(obs);
-  }
-
-  #evaluateTimeString(t: string | undefined) {
-    if (!t || t?.indexOf('T') === -1) {
-      return {
-        time: t ?? '13:00',
-      };
-    }
-
-    const date = new Date(t);
-
-    return {
-      time: `${('' + date.getHours()).padStart(2, '0')}:${('' + date.getMinutes()).padStart(2, '0')}`,
-      date: `${('' + date.getFullYear()).padStart(4, '0')}-${('' + (date.getMonth() + 1)).padStart(2, '0')}-${('' + date.getDate()).padStart(2, '0')}`,
-    };
   }
 
   setTargetUrl(

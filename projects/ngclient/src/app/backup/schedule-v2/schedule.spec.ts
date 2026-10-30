@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { getNextRunDate, scheduleOptionToSchedule } from './schedule.component';
+import { getNextRunDate, scheduleOptionToSchedule } from '../models/schedule-form';
 
 describe('scheduleOptionToSchedule', () => {
   const createSchedule = (date: string | Date, time = '08:50:30') => ({
@@ -92,7 +92,7 @@ describe('default schedule date', () => {
   it('uses the local date for the field defaults', async () => {
     vi.stubEnv('TZ', 'Asia/Tokyo');
     vi.useFakeTimers({ now: tokyoMorning });
-    const { SCHEDULE_FIELD_DEFAULTS } = await import('./schedule.component');
+    const { SCHEDULE_FIELD_DEFAULTS } = await import('../models/schedule-form');
 
     expect(SCHEDULE_FIELD_DEFAULTS().nextTime.date()).toBe('2026-10-11');
   });
@@ -101,7 +101,7 @@ describe('default schedule date', () => {
     vi.stubEnv('TZ', 'Asia/Tokyo');
     vi.useFakeTimers({ now: tokyoMorning });
     vi.resetModules();
-    const { SCHEDULE_DEFAULT_OPTIONS } = await import('./schedule.component');
+    const { SCHEDULE_DEFAULT_OPTIONS } = await import('../models/schedule-form');
 
     expect(SCHEDULE_DEFAULT_OPTIONS.find((x) => x.value === 'daily')?.data.nextTime.date).toBe('2026-10-11');
   });
@@ -111,7 +111,7 @@ describe('default schedule date', () => {
     vi.stubEnv('TZ', 'Pacific/Kiritimati');
     vi.useFakeTimers({ now: tokyoMorning });
     vi.resetModules();
-    const { SCHEDULE_DEFAULT_OPTIONS } = await import('./schedule.component');
+    const { SCHEDULE_DEFAULT_OPTIONS } = await import('../models/schedule-form');
 
     expect(SCHEDULE_DEFAULT_OPTIONS.find((x) => x.value === 'weekly')?.data.nextTime.date).toBe('2026-10-12');
   });

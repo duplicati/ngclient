@@ -6,7 +6,8 @@ import { OperationType } from '../../core/openapi';
 import { PasswordGeneratorService } from '../../core/services/password-generator.service';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 import { BackupState } from '../backup.state';
-import GeneralComponent, { createGeneralForm, NONE_OPTION } from './general.component';
+import GeneralComponent from './general.component';
+import { createGeneralForm, NONE_OPTION } from '../models/general-form';
 
 describe('GeneralComponent encryption fields', () => {
   let fixture: ComponentFixture<GeneralComponent>;

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BackupState } from '../backup.state';
-import { toLocalDateString } from '../schedule-v2/schedule.component';
+import { toLocalDateString } from '../models/schedule-form';
 
 const UNIT_OPTIONS = [
   {
