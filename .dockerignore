@@ -11,3 +11,11 @@ LICENSE
 
 dist/node_modules
 dist/npm-debug.log
+
+# Local SCM, caches, and generated build/test output
+.jj
+.angular
+tmp
+dist
+playwright-report
+test-results

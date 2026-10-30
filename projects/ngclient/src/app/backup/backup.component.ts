@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { ShipStepper } from '@ship-ui/core/ship-stepper';
 import { defer, take } from 'rxjs';
@@ -11,7 +12,7 @@ import { BackupState } from './backup.state';
 
 @Component({
   selector: 'app-backup',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, StatusBarComponent, ShipStepper, ShipProgressBar],
+  imports: [ShipAlert, RouterOutlet, RouterLink, RouterLinkActive, StatusBarComponent, ShipStepper, ShipProgressBar],
   templateUrl: './backup.component.html',
   styleUrl: './backup.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,6 +28,8 @@ export default class BackupComponent {
   isNew = this.#backupState.isNew;
   backupId = this.#backupState.backupId;
   backupName = this.#backupState.backupName;
+  saveState = this.#backupState.saveState;
+  isSubmitting = this.#backupState.isSubmitting;
   finishedLoading = this.#backupState.finishedLoading;
 
   #routeParamsSignal = toSignal(this.#route.params);
@@ -99,10 +102,9 @@ export default class BackupComponent {
         this.#dupServer.getApiV1BackupById({
           path: { id },
         })
-      )
-        .subscribe({
-          next: onBackup,
-        });
+      ).subscribe({
+        next: onBackup,
+      });
     }
   }
 }

@@ -30,5 +30,8 @@ jobs:
       - name: Test locale catalog contracts
         run: bun run test:locales
 
+      - name: Check build script ordering and failure handling
+        run: bun run test:build
+
       - name: Run unit tests
         run: bun run test:ci
