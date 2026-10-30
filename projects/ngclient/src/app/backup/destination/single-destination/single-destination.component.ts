@@ -13,6 +13,7 @@ import {
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
@@ -41,13 +42,13 @@ import {
   concatPaths,
   CustomFormView,
   FormView,
-  fromTargetPath,
+  DestinationFormValues,
   getConfigurationByUrl,
   isValidBucketname,
   isValidHostname,
   parseKeyValueTextToObject,
-  toTargetPath,
 } from '../destination.config-utilities';
+import { copyDestinationForm, DestinationEditSession } from '../destination-edit-session';
 import { BrowsePathDialog } from './browse-path-dialog/browse-path-dialog';
 
 type DestinationConfig = {
@@ -71,6 +72,7 @@ type DestinationConfig = {
     TimespanComponent,
     FileDropTextareaComponent,
 
+    ShipAlert,
     ShipFormField,
     ShipButton,
     ShipIcon,
@@ -104,18 +106,18 @@ export class SingleDestinationComponent {
   sourcePrefix = input<string | null>(null);
   remoteType = input<RemoteDestinationType>('Backend');
 
-  #destType: string | null = null;
+  #editSession = new DestinationEditSession();
+  /** False when the URL cannot be parsed into fields; edits would be lost, so the field editor is hidden. */
+  canEditFields = signal(true);
   destinationType = computed(() => {
     const targetUrl = this.targetUrl();
 
     if (!targetUrl) return null;
 
     const config = getConfigurationByUrl(targetUrl);
-    this.#destType = config?.customKey ?? config?.key;
-    return this.#destType;
+    return config?.customKey ?? config?.key;
   });
 
-  refreshView = signal(false);
   destinationForm = signal({
     custom: {} as Record<string, any>,
     dynamic: {} as Record<string, any>,
@@ -228,6 +230,10 @@ export class SingleDestinationComponent {
 
   destinationTypeEffect = effect(() => {
     const targetUrl = this.targetUrl();
+    if (targetUrl !== this.#editSession.url) {
+      this.destinationForm.set(this.#editSession.load(targetUrl));
+      this.canEditFields.set(this.#editSession.canEdit);
+    }
 
     const destinationConfig = getConfigurationByUrl(targetUrl ?? '');
     const protocolKey = destinationConfig.key;
@@ -347,38 +353,15 @@ export class SingleDestinationComponent {
     destinationFormConfig.advanced.sort((a, b) => a.order! - b.order!);
 
     this.destinationFormConfig.set(destinationFormConfig);
-
-    if (!targetUrl) return;
-
-    const targetUrlData = fromTargetPath(targetUrl);
-
-    if (!targetUrlData) return;
-
-    this.destinationForm.set({
-      custom: targetUrlData.custom,
-      dynamic: targetUrlData.dynamic,
-      advanced: targetUrlData.advanced,
-    });
   });
 
-  destinationFormEffect = effect(() => {
-    const key = this.#destType;
-    const form = this.destinationForm();
-    const _ = this.refreshView();
-
-    if (!form || !key) return;
-
-    const newTargetUrl = toTargetPath({
-      destinationType: key,
-      custom: form.custom,
-      dynamic: form.dynamic,
-      advanced: form.advanced,
-    });
-
-    if (!newTargetUrl) return;
-
-    this.targetUrl.set(newTargetUrl);
-  });
+  #updateDestinationForm(update: (form: DestinationFormValues) => void) {
+    const form = copyDestinationForm(this.destinationForm());
+    update(form);
+    this.destinationForm.set(form);
+    const url = this.#editSession.commit(form);
+    if (url !== null && url !== this.targetUrl()) this.targetUrl.set(url);
+  }
 
   getFieldValue(fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string) {
     const form = this.destinationForm();
@@ -416,11 +399,9 @@ export class SingleDestinationComponent {
   }
 
   addAdvancedOption(formView: FormView) {
-    const form = this.destinationForm();
-
-    form.advanced[formView.name] = formView.defaultValue;
-
-    this.destinationForm.set({ ...form });
+    this.#updateDestinationForm((form) => {
+      form.advanced[formView.name] = formView.defaultValue;
+    });
   }
 
   isTrue(value: any): boolean {
@@ -451,22 +432,17 @@ export class SingleDestinationComponent {
   }
 
   updateFieldValue(fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string, newValue: any) {
-    const form = this.destinationForm();
-
-    form[fieldGroup][fieldName] = newValue;
-
-    // Let the field configuration react to the change (e.g. set provider-specific defaults)
-    this.getFormView(fieldGroup, fieldName)?.onValueChange?.(newValue, form);
-
-    this.destinationForm.set({ ...form });
+    this.#updateDestinationForm((form) => {
+      form[fieldGroup][fieldName] = newValue;
+      // Provider defaults are applied only as part of the user's field edit.
+      this.getFormView(fieldGroup, fieldName)?.onValueChange?.(newValue, form);
+    });
   }
 
   removeAdvancedOption(fieldName: string) {
-    const form = this.destinationForm();
-
-    delete form.advanced[fieldName];
-
-    this.destinationForm.set({ ...form });
+    this.#updateDestinationForm((form) => {
+      delete form.advanced[fieldName];
+    });
   }
 
   mapOptions(item: FormView): { key: string; value: string | null | undefined }[] | null | undefined {
@@ -532,9 +508,8 @@ export class SingleDestinationComponent {
 
       const fullPath = concatPaths(basePath, destination);
 
-      this.destinationForm.update((y) => {
-        y[fieldGroup][fieldName] = fullPath;
-        return { ...y };
+      this.#updateDestinationForm((form) => {
+        form[fieldGroup][fieldName] = fullPath;
       });
     });
   }
@@ -577,13 +552,11 @@ export class SingleDestinationComponent {
       const authId = hasAuthId ? event.data.replace('authid:', '') : null;
 
       if (hasAuthId) {
-        this.destinationForm.update((y) => {
-          y[fieldGroup][fieldName] = authId;
-          return { ...y };
+        this.#updateDestinationForm((form) => {
+          form[fieldGroup][fieldName] = authId;
         });
 
         this.#oauthInProgress.set(false);
-        this.refreshView.set(!this.refreshView());
         wnd?.close();
       } else {
         // TODO some error handling
@@ -616,10 +589,9 @@ export class SingleDestinationComponent {
     if (typeof newValue !== 'string') return;
 
     const newSettings = parseKeyValueTextToObject(newValue);
-    this.destinationForm.update((x) => ({
-      ...x,
-      advanced: newSettings,
-    }));
+    this.#updateDestinationForm((form) => {
+      form.advanced = newSettings;
+    });
   }
 
   getIsDisabled(formFieldId: string): boolean {
@@ -657,12 +629,10 @@ export class SingleDestinationComponent {
             return;
           }
 
-          this.destinationForm.update((y) => {
-            y.advanced['api-key'] = apiKey;
-            y.dynamic['two-factor-code'] = null;
-            return { ...y };
+          this.#updateDestinationForm((form) => {
+            form.advanced['api-key'] = apiKey;
+            form.dynamic['two-factor-code'] = null;
           });
-          this.refreshView.set(!this.refreshView());
         },
         error: (error) => {
           console.error('Error authenticating Filen', error);
