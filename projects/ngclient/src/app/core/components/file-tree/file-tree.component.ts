@@ -828,7 +828,8 @@ export default class FileTreeComponent {
       }
     }
 
-    if (filters.length === 0) return result;
+    // Filters refine source selections; they must not select paths outside them.
+    if (result === TreeEvalEnum.None || filters.length === 0) return result;
 
     for (let i = 0; i < filters.length; i++) {
       const pathPart = filters[i];
