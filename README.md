@@ -3,7 +3,7 @@
 ### Prerequisites
 
 - Node.js 24 (used by the publishing and browser-test workflows) - https://nodejs.org/en/download
-- Bun - https://bun.sh/docs/installation (required by the package scripts)
+- Bun 1.4.4 (see `packageManager` in `package.json`) - https://bun.sh/docs/installation
 
 ### Dependencies
 
@@ -13,6 +13,12 @@
 - Phosphor Icons - https://phosphoricons.com/
 
 ### Run the project
+
+Use Bun for dependency installation and updates. `bun.lock` is the only dependency
+lockfile; local development, Docker, tests, and publishing install from it with
+`bun install --frozen-lockfile`. Do not generate a separate npm lockfile.
+After changing dependencies with `bun add` or `bun remove`, commit both
+`package.json` and `bun.lock`.
 
 Install dependencies and start the Angular development server:
 
@@ -30,6 +36,7 @@ Duplicati backend when using this configuration.
 Run the unit suite once, as in CI:
 
 ```sh
+bun run test:build
 bun run test:ci
 ```
 
@@ -41,10 +48,13 @@ Build the application, then serve the generated files locally:
 
 ```sh
 bun install --frozen-lockfile
-bun run gen:font
-bun run ng -- build ngclient --configuration production
+bun run build:prod
 bun run preview
 ```
+
+The `build`, `build:dev`, and `build:prod` scripts generate fonts before Angular
+starts and stop if font generation fails. CI, Docker, and publishing use these
+same scripts. `bun run build:dev` builds the development configuration.
 
 Open http://127.0.0.1:3000. The preview serves `dist/ngclient/browser` and
 supports direct navigation to application routes such as `/login`. Missing
@@ -87,3 +97,14 @@ CLI; Bun remains the package manager and script launcher.
   - `dotnet run -- --webservice-password=helloworld --webservice-interface=any` (insert your test password)
 - `npm run start:windows`
 - Debug on your mac in `localhost:4200`
+
+### npm publication
+
+The publishing workflow installs from `bun.lock`, builds with `bun run build:prod`,
+and generates the distribution's `package.json` with `bun run gen:package-json`.
+Node.js 24 and npm remain responsible for `npm publish --access public --provenance`
+using the existing OIDC permissions, registry, and main-branch publication condition.
+The published metadata does not include development dependencies or Bun-specific fields.
+
+The Production Build workflow validates the generated package with `npm pack --dry-run`
+after uploading the browser artifact. This checks packaging without publishing a version.
