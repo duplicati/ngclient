@@ -37,7 +37,7 @@
     "test:e2e": "playwright test",
     "gen:locales": "bun scripts/generate-locales.ts",
     "check:locales": "bun scripts/generate-locales.ts --check",
-    "test:locales": "bun test ./scripts/locale-catalog.test.ts"
+    "test:locales": "bun test ./scripts/locale-catalog.test.ts",
     "test:build": "bun test ./scripts/build.test.ts"
   },
   "dependencies": {
