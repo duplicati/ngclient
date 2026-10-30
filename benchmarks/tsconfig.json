@@ -1,0 +1,4 @@
+{
+  "extends": "../e2e/tsconfig.json",
+  "include": ["./startup-loading.benchmark.ts", "../playwright.startup.config.ts"]
+}

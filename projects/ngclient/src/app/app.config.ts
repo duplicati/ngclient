@@ -1,7 +1,7 @@
 /// <reference types="@angular/localize" />
 
 import { ApplicationConfig, LOCALE_ID, provideZonelessChangeDetection } from '@angular/core';
-import { PreloadAllModules, provideRouter, withComponentInputBinding, withPreloading } from '@angular/router';
+import { provideRouter, withComponentInputBinding, withPreloading } from '@angular/router';
 
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
@@ -10,6 +10,7 @@ import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { environment } from '../environments/environment';
 import { ENVIRONMENT_TOKEN } from '../environments/environment-token';
 import { routes } from './app.routes';
+import { StartupPreloadingStrategy } from './core/routing/startup-preloading.strategy';
 import { provideHeyApiClient } from './core/openapi/client/client.gen';
 import { client } from './core/openapi/client.gen';
 import { StatusBarState } from './core/components/status-bar/status-bar.state';
@@ -27,7 +28,7 @@ import { NotificationsState } from './notifications/notifications.state';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZonelessChangeDetection(),
-    provideRouter(routes, withComponentInputBinding(), withPreloading(PreloadAllModules)),
+    provideRouter(routes, withComponentInputBinding(), withPreloading(StartupPreloadingStrategy)),
     provideHttpClient(withFetch(), withInterceptors([httpInterceptorWebsocketRelay, httpInterceptor])),
     provideHeyApiClient(client),
 

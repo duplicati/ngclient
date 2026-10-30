@@ -123,10 +123,12 @@ export const routes: Routes = [
               {
                 path: '',
                 // If in iframe wait for relay...
+                data: { preload: 'shell' },
                 loadComponent: () => import('./layout/layout.component'),
                 children: [
                   {
                     path: '',
+                    data: { preload: 'shell' },
                     loadComponent: () => import('./home/home.component'),
                   },
                   connectToConsoleRoute,
@@ -158,6 +160,7 @@ export const routes: Routes = [
                   },
                   {
                     path: 'backup/:id',
+                    data: { preload: 'authenticated' },
                     loadComponent: () => import('./backup/backup.component'),
                     loadChildren: () => import('./backup/backup.routes'),
                   },
@@ -221,6 +224,7 @@ export const routes: Routes = [
                     children: [
                       {
                         path: '',
+                        data: { preload: 'authenticated' },
                         loadComponent: () => import('./restore/restore.component'),
                       },
                       {
@@ -252,6 +256,7 @@ export const routes: Routes = [
                   },
                   {
                     path: 'settings',
+                    data: { preload: 'authenticated' },
                     loadComponent: () => import('./settings/settings.component'),
                   },
                   {

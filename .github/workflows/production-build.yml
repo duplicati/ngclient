@@ -2,6 +2,19 @@ name: Production Build
 
 on:
   workflow_dispatch:
+    inputs:
+      startup_measurements:
+        description: Measure startup and first navigation in a dedicated job
+        type: boolean
+        default: false
+      startup_baseline_run:
+        description: Previous production build run ID for an interleaved comparison
+        type: string
+        default: ''
+      startup_rounds:
+        description: Sequential samples per build (1 to 9)
+        type: string
+        default: '5'
   push:
     branches:
       - main
@@ -97,3 +110,47 @@ jobs:
             playwright-report
             test-results
           retention-days: 7
+
+  startup-measurements:
+    if: github.event_name == 'workflow_dispatch' && inputs.startup_measurements
+    needs: production-build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bunx playwright install --with-deps --only-shell chromium
+      - name: Download candidate production build
+        uses: actions/download-artifact@v8
+        with:
+          name: production-browser
+          path: tmp/startup-candidate
+      - name: Download baseline production build
+        uses: actions/download-artifact@v8
+        with:
+          name: production-browser
+          path: tmp/startup-baseline
+          run-id: ${{ inputs.startup_baseline_run || github.run_id }}
+          github-token: ${{ github.token }}
+      - name: Measure isolated production startup and navigation
+        run: bunx playwright test --config playwright.startup.config.ts
+        env:
+          STARTUP_BASELINE_DIR: ${{ github.workspace }}/tmp/startup-baseline
+          STARTUP_CANDIDATE_DIR: ${{ github.workspace }}/tmp/startup-candidate
+          STARTUP_RESULTS_DIR: tmp/startup-measurements
+          STARTUP_VARIANTS: ${{ inputs.startup_baseline_run && 'baseline,candidate' || 'baseline' }}
+          STARTUP_ROUNDS: ${{ inputs.startup_rounds }}
+      - name: Upload measurements
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: startup-measurements
+          path: tmp/startup-measurements
+          retention-days: 14

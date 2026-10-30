@@ -1,0 +1,755 @@
+{
+  "date": "2026-10-30",
+  "baseline": "6e94f1edcbfc8296a9cba3e97b6236c3f9cfb3bf",
+  "candidate": "3bbb5f6e760a752b3ff14f3f3af41e8078610f3d",
+  "run": "https://github.com/JamBalaya56562/ngclient/actions/runs/40917142825",
+  "summary": [
+    {
+      "stage": "login",
+      "baseline": {
+        "bytes": 2245366,
+        "requests": 121,
+        "apiRequests": 0,
+        "readyMs": 2185.7662229999987,
+        "readyRangeMs": [2178.566616000011, 2198.8651280000004]
+      },
+      "candidate": {
+        "bytes": 1410514,
+        "requests": 51,
+        "apiRequests": 0,
+        "readyMs": 2187.0457210000022,
+        "readyRangeMs": [2184.583267, 2196.0023199999996]
+      }
+    },
+    {
+      "stage": "home",
+      "baseline": {
+        "bytes": 2267505,
+        "requests": 130,
+        "apiRequests": 5,
+        "readyMs": 193.19836000000214,
+        "readyRangeMs": [189.9115690000035, 219.02664900000036]
+      },
+      "candidate": {
+        "bytes": 1797387,
+        "requests": 75,
+        "apiRequests": 5,
+        "readyMs": 188.44371799999863,
+        "readyRangeMs": [185.49589200000628, 199.5008650000018]
+      }
+    },
+    {
+      "stage": "settings",
+      "baseline": {
+        "bytes": 2307917,
+        "requests": 133,
+        "apiRequests": 5,
+        "readyMs": 73.72304799999984,
+        "readyRangeMs": [69.45474800000011, 92.42005699999572]
+      },
+      "candidate": {
+        "bytes": 1859225,
+        "requests": 79,
+        "apiRequests": 5,
+        "readyMs": 69.66592099999252,
+        "readyRangeMs": [67.53901700000279, 72.78793500000029]
+      }
+    },
+    {
+      "stage": "restore",
+      "baseline": {
+        "bytes": 2308228,
+        "requests": 134,
+        "apiRequests": 5,
+        "readyMs": 23.657558000006247,
+        "readyRangeMs": [22.077926000012667, 36.12798099999782]
+      },
+      "candidate": {
+        "bytes": 1859536,
+        "requests": 80,
+        "apiRequests": 5,
+        "readyMs": 22.78359599999385,
+        "readyRangeMs": [21.710767999997188, 34.95948899999712]
+      }
+    },
+    {
+      "stage": "edit",
+      "baseline": {
+        "bytes": 2308228,
+        "requests": 134,
+        "apiRequests": 7,
+        "readyMs": 51.206975000000966,
+        "readyRangeMs": [28.80535399999826, 52.32316099999298]
+      },
+      "candidate": {
+        "bytes": 1859536,
+        "requests": 80,
+        "apiRequests": 7,
+        "readyMs": 52.86217599999509,
+        "readyRangeMs": [30.015825999998924, 53.94031399999221]
+      }
+    }
+  ],
+  "samples": [
+    {
+      "variant": "baseline",
+      "sample": 1,
+      "profile": {
+        "latency": 80,
+        "downloadThroughput": 750000,
+        "uploadThroughput": 250000
+      },
+      "cache": "disabled; fresh context per sample",
+      "browser": "153.0.8010.12",
+      "platform": "linux",
+      "cpu": "AMD EPYC 9V74 80-Core Processor",
+      "memoryGiB": 15.608448028564453,
+      "stages": [
+        {
+          "name": "login",
+          "readyMs": 2198.8651280000004,
+          "requests": 121,
+          "bytes": 2245366,
+          "scriptRequests": 115,
+          "scriptBytes": 1960507,
+          "apiRequests": 0,
+          "fcpMs": 188
+        },
+        {
+          "name": "home",
+          "readyMs": 219.02664900000036,
+          "requests": 130,
+          "bytes": 2267505,
+          "scriptRequests": 122,
+          "scriptBytes": 1963024,
+          "apiRequests": 5,
+          "fcpMs": 188
+        },
+        {
+          "name": "settings",
+          "readyMs": 69.45474800000011,
+          "requests": 133,
+          "bytes": 2307917,
+          "scriptRequests": 123,
+          "scriptBytes": 1964117,
+          "apiRequests": 5,
+          "fcpMs": 188
+        },
+        {
+          "name": "restore",
+          "readyMs": 24.34839800000009,
+          "requests": 134,
+          "bytes": 2308228,
+          "scriptRequests": 124,
+          "scriptBytes": 1964428,
+          "apiRequests": 5,
+          "fcpMs": 188
+        },
+        {
+          "name": "edit",
+          "readyMs": 28.80535399999826,
+          "requests": 134,
+          "bytes": 2308228,
+          "scriptRequests": 124,
+          "scriptBytes": 1964428,
+          "apiRequests": 7,
+          "fcpMs": 188
+        }
+      ]
+    },
+    {
+      "variant": "baseline",
+      "sample": 2,
+      "profile": {
+        "latency": 80,
+        "downloadThroughput": 750000,
+        "uploadThroughput": 250000
+      },
+      "cache": "disabled; fresh context per sample",
+      "browser": "153.0.8010.12",
+      "platform": "linux",
+      "cpu": "AMD EPYC 9V74 80-Core Processor",
+      "memoryGiB": 15.608448028564453,
+      "stages": [
+        {
+          "name": "login",
+          "readyMs": 2180.9893040000024,
+          "requests": 121,
+          "bytes": 2245366,
+          "scriptRequests": 115,
+          "scriptBytes": 1960507,
+          "apiRequests": 0,
+          "fcpMs": 184
+        },
+        {
+          "name": "home",
+          "readyMs": 193.58278300000165,
+          "requests": 130,
+          "bytes": 2267505,
+          "scriptRequests": 122,
+          "scriptBytes": 1963024,
+          "apiRequests": 5,
+          "fcpMs": 184
+        },
+        {
+          "name": "settings",
+          "readyMs": 73.72304799999984,
+          "requests": 133,
+          "bytes": 2307917,
+          "scriptRequests": 123,
+          "scriptBytes": 1964117,
+          "apiRequests": 5,
+          "fcpMs": 184
+        },
+        {
+          "name": "restore",
+          "readyMs": 23.657558000006247,
+          "requests": 134,
+          "bytes": 2308228,
+          "scriptRequests": 124,
+          "scriptBytes": 1964428,
+          "apiRequests": 5,
+          "fcpMs": 184
+        },
+        {
+          "name": "edit",
+          "readyMs": 51.206975000000966,
+          "requests": 134,
+          "bytes": 2308228,
+          "scriptRequests": 124,
+          "scriptBytes": 1964428,
+          "apiRequests": 7,
+          "fcpMs": 184
+        }
+      ]
+    },
+    {
+      "variant": "baseline",
+      "sample": 3,
+      "profile": {
+        "latency": 80,
+        "downloadThroughput": 750000,
+        "uploadThroughput": 250000
+      },
+      "cache": "disabled; fresh context per sample",
+      "browser": "153.0.8010.12",
+      "platform": "linux",
+      "cpu": "AMD EPYC 9V74 80-Core Processor",
+      "memoryGiB": 15.608448028564453,
+      "stages": [
+        {
+          "name": "login",
+          "readyMs": 2185.7662229999987,
+          "requests": 121,
+          "bytes": 2245366,
+          "scriptRequests": 115,
+          "scriptBytes": 1960507,
+          "apiRequests": 0,
+          "fcpMs": 184
+        },
+        {
+          "name": "home",
+          "readyMs": 193.19836000000214,
+          "requests": 130,
+          "bytes": 2267505,
+          "scriptRequests": 122,
+          "scriptBytes": 1963024,
+          "apiRequests": 5,
+          "fcpMs": 184
+        },
+        {
+          "name": "settings",
+          "readyMs": 73.33460400000331,
+          "requests": 133,
+          "bytes": 2307917,
+          "scriptRequests": 123,
+          "scriptBytes": 1964117,
+          "apiRequests": 5,
+          "fcpMs": 184
+        },
+        {
+          "name": "restore",
+          "readyMs": 22.390039999998407,
+          "requests": 134,
+          "bytes": 2308228,
+          "scriptRequests": 124,
+          "scriptBytes": 1964428,
+          "apiRequests": 5,
+          "fcpMs": 184
+        },
+        {
+          "name": "edit",
+          "readyMs": 50.740490000003774,
+          "requests": 134,
+          "bytes": 2308228,
+          "scriptRequests": 124,
+          "scriptBytes": 1964428,
+          "apiRequests": 7,
+          "fcpMs": 184
+        }
+      ]
+    },
+    {
+      "variant": "baseline",
+      "sample": 4,
+      "profile": {
+        "latency": 80,
+        "downloadThroughput": 750000,
+        "uploadThroughput": 250000
+      },
+      "cache": "disabled; fresh context per sample",
+      "browser": "153.0.8010.12",
+      "platform": "linux",
+      "cpu": "AMD EPYC 9V74 80-Core Processor",
+      "memoryGiB": 15.608448028564453,
+      "stages": [
+        {
+          "name": "login",
+          "readyMs": 2187.1276780000044,
+          "requests": 121,
+          "bytes": 2245366,
+          "scriptRequests": 115,
+          "scriptBytes": 1960507,
+          "apiRequests": 0,
+          "fcpMs": 184
+        },
+        {
+          "name": "home",
+          "readyMs": 191.75468299999193,
+          "requests": 130,
+          "bytes": 2267505,
+          "scriptRequests": 122,
+          "scriptBytes": 1963024,
+          "apiRequests": 5,
+          "fcpMs": 184
+        },
+        {
+          "name": "settings",
+          "readyMs": 74.1248559999949,
+          "requests": 133,
+          "bytes": 2307917,
+          "scriptRequests": 123,
+          "scriptBytes": 1964117,
+          "apiRequests": 5,
+          "fcpMs": 184
+        },
+        {
+          "name": "restore",
+          "readyMs": 22.077926000012667,
+          "requests": 134,
+          "bytes": 2308228,
+          "scriptRequests": 124,
+          "scriptBytes": 1964428,
+          "apiRequests": 5,
+          "fcpMs": 184
+        },
+        {
+          "name": "edit",
+          "readyMs": 52.32316099999298,
+          "requests": 134,
+          "bytes": 2308228,
+          "scriptRequests": 124,
+          "scriptBytes": 1964428,
+          "apiRequests": 7,
+          "fcpMs": 184
+        }
+      ]
+    },
+    {
+      "variant": "baseline",
+      "sample": 5,
+      "profile": {
+        "latency": 80,
+        "downloadThroughput": 750000,
+        "uploadThroughput": 250000
+      },
+      "cache": "disabled; fresh context per sample",
+      "browser": "153.0.8010.12",
+      "platform": "linux",
+      "cpu": "AMD EPYC 9V74 80-Core Processor",
+      "memoryGiB": 15.608448028564453,
+      "stages": [
+        {
+          "name": "login",
+          "readyMs": 2178.566616000011,
+          "requests": 121,
+          "bytes": 2245366,
+          "scriptRequests": 115,
+          "scriptBytes": 1960507,
+          "apiRequests": 0,
+          "fcpMs": 184
+        },
+        {
+          "name": "home",
+          "readyMs": 189.9115690000035,
+          "requests": 130,
+          "bytes": 2267505,
+          "scriptRequests": 122,
+          "scriptBytes": 1963024,
+          "apiRequests": 5,
+          "fcpMs": 184
+        },
+        {
+          "name": "settings",
+          "readyMs": 92.42005699999572,
+          "requests": 133,
+          "bytes": 2307917,
+          "scriptRequests": 123,
+          "scriptBytes": 1964117,
+          "apiRequests": 5,
+          "fcpMs": 184
+        },
+        {
+          "name": "restore",
+          "readyMs": 36.12798099999782,
+          "requests": 134,
+          "bytes": 2308228,
+          "scriptRequests": 124,
+          "scriptBytes": 1964428,
+          "apiRequests": 5,
+          "fcpMs": 184
+        },
+        {
+          "name": "edit",
+          "readyMs": 52.21566599998914,
+          "requests": 134,
+          "bytes": 2308228,
+          "scriptRequests": 124,
+          "scriptBytes": 1964428,
+          "apiRequests": 7,
+          "fcpMs": 184
+        }
+      ]
+    },
+    {
+      "variant": "candidate",
+      "sample": 1,
+      "profile": {
+        "latency": 80,
+        "downloadThroughput": 750000,
+        "uploadThroughput": 250000
+      },
+      "cache": "disabled; fresh context per sample",
+      "browser": "153.0.8010.12",
+      "platform": "linux",
+      "cpu": "AMD EPYC 9V74 80-Core Processor",
+      "memoryGiB": 15.608448028564453,
+      "stages": [
+        {
+          "name": "login",
+          "readyMs": 2184.583267,
+          "requests": 51,
+          "bytes": 1410514,
+          "scriptRequests": 45,
+          "scriptBytes": 1125655,
+          "apiRequests": 0,
+          "fcpMs": 184
+        },
+        {
+          "name": "home",
+          "readyMs": 188.44371799999863,
+          "requests": 75,
+          "bytes": 1797387,
+          "scriptRequests": 67,
+          "scriptBytes": 1492906,
+          "apiRequests": 5,
+          "fcpMs": 184
+        },
+        {
+          "name": "settings",
+          "readyMs": 72.78793500000029,
+          "requests": 79,
+          "bytes": 1859225,
+          "scriptRequests": 69,
+          "scriptBytes": 1515425,
+          "apiRequests": 5,
+          "fcpMs": 184
+        },
+        {
+          "name": "restore",
+          "readyMs": 34.95948899999712,
+          "requests": 80,
+          "bytes": 1859536,
+          "scriptRequests": 70,
+          "scriptBytes": 1515736,
+          "apiRequests": 5,
+          "fcpMs": 184
+        },
+        {
+          "name": "edit",
+          "readyMs": 30.015825999998924,
+          "requests": 80,
+          "bytes": 1859536,
+          "scriptRequests": 70,
+          "scriptBytes": 1515736,
+          "apiRequests": 7,
+          "fcpMs": 184
+        }
+      ]
+    },
+    {
+      "variant": "candidate",
+      "sample": 2,
+      "profile": {
+        "latency": 80,
+        "downloadThroughput": 750000,
+        "uploadThroughput": 250000
+      },
+      "cache": "disabled; fresh context per sample",
+      "browser": "153.0.8010.12",
+      "platform": "linux",
+      "cpu": "AMD EPYC 9V74 80-Core Processor",
+      "memoryGiB": 15.608448028564453,
+      "stages": [
+        {
+          "name": "login",
+          "readyMs": 2196.0023199999996,
+          "requests": 51,
+          "bytes": 1410514,
+          "scriptRequests": 45,
+          "scriptBytes": 1125655,
+          "apiRequests": 0,
+          "fcpMs": 184
+        },
+        {
+          "name": "home",
+          "readyMs": 199.5008650000018,
+          "requests": 75,
+          "bytes": 1797387,
+          "scriptRequests": 67,
+          "scriptBytes": 1492906,
+          "apiRequests": 5,
+          "fcpMs": 184
+        },
+        {
+          "name": "settings",
+          "readyMs": 68.23323999999411,
+          "requests": 79,
+          "bytes": 1859225,
+          "scriptRequests": 69,
+          "scriptBytes": 1515425,
+          "apiRequests": 5,
+          "fcpMs": 184
+        },
+        {
+          "name": "restore",
+          "readyMs": 21.710767999997188,
+          "requests": 80,
+          "bytes": 1859536,
+          "scriptRequests": 70,
+          "scriptBytes": 1515736,
+          "apiRequests": 5,
+          "fcpMs": 184
+        },
+        {
+          "name": "edit",
+          "readyMs": 52.76509199999418,
+          "requests": 80,
+          "bytes": 1859536,
+          "scriptRequests": 70,
+          "scriptBytes": 1515736,
+          "apiRequests": 7,
+          "fcpMs": 184
+        }
+      ]
+    },
+    {
+      "variant": "candidate",
+      "sample": 3,
+      "profile": {
+        "latency": 80,
+        "downloadThroughput": 750000,
+        "uploadThroughput": 250000
+      },
+      "cache": "disabled; fresh context per sample",
+      "browser": "153.0.8010.12",
+      "platform": "linux",
+      "cpu": "AMD EPYC 9V74 80-Core Processor",
+      "memoryGiB": 15.608448028564453,
+      "stages": [
+        {
+          "name": "login",
+          "readyMs": 2186.675645000003,
+          "requests": 51,
+          "bytes": 1410514,
+          "scriptRequests": 45,
+          "scriptBytes": 1125655,
+          "apiRequests": 0,
+          "fcpMs": 184
+        },
+        {
+          "name": "home",
+          "readyMs": 185.49589200000628,
+          "requests": 75,
+          "bytes": 1797387,
+          "scriptRequests": 67,
+          "scriptBytes": 1492906,
+          "apiRequests": 5,
+          "fcpMs": 184
+        },
+        {
+          "name": "settings",
+          "readyMs": 67.53901700000279,
+          "requests": 79,
+          "bytes": 1859225,
+          "scriptRequests": 69,
+          "scriptBytes": 1515425,
+          "apiRequests": 5,
+          "fcpMs": 184
+        },
+        {
+          "name": "restore",
+          "readyMs": 23.702318000010564,
+          "requests": 80,
+          "bytes": 1859536,
+          "scriptRequests": 70,
+          "scriptBytes": 1515736,
+          "apiRequests": 5,
+          "fcpMs": 184
+        },
+        {
+          "name": "edit",
+          "readyMs": 53.52227600000333,
+          "requests": 80,
+          "bytes": 1859536,
+          "scriptRequests": 70,
+          "scriptBytes": 1515736,
+          "apiRequests": 7,
+          "fcpMs": 184
+        }
+      ]
+    },
+    {
+      "variant": "candidate",
+      "sample": 4,
+      "profile": {
+        "latency": 80,
+        "downloadThroughput": 750000,
+        "uploadThroughput": 250000
+      },
+      "cache": "disabled; fresh context per sample",
+      "browser": "153.0.8010.12",
+      "platform": "linux",
+      "cpu": "AMD EPYC 9V74 80-Core Processor",
+      "memoryGiB": 15.608448028564453,
+      "stages": [
+        {
+          "name": "login",
+          "readyMs": 2187.0457210000022,
+          "requests": 51,
+          "bytes": 1410514,
+          "scriptRequests": 45,
+          "scriptBytes": 1125655,
+          "apiRequests": 0,
+          "fcpMs": 184
+        },
+        {
+          "name": "home",
+          "readyMs": 188.09870400000364,
+          "requests": 75,
+          "bytes": 1797387,
+          "scriptRequests": 67,
+          "scriptBytes": 1492906,
+          "apiRequests": 5,
+          "fcpMs": 184
+        },
+        {
+          "name": "settings",
+          "readyMs": 69.66592099999252,
+          "requests": 79,
+          "bytes": 1859225,
+          "scriptRequests": 69,
+          "scriptBytes": 1515425,
+          "apiRequests": 5,
+          "fcpMs": 184
+        },
+        {
+          "name": "restore",
+          "readyMs": 22.40712699999858,
+          "requests": 80,
+          "bytes": 1859536,
+          "scriptRequests": 70,
+          "scriptBytes": 1515736,
+          "apiRequests": 5,
+          "fcpMs": 184
+        },
+        {
+          "name": "edit",
+          "readyMs": 53.94031399999221,
+          "requests": 80,
+          "bytes": 1859536,
+          "scriptRequests": 70,
+          "scriptBytes": 1515736,
+          "apiRequests": 7,
+          "fcpMs": 184
+        }
+      ]
+    },
+    {
+      "variant": "candidate",
+      "sample": 5,
+      "profile": {
+        "latency": 80,
+        "downloadThroughput": 750000,
+        "uploadThroughput": 250000
+      },
+      "cache": "disabled; fresh context per sample",
+      "browser": "153.0.8010.12",
+      "platform": "linux",
+      "cpu": "AMD EPYC 9V74 80-Core Processor",
+      "memoryGiB": 15.608448028564453,
+      "stages": [
+        {
+          "name": "login",
+          "readyMs": 2187.5130930000014,
+          "requests": 51,
+          "bytes": 1410514,
+          "scriptRequests": 45,
+          "scriptBytes": 1125655,
+          "apiRequests": 0,
+          "fcpMs": 188
+        },
+        {
+          "name": "home",
+          "readyMs": 195.9002599999949,
+          "requests": 75,
+          "bytes": 1797387,
+          "scriptRequests": 67,
+          "scriptBytes": 1492906,
+          "apiRequests": 5,
+          "fcpMs": 188
+        },
+        {
+          "name": "settings",
+          "readyMs": 69.79389099999389,
+          "requests": 79,
+          "bytes": 1859225,
+          "scriptRequests": 69,
+          "scriptBytes": 1515425,
+          "apiRequests": 5,
+          "fcpMs": 188
+        },
+        {
+          "name": "restore",
+          "readyMs": 22.78359599999385,
+          "requests": 80,
+          "bytes": 1859536,
+          "scriptRequests": 70,
+          "scriptBytes": 1515736,
+          "apiRequests": 5,
+          "fcpMs": 188
+        },
+        {
+          "name": "edit",
+          "readyMs": 52.86217599999509,
+          "requests": 80,
+          "bytes": 1859536,
+          "scriptRequests": 70,
+          "scriptBytes": 1515736,
+          "apiRequests": 7,
+          "fcpMs": 188
+        }
+      ]
+    }
+  ]
+}
