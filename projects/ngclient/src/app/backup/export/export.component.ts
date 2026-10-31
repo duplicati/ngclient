@@ -61,7 +61,7 @@ export default class ExportComponent {
     ]),
   });
 
-  exportFormSignal = toSignal(this.exportForm.valueChanges);
+  exportFormSignal = toSignal(this.exportForm.valueChanges, { initialValue: this.exportForm.value });
   encryptionFieldSignal = computed(
     () => (this.exportFormSignal()?.encryption ?? false) && this.exportType() === 'file'
   );
@@ -118,6 +118,10 @@ export default class ExportComponent {
     this.isExporting.set(true);
 
     if (this.exportType() === 'file') {
+      const options = this.exportFormSignal();
+      const passphrase = options.encryption && options.password?.length ? options.password : undefined;
+      const fileExt = options.encryption ? 'aes' : 'json';
+
       defer(() =>
         this.#dupServer.postApiV1AuthIssuetokenByOperation({
           path: { operation: 'export' },
@@ -136,14 +140,10 @@ export default class ExportComponent {
                 : '';
             };
 
-            const passphrase = this.exportFormSignal()?.password?.length
-              ? this.exportFormSignal()?.password
-              : undefined;
-
             const prefix = getApiBase();
             return this.#httpClient.get(
               `${prefix}/api/v1/backup/${this.#route.snapshot.params['id']}/export${objToQueryString({
-                'export-passwords': this.exportFormSignal()?.exportPasswords ?? undefined,
+                'export-passwords': options.exportPasswords ?? undefined,
                 passphrase: passphrase,
                 token: x.Token as string,
               })}`,
@@ -161,7 +161,6 @@ export default class ExportComponent {
           next: (res) => {
             const backup = this.activeBackup();
             const backupName = backup?.Backup?.Name ?? 'Backup';
-            const fileExt = this.exportFormSignal()?.encryption ? 'aes' : 'json';
 
             this.downloadFile(res, `${backupName}-duplicati-config.${fileExt}`);
             this.#router.navigate(['/']);
