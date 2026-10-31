@@ -37,6 +37,7 @@ export class RestoreFlowState {
   backupId = signal<string | null>(null);
   backup = signal<GetBackupResultDto | null>(null);
   destinationTargetUrl = signal<string | null>(null);
+  destinationConnectionStringId = signal<number | null>(null);
   destinationTestSignal = signal<TestState>(null);
   selectFilesForm = createRestoreSelectFilesForm();
   optionsForm = createRestoreOptionsForm();
@@ -101,8 +102,11 @@ export class RestoreFlowState {
     }
   }
 
-  updateTargetUrl(targetUrl: string | null) {
+  updateTargetUrl(targetUrl: string | null, connectionStringId: number | null = null) {
     this.destinationTargetUrl.set(targetUrl);
+    this.destinationConnectionStringId.set(targetUrl ? connectionStringId : null);
+    // Different saved connections can have the same masked URL.
+    this.destinationTestSignal.set(null);
   }
 
   setAlternateRestorePath(path: string | null, prefix: string | null) {
@@ -123,14 +127,14 @@ export class RestoreFlowState {
           path: { id: this.backupId() ?? '' },
         })
       ).subscribe({
-          next: (res) => {
-            this.#submitRestore(res.ID ?? '');
-          },
-          error: (err) =>
-            this.showErrorDialog(
-              $localize`An error occurred while copying the backup to a temporary location: ${err.message}`
-            ),
-        });
+        next: (res) => {
+          this.#submitRestore(res.ID ?? '');
+        },
+        error: (err) =>
+          this.showErrorDialog(
+            $localize`An error occurred while copying the backup to a temporary location: ${err.message}`
+          ),
+      });
     } else {
       this.#submitRestore(id ?? '');
     }
