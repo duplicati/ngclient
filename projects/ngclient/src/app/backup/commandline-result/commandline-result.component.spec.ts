@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, of, throwError } from 'rxjs';
+import { BehaviorSubject, of, Subject, throwError } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { CommandLineLogOutputDto, DuplicatiServer } from '../../core/openapi';
 import CommandlineResultComponent from './commandline-result.component';
@@ -162,5 +162,68 @@ describe('CommandlineResultComponent', () => {
     await vi.advanceTimersByTimeAsync(2000);
 
     expect(getCommandline).toHaveBeenCalledTimes(2);
+  });
+  it('waits for a slow page before requesting the next offset', async () => {
+    const response = new Subject<CommandLineLogOutputDto>();
+    getCommandline.mockReturnValue(response);
+    await vi.advanceTimersByTimeAsync(3000);
+    expect(getCommandline).toHaveBeenCalledTimes(1);
+    response.next(commandlineResponse({ Items: ['first'], Count: 2 }));
+    response.complete();
+    getCommandline.mockReturnValue(of(commandlineResponse({ Offset: 1, Items: ['second'], Count: 2, Finished: true })));
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(getCommandline).toHaveBeenCalledTimes(2);
+    expect(getCommandline.mock.calls[1][0].query.offset).toBe(1);
+    expect(component.messageLog()).toEqual(['first', 'second']);
+    expect(component.offset()).toBe(2);
+    expect(component.status()).toBe('finished');
+  });
+
+  it('allows another poll after a slow transient error', async () => {
+    const response = new Subject<CommandLineLogOutputDto>();
+    getCommandline.mockReturnValue(response);
+    await vi.advanceTimersByTimeAsync(2000);
+    expect(getCommandline).toHaveBeenCalledTimes(1);
+    response.error({ status: 503 });
+    getCommandline.mockReturnValue(of(commandlineResponse({ Finished: true })));
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(getCommandline).toHaveBeenCalledTimes(2);
+    expect(component.status()).toBe('finished');
+  });
+
+  it('stops observing an in-flight page on destruction', async () => {
+    const response = new Subject<CommandLineLogOutputDto>();
+    getCommandline.mockReturnValue(response);
+    await vi.advanceTimersByTimeAsync(1000);
+    fixture.destroy();
+    expect(response.observed).toBe(false);
+    response.next(commandlineResponse({ Items: ['late'], Count: 1 }));
+    expect(component.messageLog()).toEqual([]);
+    expect(component.offset()).toBe(0);
+  });
+
+  it('does not let an in-flight poll overwrite successful abort status', async () => {
+    const response = new Subject<CommandLineLogOutputDto>();
+    getCommandline.mockReturnValue(response);
+    await vi.advanceTimersByTimeAsync(1000);
+    component.abort();
+    expect(response.observed).toBe(false);
+    response.next(commandlineResponse({ Items: ['late'], Count: 1 }));
+    expect(component.status()).toBe('aborted');
+    expect(component.messageLog()).toEqual([]);
+    await vi.advanceTimersByTimeAsync(2000);
+    expect(getCommandline).toHaveBeenCalledTimes(1);
+  });
+
+  it('cancels the pending poll when abort reports that the run is already missing', async () => {
+    const response = new Subject<CommandLineLogOutputDto>();
+    getCommandline.mockReturnValue(response);
+    await vi.advanceTimersByTimeAsync(1000);
+    abortCommandline.mockReturnValue(throwError(() => ({ status: 404 })));
+    component.abort();
+    expect(response.observed).toBe(false);
+    response.next(commandlineResponse({ Items: ['late'], Count: 1 }));
+    expect(component.status()).toBe('finished');
+    expect(component.messageLog()).toEqual([]);
   });
 });
