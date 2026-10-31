@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -6,8 +6,9 @@ import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipToggleCard } from '@ship-ui/core/ship-toggle-card';
-import { defer, finalize } from 'rxjs';
+import { defer, map } from 'rxjs';
 import { DuplicatiServer, SettingInputDto } from '../../../core/openapi';
+import { AsyncOperation } from '../../../core/signals/async-operation';
 import { OptionsListComponent } from '../../options/options-list/options-list.component';
 import { ImportDestinationState } from '../import-destination.state';
 
@@ -33,7 +34,9 @@ export default class EncryptionComponent {
   #route = inject(ActivatedRoute);
 
   encryptionForm = this.#importDestinationState.encryptionForm;
-  creatingTemporaryBackup = signal(false);
+  #preparation = new AsyncOperation<string>();
+  preparationState = this.#preparation.state;
+  creatingTemporaryBackup = this.#preparation.pending;
   settings = signal<SettingInputDto[]>([]);
   hasEncryptedBackup = computed(() => {
     const testSignal = this.#importDestinationState.destinationTestSignal();
@@ -59,13 +62,14 @@ export default class EncryptionComponent {
     return true;
   });
 
-  next() {
-    const currentTargetUrl = this.#importDestinationState.destinationTargetUrl();
-    if (!currentTargetUrl) {
-      throw new Error('No target URL');
-    }
+  constructor() {
+    inject(DestroyRef).onDestroy(() => this.#preparation.destroy());
+  }
 
-    this.creatingTemporaryBackup.set(true);
+  next() {
+    if (this.creatingTemporaryBackup() || !this.isValidConfig()) return;
+    const currentTargetUrl = this.#importDestinationState.destinationTargetUrl();
+    if (!currentTargetUrl) return;
 
     const pass = this.encryptionForm.value?.passphrase ?? null;
 
@@ -87,31 +91,33 @@ export default class EncryptionComponent {
       }
     });
 
-    defer(() =>
-      this.#dupServer.postApiV1Backups({
-        body: {
-          Backup: {
-            TargetURL: currentTargetUrl,
-            Settings: settings,
-          },
-        },
-        query: { temporary: true },
-      })
-    )
-      .pipe(finalize(() => this.creatingTemporaryBackup.set(false)))
-      .subscribe({
-        next: (backup) => {
-          const id = backup.ID!;
-          this.#importDestinationState.temporaryBackupId.set(id);
-          this.#router.navigate([`../select-config`], { relativeTo: this.#route });
-        },
-        error: (err) => {
-          console.error(err);
-        },
-      });
+    this.#preparation.run(
+      () =>
+        defer(() =>
+          this.#dupServer.postApiV1Backups({
+            body: {
+              Backup: {
+                TargetURL: currentTargetUrl,
+                Settings: settings,
+              },
+            },
+            query: { temporary: true },
+          })
+        ).pipe(
+          map((backup) => {
+            if (!backup.ID) throw new Error('The temporary backup response has no ID');
+            return backup.ID;
+          })
+        ),
+      (id) => {
+        this.#importDestinationState.temporaryBackupId.set(id);
+        this.#router.navigate(['../select-config'], { relativeTo: this.#route });
+      }
+    );
   }
 
   back() {
+    this.#preparation.cancel();
     this.#router.navigate(['../destination'], { relativeTo: this.#route });
   }
 }

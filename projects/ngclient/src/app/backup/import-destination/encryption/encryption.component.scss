@@ -4,7 +4,8 @@
   display: block;
 }
 
-form {
+form,
+.encryption-fields {
   display: flex;
   flex-direction: column;
   gap: p2r(24);
