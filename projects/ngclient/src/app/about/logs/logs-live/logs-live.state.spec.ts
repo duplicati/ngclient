@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { Subject } from 'rxjs';
+import { Observable, of, Subject, throwError } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { DuplicatiServer, LogEntry } from '../../../core/openapi';
 import { LogsLiveState } from './logs-live.state';
@@ -16,7 +16,7 @@ describe('live log cursor, accumulation and polling', () => {
   });
   function setup() {
     const responses: Subject<LogEntry[]>[] = [];
-    const poll = vi.fn(() => {
+    const poll = vi.fn((): Observable<LogEntry[]> => {
       const response = new Subject<LogEntry[]>();
       responses.push(response);
       return response;
@@ -113,5 +113,99 @@ describe('live log cursor, accumulation and polling', () => {
     expect(poll).toHaveBeenCalledTimes(1);
     expect(state.logLevel()).toBe('Disabled');
     expect(state.timerInterval).toBeUndefined();
+  });
+
+  it('waits for a slow poll before requesting the next cursor', async () => {
+    const { state, poll, responses } = setup();
+    state.isPolling.set(true);
+    TestBed.tick();
+    await Promise.resolve();
+    vi.advanceTimersByTime(9000);
+    state.loadLogs();
+    expect(poll).toHaveBeenCalledTimes(1);
+    expect(state.logsLoading()).toBe(true);
+    responses[0].next([row(7)]);
+    responses[0].complete();
+    vi.advanceTimersByTime(3000);
+    expect(poll).toHaveBeenCalledTimes(2);
+    expect(poll).toHaveBeenLastCalledWith({ query: { id: 7, level: 'Information', pagesize: 100 } });
+    responses[1].next([row(8)]);
+    responses[1].complete();
+    expect(state.logs().map((x) => x.ID)).toEqual([8, 7]);
+  });
+
+  it('can retry after a failed poll without losing its cursor or rows', () => {
+    const { state, poll, responses } = setup();
+    state.loadLogs();
+    responses[0].next([row(7)]);
+    responses[0].complete();
+    state.loadLogs();
+    responses[1].error(new Error('temporary failure'));
+    expect(state.logsLoading()).toBe(false);
+    expect(state.logs().map((x) => x.ID)).toEqual([7]);
+    state.loadLogs();
+    expect(poll).toHaveBeenCalledTimes(3);
+    expect(poll).toHaveBeenLastCalledWith({ query: { id: 7, level: 'Information', pagesize: 100 } });
+  });
+
+  it.each(['disabled', 'stopped', 'destroyed'] as const)(
+    'unsubscribes a pending poll when %s and ignores its late result',
+    async (action) => {
+      const { state, poll, responses } = setup();
+      state.isPolling.set(true);
+      TestBed.tick();
+      await Promise.resolve();
+      expect(responses[0].observed).toBe(true);
+      if (action === 'disabled') state.updateLogLevel('Disabled');
+      if (action === 'destroyed') state.destroy();
+      if (action === 'stopped') {
+        state.isPolling.set(false);
+        TestBed.tick();
+      }
+      expect(responses[0].observed).toBe(false);
+      expect(state.logsLoading()).toBe(false);
+      responses[0].next([row(7)]);
+      responses[0].complete();
+      vi.advanceTimersByTime(9000);
+      expect(poll).toHaveBeenCalledTimes(1);
+      expect(state.logs()).toEqual([]);
+      expect(state.id()).toBe(0);
+    }
+  );
+
+  it('does not start the queued immediate poll after polling is stopped', async () => {
+    const { state, poll } = setup();
+    state.isPolling.set(true);
+    TestBed.tick();
+    state.isPolling.set(false);
+    TestBed.tick();
+    await Promise.resolve();
+    expect(poll).not.toHaveBeenCalled();
+  });
+
+  it('releases the pending guard after synchronous completion and failure', () => {
+    const { state, poll } = setup();
+    poll.mockReturnValueOnce(of([row(7)]));
+    state.loadLogs();
+    expect(state.logsLoading()).toBe(false);
+    poll.mockReturnValueOnce(throwError(() => new Error('temporary failure')));
+    state.loadLogs();
+    expect(state.logsLoading()).toBe(false);
+    state.loadLogs();
+    expect(poll).toHaveBeenCalledTimes(3);
+    expect(poll).toHaveBeenLastCalledWith({ query: { id: 7, level: 'Information', pagesize: 100 } });
+  });
+
+  it('starts only the current session when stopped and restarted before its queued poll', async () => {
+    const { state, poll } = setup();
+    poll.mockReturnValue(of([]));
+    state.isPolling.set(true);
+    TestBed.tick();
+    state.isPolling.set(false);
+    TestBed.tick();
+    state.isPolling.set(true);
+    TestBed.tick();
+    await Promise.resolve();
+    expect(poll).toHaveBeenCalledTimes(1);
   });
 });

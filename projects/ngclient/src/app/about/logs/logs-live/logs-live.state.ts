@@ -1,5 +1,5 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
-import { defer, finalize } from 'rxjs';
+import { defer, finalize, Subscription } from 'rxjs';
 import { DuplicatiServer, LogEntry, LogMessageType } from '../../../core/openapi';
 
 type LogLevel = {
@@ -51,6 +51,8 @@ const LOG_LEVELS: LogLevel[] = [
 export class LogsLiveState {
   #dupServer = inject(DuplicatiServer);
   #logs = signal<LogEntry[]>([]);
+  #request: Subscription | undefined;
+  #pollingGeneration = 0;
 
   LOG_LEVELS = LOG_LEVELS;
   logLevel = signal('Disabled');
@@ -83,7 +85,10 @@ export class LogsLiveState {
     if (this.isPolling()) {
       this.#logs.set([]);
       this.id.set(0);
-      queueMicrotask(() => this.loadLogs());
+      const generation = ++this.#pollingGeneration;
+      queueMicrotask(() => {
+        if (generation === this.#pollingGeneration && this.isPolling()) this.loadLogs();
+      });
       this.timerInterval && clearInterval(this.timerInterval);
       this.timerInterval = setInterval(() => {
         this.loadLogs();
@@ -103,28 +108,42 @@ export class LogsLiveState {
 
   loadLogs() {
     // The server rejects polling at the disabled level
-    if (this.logLevel() === 'Disabled') return;
+    if (this.logLevel() === 'Disabled' || this.#request) return;
 
+    // Register before subscribing so synchronous completion also releases the guard.
+    const request = new Subscription();
+    this.#request = request;
     this.logsLoading.set(true);
 
-    defer(() =>
-      this.#dupServer.getApiV1LogdataPoll({
-        query: {
-          id: this.id(),
-          level: this.logLevel() as LogMessageType,
-          pagesize: this.pagination().pagesize,
-        },
-      })
-    )
-      .pipe(finalize(() => this.logsLoading.set(false)))
-      .subscribe({
-        next: (res) => {
-          const reversedItems = res.reverse() as LogEntry[];
-          const newId = this.#getHighestId(reversedItems);
-          newId > 0 && this.id.set(newId);
-          this.#logs.set([...reversedItems, ...this.#logs()]);
-        },
-      });
+    request.add(
+      defer(() =>
+        this.#dupServer.getApiV1LogdataPoll({
+          query: {
+            id: this.id(),
+            level: this.logLevel() as LogMessageType,
+            pagesize: this.pagination().pagesize,
+          },
+        })
+      )
+        .pipe(
+          finalize(() => {
+            if (this.#request === request) {
+              this.#request = undefined;
+              this.logsLoading.set(false);
+            }
+          })
+        )
+        .subscribe({
+          next: (res) => {
+            const reversedItems = res.reverse() as LogEntry[];
+            const newId = this.#getHighestId(reversedItems);
+            newId > 0 && this.id.set(newId);
+            this.#logs.set([...reversedItems, ...this.#logs()]);
+          },
+          // HTTP errors are reported by the interceptor; leave the next poll available.
+          error: () => {},
+        })
+    );
   }
 
   updateLogLevel(logLevel: string) {
@@ -145,7 +164,9 @@ export class LogsLiveState {
   }
 
   clearPolling() {
+    ++this.#pollingGeneration;
     this.timerInterval && clearInterval(this.timerInterval);
     this.timerInterval = undefined;
+    this.#request?.unsubscribe();
   }
 }
