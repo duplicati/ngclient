@@ -1,11 +1,21 @@
-import { ChangeDetectionStrategy, Component, effect, ElementRef, inject, signal, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  effect,
+  ElementRef,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
-import { defer, finalize } from 'rxjs';
+import { defer } from 'rxjs';
 import { OptionsListComponent } from '../../backup/options/options-list/options-list.component';
 import { DuplicatiServer, SettingDto } from '../../core/openapi';
+import { AsyncOperation } from '../../core/signals/async-operation';
 import { ServerSettingsService } from '../server-settings.service';
 
 @Component({
@@ -21,7 +31,10 @@ export default class AdvancedOptionsSettingsComponent {
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
 
   settings = signal<SettingDto[]>([]);
-  isSubmitting = signal(false);
+  #save = new AsyncOperation<unknown>();
+  #savedTimeout?: ReturnType<typeof setTimeout>;
+  saveState = this.#save.state;
+  isSubmitting = this.#save.pending;
   isLoadingOptions = signal(true);
   saved = signal(false);
 
@@ -35,7 +48,7 @@ export default class AdvancedOptionsSettingsComponent {
     this.isLoadingOptions.set(true);
 
     const serverSettingEntries = Object.entries(serverSettings);
-    serverSettingEntries.forEach(([key, value], index) => {
+    serverSettingEntries.forEach(([key, value]) => {
       if (key.startsWith('--')) {
         const name = key.substring(2);
 
@@ -50,15 +63,21 @@ export default class AdvancedOptionsSettingsComponent {
           return x;
         });
       }
-
-      if (index === serverSettingEntries.length - 1) {
-        this.isLoadingOptions.set(false);
-      }
     });
+    this.isLoadingOptions.set(false);
   });
 
+  constructor() {
+    inject(DestroyRef).onDestroy(() => {
+      this.#save.destroy();
+      clearTimeout(this.#savedTimeout);
+    });
+  }
+
   submit() {
-    this.isSubmitting.set(true);
+    if (this.isSubmitting() || this.isLoadingOptions()) return;
+    clearTimeout(this.#savedTimeout);
+    this.saved.set(false);
 
     const settings = this.settings();
     const lastRecievedServerSettings = this.lastRecievedServerSettings();
@@ -78,21 +97,13 @@ export default class AdvancedOptionsSettingsComponent {
       reduced[key] = null;
     });
 
-    defer(() =>
-      this.#dupServer.patchApiV1Serversettings({
-        body: reduced,
-      })
-    )
-      .pipe(finalize(() => this.isSubmitting.set(false)))
-      .subscribe({
-        next: () => {
-          this.#serverSettingsService.refreshServerSettings();
-          this.saved.set(true);
-
-          setTimeout(() => {
-            this.saved.set(false);
-          }, 3000);
-        },
-      });
+    this.#save.run(
+      () => defer(() => this.#dupServer.patchApiV1Serversettings({ body: reduced })),
+      () => {
+        this.#serverSettingsService.refreshServerSettings();
+        this.saved.set(true);
+        this.#savedTimeout = setTimeout(() => this.saved.set(false), 3000);
+      }
+    );
   }
 }
