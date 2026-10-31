@@ -150,6 +150,8 @@ const LOAD_MORE_ID_SUFFIX = '\0load-more';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[class.disabled]': 'disabled()',
+    '[class.maximized]': 'maximized()',
+    '(document:keydown.escape)': 'onDocumentEscape($event)',
   },
 })
 export default class FileTreeComponent {
@@ -193,6 +195,11 @@ export default class FileTreeComponent {
   searchParentMetadata = input<{ [path: string]: { [key: string]: string | null } | null | undefined }>({});
 
   _showHiddenNodes = signal(false);
+  maximized = signal(false);
+  maximizeLabels = {
+    maximize: $localize`Maximize file tree`,
+    restore: $localize`Restore file tree size`,
+  };
   createFolderDialogOpen = signal(false);
   createFolderPath = signal<string | null>(null);
   errorMessage = signal<string | null>(null);
@@ -1208,6 +1215,18 @@ export default class FileTreeComponent {
 
   treeSelectionState(node: FileTreeNode): boolean | 'mixed' | null {
     return this.#treeSelection().get(node.id ?? '') ?? null;
+  }
+
+  toggleMaximized() {
+    this.maximized.update((value) => !value);
+  }
+
+  // Escape restores the maximized tree; swallow the event so an enclosing dialog does not close as well.
+  onDocumentEscape(event: Event) {
+    if (!this.maximized() || this.createFolderDialogOpen()) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    this.maximized.set(false);
   }
 
   rememberTreeFocus(node: FileTreeNode) {

@@ -6,7 +6,24 @@
 }
 
 <div class="section" [class.hidden]="!searchMode() && pathDiscoveryMethod() !== 'browse'">
-  <ng-content select="label" ngProjectAs="label"></ng-content>
+  <div class="tree-header">
+    <ng-content select="label" ngProjectAs="label"></ng-content>
+
+    <button
+      shButton
+      type="button"
+      class="icon small maximize-toggle"
+      [attr.aria-pressed]="maximized()"
+      [attr.aria-label]="maximized() ? maximizeLabels.restore : maximizeLabels.maximize"
+      [attr.title]="maximized() ? maximizeLabels.restore : maximizeLabels.maximize"
+      (click)="toggleMaximized()">
+      @if (maximized()) {
+        <sh-icon>corners-in</sh-icon>
+      } @else {
+        <sh-icon>corners-out</sh-icon>
+      }
+    </button>
+  </div>
 
   <div
     class="browse-files"

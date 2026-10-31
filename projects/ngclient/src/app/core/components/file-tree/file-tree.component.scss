@@ -42,7 +42,7 @@
       grid-area: tree;
     }
 
-    label {
+    .tree-header {
       grid-area: label;
     }
 
@@ -50,6 +50,38 @@
       grid-area: toggle;
       flex-direction: row-reverse;
     }
+  }
+
+  // Lifted above the floating service hub (z-index 5000); native dialogs live in the top layer and stay above it.
+  &.maximized {
+    .section {
+      position: fixed;
+      inset: 0;
+      z-index: 5500;
+      padding: p2r(24);
+      background: var(--base-1);
+      overflow: hidden;
+    }
+
+    .browse-files {
+      flex: 1 1 auto;
+      height: auto;
+      min-height: 0;
+      resize: none;
+    }
+  }
+}
+
+.tree-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: p2r(8);
+  min-height: p2r(28);
+
+  .maximize-toggle {
+    flex: 0 0 auto;
+    margin-left: auto;
   }
 }
 
