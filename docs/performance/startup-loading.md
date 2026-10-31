@@ -27,6 +27,8 @@ The benchmark asserts login, authenticated home, settings, restore landing, back
 
 ## Reproduction
 
+Both ordinary E2E tests and startup measurements use the root `playwright.config.ts`. `bun run test:e2e` selects ordinary E2E tests by default; `bun run measure:startup` explicitly selects `PLAYWRIGHT_MODE=startup`. Other mode values are rejected. The measurement mode selects only the benchmark, its build-switching server and JSON results, with traces and screenshots disabled. Ordinary E2E runs retain their existing server and failure diagnostics. Both suites are type-checked through `e2e/tsconfig.json`.
+
 Use the Production Build workflow on this branch with startup_measurements=true, startup_baseline_run set to a successful baseline production workflow run ID, and startup_rounds=5. Production browser artifacts expire after one day, so rebuild the baseline when needed. The optional measurement job is disabled during ordinary CI.
 
 For local comparison, build both revisions first, set STARTUP_BASELINE_DIR and STARTUP_CANDIDATE_DIR to their browser output directories, set STARTUP_VARIANTS=baseline,candidate and STARTUP_ROUNDS=5, then run bun run measure:startup. Avoid concurrent builds, tests or other substantial workloads. Results are written under tmp/startup-results. The CI startup-measurements artifact contains full resource records for 14 days; startup-loading.json preserves all ten sample summaries and ranges alongside this report.
