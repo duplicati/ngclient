@@ -1,16 +1,21 @@
-<div class="content-wrapper">
+<div class="content-wrapper" [attr.aria-busy]="isLoading()">
   <h2 i18n>Select configurations to import</h2>
 
   @if (isLoading()) {
-    <div class="loading-state">
+    <div class="loading-state" role="status">
       <sh-progress-bar class="primary indeterminate"></sh-progress-bar>
       <p i18n>Fetching backup configurations from destination...</p>
     </div>
-  } @else if (configs().length === 0) {
+  } @else if (loadState().status === 'error') {
+    <div class="empty-state" role="alert">
+      <p i18n>Could not fetch backup configurations. Please try again.</p>
+      <button shButton type="button" (click)="loadConfigurations()" i18n>Retry</button>
+    </div>
+  } @else if (loadState().status === 'success' && configs().length === 0) {
     <div class="empty-state">
       <p i18n>No backup configurations found at this destination.</p>
     </div>
-  } @else {
+  } @else if (configs().length > 0) {
     @if (configs().length > 1) {
       <div class="search-area">
         <sh-form-field>
