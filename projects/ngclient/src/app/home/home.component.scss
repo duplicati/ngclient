@@ -158,9 +158,14 @@ sh-menu {
   }
 }
 
-// ShipTooltip globally sets `.tooltip { display: flex }`, keep the values inline
+// ShipTooltip globally sets `.tooltip { display: flex }`, keep the values inline.
+// It also draws an invisible ::after hit-area over the host, which blocks text selection.
 .time-value.tooltip {
   display: inline;
+
+  &::after {
+    pointer-events: none;
+  }
 }
 
 .provider-icon {
