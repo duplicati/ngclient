@@ -161,7 +161,7 @@ export function buildUrl(
   args: [string, string | number | unknown][]
 ) {
   const urlParams = toSearchParams(args);
-  const serverPart = encodeURIComponent(addServer(server));
+  const serverPart = encodeServer(addServer(server));
   const serverAndPortPart = serverPart == '' ? '' : serverPart + addPort(port);
   const pathPart = path ?? '';
   const isWindows = pathPart.slice(1).startsWith(':\\');
@@ -209,6 +209,14 @@ export function getSimplePath(url: UrlLike | string | null | undefined) {
 export function addServer(server: string | null | undefined) {
   if (server === null || server === undefined || server === '') return '';
   return server.endsWith('/') ? server.substring(0, server.length - 1) : server;
+}
+
+// An IPv6 address goes in brackets, as encoding its colons makes the host unparseable
+function encodeServer(server: string) {
+  const address = server.startsWith('[') && server.endsWith(']') ? server.slice(1, -1) : server;
+  if (address.includes(':') && /^[0-9a-fA-F:.]+$/.test(address)) return `[${address}]`;
+
+  return encodeURIComponent(server);
 }
 
 export function addPort(port: string | number | null | undefined) {
