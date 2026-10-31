@@ -91,8 +91,8 @@ describe('httpInterceptor', () => {
     expect(forwarded.headers.get('X-Ui-Language')).toBe('ja');
   });
 
-  it('sends the UI locale header for en-US so the server does not fall back to its OS culture', async () => {
-    localStorage.getItem.mockReturnValue('en-US');
+  it.each(['en-US', null, ''])('explicitly requests English when the UI locale is %s', async (locale) => {
+    localStorage.getItem.mockReturnValue(locale);
     const request = new HttpRequest('GET', `${apiRoot}/v1/backups`);
     const next = vi.fn((_request: HttpRequest<unknown>) => of(new HttpResponse({ status: 200 })));
 
@@ -110,6 +110,7 @@ describe('httpInterceptor', () => {
       await firstValueFrom(runInterceptor(request, next));
 
       expect(next.mock.calls[0][0].headers.has('Authorization')).toBe(false);
+      expect(next.mock.calls[0][0].headers.has('X-Ui-Language')).toBe(false);
     }
   );
 
@@ -122,6 +123,7 @@ describe('httpInterceptor', () => {
     await firstValueFrom(runInterceptor(request, next));
 
     expect(next.mock.calls[0][0].headers.has('Authorization')).toBe(false);
+    expect(next.mock.calls[0][0].headers.has('X-Ui-Language')).toBe(false);
   });
 
   it('does not add authentication when using the relay dummy token', async () => {
@@ -132,6 +134,21 @@ describe('httpInterceptor', () => {
     await firstValueFrom(runInterceptor(request, next));
 
     expect(next.mock.calls[0][0].headers.has('Authorization')).toBe(false);
+    expect(next.mock.calls[0][0].headers.has('X-Ui-Language')).toBe(false);
+  });
+
+  it('preserves the explicit English header when retrying after token refresh', async () => {
+    localStorage.getItem.mockReturnValue('en-US');
+    const request = new HttpRequest('GET', `${apiRoot}/v1/systeminfo`);
+    const next = vi
+      .fn<(request: HttpRequest<unknown>) => Observable<HttpEvent<unknown>>>()
+      .mockReturnValueOnce(throwError(() => httpError(401, 'unauthorized')))
+      .mockReturnValueOnce(of(new HttpResponse({ status: 200 })));
+    await firstValueFrom(runInterceptor(request, next));
+    expect(next).toHaveBeenCalledTimes(2);
+    expect(next.mock.calls[0][0].headers.get('X-Ui-Language')).toBe('en');
+    expect(next.mock.calls[1][0].headers.get('X-Ui-Language')).toBe('en');
+    expect(next.mock.calls[1][0].headers.get('Authorization')).toBe('Bearer refreshed-token');
   });
 
   it('refreshes an API request once and preserves its headers and locale', async () => {
