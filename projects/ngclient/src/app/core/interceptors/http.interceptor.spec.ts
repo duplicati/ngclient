@@ -91,14 +91,14 @@ describe('httpInterceptor', () => {
     expect(forwarded.headers.get('X-Ui-Language')).toBe('ja');
   });
 
-  it('does not add a UI locale header for en-US', async () => {
+  it('sends the UI locale header for en-US so the server does not fall back to its OS culture', async () => {
     localStorage.getItem.mockReturnValue('en-US');
     const request = new HttpRequest('GET', `${apiRoot}/v1/backups`);
     const next = vi.fn((_request: HttpRequest<unknown>) => of(new HttpResponse({ status: 200 })));
 
     await firstValueFrom(runInterceptor(request, next));
 
-    expect(next.mock.calls[0][0].headers.has('X-Ui-Language')).toBe(false);
+    expect(next.mock.calls[0][0].headers.get('X-Ui-Language')).toBe('en');
   });
 
   it.each(['https://example.com/data', '/proxy/apiary/v1/data'])(
