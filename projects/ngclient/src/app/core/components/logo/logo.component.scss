@@ -1,13 +1,21 @@
 @use '@ship-ui/core/styles/helpers' as *;
 
 :host {
-  display: inline-block;
+  display: inline-flex;
   width: auto;
   height: p2r(32);
+  align-items: center;
+  gap: p2r(10);
 
-  > * {
+  > img {
     height: 100%;
     width: auto;
+  }
+
+  h2 {
+    margin: 0;
+    font: var(--title-30B);
+    font-size: p2r(22);
   }
 }
 
