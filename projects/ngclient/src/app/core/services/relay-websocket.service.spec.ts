@@ -58,6 +58,16 @@ async function waitForCommand(socket: RelaySocket) {
   return socket.sent().at(-1);
 }
 
+function answerPlaintext(socket: RelaySocket, command: { from: string; to: string; messageId: string }) {
+  socket.receive({
+    from: command.to,
+    to: command.from,
+    type: 'command',
+    messageId: command.messageId,
+    payload: JSON.stringify({ statusCode: 200, body: null, headers: null }),
+  });
+}
+
 describe('RelayWebsocketService', () => {
   let service: RelayWebsocketService;
   let showError: ReturnType<typeof vi.fn>;
@@ -147,7 +157,7 @@ describe('RelayWebsocketService', () => {
   });
 
   it('sends plain text to a client on protocol version 1', async () => {
-    send(legacyTarget);
+    const pending = send(legacyTarget);
     const socket = RelaySocket.instances[0];
     socket.open();
     completeHandshake(socket);
@@ -159,6 +169,8 @@ describe('RelayWebsocketService', () => {
       body: null,
       headers: null,
     });
+    answerPlaintext(socket, command);
+    await expect(pending).resolves.toEqual({ statusCode: 200, body: null, headers: null });
   });
 
   it('rejects, and shows, a response that is not bound to the request', async () => {
@@ -196,12 +208,14 @@ describe('RelayWebsocketService', () => {
 
   it('ignores list updates pushed by the machine server', async () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    send(legacyTarget);
+    const pending = send(legacyTarget);
     const socket = RelaySocket.instances[0];
     socket.open();
     completeHandshake(socket);
     socket.receive({ from: 'server', to: 'x', type: 'list', messageId: 'l-1', payload: '[]' });
     socket.receive({ from: 'server', to: 'x', type: 'listrunners', messageId: 'l-2', payload: '[]' });
     expect(warn).not.toHaveBeenCalled();
+    answerPlaintext(socket, await waitForCommand(socket));
+    await expect(pending).resolves.toEqual({ statusCode: 200, body: null, headers: null });
   });
 });

@@ -2,7 +2,7 @@
 
 ### Prerequisites
 
-- Node.js 24 (used by the publishing and browser-test workflows) - https://nodejs.org/en/download
+- Node.js 26 LTS (used by CI and publishing) - https://nodejs.org/en/download
 - Bun 1.4.4 (see `packageManager` in `package.json`) - https://bun.sh/docs/installation
 
 ### Dependencies
@@ -119,11 +119,12 @@ JSON/XLF translations and imported Angular/Day.js locale modules exist and that
 the generated files are current. CI runs this check before building. The catalog
 is used only during generation, so the application loads static tables and does
 not need to generate configuration at startup.
+
 ### npm publication
 
 The publishing workflow installs from `bun.lock`, builds with `bun run build:prod`,
 and generates the distribution's `package.json` with `bun run gen:package-json`.
-Node.js 24 and npm remain responsible for `npm publish --access public --provenance`
+Node.js 26 and npm remain responsible for `npm publish --access public --provenance`
 using the existing OIDC permissions, registry, and main-branch publication condition.
 The published metadata does not include development dependencies or Bun-specific fields.
 
