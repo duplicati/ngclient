@@ -39,7 +39,7 @@
     "check:locales": "bun scripts/generate-locales.ts --check",
     "test:locales": "bun test ./scripts/locale-catalog.test.ts",
     "test:build": "bun test ./scripts/build.test.ts",
-    "measure:startup": "playwright test --config playwright.startup.config.ts"
+    "measure:startup": "PLAYWRIGHT_MODE=startup playwright test"
   },
   "dependencies": {
     "@angular/common": "22.2.1",
