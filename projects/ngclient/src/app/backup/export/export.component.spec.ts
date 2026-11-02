@@ -15,7 +15,7 @@ describe('ExportComponent configuration export', () => {
     TestBed.resetTestingModule();
     vi.restoreAllMocks();
   });
-  function setup() {
+  function setup(emitInitialValue = true) {
     const token = new Subject<{ Token: string }>();
     const blob = new Subject<Blob>();
     const command = new Subject<{ Command: string }>();
@@ -42,7 +42,7 @@ describe('ExportComponent configuration export', () => {
     const fixture = TestBed.createComponent(ExportComponent);
     fixture.detectChanges();
     const component = fixture.componentInstance;
-    component.exportForm.patchValue({ exportPasswords: true, encryption: false });
+    if (emitInitialValue) component.exportForm.patchValue({ exportPasswords: true, encryption: false });
     const download = vi.spyOn(component, 'downloadFile').mockImplementation(() => {});
     return { component, fixture, token, blob, command, issueToken, get, exportCommand, open, navigate, download };
   }
@@ -133,5 +133,74 @@ describe('ExportComponent configuration export', () => {
     expect(issueToken).not.toHaveBeenCalled();
     expect(get).not.toHaveBeenCalled();
     expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('omits the retained password when file encryption has been turned off', () => {
+    const { component, token, blob, get, download } = setup();
+    component.exportForm.patchValue({
+      encryption: true,
+      password: 'retained secret',
+      repeatPassword: 'retained secret',
+      exportPasswords: false,
+    });
+    component.exportForm.controls.encryption.setValue(false);
+    component.submit();
+    token.next({ Token: 'test-token' });
+    const url = new URL(get.mock.calls[0][0], 'http://localhost');
+    expect(url.searchParams.has('passphrase')).toBe(false);
+    expect(component.exportForm.controls.password.value).toBe('retained secret');
+    const data = new Blob(['configuration']);
+    blob.next(data);
+    expect(download).toHaveBeenCalledExactlyOnceWith(data, 'Documents-duplicati-config.json');
+  });
+
+  it('requires approval for the initially selected plaintext credential export', () => {
+    const { component, open, issueToken, token, get } = setup(false);
+    component.submit();
+    expect(open).toHaveBeenCalledTimes(1);
+    expect(issueToken).not.toHaveBeenCalled();
+    open.mock.calls[0][1].closed(true);
+    token.next({ Token: 'test-token' });
+    const url = new URL(get.mock.calls[0][0], 'http://localhost');
+    expect(url.searchParams.get('export-passwords')).toBe('true');
+    expect(url.searchParams.has('passphrase')).toBe(false);
+  });
+
+  it('keeps encrypted request options and filename consistent while waiting for a token', () => {
+    const { component, token, blob, get, download } = setup();
+    component.exportForm.patchValue({
+      encryption: true,
+      password: 'selected secret',
+      repeatPassword: 'selected secret',
+      exportPasswords: false,
+    });
+    component.submit();
+    component.exportForm.patchValue({ encryption: false, password: 'later secret', exportPasswords: true });
+    token.next({ Token: 'test-token' });
+    const url = new URL(get.mock.calls[0][0], 'http://localhost');
+    expect(url.searchParams.get('passphrase')).toBe('selected secret');
+    expect(url.searchParams.get('export-passwords')).toBe('false');
+    const data = new Blob(['encrypted configuration']);
+    blob.next(data);
+    expect(download).toHaveBeenCalledExactlyOnceWith(data, 'Documents-duplicati-config.aes');
+  });
+
+  it('keeps plaintext request options and filename consistent while waiting for a token', () => {
+    const { component, token, blob, get, download } = setup();
+    component.exportForm.patchValue({ encryption: false, password: '', exportPasswords: false });
+    component.submit();
+    component.exportForm.patchValue({
+      encryption: true,
+      password: 'later secret',
+      repeatPassword: 'later secret',
+      exportPasswords: true,
+    });
+    token.next({ Token: 'test-token' });
+    const url = new URL(get.mock.calls[0][0], 'http://localhost');
+    expect(url.searchParams.has('passphrase')).toBe(false);
+    expect(url.searchParams.get('export-passwords')).toBe('false');
+    const data = new Blob(['configuration']);
+    blob.next(data);
+    expect(download).toHaveBeenCalledExactlyOnceWith(data, 'Documents-duplicati-config.json');
   });
 });
