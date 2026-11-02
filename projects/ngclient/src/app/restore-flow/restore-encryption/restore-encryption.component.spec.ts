@@ -20,6 +20,7 @@ describe('restore temporary job encryption', () => {
     const state = {
       encryptionForm: createEncryptionForm(),
       destinationTargetUrl: signal<string | null>('file:///archive'),
+      destinationConnectionStringId: signal<number | null>(null),
       destinationTestSignal: signal<TestState>(null),
       isFileRestore: signal(true),
       exit: vi.fn(),
@@ -62,6 +63,21 @@ describe('restore temporary job encryption', () => {
       expect(component.creatingTemporaryBackup()).toBe(false);
     }
   );
+  it('keeps a saved destination reference when creating the temporary restore job', () => {
+    const { component, create, state } = setup();
+    state.destinationConnectionStringId.set(7);
+    component.next();
+    expect(create).toHaveBeenCalledExactlyOnceWith({
+      body: {
+        Backup: {
+          TargetURL: 'file:///archive',
+          ConnectionStringID: 7,
+          Settings: [{ Name: '--no-encryption', Value: 'true' }],
+        },
+      },
+      query: { temporary: true },
+    });
+  });
   it('normalizes advanced options without losing their values', () => {
     const { component, create } = setup();
     component.settings.set([

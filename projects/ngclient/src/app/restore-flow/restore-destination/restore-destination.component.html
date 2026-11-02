@@ -18,10 +18,12 @@
             </button>
 
             <ng-container menu>
-              <button shButton type="button" class="small" (click)="openTargetUrlDialog()" i18n>
-                <sh-icon>link</sh-icon>
-                Edit target URL
-              </button>
+              @if (connectionStringId() === null) {
+                <button shButton type="button" class="small" (click)="openTargetUrlDialog()" i18n>
+                  <sh-icon>link</sh-icon>
+                  Edit target URL
+                </button>
+              }
               @if (hasDestination) {
                 <button shButton type="button" class="small" (click)="copyTargetUrl()" i18n>
                   <sh-icon>copy</sh-icon>
@@ -38,6 +40,7 @@
       #testUrl
       [(targetUrl)]="targetUrlModel"
       [(testSignal)]="testSignal"
+      [connectionStringId]="connectionStringId()"
       [backupId]="null"
       [sourcePrefix]="null"
       [suppressErrorDialogs]="false"
@@ -49,17 +52,50 @@
     @let option = selectedDestinationTypeOption();
 
     @if (option) {
-      <app-destination-list-item [destination]="option" class="current-destination">
+      <app-destination-list-item
+        [destination]="option"
+        [connectionStringId]="connectionStringId()"
+        class="current-destination">
         <button shButton i18n (click)="removeDestination()" type="button">Change</button>
       </app-destination-list-item>
     }
   </header>
 
   @if (!hasDestination) {
+    @if (savedDestinationsLoading()) {
+      <p role="status" i18n>Loading saved destinations...</p>
+    } @else if (savedDestinationsError()) {
+      <sh-alert class="warn">
+        <span i18n>Saved destinations could not be loaded.</span>
+        <button shButton type="button" class="small" (click)="retrySavedDestinations()" i18n>Retry</button>
+      </sh-alert>
+    }
+    @if (savedDestinations().length) {
+      <section class="saved-destinations">
+        <h4 i18n>Saved destinations</h4>
+        @for (saved of savedDestinations(); track saved.ID) {
+          <app-destination-list-item [targetUrl]="saved.BaseUrl" [connectionStringId]="saved.ID" variant="type-a">
+            @if (saved.Description) {
+              <p description>{{ saved.Description }}</p>
+            }
+            <button
+              shButton
+              type="button"
+              class="small"
+              (click)="selectSavedDestination(saved)"
+              [attr.aria-label]="savedDestinationLabel(saved.Name)"
+              i18n>
+              Use destination
+            </button>
+          </app-destination-list-item>
+        }
+      </section>
+      <p i18n>Or configure a new destination below.</p>
+    }
     <app-destination-list (setDestination)="setDestination($event)" />
   }
 
-  @if (hasDestination) {
+  @if (hasDestination && connectionStringId() === null) {
     <app-single-destination [(targetUrl)]="targetUrlModel" />
   }
 
