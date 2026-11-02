@@ -140,3 +140,104 @@ describe('GeneralLogComponent mixed log rows', () => {
     expect(details.textContent).toContain('Suppress');
   });
 });
+
+describe('GeneralLogComponent restore test section', () => {
+  async function render(message: object) {
+    TestBed.configureTestingModule({
+      imports: [GeneralLogComponent],
+      providers: [
+        DecimalPipe,
+        DayJsProvider,
+        {
+          provide: DuplicatiServer,
+          useValue: {
+            getApiV1BackupById: () => Promise.resolve({}),
+            getApiV1BackupByIdLog: () =>
+              Promise.resolve([
+                {
+                  ID: 1,
+                  Type: 'Result',
+                  Timestamp: 1700000000,
+                  OperationID: 7,
+                  Exception: {},
+                  Message: JSON.stringify(message),
+                },
+              ]),
+          },
+        },
+        { provide: BackupsState, useValue: {} },
+      ],
+    });
+    const fixture = TestBed.createComponent(GeneralLogComponent);
+    fixture.componentRef.setInput('backupId', '1');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.componentInstance.openEntry.set(1);
+    fixture.detectChanges();
+    return fixture.nativeElement as HTMLElement;
+  }
+
+  const restoreTest = {
+    MainOperation: 'RestoreTest',
+    Mode: 'Rolling',
+    Version: 0,
+    Seed: 42,
+    FilesTested: 5,
+    FilesPassed: 4,
+    FilesFailed: 1,
+    FilesSkipped: 0,
+    BytesRestored: 1024,
+    BytesDownloaded: 2048,
+    RemoteVolumesDownloaded: 2,
+    DatabaseRecreated: false,
+    FailuresActualLength: 1,
+    Failures: [{ Path: '/data/report.pdf', Reason: 'HashMismatch', Expected: 'abc', Actual: 'def' }],
+    SourceDifferencesActualLength: 0,
+    SourceDifferences: [],
+    Budget: { Exceeded: true, Reason: 'Runtime' },
+    ParsedResult: 'Error',
+    BeginTime: '2026-10-09T14:00:00Z',
+    EndTime: '2026-10-09T14:05:00Z',
+    Duration: '00:05:00',
+    WarningsActualLength: 0,
+    ErrorsActualLength: 1,
+    Warnings: [],
+    Errors: [
+      '2026-10-09 16.05.00 +02 - [Error-Duplicati.Library.Main.Operation.RestoreTestHandler-FileFailed]: Hash mismatch',
+    ],
+  };
+
+  it('shows the restore test phase of a backup with its failures and its own errors', async () => {
+    const el = await render({
+      MainOperation: 'Backup',
+      ParsedResult: 'Error',
+      WarningsActualLength: 0,
+      ErrorsActualLength: 0,
+      RestoreTestResults: restoreTest,
+    });
+    const text = el.textContent ?? '';
+    expect(text).toContain('Restore test phase');
+    expect(text).toContain('Files tested: 5');
+    expect(text).toContain('Files failed: 1');
+    expect(text).toContain('Rolling, least recently verified first');
+    expect(text).toContain('runtime budget exceeded');
+    expect(el.querySelector('.restore-test-entry .path')?.textContent).toBe('/data/report.pdf');
+    expect(el.querySelector('.restore-test-entry .reason')?.textContent).toBe('Content hash mismatch');
+    const errorRow = el.querySelector('.log-line-row .log-summary');
+    expect(errorRow?.textContent?.trim()).toBe('Hash mismatch');
+  });
+
+  it('hides the restore test phase when no restore test was run', async () => {
+    const el = await render({ MainOperation: 'Backup', ParsedResult: 'Success', RestoreTestResults: null });
+    expect(el.textContent).not.toContain('Restore test phase');
+  });
+
+  it('shows the statistics of a standalone restore test', async () => {
+    const el = await render(restoreTest);
+    const text = el.textContent ?? '';
+    expect(text).toContain('Files passed: 4');
+    expect(el.querySelector('.restore-test-entry .path')?.textContent).toBe('/data/report.pdf');
+    // The standalone entry already lists its errors at the top level, so the section does not repeat them
+    expect(el.querySelectorAll('.log-line-row')).toHaveLength(1);
+  });
+});

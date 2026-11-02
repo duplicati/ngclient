@@ -27,6 +27,27 @@ export const LOG_LEVEL_DISPLAY: Record<LogLevel, { icon: string; label: string }
   unknown: { icon: 'dots-three-circle', label: $localize`Unknown level` },
 };
 
+/** Human readable names for the restore test enums, keyed by the value the server serializes */
+const RESTORE_TEST_MODE_LABELS: Record<string, string> = {
+  RandomFiles: $localize`Random files`,
+  RandomSize: $localize`Random files up to a size`,
+  Full: $localize`All files`,
+  Rolling: $localize`Rolling, least recently verified first`,
+};
+
+const RESTORE_TEST_FAILURE_LABELS: Record<string, string> = {
+  HashMismatch: $localize`Content hash mismatch`,
+  SizeMismatch: $localize`Size mismatch`,
+  MissingRemoteVolume: $localize`Remote volume missing or damaged`,
+  RestoreError: $localize`Restore failed`,
+  MetadataMismatch: $localize`Metadata mismatch`,
+};
+
+const RESTORE_TEST_BUDGET_LABELS: Record<string, string> = {
+  DownloadSize: $localize`download size budget exceeded`,
+  Runtime: $localize`runtime budget exceeded`,
+};
+
 type ParsedLogLines = {
   messages: ParsedLogLine[];
   warnings: ParsedLogLine[];
@@ -51,8 +72,8 @@ type LogEntryEvaluated = {
   data?: BackupResult & Partial<SyncResult>;
   rawMessage?: string;
   exception: unknown;
-  // The Warnings and Errors of data, and of each secondary destination, split into time, level, tag and message
-  logLines?: ParsedLogLines & { sync: ParsedLogLines[] };
+  // The Warnings and Errors of data, of the restore test and of each secondary destination, split into time, level, tag and message
+  logLines?: ParsedLogLines & { sync: ParsedLogLines[]; restoreTest?: ParsedLogLines };
 };
 
 function parseLogLines(result: { Messages?: string[] | null; Warnings?: string[] | null; Errors?: string[] | null }) {
@@ -146,6 +167,7 @@ export class GeneralLogComponent {
               logLines: data && {
                 ...parseLogLines(data),
                 sync: (data.RemoteSynchronizationResults ?? []).map(parseLogLines),
+                restoreTest: data.RestoreTestResults ? parseLogLines(data.RestoreTestResults) : undefined,
               },
               rawMessage: data === undefined ? y.Message : undefined,
               exception: JSON.stringify(y.Exception) === '{}' ? null : y.Exception,
@@ -193,6 +215,18 @@ export class GeneralLogComponent {
     if (durationString.startsWith('0h ')) durationString = durationString.slice(3);
     if (durationString.startsWith('0m ')) durationString = durationString.slice(3);
     return durationString;
+  }
+
+  restoreTestModeLabel(mode: string | undefined): string {
+    return (mode && RESTORE_TEST_MODE_LABELS[mode]) || mode || '';
+  }
+
+  restoreTestFailureLabel(reason: string | undefined): string {
+    return (reason && RESTORE_TEST_FAILURE_LABELS[reason]) || reason || '';
+  }
+
+  restoreTestBudgetLabel(reason: string | undefined): string {
+    return (reason && RESTORE_TEST_BUDGET_LABELS[reason]) || reason || '';
   }
 
   getStatusClass(item: LogEntryEvaluated): string {

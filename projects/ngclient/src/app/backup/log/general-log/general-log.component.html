@@ -157,6 +157,31 @@
               </details>
             }
 
+            @if (item.data?.RestoreTestResults; as restoreTest) {
+              <details name="details">
+                <summary i18n>
+                  <sh-icon>seal-check</sh-icon>
+                  Restore test phase
+
+                  <div class="actions">
+                    <sh-icon class="toggle-indicator">caret-down</sh-icon>
+                  </div>
+                </summary>
+
+                <div class="content">
+                  <p i18n>Start: {{ restoreTest.BeginTime | date: 'medium' }}</p>
+                  <p i18n>End: {{ restoreTest.EndTime | date: 'medium' }}</p>
+                  <p i18n>Duration: {{ restoreTest.Duration | durationFormat }}</p>
+                  <sh-divider />
+                  <ng-container
+                    *ngTemplateOutlet="
+                      restoreTestTemplate;
+                      context: { restoreTest: restoreTest, lines: item.logLines?.restoreTest, key: 'restore-test' }
+                    " />
+                </div>
+              </details>
+            }
+
             @if (item.data?.RemoteSynchronizationResults) {
               @for (syncResult of item.data?.RemoteSynchronizationResults; track $index; let syncIndex = $index) {
                 <details name="details">
@@ -291,6 +316,27 @@
                   <p i18n>Volumes read: {{ item.data?.LockResults?.VolumesRead }}</p>
                   <p i18n>Volumes updated: {{ item.data?.LockResults?.VolumesUpdated }}</p>
                   <p i18n>Parsed result: {{ item.data?.LockResults?.ParsedResult }}</p>
+                </div>
+              </details>
+            }
+
+            @if (item.data?.MainOperation === 'RestoreTest') {
+              <details name="details" open>
+                <summary i18n>
+                  <sh-icon>seal-check</sh-icon>
+                  Restore test
+
+                  <div class="actions">
+                    <sh-icon class="toggle-indicator">caret-down</sh-icon>
+                  </div>
+                </summary>
+
+                <div class="content">
+                  <ng-container
+                    *ngTemplateOutlet="
+                      restoreTestTemplate;
+                      context: { restoreTest: $any(item.data), lines: undefined, key: 'restore-test' }
+                    " />
                 </div>
               </details>
             }
@@ -448,5 +494,138 @@
         </div>
       }
     </div>
+  }
+</ng-template>
+
+<!--
+  The body of a restore test section: the sample statistics, the files that failed verification,
+  the differences against the live source and, when `lines` is given, the test's own warnings and errors
+  (they are not forwarded to the parent backup result, so this is the only place they are shown).
+-->
+<ng-template #restoreTestTemplate let-restoreTest="restoreTest" let-lines="lines" let-key="key">
+  @let rt = $any(restoreTest);
+  <p i18n>Sampling: {{ restoreTestModeLabel(rt.Mode) }}</p>
+  <p i18n>Backup version tested: {{ rt.Version }}</p>
+  <p i18n>Files tested: {{ rt.FilesTested }}</p>
+  <p i18n>Files passed: {{ rt.FilesPassed }}</p>
+  <p i18n>Files failed: {{ rt.FilesFailed }}</p>
+  <p i18n>Files skipped: {{ rt.FilesSkipped }}</p>
+  <p i18n>Restored: {{ rt.BytesRestored | bytes: true : true }}</p>
+  <p i18n>Downloaded: {{ rt.BytesDownloaded | bytes: true : true }} ({{ rt.RemoteVolumesDownloaded }} volumes)</p>
+  @if (rt.DatabaseRecreated) {
+    <p i18n>Database recreated from the destination</p>
+  }
+  @if (rt.Budget?.Exceeded) {
+    <p i18n>Stopped early: {{ restoreTestBudgetLabel(rt.Budget.Reason) }}</p>
+  }
+  @if (rt.Interrupted) {
+    <p i18n>Interrupted</p>
+  }
+
+  @if (rt.FailuresActualLength || rt.Failures?.length) {
+    <sh-divider />
+    <details name="details-restore-test">
+      <summary i18n>
+        <sh-icon>x-circle</sh-icon>
+        Failed files {{ rt.FailuresActualLength ?? rt.Failures?.length }}
+
+        <div class="actions">
+          <sh-icon class="toggle-indicator">caret-down</sh-icon>
+        </div>
+      </summary>
+
+      <div class="content">
+        @for (failure of rt.Failures; track $index) {
+          <div class="restore-test-entry">
+            <span class="path">{{ failure.Path }}</span>
+            <span class="reason">{{ restoreTestFailureLabel(failure.Reason) }}</span>
+            @if (failure.Expected || failure.Actual) {
+              <span class="diff" i18n>Expected: {{ failure.Expected }}</span>
+              <span class="diff" i18n>Actual: {{ failure.Actual }}</span>
+            }
+          </div>
+        }
+        @if (rt.FailuresActualLength > (rt.Failures?.length ?? 0)) {
+          <p i18n>Showing the first {{ rt.Failures?.length ?? 0 }} of {{ rt.FailuresActualLength }} failed files</p>
+        }
+      </div>
+    </details>
+  }
+
+  @if (rt.SourceDifferencesActualLength || rt.SourceDifferences?.length) {
+    <details name="details-restore-test">
+      <summary i18n>
+        <sh-icon>git-diff</sh-icon>
+        Source differences {{ rt.SourceDifferencesActualLength ?? rt.SourceDifferences?.length }}
+
+        <div class="actions">
+          <sh-icon class="toggle-indicator">caret-down</sh-icon>
+        </div>
+      </summary>
+
+      <div class="content">
+        <p i18n>Files that changed on the source since they were backed up. This is not a backup error.</p>
+        @for (difference of rt.SourceDifferences; track $index) {
+          <div class="restore-test-entry">
+            <span class="path">{{ difference.Path }}</span>
+            <span class="reason">{{ difference.Reason }}</span>
+            @if (difference.Expected || difference.Actual) {
+              <span class="diff" i18n>Backup: {{ difference.Expected }}</span>
+              <span class="diff" i18n>Source: {{ difference.Actual }}</span>
+            }
+          </div>
+        }
+        @if (rt.SourceDifferencesActualLength > (rt.SourceDifferences?.length ?? 0)) {
+          <p i18n>
+            Showing the first {{ rt.SourceDifferences?.length ?? 0 }} of
+            {{ rt.SourceDifferencesActualLength }} differences
+          </p>
+        }
+      </div>
+    </details>
+  }
+
+  @if (lines) {
+    <sh-divider />
+    <p i18n>Warnings: {{ rt.WarningsActualLength }}</p>
+    <p i18n>Errors: {{ rt.ErrorsActualLength }}</p>
+
+    @if (rt.WarningsActualLength) {
+      <details name="details-restore-test">
+        <summary i18n>
+          <sh-icon>warning-circle</sh-icon>
+          Warnings {{ rt.WarningsActualLength }}
+
+          <div class="actions">
+            <sh-icon class="toggle-indicator">caret-down</sh-icon>
+          </div>
+        </summary>
+
+        <div class="content">
+          <ng-container
+            *ngTemplateOutlet="
+              logLinesTemplate;
+              context: { lines: lines.warnings, key: key + '-warnings', suppressible: true }
+            " />
+        </div>
+      </details>
+    }
+
+    @if (rt.ErrorsActualLength) {
+      <details name="details-restore-test">
+        <summary i18n>
+          <sh-icon>warning</sh-icon>
+          Errors {{ rt.ErrorsActualLength }}
+
+          <div class="actions">
+            <sh-icon class="toggle-indicator">caret-down</sh-icon>
+          </div>
+        </summary>
+
+        <div class="content">
+          <ng-container *ngTemplateOutlet="logLinesTemplate; context: { lines: lines.errors, key: key + '-errors' }" />
+        </div>
+      </details>
+    }
   }
 </ng-template>
