@@ -204,12 +204,14 @@
     </div>
 
     <div class="right">
-      <sh-select [options]="languageOptions()" value="value" label="label" [isClearable]="false" [inlineSearch]="true">
-        <input
-          type="text"
-          [ngModel]="langCtrl()"
-          (ngModelChange)="updateLocale($event)"
-          [ngModelOptions]="{ standalone: true }" />
+      <sh-select
+        [options]="languageOptions()"
+        value="value"
+        label="label"
+        [isClearable]="false"
+        [inlineSearch]="true"
+        (selectedOptionsChange)="updateLocale($event)">
+        <input type="text" [ngModel]="langCtrl()" [ngModelOptions]="{ standalone: true }" />
       </sh-select>
     </div>
   </section>

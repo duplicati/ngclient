@@ -16,7 +16,7 @@ import { ShipToggle } from '@ship-ui/core/ship-toggle';
 import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { finalize } from 'rxjs';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
-import { LANGUAGES } from '../core/locales/locales.utility';
+import { LANGUAGES, mapLocale } from '../core/locales/locales.utility';
 import { LOCALSTORAGE } from '../core/services/localstorage.token';
 import { SysinfoState } from '../core/states/sysinfo.state';
 import { LayoutState } from '../layout/layout.state';
@@ -120,7 +120,7 @@ export default class SettingsComponent {
   #relayConfigState = inject(RelayconfigState);
   #fileTreeState = inject(FileTreeState);
   #ls = inject(LOCALSTORAGE);
-  #initLang = this.#ls.getItem('locale') ?? 'en-US';
+  #initLang = mapLocale(this.#ls.getItem('locale'));
 
   sysinfo = this.#sysinfo.systemInfo;
   isDarkMode = this.#layoutState.isDarkMode;
@@ -339,8 +339,13 @@ export default class SettingsComponent {
     return timeType === 'h' ? [1, 24] : [1, 60];
   });
 
-  updateLocale(newLocale: string) {
-    if (!newLocale || newLocale === '' || newLocale === this.previousLang) return;
+  // Bound to the select's selection event rather than the input's ngModelChange:
+  // the inline search types into the same input, so ngModelChange would fire
+  // with search text (which can coincide with a language code such as "da").
+  updateLocale(selected: unknown[]) {
+    const newLocale = (selected[0] as { value?: string } | undefined)?.value;
+    if (!newLocale || newLocale === this.previousLang) return;
+    if (!LANGUAGES.some((lang) => lang.value === newLocale)) return;
 
     this.#ls.setItem('locale', newLocale);
     window.location.reload();
