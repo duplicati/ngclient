@@ -1,4 +1,4 @@
-import { NgTemplateOutlet } from '@angular/common';
+import { DatePipe, NgTemplateOutlet } from '@angular/common';
 import {
   afterNextRender,
   ChangeDetectionStrategy,
@@ -86,6 +86,8 @@ type TreeNode = TreeNodeDto & {
   parentPath: string;
   isLoadMore?: boolean;
   loadMoreOffset?: number | null;
+  /** Last-modified timestamp (ISO 8601) when the listing provides one, e.g. restore and search listings. */
+  lastModified?: string | null;
 };
 
 type FileTreeNode = TreeNode & {
@@ -143,8 +145,10 @@ const LOAD_MORE_ID_SUFFIX = '\0load-more';
     NgTemplateOutlet,
     FormsModule,
     BytesPipe,
+    DatePipe,
     ShipAlert,
   ],
+  providers: [DatePipe],
   templateUrl: './file-tree.component.html',
   styleUrl: './file-tree.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -158,6 +162,7 @@ export default class FileTreeComponent {
   #dupServer = inject(DuplicatiServer);
   #listing = inject(FileTreeListingService);
   #sysInfo = inject(SysinfoState);
+  #datePipe = inject(DatePipe);
   #dialog = inject(ShipDialogService);
   #fileTreeState = inject(FileTreeState);
   #injector = inject(Injector);
@@ -585,6 +590,7 @@ export default class FileTreeComponent {
         temporary: false,
         symlink: false,
         fileSize: info.match?.Size ?? 0,
+        lastModified: info.match?.LastModified ?? null,
       };
 
       nodeMap.set(path, newNode);
@@ -1077,6 +1083,7 @@ export default class FileTreeComponent {
                 text: this.#getDisplayName(x.text, (x as any)?.Metadata),
                 iconCls: x.iconCls,
                 fileSize: x.fileSize,
+                lastModified: (x as any)?.lastModified ?? null,
                 resolvedpath: x.resolvedpath,
                 parentPath: this.getParentPath(x.id ?? ''),
               } as any as TreeNode;
@@ -1187,6 +1194,24 @@ export default class FileTreeComponent {
 
   visibleTreeChildren(nodes: FileTreeNode[]) {
     return nodes.filter((node) => node.isLoadMore || !node.hidden || this._showHiddenNodes());
+  }
+
+  /**
+   * The last-modified time of a node, or null when the listing did not provide a usable one.
+   * Unknown timestamps are reported as the .NET default (year 0001) or the Unix epoch and are hidden.
+   */
+  treeNodeLastModified(node: FileTreeNode): string | null {
+    const value = node.lastModified;
+    if (!value) return null;
+    const time = Date.parse(value);
+    if (isNaN(time) || time <= 0) return null;
+    return value;
+  }
+
+  /** Tooltip for the last-modified time, with the date formatted in the medium locale style. */
+  treeNodeLastModifiedTitle(lastModified: string): string {
+    const date = this.#datePipe.transform(lastModified, 'medium') ?? lastModified;
+    return $localize`Last modified: ${date}:date:`;
   }
 
   treeSetSize(nodes: FileTreeNode[]) {
@@ -1692,7 +1717,12 @@ export default class FileTreeComponent {
           let alignDataArray =
             this.isByBackupSettings() || this.customRemoteMode() !== null || remote
               ? result.items.map(
-                  (y: { Path: string; Size: number; Metadata: { [key: string]: string | null } | null }) => {
+                  (y: {
+                    Path: string;
+                    Size: number;
+                    LastModified?: string | null;
+                    Metadata: { [key: string]: string | null } | null;
+                  }) => {
                     this.#detectExtendData(y.Metadata);
                     const sep = this.#getPathDelimiter(y.Path);
                     const text = this.#getDisplayName(
@@ -1733,6 +1763,7 @@ export default class FileTreeComponent {
                       hidden: false,
                       remoteSource: newRemoteSource,
                       fileSize: y.Size,
+                      lastModified: y.LastModified ?? null,
                     };
                   }
                 )

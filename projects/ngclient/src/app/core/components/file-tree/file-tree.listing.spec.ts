@@ -174,6 +174,31 @@ describe('file tree listing contracts', () => {
     });
   });
 
+  it('keeps the last-modified time from the v2 restore listing and hides placeholder dates', () => {
+    const list = vi.fn(() =>
+      of({
+        Data: [
+          { Path: '/root/file.txt', Size: 12, LastModified: '2026-10-01T12:00:00Z', Metadata: null },
+          { Path: '/root/unknown.txt', Size: 1, LastModified: '0001-01-01T00:00:00', Metadata: null },
+          { Path: '/root/epoch.txt', Size: 1, LastModified: '1970-01-01T00:00:00Z', Metadata: null },
+          { Path: '/root/missing.txt', Size: 1, Metadata: null },
+        ],
+      })
+    );
+    const component = setup(
+      { postApiV2BackupListFolder: list },
+      { backupSettings: { id: '42', time: 'saved-time' }, rootPaths: ['/root/'] }
+    );
+    const nodes = component.treeStructure()[0].children;
+    const byId = (id: string) => nodes.find((node) => node.id === id)!;
+    expect(byId('/root/file.txt')).toEqual(expect.objectContaining({ lastModified: '2026-10-01T12:00:00Z' }));
+    expect(component.treeNodeLastModified(byId('/root/file.txt'))).toBe('2026-10-01T12:00:00Z');
+    expect(component.treeNodeLastModifiedTitle('2026-10-01T12:00:00Z')).toMatch(/^Last modified: .+2026.+/);
+    expect(component.treeNodeLastModified(byId('/root/unknown.txt'))).toBeNull();
+    expect(component.treeNodeLastModified(byId('/root/epoch.txt'))).toBeNull();
+    expect(component.treeNodeLastModified(byId('/root/missing.txt'))).toBeNull();
+  });
+
   it('preserves the v1 restore request and folder response', () => {
     const list = vi.fn(() => of({ Files: [{ Path: '/root/file.txt', Size: 12, Metadata: null }] }));
     const component = setup(

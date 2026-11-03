@@ -135,6 +135,12 @@
                 @if (node.cls == 'file' && node.fileSize != null && node.fileSize >= 0) {
                   <span class="size">&nbsp;({{ node.fileSize | bytes: true : true }})</span>
                 }
+                @let lastModified = treeNodeLastModified(node);
+                @if (lastModified) {
+                  <span class="modified" [attr.title]="treeNodeLastModifiedTitle(lastModified)">
+                    {{ lastModified | date: 'short' }}
+                  </span>
+                }
               </div>
             </div>
 

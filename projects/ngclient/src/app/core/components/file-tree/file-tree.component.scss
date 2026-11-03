@@ -165,6 +165,13 @@
         opacity: 0.6;
       }
 
+      .modified {
+        opacity: 0.6;
+        margin-left: p2r(8);
+        font-size: p2r(12);
+        white-space: nowrap;
+      }
+
       &.generated {
         opacity: 0.6;
 
