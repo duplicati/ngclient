@@ -327,9 +327,15 @@ export class StatusBarState {
           const restoringText = status.Phase === 'Restore_DownloadingRemoteFiles' ? 'Restoring: ' : '';
           const speedTxt = this.#constructSpeedText(status);
 
-          if ((status.Phase === 'Backup_ProcessingFiles' || status.Phase === 'Sync_ProcessingFiles') && filesleft === 0)
-            text = `Completing upload ${speedTxt}`;
-          else if (status.BackendIsBlocking ?? false) text = `Waiting for transfers ${speedTxt}`;
+          const isProcessing = status.Phase === 'Backup_ProcessingFiles' || status.Phase === 'Sync_ProcessingFiles';
+          const hasTransfers = (status.ActiveTransfers?.length ?? 0) > 0 || (status.BackendSpeed ?? -1) > 0;
+
+          if (isProcessing && filesleft === 0) {
+            // All files are handed off, but processing can continue without any upload in flight.
+            // Only call it an upload when a transfer is active; otherwise keep the phase text,
+            // which is what the status page shows.
+            if (hasTransfers || (status.BackendIsBlocking ?? false)) text = `Completing upload ${speedTxt}`;
+          } else if (status.BackendIsBlocking ?? false) text = `Waiting for transfers ${speedTxt}`;
           else text = `${restoringText}${filesleft} files (${this.#bytesPipe.transform(sizeleft)}) to go ${speedTxt}`;
         }
       } else if (status.Phase === 'Backup_WaitForUpload' || status.Phase === 'Sync_WaitForUpload') {
