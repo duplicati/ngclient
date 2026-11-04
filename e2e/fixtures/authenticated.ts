@@ -52,6 +52,11 @@ async function setupAuthentication(
       Options: [],
       ServerOnlyOptions: [],
       SpecialFolders: [],
+      TimeZones: [
+        { ID: 'UTC', DisplayName: '(UTC) Coordinated Universal Time', CurrentUTCOffset: '00:00:00' },
+        { ID: 'Europe/Copenhagen', DisplayName: '(UTC+01:00) Central European Time', CurrentUTCOffset: '01:00:00' },
+        { ID: 'America/New_York', DisplayName: 'Eastern Time', CurrentUTCOffset: '-05:00:00' },
+      ],
       APIExtensions: [
         'v1:websocket',
         'v1:websocket:authenticate',

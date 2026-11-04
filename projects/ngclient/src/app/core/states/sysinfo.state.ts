@@ -43,6 +43,11 @@ export class SysinfoState {
     return this.systemInfo()?.RestoreDestinationProviderModules ?? [];
   });
 
+  /** The time zones the server can schedule in; empty on servers that do not report them */
+  timeZones = computed(() => {
+    return this.systemInfo()?.TimeZones ?? [];
+  });
+
   allOptionsGrouped = computed(() => {
     const defaultOptions = {
       displayName: 'Default',

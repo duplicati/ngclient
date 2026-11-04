@@ -329,7 +329,11 @@
         class="primary raised"
         [checked]="disableTrayIconLogin()"
         (checkedChange)="saveDisableTrayIconLogin($event)">
-        <label i18n>Prevent tray icon automatic log-in</label>
+        @if (disableTrayIconLogin()) {
+          <label i18n>Tray icon automatic log-in is disabled</label>
+        } @else {
+          <label i18n>Tray icon automatic log-in is enabled</label>
+        }
       </sh-toggle>
     </div>
   </section>
@@ -352,6 +356,42 @@
             [ngModel]="powerModeCtrl()"
             (ngModelChange)="updatePowerMode($event)"
             [ngModelOptions]="{ standalone: true }" />
+        </sh-select>
+      </div>
+    </section>
+  }
+
+  @if (hasServerTimezones()) {
+    <section>
+      <div class="left">
+        <h3 i18n>Server time zone</h3>
+        <p i18n>
+          The time zone the server uses when scheduling backups. Scheduled times are kept at the same local time across
+          daylight saving changes in this time zone. The system default is the time zone of the machine running
+          Duplicati.
+        </p>
+      </div>
+
+      <div class="right">
+        <sh-select
+          [options]="serverTimezoneOptions()"
+          [disabled]="updatingServerTimezone()"
+          value="value"
+          label="label"
+          [isClearable]="false"
+          [inlineSearch]="true"
+          (selectedOptionsChange)="updateServerTimezone($event)">
+          <input type="text" [ngModel]="serverTimezone()" [ngModelOptions]="{ standalone: true }" />
+
+          <!-- The select takes the first TemplateRef in its content as the option template, and an @if block is one:
+               without this template the spinner block below would be rendered in place of the selected label -->
+          <ng-template let-option>
+            {{ option.label }}
+          </ng-template>
+
+          @if (updatingServerTimezone()) {
+            <sh-spinner prefix class="primary" aria-label="Saving server time zone" i18n-aria-label />
+          }
         </sh-select>
       </div>
     </section>

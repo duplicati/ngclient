@@ -66,6 +66,19 @@ describe('StatusBarState estimated totals', () => {
   it('retains the 0.9 cap when processing exceeds a positive total', () => {
     const { state } = setup({ TotalFileCount: 1, ProcessedFileCount: 2, TotalFileSize: 100, ProcessedFileSize: 200 });
     expect(state.statusData()!.progress).toBe(0.9);
+  });
+
+  it('keeps the phase text when all files are processed but nothing is uploading', () => {
+    const { state } = setup({ TotalFileCount: 1, ProcessedFileCount: 2, TotalFileSize: 100, ProcessedFileSize: 200 });
+    expect(state.statusData()!.statusText).toBe('Processing files to backup …');
+  });
+
+  it.each([
+    { label: 'an active transfer', overrides: { ActiveTransfers: [{ BackendSpeed: 50 }] } },
+    { label: 'a positive backend speed', overrides: { BackendSpeed: 50 } },
+    { label: 'a blocking backend', overrides: { BackendIsBlocking: true } },
+  ])('reports completing upload when all files are processed and there is $label', ({ overrides }) => {
+    const { state } = setup({ TotalFileCount: 1, ProcessedFileCount: 1, ...overrides });
     expect(state.statusData()!.statusText).toContain('Completing upload');
   });
 

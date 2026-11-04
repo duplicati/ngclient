@@ -6,6 +6,7 @@ import { ServerStateService } from '../core/services/server-state.service';
 import { ServerStatusWebSocketService } from '../core/services/server-status-websocket.service';
 import { SysinfoState } from '../core/states/sysinfo.state';
 import { REDUCED_REPORTING_KEY, toReducedReportingState } from './reduced-reporting-settings';
+import { SERVER_TIMEZONE_KEY } from './server-timezone-settings';
 
 const SHOWN_WELCOME_PAGE_KEY = 'shown-welcome-page-v1';
 const HIDE_CONSOLE_CONNECTION_STATUS_KEY = 'hide-console-connection-status';
@@ -155,7 +156,9 @@ export class ServerSettingsService {
   /**
    * The reduced reporting state: the operator's setting, whether the console enforces it, and the effective value.
    */
-  reducedReporting = computed(() => toReducedReportingState(this.serverSettings() as Record<string, unknown> | undefined));
+  reducedReporting = computed(() =>
+    toReducedReportingState(this.serverSettings() as Record<string, unknown> | undefined)
+  );
 
   /**
    * Switches the operator's reduced reporting setting. The server rejects switching it off while the console enforces it.
@@ -196,5 +199,12 @@ export class ServerSettingsService {
 
   setPowerModeProvider(provider: string) {
     return this.patchServerSetting(POWER_MODE_PROVIDER_KEY, provider);
+  }
+
+  /**
+   * Sets the time zone id the server schedules in. An empty value means the local time zone of the server machine.
+   */
+  setServerTimezone(timeZoneId: string) {
+    return this.patchServerSetting(SERVER_TIMEZONE_KEY, timeZoneId);
   }
 }

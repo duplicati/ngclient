@@ -24,6 +24,12 @@ import AdvancedOptionsSettingsComponent from './advanced-options-settings/advanc
 import { RemoteControlComponent } from './remote-control/remote-control.component';
 import { RemoteControlState } from './remote-control/remote-control.state';
 import { ServerSettingsService } from './server-settings.service';
+import {
+  SERVER_TIMEZONE_KEY,
+  toServerTimezoneControlValue,
+  toServerTimezoneOptions,
+  toServerTimezoneSetting,
+} from './server-timezone-settings';
 
 import { CreateSignalOptions, WritableSignal } from '@angular/core';
 import { createSignal, SIGNAL, SignalGetter, signalSetFn, signalUpdateFn } from '@angular/core/primitives/signals';
@@ -330,6 +336,17 @@ export default class SettingsComponent {
 
   usageStatisticsOptions = signal(USAGE_STATISTICS_OPTIONS);
 
+  serverTimezone = signal<string>(toServerTimezoneControlValue(''));
+  updatingServerTimezone = signal(false);
+  // Only servers reporting their time zones get the control: without the list there is nothing to pick from
+  hasServerTimezones = computed(() => this.#sysinfo.timeZones().length > 0);
+  serverTimezoneOptions = computed(() =>
+    toServerTimezoneOptions(
+      this.#sysinfo.timeZones(),
+      this.#serverSettingsService.serverSettings()?.[SERVER_TIMEZONE_KEY]
+    )
+  );
+
   timeTypeOptions = signal(TIME_OPTIONS);
   timeType = signal<TimeTypes>('none');
   timeValue = debounceSignal<number>(0, 300);
@@ -349,6 +366,25 @@ export default class SettingsComponent {
 
     this.#ls.setItem('locale', newLocale);
     window.location.reload();
+  }
+
+  // Bound to the selection event rather than ngModelChange, as the inline search types into the same input
+  updateServerTimezone(selected: unknown[]) {
+    const newValue = (selected[0] as { value?: string } | undefined)?.value;
+    if (!newValue || newValue === this.serverTimezone()) return;
+    if (this.updatingServerTimezone()) return;
+    if (!this.serverTimezoneOptions().some((option) => option.value === newValue)) return;
+
+    this.serverTimezone.set(newValue);
+    this.updatingServerTimezone.set(true);
+
+    this.#serverSettingsService
+      .setServerTimezone(toServerTimezoneSetting(newValue))
+      .pipe(finalize(() => this.updatingServerTimezone.set(false)))
+      .subscribe({
+        // The service restores the previous settings and the HTTP interceptor reports the error.
+        error: () => {},
+      });
   }
 
   updateTimeValue(newTimeValue: number) {
@@ -436,6 +472,7 @@ export default class SettingsComponent {
         ? 'default'
         : serverSettings['power-mode-provider'];
     this.powerModeCtrl.set(powerModeValue);
+    this.serverTimezone.set(toServerTimezoneControlValue(serverSettings[SERVER_TIMEZONE_KEY]));
   });
 
   setDarkMode() {
