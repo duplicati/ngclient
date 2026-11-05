@@ -2,7 +2,19 @@ import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
-import { catchError, defer, finalize, forkJoin, Observable, retry, switchMap, take, throwError, timer } from 'rxjs';
+import {
+  catchError,
+  defer,
+  finalize,
+  forkJoin,
+  map,
+  Observable,
+  retry,
+  switchMap,
+  take,
+  throwError,
+  timer,
+} from 'rxjs';
 import { TestState } from '../backup/source-data/target-url-dialog/test-url/test-url';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer, GetBackupResultDto, ListFilesetsResponseDto, SettingInputDto } from '../core/openapi';
@@ -251,15 +263,15 @@ export class RestoreFlowState {
     this.versionOptionsLoading.set(true);
 
     if (this.#sysinfo.hasV2ListOperations()) {
-      forkJoin([
-        defer(() =>
-          this.#dupServer.getApiV1BackupById({
-            path: { id },
-          })
-        ),
-        this.loadFilesetsWithRetryv2(id),
-      ])
+      this.loadFilesetsWithRetryv2(id)
         .pipe(
+          switchMap((filesets) =>
+            defer(() =>
+              this.#dupServer.getApiV1BackupById({
+                path: { id },
+              })
+            ).pipe(map((backup) => [backup, filesets] as const))
+          ),
           take(1),
           finalize(() => this.versionOptionsLoading.set(false))
         )
