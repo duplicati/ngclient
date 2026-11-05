@@ -19,6 +19,7 @@ import { RestoreFlowState } from './restore-flow.state';
 
 const backupUrl = '/api/v1/backup/42';
 const filesetsUrl = '/api/v2/backup/list-filesets';
+const activityUrl = `${backupUrl}/isactive`;
 const fileset = {
   Version: 0,
   IsFullBackup: true,
@@ -45,6 +46,7 @@ const locked = {
 describe('RestoreFlowState fileset/backup HTTP ordering', () => {
   let http: HttpTestingController;
   let originalConfig: ReturnType<typeof client.getConfig>;
+  let flushActivity: () => boolean;
   beforeEach(() => {
     vi.useFakeTimers();
     originalConfig = client.getConfig();
@@ -96,6 +98,16 @@ describe('RestoreFlowState fileset/backup HTTP ordering', () => {
     const state = TestBed.inject(RestoreFlowState);
     state.backupId.set('42');
     const backupReads: boolean[] = [];
+    let active = false;
+    const activityReads: string[] = [];
+    flushActivity = () => {
+      const requests = http.match((request) => request.url.endsWith('/isactive'));
+      for (const request of requests) {
+        activityReads.push(request.request.url);
+        request.flush({ Status: 'OK', Active: active });
+      }
+      return requests.length > 0;
+    };
     function flushBackup(exists: boolean, isTemporary = false) {
       const requests = http.match(backupUrl);
       for (const request of requests) {
@@ -110,9 +122,22 @@ describe('RestoreFlowState fileset/backup HTTP ordering', () => {
       // Deliberately HTTP 200: the real interceptor must turn Success:false into an error.
       request.flush(body, { status: 200, statusText: 'OK' });
     }
-    return { state, open, navigate, alert, backupReads, flushBackup, flushFilesets };
+    return {
+      state,
+      open,
+      navigate,
+      alert,
+      backupReads,
+      flushBackup,
+      flushFilesets,
+      activityReads,
+      setActive: (value: boolean) => (active = value),
+    };
   }
-  const settle = () => vi.advanceTimersByTimeAsync(0);
+  const settle = async () => {
+    await vi.advanceTimersByTimeAsync(0);
+    while (flushActivity()) await vi.advanceTimersByTimeAsync(0);
+  };
 
   it('reads current backup metadata after a DatabaseLocked retry succeeds', async () => {
     const { state, open, backupReads, flushBackup, flushFilesets } = setup();
@@ -125,6 +150,7 @@ describe('RestoreFlowState fileset/backup HTTP ordering', () => {
     await vi.advanceTimersByTimeAsync(999);
     http.expectNone(filesetsUrl);
     await vi.advanceTimersByTimeAsync(1);
+    await settle();
     flushFilesets();
     await settle();
     flushBackup(true); // The successful listing completed after the database was created.
@@ -197,7 +223,7 @@ describe('RestoreFlowState fileset/backup HTTP ordering', () => {
     expect(alert).toHaveBeenCalledWith('Database in use');
   });
 
-  it('documents that three DatabaseLocked results still show failure and route to direct restore', async () => {
+  it('keeps a persistently locked database on the current restore page', async () => {
     const { state, open, navigate, flushBackup, flushFilesets } = setup();
     const startedAt = Date.now();
     state.getBackup();
@@ -211,39 +237,146 @@ describe('RestoreFlowState fileset/backup HTTP ordering', () => {
         await vi.advanceTimersByTimeAsync(999);
         http.expectNone(filesetsUrl);
         await vi.advanceTimersByTimeAsync(1);
+        await settle();
       }
     }
     expect(Date.now() - startedAt).toBe(2000);
     expect(open).toHaveBeenCalledTimes(1);
-    expect(open.mock.calls[0][1].data.title).toBe('Failed to load backup filesets');
+    expect(open.mock.calls[0][1].data.title).toBe('Backup database is busy');
+    expect(open.mock.calls[0][1].data.confirmText).toBe('Retry');
     expect(state.versionOptions()).toEqual([]);
     expect(state.versionOptionsLoading()).toBe(false);
     expect(navigate).not.toHaveBeenCalled();
-    open.mock.calls[0][1].closed(true);
-    expect(navigate).toHaveBeenCalledExactlyOnceWith(['/restore-from-files/destination']);
+    open.mock.calls[0][1].closed(false);
+    expect(navigate).not.toHaveBeenCalled();
     await vi.advanceTimersByTimeAsync(5000);
     http.expectNone(filesetsUrl);
   });
 
-  it('documents the remaining pre-lock window when both immediate responses precede database creation', async () => {
-    const { state, open, flushBackup, flushFilesets } = setup();
-    let databaseExists = false;
-    setTimeout(() => (databaseExists = true), 500);
+  it('waits for a queued/starting backup before listing versions even before it owns the database lock', async () => {
+    const { state, open, flushBackup, flushFilesets, setActive } = setup();
+    setActive(true);
     state.getBackup();
     await settle();
-    flushBackup(databaseExists);
+    // The old implementation could list the remote store successfully before the DB was created.
+    const early = http.match(filesetsUrl);
+    for (const request of early) request.flush(success);
+    await settle();
+    flushBackup(false);
+    await settle();
+    expect(open).not.toHaveBeenCalled();
+    expect(early).toHaveLength(0);
+    expect(state.versionOptions()).toEqual([]);
+    expect(state.versionOptionsLoading()).toBe(true);
+    await vi.advanceTimersByTimeAsync(3000);
+    await settle();
+    http.expectNone(filesetsUrl);
+    setActive(false);
+    await vi.advanceTimersByTimeAsync(1000);
+    await settle();
     flushFilesets();
     await settle();
-    flushBackup(databaseExists);
+    flushBackup(true);
     await settle();
-    expect(open).toHaveBeenCalledTimes(1);
-    expect(open.mock.calls[0][1].data.title).toBe('Missing Local Database');
+    expect(state.versionOptions()).toEqual([fileset]);
+    expect(open).not.toHaveBeenCalled();
+    expect(state.versionOptionsLoading()).toBe(false);
+  });
+
+  it('waits instead of exhausting retries if a backup acquires the lock after the initial idle check', async () => {
+    const { state, open, flushFilesets, flushBackup, setActive } = setup();
+    state.getBackup();
+    await settle();
+    flushFilesets(locked);
+    await settle();
+    setActive(true);
+    for (let i = 0; i < 3; i++) {
+      await vi.advanceTimersByTimeAsync(1000);
+      await settle();
+      // Complete any incorrect eager retries, making the former exhaustion behavior observable.
+      for (const request of http.match(filesetsUrl)) request.flush(locked);
+      await settle();
+    }
+    expect(open).not.toHaveBeenCalled();
+    expect(state.versionOptionsLoading()).toBe(true);
+    setActive(false);
+    await vi.advanceTimersByTimeAsync(1000);
+    await settle();
+    flushFilesets();
+    await settle();
+    flushBackup(true);
+    await settle();
+    expect(state.versionOptions()).toEqual([fileset]);
+    expect(open).not.toHaveBeenCalled();
+  });
+
+  it('rechecks activity before reporting a missing DB and reloads versions after that backup finishes', async () => {
+    const { state, open, flushFilesets, flushBackup, setActive } = setup();
+    state.getBackup();
+    await settle();
+    flushFilesets();
+    await settle();
+    setActive(true);
+    flushBackup(false);
+    await settle();
+    expect(open).not.toHaveBeenCalled();
+    expect(state.versionOptionsLoading()).toBe(true);
+    await vi.advanceTimersByTimeAsync(1000);
+    await settle();
+    http.expectNone(filesetsUrl);
+    setActive(false);
+    await vi.advanceTimersByTimeAsync(1000);
+    await settle();
+    const newer = { ...fileset, Version: 1 };
+    http.expectOne(filesetsUrl).flush({ ...success, Data: [newer] });
+    await settle();
+    flushBackup(true);
+    await settle();
+    expect(state.versionOptions()).toEqual([newer]);
+    expect(open).not.toHaveBeenCalled();
+  });
+
+  it('offers a same-page retry after persistent locks and succeeds when the lock is released', async () => {
+    const { state, open, navigate, flushFilesets, flushBackup } = setup();
+    state.getBackup();
+    await settle();
+    for (let i = 0; i < 3; i++) {
+      flushFilesets(locked);
+      await settle();
+      if (i < 2) {
+        await vi.advanceTimersByTimeAsync(1000);
+        await settle();
+      }
+    }
+    expect(open.mock.calls[0][1].data.confirmText).toBe('Retry');
+    open.mock.calls[0][1].closed(true);
+    await settle();
+    flushFilesets();
+    await settle();
+    flushBackup(true);
+    await settle();
+    expect(state.versionOptions()).toEqual([fileset]);
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('stops waiting and prevents new requests when the restore state is destroyed', async () => {
+    const { state, open, setActive, flushFilesets, flushBackup } = setup();
+    setActive(true);
+    state.getBackup();
+    await settle();
+    // Consume the old implementation's eager request so teardown does not hide the lifecycle regression.
+    const eager = http.match(filesetsUrl);
+    TestBed.resetTestingModule();
+    for (const request of eager) request.flush(success);
+    await settle();
+    flushBackup(true);
+    await settle();
+    await vi.advanceTimersByTimeAsync(5000);
+    await settle();
     expect(state.versionOptions()).toEqual([]);
     expect(state.versionOptionsLoading()).toBe(false);
-    await vi.advanceTimersByTimeAsync(500);
-    expect(databaseExists).toBe(true);
-    expect(open).toHaveBeenCalledTimes(1);
-    expect(state.versionOptions()).toEqual([]);
+    expect(open).not.toHaveBeenCalled();
+    http.expectNone(activityUrl);
   });
 
   it('keeps the V1 parallel listing path without a missing-database dialog', async () => {

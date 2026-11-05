@@ -66,6 +66,7 @@ export default class SelectFilesComponent {
   selectOption = this.#restoreFlowState.selectOption;
   backupId = this.#restoreFlowState.backupId;
   versionOptionsLoading = this.#restoreFlowState.versionOptionsLoading;
+  waitingForBackup = this.#restoreFlowState.waitingForBackup;
   versionOptions = this.#restoreFlowState.versionOptions;
   isFileRestore = this.#restoreFlowState.isFileRestore;
   extendedDataType = this.#restoreFlowState.extendedDataType;
