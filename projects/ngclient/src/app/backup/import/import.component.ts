@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ShipAlertService } from '@ship-ui/core/ship-alert';
@@ -43,19 +43,76 @@ export default class ImportComponent {
   });
 
   selectedFile = signal<File[]>([]);
+  #reader: FileReader | null = null;
+  #destroyed = false;
+
+  constructor() {
+    inject(DestroyRef).onDestroy(() => {
+      this.#destroyed = true;
+      this.#cancelRead();
+    });
+  }
 
   onFileDropped(files: File[]) {
+    if (this.#destroyed) return;
+    this.#cancelRead();
     const file = files[0];
+    this.selectedFile.set(file ? [file] : []);
+    this.isValid.set(false);
+    this.isSecureFile.set(false);
+    this.importForm.patchValue({ config: '' });
 
     if (file) {
       const reader = new FileReader();
+      this.#reader = reader;
 
       // Rely on minetype (really extension)
       this.isSecureFile.set(file.type !== 'application/json');
 
-      reader.onload = this.#handleReaderLoaded.bind(this);
-      reader.readAsArrayBuffer(file);
+      reader.onload = (event) => {
+        if (this.#reader !== reader) return;
+        try {
+          if (reader.result === null || typeof reader.result === 'string') throw new Error('Missing file contents');
+          this.#handleReaderLoaded(event);
+          this.#cancelRead();
+        } catch {
+          this.#readFailed(reader);
+        }
+      };
+      reader.onerror = () => this.#readFailed(reader);
+      reader.onabort = () => this.#readFailed(reader);
+      try {
+        reader.readAsArrayBuffer(file);
+      } catch {
+        this.#readFailed(reader);
+      }
     }
+  }
+
+  #cancelRead() {
+    const reader = this.#reader;
+    this.#reader = null;
+    if (!reader) return;
+    reader.onload = null;
+    reader.onerror = null;
+    reader.onabort = null;
+    if (reader.readyState === FileReader.LOADING) reader.abort();
+  }
+
+  #readFailed(reader: FileReader) {
+    if (this.#reader !== reader) return;
+    this.#cancelRead();
+    this.isValid.set(false);
+    this.isSecureFile.set(false);
+    this.importForm.patchValue({ config: '' });
+    this.#dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: $localize`Failed to read configuration file`,
+        message: $localize`The file could not be read. Please select the configuration file again.`,
+        confirmText: $localize`OK`,
+        cancelText: undefined,
+      },
+    });
   }
 
   #handleReaderLoaded(readerEvt: ProgressEvent<FileReader>) {
@@ -111,6 +168,7 @@ export default class ImportComponent {
   }
 
   submit() {
+    if (this.#reader || !this.importForm.controls.config.value) return;
     this.isImporting.set(true);
     const isDirectImport = this.importForm.value.direct ?? false;
 

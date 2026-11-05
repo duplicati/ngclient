@@ -100,3 +100,172 @@ describe('ImportComponent configuration submission', () => {
     expect(navigate).toHaveBeenCalledExactlyOnceWith(['/backup-draft', 'draft-id']);
   });
 });
+
+class ControlledFileReader {
+  static instances: ControlledFileReader[] = [];
+  static LOADING = 1;
+  result: ArrayBuffer | string | null = null;
+  readyState = 0;
+  onload: ((event: ProgressEvent<FileReader>) => void) | null = null;
+  onerror: ((event: ProgressEvent<FileReader>) => void) | null = null;
+  onabort: ((event: ProgressEvent<FileReader>) => void) | null = null;
+  constructor() {
+    ControlledFileReader.instances.push(this);
+  }
+  readAsArrayBuffer(_file: Blob) {
+    this.readyState = 1;
+  }
+  event() {
+    return { target: this } as unknown as ProgressEvent<FileReader>;
+  }
+  abort = vi.fn(() => {
+    this.readyState = 2;
+    this.onabort?.(this.event());
+  });
+  complete(value: string | Uint8Array) {
+    const bytes = typeof value === 'string' ? new TextEncoder().encode(value) : value;
+    this.result = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer;
+    this.readyState = 2;
+    this.onload?.(this.event());
+  }
+  fail() {
+    this.readyState = 2;
+    this.onerror?.(this.event());
+  }
+}
+
+describe('configuration file read lifecycle', () => {
+  afterEach(() => {
+    TestBed.resetTestingModule();
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+  function render() {
+    ControlledFileReader.instances = [];
+    vi.stubGlobal('FileReader', ControlledFileReader);
+    const request = vi.fn(() => new Subject<unknown>());
+    const open = vi.fn();
+    TestBed.configureTestingModule({
+      imports: [ImportComponent],
+      providers: [
+        { provide: DuplicatiServer, useValue: { postApiV1BackupsImport: request } },
+        { provide: BackupsState, useValue: { addDraftBackup: vi.fn() } },
+        { provide: Router, useValue: { navigate: vi.fn() } },
+        { provide: ShipAlertService, useValue: { success: vi.fn() } },
+        { provide: ShipDialogService, useValue: { open } },
+      ],
+    }).overrideComponent(ImportComponent, { set: { template: '', imports: [] } });
+    const fixture = TestBed.createComponent(ImportComponent);
+    fixture.detectChanges();
+    return { fixture, component: fixture.componentInstance, request, open };
+  }
+  const file = (name = 'config.json', type = 'application/json') => new File(['placeholder'], name, { type });
+  const json = '{"Backup":{"Name":"文書"}}';
+
+  it.each(['application/json', 'application/octet-stream'])(
+    'preserves UTF-8 JSON bytes independently of MIME %s',
+    (mime) => {
+      const { component } = render();
+      component.onFileDropped([file('config.json', mime)]);
+      ControlledFileReader.instances[0].complete(json);
+      expect(component.importForm.controls.config.value).toBe('eyJCYWNrdXAiOnsiTmFtZSI6IuaWh+abuCJ9fQ==');
+      expect(component.isSecureFile()).toBe(false);
+      expect(component.isValid()).toBe(true);
+    }
+  );
+
+  it('recognizes the AES signature even when MIME reports JSON', () => {
+    const { component } = render();
+    component.onFileDropped([file()]);
+    ControlledFileReader.instances[0].complete(new Uint8Array([65, 69, 83, 2, 0, 1]));
+    expect(component.isSecureFile()).toBe(true);
+    expect(component.isValid()).toBe(true);
+  });
+
+  it('clears the old payload and cannot submit while a replacement is reading', () => {
+    const { component, request } = render();
+    component.onFileDropped([file('old.json')]);
+    ControlledFileReader.instances[0].complete(json);
+    component.onFileDropped([file('new.json')]);
+    expect(component.isValid()).toBe(false);
+    expect(component.importForm.controls.config.value).toBe('');
+    component.submit();
+    expect(request).not.toHaveBeenCalled();
+    ControlledFileReader.instances[1].complete('{"Backup":{"Name":"New"}}');
+    expect(component.isValid()).toBe(true);
+  });
+
+  it('clears the payload, encryption state and selection when the file is removed', () => {
+    const { component, request } = render();
+    component.onFileDropped([file('old.aes')]);
+    ControlledFileReader.instances[0].complete(new Uint8Array([65, 69, 83, 2, 0, 1]));
+    component.onFileDropped([]);
+    expect(component.selectedFile()).toEqual([]);
+    expect(component.importForm.controls.config.value).toBe('');
+    expect(component.isSecureFile()).toBe(false);
+    expect(component.isValid()).toBe(false);
+    component.submit();
+    expect(request).not.toHaveBeenCalled();
+  });
+
+  it('aborts the old reader and ignores a queued old completion after the latest file loads', () => {
+    const { component, open } = render();
+    component.onFileDropped([file('slow.aes')]);
+    const old = ControlledFileReader.instances[0];
+    const queuedLoad = old.onload!;
+    component.onFileDropped([file('latest.json')]);
+    ControlledFileReader.instances[1].complete(json);
+    old.result = new Uint8Array([65, 69, 83, 2, 0, 1]).buffer;
+    queuedLoad(old.event());
+    expect(old.abort).toHaveBeenCalledTimes(1);
+    expect(component.importForm.controls.config.value).toBe('eyJCYWNrdXAiOnsiTmFtZSI6IuaWh+abuCJ9fQ==');
+    expect(component.isSecureFile()).toBe(false);
+    expect(open).not.toHaveBeenCalled();
+  });
+
+  it('reports a failed read without retaining the old payload and permits a new selection', () => {
+    const { component, open } = render();
+    component.onFileDropped([file('old.json')]);
+    ControlledFileReader.instances[0].complete(json);
+    component.onFileDropped([file('unreadable.json')]);
+    ControlledFileReader.instances[1].fail();
+    expect(component.isValid()).toBe(false);
+    expect(component.importForm.controls.config.value).toBe('');
+    expect(open.mock.calls[0][1].data.title).toBe('Failed to read configuration file');
+    component.onFileDropped([file('retry.json')]);
+    ControlledFileReader.instances[2].complete(json);
+    expect(component.isValid()).toBe(true);
+  });
+
+  it('handles a synchronous read failure without leaving import enabled', () => {
+    const { component, open } = render();
+    vi.spyOn(ControlledFileReader.prototype, 'readAsArrayBuffer').mockImplementationOnce(() => {
+      throw new Error('Unreadable');
+    });
+    expect(() => component.onFileDropped([file()])).not.toThrow();
+    expect(component.isValid()).toBe(false);
+    expect(open).toHaveBeenCalledTimes(1);
+  });
+
+  it('reports an unexpected current-reader abort', () => {
+    const { component, open } = render();
+    component.onFileDropped([file()]);
+    ControlledFileReader.instances[0].abort();
+    expect(component.isValid()).toBe(false);
+    expect(open).toHaveBeenCalledTimes(1);
+  });
+
+  it('aborts reading on destruction and ignores an already queued completion', () => {
+    const { fixture, component, open } = render();
+    component.onFileDropped([file()]);
+    const reader = ControlledFileReader.instances[0];
+    const queuedLoad = reader.onload!;
+    fixture.destroy();
+    reader.result = new TextEncoder().encode(json).buffer;
+    queuedLoad(reader.event());
+    expect(reader.abort).toHaveBeenCalledTimes(1);
+    expect(component.importForm.controls.config.value).toBe('');
+    expect(component.isValid()).toBe(false);
+    expect(open).not.toHaveBeenCalled();
+  });
+});
