@@ -1,0 +1,45 @@
+<header>
+  <h3 class="title-30" i18n>Choose what to include</h3>
+</header>
+
+<section content>
+  <p class="description" i18n>
+    Tick the files and folders in
+    <strong>{{ folder() }}</strong>
+    that should be backed up. Everything else in the folder is excluded, including files and folders added later.
+  </p>
+
+  <app-file-tree
+    class="fill"
+    [rootPaths]="rootPaths()"
+    [rootRemoteSource]="remoteSource()"
+    [startingPath]="initialPath()"
+    [multiSelect]="true"
+    [showFiles]="true"
+    [backupId]="backupId()">
+    <label for="include-picker-path" i18n>Picked paths</label>
+    <input type="text" id="include-picker-path" [(ngModel)]="path" />
+  </app-file-tree>
+
+  <p class="summary">
+    @if (everythingPicked()) {
+      <ng-container i18n>The whole folder is picked, so no filters are needed.</ng-container>
+    } @else if (pickCount() === 0) {
+      <ng-container i18n>Nothing is picked yet.</ng-container>
+    } @else {
+      <ng-container i18n>
+        {pickCount(), plural, =1 {1 entry picked} other {{{ pickCount() }} entries picked}}
+      </ng-container>
+    }
+  </p>
+</section>
+
+<footer footer class="sticky">
+  <button shButton type="button" (click)="closed.emit(null)" i18n>Cancel</button>
+  <div class="spacer"></div>
+  <button shButton type="button" (click)="includeEverything()" i18n>Include everything</button>
+  <button shButton type="button" class="raised primary" [disabled]="!canApply()" (click)="submit()" i18n>
+    <sh-icon>list-checks</sh-icon>
+    Apply
+  </button>
+</footer>

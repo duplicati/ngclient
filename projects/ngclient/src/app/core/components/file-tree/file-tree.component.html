@@ -15,7 +15,7 @@
       class="icon small maximize-toggle"
       [attr.aria-pressed]="maximized()"
       [attr.aria-label]="maximized() ? maximizeLabels.restore : maximizeLabels.maximize"
-      [attr.title]="maximized() ? maximizeLabels.restore : maximizeLabels.maximize"
+      [shTooltip]="maximized() ? maximizeLabels.restore : maximizeLabels.maximize"
       (click)="toggleMaximized()">
       @if (maximized()) {
         <sh-icon>corners-in</sh-icon>
@@ -142,6 +142,22 @@
                   </span>
                 }
               </div>
+
+              @if (offersIncludePicker(node)) {
+                @let picked = isPickedFolder(node);
+                <button
+                  shButton
+                  type="button"
+                  class="icon small row-action"
+                  tabindex="-1"
+                  [class.picked]="picked"
+                  [attr.aria-label]="picked ? includePickLabels.edit : includePickLabels.choose"
+                  [shTooltip]="picked ? includePickLabels.edit : includePickLabels.choose"
+                  [disabled]="disabled()"
+                  (click)="requestIncludePick($event, node)">
+                  <sh-icon>list-checks</sh-icon>
+                </button>
+              }
             </div>
 
             @if (node.children.length > 0) {
