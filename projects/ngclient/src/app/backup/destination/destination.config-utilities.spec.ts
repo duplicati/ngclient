@@ -41,6 +41,11 @@ describe('destination URL utilities', () => {
       );
     });
 
+    it('puts an IPv6 server in brackets without encoding it', () => {
+      expect(buildUrl('ssh', '2001:db8::2', 22, 'backups', [])).toBe('ssh://[2001:db8::2]:22/backups');
+      expect(buildUrl('ssh', '[::1]', null, 'backups', [])).toBe('ssh://[::1]/backups');
+    });
+
     it('supports URLs without a server or path', () => {
       expect(buildUrl('file', null, null, null, [])).toBe('file://');
     });
