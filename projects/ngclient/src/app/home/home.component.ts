@@ -76,6 +76,10 @@ export default class HomeComponent {
   hasPurgeFiles = this.#sysinfo.hasV2PurgeFiles;
 
   MISSING_BACKUP_NAME = $localize`Backup name missing`;
+  stopLabel = $localize`Stop`;
+  abortLabel = $localize`Abort`;
+  pauseLabel = $localize`Pause`;
+  resumeLabel = $localize`Resume`;
   sortOrderOptions = this.#backupsState.orderByOptions;
   orderBy = this.#backupsState.orderBy;
   backups = this.#backupsState.backups;
@@ -100,6 +104,32 @@ export default class HomeComponent {
 
   clientIsRunning = this.#statusBarState.clientIsRunning;
   isResuming = this.#statusBarState.isResuming;
+
+  // Progress of the running backup as a whole percentage, or null when the phase has no measurable progress
+  runningProgress = computed(() => {
+    const progress = this.#statusBarState.statusData()?.progress ?? -1;
+    return progress < 0 ? null : Math.round(Math.min(progress, 1) * 100);
+  });
+
+  // Backup IDs waiting in the scheduler queue (the running one is reported separately)
+  queuedBackupIds = computed(() => {
+    const running = this.runningBackupId();
+    const queue = this.#serverState.serverState()?.SchedulerQueueIds ?? [];
+    return new Set(
+      queue
+        .map((x) => (x.Item2 == null ? null : String(x.Item2)))
+        .filter((x): x is string => !!x && x !== String(running))
+    );
+  });
+
+  isRunning(backupId: string | null | undefined) {
+    const running = this.runningBackupId();
+    return running != null && backupId != null && String(running) === String(backupId);
+  }
+
+  isQueued(backupId: string | null | undefined) {
+    return backupId != null && this.queuedBackupIds().has(String(backupId));
+  }
 
   runningTask = computed(() => this.#statusBarState.serverState()?.ActiveTask?.Item1);
   isStopping = computed(() => this.runningTask() == this.#taskStopRequested());

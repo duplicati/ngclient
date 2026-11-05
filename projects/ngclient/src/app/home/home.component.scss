@@ -168,6 +168,33 @@ sh-menu {
   }
 }
 
+tr.running td {
+  background: var(--primary-2);
+}
+
+.row-progress {
+  display: flex;
+  align-items: center;
+  gap: p2r(8);
+  min-width: p2r(120);
+
+  // sh-table positions every nested progress bar as its loading indicator; keep this one inline
+  sh-progress-bar {
+    flex: 1 1 auto;
+    position: relative;
+    top: auto;
+    transform: none;
+    z-index: auto;
+  }
+
+  .row-progress-value {
+    font: var(--paragraph-30);
+    font-variant-numeric: tabular-nums;
+    min-width: 4ch;
+    text-align: right;
+  }
+}
+
 .provider-icon {
   width: p2r(20);
   height: p2r(20);

@@ -185,7 +185,12 @@
                       </p>
 
                       @let next = scheduledTimes()[backup.Backup.ID ?? ''];
-                      @if (next) {
+                      @if (isQueued(backup.Backup.ID)) {
+                        <p>
+                          <span i18n>Next scheduled run:</span>
+                          <span class="time-value" i18n>Queued</span>
+                        </p>
+                      } @else if (next) {
                         <p>
                           <span i18n>Next scheduled run:</span>
                           <span class="time-value" [shTooltip]="next | relativeTime: timeType() !== 'actual'">{{ next | relativeTime: timeType() === 'actual' }}</span>
@@ -233,9 +238,22 @@
                       </sh-chip>
                     } @else {
                       @let versions = getBackupVersionCount(backup);
-                      <sh-chip class="simple success" i18n>
-                        {versions, plural, =0 {No version yet} =1 {1 Version} other {{{ versions }} Versions}}
-                      </sh-chip>
+                      @if (versions > 0) {
+                        <sh-chip
+                          class="simple success actionable"
+                          role="link"
+                          tabindex="0"
+                          [routerLink]="['/restore', backup.Backup.ID]"
+                          (keydown.enter)="$any($event.target).click()"
+                          i18n-shTooltip
+                          shTooltip="Restore from this backup"
+                          i18n>
+                          {versions, plural, =1 {1 Version} other {{{ versions }} Versions}}
+                          <sh-icon>arrow-right</sh-icon>
+                        </sh-chip>
+                      } @else {
+                        <sh-chip class="simple success" i18n>No version yet</sh-chip>
+                      }
                     }
 
                     @if (backup.Backup.ExternalID) {
@@ -298,7 +316,8 @@
           </tr>
 
           @for (backup of filteredBackups(); track $index) {
-            <tr>
+            @let running = isRunning(backup.Backup.ID);
+            <tr [class.running]="running">
               <td>
                 {{ backup.Backup.Name ?? MISSING_BACKUP_NAME }}
               </td>
@@ -318,7 +337,17 @@
                 }
               </td>
               <td>
-                @if ((backup.Backup | lastRun)) {
+                @if (running) {
+                  @let progress = runningProgress();
+                  <div class="row-progress">
+                    @if (progress === null) {
+                      <sh-progress-bar class="indeterminate primary" />
+                    } @else {
+                      <sh-progress-bar class="primary" [value]="progress" />
+                      <span class="row-progress-value">{{ progress }}%</span>
+                    }
+                  </div>
+                } @else if ((backup.Backup | lastRun)) {
                   <span class="time-value" [shTooltip]="(backup.Backup | lastRun) | relativeTime: timeType() !== 'actual'">{{ (backup.Backup | lastRun) | relativeTime: timeType() === 'actual' }}</span>
                 } @else {
                   <ng-container>-</ng-container>
@@ -326,7 +355,12 @@
               </td>
               <td>
                 @let next = scheduledTimes()[backup.Backup.ID ?? ''];
-                @if (next) {
+                @if (isQueued(backup.Backup.ID)) {
+                  <sh-chip class="small primary" i18n>
+                    <sh-icon>queue</sh-icon>
+                    Queued
+                  </sh-chip>
+                } @else if (next) {
                   <span class="time-value" [shTooltip]="next | relativeTime: timeType() !== 'actual'">{{ next | relativeTime: timeType() === 'actual' }}</span>
                 } @else {
                   <ng-container>-</ng-container>
@@ -387,31 +421,39 @@
 </section>
 
 <ng-template #actions let-backup>
-  @if (runningBackupId() === backup.Backup.ID) {
+  @if (isRunning(backup.Backup.ID)) {
+    @let compact = viewMode() === 'details';
     @if (isStopping()) {
-      <button shButton [class.small]="viewMode() === 'details'" i18n (click)="abort()">
+      <button shButton [shTooltip]="compact ? abortLabel : null" (click)="abort()">
         <sh-icon>skull</sh-icon>
-        Abort
+        @if (!compact) {
+          {{ abortLabel }}
+        }
       </button>
     } @else {
-      <button shButton [class.small]="viewMode() === 'details'" i18n (click)="stop()">
+      <button shButton [shTooltip]="compact ? stopLabel : null" (click)="stop()">
         <sh-icon>stop</sh-icon>
-        Stop
+        @if (!compact) {
+          {{ stopLabel }}
+        }
       </button>
     }
 
     <button
       shButton
-      [class.small]="viewMode() === 'details'"
-      i18n
+      [shTooltip]="compact ? (clientIsRunning() ? pauseLabel : resumeLabel) : null"
       [class.loading]="isResuming()"
       (click)="pauseResume()">
       @if (clientIsRunning()) {
         <sh-icon>pause</sh-icon>
-        Pause
+        @if (!compact) {
+          {{ pauseLabel }}
+        }
       } @else {
         <sh-icon>play</sh-icon>
-        Resume
+        @if (!compact) {
+          {{ resumeLabel }}
+        }
       }
     </button>
   } @else {

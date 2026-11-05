@@ -149,6 +149,11 @@ async function setupAuthentication(
     }
   };
 
+  const sendServerStatus = (changes: Record<string, unknown>) => {
+    Object.assign(serverStatus, changes, { LastEventID: serverStatus.LastEventID + 1 });
+    for (const socket of sockets) socket.send(JSON.stringify(serverStatus));
+  };
+
   return {
     loginRequests,
     refreshRequests,
@@ -159,6 +164,7 @@ async function setupAuthentication(
     pageErrors,
     subscriptions,
     sendBackupList,
+    sendServerStatus,
   };
 }
 
