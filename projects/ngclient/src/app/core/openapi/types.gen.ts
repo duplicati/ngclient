@@ -982,6 +982,7 @@ export type TreeNodeDto = {
     temporary: boolean;
     symlink: boolean;
     fileSize: number;
+    kind?: string | null;
 };
 
 export type UpdateCertificateInputDto = {

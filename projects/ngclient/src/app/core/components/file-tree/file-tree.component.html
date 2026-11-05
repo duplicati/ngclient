@@ -78,7 +78,7 @@
               #treeNode
               role="treeitem"
               [id]="treeItemId(node)"
-              [attr.aria-label]="node.text ?? node.id"
+              [attr.aria-label]="treeItemLabel(node)"
               [attr.aria-level]="data.level + 1"
               [attr.aria-posinset]="position + 1"
               [attr.aria-setsize]="treeSetSize(children)"
@@ -101,8 +101,13 @@
               [class.loading]="isLoading() === node.id"
               [class.generated]="node.isGenerated"
               [class.search-match]="node.isSearchMatch"
+              [class.symlink]="node.symlink"
               (click)="activateTreeNode($event, node)">
-              <div class="icon" [class.file]="node.cls === 'file'" (click)="toggleTreeNode($event, node)">
+              <div
+                class="icon"
+                [class.file]="node.cls === 'file'"
+                [attr.title]="treeNodeBadge(node)?.label ?? null"
+                (click)="toggleTreeNode($event, node)">
                 @if (node.id !== '/') {
                   @if (isTreeNodeExpanded(node)) {
                     <sh-icon class="small">caret-down</sh-icon>
@@ -114,16 +119,21 @@
                     <sh-icon class="small">caret-right</sh-icon>
                   }
 
+                  @let badge = treeNodeBadge(node);
                   @if (node.customIcon) {
                     <img class="provider-icon" [src]="node.customIcon" alt="Provider icon" />
+                  } @else if (badge?.replacesIcon) {
+                    <sh-icon class="primary">{{ badge!.icon }}</sh-icon>
                   } @else if (isTreeNodeExpanded(node)) {
                     <sh-icon class="primary">folder-open</sh-icon>
-                  } @else if (node.id === '%HOME%') {
-                    <sh-icon class="primary">folder-user</sh-icon>
                   } @else if (node.cls === 'file') {
                     <sh-icon class="primary">file</sh-icon>
                   } @else {
                     <sh-icon class="primary">folder</sh-icon>
+                  }
+
+                  @if (badge && !badge.replacesIcon) {
+                    <sh-icon class="icon-badge primary" aria-hidden="true">{{ badge.icon }}</sh-icon>
                   }
                 } @else {
                   <sh-icon class="primary">desktop-tower</sh-icon>

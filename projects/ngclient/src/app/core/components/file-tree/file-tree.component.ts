@@ -101,6 +101,20 @@ type FileTreeNode = TreeNode & {
   remoteSource?: RemoteSource;
 };
 
+type TreeNodeBadge = {
+  icon: string;
+  label: string;
+  announce?: boolean;
+  /** Show the icon in place of the folder/file icon instead of as a corner badge. */
+  replacesIcon?: boolean;
+};
+
+/**
+ * Icon names chosen in code are invisible to the ship-fg font subsetter, which only scans
+ * templates and string literals carrying the shicon prefix; the prefix makes it include the glyph.
+ */
+const shIcon = (marked: `shicon:${string}`) => marked.slice('shicon:'.length);
+
 type InputValueChangedEvent = CustomEvent<{ value: string }>;
 
 type UnrootedSource = {
@@ -204,6 +218,40 @@ export default class FileTreeComponent {
   maximizeLabels = {
     maximize: $localize`Maximize file tree`,
     restore: $localize`Restore file tree size`,
+  };
+  /**
+   * Corner badges layered over the folder/file icon, keyed by the node `kind` sent by the
+   * server (exact match first, then the part before the colon). `announce` adds the label
+   * to the row's accessible name, for states the visible name does not already convey.
+   */
+  readonly #treeNodeBadges: Record<string, TreeNodeBadge> = {
+    symlink: { icon: shIcon('shicon:arrow-bend-up-right'), label: $localize`Symbolic link`, announce: true },
+    locked: { icon: shIcon('shicon:lock'), label: $localize`Access denied`, announce: true },
+    drive: { icon: shIcon('shicon:hard-drive'), label: $localize`Drive` },
+    'drive:network': { icon: shIcon('shicon:globe-simple'), label: $localize`Network drive` },
+    'drive:removable': { icon: shIcon('shicon:usb'), label: $localize`Removable drive` },
+    special: { icon: shIcon('shicon:star'), label: $localize`Special folder` },
+    'special:home': { icon: shIcon('shicon:user'), label: $localize`Home folder` },
+    'special:my_documents': { icon: shIcon('shicon:file-text'), label: $localize`Documents folder` },
+    'special:my_music': { icon: shIcon('shicon:music-note'), label: $localize`Music folder` },
+    'special:my_pictures': { icon: shIcon('shicon:image'), label: $localize`Pictures folder` },
+    'special:my_videos': { icon: shIcon('shicon:film-strip'), label: $localize`Videos folder` },
+    'special:my_movies': { icon: shIcon('shicon:film-strip'), label: $localize`Movies folder` },
+    'special:desktop': { icon: shIcon('shicon:desktop'), label: $localize`Desktop folder` },
+    'special:appdata': { icon: shIcon('shicon:gear'), label: $localize`Application data folder` },
+    'special:my_downloads': { icon: shIcon('shicon:download-simple'), label: $localize`Downloads folder` },
+    'special:my_public': { icon: shIcon('shicon:users-three'), label: $localize`Public folder` },
+    'qnap:share': { icon: shIcon('shicon:share-network'), label: $localize`QNAP shared folder` },
+    hyperv: { icon: shIcon('shicon:cube'), label: $localize`Hyper-V` },
+    'hyperv:virtualmachine': {
+      icon: shIcon('shicon:monitor'),
+      label: $localize`Hyper-V virtual machine`,
+      replacesIcon: true,
+    },
+    mssql: { icon: shIcon('shicon:database'), label: $localize`Microsoft SQL Server` },
+    'mssql:server': { icon: shIcon('shicon:hard-drives'), label: $localize`SQL Server host` },
+    'mssql:instance': { icon: shIcon('shicon:stack'), label: $localize`SQL Server instance` },
+    'mssql:database': { icon: shIcon('shicon:database'), label: $localize`SQL Server database`, replacesIcon: true },
   };
   createFolderDialogOpen = signal(false);
   createFolderPath = signal<string | null>(null);
@@ -588,7 +636,7 @@ export default class FileTreeComponent {
         hidden: false,
         systemFile: false,
         temporary: false,
-        symlink: false,
+        symlink: info.match?.IsSymlink ?? false,
         fileSize: info.match?.Size ?? 0,
         lastModified: info.match?.LastModified ?? null,
       };
@@ -1082,6 +1130,7 @@ export default class FileTreeComponent {
                 cls: x.cls,
                 text: this.#getDisplayName(x.text, (x as any)?.Metadata),
                 iconCls: x.iconCls,
+                kind: x.kind ?? null,
                 fileSize: x.fileSize,
                 lastModified: (x as any)?.lastModified ?? null,
                 resolvedpath: x.resolvedpath,
@@ -1212,6 +1261,24 @@ export default class FileTreeComponent {
   treeNodeLastModifiedTitle(lastModified: string): string {
     const date = this.#datePipe.transform(lastModified, 'medium') ?? lastModified;
     return $localize`Last modified: ${date}:date:`;
+  }
+
+  /** Which corner badge to layer over the node's folder/file icon, if any. */
+  treeNodeBadge(node: FileTreeNode): TreeNodeBadge | null {
+    if (node.symlink) return this.#treeNodeBadges['symlink'];
+
+    // Servers that predate the kind field only mark the home folder by its token
+    const kind = node.kind ?? (node.id === '%HOME%' ? 'special:home' : null);
+    if (!kind) return null;
+
+    return this.#treeNodeBadges[kind] ?? this.#treeNodeBadges[kind.split(':')[0]] ?? null;
+  }
+
+  /** Accessible name for a tree row; badges that convey a state are announced since the badge icon is visual only. */
+  treeItemLabel(node: FileTreeNode): string {
+    const name = node.text ?? node.id ?? '';
+    const badge = this.treeNodeBadge(node);
+    return badge?.announce ? $localize`${name}:name: (${badge.label}:state:)` : name;
   }
 
   treeSetSize(nodes: FileTreeNode[]) {
@@ -1720,6 +1787,7 @@ export default class FileTreeComponent {
                   (y: {
                     Path: string;
                     Size: number;
+                    IsSymlink?: boolean;
                     LastModified?: string | null;
                     Metadata: { [key: string]: string | null } | null;
                   }) => {
@@ -1761,6 +1829,7 @@ export default class FileTreeComponent {
                       leaf: node !== null,
                       resolvedpath: y.Path,
                       hidden: false,
+                      symlink: y.IsSymlink ?? false,
                       remoteSource: newRemoteSource,
                       fileSize: y.Size,
                       lastModified: y.LastModified ?? null,
