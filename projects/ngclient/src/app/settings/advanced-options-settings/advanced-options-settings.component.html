@@ -1,13 +1,31 @@
 <div class="actions">
   @if (saved()) {
-    <sh-alert class="success" i18n>Settings saved</sh-alert>
+    <sh-alert color="success" i18n>Settings saved</sh-alert>
   }
-  <button shButton type="button" class="raised primary" [class.loading]="isSubmitting()" (click)="submit()" i18n>
+  <button
+    shButton
+    type="button"
+    class="raised primary"
+    [class.loading]="isSubmitting()"
+    [disabled]="isSubmitting() || isLoadingOptions()"
+    (click)="submit()"
+    i18n>
     <sh-icon>floppy-disk</sh-icon>
     Save settings
   </button>
 </div>
 
-@defer (when !isLoadingOptions()) {
-  <app-options-list [(options)]="settings" [hasFreeTextSettings]="true" />
+@if (isSubmitting()) {
+  <p role="status" i18n>Saving advanced settings…</p>
 }
+@if (saveState().status === 'error') {
+  <sh-alert color="error" i18n>
+    Could not save advanced settings. Your changes have been kept. Please try again.
+  </sh-alert>
+}
+
+<div class="options-editor" [attr.aria-busy]="isSubmitting()" [attr.inert]="isSubmitting() ? '' : null">
+  @defer (when !isLoadingOptions()) {
+    <app-options-list [(options)]="settings" [hasFreeTextSettings]="true" />
+  }
+</div>
