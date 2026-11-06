@@ -16,6 +16,7 @@ import {
 import { rxResource } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
+import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipButtonGroup } from '@ship-ui/core/ship-button-group';
 import { ShipDialog, ShipDialogService } from '@ship-ui/core/ship-dialog';
@@ -40,6 +41,8 @@ import { FileTreeState } from '../../states/file-tree.state';
 import { SysinfoState } from '../../states/sysinfo.state';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { globMatchesPath, regexMatchesPath } from './file-tree-filter-matcher';
+import { isFolderPath } from './file-tree-path-utils';
+import { findIncludePickContaining, findIncludePicks, toggleInIncludePick } from './include-pick';
 import { BackupSettings, RemoteSource, PagedListResult, FileTreeListingService } from './file-tree-listing.service';
 export type { BackupSettings } from './file-tree-listing.service';
 
@@ -61,10 +64,7 @@ export const getInheritedExclusionState = (
   return null;
 };
 
-export const isFolderPath = (path: string): boolean =>
-  (path.startsWith('%') && path.endsWith('%') && !path.includes('/') && !path.includes('\\')) ||
-  path.endsWith('/') ||
-  path.endsWith('\\');
+export { isFolderPath };
 
 // Filters only ever apply to paths that the backup enumerates, i.e. the selected
 // sources and everything below a selected source folder. A node outside every
@@ -161,6 +161,7 @@ const LOAD_MORE_ID_SUFFIX = '\0load-more';
     BytesPipe,
     DatePipe,
     ShipAlert,
+    ShipTooltip,
   ],
   providers: [DatePipe],
   templateUrl: './file-tree.component.html',
@@ -200,6 +201,12 @@ export default class FileTreeComponent {
   resolvePaths = input(false);
   customRemoteMode = input<'gsuite' | 'o365' | 'diskimage' | 'backend' | null>(null);
   showUnrootedSources = input(false);
+  // Offers "choose what to include" on folder rows, and toggles entries inside a picked folder as picks
+  enableIncludePicker = input(false);
+  includePick = output<string>();
+  // A remote source as @mount|url whose mount is the first root path, so the root lists through it
+  rootRemoteSource = input<string | null>(null);
+  #rootRemoteSource = computed(() => this.#parseRemotePath(this.rootRemoteSource()));
   backupId = input<string | null | undefined>('');
   connectionStringId = input<number | null | undefined>(null);
   sourcePrefix = input<string | null | undefined>('');
@@ -277,6 +284,40 @@ export default class FileTreeComponent {
   });
 
   filterGroups = this.#sysInfo.filterGroups();
+
+  // Source folders that only back up a chosen set of their contents
+  pickedFolders = computed(() => new Set(findIncludePicks(this.currentPathArray()).map((pick) => pick.folder)));
+  includePickLabels = {
+    choose: $localize`Choose what to include`,
+    edit: $localize`Edit what is included`,
+  };
+
+  isPickedFolder(node: FileTreeNode) {
+    const folder = this.includePickFolder(node);
+    return folder !== null && this.pickedFolders().has(folder);
+  }
+
+  offersIncludePicker(node: FileTreeNode) {
+    return this.enableIncludePicker() && node.cls === 'folder' && node.id !== ROOTPATH && !node.isLoadMore;
+  }
+
+  // The folder a pick is stored under is the node id as-is: a shortcut such as %MY_DOCUMENTS% stays
+  // a token, since its entries are listed as %MY_DOCUMENTS%/name and filters accept that form.
+  // The root of a remote source is its mount, whose entries are listed below it with a separator.
+  includePickFolder(node: FileTreeNode): string | null {
+    if (!node.id) return null;
+    if (node.remoteSource && !node.remoteSource.path) return this.#appendDirSep(node.id);
+    return node.id;
+  }
+
+  requestIncludePick(event: Event, node: FileTreeNode) {
+    event.stopPropagation();
+    event.preventDefault();
+    const folder = this.includePickFolder(node);
+    if (this.disabled() || !folder) return;
+    this.includePick.emit(folder);
+  }
+
   isByBackupSettings = computed(() => {
     const backupSettings = this.backupSettings();
 
@@ -311,6 +352,11 @@ export default class FileTreeComponent {
       })
       .join('\0');
   });
+
+  /** Whether the path is the mount folder of the remote source rather than a folder inside it. */
+  #isRemoteMount(path: string, remote: RemoteSource) {
+    return path.replace(/[\\/]$/, '') === remote.mount.replace(/[\\/]$/, '');
+  }
 
   #parseRemotePath(path: string | null | undefined): RemoteSource | null {
     if (!path) return null;
@@ -708,20 +754,27 @@ export default class FileTreeComponent {
     let roots: FileTreeNode[] = [];
 
     if (rootPaths.length > 0) {
-      roots = rootPaths.map((rootPath) => {
+      const rootRemote = this.#rootRemoteSource();
+      roots = rootPaths.map((rootPath, index) => {
         const evalState = this.#performRemoteEval()
           ? this.#evalRemote(rootPath, null, currentPaths, 'folder')
           : this.#eval(currentPaths, rootPath, 'folder', null);
+        const remoteSource = index === 0 && rootRemote ? rootRemote : undefined;
 
         return {
           id: rootPath,
           resolvedpath: rootPath,
-          text: this.#getDisplayName(rootPath, rootMetadata[rootPath]),
+          text:
+            remoteSource && this.#isRemoteMount(rootPath, remoteSource)
+              ? getRemotePathDisplayName(remoteSource.url)
+              : this.#getDisplayName(rootPath, rootMetadata[rootPath]),
           parentPath: '',
           children: [],
           evalState: evalState,
           isIndeterminate: false,
           cls: this.#isFolder(rootPath) ? 'folder' : 'file',
+          remoteSource,
+          customIcon: remoteSource ? getBackendIcon(remoteSource.url) : undefined,
         } as any as FileTreeNode;
       });
     } else {
@@ -907,10 +960,8 @@ export default class FileTreeComponent {
 
     for (let index = 0; index < sources.length; index++) {
       const x = sources[index];
-      if (nodeId === x || resolvedNodeId == x) {
-        result = TreeEvalEnum.Included;
-        break;
-      }
+      // A source itself is always backed up; the backend never runs its root entries through the filters
+      if (nodeId === x || resolvedNodeId == x) return TreeEvalEnum.Included;
 
       if (!isMultiSelect || !this.#isFolder(x)) continue;
 
@@ -1140,7 +1191,9 @@ export default class FileTreeComponent {
             })
           );
         }
-        this.#getPath(null, roots[0]);
+        // A remote root lists through its source; the stand-in node only carries that source
+        const rootRemote = this.#rootRemoteSource();
+        this.#getPath(rootRemote ? ({ id: roots[0], remoteSource: rootRemote } as FileTreeNode) : null, roots[0]);
       } else {
         this.#getPath(null, ROOTPATH);
       }
@@ -1480,6 +1533,16 @@ export default class FileTreeComponent {
     const nodeId = this.#resolveNodeId(node);
     const pathToTest = isChildOfSelected ? `-${nodeId}` : nodeId!;
     const isFolder = this.#isFolder(nodeId!);
+
+    // Inside a picked folder a click picks or unpicks the entry instead of adding a plain exclude
+    if (this.multiSelect() && this.enableIncludePicker() && !currentPathsWithRemotes.includes(nodeId!)) {
+      const pick = findIncludePickContaining(currentPaths, nodeId!);
+      if (pick) {
+        const included = node.evalState === TreeEvalEnum.Included || node.evalState === TreeEvalEnum.IncludedByParent;
+        this.currentPath.set(toggleInIncludePick(currentPaths, pick, nodeId!, included).join('\0'));
+        return;
+      }
+    }
 
     if (this.multiSelect()) {
       if (currentPathsWithRemotes.includes(nodeId!)) {

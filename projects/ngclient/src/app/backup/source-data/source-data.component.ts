@@ -17,8 +17,10 @@ import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipMenu } from '@ship-ui/core/ship-menu';
+import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { ShipToggle } from '@ship-ui/core/ship-toggle';
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
+import { applyIncludePick, findIncludePicks, remoteSourceFor } from '../../core/components/file-tree/include-pick';
 import { SizeComponent } from '../../core/components/size/size.component';
 import { splitSize } from '../../core/functions/parse-size';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
@@ -29,6 +31,7 @@ import { FiltersComponent } from '../components/filters/filters.component';
 import { getBackendIcon, getRemotePathDisplayName } from '../destination/destination.config-utilities';
 import { CustomRemotePermissionsDialog } from './custom-remote-permissions-dialog/custom-remote-permissions-dialog';
 import { GoogleWorkspaceCountsDialog } from './googleworkspace-counts-dialog/googleworkspace-counts-dialog';
+import { IncludePickerDialog, IncludePickerResult } from './include-picker-dialog/include-picker-dialog';
 import { Office365CountsDialog } from './office365-counts-dialog/office365-counts-dialog';
 import { TargetDiskDialog } from './target-disk-dialog/target-disk-dialog';
 import { TargetUrlDialog } from './target-url-dialog/target-url-dialog';
@@ -43,6 +46,7 @@ import { TargetUrlDialog } from './target-url-dialog/target-url-dialog';
     ShipButton,
     ShipToggle,
     ShipMenu,
+    ShipTooltip,
     FiltersComponent,
     FileTreeComponent,
     ToggleCardComponent,
@@ -96,6 +100,45 @@ export default class SourceDataComponent {
   );
 
   filters = signal<string[]>([]);
+
+  // Source folders that only back up a chosen set of their contents
+  pickedFolders = computed(() => {
+    const paths = (this.pathSignal() ?? '').split('\0').filter((x) => x !== '');
+    return new Set(findIncludePicks(paths).map((pick) => pick.folder));
+  });
+
+  #pathList() {
+    return (this.sourceDataForm.controls.path.value ?? '').split('\0').filter((x) => x !== '');
+  }
+
+  isPickedFolder(path: string) {
+    return this.pickedFolders().has(path);
+  }
+
+  openIncludePicker(folder: string) {
+    const dialogRef = this.#dialog.open(IncludePickerDialog, {
+      maxWidth: '700px',
+      maxHeight: '80vh',
+      width: '100%',
+      closeOnOutsideClick: false,
+      data: {
+        folder,
+        paths: this.#pathList(),
+        backupId: this.backupId,
+        separator: this.#sysInfo.systemInfo()?.DirectorySeparator ?? '/',
+        // A folder on a remote source lists through its @mount|url entry
+        remoteSource: remoteSourceFor(this.#pathList(), folder),
+      },
+    });
+
+    dialogRef.closed.subscribe((result: IncludePickerResult | null) => {
+      if (!result) return;
+
+      const separator = this.#sysInfo.systemInfo()?.DirectorySeparator ?? '/';
+      const next = applyIncludePick(this.#pathList(), folder, result.picks, result.excludes, separator);
+      this.sourceDataForm.controls.path.setValue(next.join('\0'));
+    });
+  }
 
   #syncFilters = effect(() => {
     const pathValue = this.pathSignal();
