@@ -20,3 +20,20 @@ form {
   justify-content: flex-end;
   margin-bottom: p2r(8);
 }
+
+.image-file {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(12);
+}
+
+.image-format {
+  display: flex;
+  flex-wrap: wrap;
+  gap: p2r(8);
+}
+
+.image-note {
+  margin: 0;
+  opacity: 0.8;
+}

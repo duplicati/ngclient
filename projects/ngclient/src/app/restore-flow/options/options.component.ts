@@ -3,6 +3,7 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
+import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipRadio } from '@ship-ui/core/ship-radio';
 import { ShipToggle } from '@ship-ui/core/ship-toggle';
@@ -14,19 +15,36 @@ import FileTreeComponent from '../../core/components/file-tree/file-tree.compone
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 import { RestoreFlowState } from '../restore-flow.state';
+import {
+  buildImageFileRestorePath,
+  defaultImageFileName,
+  IMAGE_FILE_MODULE_KEY,
+  IMAGE_FORMAT_OPTION,
+  IMAGE_PREALLOCATE_OPTION,
+  ImageFileFormat,
+  imageFormatFromName,
+  setImageExtension,
+} from './image-file-target';
 import { RESTORE_OPTION_DEFAULTS } from './restore-option-defaults';
 
 const fb = new FormBuilder();
 
 export const createRestoreOptionsForm = () => {
   return fb.group({
-    restoreFrom: fb.control<'original' | 'pickLocation' | 'same-custom' | 'other-custom' | 'diskimage'>('original'),
+    restoreFrom: fb.control<
+      'original' | 'pickLocation' | 'same-custom' | 'other-custom' | 'diskimage' | 'diskimage-file'
+    >('original'),
     restoreFromPath: fb.control<string>(''),
     handleExisting: fb.control<'overwrite' | 'saveTimestamp'>(RESTORE_OPTION_DEFAULTS.handleExisting),
     permissions: fb.control<boolean>(RESTORE_OPTION_DEFAULTS.permissions),
     includeMetadata: fb.control<boolean>(RESTORE_OPTION_DEFAULTS.includeMetadata),
     customRemoteIgnoreExisting: fb.control<boolean>(false),
     registerRestoredItems: fb.control<boolean>(false),
+    imageFolder: fb.control<string>(''),
+    imageFileName: fb.control<string>(''),
+    imageFormat: fb.control<ImageFileFormat>('raw'),
+    imageOverwrite: fb.control<boolean>(false),
+    imagePreallocate: fb.control<boolean>(false),
   });
 };
 
@@ -41,6 +59,7 @@ export const createRestoreOptionsForm = () => {
     ShipRadio,
     ShipButton,
     ShipIcon,
+    ShipFormField,
   ],
   templateUrl: './options.component.html',
   styleUrl: './options.component.scss',
@@ -62,6 +81,30 @@ export default class OptionsComponent {
   canRegisterRestoredItems = this.#restoreFlowState.canRegisterRestoredItems;
 
   remoteCustomTargetUrl = signal<string | null>(null);
+
+  /** Whether the server can restore a disk image to an image file */
+  canRestoreToImageFile = computed(() =>
+    this.#sysinfoState.restoreDestinationProviderModules().some((x) => x.Key === IMAGE_FILE_MODULE_KEY)
+  );
+
+  /** Whether the restore writes a disk, either a physical disk or an image file */
+  isDiskTarget = computed(() => {
+    const mode = this.optionsFormSignal()?.restoreFrom;
+    return mode === 'diskimage' || mode === 'diskimage-file';
+  });
+
+  hiddenAdvancedOptions = [
+    'restore-path',
+    'overwrite',
+    'restore-permissions',
+    'skip-metadata',
+    'register-restored-items',
+    'passphrase',
+    'time',
+    'version',
+    IMAGE_FORMAT_OPTION,
+    IMAGE_PREALLOCATE_OPTION,
+  ];
   backupId = computed(() => this.#restoreFlowState.backup()?.Backup?.ID ?? null);
   extendedDataType = computed(() => {
     const type = this.#restoreFlowState.extendedDataType();
@@ -178,6 +221,31 @@ export default class OptionsComponent {
     return true;
   }
 
+  /** Selects the image file target, suggesting a file name from the backed-up disk */
+  chooseImageFileDestination() {
+    const controls = this.optionsForm.controls;
+    if (!controls.imageFileName.value?.trim()) {
+      const name = defaultImageFileName(this.#restoreFlowState.backup()?.Backup?.Sources);
+      controls.imageFileName.setValue(setImageExtension(name, controls.imageFormat.value ?? 'raw'));
+    }
+  }
+
+  /** Gives the file name the extension of the chosen format, as the server picks the format by extension */
+  setImageFormat(format: ImageFileFormat) {
+    const controls = this.optionsForm.controls;
+    controls.imageFormat.setValue(format);
+    controls.imageFileName.setValue(setImageExtension(controls.imageFileName.value ?? '', format));
+  }
+
+  // Keep the format choice in line with an extension typed in the file name
+  #syncImageFormatEffect = effect(() => {
+    const name = this.optionsFormSignal()?.imageFileName ?? '';
+    const format = imageFormatFromName(name);
+    if (name.trim() !== '' && this.optionsForm.controls.imageFormat.value !== format) {
+      this.optionsForm.controls.imageFormat.setValue(format);
+    }
+  });
+
   // Handle default selection changes based on data type
   #selectDefaultRestoreModeEffect = effect(() => {
     const mode = this.optionsFormSignal()?.restoreFrom;
@@ -224,6 +292,7 @@ export default class OptionsComponent {
       this.optionsFormSignal()?.restoreFrom === 'other-custom';
 
     const restoreToTargetDisk = this.optionsFormSignal()?.restoreFrom === 'diskimage';
+    const restoreToImageFile = this.optionsFormSignal()?.restoreFrom === 'diskimage-file';
 
     if (restoreToCustomRemote) {
       let path = this.optionsFormSignal()?.restoreFromPath;
@@ -277,6 +346,34 @@ export default class OptionsComponent {
       }
 
       this.#restoreFlowState.setAlternateRestorePath(path, null);
+      this.optionsForm.controls.includeMetadata.setValue(true);
+      this.optionsForm.controls.permissions.setValue(true);
+    } else if (restoreToImageFile) {
+      const value = this.optionsFormSignal();
+      const result = buildImageFileRestorePath(value?.imageFolder, value?.imageFileName, !!value?.imagePreallocate);
+
+      if ('error' in result) {
+        const messages = {
+          'missing-folder': $localize`Please choose the folder to write the image file to.`,
+          'missing-name': $localize`Please enter a name for the image file.`,
+          'invalid-name': $localize`The image file name cannot contain a folder separator. Choose the folder in the folder list.`,
+          'invalid-path': $localize`The image file path cannot contain the characters ? or #.`,
+        };
+
+        this.#dialog.open(ConfirmDialogComponent, {
+          data: {
+            title: $localize`No image file specified`,
+            message: messages[result.error],
+            confirmText: $localize`OK`,
+            cancelText: undefined,
+          },
+        });
+        return;
+      }
+
+      // An existing image file is only replaced when allowed
+      this.optionsForm.controls.handleExisting.setValue(value?.imageOverwrite ? 'overwrite' : 'saveTimestamp');
+      this.#restoreFlowState.setAlternateRestorePath(result.path, null);
       this.optionsForm.controls.includeMetadata.setValue(true);
       this.optionsForm.controls.permissions.setValue(true);
     } else {

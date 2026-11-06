@@ -45,6 +45,18 @@
             formControlName="restoreFrom"
             (click)="chooseDiskDestination()" />
         </sh-radio>
+
+        @if (canRestoreToImageFile()) {
+          <sh-radio class="raised primary" i18n>
+            Image file
+            <input
+              type="radio"
+              name="restoreFrom"
+              value="diskimage-file"
+              formControlName="restoreFrom"
+              (click)="chooseImageFileDestination()" />
+          </sh-radio>
+        }
       }
 
       <sh-radio class="raised primary" i18n>
@@ -71,6 +83,70 @@
           <label for="path">Path</label>
           <input type="text" id="path" formControlName="restoreFromPath" />
         </app-file-tree>
+      }
+
+      @if (optionsFormSignal()?.restoreFrom === 'diskimage-file') {
+        <app-file-tree [enableCreateFolder]="true" [resolvePaths]="true">
+          <label for="imageFolder" i18n>Folder</label>
+          <input type="text" id="imageFolder" formControlName="imageFolder" />
+        </app-file-tree>
+
+        <div class="image-file">
+          <sh-form-field>
+            <label for="imageFileName" i18n>File name</label>
+            <input type="text" id="imageFileName" formControlName="imageFileName" />
+          </sh-form-field>
+
+          <div class="image-format" role="radiogroup" aria-label="Image format" i18n-aria-label>
+            <sh-radio class="raised primary" i18n>
+              Raw image (.img)
+              <input
+                type="radio"
+                name="imageFormat"
+                value="raw"
+                formControlName="imageFormat"
+                (change)="setImageFormat('raw')" />
+            </sh-radio>
+
+            <sh-radio class="raised primary" i18n>
+              VHD (.vhd)
+              <input
+                type="radio"
+                name="imageFormat"
+                value="vhd"
+                formControlName="imageFormat"
+                (change)="setImageFormat('vhd')" />
+            </sh-radio>
+
+            <sh-radio class="raised primary" i18n>
+              VHDX (.vhdx)
+              <input
+                type="radio"
+                name="imageFormat"
+                value="vhdx"
+                formControlName="imageFormat"
+                (change)="setImageFormat('vhdx')" />
+            </sh-radio>
+          </div>
+
+          <sh-toggle class="raised primary" i18n>
+            Replace the image file if it exists
+            <input type="checkbox" formControlName="imageOverwrite" />
+          </sh-toggle>
+
+          @if (optionsFormSignal()?.imageFormat === 'raw') {
+            <sh-toggle class="raised primary" i18n>
+              Reserve the full size of the image file
+              <input type="checkbox" formControlName="imagePreallocate" />
+            </sh-toggle>
+          }
+
+          <p class="image-note" i18n>
+            The image is written to a file with a .partial extension and gets its name when the restore completes. Only
+            the restored data uses disk space, unless the full size is reserved. A VHD file holds disks up to 2040 GiB
+            and a VHDX file up to 64 TiB.
+          </p>
+        </div>
       }
 
       @if (canCheckPermissions()) {
@@ -102,7 +178,7 @@
     }
   </app-toggle-card>
 
-  @if (isCustomRemoteRestore() && optionsFormSignal()?.restoreFrom !== 'diskimage') {
+  @if (isCustomRemoteRestore() && !isDiskTarget()) {
     <app-toggle-card [disableToggle]="true">
       <ng-container title i18n>Restore settings</ng-container>
 
@@ -111,7 +187,7 @@
         <input type="checkbox" formControlName="customRemoteIgnoreExisting" />
       </sh-toggle>
     </app-toggle-card>
-  } @else if (optionsFormSignal()?.restoreFrom !== 'diskimage') {
+  } @else if (!isDiskTarget()) {
     <app-toggle-card [disableToggle]="true">
       <ng-container title i18n>How do you want to handle existing files?</ng-container>
 
@@ -164,16 +240,7 @@
       <app-options-list
         [(options)]="advancedOptions"
         [hasFreeTextSettings]="true"
-        [hiddenOptions]="[
-          'restore-path',
-          'overwrite',
-          'restore-permissions',
-          'skip-metadata',
-          'register-restored-items',
-          'passphrase',
-          'time',
-          'version',
-        ]" />
+        [hiddenOptions]="hiddenAdvancedOptions" />
     </app-toggle-card>
   }
 
