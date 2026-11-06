@@ -27,6 +27,47 @@ describe('stored server log pagination', () => {
   const first = { BackupID: 1, Timestamp: 100, Message: 'First', Exception: '' };
   const second = { BackupID: 2, Timestamp: 90, Message: 'Second', Exception: '' };
 
+  it('keeps one pending page request even when load is invoked again', () => {
+    const { component, get } = setup();
+    component.getLogs();
+    component.loadMore();
+    expect(get).toHaveBeenCalledTimes(1);
+  });
+  it('does not request another page after reaching the end', () => {
+    const { fixture, component, get, responses } = setup();
+    responses[0].next([]);
+    responses[0].complete();
+    component.loadMore();
+    fixture.detectChanges();
+    component.getLogs();
+    expect(get).toHaveBeenCalledTimes(1);
+  });
+  it('does not append a late page after the component is destroyed', () => {
+    const { fixture, component, responses } = setup();
+    fixture.destroy();
+    responses[0].next([first]);
+    responses[0].complete();
+    expect(component.logs()).toEqual([]);
+    expect(component.logsIsLoading()).toBe(false);
+  });
+  it('keeps rows and retries the same cursor after a failed page', () => {
+    const { fixture, component, get, responses } = setup();
+    responses[0].next([first]);
+    responses[0].complete();
+    component.loadMore();
+    fixture.detectChanges();
+    responses[1].error(new Error('unavailable'));
+    expect(component.logs()).toEqual([first]);
+    expect(component.logsIsLoading()).toBe(false);
+    expect(component.noMoreItems()).toBe(false);
+    component.loadMore();
+    fixture.detectChanges();
+    expect(get).toHaveBeenLastCalledWith({ query: { pagesize: 10, offset: 100 } });
+    responses[2].next([second]);
+    responses[2].complete();
+    expect(component.logs()).toEqual([first, second]);
+  });
+
   it('requests the first page exactly once on initial display', () => {
     const { get, component, responses } = setup();
     expect(get).toHaveBeenCalledExactlyOnceWith({ query: { pagesize: 10, offset: undefined } });

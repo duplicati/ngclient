@@ -1,5 +1,6 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipTable } from '@ship-ui/core/ship-table';
@@ -29,6 +30,7 @@ type Pagination = {
 })
 export default class LogsStoredComponent {
   #dupServer = inject(DuplicatiServer);
+  #destroyRef = inject(DestroyRef);
 
   displayedColumns = signal(COLUMNS);
   openRowIndex = signal<number | null>(null);
@@ -47,6 +49,7 @@ export default class LogsStoredComponent {
   });
 
   getLogs() {
+    if (this.#destroyRef.destroyed || this.logsIsLoading() || this.noMoreItems()) return;
     this.logsIsLoading.set(true);
 
     const pagination = this.pagination();
@@ -59,12 +62,17 @@ export default class LogsStoredComponent {
         },
       })
     )
-      .pipe(finalize(() => this.logsIsLoading.set(false)))
+      .pipe(
+        takeUntilDestroyed(this.#destroyRef),
+        finalize(() => this.logsIsLoading.set(false))
+      )
       .subscribe({
         next: (res) => {
           if (res.length === 0) this.noMoreItems.set(true);
           this.logs.update((x) => [...x, ...(res as LogEvent[])]);
         },
+        // The interceptor presents the error; keep the cursor available for retry.
+        error: () => {},
       });
   }
 
@@ -79,6 +87,7 @@ export default class LogsStoredComponent {
   }
 
   loadMore() {
+    if (this.logsIsLoading() || this.noMoreItems()) return;
     const offsetTime = this.logs().at(-1)?.Timestamp;
     this.pagination.update((x) => ({ ...x, offsetTime: offsetTime }) as Pagination);
   }
