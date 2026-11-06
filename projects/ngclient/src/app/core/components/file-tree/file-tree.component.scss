@@ -24,30 +24,41 @@
     overflow: hidden;
     flex: 1 0;
 
+    // One header row: the projected label, then the footer with the hidden-files toggle, then the
+    // maximize button; the label has no area of its own and lands in the first free cell
     .section {
       height: auto;
       overflow: hidden;
       flex: 1 0;
       display: grid;
-      grid-template-columns: 1fr auto;
+      grid-template-columns: 1fr auto auto;
       grid-template-rows: auto 1fr;
       grid-template-areas:
-        'label toggle'
-        'tree tree';
+        'label toggle maximize'
+        'tree tree tree';
+      align-items: center;
     }
 
     .browse-files {
       resize: none;
       height: initial;
       grid-area: tree;
+      align-self: stretch;
     }
 
     .tree-header {
-      grid-area: label;
+      display: contents;
+    }
+
+    .maximize-toggle {
+      grid-area: maximize;
+    }
+
+    .footer {
+      grid-area: toggle;
     }
 
     sh-toggle {
-      grid-area: toggle;
       flex-direction: row-reverse;
     }
   }
@@ -215,7 +226,18 @@
         align-items: center;
       }
 
-      .icon {
+      // "Choose what to include" on folder rows; highlighted when the folder is picked
+      .row-action {
+        flex: 0 0 auto;
+        margin-right: p2r(4);
+
+        &.picked {
+          color: var(--primary-9);
+        }
+      }
+
+      // The expand and folder icon of a row, not the row's buttons that share the "icon" class
+      .icon:not(button) {
         position: relative;
         width: p2r(48);
         gap: p2r(4);

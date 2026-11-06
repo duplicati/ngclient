@@ -15,6 +15,8 @@
       [startingPath]="getPath()"
       [showFiles]="true"
       [showUnrootedSources]="true"
+      [enableIncludePicker]="true"
+      (includePick)="openIncludePicker($event)"
       [backupId]="backupId">
       <label for="path" i18n>Folder path</label>
       <input type="text" id="path" tabindex="4" i18n-placeholder placeholder="Path" formControlName="path" />
@@ -140,6 +142,17 @@
                   }
                 } @else {
                   <span class="source-path-text" [title]="path">{{ path }}</span>
+                  @if (isPickedFolder(path)) {
+                    <button
+                      shButton
+                      type="button"
+                      class="small primary"
+                      (click)="openIncludePicker(path)"
+                      i18n-shTooltip
+                      shTooltip="Only picked contents are included. Click to edit the picks.">
+                      <sh-icon>list-checks</sh-icon>
+                    </button>
+                  }
                 }
 
                 <button shButton type="button" class="small" (click)="editPath(path)">
