@@ -8,11 +8,18 @@ describe('PurgeFilesState version selection', () => {
   afterEach(() => TestBed.resetTestingModule());
   function setup() {
     const response = new Subject<{ Data?: ListFilesetsResponseItem[] }>();
-    const list = vi.fn(() => response);
+    const responses = [response];
+    let calls = 0;
+    const list = vi.fn(() => {
+      if (calls++ === 0) return response;
+      const next = new Subject<{ Data?: ListFilesetsResponseItem[] }>();
+      responses.push(next);
+      return next;
+    });
     TestBed.configureTestingModule({
       providers: [PurgeFilesState, { provide: DuplicatiServer, useValue: { postApiV2BackupListFilesets: list } }],
     });
-    return { state: TestBed.inject(PurgeFilesState), response, list };
+    return { state: TestBed.inject(PurgeFilesState), response, responses, list };
   }
   const version = (Version: number, Time: string): ListFilesetsResponseItem => ({
     Version,
@@ -21,6 +28,46 @@ describe('PurgeFilesState version selection', () => {
     FileCount: null,
     FileSizes: null,
   });
+  it('clears destructive selections and versions when the backup changes', () => {
+    const { state, response } = setup();
+    state.init('42');
+    response.next({ Data: [version(4, '2026-10-09')] });
+    state.selectedPaths.set('/backup-a/private.txt');
+    state.versionScope.set('specific');
+    state.specificVersions.set([4]);
+    state.init('43');
+    expect(state.versions()).toEqual([]);
+    expect(state.selectedVersion()).toBeNull();
+    expect(state.selectedPaths()).toBe('');
+    expect(state.versionScope()).toBe('all');
+    expect(state.specificVersions()).toEqual([]);
+    expect(state.isLoadingVersions()).toBe(true);
+  });
+  it('ignores an old backup response while the new backup is loading', () => {
+    const { state, response, responses } = setup();
+    state.init('42');
+    state.init('43');
+    response.next({ Data: [version(4, '2026-10-09')] });
+    response.complete();
+    expect(state.versions()).toEqual([]);
+    expect(state.selectedVersion()).toBeNull();
+    expect(state.isLoadingVersions()).toBe(true);
+    responses[1].next({ Data: [version(0, '2026-11-07')] });
+    responses[1].complete();
+    expect(state.selectedVersion()).toBe('0');
+    expect(state.versions()[0].Time).toBe('2026-11-07');
+  });
+  it('stops observing versions when the flow is destroyed', () => {
+    const { state, response } = setup();
+    state.init('42');
+    TestBed.resetTestingModule();
+    response.next({ Data: [version(4, '2026-10-09')] });
+    response.complete();
+    expect(state.versions()).toEqual([]);
+    expect(state.selectedVersion()).toBeNull();
+    expect(state.isLoadingVersions()).toBe(false);
+  });
+
   it('requests versions once per backup and waits for the response', () => {
     const { state, response, list } = setup();
     state.init('42');
