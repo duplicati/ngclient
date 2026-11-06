@@ -11,11 +11,14 @@ export class LOCALSTORAGE implements Storage {
   getItemParsed<T>(key: string, persistThroughClear = false): T | null {
     if (isPlatformServer(this.platformId)) return null;
 
-    return JSON.parse(
-      localStorage.getItem(
-        `${this.STORAGE_VERSION}:${persistThroughClear ? this.PERSISTED_PREFIX : ''}${this.APP_NAME}:${key}`
-      ) ?? 'null'
+    const stored = localStorage.getItem(
+      `${this.STORAGE_VERSION}:${persistThroughClear ? this.PERSISTED_PREFIX : ''}${this.APP_NAME}:${key}`
     );
+    try {
+      return JSON.parse(stored ?? 'null');
+    } catch {
+      return null;
+    }
   }
 
   setItemParsed<T>(key: string, value: T, persistThroughClear = false): void {
