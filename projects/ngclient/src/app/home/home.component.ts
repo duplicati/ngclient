@@ -74,12 +74,14 @@ export default class HomeComponent {
   hasBrokenFiles = this.#sysinfo.hasV2BrokenFiles;
   hasRestoreTest = this.#sysinfo.hasV2RestoreTest;
   hasPurgeFiles = this.#sysinfo.hasV2PurgeFiles;
+  hasEnableDisable = this.#sysinfo.hasBackupEnableDisable;
 
   MISSING_BACKUP_NAME = $localize`Backup name missing`;
   stopLabel = $localize`Stop`;
   abortLabel = $localize`Abort`;
   pauseLabel = $localize`Pause`;
   resumeLabel = $localize`Resume`;
+  disabledTooltip = $localize`Scheduled runs are skipped while the backup is disabled. You can still start it manually.`;
   sortOrderOptions = this.#backupsState.orderByOptions;
   orderBy = this.#backupsState.orderBy;
   backups = this.#backupsState.backups;
@@ -131,6 +133,11 @@ export default class HomeComponent {
     return backupId != null && this.queuedBackupIds().has(String(backupId));
   }
 
+  // Servers without the feature do not send the flag, so only an explicit false counts as disabled
+  isDisabled(backup: BackupAndScheduleOutputDto | null | undefined) {
+    return this.hasEnableDisable() && backup?.Backup?.Enabled === false;
+  }
+
   runningTask = computed(() => this.#statusBarState.serverState()?.ActiveTask?.Item1);
   isStopping = computed(() => this.runningTask() == this.#taskStopRequested());
   scheduledTimes = computed(() => {
@@ -141,6 +148,8 @@ export default class HomeComponent {
     backups.forEach((bk) => {
       const backupId = bk.Backup?.ID;
       if (!backupId) return;
+      // A disabled backup is skipped by the scheduler, so it has no next run
+      if (this.isDisabled(bk)) return;
 
       var actual = schedule.find((x) => x.Item1 == backupId);
       if (actual?.Item2) res[backupId] = actual.Item2;
@@ -222,6 +231,20 @@ export default class HomeComponent {
   verifyFiles(id: string) {
     this.loadingId.set(id);
     defer(() => this.#dupServer.postApiV1BackupByIdVerify({ path: { id } }))
+      .pipe(finalize(() => this.loadingId.set(null)))
+      .subscribe({
+        next: () => {
+          this.successId.set(id);
+
+          setTimeout(() => this.successId.set(null), 2000);
+        },
+      });
+  }
+
+  setEnabled(id: string, enabled: boolean) {
+    this.loadingId.set(id);
+    this.#backupsState
+      .setBackupEnabled(id, enabled)
       .pipe(finalize(() => this.loadingId.set(null)))
       .subscribe({
         next: () => {

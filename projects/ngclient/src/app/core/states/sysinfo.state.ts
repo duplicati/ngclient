@@ -115,6 +115,12 @@ export class SysinfoState {
     return apiExtensions.includes('v2:backup:restore-test');
   });
 
+  // Backups can be enabled and disabled; the scheduler skips disabled backups
+  hasBackupEnableDisable = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v1:backup:enable-disable');
+  });
+
   hasRestoreOptions = computed(() => {
     const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
     return apiExtensions.includes('v1:backup:restore-options');

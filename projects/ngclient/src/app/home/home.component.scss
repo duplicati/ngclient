@@ -172,6 +172,12 @@ tr.running td {
   background: var(--primary-2);
 }
 
+// A disabled backup is skipped by the scheduler; dim its details but keep the tags and actions readable
+.backup.disabled .text,
+tr.disabled td:not(:last-child) {
+  opacity: 0.6;
+}
+
 .row-progress {
   display: flex;
   align-items: center;

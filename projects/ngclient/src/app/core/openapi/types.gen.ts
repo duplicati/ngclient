@@ -49,6 +49,7 @@ export type BackupDto = {
     TargetURL: string | null;
     ConnectionStringID?: number;
     OperationType?: OperationType;
+    Enabled?: boolean;
     DBPath: string | null;
     DBPathExists: boolean;
     Sources: Array<string> | null;
@@ -70,6 +71,7 @@ export type BackupInputDto = {
     TargetURL?: string | null;
     ConnectionStringID?: number;
     OperationType?: OperationType;
+    Enabled?: boolean | null;
     Sources?: Array<string> | null;
     Settings?: Array<SettingInputDto> | null;
     Filters?: Array<FilterInputDto> | null;
@@ -1025,6 +1027,7 @@ export type BackupDtoWritable = {
     TargetURL: string | null;
     ConnectionStringID?: number;
     OperationType?: OperationType;
+    Enabled?: boolean;
     DBPath: string | null;
     DBPathExists: boolean;
     Sources: Array<string> | null;
@@ -2474,6 +2477,38 @@ export type PostApiV1BackupByIdDeletedbData = {
 };
 
 export type PostApiV1BackupByIdDeletedbResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiV1BackupByIdEnableData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/backup/{id}/enable';
+};
+
+export type PostApiV1BackupByIdEnableResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiV1BackupByIdDisableData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/backup/{id}/disable';
+};
+
+export type PostApiV1BackupByIdDisableResponses = {
     /**
      * OK
      */

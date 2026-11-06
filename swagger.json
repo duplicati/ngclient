@@ -2208,6 +2208,50 @@
         }
       }
     },
+    "/api/v1/backup/{id}/enable": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/backup/{id}/disable": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/v1/backup/{id}/movedb": {
       "post": {
         "tags": [
@@ -3442,6 +3486,9 @@
           "OperationType": {
             "$ref": "#/components/schemas/OperationType"
           },
+          "Enabled": {
+            "type": "boolean"
+          },
           "DBPath": {
             "type": "string",
             "nullable": true
@@ -3525,6 +3572,10 @@
           },
           "OperationType": {
             "$ref": "#/components/schemas/OperationType"
+          },
+          "Enabled": {
+            "type": "boolean",
+            "nullable": true
           },
           "Sources": {
             "type": "array",

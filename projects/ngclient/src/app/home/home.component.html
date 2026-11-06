@@ -115,7 +115,7 @@
           @if (backups().length) {
             @for (backup of filteredBackups(); track $index) {
               @if (backup.Backup.ExternalID) {
-                <div class="backup externaly-managed">
+                <div class="backup externaly-managed" [class.disabled]="isDisabled(backup)">
                   <div class="text">
                     <h3>
                       {{ backup.Backup.Name ?? MISSING_BACKUP_NAME }}
@@ -132,6 +132,12 @@
                       <sh-chip class="simple accent" [shTooltip]="'Synchronization job'" i18n>
                         <sh-icon>arrows-left-right</sh-icon>
                         Sync
+                      </sh-chip>
+                    }
+                    @if (isDisabled(backup)) {
+                      <sh-chip class="simple warn" [shTooltip]="disabledTooltip" i18n>
+                        <sh-icon>prohibit</sh-icon>
+                        Disabled
                       </sh-chip>
                     }
                     <sh-chip class="simple primary" i18n>Externally managed</sh-chip>
@@ -155,7 +161,7 @@
                   <app-backup-progress [backupId]="backup.Backup.ID" />
                 </div>
               } @else {
-                <div class="backup">
+                <div class="backup" [class.disabled]="isDisabled(backup)">
                   <div class="text">
                     <h3>
                       {{ backup.Backup.Name ?? MISSING_BACKUP_NAME }}
@@ -189,6 +195,11 @@
                         <p>
                           <span i18n>Next scheduled run:</span>
                           <span class="time-value" i18n>Queued</span>
+                        </p>
+                      } @else if (isDisabled(backup) && backup.Schedule) {
+                        <p>
+                          <span i18n>Next scheduled run:</span>
+                          <span class="time-value" [shTooltip]="disabledTooltip" i18n>Disabled</span>
                         </p>
                       } @else if (next) {
                         <p>
@@ -256,6 +267,13 @@
                       }
                     }
 
+                    @if (isDisabled(backup)) {
+                      <sh-chip class="simple warn" [shTooltip]="disabledTooltip" i18n>
+                        <sh-icon>prohibit</sh-icon>
+                        Disabled
+                      </sh-chip>
+                    }
+
                     @if (backup.Backup.ExternalID) {
                       <sh-chip class="simple primary" i18n>Externally managed</sh-chip>
                     }
@@ -317,7 +335,7 @@
 
           @for (backup of filteredBackups(); track $index) {
             @let running = isRunning(backup.Backup.ID);
-            <tr [class.running]="running">
+            <tr [class.running]="running" [class.disabled]="isDisabled(backup)">
               <td>
                 {{ backup.Backup.Name ?? MISSING_BACKUP_NAME }}
               </td>
@@ -359,6 +377,11 @@
                   <sh-chip class="small primary" i18n>
                     <sh-icon>queue</sh-icon>
                     Queued
+                  </sh-chip>
+                } @else if (isDisabled(backup)) {
+                  <sh-chip class="small simple warn" [shTooltip]="disabledTooltip" i18n>
+                    <sh-icon>prohibit</sh-icon>
+                    Disabled
                   </sh-chip>
                 } @else if (next) {
                   <span class="time-value" [shTooltip]="next | relativeTime: timeType() !== 'actual'">{{ next | relativeTime: timeType() === 'actual' }}</span>
@@ -497,7 +520,7 @@
     </button>
 
     <ng-container menu>
-      @if (backup.Backup.OperationType !== 'Sync' || !backup.Backup.ExternalID) {
+      @if (backup.Backup.OperationType !== 'Sync' || !backup.Backup.ExternalID || hasEnableDisable()) {
         <h3 title>Operations</h3>
 
         @if (backup.Backup.OperationType !== 'Sync') {
@@ -512,7 +535,23 @@
             <sh-icon>export</sh-icon>
             Export
           </button>
+        }
 
+        @if (hasEnableDisable()) {
+          @if (isDisabled(backup)) {
+            <button type="button" (click)="setEnabled(backup.Backup.ID!, true)" i18n>
+              <sh-icon>check-circle</sh-icon>
+              Enable
+            </button>
+          } @else {
+            <button type="button" (click)="setEnabled(backup.Backup.ID!, false)" i18n>
+              <sh-icon>prohibit</sh-icon>
+              Disable
+            </button>
+          }
+        }
+
+        @if (!backup.Backup.ExternalID) {
           <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'delete']" i18n>
             <sh-icon>x-circle</sh-icon>
             Delete

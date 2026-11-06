@@ -231,6 +231,26 @@ export class BackupsState {
       .subscribe();
   }
 
+  /**
+   * Enables or disables a backup. The local list is updated as soon as the server accepts
+   * the change, so the UI does not wait for the next backup list refresh.
+   */
+  setBackupEnabled(id: string, enabled: boolean) {
+    return defer(() =>
+      enabled
+        ? this.#dupServer.postApiV1BackupByIdEnable({ path: { id } })
+        : this.#dupServer.postApiV1BackupByIdDisable({ path: { id } })
+    ).pipe(
+      take(1),
+      tap(() => {
+        this.#backups.update((backups) =>
+          backups.map((x) => (x.Backup?.ID === id ? { ...x, Backup: { ...x.Backup, Enabled: enabled } } : x))
+        );
+        this.getBackups(true);
+      })
+    );
+  }
+
   deleteBackup(deleteConfig: Options<DeleteApiV1BackupByIdData>) {
     return defer(() => this.#dupServer.deleteApiV1BackupById(deleteConfig)).pipe(take(1));
   }
