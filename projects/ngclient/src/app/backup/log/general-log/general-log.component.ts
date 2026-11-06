@@ -1,5 +1,14 @@
 import { DatePipe, JsonPipe, NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, input, resource, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  linkedSignal,
+  resource,
+  signal,
+} from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipDivider } from '@ship-ui/core/ship-divider';
@@ -76,6 +85,12 @@ type LogEntryEvaluated = {
   logLines?: ParsedLogLines & { sync: ParsedLogLines[]; restoreTest?: ParsedLogLines };
 };
 
+type LogPagination = {
+  offset: number | undefined;
+  pagesize: number;
+  previousOffsets: Array<number | undefined>;
+};
+
 function parseLogLines(result: { Messages?: string[] | null; Warnings?: string[] | null; Errors?: string[] | null }) {
   return {
     messages: (result.Messages ?? []).map((line) => parseLogLine(line, 'information')),
@@ -110,8 +125,12 @@ export class GeneralLogComponent {
   #durationPipe = new DurationFormatPipe();
 
   backupId = input.required<string>();
+  pagination = linkedSignal({
+    source: this.backupId,
+    computation: (): LogPagination => ({ offset: undefined, pagesize: 100, previousOffsets: [] }),
+  });
   isSuppressingWarning = signal(false);
-  copied = signal<string | null>(null);
+  copied = linkedSignal({ source: this.pagination, computation: (): string | null => null });
 
   // Resource to fetch backup data for checking suppressed warnings
   backupResource = resource({
@@ -134,19 +153,23 @@ export class GeneralLogComponent {
     );
   });
 
-  openEntry = signal<number | null>(null);
+  openEntry = linkedSignal({ source: this.pagination, computation: (): number | null => null });
   // Keys of the log line rows the user has expanded, cleared when another entry is opened
-  expandedLogLines = signal<ReadonlySet<string>>(new Set());
-  openSection = signal<'errors' | 'warnings' | null>(null);
-  pagination = signal({
-    offset: 0,
-    pagesize: 100,
+  expandedLogLines = linkedSignal({
+    source: this.pagination,
+    computation: (): ReadonlySet<string> => new Set(),
   });
+  openSection = linkedSignal({ source: this.pagination, computation: (): 'errors' | 'warnings' | null => null });
 
   resource = rxResource({
-    params: () => ({ id: this.backupId()!, ...this.pagination() }),
+    params: () => ({ id: this.backupId(), offset: this.pagination().offset, pagesize: this.pagination().pagesize }),
     stream: ({ params }) =>
-      defer(() => this.#dupServer.getApiV1BackupByIdLog({ path: { id: params.id }, query: { pagesize: 100 } })).pipe(
+      defer(() =>
+        this.#dupServer.getApiV1BackupByIdLog({
+          path: { id: params.id },
+          query: { offset: params.offset, pagesize: params.pagesize },
+        })
+      ).pipe(
         map((x) => {
           return (x as LogEntry[]).map((y): LogEntryEvaluated => {
             let data: LogEntryEvaluated['data'] | undefined;
@@ -176,6 +199,38 @@ export class GeneralLogComponent {
         })
       ),
   });
+
+  // The API's offset is an exclusive ID cursor, not a row count or timestamp.
+  #olderOffset = computed(() => {
+    if (!this.resource.hasValue()) return undefined;
+    const entries = this.resource.value();
+    const page = this.pagination();
+    const offset = entries.at(-1)?.id;
+    if (entries.length < page.pagesize || offset === undefined || offset <= 0) return undefined;
+    if (page.offset !== undefined && offset >= page.offset) return undefined;
+    return offset;
+  });
+  hasOlderEntries = computed(() => !this.resource.isLoading() && this.#olderOffset() !== undefined);
+  hasNewerEntries = computed(() => !this.resource.isLoading() && this.pagination().previousOffsets.length > 0);
+
+  loadOlder() {
+    const offset = this.#olderOffset();
+    if (this.resource.isLoading() || offset === undefined) return;
+    this.pagination.update((page) => ({
+      ...page,
+      offset,
+      previousOffsets: [...page.previousOffsets, page.offset],
+    }));
+  }
+
+  loadNewer() {
+    if (!this.hasNewerEntries()) return;
+    this.pagination.update((page) => ({
+      ...page,
+      offset: page.previousOffsets.at(-1),
+      previousOffsets: page.previousOffsets.slice(0, -1),
+    }));
+  }
 
   getLocalizedSummary(item: LogEntryEvaluated): string {
     const errorCount = item.data?.ErrorsActualLength ?? 0;

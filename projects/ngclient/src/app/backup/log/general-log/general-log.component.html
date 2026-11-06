@@ -2,7 +2,14 @@
   <sh-progress-bar class="indeterminate primary" />
 }
 
-@for (item of resource.value(); track $index) {
+@if (resource.error()) {
+  <div class="log-load-error">
+    <p role="alert" i18n>Could not load log entries.</p>
+    <button shButton type="button" (click)="resource.reload()" [disabled]="resource.isLoading()" i18n>Retry</button>
+  </div>
+}
+
+@for (item of resource.hasValue() ? resource.value() : []; track item.id) {
   <article class="log-entry">
     <header (click)="toggleOpenEntry(item)">
       <div class="status" [class]="getStatusClass(item)"></div>
@@ -429,6 +436,15 @@
     }
   </article>
 }
+
+@if (resource.hasValue() && !resource.isLoading() && resource.value()?.length === 0) {
+  <p class="log-empty" i18n>No log entries on this page.</p>
+}
+
+<footer class="log-pagination">
+  <button shButton type="button" [disabled]="!hasNewerEntries()" (click)="loadNewer()" i18n>Newer entries</button>
+  <button shButton type="button" [disabled]="!hasOlderEntries()" (click)="loadOlder()" i18n>Older entries</button>
+</footer>
 
 <ng-template #logLinesTemplate let-lines="lines" let-key="key" let-suppressible="suppressible">
   @if (lines?.length) {
