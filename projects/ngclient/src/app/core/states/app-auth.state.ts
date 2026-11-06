@@ -160,6 +160,17 @@ export class AppAuthState {
       );
   }
 
+  /**
+   * Changing the server passphrase resets the signing key and revokes every token,
+   * so a session signed in with the old passphrase must sign in again.
+   * Relay and proxy sessions are not authenticated with the passphrase and stay signed in.
+   */
+  signOutAfterPassphraseChange() {
+    if (this.#relayConfigState.relayIsEnabled() || this.#isProxyAuthed()) return;
+
+    this.logout();
+  }
+
   logout() {
     this.#isLoggingOut.set(true);
     const { requestBody, local } = this.getRefreshNonceBody();

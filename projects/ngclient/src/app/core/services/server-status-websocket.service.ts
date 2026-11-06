@@ -292,8 +292,8 @@ export class ServerStatusWebSocketService {
             if (!this.#isCurrentConnection(generation)) return;
             console.error('Error refreshing token', error);
             this.#isHandlingAuthRefresh = false;
-            // Refresh failed — fall back to timed reconnect
-            if (this.shouldConnect()) {
+            // Refresh failed — fall back to timed reconnect, unless the failed refresh signed the session out
+            if (this.shouldConnect() && !this.#auth.isLoggingOut()) {
               this.#showDisconnectedDialogAndScheduleReconnect();
             }
           },

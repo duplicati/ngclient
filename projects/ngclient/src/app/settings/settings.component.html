@@ -133,6 +133,11 @@
 
     <div class="right passphrase-form">
       @if (showPassphraseForm()) {
+        <sh-alert color="warn" i18n>
+          Changing the passphrase signs out everyone using Duplicati, including you, and revokes all issued access
+          tokens. You need to sign in again with the new passphrase afterwards.
+        </sh-alert>
+
         <sh-form-field>
           <label for="password" i18n>Passphrase</label>
           <input

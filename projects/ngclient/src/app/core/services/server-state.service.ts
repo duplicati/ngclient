@@ -1,6 +1,7 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal, untracked } from '@angular/core';
 import { defer, Observable, Subscriber, Subscription } from 'rxjs';
 import { DuplicatiServer, GetTaskStateDto } from '../openapi';
+import { AppAuthState } from '../states/app-auth.state';
 import { SysinfoState } from '../states/sysinfo.state';
 import { ServerStatusLongPollService } from './server-status-longpoll.service';
 import { ServerStatusWebSocketService, SubscriptionService } from './server-status-websocket.service';
@@ -15,6 +16,7 @@ export class ServerStateService {
   #longPollService = inject(ServerStatusLongPollService);
   #dupServer = inject(DuplicatiServer);
   #sysinfo = inject(SysinfoState);
+  #auth = inject(AppAuthState);
 
   #connectionMethod = signal<ConnectionMethod>('longpoll');
   #isConnectionMethodSet = signal<boolean>(false);
@@ -30,6 +32,17 @@ export class ServerStateService {
   #recentCompletedTasks: GetTaskStateDto[] = [];
 
   constructor() {
+    // A signed-out session cannot reconnect, so stop retrying (and showing the reconnect dialog).
+    // The status bar starts the connection again once a page that needs it is shown after login.
+    effect(() => {
+      if (!this.#auth.isLoggingOut()) return;
+
+      untracked(() => {
+        this.#wsService.stop();
+        this.#longPollService.stop();
+      });
+    });
+
     this.#wsService.subscribe('taskcompleted');
     this.#wsService.taskCompleted.subscribe((task) => {
       this.#recentCompletedTasks.unshift(task);

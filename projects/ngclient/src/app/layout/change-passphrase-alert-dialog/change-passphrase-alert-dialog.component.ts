@@ -7,6 +7,7 @@ import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { defer, finalize } from 'rxjs';
 import { DuplicatiServer } from '../../core/openapi';
+import { AppAuthState } from '../../core/states/app-auth.state';
 
 @Component({
   selector: 'app-change-passphrase-alert-dialog',
@@ -17,6 +18,7 @@ import { DuplicatiServer } from '../../core/openapi';
 })
 export class ChangePassphraseAlertDialogComponent {
   #dupServer = inject(DuplicatiServer);
+  #auth = inject(AppAuthState);
   closed = output();
 
   isUpdating = signal(false);
@@ -37,7 +39,11 @@ export class ChangePassphraseAlertDialogComponent {
     )
       .pipe(finalize(() => this.isUpdating.set(false)))
       .subscribe({
-        next: () => this.closed.emit(),
+        next: () => {
+          this.closed.emit();
+          // The server has revoked all tokens, including the one this session uses
+          this.#auth.signOutAfterPassphraseChange();
+        },
       });
   }
 
