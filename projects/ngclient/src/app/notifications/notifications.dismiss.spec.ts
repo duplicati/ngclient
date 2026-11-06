@@ -6,6 +6,7 @@ import { ShipAlertService } from '@ship-ui/core/ship-alert';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { DuplicatiServer, NotificationDto } from '../core/openapi';
+import { UpdateInstallService } from '../core/services/update-install.service';
 import { AppAuthState } from '../core/states/app-auth.state';
 import { NotificationComponent } from './notification/notification.component';
 import { NotificationsComponent } from './notifications.component';
@@ -53,6 +54,7 @@ describe('Notification dismissal identity', () => {
         { provide: ShipAlertService, useValue: {} },
         { provide: DuplicatiServer, useValue: {} },
         { provide: AppAuthState, useValue: {} },
+        { provide: UpdateInstallService, useValue: {} },
       ],
     });
     // Keep both application templates and the real child component. Only Ship UI rendering is stubbed.

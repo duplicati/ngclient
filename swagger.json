@@ -1616,6 +1616,30 @@
         }
       }
     },
+    "/api/v1/updates/install": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/updates/cancel-install": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/v1/webmodule/{modulekey}": {
       "post": {
         "tags": [
@@ -2163,6 +2187,50 @@
       }
     },
     "/api/v1/backup/{id}/deletedb": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/backup/{id}/enable": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/backup/{id}/disable": {
       "post": {
         "tags": [
           "Duplicati.Server"
@@ -3418,6 +3486,9 @@
           "OperationType": {
             "$ref": "#/components/schemas/OperationType"
           },
+          "Enabled": {
+            "type": "boolean"
+          },
           "DBPath": {
             "type": "string",
             "nullable": true
@@ -3501,6 +3572,10 @@
           },
           "OperationType": {
             "$ref": "#/components/schemas/OperationType"
+          },
+          "Enabled": {
+            "type": "boolean",
+            "nullable": true
           },
           "Sources": {
             "type": "array",
@@ -6317,6 +6392,8 @@
           "StartedBy",
           "SupportedLocales",
           "TimeZones",
+          "UpdateInstallSupported",
+          "UpdateInstallUnsupportedReason",
           "UserName",
           "UsingAlternateUpdateURLs",
           "WebModules"
@@ -6393,6 +6470,13 @@
             "nullable": true
           },
           "PackageTypeId": {
+            "type": "string",
+            "nullable": true
+          },
+          "UpdateInstallSupported": {
+            "type": "boolean"
+          },
+          "UpdateInstallUnsupportedReason": {
             "type": "string",
             "nullable": true
           },
@@ -7037,6 +7121,10 @@
           "fileSize": {
             "type": "integer",
             "format": "int64"
+          },
+          "kind": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -7092,7 +7180,10 @@
         "enum": [
           "Waiting",
           "Checking",
-          "Downloading"
+          "Downloading",
+          "Verifying",
+          "LaunchingHelper",
+          "Installing"
         ],
         "type": "string"
       },

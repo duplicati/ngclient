@@ -49,6 +49,7 @@ export type BackupDto = {
     TargetURL: string | null;
     ConnectionStringID?: number;
     OperationType?: OperationType;
+    Enabled?: boolean;
     DBPath: string | null;
     DBPathExists: boolean;
     Sources: Array<string> | null;
@@ -70,6 +71,7 @@ export type BackupInputDto = {
     TargetURL?: string | null;
     ConnectionStringID?: number;
     OperationType?: OperationType;
+    Enabled?: boolean | null;
     Sources?: Array<string> | null;
     Settings?: Array<SettingInputDto> | null;
     Filters?: Array<FilterInputDto> | null;
@@ -822,6 +824,8 @@ export type SystemInfoDto = {
     CaseSensitiveFilesystem: boolean;
     MachineName: string | null;
     PackageTypeId: string | null;
+    UpdateInstallSupported: boolean;
+    UpdateInstallUnsupportedReason: string | null;
     UserName: string | null;
     NewLine: string | null;
     CLRVersion: string | null;
@@ -982,6 +986,7 @@ export type TreeNodeDto = {
     temporary: boolean;
     symlink: boolean;
     fileSize: number;
+    kind?: string | null;
 };
 
 export type UpdateCertificateInputDto = {
@@ -999,7 +1004,7 @@ export type UpdateDbPathInputDto = {
     path?: string | null;
 };
 
-export type UpdatePollerStates = 'Waiting' | 'Checking' | 'Downloading';
+export type UpdatePollerStates = 'Waiting' | 'Checking' | 'Downloading' | 'Verifying' | 'LaunchingHelper' | 'Installing';
 
 export type WebModuleOutputDto = {
     Status?: string | null;
@@ -1022,6 +1027,7 @@ export type BackupDtoWritable = {
     TargetURL: string | null;
     ConnectionStringID?: number;
     OperationType?: OperationType;
+    Enabled?: boolean;
     DBPath: string | null;
     DBPathExists: boolean;
     Sources: Array<string> | null;
@@ -1112,6 +1118,8 @@ export type SystemInfoDtoWritable = {
     CaseSensitiveFilesystem: boolean;
     MachineName: string | null;
     PackageTypeId: string | null;
+    UpdateInstallSupported: boolean;
+    UpdateInstallUnsupportedReason: string | null;
     UserName: string | null;
     NewLine: string | null;
     CLRVersion: string | null;
@@ -2164,6 +2172,34 @@ export type PostApiV1UpdatesCheckResponses = {
     200: unknown;
 };
 
+export type PostApiV1UpdatesInstallData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/updates/install';
+};
+
+export type PostApiV1UpdatesInstallResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiV1UpdatesCancelInstallData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/updates/cancel-install';
+};
+
+export type PostApiV1UpdatesCancelInstallResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
 export type PostApiV1WebmoduleByModulekeyData = {
     body: {
         [key: string]: string;
@@ -2441,6 +2477,38 @@ export type PostApiV1BackupByIdDeletedbData = {
 };
 
 export type PostApiV1BackupByIdDeletedbResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiV1BackupByIdEnableData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/backup/{id}/enable';
+};
+
+export type PostApiV1BackupByIdEnableResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiV1BackupByIdDisableData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/backup/{id}/disable';
+};
+
+export type PostApiV1BackupByIdDisableResponses = {
     /**
      * OK
      */

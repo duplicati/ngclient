@@ -63,7 +63,12 @@ describe('ServerStatusWebSocketService lifecycle', () => {
 
   const setup = (modernAuth = false) => {
     const refresh = new Subject<AccessTokenOutputDto>();
-    const auth = { token: signal('token'), xsrfQueryParam: signal(null), refreshToken: vi.fn(() => refresh) };
+    const auth = {
+      token: signal('token'),
+      xsrfQueryParam: signal(null),
+      isLoggingOut: signal(false),
+      refreshToken: vi.fn(() => refresh),
+    };
     const dialogRef = { close: vi.fn(), component: { reconnectTimer: signal(0) } };
     const dialog = { open: vi.fn(() => dialogRef) };
     TestBed.configureTestingModule({
@@ -212,5 +217,16 @@ describe('ServerStatusWebSocketService lifecycle', () => {
     expect(FakeWebSocket.instances).toHaveLength(1);
     vi.advanceTimersByTime(1);
     expect(FakeWebSocket.instances).toHaveLength(2);
+  });
+
+  it('does not show the reconnect dialog when a failed 4401 refresh signs the session out', () => {
+    const { socket, refresh, dialog, auth } = setup(true);
+    socket.disconnect(4401);
+    // The interceptor starts the logout before the refresh error reaches the websocket service
+    auth.isLoggingOut.set(true);
+    refresh.error(new Error('Unauthorized'));
+    expect(dialog.open).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(5000);
+    expect(FakeWebSocket.instances).toHaveLength(1);
   });
 });

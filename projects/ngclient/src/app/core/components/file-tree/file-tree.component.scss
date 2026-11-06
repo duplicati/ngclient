@@ -238,6 +238,7 @@
 
       // The expand and folder icon of a row, not the row's buttons that share the "icon" class
       .icon:not(button) {
+        position: relative;
         width: p2r(48);
         gap: p2r(4);
         height: p2r(24);
@@ -249,6 +250,21 @@
         .provider-icon {
           width: p2r(16);
           height: p2r(16);
+        }
+
+        // Corner badge layered over the folder/file icon (symlink, locked, drive, special
+        // folder, ...), like Finder/Explorer, so the entry type stays readable in every state.
+        // Its color comes from the same `primary` class as the folder icon underneath.
+        .icon-badge {
+          position: absolute;
+          right: p2r(2);
+          bottom: p2r(1);
+          font-size: p2r(11);
+          line-height: 1;
+          border-radius: 50%;
+          background: var(--base-1);
+          box-shadow: 0 0 0 p2r(1) var(--base-1);
+          pointer-events: none;
         }
 
         &.file {

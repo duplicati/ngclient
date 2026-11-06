@@ -199,6 +199,63 @@ describe('file tree listing contracts', () => {
     expect(component.treeNodeLastModified(byId('/root/missing.txt'))).toBeNull();
   });
 
+  it('marks symbolic links from the v2 restore listing and announces them in the row label', () => {
+    const list = vi.fn(() =>
+      of({
+        Data: [
+          { Path: '/root/link/', Size: 0, IsSymlink: true, Metadata: null },
+          { Path: '/root/plain.txt', Size: 1, IsSymlink: false, Metadata: null },
+          { Path: '/root/legacy.txt', Size: 1, Metadata: null },
+        ],
+      })
+    );
+    const component = setup(
+      { postApiV2BackupListFolder: list },
+      { backupSettings: { id: '42', time: 'saved-time' }, rootPaths: ['/root/'] }
+    );
+    const nodes = component.treeStructure()[0].children;
+    const byId = (id: string) => nodes.find((node) => node.id === id)!;
+    expect(byId('/root/link/').symlink).toBe(true);
+    expect(byId('/root/plain.txt').symlink).toBe(false);
+    expect(byId('/root/legacy.txt').symlink).toBe(false);
+    expect(component.treeItemLabel(byId('/root/link/'))).toBe('link (Symbolic link)');
+    expect(component.treeItemLabel(byId('/root/plain.txt'))).toBe('plain.txt');
+    expect(component.treeNodeBadge(byId('/root/link/'))?.icon).toBe('arrow-bend-up-right');
+    expect(component.treeNodeBadge(byId('/root/plain.txt'))).toBeNull();
+    expect(component.treeNodeBadge({ id: '%HOME%', symlink: false } as any)?.icon).toBe('user');
+  });
+
+  it('picks a badge from the node kind, falling back to the kind family', () => {
+    const component = setup({ postApiV1Filesystem: () => of([]), postApiV2FilesystemList: () => of({ Data: [] }) });
+    const badge = (kind: string | null, extra: object = {}) =>
+      component.treeNodeBadge({ id: '/x/', symlink: false, kind, ...extra } as any);
+
+    expect(badge('locked')?.icon).toBe('lock');
+    expect(badge('drive')?.icon).toBe('hard-drive');
+    expect(badge('drive:network')?.icon).toBe('globe-simple');
+    expect(badge('special:my_documents')?.icon).toBe('file-text');
+    expect(badge('special:unknown')?.icon).toBe('star');
+    expect(badge('qnap:share')?.icon).toBe('share-network');
+    expect(badge('hyperv:root')?.icon).toBe('cube');
+    expect(badge('hyperv:virtualmachine')?.icon).toBe('monitor');
+    expect(badge('mssql:instance')?.icon).toBe('stack');
+    expect(badge('mssql:database')?.icon).toBe('database');
+    // Leaf entries that stand for a VM or database take the icon instead of a file icon
+    expect(badge('hyperv:virtualmachine')?.replacesIcon).toBe(true);
+    expect(badge('mssql:database')?.replacesIcon).toBe(true);
+    expect(badge('mssql:instance')?.replacesIcon).toBeFalsy();
+    expect(badge('special:home')?.replacesIcon).toBeFalsy();
+    expect(badge('unknown-kind')).toBeNull();
+    expect(badge(null)).toBeNull();
+    // A symlink keeps its arrow even when the server also sends a kind
+    expect(badge('locked', { symlink: true })?.icon).toBe('arrow-bend-up-right');
+
+    expect(component.treeItemLabel({ id: '/x/', text: 'secret', kind: 'locked' } as any)).toBe(
+      'secret (Access denied)'
+    );
+    expect(component.treeItemLabel({ id: '%HOME%', text: 'Home', kind: 'special:home' } as any)).toBe('Home');
+  });
+
   it('preserves the v1 restore request and folder response', () => {
     const list = vi.fn(() => of({ Files: [{ Path: '/root/file.txt', Size: 12, Metadata: null }] }));
     const component = setup(

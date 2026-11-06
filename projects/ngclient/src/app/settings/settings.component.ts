@@ -18,6 +18,7 @@ import { finalize } from 'rxjs';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { LANGUAGES, mapLocale } from '../core/locales/locales.utility';
 import { LOCALSTORAGE } from '../core/services/localstorage.token';
+import { AppAuthState } from '../core/states/app-auth.state';
 import { SysinfoState } from '../core/states/sysinfo.state';
 import { LayoutState } from '../layout/layout.state';
 import AdvancedOptionsSettingsComponent from './advanced-options-settings/advanced-options-settings.component';
@@ -283,6 +284,7 @@ export default class SettingsComponent {
       .subscribe();
   }
 
+  #auth = inject(AppAuthState);
   showPassphraseForm = signal(false);
   isUpdating = signal(false);
   passphrase = signal('');
@@ -305,6 +307,9 @@ export default class SettingsComponent {
           setTimeout(() => {
             this.passwordUpdated.set(false);
           }, 3000);
+
+          // The server has revoked all tokens, including the one this session uses
+          this.#auth.signOutAfterPassphraseChange();
         },
       });
   }

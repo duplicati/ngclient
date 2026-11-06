@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
@@ -11,8 +11,9 @@ import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { ShipToggle } from '@ship-ui/core/ship-toggle';
-import { defer, finalize } from 'rxjs';
+import { defer, map } from 'rxjs';
 import { DuplicatiServer, RestoreTaskConfigElementDto } from '../../../core/openapi';
+import { AsyncOperation } from '../../../core/signals/async-operation';
 import { BytesPipe } from '../../../core/pipes/byte.pipe';
 import { LastRunPipe } from '../../../core/pipes/last-run.pipe';
 import { RelativeTimePipe } from '../../../core/pipes/relative-time.pipe';
@@ -55,7 +56,9 @@ export default class SelectConfigComponent implements OnInit {
   getBackendType = getBackendType;
   getBackendIcon = getBackendIcon;
 
-  isLoading = signal(true);
+  #load = new AsyncOperation<ConfigOption[]>();
+  loadState = this.#load.state;
+  isLoading = this.#load.pending;
   isImporting = signal(false);
   configs = signal<ConfigOption[]>([]);
   saveNow = signal(false);
@@ -72,30 +75,33 @@ export default class SelectConfigComponent implements OnInit {
       .sort((a, b) => (a.Match === b.Match ? 0 : a.Match ? -1 : 1));
   });
 
+  constructor() {
+    inject(DestroyRef).onDestroy(() => this.#load.destroy());
+  }
+
   ngOnInit() {
+    this.loadConfigurations();
+  }
+
+  loadConfigurations() {
+    if (this.isLoading()) return;
     const id = this.#importState.temporaryBackupId();
     if (!id) {
       this.#router.navigate(['/backup/import-destination/destination']);
       return;
     }
 
-    defer(() => this.#dupServer.postApiV1BackupByIdRestoreTaskConfig({ path: { id } }))
-      .pipe(finalize(() => this.isLoading.set(false)))
-      .subscribe({
-        next: (result) => {
-          const options = result
-            .sort((a, b) => (a.Name ?? '').localeCompare(b.Name ?? ''))
-            .map((item) => ({
-              ...item,
-              Selected: result.length === 1,
-            }));
-
-          this.configs.set(options);
-        },
-        error: (err) => {
-          this.#importState.showErrorDialog(err.message || 'Failed to fetch configurations');
-        },
-      });
+    this.#load.run(
+      () =>
+        defer(() => this.#dupServer.postApiV1BackupByIdRestoreTaskConfig({ path: { id } })).pipe(
+          map((result) =>
+            result
+              .map((item) => ({ ...item, Selected: result.length === 1 }))
+              .sort((a, b) => (a.Name ?? '').localeCompare(b.Name ?? ''))
+          )
+        ),
+      (options) => this.configs.set(options)
+    );
   }
 
   toggleSelected(id: string | null) {
@@ -148,29 +154,30 @@ export default class SelectConfigComponent implements OnInit {
           },
         })
       ).subscribe({
-          next: (res) => {
-            if (!isDirect) {
-              this.isImporting.set(false);
-              const draftId = this.#backupsState.addDraftBackup(res.data as BackupDraft);
-              this.#router.navigate(['/backup-draft', draftId]);
-            } else {
-              this.configs.update((configs) => {
-                return configs.filter((c) => c.BackupId !== item.BackupId);
-              });
-              importNext(index + 1);
-            }
-          },
-          error: (err) => {
+        next: (res) => {
+          if (!isDirect) {
             this.isImporting.set(false);
-            this.#importState.showErrorDialog(`Failed to import ${item.Name}: ${err.message}`);
-          },
-        });
+            const draftId = this.#backupsState.addDraftBackup(res.data as BackupDraft);
+            this.#router.navigate(['/backup-draft', draftId]);
+          } else {
+            this.configs.update((configs) => {
+              return configs.filter((c) => c.BackupId !== item.BackupId);
+            });
+            importNext(index + 1);
+          }
+        },
+        error: (err) => {
+          this.isImporting.set(false);
+          this.#importState.showErrorDialog(`Failed to import ${item.Name}: ${err.message}`);
+        },
+      });
     };
 
     importNext(0);
   }
 
   back() {
+    this.#load.cancel();
     this.#router.navigate(['/backup/import-destination/encryption']);
   }
 }

@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { finalize, Observable, of, Subject } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { DuplicatiServer, GetTaskStateDto, ServerStatusDto } from '../openapi';
+import { AppAuthState } from '../states/app-auth.state';
 import { SysinfoState } from '../states/sysinfo.state';
 import { ServerStateService } from './server-state.service';
 import { ServerStatusLongPollService } from './server-status-longpoll.service';
@@ -49,9 +50,12 @@ describe('ServerStateService', () => {
       return request;
     });
 
+    const auth = { isLoggingOut: signal(false) };
+
     TestBed.configureTestingModule({
       providers: [
         ServerStateService,
+        { provide: AppAuthState, useValue: auth },
         { provide: ServerStatusWebSocketService, useValue: websocket },
         { provide: ServerStatusLongPollService, useValue: longPoll },
         { provide: DuplicatiServer, useValue: { getApiV1TaskByTaskid: getTask } },
@@ -60,8 +64,22 @@ describe('ServerStateService', () => {
     });
 
     const service = TestBed.inject(ServerStateService);
-    return { service, websocket, longPoll, taskCompleted, requests, getTask, websocketState, longPollState };
+    // Run the logout effect once, so Angular's scheduling does not count as a pending timer in the tests
+    TestBed.tick();
+    return { service, websocket, longPoll, taskCompleted, requests, getTask, websocketState, longPollState, auth };
   };
+
+  it('stops both transports when the session logs out', () => {
+    const { websocket, longPoll, auth } = setup();
+    expect(websocket.stop).not.toHaveBeenCalled();
+    expect(longPoll.stop).not.toHaveBeenCalled();
+
+    auth.isLoggingOut.set(true);
+    TestBed.tick();
+
+    expect(websocket.stop).toHaveBeenCalledTimes(1);
+    expect(longPoll.stop).toHaveBeenCalledTimes(1);
+  });
 
   it('subscribes to task completions and delegates websocket subscriptions', () => {
     const { service, websocket } = setup();

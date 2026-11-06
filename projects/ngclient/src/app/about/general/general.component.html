@@ -11,9 +11,22 @@
     @if (serverState()?.UpdaterState === 'Waiting') {
       <button shButton (click)="checkForUpdates()" [class.loading]="checkingForUpdates()">Check for updates</button>
 
+      @if (updateInstall.installSupported() && serverState()?.UpdatedVersion) {
+        <button
+          class="primary raised"
+          shButton
+          (click)="updateInstall.install()"
+          [disabled]="!updateInstall.canInstall()"
+          [class.loading]="updateInstall.requestPending()"
+          i18n>
+          <sh-icon>arrow-circle-up</sh-icon>
+          Install update - {{ serverState()?.UpdatedVersion }}
+        </button>
+      }
+
       @if (serverState()?.UpdateDownloadLink) {
         <a
-          class="primary raised"
+          [class]="updateInstall.installSupported() ? 'outlined' : 'primary raised'"
           shButton
           [href]="serverState()?.UpdateDownloadLink"
           target="_blank"
@@ -26,10 +39,23 @@
       <button shButton (click)="checkForUpdates()">Checking for updates …</button>
     }
 
-    @if (serverState()?.UpdaterState === 'Downloading') {
-      <sh-progress-bar class="indeterminate primary"></sh-progress-bar>
+    @if (updateInstall.canCancel()) {
+      <button shButton class="outlined" (click)="updateInstall.cancel()" i18n>Cancel update</button>
     }
   </div>
+
+  @if (updateInstall.installing()) {
+    <div class="update-status">
+      <span>{{ updateInstall.stateLabel() }}</span>
+      @if (serverState()?.UpdaterState === 'Downloading') {
+        <sh-progress-bar class="primary" [value]="serverState()?.UpdateDownloadProgress" />
+      } @else {
+        <sh-progress-bar class="indeterminate primary" />
+      }
+    </div>
+  } @else if (serverState()?.UpdatedVersion && !updateInstall.installSupported() && updateInstall.unsupportedReason()) {
+    <p class="update-note" i18n>The update cannot be installed automatically: {{ updateInstall.unsupportedReason() }}</p>
+  }
 
   <div>{{ generalInfo() }}</div>
 </section>

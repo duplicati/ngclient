@@ -6,18 +6,13 @@ import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { defer, map } from 'rxjs';
 import { DuplicatiServer } from '../../../core/openapi';
 
-type Data = {
-  Hash: string;
-  Size: number;
-};
-
 type RemoteLogEntry = {
   ID: number;
   OperationID: number;
   Timestamp: number;
   Operation: string;
   Path: string;
-  Data: string;
+  Data: string | null;
 };
 
 type RemoteLogEntryEvaluated = {
@@ -26,7 +21,8 @@ type RemoteLogEntryEvaluated = {
   timestamp: number;
   operation: string;
   path: string;
-  data: Data;
+  data: unknown;
+  rawData?: string;
 };
 
 @Component({
@@ -56,17 +52,26 @@ export class RemoteLogComponent {
         this.#dupServer.getApiV1BackupByIdRemotelog({ path: { id: params.id }, query: { pagesize: 100 } })
       ).pipe(
         map((x) => {
-          return (x as RemoteLogEntry[]).map((y, i) => {
-            const newItem = {
+          return (x as RemoteLogEntry[]).map((y): RemoteLogEntryEvaluated => {
+            let data: unknown = null;
+            let rawData: string | undefined;
+            if (typeof y.Data === 'string') {
+              try {
+                data = JSON.parse(y.Data);
+              } catch {
+                // Failed remote operations can record an exception instead of JSON.
+                rawData = y.Data;
+              }
+            }
+            return {
               id: y.ID,
               operationId: y.OperationID,
               timestamp: y.Timestamp * 1000,
               operation: y.Operation,
               path: y.Path,
-              data: typeof y.Data === 'string' ? JSON.parse(y.Data) : null,
-            } as RemoteLogEntryEvaluated;
-
-            return newItem;
+              data,
+              rawData,
+            };
           });
         })
       ),
@@ -81,8 +86,8 @@ export class RemoteLogComponent {
     this.openEntry.set(id);
   }
 
-  copyToClipboard(data: any, index: number) {
-    const text = JSON.stringify(data, null, 2);
+  copyToClipboard(data: unknown, index: number, rawData?: string) {
+    const text = rawData ?? JSON.stringify(data, null, 2) ?? '';
     navigator.clipboard.writeText(text);
 
     this.copiedFromIndex.set(index);

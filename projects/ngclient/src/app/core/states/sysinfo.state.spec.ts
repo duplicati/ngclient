@@ -37,6 +37,17 @@ describe('SysinfoState server capabilities', () => {
   });
 
   it.each([
+    [[], false],
+    [['v1:backup:sync-mode'], false],
+    [['v1:backup:enable-disable'], true],
+  ])('reports backup enable/disable support only when the server advertises it: %j', (extensions, expected) => {
+    const state = setup();
+    expect(state.hasBackupEnableDisable()).toBe(false);
+    state.systemInfo.set({ APIExtensions: extensions } as SystemInfoDto);
+    expect(state.hasBackupEnableDisable()).toBe(expected);
+  });
+
+  it.each([
     [false, false, false],
     [true, false, false],
     [false, true, false],
