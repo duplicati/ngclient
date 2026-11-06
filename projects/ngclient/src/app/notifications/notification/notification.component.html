@@ -35,6 +35,18 @@
             <sh-progress-bar [value]="serverState()?.UpdateDownloadProgress" />
           }
 
+          @if (updateInstall.installing()) {
+            <span>{{ updateInstall.stateLabel() }}</span>
+          }
+
+          @if (updateInstall.canInstall()) {
+            <button shButton class="small primary raised" (click)="updateInstall.install()" i18n>Install</button>
+          }
+
+          @if (updateInstall.canCancel()) {
+            <button shButton class="small outlined" (click)="updateInstall.cancel()" i18n>Cancel update</button>
+          }
+
           <button shButton class="small outlined" (click)="doShowUpdate()" i18n>Show Update</button>
         </div>
       }

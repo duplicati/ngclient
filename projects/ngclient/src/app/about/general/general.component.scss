@@ -21,7 +21,7 @@ section {
   }
 }
 
-sh-progress-bar {
+:host > sh-progress-bar {
   position: absolute;
   top: 0;
   left: 0;
@@ -31,4 +31,15 @@ sh-progress-bar {
 .actions {
   display: flex;
   gap: p2r(8);
+}
+
+.update-status {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(8);
+  max-width: p2r(480);
+}
+
+.update-note {
+  color: var(--base-8);
 }

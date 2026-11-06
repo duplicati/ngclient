@@ -6,6 +6,7 @@ import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
+import { UpdateInstallService } from '../../core/services/update-install.service';
 import { DuplicatiServer, NotificationType } from '../../core/openapi';
 import { getApiBase } from '../../core/utils/proxy-config.util';
 import { ExtendedNotificationDto } from '../notifications.component';
@@ -34,6 +35,8 @@ export class NotificationComponent {
   #dupServer = inject(DuplicatiServer);
   #auth = inject(AppAuthState);
   #generatedDownloadLink = signal<string | null>(null);
+
+  updateInstall = inject(UpdateInstallService);
 
   serverState = this.#notificationState.serverState;
 

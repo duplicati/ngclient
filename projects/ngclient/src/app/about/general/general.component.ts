@@ -6,6 +6,7 @@ import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { defer, finalize, map } from 'rxjs';
 import { DuplicatiServer } from '../../core/openapi';
 import { ServerStateService } from '../../core/services/server-state.service';
+import { UpdateInstallService } from '../../core/services/update-install.service';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 
 @Component({
@@ -19,6 +20,7 @@ export default class GeneralComponent {
   #dupServer = inject(DuplicatiServer);
   #serverState = inject(ServerStateService);
   #sysinfo = inject(SysinfoState);
+  updateInstall = inject(UpdateInstallService);
 
   isLoading = signal(true);
   checkingForUpdates = signal(false);

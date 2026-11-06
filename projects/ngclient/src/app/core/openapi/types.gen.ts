@@ -822,6 +822,8 @@ export type SystemInfoDto = {
     CaseSensitiveFilesystem: boolean;
     MachineName: string | null;
     PackageTypeId: string | null;
+    UpdateInstallSupported: boolean;
+    UpdateInstallUnsupportedReason: string | null;
     UserName: string | null;
     NewLine: string | null;
     CLRVersion: string | null;
@@ -1000,7 +1002,7 @@ export type UpdateDbPathInputDto = {
     path?: string | null;
 };
 
-export type UpdatePollerStates = 'Waiting' | 'Checking' | 'Downloading';
+export type UpdatePollerStates = 'Waiting' | 'Checking' | 'Downloading' | 'Verifying' | 'LaunchingHelper' | 'Installing';
 
 export type WebModuleOutputDto = {
     Status?: string | null;
@@ -1113,6 +1115,8 @@ export type SystemInfoDtoWritable = {
     CaseSensitiveFilesystem: boolean;
     MachineName: string | null;
     PackageTypeId: string | null;
+    UpdateInstallSupported: boolean;
+    UpdateInstallUnsupportedReason: string | null;
     UserName: string | null;
     NewLine: string | null;
     CLRVersion: string | null;
@@ -2159,6 +2163,34 @@ export type PostApiV1UpdatesCheckData = {
 };
 
 export type PostApiV1UpdatesCheckResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiV1UpdatesInstallData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/updates/install';
+};
+
+export type PostApiV1UpdatesInstallResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiV1UpdatesCancelInstallData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/updates/cancel-install';
+};
+
+export type PostApiV1UpdatesCancelInstallResponses = {
     /**
      * OK
      */
