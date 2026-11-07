@@ -69,7 +69,23 @@
             </button>
           }
         </div>
-        @if (isSearchMode() && !isSearching()) {
+        <label class="search-scope">
+          <input
+            type="checkbox"
+            [ngModel]="searchAllVersions()"
+            (ngModelChange)="searchAllVersions.set($event)"
+            [ngModelOptions]="{ standalone: true }" />
+          <span i18n>Search all versions</span>
+        </label>
+        @if (searchError()) {
+          <p role="alert" i18n>Could not search files. Please try again.</p>
+        }
+        @if (unavailableVersion()) {
+          <p role="alert" i18n>
+            This backup version is no longer available. Reload the backup versions and search again.
+          </p>
+        }
+        @if (isSearchMode() && !isSearching() && !searchError()) {
           <div class="search-results-info">
             @if (searchResults().length === 0) {
               <span i18n>0 results found</span>
@@ -80,23 +96,70 @@
         }
       }
 
-      <!-- <pre>{{ rootPaths() }}</pre> -->
-      <app-file-tree
-        class="fill"
-        [rootPaths]="rootPaths()"
-        [initialNodes]="initialNodes()"
-        [rootMetadata]="rootMetadata()"
-        [backupSettings]="backupSettings()"
-        [multiSelect]="true"
-        [showFiles]="true"
-        [loadExtendedData]="true"
-        [searchMode]="isSearchMode()"
-        [searchResults]="searchResults()"
-        [searchParentMetadata]="searchParentMetadata()"
-        (hasExtendedData)="extendedDataType.set($event)">
-        <label for="path" i18n>Path</label>
-        <input type="text" id="path" formControlName="filesToRestore" />
-      </app-file-tree>
+      @if (allVersionResults()) {
+        <div class="version-results" aria-live="polite">
+          <ul>
+            @for (result of searchResults(); track $index) {
+              <li>
+                <div>
+                  <strong>{{ result.Path }}</strong>
+                  <span i18n>Version {{ result.Version }}: {{ result.Time | date: 'medium' }}</span>
+                  @if (!result.IsDirectory) {
+                    <span>{{ result.Size | bytes }}</span>
+                  }
+                </div>
+                <button
+                  shButton
+                  type="button"
+                  class="small secondary"
+                  (click)="selectSearchResult(result)"
+                  [disabled]="isSearching() || !result.Path"
+                  i18n>
+                  Select this version
+                </button>
+              </li>
+            }
+          </ul>
+        </div>
+        <div class="search-pagination">
+          <button
+            shButton
+            type="button"
+            class="small secondary"
+            (click)="performSearch(searchPage() - 1)"
+            [disabled]="isSearching() || searchPage() === 0"
+            i18n>
+            Previous results
+          </button>
+          <span i18n>Page {{ searchPage() + 1 }} of {{ searchPages() || 1 }}</span>
+          <button
+            shButton
+            type="button"
+            class="small secondary"
+            (click)="performSearch(searchPage() + 1)"
+            [disabled]="isSearching() || searchPage() + 1 >= searchPages()"
+            i18n>
+            Next results
+          </button>
+        </div>
+      } @else {
+        <app-file-tree
+          class="fill"
+          [rootPaths]="rootPaths()"
+          [initialNodes]="initialNodes()"
+          [rootMetadata]="rootMetadata()"
+          [backupSettings]="backupSettings()"
+          [multiSelect]="true"
+          [showFiles]="true"
+          [loadExtendedData]="true"
+          [searchMode]="isSearchMode()"
+          [searchResults]="searchResults()"
+          [searchParentMetadata]="searchParentMetadata()"
+          (hasExtendedData)="extendedDataType.set($event)">
+          <label for="path" i18n>Path</label>
+          <input type="text" id="path" formControlName="filesToRestore" />
+        </app-file-tree>
+      }
     }
   }
 
@@ -110,7 +173,7 @@
       shButton
       class="raised primary"
       type="submit"
-      [disabled]="versionOptionsLoading() || versionOptions().length === 0"
+      [disabled]="versionOptionsLoading() || versionOptions().length === 0 || allVersionResults()"
       i18n>
       <sh-icon>arrow-right</sh-icon>
       Continue

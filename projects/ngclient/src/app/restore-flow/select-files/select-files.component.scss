@@ -44,3 +44,40 @@ form {
   color: var(--base-8);
   font-size: var(--small);
 }
+
+.search-scope,
+.search-pagination {
+  display: flex;
+  align-items: center;
+  gap: p2r(8);
+}
+.version-results {
+  overflow: auto;
+  min-height: 0;
+  flex: 1;
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: p2r(16);
+    padding: p2r(12);
+    border-bottom: 1px solid var(--base-4);
+  }
+  li > div {
+    display: flex;
+    flex-direction: column;
+    gap: p2r(4);
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+}
+.search-pagination {
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
