@@ -1,5 +1,16 @@
 import { KeyboardActionDirective } from '../core/directives/keyboard-action.directive';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipCard } from '@ship-ui/core/ship-card';
@@ -48,6 +59,8 @@ export default class Destinations {
   #connectionStringsState = inject(ConnectionStringsState);
   #backupsState = inject(BackupsState);
   #dialog = inject(ShipDialogService);
+  #destroyRef = inject(DestroyRef);
+  #detailSubscription?: Subscription;
   getSimplePath = getSimplePath;
   backups = this.#backupsState.backups;
 
@@ -111,6 +124,7 @@ export default class Destinations {
   });
 
   selectDestination(dest: ConnectionStringDto | 'new') {
+    this.#detailSubscription?.unsubscribe();
     this.selectedDestination.set(dest);
     this.testSignal.set(null);
 
@@ -125,18 +139,22 @@ export default class Destinations {
       this.editBaseUrl.set(dest.BaseUrl);
       this.initialBaseUrl.set(dest.BaseUrl);
 
-      this.#connectionStringsState.getById(dest.ID).subscribe((res) => {
-        if (res.Data) {
-          this.editName.set(res.Data.Name);
-          this.editDescription.set(res.Data.Description);
-          this.editBaseUrl.set(res.Data.BaseUrl ?? null);
-          this.initialBaseUrl.set(res.Data.BaseUrl ?? null);
-        }
-      });
+      this.#detailSubscription = this.#connectionStringsState
+        .getById(dest.ID)
+        .pipe(takeUntilDestroyed(this.#destroyRef))
+        .subscribe((res) => {
+          if (res.Data) {
+            if (this.editName() === dest.Name) this.editName.set(res.Data.Name);
+            if (this.editDescription() === dest.Description) this.editDescription.set(res.Data.Description);
+            if (this.editBaseUrl() === dest.BaseUrl) this.editBaseUrl.set(res.Data.BaseUrl ?? null);
+            this.initialBaseUrl.set(res.Data.BaseUrl ?? null);
+          }
+        });
     }
   }
 
   cancelEdit() {
+    this.#detailSubscription?.unsubscribe();
     this.selectedDestination.set(null);
   }
 
