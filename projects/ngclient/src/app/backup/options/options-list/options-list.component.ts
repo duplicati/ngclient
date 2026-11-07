@@ -97,6 +97,17 @@ export class OptionsListComponent {
             if (optionValue) _value = optionValue;
           }
 
+          if (option.type === 'Flags' && option.options && typeof _value === 'string') {
+            const choices = option.options;
+            _value = _value
+              .split(',')
+              .map((value) => {
+                const normalized = value.trim().toLowerCase();
+                return choices.find((choice) => choice.trim().toLowerCase() === normalized) ?? value;
+              })
+              .join(',');
+          }
+
           const override = OPTIONS_LIST_CUSTOM_CONFIG.find((x) => x.name === option?.name);
           if (override) {
             option = {
