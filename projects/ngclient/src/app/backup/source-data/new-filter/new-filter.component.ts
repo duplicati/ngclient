@@ -228,6 +228,7 @@ export const serializeFilterPath = (
 })
 export class NewFilterComponent {
   #injector = inject(Injector);
+  #lastEmittedValue?: { path: string; osType: string | undefined };
 
   path = input.required<string>();
   osType = input<string>();
@@ -299,10 +300,16 @@ export class NewFilterComponent {
 
   pathEffect = effect(() => {
     const newPath = this.path();
-    const parsedPath = parseFilterPath(newPath, this.osType());
+    const osType = this.osType();
 
-    this.pathType.set(parsedPath.type);
-    this.internalPath.set(parsedPath.expression);
+    // A local edit can serialize to an ambiguous expression (for example lock/).
+    // Preserve the chosen type when the parent echoes that edit back to us.
+    if (newPath !== this.#lastEmittedValue?.path || osType !== this.#lastEmittedValue?.osType) {
+      this.#lastEmittedValue = undefined;
+      const parsedPath = parseFilterPath(newPath, osType);
+      this.pathType.set(parsedPath.type);
+      this.internalPath.set(parsedPath.expression);
+    }
 
     // Focus the input if this is a newly added filter
     if (this.isNew()) {
@@ -335,15 +342,16 @@ export class NewFilterComponent {
 
     if (!expressionOption) return;
 
-    this.pathChange.emit(
-      serializeFilterPath(
-        expressionOption.value,
-        newPath,
-        this.osType(),
-        expressionOption.startsWith,
-        expressionOption.endsWith
-      )
+    const osType = this.osType();
+    const serializedPath = serializeFilterPath(
+      expressionOption.value,
+      newPath,
+      osType,
+      expressionOption.startsWith,
+      expressionOption.endsWith
     );
+    this.#lastEmittedValue = { path: serializedPath, osType };
+    this.pathChange.emit(serializedPath);
   }
 
   removeFilter() {

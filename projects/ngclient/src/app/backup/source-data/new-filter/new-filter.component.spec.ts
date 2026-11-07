@@ -58,6 +58,74 @@ describe('NewFilterComponent folder editing', () => {
     TestBed.resetTestingModule();
   });
 
+  it.each([
+    [undefined, '-Folder', '/test/test', '-/test/test/'],
+    ['Windows', '-Folder', 'C:\\test\\test', '-C:\\test\\test\\'],
+    [undefined, '+Folder', '/test/test', '+/test/test/'],
+  ] as const)(
+    'keeps a newly selected folder type through the parent round-trip (%s, %s)',
+    (osType, type, path, expected) => {
+      const component = createFixture('-*.lock', osType);
+      let emittedPath = '';
+      component.pathChange.subscribe((value) => (emittedPath = value));
+
+      component.pathType.set(type);
+      component.updateFilter();
+      fixture.componentRef.setInput('path', emittedPath);
+      fixture.detectChanges();
+
+      expect(component.pathType()).toBe(type);
+      expect(component.internalPath()).toBe('lock');
+
+      component.internalPath.set(path);
+      component.updateFilter();
+      expect(emittedPath).toBe(expected);
+      fixture.componentRef.setInput('path', emittedPath);
+      fixture.detectChanges();
+      expect(component.pathType()).toBe(type);
+
+      // A genuinely different value supplied by the parent must still be parsed.
+      fixture.componentRef.setInput('path', '-*.tmp');
+      fixture.detectChanges();
+      expect(component.pathType()).toBe('-Extension');
+      expect(component.internalPath()).toBe('tmp');
+    }
+  );
+
+  it('reparses a local value when the server OS changes', () => {
+    const component = createFixture('-*.lock');
+    let emittedPath = '';
+    component.pathChange.subscribe((value) => (emittedPath = value));
+    component.pathType.set('-Folder');
+    component.updateFilter();
+    fixture.componentRef.setInput('path', emittedPath);
+    fixture.detectChanges();
+    expect(component.pathType()).toBe('-Folder');
+
+    fixture.componentRef.setInput('osType', 'Windows');
+    fixture.detectChanges();
+    expect(component.pathType()).toBe('-Expression');
+    expect(component.internalPath()).toBe('lock/');
+  });
+
+  it('parses a previous local value again after an external replacement', () => {
+    const component = createFixture('-*.lock');
+    let emittedPath = '';
+    component.pathChange.subscribe((value) => (emittedPath = value));
+    component.pathType.set('-Folder');
+    component.updateFilter();
+    fixture.componentRef.setInput('path', emittedPath);
+    fixture.detectChanges();
+    expect(component.pathType()).toBe('-Folder');
+
+    fixture.componentRef.setInput('path', '-*.tmp');
+    fixture.detectChanges();
+    fixture.componentRef.setInput('path', emittedPath);
+    fixture.detectChanges();
+    expect(component.pathType()).toBe('-Expression');
+    expect(component.internalPath()).toBe('lock/');
+  });
+
   it('keeps an excluded folder selected while its path is edited', () => {
     const component = createFixture('-/srv/backups');
     let emittedPath = '';
