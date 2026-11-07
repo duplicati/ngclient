@@ -58,6 +58,55 @@
               </div>
             }
 
+            @if ($index > 0) {
+              <div class="secondary-sync">
+                <sh-select [options]="synchronizationModes(dest)" value="value" label="label" [isClearable]="false">
+                  <label [for]="'sync-mode-' + dest.uiKey" i18n>Synchronization mode</label>
+                  <input
+                    type="text"
+                    [id]="'sync-mode-' + dest.uiKey"
+                    [ngModel]="synchronizationMode(dest)"
+                    (ngModelChange)="updateSynchronizationMode($index, $event)"
+                    [ngModelOptions]="{ standalone: true }" />
+                </sh-select>
+                @if (synchronizationMode(dest) === 'interval') {
+                  <sh-form-field>
+                    <label [for]="'sync-interval-' + dest.uiKey" i18n>Synchronization interval</label>
+                    <input
+                      type="text"
+                      [id]="'sync-interval-' + dest.uiKey"
+                      [ngModel]="dest.interval"
+                      (ngModelChange)="updateSynchronizationInterval($index, $event)"
+                      [ngModelOptions]="{ standalone: true }"
+                      placeholder="7D"
+                      [attr.aria-invalid]="synchronizationError(dest) === 'interval'" />
+                  </sh-form-field>
+                  <p i18n>Use seconds or units such as 30m, 12h or 7D.</p>
+                  @if (synchronizationError(dest) === 'interval') {
+                    <p role="alert" i18n>Enter a positive synchronization interval.</p>
+                  }
+                } @else if (synchronizationMode(dest) === 'counting') {
+                  <sh-form-field>
+                    <label [for]="'sync-count-' + dest.uiKey" i18n>Backup count</label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="2147483647"
+                      step="1"
+                      [id]="'sync-count-' + dest.uiKey"
+                      [ngModel]="synchronizationCount(dest)"
+                      (ngModelChange)="updateSynchronizationCount($index, $event)"
+                      [ngModelOptions]="{ standalone: true }"
+                      [attr.aria-invalid]="synchronizationError(dest) === 'count'" />
+                  </sh-form-field>
+                  @if (synchronizationError(dest) === 'count') {
+                    <p role="alert" i18n>Enter a positive whole number of backups.</p>
+                  }
+                }
+                <p i18n>Synchronization is checked after successful backups; it does not run on a separate schedule.</p>
+              </div>
+            }
+
             <app-test-url
               #testUrl
               [targetUrl]="dest.url"
@@ -188,7 +237,7 @@
       class="raised primary"
       [class.loading]="isAdvancing() || (isNew() && testStates().length > 0 && testStates()[0] === 'testing')"
       type="submit"
-      [disabled]="!hasDestination || isAdvancing()"
+      [disabled]="!hasDestination || isAdvancing() || hasInvalidSynchronization()"
       i18n>
       <sh-icon>arrow-right</sh-icon>
       Continue

@@ -72,6 +72,27 @@ describe('BackupState', () => {
     });
   });
 
+  it('retains synchronization settings and unknown options when loading and editing a secondary URL', () => {
+    const options = { count: 3, 'future-option': { enabled: true } };
+    state.mapDestinationToForm({
+      TargetURL: 'file:///primary',
+      AdditionalTargetURLs: [
+        {
+          TargetUrl: 'file:///secondary',
+          ConnectionStringID: 8,
+          UrlKey: 'second',
+          Mode: 'interval',
+          Interval: '2D',
+          Options: options,
+        },
+      ],
+    } as unknown as BackupDto);
+    expect(state.targetUrls()[1]).toMatchObject({ mode: 'interval', interval: '2D', options });
+    state.updateTargetUrl(1, 'file:///changed', 9, 'second');
+    expect(state.targetUrls()[1]).toMatchObject({ mode: 'interval', interval: '2D', options });
+    expect(options).toEqual({ count: 3, 'future-option': { enabled: true } });
+  });
+
   it('round-trips a loaded schedule without changing its local date', () => {
     vi.stubEnv('TZ', 'America/New_York');
     state.mapScheduleToForm({

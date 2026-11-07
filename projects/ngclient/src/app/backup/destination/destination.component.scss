@@ -49,6 +49,17 @@ form {
   margin: p2r(16 0 0);
 }
 
+.secondary-sync {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(12);
+  margin: p2r(16);
+
+  p {
+    margin: 0;
+  }
+}
+
 .form-actions {
   display: flex;
   justify-content: space-between;
