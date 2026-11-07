@@ -32,7 +32,6 @@ export class ConnectionStringsState {
   save(selected: ConnectionStringDto | 'new', data: CreateConnectionStringDto | UpdateConnectionStringDto) {
     this.isSaving.set(true);
 
-    data.Description = '';
     const obs = defer(() =>
       selected === 'new'
         ? this.#connectionStrings.postApiV2ConnectionStrings({ body: data as CreateConnectionStringDto })
