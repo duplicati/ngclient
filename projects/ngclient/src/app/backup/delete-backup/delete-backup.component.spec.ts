@@ -2,7 +2,7 @@ import { DecimalPipe } from '@angular/common';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
-import { of } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { DuplicatiServer } from '../../core/openapi';
 import { BackupsState } from '../../core/states/backups.state';
@@ -11,8 +11,8 @@ import DeleteBackupComponent from './delete-backup.component';
 afterEach(() => TestBed.resetTestingModule());
 
 describe('job deletion remote files option', () => {
-  async function setup(operationType?: 'Backup' | 'Sync') {
-    const remove = vi.fn(() => of({}));
+  async function setup(operationType?: 'Backup' | 'Sync', response: Observable<unknown> = of({})) {
+    const remove = vi.fn(() => response);
     const open = vi.fn((_component: unknown, _options: { closed: (confirmed: boolean) => void }) => {});
     TestBed.configureTestingModule({
       imports: [DeleteBackupComponent],
@@ -46,6 +46,46 @@ describe('job deletion remote files option', () => {
     fixture.detectChanges();
     return { fixture, component: fixture.componentInstance, remove, open };
   }
+
+  it('releases the deletion state after cancellation and allows another attempt', async () => {
+    const { component, open, remove, fixture } = await setup();
+    component.deleteBackup();
+    expect(component.isDeleting()).toBe(true);
+    open.mock.calls[0][1].closed(false);
+    fixture.detectChanges();
+    expect(component.isDeleting()).toBe(false);
+    expect(remove).not.toHaveBeenCalled();
+    component.deleteBackup();
+    expect(open).toHaveBeenCalledTimes(2);
+  });
+
+  it('opens only one confirmation and does not start another deletion while pending', async () => {
+    const pending = new Subject<unknown>();
+    const { component, open, remove } = await setup('Backup', pending);
+    component.deleteBackup();
+    component.deleteBackup();
+    expect(open).toHaveBeenCalledTimes(1);
+    open.mock.calls[0][1].closed(true);
+    component.deleteBackup();
+    expect(open).toHaveBeenCalledTimes(1);
+    expect(remove).toHaveBeenCalledTimes(1);
+    pending.complete();
+    expect(component.isDeleting()).toBe(false);
+  });
+
+  it('allows retry after a failed deletion without navigating', async () => {
+    const pending = new Subject<unknown>();
+    const { component, open } = await setup('Backup', pending);
+    const navigate = TestBed.inject(Router).navigate;
+    component.deleteBackup();
+    open.mock.calls[0][1].closed(true);
+    pending.error(new Error('busy'));
+    expect(component.isDeleting()).toBe(false);
+    expect(navigate).not.toHaveBeenCalled();
+    component.deleteBackup();
+    expect(open).toHaveBeenCalledTimes(2);
+    open.mock.calls[1][1].closed(false);
+  });
 
   it('hides the entire remote files section for Sync while retaining local database deletion', async () => {
     const { fixture } = await setup('Sync');

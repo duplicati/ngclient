@@ -43,6 +43,7 @@ export default class DeleteBackupComponent {
   isDeleting = signal(false);
 
   deleteBackup() {
+    if (this.isDeleting()) return;
     const id = this.id();
     const deleteLocalDb = this.deleteLocalDb();
     const deleteRemoteFiles = this.isSyncMode() ? undefined : this.deleteRemoteFiles();
@@ -56,7 +57,10 @@ export default class DeleteBackupComponent {
         cancelText: $localize`Cancel`,
       },
       closed: (res) => {
-        if (!res) return;
+        if (!res) {
+          this.isDeleting.set(false);
+          return;
+        }
         this.#backupsState
           .deleteBackup({
             path: { id },
@@ -70,6 +74,8 @@ export default class DeleteBackupComponent {
             next: () => {
               this.#router.navigate(['/']);
             },
+            // HTTP errors are reported by the shared interceptor; finalize permits retry.
+            error: () => {},
           });
       },
     });
