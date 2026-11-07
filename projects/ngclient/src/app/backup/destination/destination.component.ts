@@ -20,12 +20,19 @@ import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipMenu } from '@ship-ui/core/ship-menu';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
+import { ShipSelect } from '@ship-ui/core/ship-select';
 import { ShipToggle } from '@ship-ui/core/ship-toggle';
 import { ShipToggleCard } from '@ship-ui/core/ship-toggle-card';
 import { IDynamicModule } from '../../core/openapi';
 import { ConnectionStringsState } from '../../core/states/connection-strings.state';
 import { DestinationTypeOption } from '../../core/states/destinationconfig.state';
 import { BackupState } from '../backup.state';
+import {
+  BackupTargetUrl,
+  secondaryDestinationMode,
+  secondaryDestinationCount,
+  secondaryDestinationError,
+} from '../models/backup-form-mappers';
 import { TestState, TestUrl } from '../source-data/target-url-dialog/test-url/test-url';
 import { DestinationListItemComponent } from './destination-list-item/destination-list-item.component';
 import { DestinationListComponent } from './destination-list/destination-list.component';
@@ -85,6 +92,7 @@ export type DestinationFormGroupValue = ReturnType<typeof createDestinationFormG
     ShipCard,
     ShipDivider,
     ShipProgressBar,
+    ShipSelect,
     ShipToggleCard,
     ShipToggle,
   ],
@@ -106,6 +114,44 @@ export default class DestinationComponent {
   testStates = signal<TestState[]>([]);
 
   targetUrls = this.#backupState.targetUrls;
+  synchronizationMode = secondaryDestinationMode;
+  synchronizationCount = secondaryDestinationCount;
+  synchronizationError = secondaryDestinationError;
+  hasInvalidSynchronization = computed(() => this.targetUrls().slice(1).some(secondaryDestinationError));
+  #synchronizationModes = [
+    { value: 'inline', label: $localize`After every successful backup` },
+    { value: 'interval', label: $localize`After a time interval` },
+    { value: 'counting', label: $localize`After a number of successful backups` },
+  ];
+
+  synchronizationModes(target: BackupTargetUrl) {
+    const mode = secondaryDestinationMode(target);
+    return this.#synchronizationModes.some((option) => option.value === mode)
+      ? this.#synchronizationModes
+      : [...this.#synchronizationModes, { value: mode, label: $localize`Other mode: ${target.mode}` }];
+  }
+
+  updateSynchronizationMode(index: number, mode: string) {
+    const target = this.targetUrls()[index];
+    if (!target || index < 1) return;
+    const changes: Pick<BackupTargetUrl, 'mode' | 'interval' | 'options'> = { mode };
+    if (mode === 'interval' && !target.interval) changes.interval = '1D';
+    if (mode === 'counting' && secondaryDestinationCount(target) == null)
+      changes.options = { ...target.options, count: 2 };
+    this.#backupState.updateTargetSynchronization(index, changes);
+  }
+
+  updateSynchronizationInterval(index: number, interval: string) {
+    this.#backupState.updateTargetSynchronization(index, { interval });
+  }
+
+  updateSynchronizationCount(index: number, count: number | null) {
+    const target = this.targetUrls()[index];
+    if (!target || index < 1) return;
+    const options = { ...target.options };
+    for (const key of Object.keys(options)) if (key.toLowerCase() === 'count') delete options[key];
+    this.#backupState.updateTargetSynchronization(index, { options: { ...options, count } });
+  }
   targetUrlModel = computed(() => this.targetUrls()[0]?.url ?? null);
   targetUrlCtrl = signal<string | null>(null);
   targetUrlInitial = signal<string | null>(null);
@@ -317,7 +363,7 @@ export default class DestinationComponent {
   isAdvancing = signal(false);
 
   async next() {
-    if (this.isAdvancing()) return;
+    if (this.isAdvancing() || this.hasInvalidSynchronization()) return;
     this.isAdvancing.set(true);
     try {
       const isNew = this.#backupState.isNew();
