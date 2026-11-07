@@ -1,5 +1,7 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+import { ShipSelect } from '@ship-ui/core/ship-select';
 import { afterEach, describe, expect, it } from 'vitest';
 import { SysinfoState } from '../../../core/states/sysinfo.state';
 import { FormView } from '../../destination/destination.config-utilities';
@@ -17,20 +19,21 @@ describe('OptionsListComponent option editing', () => {
     fixture?.destroy();
     TestBed.resetTestingModule();
   });
-  function setup(options: { Name: string; Value: string }[], freeText = false) {
+  function setup(options: { Name: string; Value: string }[], freeText = false, renderedDefinitions?: FormView[]) {
+    const activeDefinitions = renderedDefinitions ?? definitions;
     TestBed.configureTestingModule({
       imports: [OptionsListComponent],
       providers: [
         {
           provide: SysinfoState,
           useValue: {
-            allOptions: signal(definitions),
-            allOptionsGrouped: signal([{ displayName: 'Default', options: definitions }]),
+            allOptions: signal(activeDefinitions),
+            allOptionsGrouped: signal([{ displayName: 'Default', options: activeDefinitions }]),
           },
         },
       ],
     });
-    TestBed.overrideComponent(OptionsListComponent, { set: { template: '', imports: [] } });
+    if (!renderedDefinitions) TestBed.overrideComponent(OptionsListComponent, { set: { template: '', imports: [] } });
     fixture = TestBed.createComponent(OptionsListComponent);
     fixture.componentRef.setInput('options', options);
     fixture.componentRef.setInput('hasFreeTextSettings', freeText);
@@ -90,5 +93,40 @@ describe('OptionsListComponent option editing', () => {
     expect(component.settingsAsText()).toBe('custom-name=custom=value');
     component.updateSettingsFromText('custom-name=changed=value');
     expect(component.options()).toEqual([expect.objectContaining({ Name: 'custom-name', Value: 'changed=value' })]);
+  });
+
+  it.each([
+    ['hidden,system', ['Hidden', 'System']],
+    ['Hidden,System', ['Hidden', 'System']],
+    [' hIdDeN , SYSTEM ', ['Hidden', 'System']],
+    ['hidden', ['Hidden']],
+    ['', []],
+  ] as [string, string[]][])(
+    'retains the attributes in %j through actual Flags control initialization',
+    async (value, expected) => {
+      const component = setup([{ Name: '--exclude-files-attributes', Value: value }], false, [
+        { name: 'exclude-files-attributes', type: 'Flags', options: ['Hidden', 'System', 'Archive'] },
+      ]);
+      await fixture.whenStable();
+      fixture.detectChanges();
+      await fixture.whenStable();
+      const select = fixture.debugElement.query(By.directive(ShipSelect)).componentInstance as ShipSelect;
+      expect(select.selectedOptions()).toEqual(expected);
+      expect(component.options()[0].Value).toBe(value);
+    }
+  );
+
+  it('uses the server spelling for other Flags options without changing their available choices', async () => {
+    const choices = ['Read', 'Write'];
+    const component = setup([{ Name: '--permissions', Value: 'read,WRITE' }], false, [
+      { name: 'permissions', type: 'Flags', options: choices },
+    ]);
+    await fixture.whenStable();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const select = fixture.debugElement.query(By.directive(ShipSelect)).componentInstance as ShipSelect;
+    expect(select.selectedOptions()).toEqual(['Read', 'Write']);
+    expect(component.options()[0].Value).toBe('read,WRITE');
+    expect(choices).toEqual(['Read', 'Write']);
   });
 });
