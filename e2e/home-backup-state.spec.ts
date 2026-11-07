@@ -74,7 +74,7 @@ test.describe('home backup state', () => {
     await expect(running).toHaveClass(/running/);
     await expect(running.locator('.row-progress')).toContainText('42%');
     await expect(running).not.toContainText('Queued');
-    await expect(running.getByRole('button', { name: 'Stop' })).toHaveCount(0);
+    await expect(running.getByRole('button', { name: 'Stop', exact: true })).toBeVisible();
     await expect(running.locator('button', { has: page.locator('sh-icon', { hasText: 'stop' }) })).toBeVisible();
     await expect(table.getByRole('row').filter({ hasText: 'Photos' })).toContainText('Queued');
 
