@@ -14,6 +14,28 @@ type Data = {
   notes: string;
 };
 
+function parseLicenseMetadata(jsondata: LicenseDto['Jsondata']): Data | null {
+  if (!jsondata) return null;
+  try {
+    const parsed: unknown = JSON.parse(jsondata);
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return null;
+    const fields = parsed as Record<string, unknown>;
+    const text = (key: keyof Data) => {
+      const value = fields[key];
+      return typeof value === 'string' ? value : '';
+    };
+    return {
+      name: text('name'),
+      description: text('description'),
+      link: text('link'),
+      license: text('license'),
+      notes: text('notes'),
+    };
+  } catch {
+    return null;
+  }
+}
+
 @Component({
   selector: 'app-libraries',
   imports: [ShipIcon, ShipButton, ShipDialog],
@@ -30,7 +52,7 @@ export default class LibrariesComponent {
         return x.map((y) => {
           return {
             ...y,
-            data: (y.Jsondata ? JSON.parse(y.Jsondata) : null) as Data | null,
+            data: parseLicenseMetadata(y.Jsondata),
           };
         });
       })
