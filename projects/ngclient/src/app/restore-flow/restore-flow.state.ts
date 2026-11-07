@@ -1,8 +1,25 @@
-import { computed, effect, inject, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, OnDestroy, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
-import { catchError, defer, finalize, forkJoin, Observable, retry, switchMap, take, throwError, timer } from 'rxjs';
+import {
+  catchError,
+  defer,
+  filter,
+  finalize,
+  forkJoin,
+  map,
+  Observable,
+  of,
+  repeat,
+  retry,
+  Subscription,
+  switchMap,
+  take,
+  tap,
+  throwError,
+  timer,
+} from 'rxjs';
 import { TestState } from '../backup/source-data/target-url-dialog/test-url/test-url';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer, GetBackupResultDto, ListFilesetsResponseDto, SettingInputDto } from '../core/openapi';
@@ -25,7 +42,7 @@ type ListResultFileset = {
 @Injectable({
   providedIn: 'root',
 })
-export class RestoreFlowState {
+export class RestoreFlowState implements OnDestroy {
   #router = inject(Router);
   #route = inject(ActivatedRoute);
   #sysinfo = inject(SysinfoState);
@@ -33,6 +50,8 @@ export class RestoreFlowState {
   #dupServer = inject(DuplicatiServer);
   #serverSettings = inject(ServerSettingsService);
   #restoreOptionsInitializedForBackupId: string | null = null;
+  #backupLoad: Subscription | undefined;
+  #destroyed = false;
 
   backupId = signal<string | null>(null);
   backup = signal<GetBackupResultDto | null>(null);
@@ -46,6 +65,7 @@ export class RestoreFlowState {
   selectFilesFormSignal = toSignal(this.selectFilesForm.valueChanges);
   selectOption = signal<string | null>(null);
   versionOptionsLoading = signal(false);
+  waitingForBackup = signal(false);
   versionOptions = signal<ListResultFileset[]>([]);
   isSubmitting = signal(false);
   isFileRestore = signal(false);
@@ -86,6 +106,7 @@ export class RestoreFlowState {
   });
 
   init(id: 'string', isFileRestore = false) {
+    this.#cancelBackupLoad();
     this.backupId.set(id);
 
     this.isFileRestore.set(isFileRestore);
@@ -228,6 +249,40 @@ export class RestoreFlowState {
     this.versionOptions();
   }
 
+  private waitForBackupIdle(id: string) {
+    return defer(() => this.#dupServer.getApiV1BackupByIdIsactive({ path: { id } })).pipe(
+      repeat({ delay: 1000 }),
+      tap((activity) => this.waitingForBackup.set(activity.Active === true)),
+      filter((activity) => activity.Active !== true),
+      take(1)
+    );
+  }
+
+  private loadRestoreBackupv2(id: string) {
+    return this.waitForBackupIdle(id).pipe(
+      switchMap(() => this.loadFilesetsWithRetryv2(id)),
+      switchMap((filesets) =>
+        defer(() => this.#dupServer.getApiV1BackupById({ path: { id } })).pipe(
+          map((backup) => [backup, filesets] as const)
+        )
+      ),
+      switchMap((result) => {
+        const backup = result[0].Backup;
+        if ((backup?.IsTemporary ?? true) || backup?.DBPathExists !== false) return of({ result, retry: false });
+
+        // A task can start between the initial idle check and the metadata response.
+        return defer(() => this.#dupServer.getApiV1BackupByIdIsactive({ path: { id } })).pipe(
+          map((activity) => ({ result, retry: activity.Active === true })),
+          tap(({ retry }) => this.waitingForBackup.set(retry))
+        );
+      }),
+      repeat({ delay: 1000 }),
+      filter(({ retry }) => !retry),
+      take(1),
+      map(({ result }) => result)
+    );
+  }
+
   private loadFilesetsWithRetryv2(id: string, retriesLeft: number = 2): Observable<ListFilesetsResponseDto> {
     return defer(() => this.#dupServer.postApiV2BackupListFilesets({ body: { BackupId: id } })).pipe(
       catchError((err) => {
@@ -240,88 +295,112 @@ export class RestoreFlowState {
           return throwError(() => err);
         }
 
-        return timer(1000).pipe(switchMap(() => this.loadFilesetsWithRetryv2(id, retriesLeft - 1)));
+        return timer(1000).pipe(
+          switchMap(() => (statusCode === 'DatabaseLocked' ? this.waitForBackupIdle(id) : of(null))),
+          switchMap(() => this.loadFilesetsWithRetryv2(id, retriesLeft - 1))
+        );
       })
     );
   }
 
   getBackup() {
+    if (this.#destroyed) return;
+    this.#cancelBackupLoad();
     const id = this.backupId()!;
 
     this.versionOptionsLoading.set(true);
 
     if (this.#sysinfo.hasV2ListOperations()) {
-      forkJoin([
-        defer(() =>
-          this.#dupServer.getApiV1BackupById({
-            path: { id },
-          })
-        ),
-        this.loadFilesetsWithRetryv2(id),
-      ])
-        .pipe(
-          take(1),
-          finalize(() => this.versionOptionsLoading.set(false))
-        )
-        .subscribe({
-          next: ([backup, filesets]) => {
-            if (filesets.Error) throw new Error(filesets.Error);
-            const isTemporary = backup.Backup?.IsTemporary ?? true;
-            if (!isTemporary && backup?.Backup?.DBPathExists === false) {
+      this.versionOptions.set([]);
+      this.backup.set(null);
+      const request = new Subscription();
+      this.#backupLoad = request;
+      request.add(
+        this.loadRestoreBackupv2(id)
+          .pipe(
+            take(1),
+            finalize(() => {
+              if (this.#backupLoad !== request) return;
+              this.#backupLoad = undefined;
+              this.waitingForBackup.set(false);
+              this.versionOptionsLoading.set(false);
+            })
+          )
+          .subscribe({
+            next: ([backup, filesets]) => {
+              if (filesets.Error) throw new Error(filesets.Error);
+              const isTemporary = backup.Backup?.IsTemporary ?? true;
+              if (!isTemporary && backup?.Backup?.DBPathExists === false) {
+                this.#dialog.open(ConfirmDialogComponent, {
+                  data: {
+                    title: $localize`Missing Local Database`,
+                    message: $localize`The local database for this backup is missing. Please repair or recreate the local database before restoring.`,
+                    confirmText: $localize`OK`,
+                    cancelText: undefined,
+                  },
+                  closed: (_) => {
+                    this.#router.navigate(['/backup', id, 'database']);
+                  },
+                });
+
+                return;
+              }
+
+              this.versionOptions.set(
+                (filesets.Data ?? []).map((x) => ({
+                  Version: x.Version ?? -1,
+                  IsFullBackup: x.IsFullBackup ?? undefined,
+                  Time: x.Time ?? '<missing>',
+                  FileCount: x.FileCount ?? undefined,
+                  FileSizes: x.FileSizes ?? undefined,
+                  Label: x.Label ?? undefined,
+                }))
+              );
+              this.backup.set(backup);
+            },
+            error: (err) => {
+              const statusCode = err?.error?.body?.StatusCode ?? err?.error?.requestBody?.StatusCode;
+              if (statusCode === 'DatabaseLocked') {
+                this.#dialog.open(ConfirmDialogComponent, {
+                  data: {
+                    title: $localize`Backup database is busy`,
+                    message: $localize`A backup or another operation is using the local database. Wait for it to finish, then retry.`,
+                    confirmText: $localize`Retry`,
+                    cancelText: $localize`Cancel`,
+                  },
+                  closed: (retry) => {
+                    if (retry && !this.#destroyed && this.backupId() === id) this.getBackup();
+                  },
+                });
+                return;
+              }
+              const isEncryptedError = statusCode === 'EncryptedStorageNoPassphrase';
+              const isNotFoundError = statusCode === 'FolderMissing';
+              const isEmptyFolderError = statusCode === 'EmptyRemoteFolder';
+
+              let errorMessage = $localize`An error occurred while loading the backup filesets: ${err.message}`;
+              if (isEncryptedError)
+                errorMessage = $localize`The remote storage is encrypted. Please enter the passphrase to access the backup.`;
+              if (isNotFoundError) errorMessage = $localize`The backup storage folder was not found.`;
+              if (isEmptyFolderError)
+                errorMessage = $localize`The backup storage folder does not contain any filesets.`;
+
               this.#dialog.open(ConfirmDialogComponent, {
                 data: {
-                  title: $localize`Missing Local Database`,
-                  message: $localize`The local database for this backup is missing. Please repair or recreate the local database before restoring.`,
+                  title: $localize`Failed to load backup filesets`,
+                  message: errorMessage,
                   confirmText: $localize`OK`,
                   cancelText: undefined,
                 },
                 closed: (_) => {
-                  this.#router.navigate(['/backup', id, 'database']);
+                  this.#router.navigate([
+                    isEncryptedError ? '/restore-from-files/encryption' : '/restore-from-files/destination',
+                  ]);
                 },
               });
-
-              return;
-            }
-
-            this.versionOptions.set(
-              (filesets.Data ?? []).map((x) => ({
-                Version: x.Version ?? -1,
-                IsFullBackup: x.IsFullBackup ?? undefined,
-                Time: x.Time ?? '<missing>',
-                FileCount: x.FileCount ?? undefined,
-                FileSizes: x.FileSizes ?? undefined,
-                Label: x.Label ?? undefined,
-              }))
-            );
-            this.backup.set(backup);
-          },
-          error: (err) => {
-            const statusCode = err?.error?.body?.StatusCode ?? err?.error?.requestBody?.StatusCode;
-            const isEncryptedError = statusCode === 'EncryptedStorageNoPassphrase';
-            const isNotFoundError = statusCode === 'FolderMissing';
-            const isEmptyFolderError = statusCode === 'EmptyRemoteFolder';
-
-            let errorMessage = $localize`An error occurred while loading the backup filesets: ${err.message}`;
-            if (isEncryptedError)
-              errorMessage = $localize`The remote storage is encrypted. Please enter the passphrase to access the backup.`;
-            if (isNotFoundError) errorMessage = $localize`The backup storage folder was not found.`;
-            if (isEmptyFolderError) errorMessage = $localize`The backup storage folder does not contain any filesets.`;
-
-            this.#dialog.open(ConfirmDialogComponent, {
-              data: {
-                title: $localize`Failed to load backup filesets`,
-                message: errorMessage,
-                confirmText: $localize`OK`,
-                cancelText: undefined,
-              },
-              closed: (_) => {
-                this.#router.navigate([
-                  isEncryptedError ? '/restore-from-files/encryption' : '/restore-from-files/destination',
-                ]);
-              },
-            });
-          },
-        });
+            },
+          })
+      );
     } else {
       forkJoin([
         defer(() =>
@@ -355,6 +434,17 @@ export class RestoreFlowState {
           },
         });
     }
+  }
+
+  #cancelBackupLoad() {
+    this.#backupLoad?.unsubscribe();
+    this.#backupLoad = undefined;
+    this.waitingForBackup.set(false);
+  }
+
+  ngOnDestroy() {
+    this.#destroyed = true;
+    this.#cancelBackupLoad();
   }
 
   #resetAllForms() {

@@ -36,6 +36,7 @@ describe('SelectFilesComponent restore database repair', () => {
       selectOption: signal('0'),
       backupId: signal('temp-42'),
       versionOptionsLoading: signal(true),
+      waitingForBackup: signal(false),
       versionOptions: signal([
         { Version: 0, Time: time },
         { Version: 1, Time: otherTime },

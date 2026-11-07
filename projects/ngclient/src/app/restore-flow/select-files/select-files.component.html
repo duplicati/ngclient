@@ -2,6 +2,9 @@
   <h3 class="title-30" i18n>Select files</h3>
   @if (versionOptionsLoading()) {
     <sh-progress-bar class="indeterminate primary"></sh-progress-bar>
+    @if (waitingForBackup()) {
+      <p role="status" i18n>Waiting for the backup or another operation to finish.</p>
+    }
   } @else {
     <sh-select [options]="versionOptions()" [isClearable]="false" value="Version" (cleared)="abortLoading()">
       <input
@@ -103,7 +106,12 @@
       {{ isFileRestore() ? 'Back' : 'Exit' }}
     </button>
 
-    <button shButton class="raised primary" type="submit" i18n>
+    <button
+      shButton
+      class="raised primary"
+      type="submit"
+      [disabled]="versionOptionsLoading() || versionOptions().length === 0"
+      i18n>
       <sh-icon>arrow-right</sh-icon>
       Continue
     </button>

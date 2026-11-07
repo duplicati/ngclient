@@ -36,6 +36,7 @@ describe('restore search request and results', () => {
       selectOption: signal<string | null>('0'),
       backupId: signal('42'),
       versionOptionsLoading: signal(true),
+      waitingForBackup: signal(false),
       versionOptions: signal([
         { Version: 0, Time: '2026-10-01T12:00:00Z' },
         { Version: 7, Time: '2026-09-24T12:00:00Z' },
