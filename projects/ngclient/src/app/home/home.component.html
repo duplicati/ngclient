@@ -544,10 +544,10 @@
     </button>
 
     <ng-container menu>
-      @if (backup.Backup.OperationType !== 'Sync' || !backup.Backup.ExternalID || hasEnableDisable()) {
+      @if (backup.Backup.OperationType !== 'Sync' || hasSyncRestore() || !backup.Backup.ExternalID || hasEnableDisable()) {
         <h3 title>Operations</h3>
 
-        @if (backup.Backup.OperationType !== 'Sync') {
+        @if (backup.Backup.OperationType !== 'Sync' || hasSyncRestore()) {
           <button type="button" [routerLink]="['/restore', backup.Backup.ID]" i18n>
             <sh-icon>clock-counter-clockwise</sh-icon>
             Restore

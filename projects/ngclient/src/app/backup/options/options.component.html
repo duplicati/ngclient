@@ -63,6 +63,40 @@
         <input type="text" id="backupRetentionCustom" [(ngModel)]="optionsFields.backupRetentionCustom" />
       </sh-form-field>
     }
+  } @else if (hasSyncSnapshots()) {
+    <div class="sync-snapshots">
+      <label class="sync-snapshots-toggle">
+        <input type="checkbox" id="syncSnapshotFolders" [(ngModel)]="optionsFields.syncSnapshotFolders" />
+        <span i18n>Keep each run in a dated snapshot folder</span>
+      </label>
+      @if (optionsFields.syncSnapshotFolders()) {
+        <p i18n>
+          Each run writes a complete copy of the source into its own folder, named after the time of the run, that can
+          be browsed directly and restored from. Files that did not change are hard linked from the previous snapshot
+          when the destination supports it (a local or network folder), so they take no extra space; otherwise they are
+          copied again. Deleting orphaned files has no effect in this mode.
+        </p>
+        <sh-form-field>
+          <label for="syncKeepSnapshots" i18n>Number of snapshots to keep (0 keeps all)</label>
+          <input type="number" id="syncKeepSnapshots" min="0" [(ngModel)]="optionsFields.syncKeepSnapshots" />
+        </sh-form-field>
+        <label class="sync-snapshots-toggle">
+          <input
+            type="checkbox"
+            id="syncSnapshotDisableHardlinks"
+            [(ngModel)]="optionsFields.syncSnapshotDisableHardlinks" />
+          <span i18n>Copy unchanged files instead of hard linking them</span>
+        </label>
+        @if (optionsFields.syncSnapshotDisableHardlinks()) {
+          <p i18n>
+            Every snapshot gets its own copy of every file. This takes more space and time, but changing a file in one
+            snapshot never changes it in another.
+          </p>
+        }
+      } @else {
+        <p i18n>The destination is a mirror of the source: changed files are overwritten and there is one version.</p>
+      }
+    </div>
   }
 
   <app-options-list
@@ -78,6 +112,7 @@
       'keep-time',
       'keep-versions',
       'retention-policy',
+      ...syncSnapshotOptionNames,
     ]" />
 
   <div class="form-actions">

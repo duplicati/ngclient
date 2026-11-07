@@ -99,6 +99,9 @@ export class BackupState {
     backupRetentionTime: signal(''),
     backupRetentionVersions: signal<number | null>(0),
     backupRetentionCustom: signal(''),
+    syncSnapshotFolders: signal(false),
+    syncKeepSnapshots: signal<number | null>(0),
+    syncSnapshotDisableHardlinks: signal(false),
   };
 
   targetUrls = signal<BackupTargetUrl[]>([]);
@@ -461,6 +464,9 @@ export class BackupState {
     if (fields.backupRetentionCustom !== undefined)
       this.optionsFields.backupRetentionCustom.set(fields.backupRetentionCustom);
     this.optionsFields.backupRetention.set(fields.backupRetention);
+    this.optionsFields.syncSnapshotFolders.set(fields.syncSnapshotFolders ?? false);
+    this.optionsFields.syncKeepSnapshots.set(fields.syncKeepSnapshots ?? 0);
+    this.optionsFields.syncSnapshotDisableHardlinks.set(fields.syncSnapshotDisableHardlinks ?? false);
   }
 
   storeMetadata(backup: BackupDto, isDraft: boolean) {
@@ -492,6 +498,9 @@ export class BackupState {
         backupRetentionTime: this.optionsFields.backupRetentionTime(),
         backupRetentionVersions: this.optionsFields.backupRetentionVersions(),
         backupRetentionCustom: this.optionsFields.backupRetentionCustom(),
+        syncSnapshotFolders: this.optionsFields.syncSnapshotFolders(),
+        syncKeepSnapshots: this.optionsFields.syncKeepSnapshots(),
+        syncSnapshotDisableHardlinks: this.optionsFields.syncSnapshotDisableHardlinks(),
       },
       this.settings(),
       this.isSyncMode(),
@@ -624,6 +633,9 @@ export class BackupState {
     this.scheduleFields = SCHEDULE_FIELD_DEFAULTS();
     // this.optionsFields.remoteVolumeSize.set('50MB');
     this.optionsFields.backupRetention.set('all');
+    this.optionsFields.syncSnapshotFolders.set(false);
+    this.optionsFields.syncKeepSnapshots.set(0);
+    this.optionsFields.syncSnapshotDisableHardlinks.set(false);
     this.settings.set([]);
     this.targetUrls.set([]);
   }

@@ -5,7 +5,8 @@ import { RouterTestingHarness } from '@angular/router/testing';
 import { defer, of, Subject } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { routes } from '../app.routes';
-import { DuplicatiServer } from '../core/openapi';
+import { DuplicatiServer, SystemInfoDto } from '../core/openapi';
+import { SysinfoState } from '../core/states/sysinfo.state';
 
 function findRoute(path: string, config = routes): Route {
   for (const route of config) {
@@ -32,17 +33,18 @@ class JobOperationStub {}
 @Component({ template: 'Restore selection' })
 class RestoreSelectionStub {}
 
+// Pages that need a backup database; a Sync job has none
 const blocked = [
-  'restore/:id',
-  'restore-draft/:id',
   'backup/:id/delete-versions',
   'backup/:id/purge-files',
   'backup/:id/version-labels',
   'backup/:id/broken-files',
 ];
-describe('Sync jobs cannot enter restore and version-list routes', () => {
+// Pages that start by listing the versions
+const fileListRoutes = [...blocked, 'restore/:id', 'restore-draft/:id'];
+describe('Sync jobs restore through the restore flow but cannot enter version-management routes', () => {
   afterEach(() => TestBed.resetTestingModule());
-  async function setup(path: string, OperationType: string | undefined = 'Sync') {
+  async function setup(path: string, OperationType: string | undefined = 'Sync', syncRestore = true) {
     const metadata = new Subject<{ Backup: { OperationType?: string } }>();
     const getBackup = vi.fn(() => metadata);
     const listFilesets = vi.fn(() => of({ Data: [] }));
@@ -52,7 +54,7 @@ describe('Sync jobs cannot enter restore and version-list routes', () => {
       canActivate: actual.canActivate,
       runGuardsAndResolvers: actual.runGuardsAndResolvers,
       component: PageStub,
-      children: [{ path: '**', component: blocked.includes(path) ? FileListStub : JobOperationStub }],
+      children: [{ path: '**', component: fileListRoutes.includes(path) ? FileListStub : JobOperationStub }],
     };
     TestBed.configureTestingModule({
       providers: [
@@ -63,6 +65,9 @@ describe('Sync jobs cannot enter restore and version-list routes', () => {
         },
       ],
     });
+    TestBed.inject(SysinfoState).systemInfo.set({
+      APIExtensions: syncRestore ? ['v1:backup:sync-restore'] : [],
+    } as SystemInfoDto);
     const harness = await RouterTestingHarness.create();
     return { harness, getBackup, listFilesets, metadata, OperationType };
   }
@@ -79,19 +84,44 @@ describe('Sync jobs cannot enter restore and version-list routes', () => {
     expect(TestBed.inject(Router).url).toBe('/restore');
     expect(listFilesets).not.toHaveBeenCalled();
   });
-  it.each(['Backup', undefined])('allows %s jobs to reach the file list', async (OperationType) => {
-    const { harness, metadata, listFilesets } = await setup('restore/:id', OperationType);
-    const navigation = harness.navigateByUrl('/restore/42/select-files');
+  it.each(['restore/:id', 'restore-draft/:id'])(
+    'lets every job, Sync included, reach the file list of %s',
+    async (path) => {
+      const { harness, getBackup, listFilesets } = await setup(path);
+      const url = '/' + path.replace(':id', '42') + '/select-files';
+      await harness.navigateByUrl(url);
+      expect(TestBed.inject(Router).url).toBe(url);
+      expect(getBackup).not.toHaveBeenCalled();
+      expect(listFilesets).toHaveBeenCalledTimes(1);
+    }
+  );
+  it.each(['restore/:id', 'restore-draft/:id'])(
+    'sends a Sync job back to the restore page of %s on a server that cannot restore it',
+    async (path) => {
+      const { harness, getBackup, listFilesets, metadata } = await setup(path, 'Sync', false);
+      const navigation = harness.navigateByUrl('/' + path.replace(':id', '42') + '/select-files');
+      await new Promise<void>((resolve) => setTimeout(resolve, 0));
+      metadata.next({ Backup: { OperationType: 'Sync' } });
+      metadata.complete();
+      await navigation;
+      expect(getBackup).toHaveBeenCalledExactlyOnceWith({ path: { id: '42' } });
+      expect(TestBed.inject(Router).url).toBe('/restore');
+      expect(listFilesets).not.toHaveBeenCalled();
+    }
+  );
+  it.each(['Backup', undefined])('allows %s jobs to reach version-management pages', async (OperationType) => {
+    const { harness, metadata, listFilesets } = await setup('backup/:id/delete-versions', OperationType);
+    const navigation = harness.navigateByUrl('/backup/42/delete-versions/select-files');
     await new Promise<void>((resolve) => setTimeout(resolve, 0));
     metadata.next({ Backup: { OperationType } });
     metadata.complete();
     await navigation;
-    expect(TestBed.inject(Router).url).toBe('/restore/42/select-files');
+    expect(TestBed.inject(Router).url).toBe('/backup/42/delete-versions/select-files');
     expect(listFilesets).toHaveBeenCalledTimes(1);
   });
   it('does not start file operations while job metadata is still pending', async () => {
-    const { harness, metadata, listFilesets } = await setup('restore/:id');
-    const navigation = harness.navigateByUrl('/restore/42/options');
+    const { harness, metadata, listFilesets } = await setup('backup/:id/delete-versions');
+    const navigation = harness.navigateByUrl('/backup/42/delete-versions/options');
     await new Promise<void>((resolve) => setTimeout(resolve, 0));
     expect(listFilesets).not.toHaveBeenCalled();
     metadata.next({ Backup: { OperationType: 'Sync' } });

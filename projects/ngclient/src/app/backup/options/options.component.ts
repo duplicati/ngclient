@@ -6,10 +6,11 @@ import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipSelect } from '@ship-ui/core/ship-select';
 import { TimespanComponent } from '../../core/components/timespan/timespan.component';
+import { SysinfoState } from '../../core/states/sysinfo.state';
 import { BackupState } from '../backup.state';
 import { OptionsListComponent } from './options-list/options-list.component';
 
-import { RetentionType } from '../models/backup-options';
+import { RetentionType, SYNC_SNAPSHOT_OPTION_NAMES } from '../models/backup-options';
 
 const RETENTION_OPTIONS: { value: RetentionType; name: string }[] = [
   {
@@ -52,8 +53,10 @@ export default class OptionsComponent {
   optionsFields = this.#backupState.optionsFields;
   applicationOptions = this.#backupState.applicationOptions;
   isSyncMode = this.#backupState.isSyncMode;
+  hasSyncSnapshots = inject(SysinfoState).hasSyncSnapshots;
 
   retentionOptions = signal(RETENTION_OPTIONS);
+  syncSnapshotOptionNames = SYNC_SNAPSHOT_OPTION_NAMES;
 
   goBack() {
     this.#router.navigate(['schedule'], { relativeTo: this.#route.parent });

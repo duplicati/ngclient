@@ -212,6 +212,18 @@ export class SysinfoState {
     return apiExtensions.includes('v1:backup:sync-mode');
   });
 
+  /** Sync jobs can keep each run in a dated snapshot folder, with a number of snapshots to keep */
+  hasSyncSnapshots = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v1:backup:sync-snapshots');
+  });
+
+  /** Sync jobs can be restored through the restore flow: versions, folder listing and restore */
+  hasSyncRestore = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v1:backup:sync-restore');
+  });
+
   defaultOAuthUrl = computed(() => {
     const url = this.systemInfo()?.DefaultOAuthURL ?? 'https://duplicati-oauth-handler.appspot.com/';
     if (url.endsWith('/refresh')) return url.slice(0, -'/refresh'.length);

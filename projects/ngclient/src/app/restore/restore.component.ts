@@ -12,6 +12,7 @@ import { defer } from 'rxjs';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { BackupAndScheduleOutputDto, DuplicatiServer } from '../core/openapi';
 import { BackupsState } from '../core/states/backups.state';
+import { SysinfoState } from '../core/states/sysinfo.state';
 
 @Component({
   selector: 'app-restore',
@@ -35,7 +36,14 @@ export default class RestoreComponent {
   #backupsState = inject(BackupsState);
   #dupServer = inject(DuplicatiServer);
 
-  backups = computed(() => this.#backupsState.backups().filter((job) => job.Backup?.OperationType !== 'Sync'));
+  #hasSyncRestore = inject(SysinfoState).hasSyncRestore;
+
+  // Servers that cannot restore a Sync job do not offer it
+  backups = computed(() =>
+    this.#hasSyncRestore()
+      ? this.#backupsState.backups()
+      : this.#backupsState.backups().filter((job) => job.Backup?.OperationType !== 'Sync')
+  );
   backupsLoading = this.#backupsState.backupsLoading;
   searchTerm = signal('');
   showSearch = computed(() => this.backups().length > 3);

@@ -7,7 +7,14 @@ import {
 } from '../../core/openapi';
 import { splitSize } from '../../core/functions/parse-size';
 import { resolveBackupEncryptionSettings } from '../backup-encryption-settings';
-import { BackupOptionsFormValue, SMART_RETENTION } from './backup-options';
+import {
+  BackupOptionsFormValue,
+  SMART_RETENTION,
+  SYNC_KEEP_SNAPSHOTS_OPTION,
+  SYNC_SNAPSHOT_DISABLE_HARDLINKS_OPTION,
+  SYNC_SNAPSHOT_FOLDERS_OPTION,
+  SYNC_SNAPSHOT_OPTION_NAMES,
+} from './backup-options';
 import { GeneralFormValue, NONE_OPTION } from './general-form';
 import { SourceDataFormValue } from './source-data-form';
 
@@ -93,6 +100,7 @@ export function mapBackupFormToSettings(
     'keep-time',
     'keep-versions',
     'retention-policy',
+    ...SYNC_SNAPSHOT_OPTION_NAMES,
     ...legacyOptionValues,
     ...legacyOptionValues.map((x) => `--${x}`),
   ];
@@ -134,6 +142,26 @@ export function mapBackupFormToSettings(
     .filter((x) => x !== null);
 
   const optionFields = [];
+
+  if (syncMode && optionsFields.syncSnapshotFolders) {
+    optionFields.push({
+      Name: `--${SYNC_SNAPSHOT_FOLDERS_OPTION}`,
+      Value: 'True',
+    });
+
+    const keep = optionsFields.syncKeepSnapshots ?? 0;
+    if (keep > 0)
+      optionFields.push({
+        Name: `--${SYNC_KEEP_SNAPSHOTS_OPTION}`,
+        Value: keep.toString(),
+      });
+
+    if (optionsFields.syncSnapshotDisableHardlinks)
+      optionFields.push({
+        Name: `--${SYNC_SNAPSHOT_DISABLE_HARDLINKS_OPTION}`,
+        Value: 'True',
+      });
+  }
 
   if (!syncMode) {
     switch (optionsFields.backupRetention) {
@@ -245,6 +273,7 @@ export function mapBackupToOptionsForm(
     'keep-time',
     'keep-versions',
     'retention-policy',
+    ...SYNC_SNAPSHOT_OPTION_NAMES,
   ];
 
   const allSettings = (backup.Settings ?? []).map((x) => <SettingInputDto>x);
@@ -278,7 +307,27 @@ export function mapBackupToOptionsForm(
   });
 
   var retentionValue: BackupOptionsFormValue['backupRetention'] = 'all';
+  fields.syncSnapshotFolders = false;
+  fields.syncKeepSnapshots = 0;
+  fields.syncSnapshotDisableHardlinks = false;
   excludedSettings?.forEach((x) => {
+    const name = x.Name?.replace(/^--/, '');
+    if (name === SYNC_SNAPSHOT_FOLDERS_OPTION) {
+      fields.syncSnapshotFolders = (x.Value ?? '').toLowerCase() === 'true';
+      return;
+    }
+
+    if (name === SYNC_KEEP_SNAPSHOTS_OPTION) {
+      const keep = parseInt(x.Value ?? '');
+      fields.syncKeepSnapshots = isNaN(keep) || keep < 0 ? 0 : keep;
+      return;
+    }
+
+    if (name === SYNC_SNAPSHOT_DISABLE_HARDLINKS_OPTION) {
+      fields.syncSnapshotDisableHardlinks = (x.Value ?? '').toLowerCase() === 'true';
+      return;
+    }
+
     if (x.Name === 'keep-time') {
       // If this is not filled correctly, revert to 'all'
       const v = x.Value ?? '';

@@ -48,6 +48,21 @@ describe('SysinfoState server capabilities', () => {
   });
 
   it.each([
+    [[], false, false],
+    [['v1:backup:sync-mode'], false, false],
+    [['v1:backup:sync-snapshots'], true, false],
+    [['v1:backup:sync-restore'], false, true],
+    [['v1:backup:sync-snapshots', 'v1:backup:sync-restore'], true, true],
+  ])('reports Sync snapshots and Sync restore separately: %j', (extensions, snapshots, restore) => {
+    const state = setup();
+    expect(state.hasSyncSnapshots()).toBe(false);
+    expect(state.hasSyncRestore()).toBe(false);
+    state.systemInfo.set({ APIExtensions: extensions } as SystemInfoDto);
+    expect(state.hasSyncSnapshots()).toBe(snapshots);
+    expect(state.hasSyncRestore()).toBe(restore);
+  });
+
+  it.each([
     [false, false, false],
     [true, false, false],
     [false, true, false],

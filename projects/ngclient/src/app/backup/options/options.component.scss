@@ -51,3 +51,15 @@ section {
 sh-select {
   --miw: p2r(120);
 }
+
+.sync-snapshots {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(12);
+}
+
+.sync-snapshots-toggle {
+  display: flex;
+  align-items: center;
+  gap: p2r(8);
+}

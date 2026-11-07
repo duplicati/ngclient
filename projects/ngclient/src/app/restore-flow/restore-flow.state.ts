@@ -55,6 +55,8 @@ export class RestoreFlowState implements OnDestroy {
 
   backupId = signal<string | null>(null);
   backup = signal<GetBackupResultDto | null>(null);
+  /** A Sync job restores from the copies on its destination, not from a backup database */
+  isSync = computed(() => this.backup()?.Backup?.OperationType === 'Sync');
   destinationTargetUrl = signal<string | null>(null);
   destinationConnectionStringId = signal<number | null>(null);
   destinationTestSignal = signal<TestState>(null);
@@ -330,7 +332,9 @@ export class RestoreFlowState implements OnDestroy {
             next: ([backup, filesets]) => {
               if (filesets.Error) throw new Error(filesets.Error);
               const isTemporary = backup.Backup?.IsTemporary ?? true;
-              if (!isTemporary && backup?.Backup?.DBPathExists === false) {
+              // A Sync job lists and restores from its destination, so it needs no local database
+              const isSync = backup.Backup?.OperationType === 'Sync';
+              if (!isTemporary && !isSync && backup?.Backup?.DBPathExists === false) {
                 this.#dialog.open(ConfirmDialogComponent, {
                   data: {
                     title: $localize`Missing Local Database`,

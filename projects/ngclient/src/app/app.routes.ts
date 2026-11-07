@@ -1,7 +1,7 @@
 import { inject, Injector } from '@angular/core';
 import { Routes } from '@angular/router';
 import { map, of, switchMap, zip } from 'rxjs';
-import { RestoreJobGuard } from './core/guards/restore-job.guard';
+import { RestoreJobGuard, SyncRestoreGuard } from './core/guards/restore-job.guard';
 import { StatusBarState } from './core/components/status-bar/status-bar.state';
 import { LOCALSTORAGE } from './core/services/localstorage.token';
 import { AppAuthState } from './core/states/app-auth.state';
@@ -240,13 +240,13 @@ export const routes: Routes = [
                   },
                   {
                     path: 'restore-draft/:id',
-                    canActivate: [RestoreJobGuard],
+                    canActivate: [SyncRestoreGuard],
                     loadComponent: () => import('./restore-flow/restore-flow.component'),
                     loadChildren: () => import('./restore-flow/restore-flow.routes'),
                   },
                   {
                     path: 'restore/:id',
-                    canActivate: [RestoreJobGuard],
+                    canActivate: [SyncRestoreGuard],
                     loadComponent: () => import('./restore-flow/restore-flow.component'),
                     loadChildren: () => import('./restore-flow/restore-flow.routes'),
                   },

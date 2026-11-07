@@ -9,6 +9,7 @@ import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { defer, finalize, switchMap } from 'rxjs';
 import { BackupAndScheduleInputDto, DuplicatiServer } from '../../core/openapi';
 import { BackupDraft } from '../../core/states/backups.state';
+import { SysinfoState } from '../../core/states/sysinfo.state';
 
 const fb = new FormBuilder();
 
@@ -23,6 +24,7 @@ export default class RestoreFromConfigComponent {
   #shipAlertService = inject(ShipAlertService);
   #dupServer = inject(DuplicatiServer);
   #router = inject(Router);
+  #hasSyncRestore = inject(SysinfoState).hasSyncRestore;
 
   isRestoring = signal(false);
   isSecureFile = signal(false);
@@ -82,7 +84,7 @@ export default class RestoreFromConfigComponent {
       .pipe(
         switchMap((res) => {
           const data = res.data as BackupDraft;
-          if (data.Backup?.OperationType === 'Sync') {
+          if (data.Backup?.OperationType === 'Sync' && !this.#hasSyncRestore()) {
             throw new Error($localize`Sync jobs cannot be restored.`);
           }
           const draft: BackupAndScheduleInputDto = {

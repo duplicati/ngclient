@@ -77,6 +77,7 @@ export default class HomeComponent {
   hasRestoreTest = this.#sysinfo.hasV2RestoreTest;
   hasPurgeFiles = this.#sysinfo.hasV2PurgeFiles;
   hasEnableDisable = this.#sysinfo.hasBackupEnableDisable;
+  hasSyncRestore = this.#sysinfo.hasSyncRestore;
 
   MISSING_BACKUP_NAME = $localize`Backup name missing`;
   stopLabel = $localize`Stop`;

@@ -202,19 +202,21 @@
       </sh-radio>
     </app-toggle-card>
 
-    <app-toggle-card>
-      <ng-container title i18n>Metadata settings</ng-container>
+    @if (!isSync()) {
+      <app-toggle-card>
+        <ng-container title i18n>Metadata settings</ng-container>
 
-      <sh-toggle class="primary raised" i18n>
-        Restore file metadata
-        <input type="checkbox" formControlName="includeMetadata" />
-      </sh-toggle>
+        <sh-toggle class="primary raised" i18n>
+          Restore file metadata
+          <input type="checkbox" formControlName="includeMetadata" />
+        </sh-toggle>
 
-      <sh-toggle class="primary raised" i18n>
-        Restore read/write permissions
-        <input type="checkbox" formControlName="permissions" />
-      </sh-toggle>
-    </app-toggle-card>
+        <sh-toggle class="primary raised" i18n>
+          Restore read/write permissions
+          <input type="checkbox" formControlName="permissions" />
+        </sh-toggle>
+      </app-toggle-card>
+    }
 
     @if (canRegisterRestoredItems()) {
       <app-toggle-card [disableToggle]="true">
@@ -233,7 +235,7 @@
     }
   }
 
-  @if (hasRestoreOptions()) {
+  @if (hasRestoreOptions() && !isSync()) {
     <app-toggle-card>
       <ng-container title i18n>Advanced options</ng-container>
 

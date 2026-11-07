@@ -71,7 +71,11 @@ export default class SelectFilesComponent {
   isFileRestore = this.#restoreFlowState.isFileRestore;
   extendedDataType = this.#restoreFlowState.extendedDataType;
 
-  needsDatabaseRepair = computed(() => this.#restoreFlowState.backup()?.Backup?.IsTemporary ?? true);
+  isSync = computed(() => this.#restoreFlowState.backup()?.Backup?.OperationType === 'Sync');
+  // A Sync job is browsed on its destination, so there is no database to rebuild first
+  needsDatabaseRepair = computed(
+    () => !this.isSync() && (this.#restoreFlowState.backup()?.Backup?.IsTemporary ?? true)
+  );
   showFileTree = signal<boolean>(false);
   backupSettings = signal<BackupSettings | null>(null);
   rootPaths = signal<string[]>([]);
@@ -84,7 +88,7 @@ export default class SelectFilesComponent {
   loadedVersions = signal<{ [key: string]: boolean }>({});
 
   // Search functionality
-  canSearch = computed(() => this.#sysinfo.hasV2ListOperations());
+  canSearch = computed(() => this.#sysinfo.hasV2ListOperations() && !this.isSync());
   searchQuery = signal<string>('');
   isSearching = signal(false);
   searchResults = signal<SearchEntriesItemDto[]>([]);
