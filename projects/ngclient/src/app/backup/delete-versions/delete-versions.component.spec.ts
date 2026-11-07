@@ -118,4 +118,60 @@ describe('backup version deletion confirmation', () => {
     expect(component.noneSelected()).toBe(true);
     expect(component.allSelected()).toBe(false);
   });
+
+  it('allows only one confirmation or deletion at a time', async () => {
+    const { component, open, remove } = await setup();
+    component.selectAll();
+    component.deleteVersions();
+    component.deleteVersions();
+    expect(open).toHaveBeenCalledTimes(1);
+    expect(component.isDeleting()).toBe(true);
+    open.mock.calls[0][1].closed(true);
+    component.deleteVersions();
+    expect(open).toHaveBeenCalledTimes(1);
+    expect(remove).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not apply a confirmation to another backup after navigation', async () => {
+    const { component, open, remove } = await setup();
+    component.toggleSelected(4, null);
+    component.deleteVersions();
+    fixture.componentRef.setInput('id', 'other-backup');
+    fixture.detectChanges();
+    open.mock.calls[0][1].closed(true);
+    expect(remove).not.toHaveBeenCalled();
+    expect(component.isDeleting()).toBe(false);
+  });
+
+  it('discards a confirmation after the page is destroyed', async () => {
+    const { component, open, remove } = await setup();
+    component.selectAll();
+    component.deleteVersions();
+    fixture.destroy();
+    open.mock.calls[0][1].closed(true);
+    expect(remove).not.toHaveBeenCalled();
+  });
+
+  it('does not navigate from a destroyed page when a deletion finishes', async () => {
+    const { component, open, navigate } = await setup();
+    component.selectAll();
+    component.deleteVersions();
+    open.mock.calls[0][1].closed(true);
+    fixture.destroy();
+    pending.next({});
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('releases a failed deletion for retry', async () => {
+    const { component, open, navigate } = await setup();
+    component.selectAll();
+    component.deleteVersions();
+    open.mock.calls[0][1].closed(true);
+    pending.error(new Error('locked'));
+    expect(component.isDeleting()).toBe(false);
+    expect(navigate).not.toHaveBeenCalled();
+    component.deleteVersions();
+    expect(open).toHaveBeenCalledTimes(2);
+    open.mock.calls[1][1].closed(false);
+  });
 });
