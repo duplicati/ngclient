@@ -22,6 +22,7 @@ export class UpdateInstallService {
   #dialog = inject(ShipDialogService);
   #serverState = inject(ServerStateService);
   #sysinfo = inject(SysinfoState);
+  #confirmationPending = false;
 
   /**
    * True while the install or cancel request is being sent
@@ -45,7 +46,8 @@ export class UpdateInstallService {
    * True if an update is available and can be installed now
    */
   canInstall = computed(
-    () => this.installSupported() && !!this.updatedVersion() && this.updaterState() === 'Waiting' && !this.requestPending()
+    () =>
+      this.installSupported() && !!this.updatedVersion() && this.updaterState() === 'Waiting' && !this.requestPending()
   );
 
   /**
@@ -80,9 +82,11 @@ export class UpdateInstallService {
    * Asks for confirmation and starts the install
    */
   install() {
+    if (!this.canInstall() || this.#confirmationPending) return;
     const version = this.updatedVersion();
     if (!version) return;
 
+    this.#confirmationPending = true;
     this.#dialog.open(ConfirmDialogComponent, {
       maxWidth: '550px',
       width: '100%',
@@ -93,7 +97,8 @@ export class UpdateInstallService {
         cancelText: $localize`Cancel`,
       },
       closed: (res) => {
-        if (!res) return;
+        this.#confirmationPending = false;
+        if (!res || !this.canInstall() || this.updatedVersion() !== version) return;
 
         // Errors are reported by the HTTP interceptor
         this.requestPending.set(true);
@@ -108,6 +113,7 @@ export class UpdateInstallService {
    * Cancels a running install, before the helper takes over
    */
   cancel() {
+    if (!this.canCancel()) return;
     this.requestPending.set(true);
     defer(() => this.#dupServer.postApiV1UpdatesCancelInstall())
       .pipe(finalize(() => this.requestPending.set(false)))
