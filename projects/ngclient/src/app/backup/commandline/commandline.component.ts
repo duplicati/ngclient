@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { defer } from 'rxjs';
@@ -71,6 +71,17 @@ export default class CommandlineComponent {
     command: fb.control('backup'),
     targetUrl: fb.control(''),
     arguments: fb.control(''),
+  });
+
+  // The backup sources, which are the arguments of the backup command only
+  #sources = '';
+
+  // Other commands take other arguments, test takes a number of samples (duplicati#4082),
+  // so the sources are only kept while they are unchanged and the command is backup
+  #commandChanges = this.baseCmdForm.controls.command.valueChanges.pipe(takeUntilDestroyed()).subscribe((command) => {
+    const args = this.baseCmdForm.controls.arguments;
+    if (command !== 'backup' && args.value === this.#sources) args.setValue('');
+    else if (command === 'backup' && args.value === '') args.setValue(this.#sources);
   });
 
   finishedLoading = this.#backupState.finishedLoading;
@@ -184,9 +195,10 @@ export default class CommandlineComponent {
 
     if (!targetBaseUrl) return;
 
+    this.#sources = backup.Sources?.join('\n') ?? '';
     this.baseCmdForm.patchValue({
       targetUrl: targetBaseUrl ?? '',
-      arguments: backup.Sources?.join('\n') ?? '',
+      arguments: this.baseCmdForm.value.command === 'backup' ? this.#sources : '',
     });
   }
 
