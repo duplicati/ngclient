@@ -42,7 +42,7 @@ test('backup save is single-flight and announces pending until success', async (
   await expect(page.getByRole('status')).toHaveText('Saving backup settings…');
   await expect(submit).toBeDisabled();
   await expect(page.locator('app-backup > section')).toHaveAttribute('inert', '');
-  await expect(page.locator('sh-stepper')).toHaveAttribute('inert', '');
+  await expect(page.locator('.backup-stepper')).toHaveAttribute('inert', '');
   await page.keyboard.press('Enter');
   expect(saves).toHaveLength(1);
   expect(saves[0].request().postDataJSON().Backup).toMatchObject({
@@ -65,11 +65,11 @@ test('failed backup save keeps the editor usable and retries the current inputs'
   await expect(page.getByRole('alert').filter({ hasText: 'Could not save the backup settings.' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Submit', exact: true })).toBeEnabled();
   await expect(page.locator('app-backup > section')).not.toHaveAttribute('inert');
-  await page.locator('sh-stepper').getByText('General', { exact: true }).click();
+  await page.locator('.backup-stepper').getByText('General', { exact: true }).click();
   const name = page.getByPlaceholder('Your backup name');
   await expect(name).toHaveValue('Saved backup');
   await name.fill('Retry name');
-  await page.locator('sh-stepper').getByText('Options', { exact: true }).click();
+  await page.locator('.backup-stepper').getByText('Options', { exact: true }).click();
   await page.getByRole('button', { name: 'Submit', exact: true }).click();
   await expect.poll(() => saves.length).toBe(2);
   expect(saves[1].request().postDataJSON().Backup.Name).toBe('Retry name');

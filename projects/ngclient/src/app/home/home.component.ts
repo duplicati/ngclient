@@ -1,3 +1,4 @@
+import { KeyboardActionDirective } from '../core/directives/keyboard-action.directive';
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -34,6 +35,7 @@ import { RemoteControlState } from '../settings/remote-control/remote-control.st
 @Component({
   selector: 'app-home',
   imports: [
+    KeyboardActionDirective,
     RouterLink,
     NgTemplateOutlet,
     FormsModule,

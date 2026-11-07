@@ -1,21 +1,29 @@
 <app-status-bar />
 
-<sh-stepper class="primary">
-  <div tabindex="-1" routerLinkActive="active" [routerLink]="['/backup/import-destination/destination']" i18n>
-    Destination
-  </div>
-  <div tabindex="-1" routerLinkActive="active" [routerLink]="['/backup/import-destination/encryption']" i18n>
-    Encryption
-  </div>
-  <div
-    tabindex="-1"
+<nav class="backup-stepper" aria-label="Import steps" i18n-aria-label>
+  <a
     routerLinkActive="active"
+    ariaCurrentWhenActive="step"
+    [routerLink]="['/backup/import-destination/destination']"
+    i18n>
+    Destination
+  </a>
+  <a
+    routerLinkActive="active"
+    ariaCurrentWhenActive="step"
+    [routerLink]="['/backup/import-destination/encryption']"
+    i18n>
+    Encryption
+  </a>
+  <a
+    routerLinkActive="active"
+    ariaCurrentWhenActive="step"
     class="inactive"
     [routerLink]="['/backup/import-destination/select-config']"
     i18n>
     Select configurations
-  </div>
-</sh-stepper>
+  </a>
+</nav>
 
 <section>
   <router-outlet />

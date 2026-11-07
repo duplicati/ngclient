@@ -1,3 +1,4 @@
+import { KeyboardActionDirective } from '../../../core/directives/keyboard-action.directive';
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ShipButton } from '@ship-ui/core/ship-button';
@@ -11,7 +12,15 @@ import { DestinationListItemComponent } from '../destination-list-item/destinati
 
 @Component({
   selector: 'app-destination-list',
-  imports: [DestinationListItemComponent, FormsModule, ShipFormField, ShipButton, ShipIcon, ShipToggle],
+  imports: [
+    KeyboardActionDirective,
+    DestinationListItemComponent,
+    FormsModule,
+    ShipFormField,
+    ShipButton,
+    ShipIcon,
+    ShipToggle,
+  ],
   templateUrl: './destination-list.component.html',
   styleUrl: './destination-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

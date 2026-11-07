@@ -1,3 +1,4 @@
+import { KeyboardActionDirective } from '../../../core/directives/keyboard-action.directive';
 import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -62,6 +63,7 @@ type DestinationConfig = {
 @Component({
   selector: 'app-single-destination',
   imports: [
+    KeyboardActionDirective,
     ReactiveFormsModule,
     FormsModule,
     NgTemplateOutlet,

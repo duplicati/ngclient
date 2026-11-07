@@ -1,3 +1,4 @@
+import { KeyboardActionDirective } from '../core/directives/keyboard-action.directive';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -15,6 +16,7 @@ import { BackupsState } from '../core/states/backups.state';
 @Component({
   selector: 'app-restore',
   imports: [
+    KeyboardActionDirective,
     FormsModule,
     StatusBarComponent,
     ShipCard,

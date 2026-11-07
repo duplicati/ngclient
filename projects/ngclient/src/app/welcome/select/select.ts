@@ -1,3 +1,4 @@
+import { KeyboardActionDirective } from '../../core/directives/keyboard-action.directive';
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { ShipButton } from '@ship-ui/core/ship-button';
@@ -10,7 +11,7 @@ import { ServerSettingsService } from '../../settings/server-settings.service';
 
 @Component({
   selector: 'app-select',
-  imports: [ShipButton, ShipCheckbox, ShipDialog, ShipIcon, ShipTooltip],
+  imports: [KeyboardActionDirective, ShipButton, ShipCheckbox, ShipDialog, ShipIcon, ShipTooltip],
   templateUrl: './select.html',
   styleUrl: './select.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

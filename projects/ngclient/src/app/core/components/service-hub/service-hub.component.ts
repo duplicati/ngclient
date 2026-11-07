@@ -1,3 +1,4 @@
+import { KeyboardActionDirective } from '../../directives/keyboard-action.directive';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -37,6 +38,7 @@ type Interval = ReturnType<typeof setInterval>;
 @Component({
   selector: 'app-service-hub',
   imports: [
+    KeyboardActionDirective,
     ReactiveFormsModule,
     ShipAlert,
     ShipIcon,

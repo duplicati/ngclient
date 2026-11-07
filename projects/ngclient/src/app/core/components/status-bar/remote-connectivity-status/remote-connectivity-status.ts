@@ -1,3 +1,4 @@
+import { KeyboardActionDirective } from '../../../directives/keyboard-action.directive';
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
@@ -6,7 +7,7 @@ import { RemoteControlState } from '../../../../settings/remote-control/remote-c
 
 @Component({
   selector: 'app-remote-connectivity-status',
-  imports: [RouterLink, ShipIcon, ShipTooltip],
+  imports: [KeyboardActionDirective, RouterLink, ShipIcon, ShipTooltip],
   templateUrl: './remote-connectivity-status.html',
   styleUrl: './remote-connectivity-status.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

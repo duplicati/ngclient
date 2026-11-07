@@ -5,7 +5,7 @@
 @let isConnected = state() === 'connected' || state() === 'disabled' || state() === 'connecting';
 
 @if (registeringFaulted) {
-  <div i18n class="connectivity-status" (click)="resetAndRetry()">
+  <div appKeyboardAction i18n class="connectivity-status" (click)="resetAndRetry()">
     @if (resetting()) {
       Resetting
       <div class="status blinking"></div>
@@ -15,23 +15,31 @@
     }
   </div>
 } @else if (isLoading) {
-  <div i18n class="connectivity-status" [routerLink]="['/connect/logon']">
+  <div appKeyboardAction role="link" i18n class="connectivity-status" [routerLink]="['/connect/logon']">
     Connecting
     <div class="status warning blinking"></div>
   </div>
 } @else if (clickToRegister) {
-  <div i18n class="connectivity-status" [routerLink]="['/connect/logon']">
+  <div appKeyboardAction role="link" i18n class="connectivity-status" [routerLink]="['/connect/logon']">
     Click to register
     <div class="status"></div>
   </div>
 } @else if (registered) {
   <div i18n class="connectivity-status claim">
-    <sh-icon i18n-shTooltip shTooltip="Cancel registration" (click)="cancel()">x-circle</sh-icon>
-    <div class="claim" (click)="claim()">Click to claim</div>
+    <sh-icon
+      appKeyboardAction
+      aria-label="Cancel registration"
+      i18n-aria-label
+      i18n-shTooltip
+      shTooltip="Cancel registration"
+      (click)="$event.stopPropagation(); cancel()">
+      x-circle
+    </sh-icon>
+    <div appKeyboardAction class="claim" (click)="claim()">Click to claim</div>
     <div class="status success blinking"></div>
   </div>
 } @else if (isConnected) {
-  <div i18n class="connectivity-status" (click)="openConsole()">
+  <div appKeyboardAction i18n class="connectivity-status" (click)="openConsole()">
     Connected
     <div class="status success"></div>
   </div>

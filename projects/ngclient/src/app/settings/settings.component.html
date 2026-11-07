@@ -146,7 +146,6 @@
             autocomplete="new-password"
             i18n-placeholder
             placeholder="Enter new password"
-            tabindex="1"
             [(ngModel)]="passphrase" />
         </sh-form-field>
 
@@ -158,7 +157,6 @@
             autocomplete="new-password"
             i18n-placeholder
             placeholder="Repeat password"
-            tabindex="2"
             [disabled]="passphrase().length === 0"
             [(ngModel)]="repeatPassphrase" />
 

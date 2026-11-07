@@ -20,14 +20,13 @@
       Backup name
       <sup>*</sup>
     </label>
-    <input type="text" tabindex="1" i18n-placeholder placeholder="Your backup name" formControlName="name" />
+    <input type="text" i18n-placeholder placeholder="Your backup name" id="backupName" formControlName="name" />
   </sh-form-field>
 
   <sh-form-field>
     <label for="backupDescription" i18n>Backup description</label>
     <textarea
       id="backupDescription"
-      tabindex="2"
       i18n-placeholder
       placeholder="Your backup description"
       formControlName="description"></textarea>
@@ -64,13 +63,7 @@
     @if (canEditEncryption()) {
       <sh-select [options]="encryptionOptions()" [isClearable]="false" value="Key" label="DisplayName">
         <label for="encryption" i18n>Encryption</label>
-        <input
-          type="text"
-          id="encryption"
-          tabindex="3"
-          i18n-placeholder
-          placeholder="Encryption"
-          formControlName="encryption" />
+        <input type="text" id="encryption" i18n-placeholder placeholder="Encryption" formControlName="encryption" />
 
         <ng-template let-option>
           {{ option.DisplayName }}
@@ -88,7 +81,6 @@
             <input
               [type]="showPassword() ? 'text' : 'password'"
               id="password"
-              tabindex="4"
               autocomplete="off"
               i18n-placeholder
               placeholder="Password"
@@ -109,7 +101,6 @@
             <input
               [type]="showPassword() ? 'text' : 'password'"
               id="repeatPassword"
-              tabindex="5"
               autocomplete="off"
               i18n-placeholder
               placeholder="Repeat password"

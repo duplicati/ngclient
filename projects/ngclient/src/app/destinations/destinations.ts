@@ -1,3 +1,4 @@
+import { KeyboardActionDirective } from '../core/directives/keyboard-action.directive';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ShipButton } from '@ship-ui/core/ship-button';
@@ -25,6 +26,7 @@ import { ConnectionStringsState } from '../core/states/connection-strings.state'
 @Component({
   selector: 'app-destinations',
   imports: [
+    KeyboardActionDirective,
     DestinationListItemComponent,
     DestinationListComponent,
     SingleDestinationComponent,

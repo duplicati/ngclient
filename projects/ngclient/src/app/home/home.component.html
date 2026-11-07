@@ -2,11 +2,7 @@
 
 <section>
   <header>
-    <sh-card
-      class="type-a actionable"
-      [routerLink]="['/add-backup']"
-      (keydown.enter)="$any($event.target).click()"
-      (keydown.space)="$any($event.target).click()">
+    <sh-card appKeyboardAction role="link" class="type-a actionable" [routerLink]="['/add-backup']">
       <img src="assets/images/backup.png" alt="" width="48px" />
       <div class="text">
         <h3 i18n>Backups</h3>
@@ -18,11 +14,7 @@
       </button>
     </sh-card>
 
-    <sh-card
-      class="type-a actionable"
-      [routerLink]="['/restore']"
-      (keydown.enter)="$any($event.target).click()"
-      (keydown.space)="$any($event.target).click()">
+    <sh-card appKeyboardAction role="link" class="type-a actionable" [routerLink]="['/restore']">
       <img src="assets/images/restore.png" alt="" width="48px" />
       <div class="text">
         <h3 i18n>Restores</h3>
@@ -46,7 +38,15 @@
               <input type="text" i18n-placeholder placeholder="Search backups..." [(ngModel)]="searchTerm" />
               <sh-icon prefix>magnifying-glass</sh-icon>
               @if (searchTerm()) {
-                <sh-icon class="clear-search" suffix (click)="searchTerm.set('')">x-circle</sh-icon>
+                <sh-icon
+                  appKeyboardAction
+                  aria-label="Clear search"
+                  i18n-aria-label
+                  class="clear-search"
+                  suffix
+                  (click)="$event.stopPropagation(); searchTerm.set('')">
+                  x-circle
+                </sh-icon>
               }
             </sh-form-field>
           }
@@ -187,7 +187,11 @@
                         } @else {
                           <span i18n>Last successful backup:</span>
                         }
-                        <span class="time-value" [shTooltip]="(backup.Backup | lastRun) | relativeTime: timeType() !== 'actual'">{{ (backup.Backup | lastRun) | relativeTime: timeType() === 'actual' }}</span>
+                        <span
+                          class="time-value"
+                          [shTooltip]="backup.Backup | lastRun | relativeTime: timeType() !== 'actual'">
+                          {{ backup.Backup | lastRun | relativeTime: timeType() === 'actual' }}
+                        </span>
                       </p>
 
                       @let next = scheduledTimes()[backup.Backup.ID ?? ''];
@@ -204,14 +208,20 @@
                       } @else if (next) {
                         <p>
                           <span i18n>Next scheduled run:</span>
-                          <span class="time-value" [shTooltip]="next | relativeTime: timeType() !== 'actual'">{{ next | relativeTime: timeType() === 'actual' }}</span>
+                          <span class="time-value" [shTooltip]="next | relativeTime: timeType() !== 'actual'">
+                            {{ next | relativeTime: timeType() === 'actual' }}
+                          </span>
                         </p>
                       }
 
                       <p>
                         <span i18n>Duration:</span>
-                        @if ((backup.Backup | lastRun: 'duration')) {
-                          <span class="time-value" [shTooltip]="(backup.Backup | lastRun: 'duration') | durationFormat: timeType() !== 'actual'">{{ (backup.Backup | lastRun: 'duration') | durationFormat: timeType() === 'actual' }}</span>
+                        @if (backup.Backup | lastRun: 'duration') {
+                          <span
+                            class="time-value"
+                            [shTooltip]="backup.Backup | lastRun: 'duration' | durationFormat: timeType() !== 'actual'">
+                            {{ backup.Backup | lastRun: 'duration' | durationFormat: timeType() === 'actual' }}
+                          </span>
                         } @else {
                           <ng-container>-</ng-container>
                         }
@@ -299,7 +309,11 @@
           }
         </div>
       } @else if (viewMode() === 'details') {
-        <sh-table class="type-b" [data]="filteredBackups()" [loading]="backupsLoading()" [(sortByColumn)]="sortByColumn">
+        <sh-table
+          class="type-b"
+          [data]="filteredBackups()"
+          [loading]="backupsLoading()"
+          [(sortByColumn)]="sortByColumn">
           <tr thead>
             <th i18n shSort="name">
               Backup
@@ -365,8 +379,12 @@
                       <span class="row-progress-value">{{ progress }}%</span>
                     }
                   </div>
-                } @else if ((backup.Backup | lastRun)) {
-                  <span class="time-value" [shTooltip]="(backup.Backup | lastRun) | relativeTime: timeType() !== 'actual'">{{ (backup.Backup | lastRun) | relativeTime: timeType() === 'actual' }}</span>
+                } @else if (backup.Backup | lastRun) {
+                  <span
+                    class="time-value"
+                    [shTooltip]="backup.Backup | lastRun | relativeTime: timeType() !== 'actual'">
+                    {{ backup.Backup | lastRun | relativeTime: timeType() === 'actual' }}
+                  </span>
                 } @else {
                   <ng-container>-</ng-container>
                 }
@@ -384,14 +402,20 @@
                     Disabled
                   </sh-chip>
                 } @else if (next) {
-                  <span class="time-value" [shTooltip]="next | relativeTime: timeType() !== 'actual'">{{ next | relativeTime: timeType() === 'actual' }}</span>
+                  <span class="time-value" [shTooltip]="next | relativeTime: timeType() !== 'actual'">
+                    {{ next | relativeTime: timeType() === 'actual' }}
+                  </span>
                 } @else {
                   <ng-container>-</ng-container>
                 }
               </td>
               <td>
-                @if ((backup.Backup | lastRun: 'duration')) {
-                  <span class="time-value" [shTooltip]="(backup.Backup | lastRun: 'duration') | durationFormat: timeType() !== 'actual'">{{ (backup.Backup | lastRun: 'duration') | durationFormat: timeType() === 'actual' }}</span>
+                @if (backup.Backup | lastRun: 'duration') {
+                  <span
+                    class="time-value"
+                    [shTooltip]="backup.Backup | lastRun: 'duration' | durationFormat: timeType() !== 'actual'">
+                    {{ backup.Backup | lastRun: 'duration' | durationFormat: timeType() === 'actual' }}
+                  </span>
                 } @else {
                   <ng-container>-</ng-container>
                 }

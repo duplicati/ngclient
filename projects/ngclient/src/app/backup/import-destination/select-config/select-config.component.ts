@@ -1,3 +1,4 @@
+import { KeyboardActionDirective } from '../../../core/directives/keyboard-action.directive';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -28,6 +29,7 @@ type ConfigOption = RestoreTaskConfigElementDto & {
 @Component({
   selector: 'app-import-destination-select-config',
   imports: [
+    KeyboardActionDirective,
     ShipButton,
     ShipCard,
     ShipToggle,

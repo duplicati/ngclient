@@ -10,17 +10,21 @@
           <input type="text" i18n-placeholder placeholder="Search backups..." [(ngModel)]="searchTerm" />
           <sh-icon prefix>magnifying-glass</sh-icon>
           @if (searchTerm()) {
-            <sh-icon class="clear-search" suffix (click)="searchTerm.set('')">x-circle</sh-icon>
+            <sh-icon
+              appKeyboardAction
+              aria-label="Clear search"
+              i18n-aria-label
+              class="clear-search"
+              suffix
+              (click)="$event.stopPropagation(); searchTerm.set('')">
+              x-circle
+            </sh-icon>
           }
         </sh-form-field>
       }
 
       @for (backup of filteredBackups(); track $index) {
-        <sh-card
-          class="type-a actionable"
-          [routerLink]="['/restore', backup.Backup.ID]"
-          (keydown.enter)="$any($event.target).click()"
-          (keydown.space)="$any($event.target).click()">
+        <sh-card appKeyboardAction role="link" class="type-a actionable" [routerLink]="['/restore', backup.Backup.ID]">
           <img src="assets/images/folder.png" alt="" width="48px" />
 
           <div class="text">
@@ -54,11 +58,7 @@
     <sh-divider>Or without a local configuration</sh-divider>
   }
 
-  <sh-card
-    class="type-a actionable"
-    [routerLink]="['/restore-from-files']"
-    (keydown.enter)="$any($event.target).click()"
-    (keydown.space)="$any($event.target).click()">
+  <sh-card appKeyboardAction role="link" class="type-a actionable" [routerLink]="['/restore-from-files']">
     <img src="assets/images/backup.png" alt="" width="48px" />
     <div class="text">
       <h3 i18n>Direct restore from backup files</h3>
@@ -70,11 +70,7 @@
     </button>
   </sh-card>
 
-  <sh-card
-    class="type-a actionable"
-    [routerLink]="['/restore/from-config']"
-    (keydown.enter)="$any($event.target).click()"
-    (keydown.space)="$any($event.target).click()">
+  <sh-card appKeyboardAction role="link" class="type-a actionable" [routerLink]="['/restore/from-config']">
     <img src="assets/images/restore.png" alt="" width="48px" />
     <div class="text">
       <h3 i18n>Restore from configuration</h3>

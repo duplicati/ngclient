@@ -1,3 +1,4 @@
+import { KeyboardActionDirective } from '../../../core/directives/keyboard-action.directive';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -116,7 +117,7 @@ const FILE_GROUP_OPTIONS: FileGroupTypeMap[] = [
 
 @Component({
   selector: 'app-filter',
-  imports: [FormsModule, ShipIcon, ShipFormField, ShipSelect],
+  imports: [KeyboardActionDirective, FormsModule, ShipIcon, ShipFormField, ShipSelect],
   templateUrl: './filter.component.html',
   styleUrl: './filter.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

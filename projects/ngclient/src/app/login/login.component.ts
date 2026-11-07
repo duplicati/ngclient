@@ -1,3 +1,4 @@
+import { KeyboardActionDirective } from '../core/directives/keyboard-action.directive';
 import { ChangeDetectionStrategy, Component, effect, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -15,7 +16,16 @@ const fb = new FormBuilder();
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, LogoComponent, ShipFormField, ShipIcon, ShipButton, ShipAlert, ShipCheckbox],
+  imports: [
+    KeyboardActionDirective,
+    ReactiveFormsModule,
+    LogoComponent,
+    ShipFormField,
+    ShipIcon,
+    ShipButton,
+    ShipAlert,
+    ShipCheckbox,
+  ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

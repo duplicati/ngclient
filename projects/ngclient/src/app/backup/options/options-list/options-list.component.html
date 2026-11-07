@@ -225,15 +225,15 @@
               (ngModelChange)="updateSettingValue(item, $event)" />
 
             <sh-icon prefix>password</sh-icon>
-            @if ($any(item).showPassword) {
-              <sh-icon class="clickable" suffix (click)="$any(item).showPassword = !$any(item).showPassword">
-                eye
-              </sh-icon>
-            } @else {
-              <sh-icon class="clickable" suffix (click)="$any(item).showPassword = !$any(item).showPassword">
-                eye-slash
-              </sh-icon>
-            }
+            <sh-icon
+              appKeyboardAction
+              aria-label="Toggle password visibility"
+              i18n-aria-label
+              class="clickable"
+              suffix
+              (click)="$event.stopPropagation(); $any(item).showPassword = !$any(item).showPassword">
+              {{ $any(item).showPassword ? 'eye' : 'eye-slash' }}
+            </sh-icon>
           </sh-form-field>
         } @else if (item.FormView.type === 'Enumeration') {
           <sh-select [options]="item.FormView.options!" [isClearable]="false" [optionTemplate]="enumOptionTemplate">

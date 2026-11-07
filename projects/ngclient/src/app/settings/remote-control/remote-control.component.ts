@@ -1,3 +1,4 @@
+import { KeyboardActionDirective } from '../../core/directives/keyboard-action.directive';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ShipButton } from '@ship-ui/core/ship-button';
@@ -9,7 +10,7 @@ import { RemoteControlState } from './remote-control.state';
 
 @Component({
   selector: 'app-remote-control',
-  imports: [FormsModule, ShipFormField, ShipButton, ShipChip, ShipIcon],
+  imports: [KeyboardActionDirective, FormsModule, ShipFormField, ShipButton, ShipChip, ShipIcon],
   templateUrl: './remote-control.component.html',
   styleUrl: './remote-control.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
