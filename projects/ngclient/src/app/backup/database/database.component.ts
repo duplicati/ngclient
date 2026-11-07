@@ -39,7 +39,7 @@ export default class DatabaseComponent {
 
   backupFilePath = signal<string>('');
   lastValidatedPath = signal<string>('');
-  isValidatedPath = computed(() => this.lastValidatedPath() === this.backupFilePath());
+  isValidatedPath = computed(() => this.backupFilePath() !== '' && this.lastValidatedPath() === this.backupFilePath());
   pathHasChanged = computed(() => this.backupFilePath() !== this.#firstDBPath());
   isValidatingPath = signal(false);
   #debouncedBackupFilePath = debouncedSignal(this.backupFilePath, 500);
@@ -48,20 +48,26 @@ export default class DatabaseComponent {
     () => this.#debouncedBackupFilePath() != this.backupFilePath() || this.isValidatingPath()
   );
 
-  backupFilePathEffect = effect(() => {
+  backupFilePathEffect = effect((onCleanup) => {
     const backupFilePath = this.#debouncedBackupFilePath();
     const _1 = this.activeBackup(); // Also trigger if the backup changes
     const _2 = this.#movedDbPath(); // Also trigger if the movedDbPath changes
 
+    this.lastValidatedPath.set('');
     if (backupFilePath === '') return;
 
     this.isValidatingPath.set(true);
-    defer(() => this.#dupServer.postApiV1FilesystemValidate({ body: { path: backupFilePath } }))
+    const subscription = defer(() => this.#dupServer.postApiV1FilesystemValidate({ body: { path: backupFilePath } }))
       .pipe(
         take(1),
         finalize(() => this.isValidatingPath.set(false))
       )
-      .subscribe(() => this.lastValidatedPath.set(backupFilePath));
+      .subscribe({
+        next: () => this.lastValidatedPath.set(backupFilePath),
+        // A missing or inaccessible path stays invalid; allow validation of the next edit.
+        error: () => {},
+      });
+    onCleanup(() => subscription.unsubscribe());
   });
 
   isRestoring = signal(false);
