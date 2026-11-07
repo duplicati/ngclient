@@ -80,3 +80,69 @@ for (const rememberMe of [false, true]) {
     expect(api.pageErrors).toEqual([]);
   });
 }
+
+test('recovers without reload after a rejected socket and a transient token-refresh failure', async ({
+  page,
+  serverApi: api,
+}) => {
+  await page.addInitScript(() => {
+    const NativeWebSocket = window.WebSocket;
+    window.WebSocket = class extends NativeWebSocket {
+      constructor(url: string | URL, protocols?: string | string[]) {
+        super(url, protocols);
+        this.addEventListener('close', () => {
+          document.documentElement.dataset['testSocketClosed'] = 'true';
+        });
+      }
+    };
+  });
+  const tokens: string[] = [];
+  let firstSocket: import('@playwright/test').WebSocketRoute | undefined;
+  await page.routeWebSocket('**/notifications*', (socket) => {
+    firstSocket ??= socket;
+    socket.onMessage((message) => {
+      const command = JSON.parse(String(message));
+      if (command.Action === 'auth') {
+        tokens.push(command.Token);
+        socket.send(JSON.stringify({ Version: 1, Success: command.Token === 'recovered-token', Message: 'Expired' }));
+      } else if (command.Action === 'sub') {
+        if (command.Service === 'legacystatus')
+          socket.send(
+            JSON.stringify({
+              Type: 'legacystatus',
+              ProgramState: 'Running',
+              ActiveTask: null,
+              SchedulerQueueIds: [],
+              ProposedSchedule: [],
+              LastEventID: 1,
+            })
+          );
+        else if (command.Service === 'backuplist' || command.Service === 'notifications')
+          socket.send(JSON.stringify({ Type: command.Service, ApiVersion: 1, Data: [] }));
+        else if (command.Service === 'remotecontrol')
+          socket.send(
+            JSON.stringify({ Type: command.Service, ApiVersion: 1, Data: { State: 'inactive', CanEnable: false } })
+          );
+        else socket.send(JSON.stringify({ Type: 'reply', Id: command.Id, Service: command.Service, Success: true }));
+      }
+    });
+  });
+  await page.goto('/login');
+  await page.getByPlaceholder('Enter your password').fill('browser-test-password');
+  await page.getByRole('button', { name: 'Login', exact: true }).click();
+  await expect.poll(() => api.loginRequests.length).toBe(1);
+  await api.loginRequests[0].fulfill({ json: { AccessToken: 'expired-token', RefreshNonce: 'valid-nonce' } });
+  await expect.poll(() => api.refreshRequests.length).toBe(1);
+  // The server closes the rejected socket while the refresh request is pending.
+  firstSocket!.close({ code: 1000, reason: 'Authentication rejected' });
+  await expect(page.locator('html')).toHaveAttribute('data-test-socket-closed', 'true');
+  await api.refreshRequests[0].fulfill({ status: 503, json: { Error: 'Temporarily unavailable' } });
+  await expect(page.getByRole('heading', { name: 'Reconnecting...', exact: true })).toBeVisible();
+  await expect.poll(() => api.refreshRequests.length, { timeout: 10000 }).toBe(2);
+  expect(api.refreshRequests[1].request().postDataJSON()).toEqual({ Nonce: 'valid-nonce' });
+  await api.refreshRequests[1].fulfill({ json: { AccessToken: 'recovered-token', RefreshNonce: 'rotated-nonce' } });
+  await expect.poll(() => tokens).toEqual(['expired-token', 'expired-token', 'recovered-token']);
+  await expect(page.getByRole('heading', { name: 'Reconnecting...', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'My backups', exact: true })).toBeVisible();
+  expect(api.loginRequests).toHaveLength(1);
+});

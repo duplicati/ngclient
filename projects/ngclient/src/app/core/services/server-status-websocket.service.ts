@@ -211,6 +211,10 @@ export class ServerStatusWebSocketService {
                   if (!this.#isCurrentConnection(generation)) return;
                   this.#isHandlingAuthRefresh = false;
                   console.error('Error refreshing token after WebSocket auth failed', error);
+                  // onclose may have skipped reconnect while this refresh was pending.
+                  if (this.shouldConnect() && !this.#auth.isLoggingOut()) {
+                    this.#showDisconnectedDialogAndScheduleReconnect();
+                  }
                 },
               });
 
