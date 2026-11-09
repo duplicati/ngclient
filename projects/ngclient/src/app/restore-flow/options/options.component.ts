@@ -325,6 +325,8 @@ export default class OptionsComponent {
           ? `@googleworkspace://${encodeURIComponent(path)}${queryParams}&google-ignore-existing=${checkForExisting ? 'true' : 'false'}`
           : `@office365://${encodeURIComponent(path)}${queryParams}&office365-ignore-existing=${checkForExisting ? 'true' : 'false'}`;
       this.#restoreFlowState.setAlternateRestorePath(restorePath, this.remoteCustomSourcePrefix());
+      // The cloud restore targets require overwrite; existing items are handled by the ignore-existing option instead
+      this.optionsForm.controls.handleExisting.setValue('overwrite');
       this.optionsForm.controls.includeMetadata.setValue(true);
       this.optionsForm.controls.permissions.setValue(true);
     } else if (restoreToTargetDisk) {
