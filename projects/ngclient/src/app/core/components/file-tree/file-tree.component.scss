@@ -230,6 +230,17 @@
       .row-action {
         flex: 0 0 auto;
         margin-right: p2r(4);
+        // Compact so folder rows keep the same height as file rows
+        width: p2r(24);
+        height: p2r(24);
+        min-width: 0;
+        min-height: 0;
+        padding: 0;
+        margin-block: p2r(-2);
+
+        sh-icon {
+          font-size: p2r(16);
+        }
 
         &.picked {
           color: var(--primary-9);
