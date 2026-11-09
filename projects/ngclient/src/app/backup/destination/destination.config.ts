@@ -2450,6 +2450,52 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       },
     },
   },
+  {
+    key: 'internxt',
+    displayName: $localize`Internxt Drive`,
+    description: $localize`Store backups in Internxt Drive. Requires a plan with CLI access.`,
+    icon: 'assets/dest-icons/internxt.png',
+    customFields: {
+      path: {
+        type: 'Path',
+        name: 'path',
+        doubleSlash: DEFAULT_DOUBLESLASH_CONFIG,
+        shortDescription: $localize`Path in Internxt Drive`,
+        longDescription: $localize`Path in Internxt Drive`,
+        formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      },
+    },
+    dynamicFields: [
+      {
+        name: 'auth-username',
+        isMandatory: true,
+      },
+      {
+        name: 'auth-password',
+        isMandatory: true,
+      },
+      {
+        name: 'two-factor-secret',
+      },
+      {
+        name: 'two-factor-code',
+      },
+    ],
+    mapper: {
+      to: (fields: ValueOfDestinationFormGroup): string => {
+        return buildUrlFromFields(fields, null, null, fields.custom.path);
+      },
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
+        return <ValueOfDestinationFormGroup>{
+          destinationType,
+          custom: {
+            path: getSimplePath(urlObj),
+          },
+          ...fromSearchParams(destinationType, urlObj),
+        };
+      },
+    },
+  },
   CreateCustomS3ProviderEntry('rabata', 'Rabata.io', null, 'assets/dest-icons/rabata.png', ['.rabata.io']),
   CreateCustomS3ProviderEntry('wasabi', 'Wasabi Hot Storage', null, 'assets/dest-icons/wasabi.png', ['.wasabisys.com']),
   CreateCustomS3ProviderEntry('impossiblecloud', 'Impossible Cloud', null, 'assets/dest-icons/impossiblecloud.png', [
