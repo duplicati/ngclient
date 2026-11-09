@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ShipButton } from '@ship-ui/core/ship-button';
 import { CrashLogState } from '../../core/states/crashlog.state';
 
 @Component({
   selector: 'app-crashlogs',
-  imports: [],
+  imports: [ShipButton],
   templateUrl: './crashlogs.component.html',
   styleUrl: './crashlogs.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -11,10 +12,15 @@ import { CrashLogState } from '../../core/states/crashlog.state';
 export default class CrashlogsComponent {
   #crashLogState = inject(CrashLogState);
 
-  logsLoading = computed(() => !this.#crashLogState.isLoaded());
+  logsLoading = this.#crashLogState.isLoading;
+  loadFailed = this.#crashLogState.loadFailed;
   crashLog = this.#crashLogState.crashLog;
 
   ngOnInit() {
+    this.#crashLogState.load();
+  }
+
+  retry() {
     this.#crashLogState.load();
   }
 

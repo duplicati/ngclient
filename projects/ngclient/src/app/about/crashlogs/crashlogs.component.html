@@ -2,6 +2,9 @@
 
 @if (logsLoading()) {
   <div class="loading">Loading ...</div>
+} @else if (loadFailed()) {
+  <p role="alert" i18n>Failed to load crash log.</p>
+  <button shButton type="button" (click)="retry()" i18n>Retry</button>
 } @else if (crashLog() == null || crashLog()?.length === 0) {
   <div class="loading">No crash log found</div>
 } @else {
