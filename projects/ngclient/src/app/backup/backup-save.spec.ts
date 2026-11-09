@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { EMPTY, of, Subject } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { DuplicatiServer } from '../core/openapi';
+import { BackupDto, DuplicatiServer } from '../core/openapi';
 import { TimespanLiteralsService } from '../core/services/timespan-literals.service';
 import { ConnectionStringsState } from '../core/states/connection-strings.state';
 import { SysinfoState } from '../core/states/sysinfo.state';
@@ -209,5 +209,66 @@ describe('backup save lifecycle', () => {
     expect(status()).toBe('cancelled');
     expect(create).not.toHaveBeenCalled();
     expect(state.isSubmitting()).toBe(false);
+  });
+
+  it.each([
+    { Mode: 'inline', Interval: null, Options: { 'future-option': true } },
+    { Mode: 'interval', Interval: '2D3h', Options: { 'dst-options': { retries: 2 } } },
+    { Mode: 'counting', Interval: null, Options: { count: 4, 'future-option': true } },
+  ])('round-trips secondary synchronization metadata: $Mode', (sync) => {
+    state.mapDestinationToForm({
+      TargetURL: 'file:///primary',
+      AdditionalTargetURLs: [{ TargetUrl: 'file:///secondary', ConnectionStringID: 8, UrlKey: 'second', ...sync }],
+    } as unknown as BackupDto);
+    state.submit(true);
+    expect(create.mock.calls[0][0].body.Backup.AdditionalTargetURLs).toEqual([
+      { TargetUrl: 'file:///secondary', ConnectionStringID: 8, UrlKey: 'second', ...sync },
+    ]);
+  });
+
+  it.each([0, -1, 1.5, '3', null, 2147483648])('does not save an invalid synchronization count %s', (count) => {
+    state.addTargetUrl('file:///secondary', null, null);
+    state.targetUrls.update((targets) =>
+      targets.map((target, index) => (index === 1 ? { ...target, mode: 'counting', options: { count } } : target))
+    );
+    expect(state.validateBeforeSubmit()).toBe('destination');
+    state.submit(true);
+    expect(create).not.toHaveBeenCalled();
+  });
+
+  it.each(['', '0s', '-1h', 'nonsense', '1.5h', '7.00:00:00', '30000Y-29999Y'])(
+    'does not save an invalid synchronization interval %s',
+    (interval) => {
+      state.addTargetUrl('file:///secondary', null, null);
+      state.targetUrls.update((targets) =>
+        targets.map((target, index) => (index === 1 ? { ...target, mode: 'interval', interval } : target))
+      );
+      expect(state.validateBeforeSubmit()).toBe('destination');
+      state.submit(true);
+      expect(create).not.toHaveBeenCalled();
+    }
+  );
+
+  it.each(['7D', '1D2h', ' 2h30m ', '3600'])('accepts a positive interval in server format: %s', (interval) => {
+    state.addTargetUrl('file:///secondary', null, null);
+    state.targetUrls.update((targets) =>
+      targets.map((target, index) => (index === 1 ? { ...target, mode: 'interval', interval } : target))
+    );
+    expect(state.validateBeforeSubmit()).toBe('');
+    state.submit(true);
+    expect(create).toHaveBeenCalledTimes(1);
+  });
+
+  it('cancels a pending save if secondary synchronization settings change', () => {
+    state.addTargetUrl('file:///secondary', null, null);
+    state.toggleSaveConnectionString(0);
+    state.submit(true);
+    state.targetUrls.update((targets) =>
+      targets.map((target, index) => (index === 1 ? { ...target, mode: 'counting', options: { count: 3 } } : target))
+    );
+    connection.next({ Data: { ID: 8 } });
+    connection.complete();
+    expect(create).not.toHaveBeenCalled();
+    expect(status()).toBe('cancelled');
   });
 });

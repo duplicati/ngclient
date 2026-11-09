@@ -43,6 +43,7 @@ import {
   mapBackupToOptionsForm,
   mapBackupFormToSettings,
   mapBackupFormToDto,
+  secondaryDestinationError,
 } from './models/backup-form-mappers';
 import {
   getNextRunDate,
@@ -228,7 +229,10 @@ export class BackupState {
           target.url === saved.url &&
           target.connectionStringId === saved.connectionStringId &&
           target.urlKey === saved.urlKey &&
-          target.save === saved.save
+          target.save === saved.save &&
+          target.mode === saved.mode &&
+          target.interval === saved.interval &&
+          target.options === saved.options
         );
       })
     );
@@ -240,6 +244,10 @@ export class BackupState {
   }
 
   submit(withoutExit = false) {
+    if (this.targetUrls().slice(1).some(secondaryDestinationError)) {
+      this.validateBeforeSubmit();
+      return;
+    }
     this.#saveOperation.run(
       () => {
         // Capture what was submitted before any connection-string requests finish.
@@ -261,6 +269,9 @@ export class BackupState {
               TargetUrl: target.url,
               ConnectionStringID: csIds[index + 1] ?? undefined,
               UrlKey: target.urlKey,
+              ...(target.mode !== undefined ? { Mode: target.mode } : {}),
+              ...(target.interval !== undefined ? { Interval: target.interval } : {}),
+              ...(target.options !== undefined ? { Options: target.options } : {}),
             }));
             if (additional.length) backup.Backup.AdditionalTargetURLs = additional;
 
@@ -343,6 +354,17 @@ export class BackupState {
       return 'destination';
     }
 
+    if (targetUrls.slice(1).some(secondaryDestinationError)) {
+      this.#dialog.open(ConfirmDialogComponent, {
+        data: {
+          title: $localize`Invalid synchronization settings`,
+          message: $localize`Enter a positive synchronization interval or a positive whole number of backups for each secondary destination.`,
+          confirmText: $localize`OK`,
+        },
+      });
+      return 'destination';
+    }
+
     var isSourceValid = (backup.Backup.Sources ?? []).filter((x) => x.trim() !== '').length > 0;
     if (!isSourceValid || !this.sourceDataForm.valid) {
       this.#dialog.open(ConfirmDialogComponent, {
@@ -397,9 +419,12 @@ export class BackupState {
     const firstDestination = url ? [createBackupTargetUrl(url, csId, null, !!csId)] : [];
 
     const additionalDestinations =
-      (anyBackup.AdditionalTargetURLs as TargetUrlDto[])?.map((t) =>
-        createBackupTargetUrl(t.TargetUrl!, t.ConnectionStringID ?? null, t.UrlKey ?? null, !!t.ConnectionStringID)
-      ) ?? [];
+      (anyBackup.AdditionalTargetURLs as TargetUrlDto[])?.map((t) => ({
+        ...createBackupTargetUrl(t.TargetUrl!, t.ConnectionStringID ?? null, t.UrlKey ?? null, !!t.ConnectionStringID),
+        mode: t.Mode,
+        interval: t.Interval,
+        options: t.Options ? { ...t.Options } : t.Options,
+      })) ?? [];
 
     this.targetUrls.set([...firstDestination, ...additionalDestinations]);
   }
@@ -621,6 +646,11 @@ export class BackupState {
       newUrls[index] = { ...newUrls[index], save: !newUrls[index].save };
       return newUrls;
     });
+  }
+
+  updateTargetSynchronization(index: number, changes: Pick<BackupTargetUrl, 'mode' | 'interval' | 'options'>) {
+    if (index < 1 || index >= this.targetUrls().length) return;
+    this.targetUrls.update((targets) => targets.map((target, i) => (i === index ? { ...target, ...changes } : target)));
   }
 
   removeTargetUrl(index: number) {
