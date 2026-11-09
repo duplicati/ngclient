@@ -33,6 +33,7 @@ export default class PurgeVersionScopeComponent {
   selectedVersion = this.#state.selectedVersion;
   selectedVersionItem = this.#state.selectedVersionItem;
   selectedPathsArray = this.#state.selectedPathsArray;
+  performCompact = this.#state.performCompact;
   isPurging = signal(false);
 
   isVersionSelected(version: number) {
@@ -59,6 +60,7 @@ export default class PurgeVersionScopeComponent {
 
     if (versions !== null && versions.length === 0) return;
 
+    const suppressCompact = !this.performCompact();
     const count = paths.length;
     const versionText =
       scope === 'all'
@@ -83,6 +85,7 @@ export default class PurgeVersionScopeComponent {
               BackupId: this.#state.backupId()!,
               Filters: paths.map((x) => (x.endsWith('/') || x.endsWith('\\') ? `${x}*` : x)),
               Versions: versions,
+              SuppressCompact: suppressCompact,
             },
           })
         )

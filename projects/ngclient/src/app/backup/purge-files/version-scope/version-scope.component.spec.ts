@@ -67,6 +67,7 @@ describe('PurgeVersionScopeComponent removal confirmation', () => {
           BackupId: '42',
           Filters: ['/data/file.txt', '/data/folder/*', 'C:\\data\\folder\\*'],
           Versions: versions,
+          SuppressCompact: false,
         },
       });
       expect(component.isPurging()).toBe(true);
@@ -77,6 +78,16 @@ describe('PurgeVersionScopeComponent removal confirmation', () => {
       expect(component.isPurging()).toBe(false);
     }
   );
+  it.each([true, false])('submits the compact choice captured for confirmation (%s)', (compact) => {
+    const { component, state, open, purge } = setup();
+    state.performCompact.set(compact);
+    component.purgeFiles();
+    state.performCompact.set(!compact);
+    open.mock.calls[0][1].closed(true);
+    expect(purge).toHaveBeenCalledExactlyOnceWith({
+      body: expect.objectContaining({ SuppressCompact: !compact }),
+    });
+  });
   it('shows a deletion error, stops pending state and permits a retry', () => {
     const { component, open, purge, response, navigate } = setup();
     component.purgeFiles();

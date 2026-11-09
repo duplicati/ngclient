@@ -19,6 +19,7 @@ export class PurgeFilesState {
   selectedPaths = signal('');
   versionScope = signal<PurgeVersionScope>('all');
   specificVersions = signal<number[]>([]);
+  performCompact = signal(true);
 
   selectedPathsArray = computed(() =>
     this.selectedPaths()
@@ -41,6 +42,7 @@ export class PurgeFilesState {
       this.selectedPaths.set('');
       this.versionScope.set('all');
       this.specificVersions.set([]);
+      this.performCompact.set(true);
     }
     this.versions.set([]);
 

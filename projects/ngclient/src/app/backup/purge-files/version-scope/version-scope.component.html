@@ -1,6 +1,6 @@
 <sh-alert color="primary" i18n>
   When removing files from a backup, Duplicati will add a new backup version without the removed files, and then remove
-  the existing one. After this, a compaction will remove any data that is no longer needed. This process cannot be
+  the existing one. If compacting is enabled, Duplicati can reclaim unused space afterwards. This process cannot be
   reverted.
 </sh-alert>
 
@@ -53,6 +53,10 @@
       }
     </div>
   }
+
+  <sh-checkbox class="primary raised" [(checked)]="performCompact" [disabled]="isPurging()" i18n>
+    Compact afterwards
+  </sh-checkbox>
 </div>
 
 <div class="form-actions">

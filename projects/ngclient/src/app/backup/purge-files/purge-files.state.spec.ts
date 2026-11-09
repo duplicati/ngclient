@@ -35,12 +35,14 @@ describe('PurgeFilesState version selection', () => {
     state.selectedPaths.set('/backup-a/private.txt');
     state.versionScope.set('specific');
     state.specificVersions.set([4]);
+    state.performCompact.set(false);
     state.init('43');
     expect(state.versions()).toEqual([]);
     expect(state.selectedVersion()).toBeNull();
     expect(state.selectedPaths()).toBe('');
     expect(state.versionScope()).toBe('all');
     expect(state.specificVersions()).toEqual([]);
+    expect(state.performCompact()).toBe(true);
     expect(state.isLoadingVersions()).toBe(true);
   });
   it('ignores an old backup response while the new backup is loading', () => {

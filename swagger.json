@@ -5572,6 +5572,10 @@
               "format": "int64"
             },
             "nullable": true
+          },
+          "SuppressCompact": {
+            "type": "boolean",
+            "nullable": true
           }
         },
         "additionalProperties": false
