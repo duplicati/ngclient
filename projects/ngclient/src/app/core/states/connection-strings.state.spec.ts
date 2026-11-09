@@ -50,6 +50,24 @@ describe('ConnectionStringsState saved destinations', () => {
       updateBackups,
     };
   }
+  it.each(['new', 'existing'])('preserves the requested description for a %s destination', (mode) => {
+    const { state, create, update, response } = setup();
+    const data = { Name: 'Storage', BaseUrl: destination.BaseUrl, Description: 'Off-site copies' };
+    state.save(mode === 'new' ? 'new' : destination, data).subscribe();
+    const body = { Name: 'Storage', BaseUrl: destination.BaseUrl, Description: 'Off-site copies' };
+    expect(mode === 'new' ? create : update).toHaveBeenCalledWith(
+      mode === 'new' ? { body } : { path: { id: 42 }, body }
+    );
+    expect(data.Description).toBe('Off-site copies');
+    response.complete();
+  });
+  it('does not mutate a frozen save payload', () => {
+    const { state, update, response } = setup();
+    const data = Object.freeze({ Name: 'Storage', BaseUrl: destination.BaseUrl, Description: 'Preserve this' });
+    state.save(destination, data).subscribe();
+    expect(update).toHaveBeenCalledWith({ path: { id: 42 }, body: data });
+    response.complete();
+  });
   it('loads saved destinations and reloads after an explicit refresh', () => {
     const { state, list } = setup();
     TestBed.tick();
