@@ -2667,6 +2667,11 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     'assets/dest-icons/neon.png',
     ['.neon.tech']
   ),
+  CreateCustomS3ProviderEntry('dosya', 'dosya', null, 'assets/dest-icons/dosya.png', ['.dosya.dev'], {
+    servers: [{ key: 'dosya', value: 's3.dosya.dev' }],
+    serverDescription: $localize`The dosya S3 endpoint, s3.dosya.dev. Use your workspace ID as the bucket name; it is shown under Integrations > S3 in the dosya web app.`,
+    searchTerms: 'dosya dosya.dev',
+  }),
 ];
 
 export const S3_HOST_SUFFIX_MAP: Record<string, string> = {
@@ -2725,4 +2730,5 @@ export const S3_HOST_SUFFIX_MAP: Record<string, string> = {
   '.myhuaweicloud.com': 'Huawei Cloud S3',
   '.myhuaweicloud.eu': 'Huawei Cloud S3',
   '.myqcloud.com': 'Tencent Cloud S3',
+  '.dosya.dev': 'dosya S3',
 };
