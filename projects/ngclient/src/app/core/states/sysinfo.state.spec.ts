@@ -38,6 +38,17 @@ describe('SysinfoState server capabilities', () => {
 
   it.each([
     [[], false],
+    [['v2:backup:purge-files'], false],
+    [['v2:backup:purge-files', 'v2:backup:purge-files:suppress-compact'], true],
+  ])('reports purge-files compact suppression only when the server advertises it: %j', (extensions, expected) => {
+    const state = setup();
+    expect(state.hasV2PurgeFilesSuppressCompact()).toBe(false);
+    state.systemInfo.set({ APIExtensions: extensions } as SystemInfoDto);
+    expect(state.hasV2PurgeFilesSuppressCompact()).toBe(expected);
+  });
+
+  it.each([
+    [[], false],
     [['v1:backup:sync-mode'], false],
     [['v1:backup:enable-disable'], true],
   ])('reports backup enable/disable support only when the server advertises it: %j', (extensions, expected) => {
