@@ -145,6 +145,12 @@ export class SysinfoState {
     return apiExtensions.includes('v2:backup:purge-files');
   });
 
+  // Older servers always compact after purging files and do not accept the SuppressCompact field
+  hasV2PurgeFilesSuppressCompact = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v2:backup:purge-files:suppress-compact');
+  });
+
   hasV2TestOperations = computed(() => {
     const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
     return apiExtensions.includes('v2:destination:test');

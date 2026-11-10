@@ -598,6 +598,7 @@ export type PurgeFilesRequestDto = {
     BackupId: string | null;
     Filters: Array<string> | null;
     Versions?: Array<number> | null;
+    SuppressCompact?: boolean | null;
 };
 
 export type RefreshTokenInputDto = {

@@ -11,6 +11,7 @@ import { defer, finalize } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer } from '../../../core/openapi';
 import { BytesPipe } from '../../../core/pipes/byte.pipe';
+import { SysinfoState } from '../../../core/states/sysinfo.state';
 import { PurgeFilesState } from '../purge-files.state';
 
 @Component({
@@ -23,6 +24,7 @@ import { PurgeFilesState } from '../purge-files.state';
 export default class PurgeVersionScopeComponent {
   #state = inject(PurgeFilesState);
   #dupServer = inject(DuplicatiServer);
+  #sysinfo = inject(SysinfoState);
   #dialog = inject(ShipDialogService);
   #router = inject(Router);
   #route = inject(ActivatedRoute);
@@ -33,6 +35,8 @@ export default class PurgeVersionScopeComponent {
   selectedVersion = this.#state.selectedVersion;
   selectedVersionItem = this.#state.selectedVersionItem;
   selectedPathsArray = this.#state.selectedPathsArray;
+  performCompact = this.#state.performCompact;
+  canSuppressCompact = this.#sysinfo.hasV2PurgeFilesSuppressCompact;
   isPurging = signal(false);
 
   isVersionSelected(version: number) {
@@ -59,6 +63,8 @@ export default class PurgeVersionScopeComponent {
 
     if (versions !== null && versions.length === 0) return;
 
+    // Servers without the extension always compact, so the field is left out for them
+    const suppressCompact = this.canSuppressCompact() ? { SuppressCompact: !this.performCompact() } : {};
     const count = paths.length;
     const versionText =
       scope === 'all'
@@ -83,6 +89,7 @@ export default class PurgeVersionScopeComponent {
               BackupId: this.#state.backupId()!,
               Filters: paths.map((x) => (x.endsWith('/') || x.endsWith('\\') ? `${x}*` : x)),
               Versions: versions,
+              ...suppressCompact,
             },
           })
         )

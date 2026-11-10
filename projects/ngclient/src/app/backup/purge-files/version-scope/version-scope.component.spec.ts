@@ -3,13 +3,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { Subject } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { DuplicatiServer } from '../../../core/openapi';
+import { DuplicatiServer, SystemInfoDto } from '../../../core/openapi';
+import { SysinfoState } from '../../../core/states/sysinfo.state';
 import { PurgeFilesState, PurgeVersionScope } from '../purge-files.state';
 import PurgeVersionScopeComponent from './version-scope.component';
 
 describe('PurgeVersionScopeComponent removal confirmation', () => {
   afterEach(() => TestBed.resetTestingModule());
-  function setup() {
+  function setup(extensions = ['v2:backup:purge-files:suppress-compact']) {
     const response = new Subject<unknown>();
     const purge = vi.fn(() => response);
     const open = vi.fn();
@@ -26,6 +27,7 @@ describe('PurgeVersionScopeComponent removal confirmation', () => {
     }).overrideComponent(PurgeVersionScopeComponent, { set: { template: '', imports: [] } });
     const fixture = TestBed.createComponent(PurgeVersionScopeComponent);
     const state = TestBed.inject(PurgeFilesState);
+    TestBed.inject(SysinfoState).systemInfo.set({ APIExtensions: extensions } as SystemInfoDto);
     state.backupId.set('42');
     state.selectedVersion.set('7');
     state.selectedPaths.set('/data/file.txt\0/data/folder/\0C:\\data\\folder\\');
@@ -67,6 +69,7 @@ describe('PurgeVersionScopeComponent removal confirmation', () => {
           BackupId: '42',
           Filters: ['/data/file.txt', '/data/folder/*', 'C:\\data\\folder\\*'],
           Versions: versions,
+          SuppressCompact: false,
         },
       });
       expect(component.isPurging()).toBe(true);
@@ -77,6 +80,25 @@ describe('PurgeVersionScopeComponent removal confirmation', () => {
       expect(component.isPurging()).toBe(false);
     }
   );
+  it.each([true, false])('submits the compact choice captured for confirmation (%s)', (compact) => {
+    const { component, state, open, purge } = setup();
+    state.performCompact.set(compact);
+    component.purgeFiles();
+    state.performCompact.set(!compact);
+    open.mock.calls[0][1].closed(true);
+    expect(purge).toHaveBeenCalledExactlyOnceWith({
+      body: expect.objectContaining({ SuppressCompact: !compact }),
+    });
+  });
+  it('leaves the compact choice out when the server does not support suppressing it', () => {
+    const { component, state, open, purge } = setup(['v2:backup:purge-files']);
+    state.performCompact.set(false);
+    component.purgeFiles();
+    open.mock.calls[0][1].closed(true);
+    expect(purge).toHaveBeenCalledExactlyOnceWith({
+      body: { BackupId: '42', Filters: expect.any(Array), Versions: null },
+    });
+  });
   it('shows a deletion error, stops pending state and permits a retry', () => {
     const { component, open, purge, response, navigate } = setup();
     component.purgeFiles();
