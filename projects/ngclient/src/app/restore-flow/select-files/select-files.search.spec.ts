@@ -66,6 +66,16 @@ describe('restore search request and results', () => {
     return { component: fixture.componentInstance, flow, search, response };
   }
 
+  it('searches all versions without a version or time restriction', () => {
+    const { component, search } = setup();
+    component.searchAllVersions.set(true);
+    component.searchQuery.set('*report*');
+    component.performSearch();
+    expect(search).toHaveBeenCalledWith({
+      body: expect.objectContaining({ Version: null, Time: null, PageSize: 100 }),
+    });
+  });
+
   it.each(['0', '7'])('searches only selected version %s with a trimmed filter', (version) => {
     const { component, flow, search } = setup();
     flow.selectOption.set(version);
@@ -162,5 +172,115 @@ describe('restore search request and results', () => {
     component.performSearch();
     expect(search).toHaveBeenCalledTimes(2);
     expect(component.isSearching()).toBe(false);
+  });
+  function hit(version = 7, time = '2026-09-24T12:00:00Z') {
+    return {
+      Version: version,
+      Time: time,
+      Path: '/documents/report.pdf',
+      Size: 123,
+      IsDirectory: false,
+      IsSymlink: false,
+      LastModified: time,
+      Metadata: null,
+    };
+  }
+
+  it('keeps duplicate paths in different versions and selects by timestamp when version numbers shift', () => {
+    const { component, flow, response } = setup();
+    component.searchAllVersions.set(true);
+    component.searchQuery.set('*report*');
+    flow.selectFilesForm.controls.filesToRestore.setValue('/old/selection');
+    component.performSearch();
+    const older = hit(8); // A new backup changed the server's relative version numbers.
+    response.next({ ...emptyResponse, Data: [hit(1, '2026-10-01T12:00:00Z'), older] });
+    response.complete();
+    expect(component.searchResults()).toHaveLength(2);
+    component.selectSearchResult(older);
+    expect(flow.selectOption()).toBe('7');
+    expect(flow.selectFilesForm.controls.filesToRestore.value).toBe('/documents/report.pdf');
+    expect(component.allVersionResults()).toBe(false);
+    expect(component.searchResults()).toEqual([]);
+  });
+
+  it('refuses to substitute another version when a hit timestamp is unavailable', () => {
+    const { component, flow, response } = setup();
+    component.searchAllVersions.set(true);
+    component.searchQuery.set('*report*');
+    component.performSearch();
+    const missing = hit(0, '2020-01-01T00:00:00Z');
+    response.next({ ...emptyResponse, Data: [missing] });
+    response.complete();
+    component.selectSearchResult(missing);
+    expect(component.unavailableVersion()).toBe(true);
+    expect(flow.selectOption()).toBe('0');
+    expect(flow.selectFilesForm.controls.filesToRestore.value).toBe('');
+    expect(component.allVersionResults()).toBe(true);
+  });
+
+  it('loads another page with the same all-version query', () => {
+    const { component, search, response } = setup();
+    component.searchAllVersions.set(true);
+    component.searchQuery.set('*report*');
+    component.performSearch();
+    response.next({ ...emptyResponse, PageInfo: { Page: 0, Pages: 3 } });
+    response.complete();
+    expect(component.searchPages()).toBe(3);
+    search.mockReturnValue(of({ ...emptyResponse, Data: [hit()], PageInfo: { Page: 1, Pages: 0 } }));
+    component.performSearch(1);
+    expect(search).toHaveBeenLastCalledWith({
+      body: expect.objectContaining({ Version: null, Filters: ['*report*'], Page: 1, PageSize: 100 }),
+    });
+    expect(component.searchPage()).toBe(1);
+    expect(component.searchPages()).toBe(3);
+    expect(component.searchResults()).toHaveLength(1);
+  });
+
+  it.each(['query', 'scope', 'version', 'backup', 'clear', 'destroy'] as const)(
+    'cancels pending search on %s changes',
+    (change) => {
+      const { component, flow, response } = setup();
+      component.searchAllVersions.set(true);
+      component.searchQuery.set('*report*');
+      component.performSearch();
+      if (change === 'query') component.searchQuery.set('*other*');
+      if (change === 'scope') component.searchAllVersions.set(false);
+      if (change === 'version') flow.selectOption.set('7');
+      if (change === 'backup') flow.backupId.set('43');
+      if (change === 'clear') component.clearSearch();
+      if (change === 'destroy') fixture.destroy();
+      else fixture.detectChanges();
+      expect(response.observed).toBe(false);
+      expect(component.isSearching()).toBe(false);
+      response.next({ ...emptyResponse, Data: [hit()] });
+      expect(component.searchResults()).toEqual([]);
+    }
+  );
+
+  it('ignores stale results even before change detection processes a query change', () => {
+    const { component, flow, response } = setup();
+    component.searchAllVersions.set(true);
+    component.searchQuery.set('*report*');
+    component.performSearch();
+    const result = hit();
+    response.next({ ...emptyResponse, Data: [result] });
+    response.complete();
+    component.searchQuery.set('*different*');
+    component.selectSearchResult(result);
+    expect(flow.selectOption()).toBe('0');
+    expect(flow.selectFilesForm.controls.filesToRestore.value).toBe('');
+  });
+
+  it('reports unsuccessful responses and permits a retry', () => {
+    const { component, search, response } = setup();
+    component.searchAllVersions.set(true);
+    component.searchQuery.set('*report*');
+    component.performSearch();
+    response.next({ ...emptyResponse, Success: false, Error: 'Database locked' });
+    response.complete();
+    expect(component.searchError()).toBe(true);
+    search.mockReturnValue(of(emptyResponse));
+    component.performSearch();
+    expect(component.searchError()).toBe(false);
   });
 });

@@ -1,5 +1,14 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, untracked } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  signal,
+  untracked,
+} from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipButton } from '@ship-ui/core/ship-button';
@@ -8,7 +17,7 @@ import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { ShipSelect } from '@ship-ui/core/ship-select';
-import { defer, finalize, Subject, take, takeUntil } from 'rxjs';
+import { defer, finalize, Subject, Subscription, take, takeUntil } from 'rxjs';
 import FileTreeComponent, { BackupSettings } from '../../core/components/file-tree/file-tree.component';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer, SearchEntriesItemDto, TreeNodeDto } from '../../core/openapi';
@@ -86,6 +95,26 @@ export default class SelectFilesComponent {
   loadingRootPath = signal(false);
   isRepairing = computed(() => this.#activeRepairIds().length > 0);
   loadedVersions = signal<{ [key: string]: boolean }>({});
+
+  #searchSubscription?: Subscription;
+  #searchContext: string | null = null;
+  #destroySearch = inject(DestroyRef).onDestroy(() => this.#searchSubscription?.unsubscribe());
+
+  searchAllVersions = signal(false);
+  searchPage = signal(0);
+  searchPages = signal(0);
+  searchError = signal(false);
+  unavailableVersion = signal(false);
+  allVersionResults = computed(() => this.searchAllVersions() && this.isSearchMode());
+  #currentSearchContext = computed(() =>
+    JSON.stringify([this.backupId(), this.selectOption(), this.searchQuery().trim(), this.searchAllVersions()])
+  );
+  #invalidateSearch = effect(() => {
+    const context = this.#currentSearchContext();
+    untracked(() => {
+      if (this.#searchContext !== null && this.#searchContext !== context) this.#resetSearch();
+    });
+  });
 
   // Search functionality
   canSearch = computed(() => this.#sysinfo.hasV2ListOperations() && !this.isSync());
@@ -325,6 +354,7 @@ export default class SelectFilesComponent {
   }
 
   next() {
+    if (this.allVersionResults()) return;
     this.#router.navigate(['options'], { relativeTo: this.#route.parent });
   }
 
@@ -336,7 +366,7 @@ export default class SelectFilesComponent {
     }
   }
 
-  performSearch() {
+  performSearch(page = 0) {
     const query = this.searchQuery().trim();
     const backupSettings = this.backupSettings();
     const needsMetadata = (this.#restoreFlowState.extendedDataType() ?? '').length > 0 || this.hasVirtualSources();
@@ -348,21 +378,28 @@ export default class SelectFilesComponent {
 
     if (version === null || version === undefined) return;
 
+    this.#searchSubscription?.unsubscribe();
+    this.#searchContext = this.#currentSearchContext();
+    const context = this.#searchContext;
+    this.searchError.set(false);
+    this.unavailableVersion.set(false);
+    this.searchPage.set(page);
+    if (page === 0) this.searchPages.set(0);
     this.isSearching.set(true);
     this.searchResults.set([]);
     this.searchParentMetadata.set({});
     this.hasSearched.set(true);
 
-    defer(() =>
+    this.#searchSubscription = defer(() =>
       this.#dupServer.postApiV2BackupSearch({
         body: {
           BackupId: backupSettings.id,
           Time: null,
-          Version: [version],
+          Version: this.searchAllVersions() ? null : [version],
           Filters: [query],
           Paths: null,
-          PageSize: 1000,
-          Page: 0,
+          PageSize: this.searchAllVersions() ? 100 : 1000,
+          Page: page,
           ReturnExtended: needsMetadata,
           SearchMetadata: needsMetadata,
         },
@@ -374,20 +411,56 @@ export default class SelectFilesComponent {
       )
       .subscribe({
         next: (res) => {
+          if (context !== this.#currentSearchContext()) return;
+          if (!res.Success) {
+            this.searchError.set(true);
+            return;
+          }
+          if (page === 0 || (res.PageInfo?.Pages ?? 0) > 0) this.searchPages.set(res.PageInfo?.Pages ?? 0);
           // Older servers do not return the metadata for the parent folders
           this.searchParentMetadata.set(res.ParentMetadata ?? {});
           this.searchResults.set(res.Data ?? []);
         },
         error: () => {
+          if (context !== this.#currentSearchContext()) return;
+          this.searchError.set(true);
           this.searchResults.set([]);
         },
       });
   }
 
-  clearSearch() {
-    this.searchQuery.set('');
+  selectSearchResult(result: SearchEntriesItemDto) {
+    if (!this.allVersionResults() || this.isSearching() || this.#searchContext !== this.#currentSearchContext()) return;
+    if (!this.searchResults().includes(result) || !result.Path) return;
+    // Version numbers are relative to the newest backup and can shift while searching.
+    // Match the immutable backup timestamp instead of trusting the result's version number.
+    const timestamp = Date.parse(result.Time);
+    const option = this.versionOptions().find((x) => Number.isFinite(timestamp) && Date.parse(x.Time) === timestamp);
+    if (!option) {
+      this.unavailableVersion.set(true);
+      return;
+    }
+    this.abortLoading$.next(true);
+    this.selectOption.set(option.Version.toString());
+    const path = result.IsDirectory && !/[\\/]$/.test(result.Path) ? result.Path + '/' : result.Path;
+    this.selectFilesForm.controls.filesToRestore.setValue(path);
+    this.clearSearch();
+  }
+
+  #resetSearch() {
+    this.#searchSubscription?.unsubscribe();
+    this.#searchContext = null;
+    this.searchPages.set(0);
+    this.searchPage.set(0);
+    this.searchError.set(false);
+    this.unavailableVersion.set(false);
     this.searchResults.set([]);
     this.searchParentMetadata.set({});
     this.hasSearched.set(false);
+  }
+
+  clearSearch() {
+    this.#resetSearch();
+    this.searchQuery.set('');
   }
 }
