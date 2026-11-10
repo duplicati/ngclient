@@ -61,6 +61,7 @@ describe('saved destination editor actions', () => {
     fixture.detectChanges();
     getBackups.mockClear();
     return {
+      fixture,
       component: fixture.componentInstance,
       lookup,
       saved,
@@ -76,6 +77,39 @@ describe('saved destination editor actions', () => {
       destinations,
     };
   }
+  it('ignores a previous destination response after selecting another destination', () => {
+    const { component, lookup, getById } = setup();
+    const second = new Subject<{ Data: ConnectionStringDto }>();
+    getById.mockReturnValueOnce(lookup).mockReturnValueOnce(second);
+    component.selectDestination(destination);
+    component.selectDestination({ ...destination, ID: 4, Name: 'Other' });
+    second.next({ Data: { ...destination, ID: 4, Name: 'Fresh other' } });
+    lookup.next({ Data: { ...destination, Name: 'Stale' } });
+    expect(component.editName()).toBe('Fresh other');
+  });
+  it.each(['new', 'cancel', 'destroy'] as const)('discards a pending lookup on %s', (action) => {
+    const { fixture, component, lookup } = setup();
+    component.selectDestination(destination);
+    if (action === 'new') component.selectDestination('new');
+    if (action === 'cancel') component.cancelEdit();
+    if (action === 'destroy') fixture.destroy();
+    const before = component.editName();
+    lookup.next({ Data: { ...destination, Name: 'Stale' } });
+    expect(component.editName()).toBe(before);
+  });
+  it('preserves edits made while fresh destination details are loading', () => {
+    const { component, lookup } = setup();
+    component.selectDestination(destination);
+    component.editName.set('My name');
+    component.editDescription.set('My description');
+    component.editBaseUrl.set('file:///mine');
+    lookup.next({ Data: { ...destination, Name: 'Fresh', Description: 'Fresh', BaseUrl: 'file:///fresh' } });
+    expect(component.editName()).toBe('My name');
+    expect(component.editDescription()).toBe('My description');
+    expect(component.editBaseUrl()).toBe('file:///mine');
+    expect(component.initialBaseUrl()).toBe('file:///fresh');
+    expect(component.isUrlChanged()).toBe(true);
+  });
   it('shows cached fields, then fills the editor from the requested destination without saving', () => {
     const { component, getById, lookup, save } = setup();
     component.selectDestination(destination);
