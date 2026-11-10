@@ -11,6 +11,25 @@
 
   <!-- <pre>{{ targetUrl() }}</pre> -->
 
+  <!-- Dynamic fields marked showFirst (e.g. an S3 provider's server) go above the custom fields -->
+  @for (formView of config.dynamic; track $index) {
+    @if (formView.showFirst) {
+      <ng-container
+        *ngTemplateOutlet="
+          fieldTemplate;
+          context: {
+            $implicit: {
+              index: $index,
+              fieldGroup: 'dynamic',
+              formView: formView,
+              destinationType: _destinationType,
+              oauthField: config.oauthField,
+            },
+          }
+        "></ng-container>
+    }
+  }
+
   @for (formView of config.custom; track $index) {
     <ng-container
       *ngTemplateOutlet="
@@ -28,19 +47,21 @@
   }
 
   @for (formView of config.dynamic; track $index) {
-    <ng-container
-      *ngTemplateOutlet="
-        fieldTemplate;
-        context: {
-          $implicit: {
-            index: $index,
-            fieldGroup: 'dynamic',
-            formView: formView,
-            destinationType: _destinationType,
-            oauthField: config.oauthField,
-          },
-        }
-      "></ng-container>
+    @if (!formView.showFirst) {
+      <ng-container
+        *ngTemplateOutlet="
+          fieldTemplate;
+          context: {
+            $implicit: {
+              index: $index,
+              fieldGroup: 'dynamic',
+              formView: formView,
+              destinationType: _destinationType,
+              oauthField: config.oauthField,
+            },
+          }
+        "></ng-container>
+    }
   }
 
   <sh-toggle-card [disableToggle]="true" class="advanced-options">
@@ -356,10 +377,14 @@
 
         @if (options) {
           <sh-select
+            #freeTextSelect
             [options]="options"
             [asFreeText]="true"
             [inlineSearch]="true"
+            [isClearable]="false"
             [optionTemplate]="nonValidatedOptionTemplate"
+            [placeholder]="item.formView.acceptsPastedUrl ? pasteUrlPlaceholder : undefined"
+            (isOpenChange)="!$event && onFreeTextSelectClosed(freeTextSelect, item.fieldGroup, item.formView.name)"
             label="key"
             value="value">
             <label [for]="formFieldId">
@@ -387,11 +412,16 @@
               [id]="formFieldId"
               [ngModel]="formInput"
               (paste)="onFieldPaste(item.fieldGroup, item.formView.name, $event)"
-              (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
+              (input)="onFreeTextInput(item.fieldGroup, item.formView.name, $event)" />
           </sh-select>
 
+          <!-- The free-text row has only a value, so show it without brackets -->
           <ng-template let-option #nonValidatedOptionTemplate>
-            {{ option.key }} {{ option.value && option.value != option.key ? '(' + option.value + ')' : '' }}
+            @if (option.key) {
+              {{ option.key }} {{ option.value && option.value != option.key ? '(' + option.value + ')' : '' }}
+            } @else {
+              {{ option.value }}
+            }
           </ng-template>
         } @else {
           <sh-progress-bar class="indeterminate primary" />

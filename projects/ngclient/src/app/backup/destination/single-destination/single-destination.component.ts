@@ -60,6 +60,25 @@ type DestinationConfig = {
   advanced: FormView[];
 };
 
+/**
+ * True for an input event that sh-select raised itself to blank a free-text select:
+ * it empties the input when the dropdown opens (to search) and when the value matches
+ * no option. Applying those would erase the stored value without the user asking.
+ */
+export function isSelectBlankingEvent(event: Event): boolean {
+  return !event.isTrusted && (event.target as HTMLInputElement | null)?.value === '';
+}
+
+/**
+ * Makes a closed free-text select show the value the form holds. When the dropdown closes
+ * after the user typed, sh-select keeps the last picked option selected and displays it,
+ * although the typed text is what gets stored.
+ */
+export function syncFreeTextSelection(select: ShipSelect, getValue: () => unknown) {
+  // sh-select closes before it reports a picked option, so wait for that to land first
+  queueMicrotask(() => select.setSelectedOptionsFromValue((getValue() ?? '').toString()));
+}
+
 @Component({
   selector: 'app-single-destination',
   imports: [
@@ -439,6 +458,17 @@ export class SingleDestinationComponent {
       // Provider defaults are applied only as part of the user's field edit.
       this.getFormView(fieldGroup, fieldName)?.onValueChange?.(newValue, form);
     });
+  }
+
+  pasteUrlPlaceholder = $localize`Pick a server, or paste a URL from your provider`;
+
+  onFreeTextSelectClosed(select: ShipSelect, fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string) {
+    syncFreeTextSelection(select, () => this.destinationForm()[fieldGroup][fieldName]);
+  }
+
+  onFreeTextInput(fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string, event: Event) {
+    if (isSelectBlankingEvent(event)) return;
+    this.updateFieldValue(fieldGroup, fieldName, (event.target as HTMLInputElement).value);
   }
 
   onFieldPaste(fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string, event: ClipboardEvent) {

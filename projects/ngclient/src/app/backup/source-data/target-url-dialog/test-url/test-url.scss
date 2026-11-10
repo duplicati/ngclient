@@ -9,3 +9,13 @@
   gap: 8px;
   justify-content: space-between;
 }
+
+// sh-alert aligns its grid to the top, which leaves the text above the middle of the
+// taller "Test now" button; centre the row instead.
+.test-prompt ::ng-deep .alert {
+  align-items: center;
+}
+
+.test-prompt ::ng-deep .title {
+  padding-top: 0;
+}

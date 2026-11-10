@@ -1,6 +1,6 @@
 @if (isExpectedValidTargetUrl()) {
   @if (testSignal() === null) {
-    <sh-alert class="simple primary" i18n>
+    <sh-alert class="simple primary test-prompt" i18n>
       Make sure to test the configuration
       <button shButton class="primary small" (click)="testDestinationClick()">Test now</button>
     </sh-alert>

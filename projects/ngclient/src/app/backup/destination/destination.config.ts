@@ -18,6 +18,16 @@ import {
   UrlLike,
   ValueOfDestinationFormGroup,
 } from './destination.config-utilities';
+import {
+  DIGITALOCEAN_SERVERS,
+  EXOSCALE_SERVERS,
+  HETZNER_SERVERS,
+  HUAWEI_OBS_SERVERS,
+  IONOS_SERVERS,
+  LINODE_SERVERS,
+  OVHCLOUD_SERVERS,
+  SYNOLOGY_C2_SERVERS,
+} from './destination.s3-provider-servers';
 import { parseS3EndpointUrl } from './destination.s3-endpoint';
 
 const fb = new FormBuilder();
@@ -97,6 +107,7 @@ export const S3_DISABLE_CHUNK_ENCODING_OPTION = 's3-disable-chunk-encoding';
  * - Infomaniak (Swiss Backup / Public Cloud): Swift s3api, "aws-chunked is not supported"
  * - Poli Systems: their Duplicati guide requires ticking s3-disable-chunk-encoding
  * - Alibaba OSS: "Aws MultiChunkedEncoding is not supported" (duplicati/duplicati#4994)
+ * - Oracle OCI: S3 compatibility API does not support aws-chunked uploads
  */
 export const S3_NO_CHUNK_ENCODING_HOST_SUFFIXES: readonly string[] = [
   '.wasabisys.com',
@@ -105,6 +116,8 @@ export const S3_NO_CHUNK_ENCODING_HOST_SUFFIXES: readonly string[] = [
   '.infomaniak.cloud',
   '.polisystems.ch',
   '.aliyuncs.com',
+  '.oraclecloud.com',
+  '.customer-oci.com',
 ];
 
 /** True when the given S3 server name belongs to a provider that does not support chunked uploads. */
@@ -205,6 +218,7 @@ export const S3_BASE: DestinationConfigEntry = {
       isMandatory: true,
       formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       onPaste: onS3ServerPaste,
+      acceptsPastedUrl: true,
       onValueChange: applyS3ChunkEncodingDefault,
     },
     {
@@ -460,6 +474,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         isMandatory: true,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
         onPaste: onS3ServerPaste,
+        acceptsPastedUrl: true,
         onValueChange: applyS3ChunkEncodingDefault,
       },
       S3_USE_TLS_FIELD,
@@ -561,6 +576,7 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         isMandatory: true,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
         onPaste: onS3ServerPaste,
+        acceptsPastedUrl: true,
       },
       S3_USE_TLS_FIELD,
       S3_DISABLE_CHUNK_ENCODING_FIELD,
@@ -2546,7 +2562,10 @@ export const DESTINATION_CONFIG: DestinationConfig = [
   CreateCustomS3ProviderEntry('polisystems', 'Poli Systems', null, 'assets/dest-icons/polisystems.png', [
     '.polisystems.ch',
   ]),
-  CreateCustomS3ProviderEntry('ibmcos', 'IBM COS', null, 'assets/dest-icons/ibmcos.png', ['.softlayer.net']),
+  CreateCustomS3ProviderEntry('ibmcos', 'IBM COS', null, 'assets/dest-icons/ibmcos.png', [
+    '.softlayer.net',
+    '.cloud-object-storage.appdomain.cloud',
+  ]),
   CreateCustomS3ProviderEntry('storadera', 'Storadera', null, 'assets/dest-icons/storadera.png', ['.storadera.com']),
   CreateCustomS3ProviderEntry('infomaniak', 'Infomaniak', null, 'assets/dest-icons/infomaniak.png', [
     '.infomaniak.com',
@@ -2564,6 +2583,83 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     '.srvstorage.uz',
     '.srvstorage.kz',
   ]),
+  CreateCustomS3ProviderEntry(
+    'cloudflarer2',
+    'Cloudflare R2',
+    null,
+    'assets/dest-icons/cloudflare.png',
+    ['.r2.cloudflarestorage.com'],
+    {
+      serverDescription: $localize`Your account's R2 endpoint, such as <account ID>.r2.cloudflarestorage.com. Paste the S3 API URL from the bucket settings in the Cloudflare dashboard, and the server and bucket are filled in from it.`,
+      searchTerms: 'cloudflare r2',
+    }
+  ),
+  CreateCustomS3ProviderEntry(
+    'oracle',
+    'Oracle Cloud',
+    null,
+    'assets/dest-icons/oracle.png',
+    ['.customer-oci.com', '.oraclecloud.com'],
+    {
+      serverDescription: $localize`Your tenancy's endpoint, such as <namespace>.compat.objectstorage.<region>.oci.customer-oci.com, using the namespace shown on the bucket details page. Namespaces containing "-", "_" or "." must use the older <namespace>.compat.objectstorage.<region>.oraclecloud.com form. You can also paste the full bucket URL.`,
+      searchTerms: 'oracle oci',
+    }
+  ),
+  CreateCustomS3ProviderEntry(
+    'digitalocean',
+    'DigitalOcean Spaces',
+    null,
+    'assets/dest-icons/digitalocean.png',
+    ['.digitaloceanspaces.com'],
+    { servers: DIGITALOCEAN_SERVERS, disableChunkEncoding: true, searchTerms: 'digitalocean spaces do' }
+  ),
+  CreateCustomS3ProviderEntry(
+    'hetzner',
+    'Hetzner Object Storage',
+    null,
+    'assets/dest-icons/hetzner.png',
+    ['.your-objectstorage.com'],
+    { servers: HETZNER_SERVERS, disableChunkEncoding: true, searchTerms: 'hetzner' }
+  ),
+  CreateCustomS3ProviderEntry(
+    'linode',
+    'Akamai Cloud (Linode)',
+    null,
+    'assets/dest-icons/akamai.png',
+    ['.linodeobjects.com'],
+    { servers: LINODE_SERVERS, disableChunkEncoding: true, searchTerms: 'akamai linode' }
+  ),
+  CreateCustomS3ProviderEntry('ovhcloud', 'OVHcloud', null, 'assets/dest-icons/ovhcloud.png', ['.cloud.ovh.net'], {
+    servers: OVHCLOUD_SERVERS,
+    disableChunkEncoding: true,
+    searchTerms: 'ovh ovhcloud',
+  }),
+  CreateCustomS3ProviderEntry('ionos', 'IONOS', null, 'assets/dest-icons/ionos.png', ['.ionoscloud.com'], {
+    servers: IONOS_SERVERS,
+    disableChunkEncoding: true,
+    searchTerms: 'ionos 1&1',
+  }),
+  CreateCustomS3ProviderEntry('exoscale', 'Exoscale', null, 'assets/dest-icons/exoscale.png', ['.exo.io'], {
+    servers: EXOSCALE_SERVERS,
+    disableChunkEncoding: true,
+    searchTerms: 'exoscale sos',
+  }),
+  CreateCustomS3ProviderEntry(
+    'synologyc2',
+    'Synology C2',
+    null,
+    'assets/dest-icons/synology.png',
+    ['.synologyc2.net'],
+    { servers: SYNOLOGY_C2_SERVERS, disableChunkEncoding: true, searchTerms: 'synology c2 nas' }
+  ),
+  CreateCustomS3ProviderEntry(
+    'huawei',
+    'Huawei Cloud OBS',
+    null,
+    'assets/dest-icons/huawei.png',
+    ['.myhuaweicloud.com', '.myhuaweicloud.eu'],
+    { servers: HUAWEI_OBS_SERVERS, disableChunkEncoding: true, searchTerms: 'huawei obs' }
+  ),
   CreateCustomS3ProviderEntry(
     'neon',
     'Neon Object Storage',
@@ -2617,4 +2713,16 @@ export const S3_HOST_SUFFIX_MAP: Record<string, string> = {
   '.srvstorage.kz': 'Selectel S3',
   '.relaix.net': 'RelAix S3',
   '.neon.tech': 'Neon S3',
+  '.r2.cloudflarestorage.com': 'Cloudflare R2',
+  '.oraclecloud.com': 'Oracle Cloud S3',
+  '.customer-oci.com': 'Oracle Cloud S3',
+  '.cloud-object-storage.appdomain.cloud': 'IBM COS (S3)',
+  '.your-objectstorage.com': 'Hetzner S3',
+  '.cloud.ovh.net': 'OVHcloud S3',
+  '.ionoscloud.com': 'IONOS S3',
+  '.exo.io': 'Exoscale S3',
+  '.synologyc2.net': 'Synology C2 S3',
+  '.myhuaweicloud.com': 'Huawei Cloud S3',
+  '.myhuaweicloud.eu': 'Huawei Cloud S3',
+  '.myqcloud.com': 'Tencent Cloud S3',
 };

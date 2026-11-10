@@ -1,4 +1,4 @@
-import { Injector, Signal } from '@angular/core';
+import { computed, Injector, Signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ArgumentType, ICommandLineArgument, SettingInputDto } from '../../core/openapi';
 import { WebModuleOption, WebModulesService } from '../../core/services/webmodules.service';
@@ -107,6 +107,13 @@ export type FormView = {
    * when the paste was handled, which suppresses the default paste into the input.
    */
   onPaste?: (text: string, form: DestinationFormValues) => boolean;
+  /**
+   * Render this dynamic field above the custom fields (bucket, path, ...) instead of
+   * after them, e.g. so an S3 provider's server field can take a pasted URL first.
+   */
+  showFirst?: boolean;
+  /** Use a placeholder that suggests pasting a URL, for fields whose onPaste splits URLs. */
+  acceptsPastedUrl?: boolean;
 };
 
 /** The plain values of the destination form, grouped like the form itself. */
@@ -480,51 +487,85 @@ export function isValidHostname(hostname: string): boolean {
   return true;
 }
 
+/** Optional settings for {@link CreateCustomS3ProviderEntry}. */
+export type CustomS3ProviderOptions = {
+  /**
+   * Endpoints offered in the server dropdown, in addition to any the backend lists for
+   * the provider. Leave out for providers with account-specific hostnames.
+   */
+  servers?: WebModuleOption[];
+  /** Help text for the server field, e.g. where to find an account-specific endpoint. */
+  serverDescription?: string;
+  /** Extra words that find this provider in the destination search. */
+  searchTerms?: string;
+  /**
+   * Turn off chunk encoding on new connections, as the generic S3 entry does, for providers
+   * not known to support it. Hosts in S3_NO_CHUNK_ENCODING_HOST_SUFFIXES always get this.
+   */
+  disableChunkEncoding?: boolean;
+};
+
 export function CreateCustomS3ProviderEntry(
   customKey: string,
   displayName: string,
   description: string | null,
   icon: string | null,
-  hostnameEndsWith: string[]
+  hostnameEndsWith: string[],
+  options?: CustomS3ProviderOptions
 ): DestinationConfigEntry {
+  const matchesProvider = (host: string) => hostnameEndsWith.some((suffix) => host.endsWith(suffix));
+
   return {
     ...S3_BASE,
     customKey: `s3-${customKey}`,
     icon: icon ?? S3_BASE.icon,
     displayName: $localize`${displayName} (S3)`,
     description: description ?? $localize`Store backups in ${displayName} storage.`,
+    ...(options?.searchTerms ? { searchTerms: options.searchTerms } : {}),
     dynamicFields: [
       ...(S3_BASE.dynamicFields ?? []).filter((f) => (<CustomFormView>f)?.name !== 's3-server-name'),
       {
         name: 's3-server-name',
         order: 1,
+        // Server first, so the user can start by pasting the provider's URL
+        showFirst: true,
         shortDescription: $localize`Server`,
-        longDescription: $localize`The hostname of the ${displayName} endpoint. You can also paste the endpoint or bucket URL from ${displayName}, and the server, bucket and folder are filled in from it.`,
+        longDescription:
+          options?.serverDescription ??
+          $localize`The hostname of the ${displayName} endpoint. You can also paste the endpoint or bucket URL from ${displayName}, and the server, bucket and folder are filled in from it.`,
         type: 'NonValidatedSelectableString', // Convert to string before submitting
-        loadOptions: (injector) =>
-          injector
+        loadOptions: (injector) => {
+          // Backend entries like ".r2.cloudflarestorage.com" are suffixes, not usable hosts
+          const backendServers = injector
             .get(WebModulesService)
-            .getS3ProvidersFiltered((option) => hostnameEndsWith.some((suffix) => option.value.endsWith(suffix))),
+            .getS3ProvidersFiltered((option) => !option.value.startsWith('.') && matchesProvider(option.value));
+          return computed(() => {
+            const merged = [...(options?.servers ?? []), ...(backendServers() ?? [])];
+            return Array.from(new Map(merged.map((x) => [x.value, x])).values());
+          });
+        },
         isMandatory: true,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
         onValueChange: applyS3ChunkEncodingDefault,
         onPaste: (text: string, form: DestinationFormValues) => applyPastedS3Endpoint(text, form),
+        acceptsPastedUrl: true,
       },
     ],
     mapper: {
       ...S3_BASE.mapper,
       to: (fields: ValueOfDestinationFormGroup): string => {
         const { bucket, path } = fields.custom;
-        if (hostnameEndsWith.some((suffix) => fields.dynamic['s3-server-name']?.endsWith(suffix)))
-          fields.destinationType = `s3`;
+        if (matchesProvider(fields.dynamic['s3-server-name'] ?? '')) fields.destinationType = `s3`;
         return buildUrlFromFields(fields, bucket, null, path);
       },
       default: (backupName: string): string => {
         // Providers that do not support AWS chunked (streaming SigV4) uploads
         // get the AWS client's chunk encoding disabled on new connections.
-        const disableChunkEncoding = hostnameEndsWith.some((suffix) => s3HostRequiresDisabledChunkEncoding(suffix))
-          ? `&${S3_DISABLE_CHUNK_ENCODING_OPTION}=true`
-          : '';
+        const disableChunkEncoding =
+          options?.disableChunkEncoding ||
+          hostnameEndsWith.some((suffix) => s3HostRequiresDisabledChunkEncoding(suffix))
+            ? `&${S3_DISABLE_CHUNK_ENCODING_OPTION}=true`
+            : '';
         return `s3-${customKey}://?use-ssl=true${disableChunkEncoding}`;
       },
       intercept: (urlObj: UrlLike): boolean => {

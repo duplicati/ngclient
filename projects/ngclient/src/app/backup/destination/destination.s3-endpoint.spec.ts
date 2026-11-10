@@ -44,7 +44,10 @@ describe('parseS3EndpointUrl', () => {
       'https://bkt-1250000000.cos.ap-guangzhou.myqcloud.com',
       { server: 'cos.ap-guangzhou.myqcloud.com', bucket: 'bkt-1250000000', useSsl: true },
     ],
-    ['https://bkt.oss-cn-hangzhou.aliyuncs.com', { server: 'oss-cn-hangzhou.aliyuncs.com', bucket: 'bkt', useSsl: true }],
+    [
+      'https://bkt.oss-cn-hangzhou.aliyuncs.com',
+      { server: 'oss-cn-hangzhou.aliyuncs.com', bucket: 'bkt', useSsl: true },
+    ],
     [
       'https://bkt.0123456789abcdef0123456789abcdef.eu.r2.cloudflarestorage.com',
       { server: '0123456789abcdef0123456789abcdef.eu.r2.cloudflarestorage.com', bucket: 'bkt', useSsl: true },
@@ -62,6 +65,14 @@ describe('parseS3EndpointUrl', () => {
     [
       'https://mynamespace.compat.objectstorage.us-ashburn-1.oraclecloud.com/bkt',
       { server: 'mynamespace.compat.objectstorage.us-ashburn-1.oraclecloud.com', bucket: 'bkt', useSsl: true },
+    ],
+    [
+      'https://my_tenant-ns.compat.objectstorage.us-ashburn-1.oraclecloud.com/duplicati-backups',
+      {
+        server: 'my_tenant-ns.compat.objectstorage.us-ashburn-1.oraclecloud.com',
+        bucket: 'duplicati-backups',
+        useSsl: true,
+      },
     ],
     ['https://s3.wasabisys.com/bkt/a%20b', { server: 's3.wasabisys.com', bucket: 'bkt', path: 'a b', useSsl: true }],
     ['http://minio.local:9000/bkt?x=1', { server: 'minio.local:9000', bucket: 'bkt', useSsl: false }],

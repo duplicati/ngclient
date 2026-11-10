@@ -53,7 +53,7 @@ const S3_SERVICE_HOSTS: readonly ServiceHostPattern[] = [
   { pattern: `${REGION}\\.s3\\.synologyc2\\.net` },
   { pattern: `s3\\.(?:private\\.|direct\\.)?${REGION}\\.cloud-object-storage\\.appdomain\\.cloud` },
   { pattern: `cos\\.${REGION}\\.myqcloud\\.com` },
-  { pattern: `obs\\.${REGION}\\.myhuaweicloud\\.com` },
+  { pattern: `obs\\.${REGION}\\.myhuaweicloud\\.(?:com|eu)` },
   { pattern: `oss-${REGION}\\.aliyuncs\\.com` },
 ];
 
@@ -104,7 +104,8 @@ export function parseS3EndpointUrl(text: string, options?: { requireUrl?: boolea
   if (!authority || authority.includes('@')) return null;
 
   const [hostname, port] = authority.split(':');
-  if (!/^[a-z0-9.-]+$/.test(hostname) || (port !== undefined && !/^\d+$/.test(port))) return null;
+  // DNS names may contain "_" even though strict hostnames may not; Oracle namespaces use it.
+  if (!/^[a-z0-9._-]+$/.test(hostname) || (port !== undefined && !/^\d+$/.test(port))) return null;
 
   const virtual = splitVirtualHost(hostname);
   if (!scheme && !virtual && (options?.requireUrl || !pathPart)) return null;
