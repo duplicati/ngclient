@@ -154,6 +154,14 @@ async function setupAuthentication(
     for (const socket of sockets) socket.send(JSON.stringify(serverStatus));
   };
 
+  const sendNotifications = (notifications: unknown[]) => {
+    getResponses['/api/v1/notifications'] = notifications;
+    subscriptionResponses.notifications = notifications;
+    for (const socket of sockets) {
+      socket.send(JSON.stringify({ Type: 'notifications', ApiVersion: 1, Data: notifications }));
+    }
+  };
+
   return {
     loginRequests,
     refreshRequests,
@@ -165,6 +173,7 @@ async function setupAuthentication(
     subscriptions,
     sendBackupList,
     sendServerStatus,
+    sendNotifications,
   };
 }
 
