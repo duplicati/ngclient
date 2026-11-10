@@ -441,6 +441,23 @@ export class SingleDestinationComponent {
     });
   }
 
+  onFieldPaste(fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string, event: ClipboardEvent) {
+    const onPaste = this.getFormView(fieldGroup, fieldName)?.onPaste;
+    const text = event.clipboardData?.getData('text/plain');
+    if (!onPaste || !text) return;
+
+    // Try the paste on a copy first, so an unhandled paste leaves the form untouched.
+    const pasted = copyDestinationForm(this.destinationForm());
+    if (!onPaste(text, pasted)) return;
+
+    event.preventDefault();
+    this.#updateDestinationForm((form) => {
+      form.custom = pasted.custom;
+      form.dynamic = pasted.dynamic;
+      form.advanced = pasted.advanced;
+    });
+  }
+
   removeAdvancedOption(fieldName: string) {
     this.#updateDestinationForm((form) => {
       delete form.advanced[fieldName];

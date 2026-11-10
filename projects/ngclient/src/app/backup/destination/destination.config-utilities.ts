@@ -4,6 +4,7 @@ import { ArgumentType, ICommandLineArgument, SettingInputDto } from '../../core/
 import { WebModuleOption, WebModulesService } from '../../core/services/webmodules.service';
 import { DestinationFormGroupValue } from './destination.component';
 import {
+  applyPastedS3Endpoint,
   applyS3ChunkEncodingDefault,
   DESTINATION_CONFIG,
   DESTINATION_CONFIG_DEFAULT,
@@ -100,6 +101,12 @@ export type FormView = {
    * other fields (e.g. set a required advanced option for a chosen provider).
    */
   onValueChange?: (value: any, form: DestinationFormValues) => void;
+  /**
+   * Invoked when the user pastes text into this field. Can rewrite any fields in the
+   * mutable form values (e.g. split a pasted URL into several fields). Return true
+   * when the paste was handled, which suppresses the default paste into the input.
+   */
+  onPaste?: (text: string, form: DestinationFormValues) => boolean;
 };
 
 /** The plain values of the destination form, grouped like the form itself. */
@@ -492,7 +499,7 @@ export function CreateCustomS3ProviderEntry(
         name: 's3-server-name',
         order: 1,
         shortDescription: $localize`Server`,
-        longDescription: $localize`The hostname of the ${displayName} endpoint`,
+        longDescription: $localize`The hostname of the ${displayName} endpoint. You can also paste the endpoint or bucket URL from ${displayName}, and the server, bucket and folder are filled in from it.`,
         type: 'NonValidatedSelectableString', // Convert to string before submitting
         loadOptions: (injector) =>
           injector
@@ -501,6 +508,7 @@ export function CreateCustomS3ProviderEntry(
         isMandatory: true,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
         onValueChange: applyS3ChunkEncodingDefault,
+        onPaste: (text: string, form: DestinationFormValues) => applyPastedS3Endpoint(text, form),
       },
     ],
     mapper: {

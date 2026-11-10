@@ -18,6 +18,7 @@ import {
   UrlLike,
   ValueOfDestinationFormGroup,
 } from './destination.config-utilities';
+import { parseS3EndpointUrl } from './destination.s3-endpoint';
 
 const fb = new FormBuilder();
 
@@ -124,6 +125,36 @@ export function applyS3ChunkEncodingDefault(serverName: string | null | undefine
   form.dynamic[S3_DISABLE_CHUNK_ENCODING_OPTION] = 'true';
 }
 
+/**
+ * Applies an endpoint URL pasted into an S3 form field, e.g.
+ * `https://my-bucket.ams3.digitaloceanspaces.com/folder`, by splitting it into
+ * server, bucket, folder and TLS setting. Returns false when the text is not an
+ * endpoint URL, so the paste goes through unchanged.
+ *
+ * With `requireBucket`, the text is only applied when it names a bucket; used for
+ * the bucket field, where pasting a bare server name would otherwise be swallowed.
+ */
+export function applyPastedS3Endpoint(
+  text: string,
+  form: DestinationFormValues,
+  options?: { requireBucket?: boolean }
+): boolean {
+  const parts = parseS3EndpointUrl(text, { requireUrl: options?.requireBucket });
+  if (!parts) return false;
+  if (options?.requireBucket && !parts.bucket) return false;
+
+  form.dynamic['s3-server-name'] = parts.server;
+  if (parts.useSsl !== undefined) form.dynamic['use-ssl'] = parts.useSsl ? 'true' : 'false';
+  if (parts.bucket) form.custom['bucket'] = parts.bucket;
+  if (parts.path) form.custom['path'] = parts.path;
+  applyS3ChunkEncodingDefault(parts.server, form);
+  return true;
+}
+
+const onS3ServerPaste = (text: string, form: DestinationFormValues) => applyPastedS3Endpoint(text, form);
+const onS3BucketPaste = (text: string, form: DestinationFormValues) =>
+  applyPastedS3Endpoint(text, form, { requireBucket: true });
+
 const S3_USE_TLS_FIELD = {
   name: 'use-ssl',
   order: 2,
@@ -149,9 +180,10 @@ export const S3_BASE: DestinationConfigEntry = {
       type: 'Bucketname',
       name: 'bucket',
       shortDescription: $localize`Bucket name`,
-      longDescription: $localize`Bucket name`,
+      longDescription: $localize`The name of the bucket. You can also paste a bucket URL from your provider, and the server, bucket and folder are filled in from it.`,
       formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
       isMandatory: true,
+      onPaste: onS3BucketPaste,
     },
     path: {
       type: 'Path',
@@ -167,11 +199,12 @@ export const S3_BASE: DestinationConfigEntry = {
       name: 's3-server-name',
       order: 1,
       shortDescription: $localize`Server`,
-      longDescription: $localize`The hostname of the S3 compatible server to connect to`,
+      longDescription: $localize`The hostname of the S3 compatible server to connect to. You can also paste the endpoint or bucket URL from your provider, and the server, bucket and folder are filled in from it.`,
       type: 'NonValidatedSelectableString', // Convert to string before submitting
       loadOptions: (injector) => injector.get(WebModulesService).getS3AllProviders(),
       isMandatory: true,
       formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+      onPaste: onS3ServerPaste,
       onValueChange: applyS3ChunkEncodingDefault,
     },
     {
@@ -402,9 +435,10 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         type: 'Bucketname',
         name: 'bucket',
         shortDescription: $localize`Bucket name`,
-        longDescription: $localize`Bucket name`,
+        longDescription: $localize`The name of the bucket. You can also paste a bucket URL from your provider, and the server, bucket and folder are filled in from it.`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
         isMandatory: true,
+        onPaste: onS3BucketPaste,
       },
       path: {
         type: 'Path',
@@ -420,11 +454,12 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         name: 's3-server-name',
         order: 1,
         shortDescription: $localize`Server`,
-        longDescription: $localize`The hostname of the S3 compatible server to connect to`,
+        longDescription: $localize`The hostname of the S3 compatible server to connect to. You can also paste the endpoint or bucket URL from your provider, and the server, bucket and folder are filled in from it.`,
         type: 'NonValidatedSelectableString', // Convert to string before submitting
         loadOptions: (injector) => injector.get(WebModulesService).getS3AllProviders(),
         isMandatory: true,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+        onPaste: onS3ServerPaste,
         onValueChange: applyS3ChunkEncodingDefault,
       },
       S3_USE_TLS_FIELD,
@@ -500,9 +535,10 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         type: 'Bucketname',
         name: 'bucket',
         shortDescription: $localize`Bucket name`,
-        longDescription: $localize`Bucket name`,
+        longDescription: $localize`The name of the bucket. You can also paste a bucket URL from your provider, and the server, bucket and folder are filled in from it.`,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
         isMandatory: true,
+        onPaste: onS3BucketPaste,
       },
       path: {
         type: 'Path',
@@ -518,12 +554,13 @@ export const DESTINATION_CONFIG: DestinationConfig = [
         name: 's3-server-name',
         order: 1,
         shortDescription: $localize`Server`,
-        longDescription: $localize`The hostname of the S3 compatible server to connect to`,
+        longDescription: $localize`The hostname of the S3 compatible server to connect to. You can also paste the endpoint or bucket URL from your provider, and the server, bucket and folder are filled in from it.`,
         type: 'NonValidatedSelectableString', // Convert to string before submitting
         loadOptions: (injector) =>
           injector.get(WebModulesService).getS3ProvidersFiltered((x) => x.value.endsWith('.amazonaws.com')),
         isMandatory: true,
         formElement: (defaultValue?: string) => fb.control<string>(defaultValue ?? ''),
+        onPaste: onS3ServerPaste,
       },
       S3_USE_TLS_FIELD,
       S3_DISABLE_CHUNK_ENCODING_FIELD,

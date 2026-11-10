@@ -219,6 +219,7 @@
             [ngModel]="formInput"
             autocomplete="off"
             (keydown)="onKeyDown(item.fieldGroup, item.formView.name, item.formView.type, $event)"
+            (paste)="onFieldPaste(item.fieldGroup, item.formView.name, $event)"
             (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
 
           @let inputValue = fieldValue;
@@ -385,6 +386,7 @@
               type="text"
               [id]="formFieldId"
               [ngModel]="formInput"
+              (paste)="onFieldPaste(item.fieldGroup, item.formView.name, $event)"
               (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
           </sh-select>
 
