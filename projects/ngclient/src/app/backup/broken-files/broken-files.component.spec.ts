@@ -32,7 +32,7 @@ describe('BrokenFilesComponent purge confirmation', () => {
     fixture.detectChanges();
     TestBed.tick();
     fixture.detectChanges();
-    return { component: fixture.componentInstance, list, purge, open, navigate, response };
+    return { fixture, component: fixture.componentInstance, list, purge, open, navigate, response };
   }
   const fileset = (FilesetTime: string, count: number): ListBrokenFilesFilesetItem => ({
     FilesetID: 1,
@@ -79,5 +79,80 @@ describe('BrokenFilesComponent purge confirmation', () => {
     response.complete();
     expect(navigate).toHaveBeenCalledExactlyOnceWith(['/']);
     expect(component.isPurging()).toBe(false);
+  });
+  it('does not purge another job through an earlier confirmation', () => {
+    const { fixture, component, open, purge } = setup([fileset('2026-10-11', 1)]);
+    component.purgeBrokenFiles();
+    fixture.componentRef.setInput('id', '43');
+    fixture.detectChanges();
+    TestBed.tick();
+    open.mock.calls[0][1].closed(true);
+    expect(purge).not.toHaveBeenCalled();
+  });
+
+  it('does not submit a confirmation after leaving the page', () => {
+    const { fixture, component, open, purge } = setup([fileset('2026-10-11', 1)]);
+    component.purgeBrokenFiles();
+    fixture.destroy();
+    open.mock.calls[0][1].closed(true);
+    expect(purge).not.toHaveBeenCalled();
+  });
+
+  it('does not open overlapping confirmations or submit twice while purging', () => {
+    const { component, open, purge } = setup([fileset('2026-10-11', 1)]);
+    component.purgeBrokenFiles();
+    component.purgeBrokenFiles();
+    expect(open).toHaveBeenCalledTimes(1);
+    const closed = open.mock.calls[0][1].closed;
+    closed(true);
+    closed(true);
+    component.purgeBrokenFiles();
+    expect(purge).toHaveBeenCalledTimes(1);
+    expect(open).toHaveBeenCalledTimes(1);
+  });
+
+  it('stops observing the purge when the page is destroyed', () => {
+    const { fixture, component, open, response, navigate } = setup([fileset('2026-10-11', 1)]);
+    component.purgeBrokenFiles();
+    open.mock.calls[0][1].closed(true);
+    expect(response.observed).toBe(true);
+    fixture.destroy();
+    expect(response.observed).toBe(false);
+    response.next({});
+    response.complete();
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('cancels observation when switching jobs and ignores the old response', () => {
+    const { fixture, component, open, response, navigate } = setup([fileset('2026-10-11', 1)]);
+    component.purgeBrokenFiles();
+    open.mock.calls[0][1].closed(true);
+    fixture.componentRef.setInput('id', '43');
+    fixture.detectChanges();
+    TestBed.tick();
+    expect(response.observed).toBe(false);
+    expect(component.isPurging()).toBe(false);
+    response.next({});
+    response.complete();
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('releases pending state after a failure and retries with a new confirmation', () => {
+    const { component, open, purge, response, navigate } = setup([fileset('2026-10-11', 1)]);
+    component.purgeBrokenFiles();
+    open.mock.calls[0][1].closed(true);
+    response.error(new Error('Offline'));
+    expect(component.isPurging()).toBe(false);
+    expect(component.purgeError()).toBe(true);
+    expect(navigate).not.toHaveBeenCalled();
+    const retry = new Subject<unknown>();
+    purge.mockReturnValue(retry);
+    component.purgeBrokenFiles();
+    open.mock.calls[1][1].closed(true);
+    expect(component.purgeError()).toBe(false);
+    expect(purge).toHaveBeenCalledTimes(2);
+    retry.next({});
+    retry.complete();
+    expect(navigate).toHaveBeenCalledExactlyOnceWith(['/']);
   });
 });

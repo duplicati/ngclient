@@ -37,6 +37,10 @@
   </div>
 }
 
+@if (purgeError()) {
+  <p role="alert" i18n>Could not purge the broken files. Please try again.</p>
+}
+
 <div class="actions">
   <button shButton [routerLink]="['/']" [disabled]="isPurging()" i18n>Cancel</button>
   <button
