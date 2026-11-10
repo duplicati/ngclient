@@ -142,6 +142,9 @@
 
               <div class="text">
                 <span>{{ node.text }}</span>
+                @if (lockedLinkLabel(node); as label) {
+                  <span class="size">({{ label }})</span>
+                }
                 @if (node.cls == 'file' && node.fileSize != null && node.fileSize >= 0) {
                   <span class="size">&nbsp;({{ node.fileSize | bytes: true : true }})</span>
                 }

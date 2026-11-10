@@ -89,7 +89,8 @@ describe('file tree keyboard navigation', () => {
 
   it('keeps a locked folder selectable without offering or requesting expansion', () => {
     const { component, list } = setup({}, { '/': [lockedFolder] });
-    const cookies = row('Cookies (Symbolic link)');
+    const cookies = row('Cookies (Symbolic link, Access denied)');
+    expect(cookies.querySelector('.text')?.textContent).toContain('Access denied');
     const icon = cookies.querySelector<HTMLElement>('.icon')!;
     icon.click();
     press(cookies, 'ArrowRight');
@@ -104,8 +105,8 @@ describe('file tree keyboard navigation', () => {
 
   it('does not expand a locked folder when activation is used to browse for files', () => {
     const { list } = setup({ selectFiles: true }, { '/': [lockedFolder] });
-    row('Cookies (Symbolic link)').querySelector<HTMLElement>('.text')!.click();
-    press(row('Cookies (Symbolic link)'), 'Enter');
+    row('Cookies (Symbolic link, Access denied)').querySelector<HTMLElement>('.text')!.click();
+    press(row('Cookies (Symbolic link, Access denied)'), 'Enter');
     expect(list.mock.calls.map(([request]) => request.body.path)).toEqual(['/']);
   });
 

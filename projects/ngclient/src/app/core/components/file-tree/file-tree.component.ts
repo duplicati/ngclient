@@ -1015,10 +1015,16 @@ export default class FileTreeComponent {
     return this.#treeNodeBadges[kind] ?? this.#treeNodeBadges[kind.split(':')[0]] ?? null;
   }
 
+  lockedLinkLabel(node: FileTreeNode): string | null {
+    return node.symlink && node.kind === 'locked' ? this.#treeNodeBadges['locked'].label : null;
+  }
+
   /** Accessible name for a tree row; badges that convey a state are announced since the badge icon is visual only. */
   treeItemLabel(node: FileTreeNode): string {
     const name = node.text ?? node.id ?? '';
     const badge = this.treeNodeBadge(node);
+    const locked = this.lockedLinkLabel(node);
+    if (locked && badge) return $localize`${name}:name: (${badge.label}:linkState:, ${locked}:accessState:)`;
     return badge?.announce ? $localize`${name}:name: (${badge.label}:state:)` : name;
   }
 
