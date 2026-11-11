@@ -55,7 +55,11 @@ test('a failed replacement read clears the old file and allows a fresh selection
   await expect(submit).toBeDisabled();
   await upload.setInputFiles({ name: 'fresh.json', mimeType: 'application/json', buffer: json('Fresh') });
   await expect(submit).toBeEnabled();
-  await component.locator('input[formcontrolname=direct]').check();
+  await component
+    .locator('sh-toggle')
+    .filter({ hasText: 'Save now' })
+    .locator('input[type=checkbox]:not(.internal-input)')
+    .check();
   await submit.click();
   await expect.poll(() => requests.length).toBe(1);
   expect(requests[0].request().postDataJSON().config).toBe(json('Fresh').toString('base64'));
@@ -84,7 +88,11 @@ test('a slower previous read cannot replace the latest selected configuration', 
   await expect(submit).toBeEnabled();
   await page.evaluate(() => (window as Window & { releaseSlowRead?: () => void }).releaseSlowRead?.());
   await page.waitForFunction(() => (window as Window & { slowReadComplete?: boolean }).slowReadComplete === true);
-  await component.locator('input[formcontrolname=direct]').check();
+  await component
+    .locator('sh-toggle')
+    .filter({ hasText: 'Save now' })
+    .locator('input[type=checkbox]:not(.internal-input)')
+    .check();
   await submit.click();
   await expect.poll(() => requests.length).toBe(1);
   expect(requests[0].request().postDataJSON().config).toBe(json('Latest').toString('base64'));
