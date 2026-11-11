@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
-import { rxResource } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, input, signal } from '@angular/core';
+import { rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipCheckbox } from '@ship-ui/core/ship-checkbox';
@@ -32,6 +32,7 @@ export default class DeleteVersionsComponent {
   #dialog = inject(ShipDialogService);
   #backupsState = inject(BackupsState);
   #router = inject(Router);
+  #destroyRef = inject(DestroyRef);
 
   id = input.required<string>();
   backup = computed(() => {
@@ -90,11 +91,15 @@ export default class DeleteVersionsComponent {
   }
 
   deleteVersions() {
+    if (this.isDeleting()) return;
     const selected = this.selectedItems();
     if (selected.length === 0) return;
 
     const count = selected.length;
     const versions = selected.map((v) => v.Version);
+    const id = this.id();
+    const suppressCompact = !this.performCompact();
+    this.isDeleting.set(true);
 
     this.#dialog.open(ConfirmDialogComponent, {
       data: {
@@ -104,22 +109,29 @@ export default class DeleteVersionsComponent {
         cancelText: $localize`Cancel`,
       },
       closed: (res) => {
-        if (!res) return;
-        this.isDeleting.set(true);
+        if (!res || this.#destroyRef.destroyed || this.id() !== id) {
+          this.isDeleting.set(false);
+          return;
+        }
         defer(() =>
           this.#dupServer.postApiV2BackupDeleteVersions({
             body: {
-              BackupId: this.id(),
+              BackupId: id,
               Versions: versions,
-              SuppressCompact: !this.performCompact(),
+              SuppressCompact: suppressCompact,
             },
           })
         )
-          .pipe(finalize(() => this.isDeleting.set(false)))
+          .pipe(
+            takeUntilDestroyed(this.#destroyRef),
+            finalize(() => this.isDeleting.set(false))
+          )
           .subscribe({
             next: () => {
-              this.#router.navigate(['/']);
+              if (this.id() === id) this.#router.navigate(['/']);
             },
+            // The shared HTTP interceptor reports the failure; allow another attempt.
+            error: () => {},
           });
       },
     });
