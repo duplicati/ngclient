@@ -86,8 +86,8 @@ describe('ScheduleComponent date picker', () => {
 
     fixture.componentInstance.updateScheduleType('weekly');
 
-    expect(state.scheduleFields.nextTime.date()).toBe(expectedDate);
-    expect(state.scheduleFields.nextTime.time()).toBe('13:00:00');
+    expect(state.scheduleForm.nextTime.date().value()).toBe(expectedDate);
+    expect(state.scheduleForm.nextTime.time().value()).toBe('13:00:00');
     expect(state.getScheduleFormValue()).toEqual({
       Time: expectedDate + 'T04:00:00.000Z',
       Repeat: '1W',
@@ -102,10 +102,10 @@ describe('ScheduleComponent date picker', () => {
     await renderSchedule('2026-09-06T12:20:00.000Z');
 
     fixture.componentInstance.updateScheduleType('daily');
-    expect(state.scheduleFields.nextTime.date()).toBe('2026-10-21');
+    expect(state.scheduleForm.nextTime.date().value()).toBe('2026-10-21');
 
     fixture.componentInstance.updateScheduleType('weekly');
-    expect(state.scheduleFields.nextTime.date()).toBe('2026-10-26');
+    expect(state.scheduleForm.nextTime.date().value()).toBe('2026-10-26');
   });
 
   it.each([
@@ -116,8 +116,8 @@ describe('ScheduleComponent date picker', () => {
     vi.stubEnv('TZ', timezone);
     const picker = await renderSchedule(time);
 
-    expect(state.scheduleFields.nextTime.date()).toBe('2026-09-06');
-    expect(state.scheduleFields.nextTime.time()).toBe('08:20');
+    expect(state.scheduleForm.nextTime.date().value()).toBe('2026-09-06');
+    expect(state.scheduleForm.nextTime.time().value()).toBe('08:20');
     expect(picker.internalDate()?.getFullYear()).toBe(2026);
     expect(picker.internalDate()?.getMonth()).toBe(8);
     expect(picker.internalDate()?.getDate()).toBe(6);
@@ -143,11 +143,38 @@ describe('ScheduleComponent date picker', () => {
     expect(picker.internalDate()?.getDate()).toBe(7);
   });
 
+  it('serializes native input edits and keeps bindings connected after resetting the form', async () => {
+    vi.stubEnv('TZ', 'UTC');
+    await renderSchedule('2026-09-06T08:20:00.000Z');
+    const time = fixture.nativeElement.querySelector('#time') as HTMLInputElement;
+    time.value = '09:45';
+    time.dispatchEvent(new Event('input', { bubbles: true }));
+    time.dispatchEvent(new Event('blur'));
+    const repeat = fixture.nativeElement.querySelector('#repeatValue') as HTMLInputElement;
+    repeat.value = '3';
+    repeat.dispatchEvent(new Event('input', { bubbles: true }));
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(state.getScheduleFormValue()).toEqual({
+      Time: '2026-09-06T09:45:00.000Z',
+      Repeat: '3D',
+      AllowedDays: ['Monday', 'Friday'],
+    });
+    expect(state.scheduleForm.nextTime.time().dirty()).toBe(true);
+    expect(state.scheduleForm.nextTime.time().touched()).toBe(true);
+    state.scheduleForm().reset({ ...state.scheduleModel(), nextTime: { date: '2026-09-07', time: '11:30' } });
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(time.value).toBe('11:30');
+    expect(state.getScheduleFormValue()?.Time).toBe('2026-09-07T11:30:00.000Z');
+    expect(state.scheduleForm().dirty()).toBe(false);
+  });
+
   it('keeps an empty date empty instead of displaying an invalid date', async () => {
     vi.stubEnv('TZ', 'America/New_York');
     const picker = await renderSchedule('2026-09-06T12:20:00.000Z');
 
-    state.scheduleFields.nextTime.date.set('');
+    state.scheduleForm.nextTime.date().value.set('');
     fixture.detectChanges();
     await fixture.whenStable();
     fixture.detectChanges();

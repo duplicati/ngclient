@@ -13,7 +13,7 @@
   <div class="toggle-wrap">
     <sh-toggle class="raised primary" i18n>
       Automatically run backups
-      <input type="checkbox" [(ngModel)]="scheduleFields.autoRun" />
+      <input type="checkbox" [formField]="scheduleForm.autoRun" />
     </sh-toggle>
 
     <p i18n>If a date was missed, the job will run as soon as possible.</p>
@@ -75,11 +75,11 @@
     }
   </section>
 
-  @if (scheduleFields.autoRun()) {
+  @if (scheduleForm.autoRun().value()) {
     <div class="row-inputs">
       <sh-form-field>
         <label for="time" i18n>Next time</label>
-        <input type="time" id="time" #timeRef [(ngModel)]="scheduleFields.nextTime.time" />
+        <input type="time" id="time" #timeRef [formField]="scheduleForm.nextTime.time" />
         <sh-icon suffix>clock</sh-icon>
       </sh-form-field>
 
@@ -90,7 +90,7 @@
           id="date"
           #dateRef
           [ngModel]="datepickerDate()"
-          (ngModelChange)="scheduleFields.nextTime.date.set($event)" />
+          (ngModelChange)="scheduleForm.nextTime.date().value.set($event)" />
         <sh-icon suffix>calendar</sh-icon>
       </sh-datepicker-input>
     </div>
@@ -98,11 +98,11 @@
     <div class="row-inputs">
       <sh-form-field>
         <label for="repeatValue" i18n>Run again every</label>
-        <input type="number" id="repeatValue" [(ngModel)]="scheduleFields.runAgain.repeatValue" />
+        <input type="number" id="repeatValue" [formField]="scheduleForm.runAgain.repeatValue" />
       </sh-form-field>
 
       <sh-select [options]="unitOptions" [isClearable]="false" value="key" label="label">
-        <input type="text" id="repeatUnit" [(ngModel)]="scheduleFields.runAgain.repeatUnit" />
+        <input type="text" id="repeatUnit" [formField]="scheduleForm.runAgain.repeatUnit" />
       </sh-select>
     </div>
 
@@ -112,37 +112,37 @@
       <div class="days-wrap">
         <sh-toggle class="raised primary" i18n>
           Monday
-          <input type="checkbox" [(ngModel)]="scheduleFields.runAgain.allowedDays.mon" />
+          <input type="checkbox" [formField]="scheduleForm.runAgain.allowedDays.mon" />
         </sh-toggle>
 
         <sh-toggle class="raised primary" i18n>
           Tuesday
-          <input type="checkbox" [(ngModel)]="scheduleFields.runAgain.allowedDays.tue" />
+          <input type="checkbox" [formField]="scheduleForm.runAgain.allowedDays.tue" />
         </sh-toggle>
 
         <sh-toggle class="raised primary" i18n>
           Wednesday
-          <input type="checkbox" [(ngModel)]="scheduleFields.runAgain.allowedDays.wed" />
+          <input type="checkbox" [formField]="scheduleForm.runAgain.allowedDays.wed" />
         </sh-toggle>
 
         <sh-toggle class="raised primary" i18n>
           Thursday
-          <input type="checkbox" [(ngModel)]="scheduleFields.runAgain.allowedDays.thu" />
+          <input type="checkbox" [formField]="scheduleForm.runAgain.allowedDays.thu" />
         </sh-toggle>
 
         <sh-toggle class="raised primary" i18n>
           Friday
-          <input type="checkbox" [(ngModel)]="scheduleFields.runAgain.allowedDays.fri" />
+          <input type="checkbox" [formField]="scheduleForm.runAgain.allowedDays.fri" />
         </sh-toggle>
 
         <sh-toggle class="raised primary" i18n>
           Saturday
-          <input type="checkbox" [(ngModel)]="scheduleFields.runAgain.allowedDays.sat" />
+          <input type="checkbox" [formField]="scheduleForm.runAgain.allowedDays.sat" />
         </sh-toggle>
 
         <sh-toggle class="raised primary" i18n>
           Sunday
-          <input type="checkbox" [(ngModel)]="scheduleFields.runAgain.allowedDays.sun" />
+          <input type="checkbox" [formField]="scheduleForm.runAgain.allowedDays.sun" />
         </sh-toggle>
       </div>
     </sh-toggle-card>

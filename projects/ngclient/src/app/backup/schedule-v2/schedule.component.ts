@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { FormField } from '@angular/forms/signals';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipDatepickerInput } from '@ship-ui/core/ship-datepicker';
@@ -48,6 +49,7 @@ const UNIT_OPTIONS = [
   selector: 'app-schedule',
   imports: [
     FormsModule,
+    FormField,
     ShipFormField,
     ShipToggle,
     ShipIcon,
@@ -68,9 +70,9 @@ export default class ScheduleComponent {
   #dayjs = inject(DAYJS);
 
   unitOptions = UNIT_OPTIONS;
-  scheduleFields = this.#backupState.scheduleFields;
+  scheduleForm = this.#backupState.scheduleForm;
   datepickerDate = computed(() => {
-    const value = this.scheduleFields.nextTime.date();
+    const value = this.scheduleForm.nextTime.date().value();
     if (!value) return null;
 
     // The picker parses strings with new Date(), treating YYYY-MM-DD as UTC.
@@ -81,28 +83,28 @@ export default class ScheduleComponent {
   scheduleType = this.#backupState.scheduleType;
   scheduleOptions = SCHEDULE_DEFAULT_OPTIONS;
   scheduleSummary = computed(() => {
-    if (!this.scheduleFields.autoRun()) {
+    if (!this.scheduleForm.autoRun().value()) {
       return {
         autoRun: false as const,
       };
     }
 
-    const allowedDays = this.scheduleFields.runAgain.allowedDays;
+    const allowedDays = this.scheduleForm.runAgain.allowedDays().value();
 
     return {
       autoRun: true as const,
-      date: this.scheduleFields.nextTime.date(),
-      time: this.scheduleFields.nextTime.time(),
-      repeatValue: this.scheduleFields.runAgain.repeatValue(),
-      repeatUnit: this.scheduleFields.runAgain.repeatUnit(),
+      date: this.scheduleForm.nextTime.date().value(),
+      time: this.scheduleForm.nextTime.time().value(),
+      repeatValue: this.scheduleForm.runAgain.repeatValue().value(),
+      repeatUnit: this.scheduleForm.runAgain.repeatUnit().value(),
       allowedDays: formatAllowedDays(this.#dayjs, {
-        mon: allowedDays.mon(),
-        tue: allowedDays.tue(),
-        wed: allowedDays.wed(),
-        thu: allowedDays.thu(),
-        fri: allowedDays.fri(),
-        sat: allowedDays.sat(),
-        sun: allowedDays.sun(),
+        mon: allowedDays.mon,
+        tue: allowedDays.tue,
+        wed: allowedDays.wed,
+        thu: allowedDays.thu,
+        fri: allowedDays.fri,
+        sat: allowedDays.sat,
+        sun: allowedDays.sun,
       }),
     };
   });
@@ -115,23 +117,23 @@ export default class ScheduleComponent {
 
       const data = predefinedType.data;
 
-      this.scheduleFields.autoRun.set(data.autoRun ?? false);
+      this.scheduleForm.autoRun().value.set(data.autoRun ?? false);
       const time = data.nextTime?.time ?? '13:00';
 
       // Compute the start when the preset is picked, as the page may have been open since an earlier day
-      this.scheduleFields.nextTime.time.set(time);
-      this.scheduleFields.nextTime.date.set(
-        getNextRunDate(time, new Date(), predefinedType.value === 'weekly' ? 1 : undefined)
-      );
-      this.scheduleFields.runAgain.repeatValue.set(data.runAgain?.repeatValue ?? 1);
-      this.scheduleFields.runAgain.repeatUnit.set(data.runAgain?.repeatUnit ?? 'D');
-      this.scheduleFields.runAgain.allowedDays.mon.set(data.runAgain?.allowedDays?.mon ?? true);
-      this.scheduleFields.runAgain.allowedDays.tue.set(data.runAgain?.allowedDays?.tue ?? true);
-      this.scheduleFields.runAgain.allowedDays.wed.set(data.runAgain?.allowedDays?.wed ?? true);
-      this.scheduleFields.runAgain.allowedDays.thu.set(data.runAgain?.allowedDays?.thu ?? true);
-      this.scheduleFields.runAgain.allowedDays.fri.set(data.runAgain?.allowedDays?.fri ?? true);
-      this.scheduleFields.runAgain.allowedDays.sat.set(data.runAgain?.allowedDays?.sat ?? true);
-      this.scheduleFields.runAgain.allowedDays.sun.set(data.runAgain?.allowedDays?.sun ?? true);
+      this.scheduleForm.nextTime.time().value.set(time);
+      this.scheduleForm.nextTime
+        .date()
+        .value.set(getNextRunDate(time, new Date(), predefinedType.value === 'weekly' ? 1 : undefined));
+      this.scheduleForm.runAgain.repeatValue().value.set(data.runAgain?.repeatValue ?? 1);
+      this.scheduleForm.runAgain.repeatUnit().value.set(data.runAgain?.repeatUnit ?? 'D');
+      this.scheduleForm.runAgain.allowedDays.mon().value.set(data.runAgain?.allowedDays?.mon ?? true);
+      this.scheduleForm.runAgain.allowedDays.tue().value.set(data.runAgain?.allowedDays?.tue ?? true);
+      this.scheduleForm.runAgain.allowedDays.wed().value.set(data.runAgain?.allowedDays?.wed ?? true);
+      this.scheduleForm.runAgain.allowedDays.thu().value.set(data.runAgain?.allowedDays?.thu ?? true);
+      this.scheduleForm.runAgain.allowedDays.fri().value.set(data.runAgain?.allowedDays?.fri ?? true);
+      this.scheduleForm.runAgain.allowedDays.sat().value.set(data.runAgain?.allowedDays?.sat ?? true);
+      this.scheduleForm.runAgain.allowedDays.sun().value.set(data.runAgain?.allowedDays?.sun ?? true);
     } else {
       this.scheduleType.set('custom');
     }

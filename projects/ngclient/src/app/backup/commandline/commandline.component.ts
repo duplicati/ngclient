@@ -58,7 +58,7 @@ export default class CommandlineComponent {
   #routeParamsSignal = toSignal(this.#route.params);
   commandOptions = toSignal(defer(() => this.#commandline.getApiV1Commandline()));
   isSubmitting = signal(false);
-  optionsFields = this.#backupState.optionsFields;
+  optionsForm = this.#backupState.optionsForm;
 
   standardFields = fb.group({
     'backup-id': fb.control(''),
@@ -107,22 +107,21 @@ export default class CommandlineComponent {
       this.#dupServer.getApiV1BackupById({
         path: { id },
       })
-    )
-      .subscribe({
-        next: (res: GetBackupResultDto) => {
-          this.#backupState.mapScheduleToForm(res.Schedule ?? null);
+    ).subscribe({
+      next: (res: GetBackupResultDto) => {
+        this.#backupState.mapScheduleToForm(res.Schedule ?? null);
 
-          if (res.Backup) {
-            this.#backupState.mapGeneralToForm(res.Backup);
-            this.mapStandardFieldsToForm(res.Backup);
-            this.mapBaseCmdToForm(res.Backup);
-            this.#backupState.mapOptionsToForms(res.Backup, true);
-          }
+        if (res.Backup) {
+          this.#backupState.mapGeneralToForm(res.Backup);
+          this.mapStandardFieldsToForm(res.Backup);
+          this.mapBaseCmdToForm(res.Backup);
+          this.#backupState.mapOptionsToForms(res.Backup, true);
+        }
 
-          this.applyStateFromUrl();
-          this.#backupState.finishedLoading.set(true);
-        },
-      });
+        this.applyStateFromUrl();
+        this.#backupState.finishedLoading.set(true);
+      },
+    });
   }
 
   mapStandardFieldsToForm(backup: BackupDto) {
@@ -175,19 +174,18 @@ export default class CommandlineComponent {
       this.#dupServer.postApiV1Commandline({
         body: command,
       })
-    )
-      .subscribe({
-        next: (response) => {
-          if (response.Status === 'OK') {
-            this.#router.navigate(['backup', this.backupId(), 'commandline', response.ID], {
-              queryParams: { state: stateId },
-            });
-          }
-        },
-        error: () => {
-          this.isSubmitting.set(false);
-        },
-      });
+    ).subscribe({
+      next: (response) => {
+        if (response.Status === 'OK') {
+          this.#router.navigate(['backup', this.backupId(), 'commandline', response.ID], {
+            queryParams: { state: stateId },
+          });
+        }
+      },
+      error: () => {
+        this.isSubmitting.set(false);
+      },
+    });
   }
 
   mapBaseCmdToForm(backup: BackupDto) {

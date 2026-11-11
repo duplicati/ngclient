@@ -46,26 +46,26 @@ describe('BackupState retention policy editing', () => {
     ['retention-policy', '7D:1D,30D:1W,U:1M', 'custom'],
   ])('round-trips %s=%s without duplicating the managed option', (Name, Value, mode) => {
     load(Name, Value);
-    expect(state.optionsFields.backupRetention()).toBe(mode);
+    expect(state.optionsForm.backupRetention().value()).toBe(mode);
     expect(savedRetention()).toEqual([{ Name, Value }]);
     expect(state.settings()).not.toContainEqual(expect.objectContaining({ Name }));
     expect(state.mapFormsToSettings()).toContainEqual({ Name: '--retry-count', Value: '7' });
   });
   it.each(['keep-time', 'keep-versions', 'retention-policy'])('treats an empty %s as keep all', (Name) => {
     load(Name, '');
-    expect(state.optionsFields.backupRetention()).toBe('all');
+    expect(state.optionsForm.backupRetention().value()).toBe('all');
     expect(savedRetention()).toEqual([]);
   });
   it('does not retain an old destructive policy when switched to keep all', () => {
     load('keep-versions', '5');
-    state.optionsFields.backupRetention.set('all');
+    state.optionsForm.backupRetention().value.set('all');
     expect(savedRetention()).toEqual([]);
     expect(state.mapFormsToSettings()).toContainEqual({ Name: '--retry-count', Value: '7' });
   });
   it('emits only the new time policy when switching away from a version limit', () => {
     load('keep-versions', '5');
-    state.optionsFields.backupRetention.set('time');
-    state.optionsFields.backupRetentionTime.set('14D');
+    state.optionsForm.backupRetention().value.set('time');
+    state.optionsForm.backupRetentionTime().value.set('14D');
     expect(savedRetention()).toEqual([{ Name: 'keep-time', Value: '14D' }]);
   });
   it('omits backup retention options for synchronization jobs', () => {
