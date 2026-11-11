@@ -35,13 +35,7 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   const IS_PROXY_DETECT_REQUEST = hasCustomProxyHeader || token === dummytoken;
 
   if (token && isApiRequest && !IS_PROXY_DETECT_REQUEST) {
-    let newHeaders = req.headers.set('Authorization', `Bearer ${token}`);
-
-    // Always tell the server which language the UI uses. Omitting the header
-    // makes the server fall back to its own OS culture, not to English.
-    if (locale) {
-      newHeaders = newHeaders.set('X-Ui-Language', mappedLocale);
-    }
+    const newHeaders = req.headers.set('Authorization', `Bearer ${token}`).set('X-Ui-Language', mappedLocale);
 
     modifiedRequest = req.clone({
       headers: newHeaders,

@@ -35,3 +35,24 @@ test('starts with isolated nonce storage and request history', async ({ authenti
   expect(serverApi.refreshRequests).toHaveLength(0);
   expect(serverApi.socketTokens).toEqual(['fixture-access-token']);
 });
+
+test.describe('English UI with Czech browser language', () => {
+  test.use({ locale: 'cs-CZ' });
+
+  test('explicitly requests English server strings independently of Accept-Language', async ({
+    authenticatedPage: page,
+    serverApi,
+  }) => {
+    expect(await page.evaluate(() => navigator.language)).toBe('cs-CZ');
+    expect(await page.evaluate(() => localStorage.getItem('v1:duplicati:locale'))).toBe('en-US');
+    const systemInfo = serverApi.requests.filter((request) => new URL(request.url()).pathname === '/api/v1/systeminfo');
+    expect(systemInfo).toHaveLength(1);
+    expect(systemInfo[0].headers()['accept-language']).toMatch(/^cs-CZ/);
+    expect(systemInfo[0].headers()['x-ui-language']).toBe('en');
+    const authenticated = serverApi.requests.filter(
+      (request) => request.headers()['authorization'] === 'Bearer fixture-access-token'
+    );
+    expect(authenticated.length).toBeGreaterThan(0);
+    for (const request of authenticated) expect(request.headers()['x-ui-language']).toBe('en');
+  });
+});
