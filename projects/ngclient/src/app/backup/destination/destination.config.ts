@@ -18,6 +18,7 @@ import {
   UrlLike,
   ValueOfDestinationFormGroup,
 } from './destination.config-utilities';
+import { parseS3EndpointUrl } from './destination.s3-endpoint';
 import {
   DIGITALOCEAN_SERVERS,
   EXOSCALE_SERVERS,
@@ -28,7 +29,6 @@ import {
   OVHCLOUD_SERVERS,
   SYNOLOGY_C2_SERVERS,
 } from './destination.s3-provider-servers';
-import { parseS3EndpointUrl } from './destination.s3-endpoint';
 
 const fb = new FormBuilder();
 
@@ -2718,7 +2718,7 @@ export const S3_HOST_SUFFIX_MAP: Record<string, string> = {
   '.srvstorage.kz': 'Selectel S3',
   '.relaix.net': 'RelAix S3',
   '.neon.tech': 'Neon S3',
-  '.r2.cloudflarestorage.com': 'Cloudflare R2',
+  '.cloudflarestorage.com': 'Cloudflare R2',
   '.oraclecloud.com': 'Oracle Cloud S3',
   '.customer-oci.com': 'Oracle Cloud S3',
   '.cloud-object-storage.appdomain.cloud': 'IBM COS (S3)',
