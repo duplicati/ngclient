@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { form, FormField } from '@angular/forms/signals';
+import { NullableTextControl } from '../../backup/general/nullable-text-control';
 import { Router, RouterLink } from '@angular/router';
 import { ShipFileDragDrop } from '@ship-ui/core/ship-file-drag-drop';
 import { ShipAlertService } from '@ship-ui/core/ship-alert';
@@ -11,11 +12,9 @@ import { BackupAndScheduleInputDto, DuplicatiServer } from '../../core/openapi';
 import { BackupDraft } from '../../core/states/backups.state';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 
-const fb = new FormBuilder();
-
 @Component({
   selector: 'app-restore-from-config',
-  imports: [ReactiveFormsModule, RouterLink, ShipFileDragDrop, ShipFormField, ShipIcon, ShipButton],
+  imports: [FormField, NullableTextControl, RouterLink, ShipFileDragDrop, ShipFormField, ShipIcon, ShipButton],
   templateUrl: './restore-from-config.component.html',
   styleUrl: './restore-from-config.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,13 +28,15 @@ export default class RestoreFromConfigComponent {
   isRestoring = signal(false);
   isSecureFile = signal(false);
 
-  importForm = fb.group({
-    config: fb.control<string>(''),
-    cmdline: fb.control<boolean>(false),
-    importMetadata: fb.control<boolean>(false),
-    direct: fb.control<boolean>(false),
-    passphrase: fb.control<string>(''),
-  });
+  importForm = form(
+    signal<{
+      config: string | null;
+      cmdline: boolean | null;
+      importMetadata: boolean | null;
+      direct: boolean | null;
+      passphrase: string | null;
+    }>({ config: '', cmdline: false, importMetadata: false, direct: false, passphrase: '' })
+  );
 
   selectedFile = signal<File | null>(null);
 
@@ -56,9 +57,7 @@ export default class RestoreFromConfigComponent {
   #handleReaderLoaded(readerEvt: ProgressEvent<FileReader>) {
     const arrayBuffer = readerEvt.target?.result as ArrayBuffer;
 
-    this.importForm.patchValue({
-      config: this.#arrayBufferToBase64(arrayBuffer),
-    });
+    this.importForm.config().value.set(this.#arrayBufferToBase64(arrayBuffer));
   }
 
   #arrayBufferToBase64(buffer: ArrayBuffer): string {
@@ -78,7 +77,7 @@ export default class RestoreFromConfigComponent {
 
     defer(() =>
       this.#dupServer.postApiV1BackupsImport({
-        body: this.importForm.value,
+        body: this.importForm().value(),
       })
     )
       .pipe(

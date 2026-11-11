@@ -22,7 +22,7 @@
   </h3>
 </header>
 
-<form [formGroup]="importForm" autocomplete="off">
+<form autocomplete="off" novalidate (submit)="$event.preventDefault()">
   <sh-form-field shDragDrop (fileDropped)="onFileDropped($event)">
     <label for="file" i18n>Select a configuration file</label>
     <input type="file" accept=".json,.aes" (change)="onFileDropped($event)" />
@@ -33,7 +33,7 @@
   @if (isSecureFile()) {
     <sh-form-field>
       <label for="passphrase" i18n>Passphrase</label>
-      <input type="password" autocomplete="disabled" formControlName="passphrase" />
+      <input type="password" autocomplete="disabled" appNullableText [formField]="importForm.passphrase" />
     </sh-form-field>
   }
 </form>
