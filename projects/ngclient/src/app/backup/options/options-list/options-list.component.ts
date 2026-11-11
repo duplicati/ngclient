@@ -1,7 +1,19 @@
 import { KeyboardActionDirective } from '../../../core/directives/keyboard-action.directive';
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, input, model, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  linkedSignal,
+  model,
+  signal,
+  untracked,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { form, FormField } from '@angular/forms/signals';
 import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
@@ -17,20 +29,13 @@ import { SettingDto, SettingInputDto } from '../../../core/openapi';
 import { SysinfoState } from '../../../core/states/sysinfo.state';
 import { FormView, parseKeyValueTextToSettings } from '../../destination/destination.config-utilities';
 import { OPTIONS_LIST_CUSTOM_CONFIG } from './options-list.config';
+import { isOptionTrue, optionDisplayValue, OptionValueControl, serializeOptionValue } from './option-value-control';
 
 type SettingItem = {
   Filter?: string | null;
   Name?: string | null;
-  Value: ReturnType<typeof signal<any | null>>;
-  FormView: FormView;
-};
-
-type SizeSettingItem = {
-  Filter?: string | null;
-  Name?: string | null;
-  Value: ReturnType<typeof signal<string | null>>;
-  unit: ReturnType<typeof signal<string>>;
-  size: ReturnType<typeof signal<number>>;
+  Value: any;
+  Index: number;
   FormView: FormView;
 };
 
@@ -39,6 +44,8 @@ type SizeSettingItem = {
   imports: [
     KeyboardActionDirective,
     FormsModule,
+    FormField,
+    OptionValueControl,
     FileTreeComponent,
     SizeComponent,
     TimespanComponent,
@@ -61,6 +68,22 @@ export class OptionsListComponent {
   #sysInfo = inject(SysinfoState);
 
   options = model.required<SettingInputDto[]>();
+  // Keep form metadata out of the DTO objects, and preserve absent/null values on load.
+  settingValues = linkedSignal(() => this.options().map((setting) => setting.Value ?? null));
+  settingsForm = form(this.settingValues);
+  #syncEditedValues = effect(() => {
+    const values = this.settingValues();
+    const settings = this.options();
+    if (settings.some((setting, index) => !Object.is(setting.Value ?? null, values[index]))) {
+      untracked(() =>
+        this.options.set(
+          settings.map((setting, index) =>
+            Object.is(setting.Value ?? null, values[index]) ? setting : { ...setting, Value: values[index] }
+          )
+        )
+      );
+    }
+  });
   hiddenOptions = input<string[]>([]);
   hasFreeTextSettings = input(false);
   applicationOptions = input<SettingDto[] | null | undefined>();
@@ -75,39 +98,14 @@ export class OptionsListComponent {
     const options = this.options();
 
     const predefinedSettings = options
-      .map((setting) => {
+      .map((setting, index) => {
         let option = this.allOptions().find((opt) => opt.name === setting.Name?.replace('--', ''));
 
-        let _value: any = setting.Value ?? '';
+        const _value = optionDisplayValue(setting.Value, option);
 
         if (option && hiddenNames.includes(option.name)) return null;
 
         if (option) {
-          if (option.type === 'Boolean') {
-            _value = this.isTrue(_value);
-          }
-
-          if (option.type === 'Integer') {
-            _value = parseInt(_value) || 0;
-          }
-
-          if (option.type === 'Enumeration' && option.options) {
-            const cmpvalue = _value?.trim().toLowerCase();
-            const optionValue = option.options.find((opt) => (opt ?? '').trim().toLocaleLowerCase() === cmpvalue);
-            if (optionValue) _value = optionValue;
-          }
-
-          if (option.type === 'Flags' && option.options && typeof _value === 'string') {
-            const choices = option.options;
-            _value = _value
-              .split(',')
-              .map((value) => {
-                const normalized = value.trim().toLowerCase();
-                return choices.find((choice) => choice.trim().toLowerCase() === normalized) ?? value;
-              })
-              .join(',');
-          }
-
           const override = OPTIONS_LIST_CUSTOM_CONFIG.find((x) => x.name === option?.name);
           if (override) {
             option = {
@@ -118,13 +116,15 @@ export class OptionsListComponent {
 
           return {
             ...setting,
-            Value: signal(_value),
+            Value: _value,
+            Index: index,
             FormView: option,
           } as SettingItem;
         } else if (this.hasFreeTextSettings()) {
           return {
             ...setting,
-            Value: signal(_value),
+            Value: _value,
+            Index: index,
             FormView: {
               name: setting.Name,
               type: 'FreeText',
@@ -136,7 +136,7 @@ export class OptionsListComponent {
 
         return null;
       })
-      .filter((x) => x !== null) as (SettingItem | SizeSettingItem)[];
+      .filter((x) => x !== null) as SettingItem[];
 
     return predefinedSettings;
   });
@@ -164,7 +164,7 @@ export class OptionsListComponent {
   settingsAsText = computed(() => {
     return this.selectedSettings()
       .map((setting) => {
-        const value = setting.Value();
+        const value = setting.Value;
 
         let valueString = '';
         if (typeof value === 'boolean') {
@@ -188,14 +188,7 @@ export class OptionsListComponent {
   }
 
   isTrue(value: any): boolean {
-    if (typeof value === 'boolean') {
-      return value;
-    }
-    if (typeof value === 'string') {
-      const lowerValue = value.toLowerCase();
-      return lowerValue === 'true' || lowerValue === '1' || lowerValue === 'yes' || lowerValue === 'on';
-    }
-    return false;
+    return isOptionTrue(value);
   }
 
   inAppOptions(optionName: string) {
@@ -248,26 +241,7 @@ export class OptionsListComponent {
       const newSettings = [...settings];
       const index = newSettings.findIndex((s) => s.Name === option.Name);
 
-      if (option.FormView.type === 'Boolean') {
-        newSettings[index].Value = this.isTrue(newValue) ? 'True' : 'False';
-        return newSettings;
-      }
-
-      if (option.FormView.type === 'Integer') {
-        newSettings[index].Value = newValue.toString();
-        return newSettings;
-      }
-
-      if (option.FormView.type === 'Enumeration' && option.FormView.options) {
-        const cmpvalue = newValue?.trim().toLowerCase() ?? '';
-        const optionValue = option.FormView.options.find((opt) => (opt ?? '').trim().toLocaleLowerCase() === cmpvalue);
-        if (optionValue) {
-          newSettings[index].Value = optionValue;
-          return newSettings;
-        }
-      }
-
-      newSettings[index].Value = newValue;
+      newSettings[index].Value = serializeOptionValue(option.FormView, newValue);
       return newSettings;
     });
   }
@@ -282,7 +256,7 @@ export class OptionsListComponent {
     });
   }
 
-  removeSetting(settingToRemove: SettingItem | SizeSettingItem) {
+  removeSetting(settingToRemove: SettingItem) {
     this.options.update((settings) => {
       return settings.filter((setting) => setting.Name !== settingToRemove.Name);
     });

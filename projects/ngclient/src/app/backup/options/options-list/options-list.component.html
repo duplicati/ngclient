@@ -129,7 +129,7 @@
             </div>
             <div>
               <sh-form-field>
-                <input type="text" [ngModel]="item.Value()" (ngModelChange)="updateSettingValue(item, $event)" />
+                <input type="text" [appOptionValue]="item.FormView" [formField]="settingsForm[item.Index]!" />
 
                 <sh-icon prefix>textbox</sh-icon>
               </sh-form-field>
@@ -137,7 +137,7 @@
           </div>
         } @else if (item.FormView.type === 'FileTree') {
           <app-file-tree
-            [startingPath]="item.Value()"
+            [startingPath]="item.Value"
             [accepts]="item.FormView.accepts"
             [showFiles]="true"
             [showHiddenNodes]="true"
@@ -147,20 +147,12 @@
             <label [for]="formId">
               <ng-container *ngTemplateOutlet="defaultLabel" />
             </label>
-            <input
-              type="text"
-              [id]="formId"
-              [ngModel]="item.Value()"
-              (ngModelChange)="updateSettingValue(item, $event)" />
+            <input type="text" [id]="formId" [appOptionValue]="item.FormView" [formField]="settingsForm[item.Index]!" />
           </app-file-tree>
         } @else if (item.FormView.type === 'FolderTree') {
-          <app-file-tree [startingPath]="item.Value()" [hideShortcuts]="false" [resolvePaths]="true">
+          <app-file-tree [startingPath]="item.Value" [hideShortcuts]="false" [resolvePaths]="true">
             <label [for]="formId"></label>
-            <input
-              type="text"
-              [id]="formId"
-              [ngModel]="item.Value()"
-              (ngModelChange)="updateSettingValue(item, $event)" />
+            <input type="text" [id]="formId" [appOptionValue]="item.FormView" [formField]="settingsForm[item.Index]!" />
           </app-file-tree>
         } @else if (
           item.FormView.type === 'String' ||
@@ -187,8 +179,8 @@
             <input
               [type]="item.FormView.type === 'Email' ? 'email' : 'text'"
               [id]="formId"
-              [ngModel]="item.Value()"
-              (ngModelChange)="updateSettingValue(item, $event)" />
+              [appOptionValue]="item.FormView"
+              [formField]="settingsForm[item.Index]!" />
 
             @if (item.FormView.type === 'Path') {
               <sh-icon prefix>link</sh-icon>
@@ -221,8 +213,8 @@
               [type]="$any(item)['showPassword'] ? 'text' : 'password'"
               autocomplete="new-password"
               [id]="formId"
-              [ngModel]="item.Value()"
-              (ngModelChange)="updateSettingValue(item, $event)" />
+              [appOptionValue]="item.FormView"
+              [formField]="settingsForm[item.Index]!" />
 
             <sh-icon prefix>password</sh-icon>
             <sh-icon
@@ -250,22 +242,14 @@
                 "></ng-container>
             </label>
 
-            <input
-              type="text"
-              [id]="formId"
-              [ngModel]="item.Value()"
-              (ngModelChange)="updateSettingValue(item, $event)" />
+            <input type="text" [id]="formId" [appOptionValue]="item.FormView" [formField]="settingsForm[item.Index]!" />
           </sh-select>
 
           <ng-template let-item #enumOptionTemplate>
             {{ item }}
           </ng-template>
         } @else if (item.FormView.type === 'Size') {
-          <app-size
-            [inputType]="item.Name"
-            [ngModel]="item.Value()"
-            (ngModelChange)="updateSettingValue(item, $event)"
-            [customId]="formId">
+          <app-size [inputType]="item.Name" [formField]="settingsForm[item.Index]!" [customId]="formId">
             <label [for]="formId">
               <ng-container *ngTemplateOutlet="defaultLabel" />
               <ng-container
@@ -296,7 +280,7 @@
             <input
               type="number"
               [id]="formId"
-              [ngModel]="item.Value()"
+              [ngModel]="item.Value"
               (ngModelChange)="updateSettingValue(item, $event)" />
             <sh-icon prefix>numpad</sh-icon>
           </sh-form-field>
@@ -318,8 +302,8 @@
             <input
               type="checkbox"
               [id]="formId"
-              [ngModel]="item.Value()"
-              (ngModelChange)="updateSettingValue(item, $event)" />
+              [appOptionValue]="item.FormView"
+              [formField]="settingsForm[item.Index]!" />
           </sh-toggle>
         } @else if (item.FormView.type === 'Flags') {
           <sh-select
@@ -339,18 +323,14 @@
                   }
                 "></ng-container>
             </label>
-            <input type="text" id="text" [ngModel]="item.Value()" (ngModelChange)="updateSettingValue(item, $event)" />
+            <input type="text" id="text" [appOptionValue]="item.FormView" [formField]="settingsForm[item.Index]!" />
           </sh-select>
 
           <ng-template let-item #optionTemplate>
             {{ item }}
           </ng-template>
         } @else if (item.FormView.type === 'Timespan' || item.FormView.type === 'DateTime') {
-          <app-timespan
-            [inputType]="item.Name"
-            [ngModel]="item.Value()"
-            (ngModelChange)="updateSettingValue(item, $event)"
-            [customId]="formId">
+          <app-timespan [inputType]="item.Name" [formField]="settingsForm[item.Index]!" [customId]="formId">
             <label [for]="formId">
               <ng-container *ngTemplateOutlet="defaultLabel" />
               <ng-container
@@ -375,8 +355,8 @@
 </sh-toggle-card>
 
 <ng-template #validateTemplate let-item>
-  @if (item.Value) {
-    @let fieldValue = item.Value();
+  @if (item.Value !== undefined) {
+    @let fieldValue = item.Value;
     @let isFieldEmpty = (fieldValue ?? '').toString().trim() === '';
     @if (!isFieldEmpty && item.formView.validate) {
       @let validationResult = item.formView.validate(fieldValue);
