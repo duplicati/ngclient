@@ -80,6 +80,10 @@ export default class HomeComponent {
   hasSyncRestore = this.#sysinfo.hasSyncRestore;
 
   MISSING_BACKUP_NAME = $localize`Backup name missing`;
+  startLabel = $localize`Start`;
+  editLabel = $localize`Edit`;
+  moreActionsLabel = $localize`More actions`;
+  externallyManagedLabel = $localize`Externally managed`;
   stopLabel = $localize`Stop`;
   abortLabel = $localize`Abort`;
   pauseLabel = $localize`Pause`;

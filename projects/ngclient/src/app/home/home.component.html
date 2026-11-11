@@ -146,6 +146,8 @@
                   <div class="actions">
                     <button
                       shButton
+                      [attr.aria-label]="startLabel"
+                      [shTooltip]="viewMode() === 'details' ? startLabel : null"
                       [class.loading]="startingBackup() === backup.Backup.ID"
                       (click)="startBackup($any(backup.Backup.ID))"
                       i18n>
@@ -471,14 +473,14 @@
   @if (isRunning(backup.Backup.ID)) {
     @let compact = viewMode() === 'details';
     @if (isStopping()) {
-      <button shButton [shTooltip]="compact ? abortLabel : null" (click)="abort()">
+      <button shButton [shTooltip]="compact ? abortLabel : null" [attr.aria-label]="abortLabel" (click)="abort()">
         <sh-icon>skull</sh-icon>
         @if (!compact) {
           {{ abortLabel }}
         }
       </button>
     } @else {
-      <button shButton [shTooltip]="compact ? stopLabel : null" (click)="stop()">
+      <button shButton [shTooltip]="compact ? stopLabel : null" [attr.aria-label]="stopLabel" (click)="stop()">
         <sh-icon>stop</sh-icon>
         @if (!compact) {
           {{ stopLabel }}
@@ -489,6 +491,7 @@
     <button
       shButton
       [shTooltip]="compact ? (clientIsRunning() ? pauseLabel : resumeLabel) : null"
+      [attr.aria-label]="clientIsRunning() ? pauseLabel : resumeLabel"
       [class.loading]="isResuming()"
       (click)="pauseResume()">
       @if (clientIsRunning()) {
@@ -506,6 +509,8 @@
   } @else {
     <button
       shButton
+      [attr.aria-label]="startLabel"
+      [shTooltip]="viewMode() === 'details' ? startLabel : null"
       [class.loading]="startingBackup() === backup.Backup.ID"
       (click)="startBackup($any(backup.Backup.ID))"
       i18n>
@@ -516,11 +521,18 @@
     </button>
 
     @if (backup.Backup.ExternalID) {
-      <button type="button" shButton [shTooltip]="'Externally managed'" [disabled]="true">
-        <sh-icon>pencil-simple</sh-icon>
-      </button>
+      <span [shTooltip]="externallyManagedLabel">
+        <button type="button" shButton [attr.aria-label]="externallyManagedLabel" [disabled]="true">
+          <sh-icon>pencil-simple</sh-icon>
+        </button>
+      </span>
     } @else {
-      <button type="button" shButton [routerLink]="['/backup', backup.Backup.ID]">
+      <button
+        type="button"
+        shButton
+        [shTooltip]="editLabel"
+        [attr.aria-label]="editLabel"
+        [routerLink]="['/backup', backup.Backup.ID]">
         <sh-icon>pencil-simple</sh-icon>
       </button>
     }
@@ -534,6 +546,8 @@
     <button
       type="button"
       shButton
+      [shTooltip]="moreActionsLabel"
+      [attr.aria-label]="moreActionsLabel"
       [class.loading]="loadingId() === backup.Backup.ID"
       [class.success]="successId() === backup.Backup.ID">
       @if (successId() === backup.Backup.ID) {
@@ -544,7 +558,9 @@
     </button>
 
     <ng-container menu>
-      @if (backup.Backup.OperationType !== 'Sync' || hasSyncRestore() || !backup.Backup.ExternalID || hasEnableDisable()) {
+      @if (
+        backup.Backup.OperationType !== 'Sync' || hasSyncRestore() || !backup.Backup.ExternalID || hasEnableDisable()
+      ) {
         <h3 title>Operations</h3>
 
         @if (backup.Backup.OperationType !== 'Sync' || hasSyncRestore()) {
