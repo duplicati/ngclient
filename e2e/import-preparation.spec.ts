@@ -41,6 +41,16 @@ test('import preparation submits once and advances only after success', async ({
   await expect(page).toHaveURL('/backup/import-destination/select-config');
 });
 
+test('clearing the passphrase submits the unchanged no-encryption option', async ({ authenticatedPage: page }) => {
+  const requests = await openImport(page);
+  await page.getByLabel('Password', { exact: true }).fill('');
+  await page.getByRole('button', { name: 'Continue', exact: true }).click();
+  await expect.poll(() => requests.length).toBe(1);
+  expect(requests[0].request().postDataJSON().Backup.Settings).toEqual([{ Name: '--no-encryption', Value: 'true' }]);
+  await requests[0].fulfill({ json: { ID: 'unencrypted-import' } });
+  await expect(page).toHaveURL('/backup/import-destination/select-config');
+});
+
 test('import preparation retains input after failure and retries the current passphrase', async ({
   authenticatedPage: page,
 }) => {
@@ -77,6 +87,7 @@ test('leaving import preparation ignores the old response and allows a new attem
   await expect(page).toHaveURL('/backup/import-destination/encryption');
   await page.getByRole('button', { name: 'Continue', exact: true }).click();
   await expect.poll(() => requests.length).toBe(2);
+  expect(requests[1].request().postDataJSON().Backup.Settings[0].Value).toBe('original passphrase');
   await requests[0].fulfill({ json: { ID: 'abandoned' } });
   await expect(page.getByRole('status')).toHaveText('Preparing configuration import…');
   await requests[1].fulfill({ json: { ID: 'current' } });
