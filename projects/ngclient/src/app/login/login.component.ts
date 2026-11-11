@@ -1,6 +1,16 @@
 import { KeyboardActionDirective } from '../core/directives/keyboard-action.directive';
-import { ChangeDetectionStrategy, Component, effect, ElementRef, inject, signal, viewChild } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  ElementRef,
+  inject,
+  signal,
+  untracked,
+  viewChild,
+} from '@angular/core';
+import { form, FormField, required } from '@angular/forms/signals';
+import { NullableTextControl } from '../backup/general/nullable-text-control';
 import { Router } from '@angular/router';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
@@ -12,13 +22,12 @@ import LogoComponent from '../core/components/logo/logo.component';
 import { localStorageSignal } from '../core/functions/localstorage-signal';
 import { AppAuthState } from '../core/states/app-auth.state';
 
-const fb = new FormBuilder();
-
 @Component({
   selector: 'app-login',
   imports: [
     KeyboardActionDirective,
-    ReactiveFormsModule,
+    FormField,
+    NullableTextControl,
     LogoComponent,
     ShipFormField,
     ShipIcon,
@@ -38,9 +47,13 @@ export default class LoginComponent {
   failedLogin = signal(false);
   successLogin = signal(false);
   isLoading = signal(false);
-  loginForm = fb.group({
-    pass: fb.control<string>('', Validators.required),
-    rememberMe: fb.control<boolean>(this.rememberMe()),
+  loginForm = form(
+    signal<{ pass: string | null; rememberMe: boolean }>({ pass: '', rememberMe: this.rememberMe() }),
+    (path) => required(path.pass)
+  );
+  rememberMeEffect = effect(() => {
+    const remember = this.loginForm.rememberMe().value();
+    if (remember !== untracked(this.rememberMe)) this.rememberMe.set(remember);
   });
   showPassword = signal(false);
   passwordInput = viewChild<ElementRef<HTMLInputElement>>('passwordInput');
@@ -51,14 +64,12 @@ export default class LoginComponent {
   });
 
   ngOnInit() {
-    this.loginForm.controls.rememberMe.valueChanges.subscribe((v) => this.rememberMe.set(v ?? false));
-
     queueMicrotask(() => this.passwordInput()?.nativeElement?.focus());
   }
 
   submit() {
-    const password = this.loginForm.value.pass;
-    this.rememberMe.set(this.loginForm.value.rememberMe ?? false);
+    const password = this.loginForm.pass().value();
+    this.rememberMe.set(this.loginForm.rememberMe().value());
 
     if (!password) return;
 

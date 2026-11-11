@@ -1,4 +1,4 @@
-<form [formGroup]="loginForm" (submit)="submit()">
+<form novalidate (submit)="$event.preventDefault(); submit()">
   @if (failedLogin() && !successLogin()) {
     <sh-alert type="warning" i18n>
       Remember to enter a password, if you can't remember the password open the duplicati client on the machine in
@@ -27,11 +27,11 @@
         <input
           #passwordInput
           [type]="showPassword() ? 'text' : 'password'"
-          name="password"
           autocomplete="current-password"
           i18n-placeholder
           placeholder="Enter your password"
-          formControlName="pass" />
+          appNullableText
+          [formField]="loginForm.pass" />
         <sh-icon
           appKeyboardAction
           aria-label="Toggle password visibility"
@@ -50,7 +50,7 @@
 
     <sh-checkbox class="raised primary" i18n>
       Keep me logged in
-      <input type="checkbox" id="rememberMe" formControlName="rememberMe" />
+      <input type="checkbox" id="rememberMe" [formField]="loginForm.rememberMe" />
     </sh-checkbox>
 
     <div class="login-row checkbox">
