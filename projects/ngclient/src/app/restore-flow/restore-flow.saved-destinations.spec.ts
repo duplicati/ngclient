@@ -31,7 +31,7 @@ describe('direct restore saved destination selection', () => {
     state.updateTargetUrl(url, 7);
     expect(state.destinationTargetUrl()).toBe(url);
     expect(state.destinationConnectionStringId()).toBe(7);
-    state.encryptionForm.patchValue({ passphrase: 'backup key' });
+    state.encryptionForm.passphrase().value.set('backup key');
     expect(state.destinationConnectionStringId()).toBe(7);
   });
   it('invalidates the previous result even when a different connection has the same URL', () => {

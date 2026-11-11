@@ -27,7 +27,7 @@ import { SysinfoState } from '../core/states/sysinfo.state';
 import { ServerSettingsService } from '../settings/server-settings.service';
 import { createRestoreOptionsForm } from './options/options.component';
 import { resolveRestoreOptionDefaults } from './options/restore-option-defaults';
-import { createEncryptionForm } from './restore-encryption/restore-encryption.component';
+import { form } from '@angular/forms/signals';
 import { createRestoreSelectFilesForm } from './select-files/select-files.component';
 
 type ListResultFileset = {
@@ -62,7 +62,7 @@ export class RestoreFlowState implements OnDestroy {
   destinationTestSignal = signal<TestState>(null);
   selectFilesForm = createRestoreSelectFilesForm();
   optionsForm = createRestoreOptionsForm();
-  encryptionForm = createEncryptionForm();
+  encryptionForm = form(signal<{ passphrase: string | null }>({ passphrase: '' }));
   optionsFormSignal = toSignal(this.optionsForm.valueChanges);
   selectFilesFormSignal = toSignal(this.selectFilesForm.valueChanges);
   selectOption = signal<string | null>(null);

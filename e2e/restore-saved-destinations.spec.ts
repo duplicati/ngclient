@@ -45,72 +45,79 @@ test.beforeEach(async ({ page, serverApi }) => {
   await page.route('**/api/v2/connection-strings', (route) => route.fulfill({ json: { Success: true, Data: saved } }));
 });
 
-test('keyboard selection uses the saved connection for a read-only test and temporary restore job', async ({
-  authenticatedPage: page,
-}) => {
-  const tests: DestinationTestRequestDto[] = [];
-  const creates: BackupAndScheduleInputDto[] = [];
-  await page.route('**/api/v2/destination/test', (route) => {
-    tests.push(route.request().postDataJSON());
-    return route.fulfill({
-      json: {
-        Success: true,
-        Data: {
-          FolderContainsBackupFiles: true,
-          FolderContainsEncryptedBackupFiles: false,
-          FolderIsEmpty: false,
+for (const encrypted of [false, true]) {
+  test(`saved connection and encryption setting survive temporary restore creation (encrypted=${encrypted})`, async ({
+    authenticatedPage: page,
+  }) => {
+    const tests: DestinationTestRequestDto[] = [];
+    const creates: BackupAndScheduleInputDto[] = [];
+    await page.route('**/api/v2/destination/test', (route) => {
+      tests.push(route.request().postDataJSON());
+      return route.fulfill({
+        json: {
+          Success: true,
+          Data: {
+            FolderContainsBackupFiles: true,
+            FolderContainsEncryptedBackupFiles: encrypted,
+            FolderIsEmpty: false,
+          },
         },
-      },
+      });
+    });
+    await page.route('**/api/v1/backups?temporary=true', (route) => {
+      creates.push(route.request().postDataJSON());
+      return route.fulfill({ json: { ID: 'temp-7' } });
+    });
+    await page.route('**/api/v1/backup/temp-7', (route) =>
+      route.fulfill({
+        json: {
+          Backup: {
+            ID: 'temp-7',
+            OperationType: 'Backup',
+            IsTemporary: true,
+            TargetURL: maskedUrl,
+            ConnectionStringID: 7,
+            Sources: [],
+            Settings: encrypted
+              ? [{ Name: '--passphrase', Value: ' secret & + % password ' }]
+              : [{ Name: '--no-encryption', Value: 'true' }],
+            Metadata: {},
+          },
+        },
+      })
+    );
+    await page.route('**/api/v1/backup/temp-7/filesets', (route) => route.fulfill({ json: [] }));
+    await page.route('**/api/v1/backup/temp-7/files?*', (route) => route.fulfill({ json: { Files: [] } }));
+    await openDestination(page);
+    const select = page.getByRole('button', { name: 'Use saved destination Archive storage', exact: true });
+    await select.focus();
+    await page.keyboard.press('Enter');
+    await expect(page.locator('app-restore-destination .current-destination')).toContainText('Archive storage');
+    await expect(page.locator('app-restore-destination app-single-destination')).toHaveCount(0);
+    await page.getByRole('button', { name: 'Test now', exact: true }).click();
+    await expect(page.getByText('Success! Test completed, backup found.', { exact: true })).toBeVisible();
+    expect(tests).toHaveLength(1);
+    expect(tests[0]).toMatchObject({
+      DestinationUrl: maskedUrl,
+      ConnectionStringId: 7,
+      ReadOnlyTest: true,
+      AutoCreate: false,
+    });
+    await page.getByRole('button', { name: 'Continue', exact: true }).click();
+    await expect(page).toHaveURL('/restore-from-files/encryption');
+    if (encrypted) await page.getByLabel('Password', { exact: true }).fill(' secret & + % password ');
+    await page.getByRole('button', { name: 'Continue', exact: true }).click();
+    await expect(page).toHaveURL('/restore-draft/temp-7/select-files');
+    expect(creates).toHaveLength(1);
+    expect(creates[0].Backup).toEqual({
+      TargetURL: maskedUrl,
+      ConnectionStringID: 7,
+      Settings: encrypted
+        ? [{ Name: '--passphrase', Value: ' secret & + % password ' }]
+        : [{ Name: '--no-encryption', Value: 'true' }],
     });
   });
-  await page.route('**/api/v1/backups?temporary=true', (route) => {
-    creates.push(route.request().postDataJSON());
-    return route.fulfill({ json: { ID: 'temp-7' } });
-  });
-  await page.route('**/api/v1/backup/temp-7', (route) =>
-    route.fulfill({
-      json: {
-        Backup: {
-          ID: 'temp-7',
-          OperationType: 'Backup',
-          IsTemporary: true,
-          TargetURL: maskedUrl,
-          ConnectionStringID: 7,
-          Sources: [],
-          Settings: [{ Name: '--no-encryption', Value: 'true' }],
-          Metadata: {},
-        },
-      },
-    })
-  );
-  await page.route('**/api/v1/backup/temp-7/filesets', (route) => route.fulfill({ json: [] }));
-  await page.route('**/api/v1/backup/temp-7/files?*', (route) => route.fulfill({ json: { Files: [] } }));
-  await openDestination(page);
-  const select = page.getByRole('button', { name: 'Use saved destination Archive storage', exact: true });
-  await select.focus();
-  await page.keyboard.press('Enter');
-  await expect(page.locator('app-restore-destination .current-destination')).toContainText('Archive storage');
-  await expect(page.locator('app-restore-destination app-single-destination')).toHaveCount(0);
-  await page.getByRole('button', { name: 'Test now', exact: true }).click();
-  await expect(page.getByText('Success! Test completed, backup found.', { exact: true })).toBeVisible();
-  expect(tests).toHaveLength(1);
-  expect(tests[0]).toMatchObject({
-    DestinationUrl: maskedUrl,
-    ConnectionStringId: 7,
-    ReadOnlyTest: true,
-    AutoCreate: false,
-  });
-  await page.getByRole('button', { name: 'Continue', exact: true }).click();
-  await expect(page).toHaveURL('/restore-from-files/encryption');
-  await page.getByRole('button', { name: 'Continue', exact: true }).click();
-  await expect(page).toHaveURL('/restore-draft/temp-7/select-files');
-  expect(creates).toHaveLength(1);
-  expect(creates[0].Backup).toEqual({
-    TargetURL: maskedUrl,
-    ConnectionStringID: 7,
-    Settings: [{ Name: '--no-encryption', Value: 'true' }],
-  });
-});
+}
 
 test('changing between saved connections with the same URL resets the previous test result', async ({
   authenticatedPage: page,
