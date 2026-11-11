@@ -6,6 +6,7 @@ import { ShipDivider } from '@ship-ui/core/ship-divider';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipList } from '@ship-ui/core/ship-list';
 import { ShipSidenav } from '@ship-ui/core/ship-sidenav';
+import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import LogoComponent from '../core/components/logo/logo.component';
 import ServiceHubComponent from '../core/components/service-hub/service-hub.component';
 import { GetApiV1ServersettingsResponse } from '../core/openapi';
@@ -30,6 +31,7 @@ import { LayoutState } from './layout.state';
     ShipList,
     ShipButton,
     ShipDivider,
+    ShipTooltip,
     ServiceHubComponent,
     LogoComponent,
   ],
@@ -51,6 +53,9 @@ export default class LayoutComponent {
 
   relayIsEnabled = this.#relayConfigState.relayIsEnabled;
   isDarkMode = this.#layoutState.isDarkMode;
+  themeToggleLabel = computed(() =>
+    this.isDarkMode() ? $localize`Switch to light mode` : $localize`Switch to dark mode`
+  );
   isNavOpen = this.#layoutState.isNavOpen;
   sidenavType = this.#layoutState.sidenavType;
   hasShownPasswordDialog = false;

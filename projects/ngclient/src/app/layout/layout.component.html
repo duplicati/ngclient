@@ -3,7 +3,13 @@
     <header>
       <app-logo />
 
-      <button shButton class="icon small" (click)="toggleBodyClass()">
+      <button
+        shButton
+        type="button"
+        class="icon small"
+        [shTooltip]="themeToggleLabel()"
+        [attr.aria-label]="themeToggleLabel()"
+        (click)="toggleBodyClass()">
         @if (isDarkMode()) {
           <sh-icon>sun</sh-icon>
         } @else {
