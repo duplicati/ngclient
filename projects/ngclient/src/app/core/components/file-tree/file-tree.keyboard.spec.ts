@@ -1,7 +1,7 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { DuplicatiServer } from '../../openapi';
 import { FileTreeListingService } from './file-tree-listing.service';
@@ -84,6 +84,61 @@ describe('file tree keyboard navigation', () => {
     fixture.detectChanges();
     return event;
   }
+
+  const lockedFolder = { id: '/Cookies/', text: 'Cookies', cls: 'folder', leaf: true, kind: 'locked', symlink: true };
+
+  it('keeps a locked folder selectable without offering or requesting expansion', () => {
+    const { component, list } = setup({}, { '/': [lockedFolder] });
+    const cookies = row('Cookies (Symbolic link, Access denied)');
+    expect(cookies.querySelector('.text')?.textContent).toContain('Access denied');
+    const icon = cookies.querySelector<HTMLElement>('.icon')!;
+    icon.click();
+    press(cookies, 'ArrowRight');
+    expect(list.mock.calls.map(([request]) => request.body.path)).toEqual(['/']);
+    expect(cookies.hasAttribute('aria-expanded')).toBe(false);
+    expect(icon.textContent).not.toMatch(/caret-right|caret-down/);
+
+    press(cookies, 'Enter');
+    expect(component.currentPath()).toBe('/Cookies/');
+    expect(list).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not expand a locked folder when activation is used to browse for files', () => {
+    const { list } = setup({ selectFiles: true }, { '/': [lockedFolder] });
+    row('Cookies (Symbolic link, Access denied)').querySelector<HTMLElement>('.text')!.click();
+    press(row('Cookies (Symbolic link, Access denied)'), 'Enter');
+    expect(list.mock.calls.map(([request]) => request.body.path)).toEqual(['/']);
+  });
+
+  it('still expands an empty folder and a junction without the locked kind', () => {
+    const { list } = setup(
+      {},
+      {
+        '/': [
+          { id: '/Empty/', text: 'Empty', cls: 'folder', leaf: true },
+          { id: '/Link/', text: 'Link', cls: 'folder', symlink: true, kind: 'junction', leaf: false },
+        ],
+        '/Link/': [{ id: '/Link/notes.txt', text: 'notes.txt', cls: 'file', leaf: true }],
+      }
+    );
+    press(row('Empty'), 'ArrowRight');
+    expect(row('Empty').getAttribute('aria-expanded')).toBe('true');
+    press(row('Link (Symbolic link)'), 'ArrowRight');
+    expect(row('Link (Symbolic link)').getAttribute('aria-expanded')).toBe('true');
+    expect(row('notes.txt')).toBeDefined();
+    expect(list.mock.calls.map(([request]) => request.body.path)).toEqual(['/', '/Empty/', '/Link/']);
+  });
+
+  it.each([
+    [500, 'An error occurred'],
+    [403, 'Access to the folder is denied: /Documents/'],
+  ])('shows the error from a failed child request (HTTP %s)', (status, message) => {
+    const { list } = setup();
+    list.mockImplementationOnce(() => throwError(() => ({ status, message })));
+    press(row('Documents'), 'ArrowRight');
+    expect(row('Documents').getAttribute('aria-expanded')).toBe('false');
+    expect(fixture.nativeElement.querySelector('sh-alert').textContent).toContain(message);
+  });
 
   it('has one Tab entry, hierarchical roles and a name for each node', () => {
     setup();

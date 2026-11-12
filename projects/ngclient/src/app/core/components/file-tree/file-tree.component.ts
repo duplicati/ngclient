@@ -1015,10 +1015,16 @@ export default class FileTreeComponent {
     return this.#treeNodeBadges[kind] ?? this.#treeNodeBadges[kind.split(':')[0]] ?? null;
   }
 
+  lockedLinkLabel(node: FileTreeNode): string | null {
+    return node.symlink && node.kind === 'locked' ? this.#treeNodeBadges['locked'].label : null;
+  }
+
   /** Accessible name for a tree row; badges that convey a state are announced since the badge icon is visual only. */
   treeItemLabel(node: FileTreeNode): string {
     const name = node.text ?? node.id ?? '';
     const badge = this.treeNodeBadge(node);
+    const locked = this.lockedLinkLabel(node);
+    if (locked && badge) return $localize`${name}:name: (${badge.label}:linkState:, ${locked}:accessState:)`;
     return badge?.announce ? $localize`${name}:name: (${badge.label}:state:)` : name;
   }
 
@@ -1038,8 +1044,12 @@ export default class FileTreeComponent {
     return this.#treeId + '-group-' + encodeURIComponent(node.id ?? '');
   }
 
+  canExpandTreeNode(node: FileTreeNode) {
+    return node.cls === 'folder' && node.kind !== 'locked';
+  }
+
   isTreeNodeExpanded(node: FileTreeNode) {
-    return node.cls === 'folder' && (node.children.length > 0 || this.#expandedPaths().has(node.id ?? ''));
+    return this.canExpandTreeNode(node) && (node.children.length > 0 || this.#expandedPaths().has(node.id ?? ''));
   }
 
   canSelectTreeNode(node: FileTreeNode) {
@@ -1126,7 +1136,7 @@ export default class FileTreeComponent {
         this.#focusTreePath(rows.at(-1)?.node.id);
         break;
       case 'ArrowRight': {
-        if (node.cls !== 'folder') break;
+        if (!this.canExpandTreeNode(node)) break;
         const firstChild = this.visibleTreeChildren(node.children)[0];
         if (firstChild) this.#focusTreePath(firstChild.id);
         else if (!this.isTreeNodeExpanded(node) && this.isLoading() !== node.id) {
@@ -1263,7 +1273,7 @@ export default class FileTreeComponent {
 
   toggleNode($event: Event, path: string, node: FileTreeNode | null = null) {
     $event.stopPropagation();
-    if (node?.cls !== 'folder') return;
+    if (!node || !this.canExpandTreeNode(node)) return;
     if (this.isTreeNodeExpanded(node)) {
       const prefix = node.id as string;
       this.#expandedPaths.update((paths) => new Set([...paths].filter((x) => !x.startsWith(prefix))));
