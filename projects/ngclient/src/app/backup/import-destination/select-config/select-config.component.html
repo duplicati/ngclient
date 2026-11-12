@@ -19,7 +19,11 @@
     @if (configs().length > 1) {
       <div class="search-area">
         <sh-form-field>
-          <input type="text" i18n-placeholder placeholder="Search for destination..." [(ngModel)]="searchTerm" />
+          <input
+            type="text"
+            i18n-placeholder
+            placeholder="Search for destination..."
+            [formField]="selectionForm.searchTerm" />
           <sh-icon prefix>magnifying-glass</sh-icon>
           @if (searchTerm()) {
             <sh-icon
@@ -96,7 +100,7 @@
 
     <div class="options">
       @if (selectedItems().length <= 1) {
-        <sh-toggle [color]="'primary'" [(checked)]="saveNow" i18n>
+        <sh-toggle [color]="'primary'" [formField]="selectionForm.saveNow" i18n>
           Save now
           <sh-icon class="small" [shTooltip]="'Save backups without editing the configuration'">info</sh-icon>
         </sh-toggle>
@@ -109,7 +113,7 @@
           </sh-icon>
         </sh-toggle>
       }
-      <sh-toggle [color]="'primary'" [(checked)]="importMetadata" i18n>Import metadata</sh-toggle>
+      <sh-toggle [color]="'primary'" [formField]="selectionForm.importMetadata" i18n>Import metadata</sh-toggle>
     </div>
   }
 

@@ -64,3 +64,31 @@ test('leaving configuration loading prevents a late error dialog', async ({ auth
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(page).toHaveURL('/backup/import-destination/encryption');
 });
+
+test('search and import options retain their values in the selected configuration request', async ({
+  authenticatedPage: page,
+}) => {
+  const imports: Route[] = [];
+  await page.route('**/api/v1/backup/**importfromtemp', (route) => {
+    imports.push(route);
+  });
+  const lists = await openConfigurationList(page);
+  await lists[0].fulfill({
+    json: [
+      { BackupId: 'a', Name: 'Alpha', TargetURLDisplay: 'file:///alpha', Metadata: {} },
+      { BackupId: 'b', Name: 'Beta', TargetURLDisplay: 'file:///beta', Metadata: {} },
+    ],
+  });
+  const search = page.getByPlaceholder('Search for destination...', { exact: true });
+  await search.fill('beta');
+  const cards = page.locator('.config-list sh-card');
+  await expect(cards.first()).toContainText('Beta');
+  await page.getByRole('button', { name: 'Clear search', exact: true }).press('Enter');
+  await expect(search).toHaveValue('');
+  await cards.filter({ hasText: 'Beta' }).press('Enter');
+  await page.locator('.options sh-toggle').filter({ hasText: 'Save now' }).locator('input').check();
+  await page.locator('.options sh-toggle').filter({ hasText: 'Import metadata' }).locator('input').check();
+  await page.getByRole('button', { name: 'Import selected', exact: true }).click();
+  await expect.poll(() => imports.length).toBe(1);
+  expect(imports[0].request().postDataJSON()).toEqual({ BackupId: 'b', ImportMetadata: true, Direct: true });
+});
