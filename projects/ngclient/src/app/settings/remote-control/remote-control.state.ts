@@ -1,5 +1,6 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { defer } from 'rxjs';
+import { form } from '@angular/forms/signals';
 
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
@@ -51,8 +52,9 @@ export class RemoteControlState {
 
   state = signal<State>('unknown');
   claimUrl = signal<string | null>(null);
-  registerUrl = signal<string>('');
-  customRegisterUrl = signal<string>('');
+  registrationForm = form(signal({ registerUrl: '', customRegisterUrl: '' }));
+  registerUrl = this.registrationForm.registerUrl().value;
+  customRegisterUrl = this.registrationForm.customRegisterUrl().value;
   statusMessage = computed(() => {
     const state = this.state();
 
@@ -221,9 +223,9 @@ export class RemoteControlState {
         body: { RegistrationUrl: useCustomUrl ? this.customRegisterUrl() : this.registerUrl() },
       })
     ).subscribe({
-        next: (res) => this.#mapRemoteControlStatus(res),
-        error: (err) => this.#mapRemoteControlError(err),
-      });
+      next: (res) => this.#mapRemoteControlStatus(res),
+      error: (err) => this.#mapRemoteControlError(err),
+    });
   }
 
   cancelRemoteRegistration() {
