@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { defer, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -12,6 +12,7 @@ type ConnectionStatus = 'connected' | 'disconnected' | 'connecting';
   providedIn: 'root',
 })
 export class ServerStatusLongPollService {
+  #destroyRef = inject(DestroyRef);
   dialog = inject(ShipDialogService);
   #dupServer = inject(DuplicatiServer);
   #connectionStatus = signal<ConnectionStatus>('disconnected');
@@ -29,7 +30,13 @@ export class ServerStatusLongPollService {
   // Due to a bug in the Duplicati client, the max duration is 100s when relay is enabled
   duration = inject(RelayconfigState).relayIsEnabled() ? '94s' : '299s';
 
+  constructor() {
+    this.#destroyRef.onDestroy(() => this.stop());
+  }
+
   start() {
+    if (this.#destroyRef.destroyed || this.#awaitingPoll()) return;
+
     this.#awaitingPoll.set(true);
     this.#destroy$ = new Subject<void>();
     this.#longPoll();

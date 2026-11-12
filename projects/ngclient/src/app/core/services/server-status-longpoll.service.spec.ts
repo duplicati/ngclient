@@ -48,6 +48,55 @@ describe('ServerStatusLongPollService', () => {
     return { service, requests, getServerState, dialog, dialogRef };
   };
 
+  it('starts only one active poll and stop cancels that subscription', () => {
+    const { service, requests, getServerState } = setup();
+    service.start();
+    service.start();
+    expect(getServerState).toHaveBeenCalledTimes(1);
+    expect(requests[0].observed).toBe(true);
+    service.stop();
+    expect(requests[0].observed).toBe(false);
+    requests[0].next({ LastEventID: 42 } as ServerStatusDto);
+    expect(service.serverState()).toBeNull();
+  });
+
+  it('keeps one retry schedule when start is repeated after a failure', async () => {
+    const { service, requests, getServerState } = setup();
+    service.start();
+    requests[0].error(new Error('offline'));
+    service.start();
+    expect(getServerState).toHaveBeenCalledTimes(1);
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(getServerState).toHaveBeenCalledTimes(2);
+    expect(requests[1].observed).toBe(true);
+    service.stop();
+    expect(requests[1].observed).toBe(false);
+  });
+
+  it('unsubscribes an active poll when its injector is destroyed and cannot restart it', () => {
+    const { service, requests, getServerState } = setup();
+    service.start();
+    expect(requests[0].observed).toBe(true);
+    TestBed.resetTestingModule();
+    expect(requests[0].observed).toBe(false);
+    requests[0].next({ LastEventID: 42 } as ServerStatusDto);
+    expect(service.serverState()).toBeNull();
+    service.start();
+    service.reconnect();
+    service.reconnectIfNeeded();
+    expect(getServerState).toHaveBeenCalledTimes(1);
+  });
+
+  it('clears retry and closes its dialog when the injector is destroyed', async () => {
+    const { service, requests, getServerState, dialogRef } = setup();
+    service.start();
+    requests[0].error(new Error('offline'));
+    TestBed.resetTestingModule();
+    expect(dialogRef.close).toHaveBeenCalledOnce();
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(getServerState).toHaveBeenCalledTimes(1);
+    expect(vi.getTimerCount()).toBe(0);
+  });
   it.each([
     { relayIsEnabled: false, duration: '299s' },
     { relayIsEnabled: true, duration: '94s' },
