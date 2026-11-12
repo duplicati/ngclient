@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter, Router } from '@angular/router';
+import { provideRouter, Router, withComponentInputBinding } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
@@ -53,10 +53,13 @@ describe('existing backup editor save action', () => {
     }));
     TestBed.configureTestingModule({
       providers: [
-        provideRouter([
-          { path: 'backup/:id', component: BackupComponent, children },
-          { path: 'backup-draft/:id', component: BackupComponent, children },
-        ]),
+        provideRouter(
+          [
+            { path: 'backup/:id', component: BackupComponent, children },
+            { path: 'backup-draft/:id', component: BackupComponent, children },
+          ],
+          withComponentInputBinding()
+        ),
         { provide: DuplicatiServer, useValue: {} },
         { provide: BackupsState, useValue: { draftBackups: signal([]) } },
       ],
