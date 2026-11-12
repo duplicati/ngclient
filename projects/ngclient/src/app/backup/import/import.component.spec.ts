@@ -42,6 +42,35 @@ describe('ImportComponent configuration submission', () => {
     }));
     return { fixture, component, response, request, addDraftBackup, navigate, success, open };
   }
+  it('exposes a home link without submitting or creating a draft', () => {
+    const { fixture, request, addDraftBackup } = setup(false, true);
+    const link = fixture.nativeElement.querySelector('header a') as HTMLAnchorElement;
+    expect(link).not.toBeNull();
+    expect(link.getAttribute('href')).toBe('/');
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+    link.click();
+    expect(navigate).toHaveBeenCalledOnce();
+    expect(request).not.toHaveBeenCalled();
+    expect(addDraftBackup).not.toHaveBeenCalled();
+  });
+
+  it('leaves modified home-link clicks to the browser without submitting', () => {
+    const { fixture, request, addDraftBackup } = setup(false, true);
+    const link = fixture.nativeElement.querySelector('header a') as HTMLAnchorElement;
+    expect(link).not.toBeNull();
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+    const click = new MouseEvent('click', { bubbles: true, cancelable: true, ctrlKey: true });
+    let prevented: boolean | undefined;
+    link.addEventListener('click', (event) => {
+      prevented = event.defaultPrevented;
+      event.preventDefault(); // jsdom cannot open another document.
+    });
+    link.dispatchEvent(click);
+    expect(prevented).toBe(false);
+    expect(navigate).not.toHaveBeenCalled();
+    expect(request).not.toHaveBeenCalled();
+    expect(addDraftBackup).not.toHaveBeenCalled();
+  });
   it('binds the rendered passphrase, metadata and Save now controls to the submitted settings', () => {
     const { fixture, component, request } = setup(false, true);
     component.isSecureFile.set(true);

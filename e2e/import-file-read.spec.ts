@@ -99,3 +99,35 @@ test('a slower previous read cannot replace the latest selected configuration', 
   await requests[0].fulfill({ json: { data: null } });
   await expect(page).toHaveURL('/');
 });
+
+test('configuration import Back supports native new tabs and keyboard navigation without importing', async ({
+  authenticatedPage: page,
+}) => {
+  const { component, upload, submit, requests } = await openImport(page);
+  await upload.setInputFiles({ name: 'config.json', mimeType: 'application/json', buffer: json('Unsubmitted') });
+  await expect(submit).toBeEnabled();
+  const back = component.getByRole('link', { name: 'Back', exact: true });
+  await expect(back).toHaveAttribute('href', '/');
+  const home = new URL('/', page.url()).href;
+  // Verify native new-tab navigation without starting another authenticated application session.
+  await page
+    .context()
+    .route(home, (route) => route.fulfill({ contentType: 'text/html', body: '<title>Home target</title>' }));
+  for (const click of [{ modifiers: ['Control' as const] }, { button: 'middle' as const }]) {
+    const opened = page.context().waitForEvent('page');
+    await back.click(click);
+    const tab = await opened;
+    await expect(tab).toHaveURL(home);
+    await tab.close();
+    await expect(page).toHaveURL('/backup/import');
+    await expect(submit).toBeEnabled();
+    expect(await upload.evaluate((input: HTMLInputElement) => input.files?.[0]?.name)).toBe('config.json');
+    expect(requests).toHaveLength(0);
+  }
+  await back.focus();
+  await expect(back).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL('/');
+  await expect(page.getByRole('heading', { name: 'My backups', exact: true })).toBeVisible();
+  expect(requests).toHaveLength(0);
+});
