@@ -18,23 +18,20 @@
     <label for="password" i18n>Passphrase</label>
     <input
       type="password"
-      name="password"
       autocomplete="disabled"
       i18n-placeholder
       placeholder="Enter new password"
-      [(ngModel)]="passphrase" />
+      [formField]="passphraseForm.passphrase" />
   </sh-form-field>
 
   <sh-form-field>
     <label for="repeatPassword" i18n>Repeat passphrase</label>
     <input
       type="password"
-      name="repeatPassword"
       autocomplete="disabled"
       i18n-placeholder
       placeholder="Repeat password"
-      [disabled]="passphrase().length === 0"
-      [(ngModel)]="repeatPassphrase" />
+      [formField]="passphraseForm.repeatPassphrase" />
 
     @if (passphrase().length !== 0 && passphrase() === repeatPassphrase()) {
       <sh-icon suffix class="sh-success">check</sh-icon>
