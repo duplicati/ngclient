@@ -99,12 +99,18 @@
 }
 
 <div class="form-actions">
-  <button shButton type="button" [routerLink]="['/']" i18n>
+  <a shButton [routerLink]="['/']" i18n>
     <sh-icon>arrow-left</sh-icon>
     Exit
-  </button>
+  </a>
 
-  <button shButton class="raised primary" type="button" (click)="next()" [disabled]="selectedPathsArray().length === 0" i18n>
+  <button
+    shButton
+    class="raised primary"
+    type="button"
+    (click)="next()"
+    [disabled]="selectedPathsArray().length === 0"
+    i18n>
     <sh-icon>arrow-right</sh-icon>
     Continue
   </button>

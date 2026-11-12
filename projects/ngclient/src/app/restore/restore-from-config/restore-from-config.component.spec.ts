@@ -35,6 +35,21 @@ describe('restore from configuration Signal Form', () => {
     return { fixture, component: fixture.componentInstance, imported, importConfig, create, error, navigate };
   }
 
+  it('exposes Back as a home link without importing or creating a job', () => {
+    const { fixture, component, importConfig, create } = setup();
+    const back = fixture.nativeElement.querySelector('header .actions > :first-child') as HTMLElement;
+    expect(back.tagName).toBe('A');
+    expect(back.getAttribute('href')).toBe('/');
+    component.importForm.passphrase().value.set('keep input');
+    component.isRestoring.set(true);
+    fixture.detectChanges();
+    expect(back.getAttribute('href')).toBe('/');
+    expect(fixture.nativeElement.querySelector('button[type=submit]').disabled).toBe(true);
+    expect(importConfig).not.toHaveBeenCalled();
+    expect(create).not.toHaveBeenCalled();
+    expect(component.importForm.passphrase().value()).toBe('keep input');
+  });
+
   it('submits the exact rendered passphrase and default import options, then creates a temporary job', () => {
     const { fixture, component, imported, importConfig, create, navigate } = setup();
     component.importForm.config().value.set('AAH/');
