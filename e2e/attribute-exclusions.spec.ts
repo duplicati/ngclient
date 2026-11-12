@@ -15,6 +15,7 @@ for (const attributes of ['hidden,system', ' hIdDeN , SYSTEM ']) {
           ServerOnlyOptions: [],
           SpecialFolders: [],
           Options: [
+            { Name: 'dry-run', Type: 'Boolean', ShortDescription: 'Dry run' },
             {
               Name: 'exclude-files-attributes',
               Type: 'Flags',
@@ -35,6 +36,7 @@ for (const attributes of ['hidden,system', ' hIdDeN , SYSTEM ']) {
     await page.route('**/api/v2/connection-strings', (route) => route.fulfill({ json: { Success: true, Data: [] } }));
     let settings = [
       { Name: '--no-encryption', Value: 'True' },
+      { Name: '--dry-run', Value: 'YES' },
       { Name: '--exclude-files-attributes', Value: attributes },
     ];
     let saves = 0;
@@ -68,14 +70,14 @@ for (const attributes of ['hidden,system', ' hIdDeN , SYSTEM ']) {
       json: { AccessToken: 'fixture-access-token', RefreshNonce: 'fixture-refresh-nonce' },
     });
     await expect(page).toHaveURL('/');
-    async function openOptions() {
+    async function openOptions(expected = ['Hidden', 'System']) {
       await page.evaluate(() => {
         history.pushState(null, '', '/backup/42/options');
         window.dispatchEvent(new PopStateEvent('popstate'));
       });
       const flags = page.locator('app-options-list sh-select').filter({ hasText: 'Exclude file attributes' });
-      await expect(flags.locator('sh-chip')).toHaveText([/Hidden/, /System/]);
-      await expect(flags.locator('input')).toHaveValue('Hidden,System');
+      await expect(flags.locator('sh-chip')).toHaveText(expected.map((value) => new RegExp(value)));
+      await expect(flags.locator('input')).toHaveValue(expected.join(','));
     }
     await openOptions();
     await page.getByRole('button', { name: 'Submit', exact: true }).click();
@@ -88,5 +90,26 @@ for (const attributes of ['hidden,system', ' hIdDeN , SYSTEM ']) {
     ).toEqual(['hidden', 'system']);
     await expect(page).toHaveURL('/');
     await openOptions();
+    expect(saves).toBe(1);
+    expect(settings.find((setting) => setting.Name === '--exclude-files-attributes')?.Value).toBe(attributes);
+    expect(settings.find((setting) => setting.Name === '--dry-run')?.Value).toBe('YES');
+    const dryRun = page.locator('app-options-list sh-toggle').filter({ hasText: 'Dry run' });
+    const toggle = dryRun.locator('input');
+    await expect(toggle).toBeChecked();
+    await dryRun.click();
+    const flags = page.locator('app-options-list sh-select').filter({ hasText: 'Exclude file attributes' });
+    await flags.click();
+    await page.getByRole('option').filter({ hasText: 'Archive' }).click();
+    await page.keyboard.press('Escape');
+    await expect(flags.locator('sh-chip')).toHaveText([/Hidden/, /System/, /Archive/]);
+    await page.getByRole('button', { name: 'Submit', exact: true }).click();
+    await expect.poll(() => saves).toBe(2);
+    expect(settings.find((setting) => setting.Name === '--exclude-files-attributes')?.Value).toBe(
+      'Hidden,System,Archive'
+    );
+    await expect(page).toHaveURL('/');
+    expect(settings.find((setting) => setting.Name === '--dry-run')?.Value).toBe('False');
+    await openOptions(['Hidden', 'System', 'Archive']);
+    await expect(toggle).not.toBeChecked();
   });
 }
