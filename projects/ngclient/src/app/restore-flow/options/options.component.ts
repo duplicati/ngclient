@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
@@ -60,6 +60,7 @@ export const createRestoreOptionsForm = () => {
     ShipButton,
     ShipIcon,
     ShipFormField,
+    RouterLink,
   ],
   templateUrl: './options.component.html',
   styleUrl: './options.component.scss',
@@ -67,8 +68,6 @@ export const createRestoreOptionsForm = () => {
 })
 export default class OptionsComponent {
   #restoreFlowState = inject(RestoreFlowState);
-  #router = inject(Router);
-  #route = inject(ActivatedRoute);
   #sysinfoState = inject(SysinfoState);
   #dialog = inject(ShipDialogService);
 
@@ -261,10 +260,6 @@ export default class OptionsComponent {
       this.optionsForm.controls.handleExisting.setValue('saveTimestamp');
     }
   });
-
-  goBack() {
-    this.#router.navigate(['select-files'], { relativeTo: this.#route.parent });
-  }
 
   submit() {
     const files = (this.#restoreFlowState.selectFilesFormSignal()?.filesToRestore ?? '')

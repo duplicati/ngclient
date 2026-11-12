@@ -221,3 +221,29 @@ test('shows a failed restore task as a failure rather than a successful completi
   const body = await completeTask(page, restores, tasks, true);
   expect(body.time).toBe(older);
 });
+
+test('options Back is a native link and Enter returns without starting a restore', async ({ page, serverApi }) => {
+  const { restores } = await openRestore(page, serverApi.loginRequests, '/', '/archive/');
+  await selectOlderFiles(page);
+  const back = page.getByRole('link', { name: 'Go back', exact: true });
+  await expect(back).toHaveAttribute('href', '/restore/42/select-files');
+  await page.context().route('**/restore/42/select-files', (route) =>
+    route.fulfill({
+      contentType: 'text/html',
+      body: '<title>File selection target</title>',
+    })
+  );
+  const newPage = page.context().waitForEvent('page');
+  await back.click({ modifiers: ['ControlOrMeta'] });
+  const popup = await newPage;
+  await expect(popup).toHaveURL(/\/restore\/42\/select-files$/);
+  await expect(popup).toHaveTitle('File selection target');
+  await popup.close();
+  await expect(page).toHaveURL('/restore/42/options');
+  expect(restores).toHaveLength(0);
+  await back.focus();
+  await back.press('Enter');
+  await expect(page).toHaveURL('/restore/42/select-files');
+  await expect(page.getByRole('heading', { name: 'Select files', exact: true })).toBeVisible();
+  expect(restores).toHaveLength(0);
+});
