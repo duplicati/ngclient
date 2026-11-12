@@ -162,6 +162,13 @@ async function setupAuthentication(
     }
   };
 
+  const sendRemoteControlStatus = (status: Record<string, unknown>) => {
+    getResponses['/api/v1/remotecontrol/status'] = status;
+    subscriptionResponses.remotecontrol = status;
+    for (const socket of sockets) {
+      socket.send(JSON.stringify({ Type: 'remotecontrol', ApiVersion: 1, Data: status }));
+    }
+  };
   return {
     loginRequests,
     refreshRequests,
@@ -174,6 +181,7 @@ async function setupAuthentication(
     sendBackupList,
     sendServerStatus,
     sendNotifications,
+    sendRemoteControlStatus,
   };
 }
 

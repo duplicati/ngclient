@@ -40,9 +40,9 @@
 
     <div class="mobile-actions">
       <sh-menu>
-        <button shButton class="small menu-mobile-toggle">
+        <button shButton type="button" class="small menu-mobile-toggle" aria-label="More options" i18n-aria-label>
           @if (!isUsingRelay() && !hideConsoleConnectionStatus()) {
-            <app-remote-connectivity-status class="hide-text" />
+            <app-remote-connectivity-status class="hide-text" [indicatorOnly]="true" />
           }
           <sh-icon>dots-three-vertical-bold</sh-icon>
         </button>
