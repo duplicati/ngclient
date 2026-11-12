@@ -1,14 +1,19 @@
 <app-status-bar />
 
 <div class="content">
-  <sh-tabs class="primary">
-    <button tab routerLink="/about/general" routerLinkActive="active" i18n>General</button>
-    <button tab routerLink="/about/changelog" routerLinkActive="active" i18n>Changelog</button>
-    <button tab routerLink="/about/libraries" routerLinkActive="active" i18n>Libraries</button>
-    <button tab routerLink="/about/system-info" routerLinkActive="active" i18n>System info</button>
-    <button tab routerLink="/about/server-settings" routerLinkActive="active" i18n>Server settings</button>
-    <button tab routerLink="/about/logs" routerLinkActive="active" i18n>Logs</button>
-    <button tab routerLink="/about/crashlogs" routerLinkActive="active" i18n>Crash log</button>
+  <sh-tabs class="primary" [value]="activeTab()" (valueChange)="navigateToTab($event)">
+    <!-- RouterLink handles clicks and Enter. ShipTabs handles Space and arrow keys. -->
+    <div class="navigation-links" (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()">
+      <a tab value="/about/general" routerLink="/about/general" routerLinkActive="active" i18n>General</a>
+      <a tab value="/about/changelog" routerLink="/about/changelog" routerLinkActive="active" i18n>Changelog</a>
+      <a tab value="/about/libraries" routerLink="/about/libraries" routerLinkActive="active" i18n>Libraries</a>
+      <a tab value="/about/system-info" routerLink="/about/system-info" routerLinkActive="active" i18n>System info</a>
+      <a tab value="/about/server-settings" routerLink="/about/server-settings" routerLinkActive="active" i18n>
+        Server settings
+      </a>
+      <a tab value="/about/logs" routerLink="/about/logs" routerLinkActive="active" i18n>Logs</a>
+      <a tab value="/about/crashlogs" routerLink="/about/crashlogs" routerLinkActive="active" i18n>Crash log</a>
+    </div>
   </sh-tabs>
 
   <section>
