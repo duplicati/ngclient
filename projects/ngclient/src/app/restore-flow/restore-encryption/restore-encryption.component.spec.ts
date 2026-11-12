@@ -1,4 +1,7 @@
-import { signal } from '@angular/core';
+import { Component, input, model, signal } from '@angular/core';
+import { form } from '@angular/forms/signals';
+import { SettingInputDto } from '../../core/openapi';
+import { OptionsListComponent } from '../../backup/options/options-list/options-list.component';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -6,43 +9,104 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { DuplicatiServer } from '../../core/openapi';
 import { TestState } from '../../backup/source-data/target-url-dialog/test-url/test-url';
 import { RestoreFlowState } from '../restore-flow.state';
-import RestoreEncryptionComponent, { createEncryptionForm } from './restore-encryption.component';
+import RestoreEncryptionComponent from './restore-encryption.component';
+
+@Component({ selector: 'app-options-list', template: '' })
+class OptionsStub {
+  options = model<SettingInputDto[]>([]);
+  hasFreeTextSettings = input(false);
+}
 
 describe('restore temporary job encryption', () => {
   afterEach(() => {
     TestBed.resetTestingModule();
     vi.restoreAllMocks();
   });
-  function setup() {
+  function setup(rendered = false) {
     const response = new Subject<{ ID: string }>();
     const create = vi.fn(() => response);
     const navigate = vi.fn();
-    const state = {
-      encryptionForm: createEncryptionForm(),
+    const createState = () => ({
+      encryptionForm: form(signal<{ passphrase: string | null }>({ passphrase: '' })),
       destinationTargetUrl: signal<string | null>('file:///archive'),
       destinationConnectionStringId: signal<number | null>(null),
       destinationTestSignal: signal<TestState>(null),
       isFileRestore: signal(true),
       exit: vi.fn(),
-    };
+    });
     TestBed.configureTestingModule({
       imports: [RestoreEncryptionComponent],
       providers: [
         { provide: DuplicatiServer, useValue: { postApiV1Backups: create } },
-        { provide: RestoreFlowState, useValue: state },
+        { provide: RestoreFlowState, useFactory: createState },
         { provide: Router, useValue: { navigate } },
         { provide: ActivatedRoute, useValue: { parent: {} } },
       ],
     });
-    TestBed.overrideComponent(RestoreEncryptionComponent, { set: { template: '', imports: [] } });
+    if (rendered)
+      TestBed.overrideComponent(RestoreEncryptionComponent, {
+        remove: { imports: [OptionsListComponent] },
+        add: { imports: [OptionsStub] },
+      });
+    else TestBed.overrideComponent(RestoreEncryptionComponent, { set: { template: '', imports: [] } });
+    const state = TestBed.inject(RestoreFlowState) as unknown as ReturnType<typeof createState>;
     const fixture = TestBed.createComponent(RestoreEncryptionComponent);
-    return { component: fixture.componentInstance, response, create, navigate, state };
+    if (rendered) fixture.detectChanges();
+    return { fixture, component: fixture.componentInstance, response, create, navigate, state };
   }
+  it('submits exact input text together with the saved connection reference', async () => {
+    const { fixture, component, state, create } = setup(true);
+    state.destinationConnectionStringId.set(7);
+    const input = fixture.nativeElement.querySelector('#password') as HTMLInputElement;
+    input.value = ' secret & + % password ';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    fixture.detectChanges();
+    await fixture.whenStable();
+    component.next();
+    expect(state.encryptionForm.passphrase().value()).toBe(' secret & + % password ');
+    expect(create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        body: {
+          Backup: {
+            TargetURL: 'file:///archive',
+            ConnectionStringID: 7,
+            Settings: [{ Name: '--passphrase', Value: ' secret & + % password ' }],
+          },
+        },
+      })
+    );
+  });
+
+  it('renders a null reset as empty and preserves the no-encryption payload', async () => {
+    const { fixture, state, create } = setup(true);
+    state.encryptionForm.passphrase().value.set('previous password');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    state.encryptionForm().reset({ passphrase: null });
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(fixture.nativeElement.querySelector('#password').value).toBe('');
+    expect(state.encryptionForm.passphrase().value()).toBeNull();
+    const event = new Event('submit', { cancelable: true, bubbles: true });
+    fixture.nativeElement.querySelector('form').dispatchEvent(event);
+    expect(event.defaultPrevented).toBe(true);
+    expect(create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        body: {
+          Backup: {
+            TargetURL: 'file:///archive',
+            Settings: [{ Name: '--no-encryption', Value: 'true' }],
+          },
+        },
+      })
+    );
+  });
+
   it.each(['', 'secret &+ password'])(
     'creates a temporary job with the correct encryption option for %s',
     (passphrase) => {
       const { component, create, response, navigate, state } = setup();
-      state.encryptionForm.patchValue({ passphrase });
+      state.encryptionForm.passphrase().value.set(passphrase);
       component.next();
       expect(create).toHaveBeenCalledExactlyOnceWith({
         body: {
