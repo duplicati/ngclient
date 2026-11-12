@@ -1,4 +1,4 @@
-<form [formGroup]="encryptionForm" (submit)="next()" [attr.aria-busy]="creatingTemporaryBackup()">
+<form novalidate (submit)="$event.preventDefault(); next()" [attr.aria-busy]="creatingTemporaryBackup()">
   <div class="encryption-fields" [attr.inert]="creatingTemporaryBackup() ? '' : null">
     @if (!hasEncryptedBackup()) {
       <p i18n>The backup does not contain encrypted files.</p>
@@ -13,7 +13,8 @@
           autocomplete="disabled"
           i18n-placeholder
           placeholder="Enter backup passphrase if defined."
-          formControlName="passphrase" />
+          appNullableText
+          [formField]="encryptionForm.passphrase" />
       </sh-form-field>
     }
 

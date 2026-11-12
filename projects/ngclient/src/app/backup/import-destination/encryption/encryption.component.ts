@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormField } from '@angular/forms/signals';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
@@ -11,18 +10,11 @@ import { DuplicatiServer, SettingInputDto } from '../../../core/openapi';
 import { AsyncOperation } from '../../../core/signals/async-operation';
 import { OptionsListComponent } from '../../options/options-list/options-list.component';
 import { ImportDestinationState } from '../import-destination.state';
-
-const fb = new FormBuilder();
-
-export const createEncryptionForm = () => {
-  return fb.group({
-    passphrase: fb.control<string>(''),
-  });
-};
+import { NullableTextControl } from '../../general/nullable-text-control';
 
 @Component({
   selector: 'app-import-destination-encryption',
-  imports: [ReactiveFormsModule, ShipFormField, ShipIcon, ShipButton, ShipToggleCard, OptionsListComponent],
+  imports: [FormField, NullableTextControl, ShipFormField, ShipIcon, ShipButton, ShipToggleCard, OptionsListComponent],
   templateUrl: './encryption.component.html',
   styleUrl: './encryption.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -45,7 +37,7 @@ export default class EncryptionComponent {
     return testSignal?.containsEncryptedBackupFiles ?? true;
   });
 
-  passphraseSignal = toSignal(this.encryptionForm.controls.passphrase.valueChanges);
+  passphraseSignal = this.encryptionForm.passphrase().value;
 
   showEncryptionField = signal(false);
   isValidConfig = computed(() => {
@@ -71,7 +63,7 @@ export default class EncryptionComponent {
     const currentTargetUrl = this.#importDestinationState.destinationTargetUrl();
     if (!currentTargetUrl) return;
 
-    const pass = this.encryptionForm.value?.passphrase ?? null;
+    const pass = this.encryptionForm.passphrase().value();
 
     let settings: SettingInputDto[] = [];
 

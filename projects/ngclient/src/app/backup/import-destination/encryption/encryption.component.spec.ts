@@ -1,13 +1,13 @@
-import { Component, input, model, signal } from '@angular/core';
+import { Component, input, model } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { CreateBackupDto, DuplicatiServer, SettingInputDto } from '../../../core/openapi';
 import { OptionsListComponent } from '../../options/options-list/options-list.component';
-import { TestState } from '../../source-data/target-url-dialog/test-url/test-url';
+import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { ImportDestinationState } from '../import-destination.state';
-import EncryptionComponent, { createEncryptionForm } from './encryption.component';
+import EncryptionComponent from './encryption.component';
 
 @Component({ selector: 'app-options-list', template: '' })
 class OptionsStub {
@@ -27,17 +27,12 @@ describe('Import destination preparation', () => {
       }) => response
     );
     const navigate = vi.fn();
-    const state = {
-      encryptionForm: createEncryptionForm(),
-      destinationTargetUrl: signal<string | null>('file:///archive'),
-      destinationTestSignal: signal<TestState>(null),
-      temporaryBackupId: signal<string | null>(null),
-    };
     TestBed.configureTestingModule({
       imports: [EncryptionComponent],
       providers: [
         { provide: DuplicatiServer, useValue: { postApiV1Backups: post } },
-        { provide: ImportDestinationState, useValue: state },
+        ImportDestinationState,
+        { provide: ShipDialogService, useValue: {} },
         { provide: Router, useValue: { navigate } },
         { provide: ActivatedRoute, useValue: {} },
       ],
@@ -46,12 +41,67 @@ describe('Import destination preparation', () => {
       remove: { imports: [OptionsListComponent] },
       add: { imports: [OptionsStub] },
     });
+    const state = TestBed.inject(ImportDestinationState);
+    state.destinationTargetUrl.set('file:///archive');
     const fixture = TestBed.createComponent(EncryptionComponent);
     fixture.detectChanges();
     const component = fixture.componentInstance;
     const element = fixture.nativeElement as HTMLElement;
     return { fixture, component, element, state, response, post, navigate };
   }
+
+  it('submits the exact passphrase entered through the real input', async () => {
+    const { fixture, element, state, component, post } = render();
+    const input = element.querySelector<HTMLInputElement>('#password')!;
+    input.value = ' secret & + % value ';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.dispatchEvent(new Event('blur'));
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(state.encryptionForm.passphrase().value()).toBe(' secret & + % value ');
+    expect(state.encryptionForm.passphrase().dirty()).toBe(true);
+    expect(state.encryptionForm.passphrase().touched()).toBe(true);
+    component.next();
+    expect(post.mock.calls[0][0].body.Backup.Settings).toEqual([
+      { Name: '--passphrase', Value: ' secret & + % value ' },
+    ]);
+  });
+
+  it('keeps the input connected after resetting the shared form to null', async () => {
+    const { fixture, element, state, component, post } = render();
+    state.encryptionForm.passphrase().value.set('old passphrase');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    state.encryptionForm().reset({ passphrase: null });
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(element.querySelector<HTMLInputElement>('#password')!.value).toBe('');
+    expect(state.encryptionForm.passphrase().value()).toBeNull();
+    component.next();
+    expect(post.mock.calls[0][0].body.Backup.Settings).toEqual([{ Name: '--no-encryption', Value: 'true' }]);
+  });
+
+  it('disables continuation after the required passphrase is cleared through the input', async () => {
+    const { fixture, element, state, component, post } = render();
+    state.destinationTestSignal.set({
+      action: 'success',
+      targetUrl: 'file:///archive',
+      testAgain: false,
+      destinationIndex: 0,
+      containsEncryptedBackupFiles: true,
+    });
+    const input = element.querySelector<HTMLInputElement>('#password')!;
+    for (const value of ['secret', '']) {
+      input.value = value;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
+      expect(element.querySelector<HTMLButtonElement>('button[type=submit]')!.disabled).toBe(value === '');
+    }
+    component.next();
+    expect(post).not.toHaveBeenCalled();
+  });
 
   it('submits once while pending and exposes a busy, non-editable form', () => {
     const { fixture, component, element, post } = render();
@@ -67,7 +117,7 @@ describe('Import destination preparation', () => {
 
   it('preserves the temporary-backup payload and accepts only the first result', () => {
     const { component, state, response, post, navigate } = render();
-    state.encryptionForm.controls.passphrase.setValue('secret & value');
+    state.encryptionForm.passphrase().value.set('secret & value');
     component.settings.set([
       { Name: ' retry-delay ', Value: '5s' },
       { Name: '--number-of-retries', Value: '3' },
@@ -98,17 +148,17 @@ describe('Import destination preparation', () => {
 
   it('shows failures without losing input and retries with the latest values', () => {
     const { fixture, component, element, state, response, post, navigate } = render();
-    state.encryptionForm.controls.passphrase.setValue('original');
+    state.encryptionForm.passphrase().value.set('original');
     component.next();
     response.error(new Error('Request failed'));
     fixture.detectChanges();
     expect(element.querySelector('[role=alert]')!.textContent).toContain('Please try again');
-    expect(state.encryptionForm.controls.passphrase.value).toBe('original');
+    expect(state.encryptionForm.passphrase().value()).toBe('original');
     expect(component.creatingTemporaryBackup()).toBe(false);
     expect(navigate).not.toHaveBeenCalled();
     const retry = new Subject<CreateBackupDto>();
     post.mockReturnValue(retry);
-    state.encryptionForm.controls.passphrase.setValue('updated');
+    state.encryptionForm.passphrase().value.set('updated');
     component.next();
     fixture.detectChanges();
     expect(element.querySelector('[role=alert]')).toBeNull();
@@ -158,7 +208,7 @@ describe('Import destination preparation', () => {
     });
     component.next();
     expect(post).not.toHaveBeenCalled();
-    state.encryptionForm.controls.passphrase.setValue('passphrase');
+    state.encryptionForm.passphrase().value.set('passphrase');
     component.next();
     expect(post).toHaveBeenCalledTimes(1);
   });

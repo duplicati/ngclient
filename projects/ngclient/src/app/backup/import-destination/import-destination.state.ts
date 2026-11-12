@@ -2,7 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { TestState } from '../../backup/source-data/target-url-dialog/test-url/test-url';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
-import { createEncryptionForm } from './encryption/encryption.component';
+import { form } from '@angular/forms/signals';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +12,7 @@ export class ImportDestinationState {
 
   destinationTargetUrl = signal<string | null>(null);
   destinationTestSignal = signal<TestState>(null);
-  encryptionForm = createEncryptionForm();
+  encryptionForm = form(signal<{ passphrase: string | null }>({ passphrase: '' }));
 
   // The temporary backup ID once created
   temporaryBackupId = signal<string | null>(null);
