@@ -13,7 +13,7 @@ async function navigate(page: Page, path: string) {
     window.dispatchEvent(new PopStateEvent('popstate'));
   }, path);
 }
-async function openSources(page: Page) {
+async function openSources(page: Page, filters: { Include: boolean; Expression: string; Order: number }[] = []) {
   const saves: Route[] = [];
   await page.route('**/api/v2/connection-strings', (route) => route.fulfill({ json: { Success: true, Data: [] } }));
   await page.route('**/api/v1/filesystem*', (route) => route.fulfill({ json: [] }));
@@ -31,7 +31,7 @@ async function openSources(page: Page) {
           Sources: sources,
           Settings: [{ Name: '--no-encryption', Value: 'True' }],
           TargetURL: 'file:///backup',
-          Filters: [],
+          Filters: filters,
           Metadata: {},
           OperationType: 'Backup',
         },
@@ -91,4 +91,26 @@ test('wrapping source paths preserves editing and the saved source values', asyn
   expect(saves[0].request().postDataJSON().Backup.Sources).toEqual([changed, ...sources.slice(1)]);
   await saves[0].fulfill({ json: {} });
   await expect(page).toHaveURL('/');
+});
+
+test('direct path and size exclusion edits keep existing filters in the saved job', async ({
+  authenticatedPage: page,
+}) => {
+  const filters = [{ Include: false, Expression: '*.tmp', Order: 0 }];
+  const saves = await openSources(page, filters);
+  const source = page.locator('app-source-data');
+  await source.getByPlaceholder('Add a direct path').fill('/source/new/');
+  await source.locator('.paths > .row-inputs button').click();
+  await expect(source.getByPlaceholder('Add a direct path')).toHaveValue('');
+  await expect(source.locator('.source-path-text').last()).toHaveText('/source/new/');
+  await source.locator('sh-toggle').filter({ hasText: 'Files larger than' }).click();
+  await source.locator('app-size input[type=number]').fill('25');
+  await page.getByRole('button', { name: 'Save changes', exact: true }).click();
+  await expect.poll(() => saves.length).toBe(1);
+  const saved = saves[0].request().postDataJSON().Backup;
+  expect(saved.Sources).toEqual([...sources, '/source/new/']);
+  expect(saved.Filters).toEqual(filters);
+  expect(saved.Settings).toContainEqual(expect.objectContaining({ Name: '--skip-files-larger-than', Value: '25MB' }));
+  await saves[0].fulfill({ json: {} });
+  await expect(page.getByText('Backup settings saved.', { exact: true })).toBeVisible();
 });

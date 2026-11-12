@@ -8,8 +8,9 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
+import { form, FormField } from '@angular/forms/signals';
+import { compatForm } from '@angular/forms/signals/compat';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipChip } from '@ship-ui/core/ship-chip';
@@ -27,6 +28,7 @@ import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.c
 import { WebModulesService } from '../../core/services/webmodules.service';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 import { BackupState } from '../backup.state';
+import { NullableTextControl } from '../general/nullable-text-control';
 import { FiltersComponent } from '../components/filters/filters.component';
 import { getBackendIcon, getRemotePathDisplayName } from '../destination/destination.config-utilities';
 import { CustomRemotePermissionsDialog } from './custom-remote-permissions-dialog/custom-remote-permissions-dialog';
@@ -40,7 +42,8 @@ import { TargetUrlDialog } from './target-url-dialog/target-url-dialog';
   selector: 'app-source-data',
   imports: [
     FormsModule,
-    ReactiveFormsModule,
+    FormField,
+    NullableTextControl,
     ShipFormField,
     ShipIcon,
     ShipButton,
@@ -65,17 +68,21 @@ export default class SourceDataComponent {
   #sysInfo = inject(SysinfoState);
   #webModules = inject(WebModulesService);
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
-  sourceDataForm = this.#backupState.sourceDataForm;
-  sourceDataFormSignal = this.#backupState.sourceDataFormSignal;
-
-  newPathCtrl = new FormControl('');
+  // Keep the shared controls as the single source of truth during the staged migration.
+  sourceForm = compatForm(
+    signal({
+      path: this.#backupState.sourceDataForm.controls.path,
+      filesLargerThan: this.#backupState.sourceDataForm.controls.excludes.controls.filesLargerThan,
+    })
+  );
+  newPathForm = form(signal<string | null>(''));
   filesLargerThan = computed(() => {
-    const el = this.sourceDataFormSignal()?.excludes?.filesLargerThan ?? {};
-    return el.size !== null && el.unit !== null ? `${el.size}${el.unit}` : null;
+    const { size, unit } = this.sourceForm.filesLargerThan().value();
+    return size !== null && unit !== null ? `${size}${unit}` : null;
   });
   osType = this.#backupState.osType;
 
-  pathSignal = toSignal(this.sourceDataForm.controls.path.valueChanges);
+  pathSignal = this.sourceForm.path().value;
   pathArray = computed(
     () =>
       (this.pathSignal()
@@ -90,6 +97,7 @@ export default class SourceDataComponent {
 
   oldPath = signal<string | null>(null);
   editingPath = signal<string | null>(null);
+  editingPathForm = form(this.editingPath);
   addingNewPath = signal(false);
   bulkPathEditMode = signal(false);
   bulkPaths = signal('');
@@ -108,7 +116,7 @@ export default class SourceDataComponent {
   });
 
   #pathList() {
-    return (this.sourceDataForm.controls.path.value ?? '').split('\0').filter((x) => x !== '');
+    return (this.sourceForm.path().value() ?? '').split('\0').filter((x) => x !== '');
   }
 
   isPickedFolder(path: string) {
@@ -136,7 +144,7 @@ export default class SourceDataComponent {
 
       const separator = this.#sysInfo.systemInfo()?.DirectorySeparator ?? '/';
       const next = applyIncludePick(this.#pathList(), folder, result.picks, result.excludes, separator);
-      this.sourceDataForm.controls.path.setValue(next.join('\0'));
+      this.sourceForm.path().value.set(next.join('\0'));
     });
   }
 
@@ -218,7 +226,7 @@ export default class SourceDataComponent {
     const filters = this.pathArray();
     const combined = [...newPaths, ...filters];
     const distinct = [...new Set(combined)].join('\0');
-    this.sourceDataForm.controls.path.setValue(distinct);
+    this.sourceForm.path().value.set(distinct);
   }
 
   editPath(oldPath: string) {
@@ -252,8 +260,8 @@ export default class SourceDataComponent {
       if (!newPath) return;
 
       const newRemotePath = `${prefix}|diskimage://${newPath}`;
-      const currentPath = this.sourceDataForm.controls.path.value;
-      this.sourceDataForm.controls.path.setValue(currentPath?.replace(oldPath, newRemotePath) ?? '');
+      const currentPath = this.sourceForm.path().value();
+      this.sourceForm.path().value.set(currentPath?.replace(oldPath, newRemotePath) ?? '');
     });
   }
 
@@ -279,14 +287,14 @@ export default class SourceDataComponent {
 
       const newPath = `${prefix}|${targetUrl}`;
 
-      const currentPath = this.sourceDataForm.controls.path.value;
-      this.sourceDataForm.controls.path.setValue(currentPath?.replace(oldPath, newPath) ?? '');
+      const currentPath = this.sourceForm.path().value();
+      this.sourceForm.path().value.set(currentPath?.replace(oldPath, newPath) ?? '');
     });
   }
 
   updateFilesLargerThan($event: any) {
     const { size, unit } = splitSize($event);
-    this.sourceDataForm.controls.excludes.controls.filesLargerThan.setValue({
+    this.sourceForm.filesLargerThan().value.set({
       size,
       unit,
     });
@@ -303,9 +311,9 @@ export default class SourceDataComponent {
       return;
     }
 
-    const currentPath = this.sourceDataForm.controls.path.value;
+    const currentPath = this.sourceForm.path().value();
 
-    this.sourceDataForm.controls.path.setValue(currentPath?.replace(oldPath, newPath) ?? '');
+    this.sourceForm.path().value.set(currentPath?.replace(oldPath, newPath) ?? '');
     this.oldPath.set(null);
     this.editingPath.set(null);
   }
@@ -316,7 +324,7 @@ export default class SourceDataComponent {
   }
 
   removePath(path: string) {
-    const currentPath = this.sourceDataForm.controls.path.value ?? '';
+    const currentPath = this.sourceForm.path().value() ?? '';
     const paths = currentPath.split('\0');
     const indexOfPath = paths.indexOf(path);
 
@@ -325,24 +333,24 @@ export default class SourceDataComponent {
     paths.splice(indexOfPath, 1);
     const nonFilterPath = paths.filter((x) => x && x !== '').join('\0');
 
-    this.sourceDataForm.controls.path.setValue(nonFilterPath);
+    this.sourceForm.path().value.set(nonFilterPath);
   }
 
   addPath(path: string) {
-    const currentPath = this.sourceDataForm.controls.path.value;
+    const currentPath = this.sourceForm.path().value();
     const combined = [currentPath, path].filter((x) => x && x !== '').join('\0');
 
-    this.sourceDataForm.controls.path.setValue(combined);
+    this.sourceForm.path().value.set(combined);
   }
 
   updateFilters(newFilters: string[]) {
     const nonFilterPaths = this.nonFilterPaths() ?? [];
     const combined = [...nonFilterPaths, ...newFilters].filter((x) => x && x !== '').join('\0');
-    this.sourceDataForm.controls.path.setValue(combined);
+    this.sourceForm.path().value.set(combined);
   }
 
   getPath() {
-    return this.sourceDataForm.value.path ?? null;
+    return this.#backupState.sourceDataForm.value.path ?? null;
   }
 
   getBackendIcon(path: string | null | undefined) {
@@ -413,12 +421,12 @@ export default class SourceDataComponent {
 
   toggleFilesLargerThan($event: boolean) {
     if ($event) {
-      this.sourceDataForm.controls.excludes.controls.filesLargerThan.setValue({
+      this.sourceForm.filesLargerThan().value.set({
         size: 50,
         unit: 'MB',
       });
     } else {
-      this.sourceDataForm.controls.excludes.controls.filesLargerThan.setValue({
+      this.sourceForm.filesLargerThan().value.set({
         size: null,
         unit: null,
       });
@@ -426,8 +434,8 @@ export default class SourceDataComponent {
   }
 
   addNewPath() {
-    const currentPath = this.sourceDataForm.controls.path.value;
-    const newPath = this.newPathCtrl.value;
+    const currentPath = this.sourceForm.path().value();
+    const newPath = this.newPathForm().value();
 
     // TODO - Add path validation
     const existing = currentPath?.split('\0') || [];
@@ -435,8 +443,8 @@ export default class SourceDataComponent {
     if (newPath && !existing.includes(newPath)) existing.push(newPath);
 
     const updatedPath = existing.filter((x) => x && x !== '').join('\0');
-    this.sourceDataForm.controls.path.setValue(updatedPath);
-    this.newPathCtrl.setValue('');
+    this.sourceForm.path().value.set(updatedPath);
+    this.newPathForm().value.set('');
   }
 
   goBack() {
