@@ -32,8 +32,7 @@ import {
   toServerTimezoneSetting,
 } from './server-timezone-settings';
 
-import { CreateSignalOptions, WritableSignal } from '@angular/core';
-import { createSignal, SIGNAL, SignalGetter, signalSetFn, signalUpdateFn } from '@angular/core/primitives/signals';
+import { debounceSignal } from '../core/functions/debounce-signal';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import { FileTreeState } from '../core/states/file-tree.state';
 import { RelayconfigState } from '../core/states/relayconfig.state';
@@ -43,31 +42,6 @@ import {
   USAGE_STATISTICS_OPTIONS,
   UsageStatisticsControlValue,
 } from './usage-statistics-settings';
-
-export function debounceSignal<T>(initialValue: T, time: number, options?: CreateSignalOptions<T>): WritableSignal<T> {
-  const [getter] = createSignal<T>(initialValue, options?.equal);
-
-  const signalFn = getter as unknown as WritableSignal<T>;
-  const node = (getter as SignalGetter<T>)[SIGNAL];
-
-  let timeoutId: any;
-
-  signalFn.set = (newValue: T) => {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => {
-      signalSetFn(node, newValue);
-    }, time);
-  };
-
-  signalFn.update = (updateFn: (value: T) => T) => {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => {
-      signalUpdateFn(node, updateFn);
-    }, time);
-  };
-
-  return signalFn;
-}
 
 type UpdateChannel = '' | 'stable' | 'beta' | 'experimental' | 'canary';
 

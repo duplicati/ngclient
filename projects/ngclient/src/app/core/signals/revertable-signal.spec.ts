@@ -49,4 +49,25 @@ describe('revertableSignal', () => {
     value.set({ id: 2, label: 'updated' });
     expect(value()).toEqual({ id: 2, label: 'updated' });
   });
+  it('restores each captured value even when writes overlap', () => {
+    const value = revertableSignal(() => 1);
+    const first = value.set(2);
+    const second = value.update((n) => n + 1);
+    first();
+    expect(value()).toBe(1);
+    second();
+    expect(value()).toBe(2);
+  });
+
+  it('follows external changes and retains the captured rollback value', () => {
+    const source = signal(1);
+    const value = revertableSignal(() => source());
+    const revert = value.set(2);
+    source.set(3);
+    expect(value()).toBe(3);
+    revert();
+    expect(value()).toBe(1);
+    source.set(4);
+    expect(value()).toBe(4);
+  });
 });

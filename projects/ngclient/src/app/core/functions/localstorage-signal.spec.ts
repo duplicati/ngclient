@@ -80,4 +80,24 @@ describe('localStorageSignal', () => {
     expect(storage.getItemParsed).toHaveBeenCalledWith('setting', true);
     expect(storage.setItemParsed).toHaveBeenCalledWith('setting', 'updated', true);
   });
+  it('persists synchronously even when equality retains the previous signal value', () => {
+    const value = TestBed.runInInjectionContext(() =>
+      localStorageSignal('setting', { id: 1, name: 'old' }, false, {
+        equal: (a, b) => a.id === b.id,
+      })
+    );
+    const initial = value();
+    value.set({ id: 1, name: 'new' });
+    expect(storage.setItemParsed).toHaveBeenCalledWith('setting', { id: 1, name: 'new' }, false);
+    expect(value()).toBe(initial);
+  });
+
+  it('does not change its value if persistence fails', () => {
+    const value = create(1);
+    vi.mocked(storage.setItemParsed).mockImplementation(() => {
+      throw new Error('storage failure');
+    });
+    expect(() => value.update((n) => n + 1)).toThrow('storage failure');
+    expect(value()).toBe(1);
+  });
 });
