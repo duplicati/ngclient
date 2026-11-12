@@ -25,7 +25,7 @@ describe('command execution confirmation and arguments', () => {
       { Name: '--verbose', Value: 'true' },
     ]);
     const state = {
-      optionsFields: {},
+      optionsForm: {},
       finishedLoading: signal(false),
       backupId: signal('42'),
       settings,

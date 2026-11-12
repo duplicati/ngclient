@@ -47,7 +47,7 @@ describe('backup save lifecycle', () => {
     state.backupId.set('new');
     state.generalForm.patchValue({ name: 'Original name', encryption: '-' });
     state.sourceDataForm.controls.path.setValue('/source/');
-    state.scheduleFields.autoRun.set(false);
+    state.scheduleForm.autoRun().value.set(false);
     state.setTargetUrl('file:///backup');
     TestBed.tick();
   });

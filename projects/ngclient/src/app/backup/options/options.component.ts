@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { FormField } from '@angular/forms/signals';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
@@ -37,7 +38,16 @@ const RETENTION_OPTIONS: { value: RetentionType; name: string }[] = [
 
 @Component({
   selector: 'app-advanced-options-settings',
-  imports: [FormsModule, OptionsListComponent, TimespanComponent, ShipButton, ShipIcon, ShipSelect, ShipFormField],
+  imports: [
+    FormsModule,
+    FormField,
+    OptionsListComponent,
+    TimespanComponent,
+    ShipButton,
+    ShipIcon,
+    ShipSelect,
+    ShipFormField,
+  ],
   templateUrl: './options.component.html',
   styleUrl: './options.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,13 +60,18 @@ export default class OptionsComponent {
 
   isSubmitting = this.#backupState.isSubmitting;
   settings = this.#backupState.settings;
-  optionsFields = this.#backupState.optionsFields;
+  optionsForm = this.#backupState.optionsForm;
   applicationOptions = this.#backupState.applicationOptions;
   isSyncMode = this.#backupState.isSyncMode;
   hasSyncSnapshots = inject(SysinfoState).hasSyncSnapshots;
 
   retentionOptions = signal(RETENTION_OPTIONS);
   syncSnapshotOptionNames = SYNC_SNAPSHOT_OPTION_NAMES;
+
+  updateRetention(value: string) {
+    const option = RETENTION_OPTIONS.find((option) => option.value === value);
+    if (option) this.optionsForm.backupRetention().value.set(option.value);
+  }
 
   goBack() {
     this.#router.navigate(['schedule'], { relativeTo: this.#route.parent });

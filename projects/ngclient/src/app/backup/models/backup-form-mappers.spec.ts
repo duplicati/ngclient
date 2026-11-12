@@ -17,8 +17,8 @@ describe('backup form model boundaries', () => {
     expect(secondSource.controls.path.value).toBe('');
     const firstSchedule = SCHEDULE_FIELD_DEFAULTS();
     const secondSchedule = SCHEDULE_FIELD_DEFAULTS();
-    firstSchedule.runAgain.allowedDays.mon.set(false);
-    expect(secondSchedule.runAgain.allowedDays.mon()).toBe(true);
+    firstSchedule.runAgain.allowedDays.mon = false;
+    expect(secondSchedule.runAgain.allowedDays.mon).toBe(true);
   });
 
   it('does not mutate supplied settings while adding the managed source size option', () => {

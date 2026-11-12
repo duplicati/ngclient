@@ -94,7 +94,7 @@ describe('default schedule date', () => {
     vi.useFakeTimers({ now: tokyoMorning });
     const { SCHEDULE_FIELD_DEFAULTS } = await import('../models/schedule-form');
 
-    expect(SCHEDULE_FIELD_DEFAULTS().nextTime.date()).toBe('2026-10-11');
+    expect(SCHEDULE_FIELD_DEFAULTS().nextTime.date).toBe('2026-10-11');
   });
 
   it('uses the local date for the predefined options', async () => {

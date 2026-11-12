@@ -68,7 +68,7 @@ export default class ScheduleComponent {
   #route = inject(ActivatedRoute);
 
   unitOptions = UNIT_OPTIONS;
-  scheduleFields = this.#backupState.scheduleFields;
+  scheduleForm = this.#backupState.scheduleForm;
 
   goBack() {
     this.#router.navigate(['source-data'], { relativeTo: this.#route.parent });

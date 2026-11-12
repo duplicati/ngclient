@@ -1,4 +1,3 @@
-import { signal } from '@angular/core';
 import { DayOfWeek, ScheduleInputDto } from '../../core/openapi';
 
 export const SCHEDULE_DEFAULT_OPTIONS = [
@@ -217,24 +216,24 @@ export function scheduleOptionToSchedule(schedule: ScheduleFormValue): ScheduleI
   };
 }
 
-export const SCHEDULE_FIELD_DEFAULTS = () => {
+export const SCHEDULE_FIELD_DEFAULTS = (): ScheduleFormValue => {
   return {
-    autoRun: signal(true),
+    autoRun: true,
     nextTime: {
-      time: signal<string>('13:00'),
-      date: signal<string | Date>(toLocalDateString(new Date())),
+      time: '13:00',
+      date: toLocalDateString(new Date()),
     },
     runAgain: {
-      repeatValue: signal(1),
-      repeatUnit: signal<string>('D'),
+      repeatValue: 1,
+      repeatUnit: 'D',
       allowedDays: {
-        mon: signal(true),
-        tue: signal(true),
-        wed: signal(true),
-        thu: signal(true),
-        fri: signal(true),
-        sat: signal(true),
-        sun: signal(true),
+        mon: true,
+        tue: true,
+        wed: true,
+        thu: true,
+        fri: true,
+        sat: true,
+        sun: true,
       },
     },
   };

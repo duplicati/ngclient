@@ -2,7 +2,7 @@
   <h3 class="title-30" i18n>Options</h3>
 
   <!-- <div class="remote-volume-wrap">
-    <app-size [customId]="'size'" [(ngModel)]="optionsFields.remoteVolumeSize">
+    <app-size [customId]="'size'" [(ngModel)]="optionsForm.remoteVolumeSize">
       <label for="size" i18n>
         Remote volume size
         @if (exceededVolumeSize()) {
@@ -30,28 +30,28 @@
   @if (!isSyncMode()) {
     <sh-select [options]="retentionOptions()" [inlineSearch]="true" [isClearable]="false" value="value" label="name">
       <label for="size" i18n>Backup retention</label>
-      <input type="text" [(ngModel)]="optionsFields.backupRetention" />
+      <input type="text" [ngModel]="optionsForm.backupRetention().value()" (ngModelChange)="updateRetention($event)" />
     </sh-select>
 
-    @if (optionsFields.backupRetention() === 'all') {
+    @if (optionsForm.backupRetention().value() === 'all') {
       <p i18n>Nothing will be deleted. The backup size will grow with each change.</p>
-    } @else if (optionsFields.backupRetention() === 'time') {
+    } @else if (optionsForm.backupRetention().value() === 'time') {
       <p i18n>If at least one newer backup is found, all backups older than this date are deleted.</p>
-      <app-timespan [customId]="'backupRetentionTime'" [(ngModel)]="optionsFields.backupRetentionTime">
+      <app-timespan [customId]="'backupRetentionTime'" [formField]="optionsForm.backupRetentionTime">
         <label for="backupRetentionTime" i18n>Time to keep versions</label>
       </app-timespan>
-    } @else if (optionsFields.backupRetention() === 'versions') {
+    } @else if (optionsForm.backupRetention().value() === 'versions') {
       <p i18n>Once there are more backups than the specified number, the oldest backups are deleted.</p>
       <sh-form-field>
         <label for="backupRetentionVersions" i18n>Number of versions</label>
-        <input type="number" id="backupRetentionVersions" [(ngModel)]="optionsFields.backupRetentionVersions" />
+        <input type="number" id="backupRetentionVersions" [formField]="optionsForm.backupRetentionVersions" />
       </sh-form-field>
-    } @else if (optionsFields.backupRetention() === 'smart') {
+    } @else if (optionsForm.backupRetention().value() === 'smart') {
       <p i18n>
         Over time backups will be deleted automatically. There will remain one backup for each of the last 7 days, each
         of the last 4 weeks, each of the last 12 months. There will always be at least one remaining backup.
       </p>
-    } @else if (optionsFields.backupRetention() === 'custom') {
+    } @else if (optionsForm.backupRetention().value() === 'custom') {
       <p i18n>
         Enter a retention strategy manually. Placeholders are D/W/Y for days/weeks/years and U for unlimited. The syntax
         is: 7D:1D,4W:1W,36M:1M. This example keeps one backup for each of the next 7 days, one for each of the next 4
@@ -60,16 +60,16 @@
       <sh-form-field>
         <p i18n>Once there are more backups than the specified number, the oldest backups are deleted.</p>
         <label for="backupRetentionCustom" i18n>Retention expression</label>
-        <input type="text" id="backupRetentionCustom" [(ngModel)]="optionsFields.backupRetentionCustom" />
+        <input type="text" id="backupRetentionCustom" [formField]="optionsForm.backupRetentionCustom" />
       </sh-form-field>
     }
   } @else if (hasSyncSnapshots()) {
     <div class="sync-snapshots">
       <label class="sync-snapshots-toggle">
-        <input type="checkbox" id="syncSnapshotFolders" [(ngModel)]="optionsFields.syncSnapshotFolders" />
+        <input type="checkbox" id="syncSnapshotFolders" [formField]="optionsForm.syncSnapshotFolders" />
         <span i18n>Keep each run in a dated snapshot folder</span>
       </label>
-      @if (optionsFields.syncSnapshotFolders()) {
+      @if (optionsForm.syncSnapshotFolders().value()) {
         <p i18n>
           Each run writes a complete copy of the source into its own folder, named after the time of the run, that can
           be browsed directly and restored from. Files that did not change are hard linked from the previous snapshot
@@ -78,16 +78,16 @@
         </p>
         <sh-form-field>
           <label for="syncKeepSnapshots" i18n>Number of snapshots to keep (0 keeps all)</label>
-          <input type="number" id="syncKeepSnapshots" min="0" [(ngModel)]="optionsFields.syncKeepSnapshots" />
+          <input type="number" id="syncKeepSnapshots" [formField]="optionsForm.syncKeepSnapshots" />
         </sh-form-field>
         <label class="sync-snapshots-toggle">
           <input
             type="checkbox"
             id="syncSnapshotDisableHardlinks"
-            [(ngModel)]="optionsFields.syncSnapshotDisableHardlinks" />
+            [formField]="optionsForm.syncSnapshotDisableHardlinks" />
           <span i18n>Copy unchanged files instead of hard linking them</span>
         </label>
-        @if (optionsFields.syncSnapshotDisableHardlinks()) {
+        @if (optionsForm.syncSnapshotDisableHardlinks().value()) {
           <p i18n>
             Every snapshot gets its own copy of every file. This takes more space and time, but changing a file in one
             snapshot never changes it in another.
