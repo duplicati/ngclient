@@ -1,12 +1,10 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipChip } from '@ship-ui/core/ship-chip';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipTabs } from '@ship-ui/core/ship-tabs';
-import { map } from 'rxjs';
 import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
 import { BytesPipe } from '../../core/pipes/byte.pipe';
 import { DurationFormatPipe } from '../../core/pipes/duration.pipe';
@@ -36,12 +34,11 @@ import { RemoteLogComponent } from './remote-log/remote-log.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class LogComponent {
-  #route = inject(ActivatedRoute);
   #backupsState = inject(BackupsState);
 
   MISSING_BACKUP_NAME = $localize`Backup name missing`;
   activeTab = signal<'general' | 'destination'>('general');
-  backupId = toSignal<string>(this.#route.params.pipe(map((x) => x['id'])));
+  backupId = input.required<string>({ alias: 'id' });
   backup = computed(() => {
     const backupId = this.backupId();
     if (backupId) {
