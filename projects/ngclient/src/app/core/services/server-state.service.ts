@@ -1,4 +1,5 @@
-import { computed, effect, inject, Injectable, signal, untracked } from '@angular/core';
+import { computed, DestroyRef, effect, inject, Injectable, signal, untracked } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { defer, Observable, Subscriber, Subscription } from 'rxjs';
 import { DuplicatiServer, GetTaskStateDto } from '../openapi';
 import { AppAuthState } from '../states/app-auth.state';
@@ -12,6 +13,7 @@ const RECENT_COMPLETED_TASKS = 10;
   providedIn: 'root',
 })
 export class ServerStateService {
+  #destroyRef = inject(DestroyRef);
   #wsService = inject(ServerStatusWebSocketService);
   #longPollService = inject(ServerStatusLongPollService);
   #dupServer = inject(DuplicatiServer);
@@ -44,7 +46,7 @@ export class ServerStateService {
     });
 
     this.#wsService.subscribe('taskcompleted');
-    this.#wsService.taskCompleted.subscribe((task) => {
+    this.#wsService.taskCompleted.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe((task) => {
       this.#recentCompletedTasks.unshift(task);
       if (this.#recentCompletedTasks.length > RECENT_COMPLETED_TASKS) this.#recentCompletedTasks.pop();
 
@@ -59,6 +61,14 @@ export class ServerStateService {
         });
         if (Object.keys(this.#waitForTaskItems).length === 0) this.#stopPolling();
       }
+    });
+
+    this.#destroyRef.onDestroy(() => {
+      this.#stopPolling();
+      const waiters = Object.values(this.#waitForTaskItems).flat();
+      // Complete callbacks can create new waits; detach first and reject waits after destruction.
+      this.#waitForTaskItems = {};
+      waiters.forEach((subscriber) => subscriber.complete());
     });
   }
 
@@ -122,6 +132,11 @@ export class ServerStateService {
 
   waitForTaskToComplete(taskId: number) {
     return new Observable<GetTaskStateDto>((subscriber) => {
+      if (this.#destroyRef.destroyed) {
+        subscriber.complete();
+        return;
+      }
+
       // In case there is a race and the task has already completed
       const existing = this.#recentCompletedTasks.find((task) => task.ID === taskId);
       if (existing) {
