@@ -1,7 +1,6 @@
 import { DecimalPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute } from '@angular/router';
 import { ShipCard } from '@ship-ui/core/ship-card';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
@@ -36,8 +35,9 @@ export default class RestoreProgressComponent implements OnInit {
   #serverState = inject(ServerStateService);
   #statusBarState = inject(StatusBarState);
   #restoreFlowState = inject(RestoreFlowState);
-  #route = inject(ActivatedRoute);
   #destroyRef = inject(DestroyRef);
+
+  taskId = input.required<string>({ alias: 'taskid' });
 
   statusData = this.#statusBarState.statusData;
   backupId = this.#restoreFlowState.backupId;
@@ -72,7 +72,7 @@ export default class RestoreProgressComponent implements OnInit {
   };
 
   ngOnInit() {
-    const taskid = Number(this.#route.snapshot.params['taskid'] ?? '');
+    const taskid = Number(this.taskId());
     defer(() => this.#dupServer.getApiV1TaskByTaskid({ path: { taskid } }))
       .pipe(takeUntilDestroyed(this.#destroyRef))
       .subscribe({

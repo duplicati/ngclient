@@ -1,6 +1,5 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute } from '@angular/router';
 import { finalize, Subject } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { StatusBarState } from '../../core/components/status-bar/status-bar.state';
@@ -64,7 +63,6 @@ describe('RestoreProgressComponent', () => {
     TestBed.configureTestingModule({
       imports: [RestoreProgressComponent],
       providers: [
-        { provide: ActivatedRoute, useValue: { snapshot: { params: { taskid: '42' } } } },
         { provide: DuplicatiServer, useValue: { getApiV1TaskByTaskid: getTask } },
         { provide: ServerStateService, useValue: { waitForTaskToComplete: wait } },
         { provide: StatusBarState, useValue: { statusData } },
@@ -73,6 +71,7 @@ describe('RestoreProgressComponent', () => {
     });
     TestBed.overrideComponent(RestoreProgressComponent, { set: { template: '', imports: [] } });
     fixture = TestBed.createComponent(RestoreProgressComponent);
+    fixture.componentRef.setInput('taskid', '42');
     fixture.detectChanges();
     return {
       component: fixture.componentInstance,
