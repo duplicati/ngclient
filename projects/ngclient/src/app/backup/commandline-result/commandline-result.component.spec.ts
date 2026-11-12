@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, of, Subject, throwError } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { CommandLineLogOutputDto, DuplicatiServer } from '../../core/openapi';
 import CommandlineResultComponent from './commandline-result.component';
@@ -31,13 +30,6 @@ describe('CommandlineResultComponent', () => {
       imports: [CommandlineResultComponent],
       providers: [
         {
-          provide: ActivatedRoute,
-          useValue: {
-            params: new BehaviorSubject({ runId: 'run-id' }),
-            queryParams: new BehaviorSubject({ state: 'state-id' }),
-          },
-        },
-        {
           provide: DuplicatiServer,
           useValue: {
             getApiV1CommandlineByRunid: getCommandline,
@@ -55,6 +47,8 @@ describe('CommandlineResultComponent', () => {
     });
 
     fixture = TestBed.createComponent(CommandlineResultComponent);
+    fixture.componentRef.setInput('runId', 'run-id');
+    fixture.componentRef.setInput('state', 'state-id');
     component = fixture.componentInstance;
     fixture.detectChanges();
     logOutput = fixture.nativeElement.querySelector('code');

@@ -2,15 +2,14 @@ import {
   afterRenderEffect,
   ChangeDetectionStrategy,
   Component,
-  computed,
   ElementRef,
   inject,
+  input,
   OnDestroy,
   signal,
   viewChild,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { catchError, defer, EMPTY, exhaustMap, interval, take } from 'rxjs';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
@@ -41,11 +40,8 @@ const getErrorStatus = (error: unknown): number | undefined => {
 })
 export default class CommandlineResultComponent implements OnDestroy {
   #dupServer = inject(DuplicatiServer);
-  #route = inject(ActivatedRoute);
-  #routeParamsSignal = toSignal(this.#route.params);
-  #queryParamsSignal = toSignal(this.#route.queryParams);
-  runId = computed(() => this.#routeParamsSignal()?.['runId']);
-  stateId = computed(() => this.#queryParamsSignal()?.['state']);
+  runId = input.required<string>();
+  stateId = input<string | undefined>(undefined, { alias: 'state' });
 
   offset = signal<number>(0);
   status = signal<Status>('starting');
