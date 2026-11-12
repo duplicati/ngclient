@@ -47,6 +47,27 @@ describe('job deletion remote files option', () => {
     return { fixture, component: fixture.componentInstance, remove, open };
   }
 
+  it.each(['Backup', 'Sync'] as const)('exposes navigation links without deleting a %s job', async (operationType) => {
+    const { fixture, component, remove, open } = await setup(operationType);
+    const exportLink = () =>
+      Array.from(fixture.nativeElement.querySelectorAll('[shButton]') as NodeListOf<HTMLElement>).find((item) =>
+        item.textContent!.includes('Export configuration')
+      )!;
+    const cancel = fixture.nativeElement.querySelector('.actions [shButton]') as HTMLElement;
+    expect(exportLink().tagName).toBe('A');
+    expect(exportLink().getAttribute('href')).toBe('/backup/42/export');
+    expect(cancel.tagName).toBe('A');
+    expect(cancel.getAttribute('href')).toBe('/');
+    fixture.componentRef.setInput('id', '43');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(exportLink().getAttribute('href')).toBe('/backup/43/export');
+    expect(remove).not.toHaveBeenCalled();
+    expect(open).not.toHaveBeenCalled();
+    expect(component.isDeleting()).toBe(false);
+    expect(fixture.nativeElement.querySelector('.actions button').textContent).toContain('Delete backup');
+  });
+
   it('releases the deletion state after cancellation and allows another attempt', async () => {
     const { component, open, remove, fixture } = await setup();
     component.deleteBackup();

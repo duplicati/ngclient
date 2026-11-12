@@ -23,10 +23,10 @@
 <section>
   <h4 i18n>Export configuration</h4>
   <p i18n>If you want to use the backup later, you can export the configuration before deleting it.</p>
-  <button shButton [routerLink]="['/backup', id(), 'export']">
+  <a shButton [routerLink]="['/backup', id(), 'export']">
     Export configuration
     <sh-icon>caret-right</sh-icon>
-  </button>
+  </a>
 </section>
 
 @if (noLocalDb && !isSyncMode()) {
@@ -48,6 +48,6 @@
 }
 
 <div class="actions">
-  <button shButton [routerLink]="['/']" i18n>Cancel</button>
+  <a shButton [routerLink]="['/']" i18n>Cancel</a>
   <button shButton class="raised error" [class.loading]="isDeleting()" (click)="deleteBackup()">Delete backup</button>
 </div>

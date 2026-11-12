@@ -65,6 +65,38 @@ test.describe('Sync job deletion', () => {
 test.describe('backup deletion', () => {
   test.use({ initialBackups: [[job('Backup')], { scope: 'test' }] });
 
+  for (const button of ['ControlOrMeta', 'middle'] as const) {
+    test(`export link opens a separate tab with ${button} and Cancel leaves without deleting`, async ({
+      authenticatedPage: page,
+    }) => {
+      const deletes = await openDeletion(page);
+      const exportLink = page.getByRole('link', { name: 'Export configuration', exact: true });
+      await expect(exportLink).toHaveAttribute('href', '/backup/42/export');
+      await page.context().route('**/backup/42/export', (route) =>
+        route.fulfill({
+          contentType: 'text/html',
+          body: '<title>Export configuration target</title>',
+        })
+      );
+      const newTab = page.context().waitForEvent('page');
+      if (button === 'middle') await exportLink.click({ button: 'middle' });
+      else await exportLink.click({ modifiers: [button] });
+      const popup = await newTab;
+      await expect(popup).toHaveURL(/\/backup\/42\/export$/);
+      await expect(popup).toHaveTitle('Export configuration target');
+      await popup.close();
+      await expect(page).toHaveURL('/backup/42/delete');
+      await expect(page.getByRole('dialog')).toHaveCount(0);
+      expect(deletes).toHaveLength(0);
+      const cancel = page.getByRole('link', { name: 'Cancel', exact: true });
+      await expect(cancel).toHaveAttribute('href', '/');
+      await cancel.focus();
+      await cancel.press('Enter');
+      await expect(page).toHaveURL('/');
+      expect(deletes).toHaveLength(0);
+    });
+  }
+
   test('cancels confirmation without deleting and then sends the selected options', async ({
     authenticatedPage: page,
   }) => {
