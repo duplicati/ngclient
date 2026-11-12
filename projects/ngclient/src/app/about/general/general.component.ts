@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
@@ -17,6 +17,7 @@ import { SysinfoState } from '../../core/states/sysinfo.state';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class GeneralComponent {
+  #destroyRef = inject(DestroyRef);
   #dupServer = inject(DuplicatiServer);
   #serverState = inject(ServerStateService);
   #sysinfo = inject(SysinfoState);
@@ -34,10 +35,17 @@ export default class GeneralComponent {
   );
 
   checkForUpdates() {
+    if (this.#destroyRef.destroyed || this.checkingForUpdates() || this.serverState()?.UpdaterState === 'Checking')
+      return;
+
     this.checkingForUpdates.set(true);
 
     defer(() => this.#dupServer.postApiV1UpdatesCheck())
-      .pipe(finalize(() => this.checkingForUpdates.set(false)))
-      .subscribe();
+      .pipe(
+        takeUntilDestroyed(this.#destroyRef),
+        finalize(() => this.checkingForUpdates.set(false))
+      )
+      // HTTP errors are presented by the interceptor; allow a later retry.
+      .subscribe({ error: () => {} });
   }
 }
