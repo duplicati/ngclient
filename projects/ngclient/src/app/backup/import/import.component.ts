@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { form, FormField } from '@angular/forms/signals';
+import { NullableTextControl } from '../general/nullable-text-control';
 import { Router, RouterLink } from '@angular/router';
 import { ShipAlertService } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
@@ -13,11 +14,18 @@ import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/con
 import { DuplicatiServer } from '../../core/openapi';
 import { BackupDraft, BackupsState } from '../../core/states/backups.state';
 
-const fb = new FormBuilder();
-
 @Component({
   selector: 'app-import',
-  imports: [ReactiveFormsModule, RouterLink, ShipFormField, ShipIcon, ShipButton, ShipToggle, ShipFileUpload],
+  imports: [
+    FormField,
+    NullableTextControl,
+    RouterLink,
+    ShipFormField,
+    ShipIcon,
+    ShipButton,
+    ShipToggle,
+    ShipFileUpload,
+  ],
   templateUrl: './import.component.html',
   styleUrl: './import.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,13 +42,15 @@ export default class ImportComponent {
   isSecureFile = signal(false);
   isValid = signal(false);
 
-  importForm = fb.group({
-    config: fb.control<string>(''),
-    cmdline: fb.control<boolean>(false),
-    import_metadata: fb.control<boolean>(false),
-    direct: fb.control<boolean>(false),
-    passphrase: fb.control<string>(''),
-  });
+  importForm = form(
+    signal<{
+      config: string | null;
+      cmdline: boolean;
+      import_metadata: boolean;
+      direct: boolean;
+      passphrase: string | null;
+    }>({ config: '', cmdline: false, import_metadata: false, direct: false, passphrase: '' })
+  );
 
   selectedFile = signal<File[]>([]);
   #reader: FileReader | null = null;
@@ -60,7 +70,7 @@ export default class ImportComponent {
     this.selectedFile.set(file ? [file] : []);
     this.isValid.set(false);
     this.isSecureFile.set(false);
-    this.importForm.patchValue({ config: '' });
+    this.importForm.config().value.set('');
 
     if (file) {
       const reader = new FileReader();
@@ -104,7 +114,7 @@ export default class ImportComponent {
     this.#cancelRead();
     this.isValid.set(false);
     this.isSecureFile.set(false);
-    this.importForm.patchValue({ config: '' });
+    this.importForm.config().value.set('');
     this.#dialog.open(ConfirmDialogComponent, {
       data: {
         title: $localize`Failed to read configuration file`,
@@ -121,10 +131,8 @@ export default class ImportComponent {
     // Check on the actual content of the ArrayBuffer
     this.isSecureFile.set(this.#checkArrayBufferType(arrayBuffer) !== 'json');
 
-    this.importForm.patchValue({
-      config: this.#arrayBufferToBase64(arrayBuffer),
-    });
-    this.isValid.set(this.importForm.value.config !== '');
+    this.importForm.config().value.set(this.#arrayBufferToBase64(arrayBuffer));
+    this.isValid.set(this.importForm.config().value() !== '');
   }
 
   #checkArrayBufferType(buffer: ArrayBuffer): 'json' | 'aes' | 'unknown' {
@@ -168,13 +176,13 @@ export default class ImportComponent {
   }
 
   submit() {
-    if (this.#reader || !this.importForm.controls.config.value) return;
+    if (this.#reader || !this.importForm.config().value()) return;
     this.isImporting.set(true);
-    const isDirectImport = this.importForm.value.direct ?? false;
+    const isDirectImport = this.importForm.direct().value();
 
     defer(() =>
       this.#dupServer.postApiV1BackupsImport({
-        body: this.importForm.value,
+        body: this.importForm().value(),
       })
     )
       .pipe(finalize(() => this.isImporting.set(false)))
