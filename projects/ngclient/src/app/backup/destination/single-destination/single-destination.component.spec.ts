@@ -1,8 +1,9 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
-import { Subject } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { TestDestinationResult, TestDestinationService } from '../../../core/services/test-destination.service';
 import { WebModulesService } from '../../../core/services/webmodules.service';
 import { DestinationConfigState } from '../../../core/states/destinationconfig.state';
 import { SysinfoState } from '../../../core/states/sysinfo.state';
@@ -15,10 +16,19 @@ import { SingleDestinationComponent } from './single-destination.component';
 describe('SingleDestinationComponent editor', () => {
   let dialogClosed: Subject<string | null>;
   let dialogOpen: ReturnType<typeof vi.fn>;
+  let testDestination: ReturnType<typeof vi.fn<(...args: unknown[]) => Observable<TestDestinationResult>>>;
 
   beforeEach(() => {
     dialogClosed = new Subject<string | null>();
     dialogOpen = vi.fn(() => ({ closed: dialogClosed.asObservable() }));
+    testDestination = vi.fn((url: unknown) =>
+      of({
+        action: 'success',
+        targetUrl: url as string,
+        testAgain: false,
+        destinationIndex: 0,
+      } as TestDestinationResult)
+    );
 
     TestBed.configureTestingModule({
       imports: [SingleDestinationComponent],
@@ -30,6 +40,7 @@ describe('SingleDestinationComponent editor', () => {
         { provide: DestinationConfigState, useValue: { allModules: signal([]) } },
         { provide: RemoteControlState, useValue: { state: signal('disconnected') } },
         { provide: WebModulesService, useValue: {} },
+        { provide: TestDestinationService, useValue: { testDestination } },
       ],
     });
     TestBed.overrideComponent(SingleDestinationComponent, { set: { template: '' } });
@@ -129,6 +140,91 @@ describe('SingleDestinationComponent editor', () => {
     dialogClosed.next(null);
     fixture.detectChanges();
     expect(fixture.componentInstance.targetUrl()).toBe(savedUrl);
+  });
+
+  describe('SSH host key', () => {
+    const sshUrl = 'ssh://sftp.example.test:2222/home?auth-username=tester&auth-password=fake-sftp-pass-1';
+    const hostKey = 'ssh-ed25519 256 3a:4f';
+    const hostKeyResult = (url: string, suppressed: boolean): TestDestinationResult => ({
+      action: 'approve-host-key',
+      targetUrl: url,
+      suggestedUrl: `${url}&ssh-fingerprint=${hostKey}`,
+      testAgain: true,
+      reportedHostKey: hostKey,
+      destinationIndex: 0,
+      errorMessage: suppressed ? 'not asked' : 'approved',
+    });
+
+    it('asks to approve an unknown host key before browsing and browses with the approved key', () => {
+      testDestination.mockImplementation((url: unknown, ...rest: unknown[]) =>
+        of(hostKeyResult(url as string, rest[5] as boolean))
+      );
+      const fixture = create(sshUrl);
+
+      fixture.componentInstance.browse('custom', 'path', null);
+
+      // The first test is silent; only the one that reported a host key shows the approval dialog
+      expect(testDestination.mock.calls.map((x) => x[6])).toEqual([true, false]);
+      expect(testDestination.mock.calls[0][7]).toBe('error');
+      expect(testDestination.mock.calls[0][8]).toBe(true);
+      expect(dialogOpen).toHaveBeenCalledWith(
+        BrowsePathDialog,
+        expect.objectContaining({
+          data: expect.objectContaining({ destinationUrl: `${sshUrl}&ssh-fingerprint=${hostKey}` }),
+        })
+      );
+
+      dialogClosed.next('/tester/backups/');
+      fixture.detectChanges();
+      const url = fixture.componentInstance.targetUrl()!;
+      expect(url.startsWith('ssh://sftp.example.test:2222/home/tester/backups/?')).toBe(true);
+      expect(new URLSearchParams(url.split('?')[1]).get('ssh-fingerprint')).toBe(hostKey);
+    });
+
+    it('does not browse when the host key is not approved', () => {
+      testDestination
+        .mockImplementationOnce((url: unknown) => of(hostKeyResult(url as string, true)))
+        .mockImplementationOnce((url: unknown) =>
+          of({
+            action: 'generic-error',
+            targetUrl: url as string,
+            testAgain: false,
+            destinationIndex: 0,
+          } as TestDestinationResult)
+        );
+      const fixture = create(sshUrl);
+
+      fixture.componentInstance.browse('custom', 'path', null);
+
+      expect(testDestination).toHaveBeenCalledTimes(2);
+      expect(dialogOpen).not.toHaveBeenCalled();
+      expect(fixture.componentInstance.targetUrl()).toBe(sshUrl);
+    });
+
+    it('browses at once when the test reports no host key', () => {
+      const fixture = create(sshUrl);
+
+      fixture.componentInstance.browse('custom', 'path', null);
+
+      expect(testDestination).toHaveBeenCalledTimes(1);
+      expect(dialogOpen).toHaveBeenCalledWith(
+        BrowsePathDialog,
+        expect.objectContaining({ data: expect.objectContaining({ destinationUrl: sshUrl }) })
+      );
+    });
+
+    it.each([
+      ['an approved host key', `${sshUrl}&ssh-fingerprint=${encodeURIComponent(hostKey)}`],
+      ['any host key accepted', `${sshUrl}&ssh-accept-any-fingerprints=true`],
+      ['a destination other than SSH', 'smb://192.168.1.62/backuperika?auth-username=u&auth-password=p'],
+    ])('browses without a test for %s', (_, url) => {
+      const fixture = create(url);
+
+      fixture.componentInstance.browse('custom', 'path', null);
+
+      expect(testDestination).not.toHaveBeenCalled();
+      expect(dialogOpen).toHaveBeenCalledTimes(1);
+    });
   });
 
   it('clears old form values when an externally supplied URL cannot be parsed', () => {
