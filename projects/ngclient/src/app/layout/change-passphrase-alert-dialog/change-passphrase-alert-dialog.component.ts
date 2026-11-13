@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, output, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { disabled, form, FormField } from '@angular/forms/signals';
 import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
@@ -11,7 +11,7 @@ import { AppAuthState } from '../../core/states/app-auth.state';
 
 @Component({
   selector: 'app-change-passphrase-alert-dialog',
-  imports: [FormsModule, ShipAlert, ShipFormField, ShipIcon, ShipTooltip, ShipButton],
+  imports: [FormField, ShipAlert, ShipFormField, ShipIcon, ShipTooltip, ShipButton],
   templateUrl: './change-passphrase-alert-dialog.component.html',
   styleUrl: './change-passphrase-alert-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -22,8 +22,11 @@ export class ChangePassphraseAlertDialogComponent {
   closed = output();
 
   isUpdating = signal(false);
-  passphrase = signal('');
-  repeatPassphrase = signal('');
+  passphraseForm = form(signal({ passphrase: '', repeatPassphrase: '' }), (path) => {
+    disabled(path.repeatPassphrase, ({ valueOf }) => valueOf(path.passphrase).length === 0);
+  });
+  passphrase = this.passphraseForm.passphrase().value;
+  repeatPassphrase = this.passphraseForm.repeatPassphrase().value;
 
   updatePassphrase() {
     if (this.passphrase() !== this.repeatPassphrase()) return;
