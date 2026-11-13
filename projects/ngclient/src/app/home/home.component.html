@@ -113,7 +113,7 @@
       @if (viewMode() === 'list') {
         <div class="backups" [class.fallback]="backups().length === 0">
           @if (backups().length) {
-            @for (backup of filteredBackups(); track $index) {
+            @for (backup of filteredBackups(); track backup.Backup.ID ?? backup) {
               @if (backup.Backup.ExternalID) {
                 <div class="backup externaly-managed" [class.disabled]="isDisabled(backup)">
                   <div class="text">
@@ -349,7 +349,7 @@
             <th i18n>Actions</th>
           </tr>
 
-          @for (backup of filteredBackups(); track $index) {
+          @for (backup of filteredBackups(); track backup.Backup.ID ?? backup) {
             @let running = isRunning(backup.Backup.ID);
             <tr [class.running]="running" [class.disabled]="isDisabled(backup)">
               <td>
