@@ -12,6 +12,18 @@ describe('SysinfoState server capabilities', () => {
   }
 
   it.each([
+    [undefined, false],
+    [[], false],
+    [[{ Name: 'store-task-config' }], false],
+    [[{ Name: 'store-task-config' }, { Name: 'use-file-watcher' }], true],
+  ])('reports the file watcher when the server lists its option: %j', (serverOnlyOptions, expected) => {
+    const state = setup();
+    expect(state.hasFileWatcher()).toBe(false);
+    state.systemInfo.set({ ServerOnlyOptions: serverOnlyOptions } as SystemInfoDto);
+    expect(state.hasFileWatcher()).toBe(expected);
+  });
+
+  it.each([
     [[], false],
     [['v2:backup:list-filesets'], false],
     [['v2:backup:list-folder'], false],

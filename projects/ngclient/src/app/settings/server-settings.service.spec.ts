@@ -136,10 +136,23 @@ describe('ServerSettingsService', () => {
         : {
             'hide-console-connection-status': value,
             'use-out-of-process-controller': value,
+            'disable-file-watcher': value,
           };
     getResponses[0].next(settings);
     expect(service.isConsoleConnectionStatusHidden()).toBe(expected);
     expect(service.isControllerIpcEnabled()).toBe(expected);
+    expect(service.isFileWatcherDisabled()).toBe(expected);
+  });
+
+  it.each([
+    [true, 'True'],
+    [false, 'False'],
+  ] as const)('writes the file watcher disabled state %s as %s', (disable, value) => {
+    const { service, getResponses, patchSettings } = setup();
+    getResponses[0].next({});
+    subscriptions.push(service.setFileWatcherDisabled(disable).subscribe());
+    expect(patchSettings).toHaveBeenCalledExactlyOnceWith({ body: { 'disable-file-watcher': value } });
+    expect(service.isFileWatcherDisabled()).toBe(disable);
   });
 
   it('optimistically patches settings, removes null-valued keys, and retains the update after success', () => {

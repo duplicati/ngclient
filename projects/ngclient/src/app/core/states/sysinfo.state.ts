@@ -213,6 +213,12 @@ export class SysinfoState {
     return apiExtensions.includes('v1:ipc:controller');
   });
 
+  /** The server lists the per-backup file watcher option, so it has the file system watcher feature */
+  hasFileWatcher = computed(() => {
+    const serverOnlyOptions = this.systemInfo()?.ServerOnlyOptions ?? [];
+    return serverOnlyOptions.some((x) => x.Name === 'use-file-watcher');
+  });
+
   hasSyncMode = computed(() => {
     const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
     return apiExtensions.includes('v1:backup:sync-mode');

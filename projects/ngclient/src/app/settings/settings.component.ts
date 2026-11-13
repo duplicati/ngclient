@@ -145,6 +145,7 @@ export default class SettingsComponent {
   isUsingRelay = this.#relayConfigState.relayIsEnabled;
   defaultClient = signal(this.#getDefaultClient());
   hasIpcController = this.#sysinfo.hasIpcController;
+  hasFileWatcher = this.#sysinfo.hasFileWatcher;
   usageStatisticsDisabled = computed(() => {
     const value = this.#sysinfo.systemInfo()?.DefaultUsageReportLevel ?? '';
     return value.toLowerCase() === 'disabled';
@@ -282,6 +283,21 @@ export default class SettingsComponent {
       .setControllerIpcState(!!$event)
       .pipe(finalize(() => this.updatingControllerIpcState.set(false)))
       .subscribe();
+  }
+
+  isFileWatcherDisabled = this.#serverSettingsService.isFileWatcherDisabled;
+  updatingFileWatcherState = signal(false);
+
+  saveFileWatcherState($event: boolean) {
+    this.updatingFileWatcherState.set(true);
+
+    this.#serverSettingsService
+      .setFileWatcherDisabled(!$event)
+      .pipe(finalize(() => this.updatingFileWatcherState.set(false)))
+      .subscribe({
+        // The service restores the previous settings and the HTTP interceptor reports the error.
+        error: () => {},
+      });
   }
 
   #auth = inject(AppAuthState);

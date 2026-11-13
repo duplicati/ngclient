@@ -11,6 +11,7 @@ import { SERVER_TIMEZONE_KEY } from './server-timezone-settings';
 const SHOWN_WELCOME_PAGE_KEY = 'shown-welcome-page-v1';
 const HIDE_CONSOLE_CONNECTION_STATUS_KEY = 'hide-console-connection-status';
 const USE_OUT_OF_PROCESS_CONTROLLER_KEY = 'use-out-of-process-controller';
+const DISABLE_FILE_WATCHER_KEY = 'disable-file-watcher';
 const DISABLE_CONSOLE_CONTROL_KEY = 'disable-console-control';
 const DISABLE_TRAYICON_LOGIN_KEY = 'disable-tray-icon-login';
 const REMOTE_ACCESS_INTERFACE_KEY = 'server-listen-interface';
@@ -86,6 +87,10 @@ export class ServerSettingsService {
     return this.#isOptionTrue(USE_OUT_OF_PROCESS_CONTROLLER_KEY, this.serverSettings());
   });
 
+  isFileWatcherDisabled = computed(() => {
+    return this.#isOptionTrue(DISABLE_FILE_WATCHER_KEY, this.serverSettings());
+  });
+
   refreshServerSettings() {
     // If we have websocket connection, do not refresh via REST
     if (this.#serverState.getConnectionMethod() === 'websocket') return;
@@ -143,6 +148,10 @@ export class ServerSettingsService {
 
   setControllerIpcState(enabled: boolean) {
     return this.patchServerSetting(USE_OUT_OF_PROCESS_CONTROLLER_KEY, enabled ? 'True' : 'False');
+  }
+
+  setFileWatcherDisabled(disable: boolean) {
+    return this.patchServerSetting(DISABLE_FILE_WATCHER_KEY, disable ? 'True' : 'False');
   }
 
   setDisableTrayIconLogin(disable: boolean) {
