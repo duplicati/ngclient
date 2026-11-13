@@ -52,4 +52,24 @@ describe('resolveBackupEncryptionSettings', () => {
       encryptionModule: 'aes',
     });
   });
+
+  it('reads a passphrase without an encryption module as the default module', () => {
+    expect(resolveBackupEncryptionSettings(settings([['passphrase', 'secret']]))).toEqual({
+      encryptionDisabled: false,
+      encryptionModule: 'aes',
+      passphrase: 'secret',
+    });
+  });
+
+  it('does not add a module when encryption is disabled or there is no passphrase', () => {
+    expect(
+      resolveBackupEncryptionSettings(
+        settings([
+          ['--no-encryption', 'true'],
+          ['passphrase', 'secret'],
+        ])
+      ).encryptionModule
+    ).toBe('');
+    expect(resolveBackupEncryptionSettings(settings([])).encryptionModule).toBe('');
+  });
 });

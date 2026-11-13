@@ -1,7 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { BackupDto, SettingInputDto } from '../../core/openapi';
-import { mapBackupFormToDto, mapBackupFormToSettings, mapBackupToOptionsForm } from './backup-form-mappers';
-import { createGeneralForm } from './general-form';
+import {
+  mapBackupFormToDto,
+  mapBackupFormToSettings,
+  mapBackupToGeneralForm,
+  mapBackupToOptionsForm,
+} from './backup-form-mappers';
+import { createGeneralForm, NONE_OPTION } from './general-form';
 import { createSourceDataForm } from './source-data-form';
 import { SCHEDULE_FIELD_DEFAULTS } from './schedule-form';
 
@@ -173,5 +178,60 @@ describe('Sync snapshot options', () => {
     expect(fields.syncKeepSnapshots).toBe(7);
     expect(fields.syncSnapshotDisableHardlinks).toBe(true);
     expect(settings.map((x) => x.Name)).toEqual(['--retry-count']);
+  });
+});
+
+describe('Encryption of a backup without an encryption module', () => {
+  const backupWith = (settings: Array<[string, string]>) =>
+    ({
+      Name: 'Backup',
+      Description: '',
+      OperationType: 'Backup',
+      Settings: settings.map(([Name, Value]) => ({ Name, Value })),
+    }) as unknown as BackupDto;
+
+  // The editor creates the form with its defaults, patches it with the loaded backup, and maps it back on save
+  const saveUnchanged = (backup: BackupDto) => {
+    const general = createGeneralForm();
+    general.patchValue(mapBackupToGeneralForm(backup));
+    return mapBackupFormToSettings(
+      general.value,
+      {
+        backupRetention: 'all',
+        backupRetentionTime: '',
+        backupRetentionVersions: 0,
+        backupRetentionCustom: '',
+        syncSnapshotFolders: false,
+        syncKeepSnapshots: 0,
+        syncSnapshotDisableHardlinks: false,
+      },
+      [],
+      false
+    );
+  };
+
+  it('reads a passphrase without an encryption module as the default module', () => {
+    // The server encrypts with aes when a backup has a passphrase and no encryption-module
+    expect(mapBackupToGeneralForm(backupWith([['passphrase', 'secret']])).encryption).toBe('aes');
+  });
+
+  it('keeps such a backup encrypted when it is saved unchanged', () => {
+    const settings = saveUnchanged(backupWith([['passphrase', 'secret']]));
+
+    expect(settings).toContainEqual({ Name: 'encryption-module', Value: 'aes' });
+    expect(settings).toContainEqual({ Name: 'passphrase', Value: 'secret' });
+    expect(settings.find((x) => x.Name === '--no-encryption')).toBeUndefined();
+  });
+
+  it('keeps a backup without encryption unencrypted', () => {
+    expect(
+      mapBackupToGeneralForm(
+        backupWith([
+          ['--no-encryption', 'true'],
+          ['passphrase', 'secret'],
+        ])
+      ).encryption
+    ).toBe(NONE_OPTION.Key);
+    expect(mapBackupToGeneralForm(backupWith([])).encryption).toBeUndefined();
   });
 });
