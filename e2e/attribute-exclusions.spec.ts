@@ -1,7 +1,26 @@
+import type { Locator } from '@playwright/test';
 import { expect, test } from './fixtures/authenticated';
 
-for (const attributes of ['hidden,system', ' hIdDeN , SYSTEM ']) {
-  test(`editing a legacy backup retains attribute exclusions: ${attributes}`, async ({ page, serverApi }) => {
+for (const { attributes, interaction } of [
+  { attributes: 'hidden,system', interaction: 'mouse' },
+  { attributes: ' hIdDeN , SYSTEM ', interaction: 'mouse' },
+  { attributes: null, interaction: 'mouse' },
+  { attributes: null, interaction: 'keyboard' },
+] as const) {
+  const title =
+    attributes === null
+      ? `adding an attribute exclusion with ${interaction}`
+      : `editing a legacy backup retains attribute exclusions: ${attributes}`;
+  test(title, async ({ page, serverApi }) => {
+    async function activate(button: Locator) {
+      await expect(button).toBeEnabled();
+      if (interaction === 'keyboard') {
+        await button.focus();
+        await page.keyboard.press('Enter');
+      } else {
+        await button.click();
+      }
+    }
     await page.route('**/api/v1/systeminfo', (route) =>
       route.fulfill({
         json: {
@@ -37,7 +56,7 @@ for (const attributes of ['hidden,system', ' hIdDeN , SYSTEM ']) {
     let settings = [
       { Name: '--no-encryption', Value: 'True' },
       { Name: '--dry-run', Value: 'YES' },
-      { Name: '--exclude-files-attributes', Value: attributes },
+      ...(attributes === null ? [] : [{ Name: '--exclude-files-attributes', Value: attributes }]),
     ];
     let saves = 0;
     await page.route('**/api/v1/backup/42', async (route) => {
@@ -75,23 +94,76 @@ for (const attributes of ['hidden,system', ' hIdDeN , SYSTEM ']) {
         history.pushState(null, '', '/backup/42/options');
         window.dispatchEvent(new PopStateEvent('popstate'));
       });
+      await expect(page.locator('app-options-list sh-toggle').filter({ hasText: 'Dry run' })).toBeVisible();
       const flags = page.locator('app-options-list sh-select').filter({ hasText: 'Exclude file attributes' });
+      if ((await flags.count()) === 0) {
+        const add = page.getByRole('button', { name: 'Add advanced option', exact: true });
+        await expect(add).toBeEnabled();
+        if (interaction === 'keyboard') {
+          await page
+            .getByRole('navigation', { name: 'Backup steps' })
+            .getByRole('link', { name: 'Options', exact: true })
+            .focus();
+          for (let i = 0; i < 20 && !(await add.evaluate((element) => element === document.activeElement)); i++) {
+            await page.keyboard.press('Tab');
+          }
+          await expect(add).toBeFocused();
+          await page.keyboard.press('Enter');
+        } else {
+          await add.click();
+        }
+        const search = page.getByPlaceholder('Search', { exact: true });
+        await search.fill('exclude-files-attributes');
+        const option = page.getByRole('option', { name: /exclude-files-attributes/ });
+        await expect(option).toBeEnabled();
+        if (interaction === 'keyboard') {
+          await option.focus();
+          await page.keyboard.press('Enter');
+        } else {
+          await option.click();
+        }
+        await flags.click();
+        await page.getByRole('option').filter({ hasText: 'Hidden' }).click();
+        await page.getByRole('option').filter({ hasText: 'System' }).click();
+        await page.keyboard.press('Escape');
+      }
       await expect(flags.locator('sh-chip')).toHaveText(expected.map((value) => new RegExp(value)));
       await expect(flags.locator('input')).toHaveValue(expected.join(','));
     }
     await openOptions();
+    if (attributes === null) {
+      await activate(page.getByRole('button', { name: 'More advanced option actions', exact: true }));
+      const editAsText = page.getByRole('button', { name: 'Edit contents as text', exact: true });
+      await expect(editAsText).toBeEnabled();
+      if (interaction === 'keyboard') {
+        await page.keyboard.press('ArrowDown');
+        await expect(page.getByRole('button', { name: 'New custom option', exact: true })).toHaveClass(/active/);
+        await page.keyboard.press('ArrowDown');
+        await expect(editAsText).toHaveClass(/active/);
+        await page.keyboard.press('Enter');
+      } else {
+        await editAsText.click();
+      }
+      await expect(page.locator('app-options-list textarea')).toHaveValue(/exclude-files-attributes=Hidden,System/);
+      await activate(page.getByRole('button', { name: 'Show editor', exact: true }));
+      await expect(
+        page.locator('app-options-list sh-select').filter({ hasText: 'Exclude file attributes' }).locator('sh-chip')
+      ).toHaveText([/Hidden/, /System/]);
+    }
     await page.getByRole('button', { name: 'Submit', exact: true }).click();
     await expect.poll(() => saves).toBe(1);
     expect(
       settings
-        .find((setting) => setting.Name === '--exclude-files-attributes')
+        .find((setting) => setting.Name.replace(/^--/, '') === 'exclude-files-attributes')
         ?.Value.split(',')
         .map((value) => value.trim().toLowerCase())
     ).toEqual(['hidden', 'system']);
     await expect(page).toHaveURL('/');
     await openOptions();
     expect(saves).toBe(1);
-    expect(settings.find((setting) => setting.Name === '--exclude-files-attributes')?.Value).toBe(attributes);
+    expect(settings.find((setting) => setting.Name.replace(/^--/, '') === 'exclude-files-attributes')?.Value).toBe(
+      attributes ?? 'Hidden,System'
+    );
     expect(settings.find((setting) => setting.Name === '--dry-run')?.Value).toBe('YES');
     const dryRun = page.locator('app-options-list sh-toggle').filter({ hasText: 'Dry run' });
     const toggle = dryRun.locator('input');
@@ -104,7 +176,7 @@ for (const attributes of ['hidden,system', ' hIdDeN , SYSTEM ']) {
     await expect(flags.locator('sh-chip')).toHaveText([/Hidden/, /System/, /Archive/]);
     await page.getByRole('button', { name: 'Submit', exact: true }).click();
     await expect.poll(() => saves).toBe(2);
-    expect(settings.find((setting) => setting.Name === '--exclude-files-attributes')?.Value).toBe(
+    expect(settings.find((setting) => setting.Name.replace(/^--/, '') === 'exclude-files-attributes')?.Value).toBe(
       'Hidden,System,Archive'
     );
     await expect(page).toHaveURL('/');
