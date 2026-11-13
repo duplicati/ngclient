@@ -33,11 +33,7 @@
   @if (readyToAddLink) {
     <sh-form-field>
       <label i18n for="remoteControlRegisterUrl">Paste registration URL here</label>
-      <input
-        type="text"
-        id="remoteControlRegisterUrl"
-        name="remoteControlRegisterUrl"
-        [(ngModel)]="customRegisterUrl" />
+      <input type="text" id="remoteControlRegisterUrl" [formField]="registrationForm.customRegisterUrl" />
     </sh-form-field>
 
     <div class="nav-buttons">

@@ -1,6 +1,6 @@
 import { KeyboardActionDirective } from '../../core/directives/keyboard-action.directive';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormField } from '@angular/forms/signals';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipChip } from '@ship-ui/core/ship-chip';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
@@ -10,7 +10,7 @@ import { RemoteControlState } from './remote-control.state';
 
 @Component({
   selector: 'app-remote-control',
-  imports: [KeyboardActionDirective, FormsModule, ShipFormField, ShipButton, ShipChip, ShipIcon],
+  imports: [KeyboardActionDirective, FormField, ShipFormField, ShipButton, ShipChip, ShipIcon],
   templateUrl: './remote-control.component.html',
   styleUrl: './remote-control.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,7 +21,7 @@ export class RemoteControlComponent {
 
   state = this.#remoteControlState.state;
   claimUrl = this.#remoteControlState.claimUrl;
-  registerUrl = this.#remoteControlState.registerUrl;
+  registrationForm = this.#remoteControlState.registrationForm;
   additionalReportingUrl = computed(() => {
     const settings = this.#serverSettingsService.serverSettings();
     return settings ? settings['additional-report-url'] || '' : '';
