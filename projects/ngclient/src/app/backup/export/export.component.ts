@@ -1,7 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+
+import { applyWhen, applyWhenValue, form, FormField, minLength, required } from '@angular/forms/signals';
+import { NullableTextControl } from '../general/nullable-text-control';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
@@ -18,14 +19,12 @@ import { DuplicatiServer } from '../../core/openapi';
 import { PasswordGeneratorService } from '../../core/services/password-generator.service';
 import { BackupsState } from '../../core/states/backups.state';
 import { getApiBase, getApiConfigHeaders } from '../../core/utils/proxy-config.util';
-import { validateIf, watchField } from '../../core/validators/custom.validators';
-
-const fb = new FormBuilder();
 
 @Component({
   selector: 'app-export',
   imports: [
-    ReactiveFormsModule,
+    FormField,
+    NullableTextControl,
     RouterLink,
     ShipButtonGroup,
     ShipToggle,
@@ -49,19 +48,41 @@ export default class ExportComponent {
   #httpClient = inject(HttpClient);
   #backups = inject(BackupsState);
 
+  isRequiredError = (error: { kind: string }) => error.kind === 'required';
+  isMinLengthError = (error: { kind: string }) => error.kind === 'minLength';
   isExporting = signal(false);
   exportType = signal<'file' | 'cmd'>('file');
   exportedCmd = signal<string | null>(null);
-  exportForm = fb.group({
-    exportPasswords: fb.control<boolean>(true),
-    encryption: fb.control<boolean>(false, [Validators.required, watchField()]),
-    password: fb.control<string>('', [validateIf('encryption', true, [Validators.required, Validators.minLength(3)])]),
-    repeatPassword: fb.control<string>('', [
-      validateIf('encryption', true, [Validators.required, Validators.minLength(3)]),
-    ]),
-  });
+  exportForm = form(
+    signal<{ exportPasswords: boolean; encryption: boolean; password: string | null; repeatPassword: string | null }>({
+      exportPasswords: true,
+      encryption: false,
+      password: '',
+      repeatPassword: '',
+    }),
+    (path) => {
+      applyWhen(
+        path,
+        ({ value }) => value().encryption,
+        (active) => {
+          required(active.password);
+          applyWhenValue(
+            active.password,
+            (value): value is string => value !== null,
+            (text) => minLength(text, 3)
+          );
+          required(active.repeatPassword);
+          applyWhenValue(
+            active.repeatPassword,
+            (value): value is string => value !== null,
+            (text) => minLength(text, 3)
+          );
+        }
+      );
+    }
+  );
 
-  exportFormSignal = toSignal(this.exportForm.valueChanges, { initialValue: this.exportForm.value });
+  exportFormSignal = this.exportForm().value;
   encryptionFieldSignal = computed(
     () => (this.exportFormSignal()?.encryption ?? false) && this.exportType() === 'file'
   );
@@ -79,14 +100,8 @@ export default class ExportComponent {
     return this.#passwordGeneratorService.calculatePasswordStrength(password);
   });
 
-  showPasswordEffect = effect(() => {
-    if (this.showPassword()) {
-      this.exportForm.updateValueAndValidity();
-    }
-  });
-
   disablePasswordForCommandLine = effect(() => {
-    if (this.exportType() === 'cmd') this.exportForm.controls.encryption.setValue(false);
+    if (this.exportType() === 'cmd') this.exportForm.encryption().value.set(false);
   });
 
   submit() {
@@ -200,7 +215,7 @@ export default class ExportComponent {
     window.URL.revokeObjectURL(url);
   }
   async copyPassword() {
-    const pass = this.exportForm.controls.password.value;
+    const pass = this.exportForm.password().value();
 
     await this.#copyToClipboard(pass ?? '');
 
@@ -230,8 +245,8 @@ export default class ExportComponent {
     this.copiedPassword.set(false);
 
     const newPass = this.#passwordGeneratorService.generate(41);
-    this.exportForm.controls.password.setValue(newPass);
-    this.exportForm.controls.repeatPassword.setValue(newPass);
+    this.exportForm.password().value.set(newPass);
+    this.exportForm.repeatPassword().value.set(newPass);
 
     this.showCopyPassword.set(true);
   }

@@ -40,13 +40,13 @@ async function openExport(page: Page, retainPasswords = false) {
   });
   await expect(page.locator('app-export')).toBeVisible();
   const form = page.locator('app-export');
-  if (!retainPasswords) await form.locator('input[formcontrolname=exportPasswords]').uncheck();
-  const encrypt = form.locator('input[formcontrolname=encryption]');
+  if (!retainPasswords) await form.locator('input[name$=".exportPasswords"]').uncheck();
+  const encrypt = form.locator('input[name$=".encryption"]');
   return { form, encrypt, tokens, exports, submit: form.getByRole('button', { name: 'Export', exact: true }) };
 }
 
 async function enterPassword(page: Page) {
-  await page.locator('input[formcontrolname=encryption]').check();
+  await page.locator('input[name$=".encryption"]').check();
   await page.getByPlaceholder('Password', { exact: true }).fill('selected export secret');
   await page.getByPlaceholder('Repeat password', { exact: true }).fill('selected export secret');
 }
@@ -78,7 +78,7 @@ for (const encrypted of [false, true]) {
     await expect.poll(() => tokens.length).toBe(1);
     if (encrypted) await encrypt.uncheck();
     else await enterPassword(page);
-    await form.locator('input[formcontrolname=exportPasswords]').check();
+    await form.locator('input[name$=".exportPasswords"]').check();
     const downloaded = page.waitForEvent('download');
     await tokens[0].fulfill({ json: { Token: 'export-token' } });
     const download = await downloaded;
@@ -107,4 +107,24 @@ test('initial plaintext password export asks for approval and supports cancellat
   expect(exports[0].searchParams.get('export-passwords')).toBe('true');
   expect(exports[0].searchParams.has('passphrase')).toBe(false);
   expect(download.suggestedFilename()).toBe('Documents-duplicati-config.json');
+});
+
+test('encrypted export retains required, minimum-length and matching-password checks', async ({
+  authenticatedPage: page,
+}) => {
+  const { encrypt, submit, tokens } = await openExport(page);
+  await encrypt.check();
+  await expect(submit).toBeDisabled();
+  await expect(page.getByText('Passwords are required', { exact: true })).toHaveCount(2);
+  await page.getByPlaceholder('Password', { exact: true }).fill('ab');
+  await page.getByPlaceholder('Repeat password', { exact: true }).fill('ab');
+  await expect(page.getByText('Passwords must be at least', { exact: false })).toHaveCount(2);
+  await expect(submit).toBeDisabled();
+  await page.getByPlaceholder('Password', { exact: true }).fill('abc');
+  await page.getByPlaceholder('Repeat password', { exact: true }).fill('different');
+  await expect(page.getByText('Passwords do not match', { exact: true })).toBeVisible();
+  await expect(submit).toBeDisabled();
+  await page.getByPlaceholder('Repeat password', { exact: true }).fill('abc');
+  await expect(submit).toBeEnabled();
+  expect(tokens).toHaveLength(0);
 });
