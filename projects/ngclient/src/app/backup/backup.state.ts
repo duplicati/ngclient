@@ -117,7 +117,7 @@ export class BackupState {
   backupMetadata = signal<Record<string, string> | null>(null);
 
   isDraft = signal(false);
-  backupId = signal<'new' | 'string' | null>(null);
+  backupId = signal<string | null>(null);
   backupName = computed(() => this.generalFormSignal()?.name ?? '');
   #saveOperation = new AsyncOperation<unknown>();
   #saveContext: BackupSaveContext | null = null;

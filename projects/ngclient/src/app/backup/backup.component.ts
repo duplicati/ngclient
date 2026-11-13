@@ -1,6 +1,6 @@
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
-import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
@@ -43,11 +43,11 @@ export default class BackupComponent {
   isSubmitting = this.#backupState.isSubmitting;
   finishedLoading = this.#backupState.finishedLoading;
 
-  #routeParamsSignal = toSignal(this.#route.params);
+  readonly routeId = input.required<string>({ alias: 'id' });
   #routeUrlSignal = toSignal(this.#route.url);
 
   paramsChanged = effect(() => {
-    const backupId = this.#routeParamsSignal()?.['id'];
+    const backupId = this.routeId();
     const isDraft = !!this.#routeUrlSignal()?.find((x) => x.path === 'backup-draft');
 
     if (backupId == this.#backupState.backupId()) return;
