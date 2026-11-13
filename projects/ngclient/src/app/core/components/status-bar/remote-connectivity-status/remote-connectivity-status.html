@@ -4,7 +4,14 @@
 @let registered = state() === 'registered';
 @let isConnected = state() === 'connected' || state() === 'disabled' || state() === 'connecting';
 
-@if (registeringFaulted) {
+@if (indicatorOnly()) {
+  <span
+    aria-hidden="true"
+    class="status"
+    [class.warning]="isLoading"
+    [class.success]="registered || isConnected"
+    [class.blinking]="isLoading || registered || (registeringFaulted && resetting())"></span>
+} @else if (registeringFaulted) {
   <div appKeyboardAction i18n class="connectivity-status" (click)="resetAndRetry()">
     @if (resetting()) {
       Resetting
@@ -15,15 +22,15 @@
     }
   </div>
 } @else if (isLoading) {
-  <div appKeyboardAction role="link" i18n class="connectivity-status" [routerLink]="['/connect/logon']">
+  <a i18n class="connectivity-status" [routerLink]="['/connect/logon']">
     Connecting
     <div class="status warning blinking"></div>
-  </div>
+  </a>
 } @else if (clickToRegister) {
-  <div appKeyboardAction role="link" i18n class="connectivity-status" [routerLink]="['/connect/logon']">
+  <a i18n class="connectivity-status" [routerLink]="['/connect/logon']">
     Click to register
     <div class="status"></div>
-  </div>
+  </a>
 } @else if (registered) {
   <div i18n class="connectivity-status claim">
     <sh-icon
