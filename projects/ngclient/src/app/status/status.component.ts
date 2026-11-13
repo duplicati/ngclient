@@ -1,11 +1,21 @@
 import { DatePipe, DecimalPipe, PercentPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipButtonGroup } from '@ship-ui/core/ship-button-group';
 import { ShipCard } from '@ship-ui/core/ship-card';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
-import { defer } from 'rxjs';
+import { defer, finalize } from 'rxjs';
 import LogsLiveComponent from '../about/logs/logs-live/logs-live.component';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { StatusBarState } from '../core/components/status-bar/status-bar.state';
@@ -72,12 +82,15 @@ const OPERATION_CLASSES: Record<string, string> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class StatusComponent implements OnInit, OnDestroy {
+  #destroyRef = inject(DestroyRef);
   #statusBarState = inject(StatusBarState);
   #statusPageState = inject(StatusPageState);
   #backupsState = inject(BackupsState);
   #dupServer = inject(DuplicatiServer);
   #bytesPipe = inject(BytesPipe);
   #serverSettings = inject(ServerSettingsService);
+  #stoppingTasks = signal(new Set<number>());
+  #abortingTasks = signal(new Set<number>());
 
   /** The active transfer throttles in bytes per second, or null for a direction that is not throttled */
   throttle = computed(() => {
@@ -108,6 +121,8 @@ export default class StatusComponent implements OnInit, OnDestroy {
   recentFiles = this.#statusPageState.recentFiles;
   etaData = this.#statusPageState.etaData;
   progressData = this.#statusPageState.progress;
+  stopPending = computed(() => this.#stoppingTasks().has(this.progressData()?.TaskID ?? 0));
+  abortPending = computed(() => this.#abortingTasks().has(this.progressData()?.TaskID ?? 0));
   queue = this.#statusPageState.queue;
   hasSystemStatus = this.#statusPageState.hasSystemStatus;
   machine = this.#statusPageState.machine;
@@ -288,15 +303,43 @@ export default class StatusComponent implements OnInit, OnDestroy {
   }
 
   stop() {
-    const taskId = this.progressData()?.TaskID;
-    if (!taskId) return;
-    defer(() => this.#dupServer.postApiV1TaskByTaskidStop({ path: { taskid: taskId } })).subscribe();
+    this.#sendTaskAction('stop');
   }
 
   abort() {
+    this.#sendTaskAction('abort');
+  }
+
+  #sendTaskAction(action: 'stop' | 'abort') {
     const taskId = this.progressData()?.TaskID;
-    if (!taskId) return;
-    defer(() => this.#dupServer.postApiV1TaskByTaskidAbort({ path: { taskid: taskId } })).subscribe();
+    const pendingTasks = action === 'stop' ? this.#stoppingTasks : this.#abortingTasks;
+    if (
+      this.#destroyRef.destroyed ||
+      !taskId ||
+      pendingTasks().has(taskId) ||
+      (action === 'stop' && this.#abortingTasks().has(taskId))
+    )
+      return;
+
+    // An old task's response must not release the next task's pending state.
+    pendingTasks.update((tasks) => new Set([...tasks, taskId]));
+    defer(() =>
+      action === 'stop'
+        ? this.#dupServer.postApiV1TaskByTaskidStop({ path: { taskid: taskId } })
+        : this.#dupServer.postApiV1TaskByTaskidAbort({ path: { taskid: taskId } })
+    )
+      .pipe(
+        takeUntilDestroyed(this.#destroyRef),
+        finalize(() =>
+          pendingTasks.update((tasks) => {
+            const remaining = new Set(tasks);
+            remaining.delete(taskId);
+            return remaining;
+          })
+        )
+      )
+      // The interceptor reports HTTP errors; release the guard for retry.
+      .subscribe({ error: () => {} });
   }
 }
 

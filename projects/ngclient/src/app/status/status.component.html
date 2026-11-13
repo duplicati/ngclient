@@ -29,8 +29,24 @@
 
         @if (isTaskRunning()) {
           <div class="card-actions">
-            <button shButton class="outlined small" (click)="stop()" i18n>Stop after current file</button>
-            <button shButton class="outlined small error" (click)="abort()" i18n>Abort</button>
+            <button
+              shButton
+              class="outlined small"
+              (click)="stop()"
+              [disabled]="stopPending() || abortPending()"
+              [class.loading]="stopPending()"
+              i18n>
+              Stop after current file
+            </button>
+            <button
+              shButton
+              class="outlined small error"
+              (click)="abort()"
+              [disabled]="abortPending()"
+              [class.loading]="abortPending()"
+              i18n>
+              Abort
+            </button>
           </div>
         }
       </div>
@@ -309,7 +325,7 @@
       <div class="foot muted">
         <ng-container i18n>Peak upload: {{ peakUpload() | bytes: false : true }}/s</ng-container>
         @if (throttleText(); as throttleText) {
-          <span> · {{ throttleText }}</span>
+          <span>· {{ throttleText }}</span>
         }
       </div>
     </sh-card>
