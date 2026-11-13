@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { FormsModule } from '@angular/forms';
+import { disabled, form, FormField } from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
@@ -23,16 +23,7 @@ type OrderBy = 'version' | 'size' | 'files' | 'label';
 
 @Component({
   selector: 'app-version-labels',
-  imports: [
-    FormsModule,
-    ShipButton,
-    ShipProgressBar,
-    ShipTable,
-    BytesPipe,
-    RelativeTimePipe,
-    RouterLink,
-    ShipFormField,
-  ],
+  imports: [FormField, ShipButton, ShipProgressBar, ShipTable, BytesPipe, RelativeTimePipe, RouterLink, ShipFormField],
   templateUrl: './version-labels.component.html',
   styleUrl: './version-labels.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -57,6 +48,7 @@ export default class VersionLabelsComponent {
   isLoading = computed(() => this.versionsResource.isLoading());
   isSaving = signal(false);
   versions = signal<VersionLabelOption[]>([]);
+  labelsForm = form(this.versions, (path) => disabled(path, () => this.isSaving()));
   #saveSubscription?: Subscription;
 
   constructor() {
