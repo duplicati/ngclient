@@ -1,6 +1,6 @@
-import { computed, effect, inject, Injectable, signal } from '@angular/core';
+import { computed, DestroyRef, effect, inject, Injectable, signal } from '@angular/core';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
-import { defer, finalize, map, of, switchMap } from 'rxjs';
+import { defer, EMPTY, finalize, map, of, Subscription, switchMap } from 'rxjs';
 import { resolveStatusText, STATUS_STATES } from '../../constants/status-states.constant';
 import {
   DuplicatiServer,
@@ -32,6 +32,7 @@ export type StatusWithContent = Status & {
   providedIn: 'root',
 })
 export class StatusBarState {
+  #destroyRef = inject(DestroyRef);
   #bytesPipe = inject(BytesPipe);
   #dupServer = inject(DuplicatiServer);
   #backupState = inject(BackupsState);
@@ -77,24 +78,29 @@ export class StatusBarState {
   connectionStatus = this.#serverState.connectionStatus;
   pollingInterval: number | undefined;
   #activeTaskId: number | null = null;
+  #progressRequest: Subscription | null = null;
+
+  constructor() {
+    this.#destroyRef.onDestroy(() => this.stopPollingProgress());
+  }
 
   #serverStateEffect = effect(() => {
     const serverState = this.#serverState.serverState();
     if (!serverState?.ActiveTask) this.#backupState.getBackups(true);
 
-    if (this.hasProgressOnWebsocket()) {
-      this.#serverState.subscribe('progress');
-      this.#serverState.subscribe('taskqueue');
-    }
-
     // A new task must not show the previous task's final state while its first progress fetch is pending
     const activeTaskId = serverState?.ActiveTask?.Item1 ?? null;
     if (activeTaskId !== this.#activeTaskId) {
+      this.#cancelProgressRequest();
       this.#activeTaskId = activeTaskId;
       if (activeTaskId !== null) this.#statusData.set(null);
     }
 
-    if (serverState?.ActiveTask && this.pollingInterval === undefined) {
+    if (this.hasProgressOnWebsocket()) {
+      this.stopPollingProgress();
+      this.#serverState.subscribe('progress');
+      this.#serverState.subscribe('taskqueue');
+    } else if (serverState?.ActiveTask && this.pollingInterval === undefined) {
       this.startPollingProgress();
     } else if (!serverState?.ActiveTask) {
       this.stopPollingProgress();
@@ -115,6 +121,8 @@ export class StatusBarState {
   }
 
   startPollingProgress() {
+    if (this.#destroyRef.destroyed || this.pollingInterval !== undefined) return;
+
     // If the server pushes progress updates via WebSocket, we don't need to poll
     if (this.hasProgressOnWebsocket()) {
       this.#serverState.subscribe('progress');
@@ -126,11 +134,17 @@ export class StatusBarState {
   }
 
   stopPollingProgress() {
-    if (this.pollingInterval === undefined) return;
-
     // The handle is reset so the next active task starts polling again
-    clearInterval(this.pollingInterval);
+    if (this.pollingInterval !== undefined) clearInterval(this.pollingInterval);
     this.pollingInterval = undefined;
+    this.#cancelProgressRequest();
+  }
+
+  #cancelProgressRequest() {
+    const request = this.#progressRequest;
+    this.#progressRequest = null;
+    request?.unsubscribe();
+    this.#isFetching.set(false);
   }
 
   fetchProgressState() {
@@ -169,32 +183,53 @@ export class StatusBarState {
   }
 
   #getProgressState() {
-    this.#isFetching.set(true);
-    defer(() => this.#dupServer.getApiV1Progressstate())
-      .pipe(
-        switchMap((x) => {
-          const taskId = x.TaskID ?? null;
-          if (taskId === null) return of(x);
+    if (this.#destroyRef.destroyed || this.#progressRequest) return;
 
-          return defer(() => this.#dupServer.getApiV1TaskByTaskid({ path: { taskid: taskId } })).pipe(
-            map((res) => ({ ...x, task: res ?? null }))
-          );
-        }),
-        finalize(() => this.#isFetching.set(false))
-      )
-      .subscribe({
-        next: (res) => {
-          this.#onProgressStateFetched(res);
-          if (this.serverState()?.ActiveTask == null) {
-            this.stopPollingProgress();
-          }
-        },
-        error: (err) => {
-          if (err.status === 404) {
-            this.stopPollingProgress();
-          }
-        },
-      });
+    const request = new Subscription();
+    this.#progressRequest = request;
+    const expectedTaskId = this.#serverState.serverState()?.ActiveTask?.Item1 ?? null;
+    const usedWebsocket = this.hasProgressOnWebsocket();
+    const isCurrent = () =>
+      this.#progressRequest === request &&
+      (this.#serverState.serverState()?.ActiveTask?.Item1 ?? null) === expectedTaskId &&
+      this.hasProgressOnWebsocket() === usedWebsocket;
+    this.#isFetching.set(true);
+    request.add(
+      defer(() => this.#dupServer.getApiV1Progressstate())
+        .pipe(
+          switchMap((x) => {
+            if (!isCurrent()) return EMPTY;
+            const taskId = x.TaskID ?? null;
+            if (expectedTaskId !== null && taskId !== null && taskId !== expectedTaskId) return EMPTY;
+            if (taskId === null) return of(x);
+
+            return defer(() => this.#dupServer.getApiV1TaskByTaskid({ path: { taskid: taskId } })).pipe(
+              map((res) => ({ ...x, task: res ?? null }))
+            );
+          }),
+          finalize(() => {
+            if (this.#progressRequest !== request) return;
+            this.#progressRequest = null;
+            request.unsubscribe();
+            this.#isFetching.set(false);
+          })
+        )
+        .subscribe({
+          next: (res) => {
+            if (!isCurrent()) return;
+            this.#onProgressStateFetched(res);
+            if (this.serverState()?.ActiveTask == null) {
+              this.stopPollingProgress();
+            }
+          },
+          error: (err) => {
+            if (!isCurrent()) return;
+            if (err.status === 404) {
+              this.stopPollingProgress();
+            }
+          },
+        })
+    );
   }
 
   #onProgressStateFetched(status: Status) {
