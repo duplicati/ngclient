@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipButtonGroup } from '@ship-ui/core/ship-button-group';
@@ -22,7 +23,7 @@ export default class LogsComponent {
   currentUrl = signal(this.#router.url);
 
   constructor() {
-    this.#router.events.subscribe((event) => {
+    this.#router.events.pipe(takeUntilDestroyed()).subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.currentUrl.set(event.urlAfterRedirects);
       }
