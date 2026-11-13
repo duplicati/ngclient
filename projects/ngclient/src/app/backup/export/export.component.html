@@ -17,9 +17,9 @@
         [shTooltip]="encryptionFieldSignal() ? 'Remember to copy the password' : ''"
         [class.loading]="isExporting()"
         [disabled]="
-          exportForm.invalid ||
+          exportForm().invalid() ||
           (showCopyPassword() && !copiedPassword()) ||
-          (encryptionFieldSignal() && exportForm.value.repeatPassword !== exportForm.value.password)
+          (encryptionFieldSignal() && exportForm.repeatPassword().value() !== exportForm.password().value())
         ">
         <sh-icon>export</sh-icon>
         Export
@@ -30,7 +30,7 @@
   <p>#{{ activeBackup()?.Backup?.ID }}: {{ activeBackup()?.Backup?.Name }}</p>
 </header>
 
-<form [formGroup]="exportForm" autocomplete="off">
+<form autocomplete="off" novalidate (submit)="$event.preventDefault()">
   <sh-button-group [(value)]="exportType" class="type-b">
     <button value="cmd" i18n>
       <sh-icon>terminal-window</sh-icon>
@@ -45,13 +45,13 @@
 
   <sh-toggle class="raised primary" i18n>
     Export passwords
-    <input type="checkbox" formControlName="exportPasswords" />
+    <input type="checkbox" [formField]="exportForm.exportPasswords" />
   </sh-toggle>
 
   @if (exportType() === 'file') {
     <sh-toggle class="primary raised" i18n>
       Encrypt file
-      <input type="checkbox" formControlName="encryption" />
+      <input type="checkbox" [formField]="exportForm.encryption" />
     </sh-toggle>
   }
 
@@ -69,19 +69,20 @@
           autocomplete="off"
           i18n-placeholder
           placeholder="Password"
-          formControlName="password" />
+          appNullableText
+          [formField]="exportForm.password" />
 
-        @if (exportForm.controls.password.errors?.['required']) {
+        @if (exportForm.password().errors().some(isRequiredError)) {
           <span error i18n>Passwords are required</span>
-        } @else if (exportForm.controls.password.errors?.['minlength']) {
+        } @else if (exportForm.password().errors().some(isMinLengthError)) {
           <span error i18n>
             Passwords must be at least
-            {{ exportForm.controls.password.errors?.['minlength'].requiredLength }} characters long
+            {{ 3 }} characters long
           </span>
         }
       </sh-form-field>
 
-      @if (exportForm.value.password) {
+      @if (exportForm.password().value()) {
         <sh-progress-bar
           class="raised"
           [class.error]="calculatePasswordStrength() === 1"
@@ -98,16 +99,19 @@
           autocomplete="off"
           i18n-placeholder
           placeholder="Repeat password"
-          formControlName="repeatPassword" />
+          appNullableText
+          [formField]="exportForm.repeatPassword" />
 
-        @if (exportForm.value.repeatPassword && exportForm.value.repeatPassword !== exportForm.value.password) {
+        @if (
+          exportForm.repeatPassword().value() && exportForm.repeatPassword().value() !== exportForm.password().value()
+        ) {
           <span error i18n>Passwords do not match</span>
-        } @else if (exportForm.controls.repeatPassword.errors?.['required']) {
+        } @else if (exportForm.repeatPassword().errors().some(isRequiredError)) {
           <span error i18n>Passwords are required</span>
-        } @else if (exportForm.controls.repeatPassword.errors?.['minlength']) {
+        } @else if (exportForm.repeatPassword().errors().some(isMinLengthError)) {
           <span error i18n>
             Passwords must be at least
-            {{ exportForm.controls.repeatPassword.errors?.['minlength'].requiredLength }} characters long
+            {{ 3 }} characters long
           </span>
         }
       </sh-form-field>
@@ -141,7 +145,7 @@
         }
       </div>
 
-      @if (exportForm.value.password && exportForm.value.password === exportForm.value.repeatPassword) {
+      @if (exportForm.password().value() && exportForm.password().value() === exportForm.repeatPassword().value()) {
         <sh-alert class="primary" i18n>
           Tip: Be sure to save your password. If you lose it, you will not be able to import the configuration.
         </sh-alert>

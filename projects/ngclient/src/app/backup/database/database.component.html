@@ -83,7 +83,7 @@
     <h2 i18n>Placement</h2>
 
     <sh-form-field [class]="isValidatedPath() ? 'success' : 'error'">
-      <input type="text" [(ngModel)]="backupFilePath" />
+      <input type="text" [formField]="placementForm.path" />
       @if (isWaitingForValidation()) {
         <sh-icon class="primary" prefix>spinner</sh-icon>
       } @else if (isValidatedPath()) {

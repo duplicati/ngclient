@@ -13,11 +13,11 @@
           type="number"
           (paste)="cleanupInputAfterPasting($event)"
           (keydown)="blockDecimalKeys($event)"
-          [(ngModel)]="maxUpload" />
+          [formField]="throttleForm.maxUpload" />
       </sh-form-field>
 
       <sh-select [isClearable]="false" [options]="sizeOptions()">
-        <input type="text" [(ngModel)]="maxUploadUnit" />
+        <input type="text" appThrottleUnit [formField]="throttleForm.maxUploadUnit" />
       </sh-select>
     </div>
 
@@ -29,11 +29,11 @@
           type="number"
           (paste)="cleanupInputAfterPasting($event)"
           (keydown)="blockDecimalKeys($event)"
-          [(ngModel)]="maxDownload" />
+          [formField]="throttleForm.maxDownload" />
       </sh-form-field>
 
       <sh-select [isClearable]="false" [options]="sizeOptions()">
-        <input type="text" [(ngModel)]="maxDownloadUnit" />
+        <input type="text" appThrottleUnit [formField]="throttleForm.maxDownloadUnit" />
       </sh-select>
     </div>
   </div>

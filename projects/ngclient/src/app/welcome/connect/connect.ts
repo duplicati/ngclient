@@ -9,7 +9,7 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormField } from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
@@ -26,7 +26,7 @@ import { ServerStatusWebSocketService } from '../../core/services/server-status-
 
 @Component({
   selector: 'app-connect',
-  imports: [RouterLink, FormsModule, ShipFormField, ShipButton, ShipProgressBar, ShipCard, ShipAlert, ShipIcon],
+  imports: [RouterLink, FormField, ShipFormField, ShipButton, ShipProgressBar, ShipCard, ShipAlert, ShipIcon],
   templateUrl: './connect.html',
   styleUrl: './connect.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -46,6 +46,7 @@ export default class Connect {
   // state = signal('connected');
   state = this.#remoteControlState.state;
   claimUrl = this.#remoteControlState.claimUrl;
+  registrationForm = this.#remoteControlState.registrationForm;
   registerUrl = this.#remoteControlState.registerUrl;
   customRegisterUrl = this.#remoteControlState.customRegisterUrl;
   additionalReportingUrl = computed(() => {

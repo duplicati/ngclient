@@ -32,9 +32,7 @@
             <input
               class="label"
               type="text"
-              [ngModel]="version.EditedLabel"
-              (ngModelChange)="updateLabel(version.Version, $event)"
-              [disabled]="isSaving()"
+              [formField]="labelsForm[$index].EditedLabel"
               i18n-placeholder
               placeholder="Add label..." />
           </sh-form-field>

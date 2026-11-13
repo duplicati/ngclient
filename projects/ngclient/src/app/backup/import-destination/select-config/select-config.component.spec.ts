@@ -184,6 +184,43 @@ describe('configuration list loading', () => {
     return { fixture, element, component: fixture.componentInstance, response, list, showErrorDialog, navigate };
   }
 
+  it('binds search and import options through the rendered controls', () => {
+    const { fixture, element, component, response } = render();
+    response.next([configuration('a', 'Alpha'), configuration('b', 'Beta')]);
+    response.complete();
+    fixture.detectChanges();
+    const search = element.querySelector('input[type=text]') as HTMLInputElement;
+    search.value = 'beta';
+    search.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    expect(component.selectionForm.searchTerm().value()).toBe('beta');
+    expect(component.configsSorted()[0].BackupId).toBe('b');
+    const clear = element.querySelector('[aria-label="Clear search"]') as HTMLElement;
+    clear.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    fixture.detectChanges();
+    expect(search.value).toBe('');
+    for (const input of element.querySelectorAll('.options sh-toggle input') as NodeListOf<HTMLInputElement>) {
+      input.click();
+      fixture.detectChanges();
+    }
+    expect(component.selectionForm.saveNow().value()).toBe(true);
+    expect(component.selectionForm.importMetadata().value()).toBe(true);
+  });
+
+  it('shows forced direct import for multiple selections without changing the single-selection preference', () => {
+    const { fixture, element, component, response } = render();
+    response.next([configuration('a', 'Alpha'), configuration('b', 'Beta')]);
+    response.complete();
+    component.selectAll();
+    fixture.detectChanges();
+    const forced = element.querySelector('.options sh-toggle input') as HTMLInputElement;
+    expect(forced.checked).toBe(true);
+    expect(forced.disabled).toBe(true);
+    expect(component.selectionForm.saveNow().value()).toBe(false);
+    component.toggleSelected('a');
+    fixture.detectChanges();
+    expect((element.querySelector('.options sh-toggle input') as HTMLInputElement).checked).toBe(false);
+  });
   it('distinguishes a failed request from an empty destination and offers retry', () => {
     const { fixture, element, response, showErrorDialog } = render();
     response.error(new Error('Server unavailable'));

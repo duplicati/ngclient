@@ -1,6 +1,6 @@
 import { KeyboardActionDirective } from '../../../core/directives/keyboard-action.directive';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { form, FormField } from '@angular/forms/signals';
 import { Router } from '@angular/router';
 import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { ShipAlertService } from '@ship-ui/core/ship-alert';
@@ -34,7 +34,7 @@ type ConfigOption = RestoreTaskConfigElementDto & {
     ShipCard,
     ShipToggle,
     ShipCheckbox,
-    FormsModule,
+    FormField,
     ShipProgressBar,
     ShipTooltip,
     ShipIcon,
@@ -63,9 +63,10 @@ export default class SelectConfigComponent implements OnInit {
   isLoading = this.#load.pending;
   isImporting = signal(false);
   configs = signal<ConfigOption[]>([]);
-  saveNow = signal(false);
-  importMetadata = signal(false);
-  searchTerm = signal('');
+  selectionForm = form(signal({ saveNow: false, importMetadata: false, searchTerm: '' }));
+  saveNow = this.selectionForm.saveNow().value;
+  importMetadata = this.selectionForm.importMetadata().value;
+  searchTerm = this.selectionForm.searchTerm().value;
 
   allSelected = computed(() => this.selectedItems().length === this.configs().length);
   noneSelected = computed(() => this.selectedItems().length === 0);

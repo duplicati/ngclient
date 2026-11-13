@@ -2,12 +2,7 @@
   <div class="field-row">
     @if (state() === 'inactive') {
       <sh-form-field label="Registration URL" for="remoteControlRegisterUrl">
-        <input
-          type="text"
-          sh-input
-          id="remoteControlRegisterUrl"
-          name="remoteControlRegisterUrl"
-          [(ngModel)]="registerUrl" />
+        <input type="text" sh-input id="remoteControlRegisterUrl" [formField]="registrationForm.registerUrl" />
       </sh-form-field>
 
       <button type="button" shButton class="raised" (click)="register()" i18n>Register on console</button>
