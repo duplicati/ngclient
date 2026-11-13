@@ -1,54 +1,27 @@
-import { ValueEqualityFn } from '@angular/core';
-import {
-  createLinkedSignal,
-  LinkedSignalGetter,
-  LinkedSignalNode,
-  linkedSignalSetFn,
-  linkedSignalUpdateFn,
-  SIGNAL,
-} from '@angular/core/primitives/signals';
-
-type RevertableSignal<D> = {
-  set: (newValue: D) => () => void;
-  update: (updateFn: (value: D) => D) => () => void;
-};
-
-const identityFn = <T>(v: T) => v;
+import { linkedSignal, Signal, ValueEqualityFn } from '@angular/core';
 
 export function revertableSignal<D>(
   computation: () => D,
   options?: { equal?: ValueEqualityFn<D>; debugName?: string }
-) {
-  const getter = createLinkedSignal<D, D>(computation, identityFn<D>, options?.equal) as LinkedSignalGetter<D, D> &
-    RevertableSignal<D>;
+): Signal<D> & { set: (value: D) => () => void; update: (fn: (value: D) => D) => () => void } {
+  const getter = linkedSignal(computation, options);
+  const set = getter.set;
+  const update = getter.update;
+
   if (ngDevMode) {
     getter.toString = () => `[RevertableSignal: ${getter()}]`;
-    getter[SIGNAL].debugName = options?.debugName;
   }
 
-  type S = NoInfer<D>;
-  const node = getter[SIGNAL] as LinkedSignalNode<S, D>;
-  const upgradedGetter = getter as RevertableSignal<D>;
-
-  upgradedGetter.set = (newValue: D) => {
-    const prevValue = getter();
-
-    linkedSignalSetFn(node, newValue);
-
-    return () => {
-      linkedSignalSetFn(node, prevValue);
-    };
-  };
-
-  upgradedGetter.update = (updateFn: (value: D) => D) => {
-    const prevValue = getter();
-
-    linkedSignalUpdateFn(node, updateFn);
-
-    return () => {
-      linkedSignalSetFn(node, prevValue);
-    };
-  };
-
-  return getter;
+  return Object.assign(getter, {
+    set: (newValue: D) => {
+      const prevValue = getter();
+      set(newValue);
+      return () => set(prevValue);
+    },
+    update: (updateFn: (value: D) => D) => {
+      const prevValue = getter();
+      update(updateFn);
+      return () => set(prevValue);
+    },
+  });
 }

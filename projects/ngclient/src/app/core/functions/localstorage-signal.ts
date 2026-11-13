@@ -1,5 +1,4 @@
 import { CreateSignalOptions, inject, WritableSignal } from '@angular/core';
-import { SIGNAL, SignalGetter, signalSetFn } from '@angular/core/primitives/signals';
 import { LOCALSTORAGE } from '../services/localstorage.token';
 import { createSignal } from './create-signal';
 
@@ -14,12 +13,8 @@ export function localStorageSignal<T>(
 
   initialValue = lsValue ?? initialValue;
 
-  const signalFn = createSignal(initialValue) as SignalGetter<T> & WritableSignal<T>;
-  const node = signalFn[SIGNAL];
-
-  if (options?.equal) {
-    node.equal = options.equal;
-  }
+  const signalFn = createSignal(initialValue, options);
+  const set = signalFn.set;
 
   function setValueToLocalStorage(newValue: T) {
     if (newValue === null || newValue === undefined) {
@@ -31,13 +26,13 @@ export function localStorageSignal<T>(
 
   signalFn.set = (newValue: T) => {
     setValueToLocalStorage(newValue);
-    signalSetFn(node, newValue);
+    set(newValue);
   };
 
   signalFn.update = (updateFn: (value: T) => T) => {
     const newValue = updateFn(signalFn());
     setValueToLocalStorage(newValue);
-    signalSetFn(node, newValue);
+    set(newValue);
   };
 
   return signalFn;
