@@ -7,7 +7,7 @@
     @if (backups().length) {
       @if (showSearch()) {
         <sh-form-field class="small search">
-          <input type="text" i18n-placeholder placeholder="Search backups..." [(ngModel)]="searchTerm" />
+          <input type="text" i18n-placeholder placeholder="Search backups..." [formField]="searchForm.query" />
           <sh-icon prefix>magnifying-glass</sh-icon>
           @if (searchTerm()) {
             <sh-icon

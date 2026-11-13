@@ -62,6 +62,20 @@ describe('Restore backup list search', () => {
     expect(text).not.toContain('Documents');
     expect(text).not.toContain('No backups match');
   });
+  it('clears the rendered Signal Form value through keyboard activation', async () => {
+    const { fixture, searchInput } = await setup(many);
+    const input = searchInput()!;
+    input.value = 'Photos';
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    expect(fixture.componentInstance.searchForm.query().value()).toBe('Photos');
+    const clear = fixture.nativeElement.querySelector('[aria-label="Clear search"]') as HTMLElement;
+    clear.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    fixture.detectChanges();
+    expect(input.value).toBe('');
+    expect(fixture.componentInstance.filteredBackups()).toHaveLength(4);
+    expect(fixture.nativeElement.querySelector('[aria-label="Clear search"]')).toBeNull();
+  });
   it('shows a no-matches message when nothing matches', async () => {
     const { fixture, searchInput } = await setup(many);
     const input = searchInput()!;
