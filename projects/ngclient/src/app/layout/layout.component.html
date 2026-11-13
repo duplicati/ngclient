@@ -19,35 +19,41 @@
     </header>
 
     <sh-list class="base-1 primary">
-      <button action routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" i18n>
+      <a
+        action
+        ariaCurrentWhenActive="page"
+        routerLink="/"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        i18n>
         <sh-icon>house</sh-icon>
         Home
-      </button>
+      </a>
 
-      <button action routerLink="/add-backup" routerLinkActive="active" i18n>
+      <a action ariaCurrentWhenActive="page" routerLink="/add-backup" routerLinkActive="active" i18n>
         <sh-icon>database</sh-icon>
         Add backup
-      </button>
+      </a>
 
-      <button action routerLink="/restore" routerLinkActive="active" i18n>
+      <a action ariaCurrentWhenActive="page" routerLink="/restore" routerLinkActive="active" i18n>
         <sh-icon>clock-counter-clockwise</sh-icon>
         Restore
-      </button>
+      </a>
 
-      <button action routerLink="/destinations" routerLinkActive="active" i18n>
+      <a action ariaCurrentWhenActive="page" routerLink="/destinations" routerLinkActive="active" i18n>
         <sh-icon>link-simple</sh-icon>
         Destinations
-      </button>
+      </a>
 
-      <button action routerLink="/status" routerLinkActive="active" i18n>
+      <a action ariaCurrentWhenActive="page" routerLink="/status" routerLinkActive="active" i18n>
         <sh-icon>pulse</sh-icon>
         System status
-      </button>
+      </a>
 
-      <button action routerLink="/settings" routerLinkActive="active" i18n>
+      <a action ariaCurrentWhenActive="page" routerLink="/settings" routerLinkActive="active" i18n>
         <sh-icon>gear</sh-icon>
         Settings
-      </button>
+      </a>
 
       <!-- <sh-divider /> -->
     </sh-list>
@@ -67,10 +73,10 @@
 
       <sh-divider />
 
-      <button action routerLink="/about" routerLinkActive="active" i18n>
+      <a action ariaCurrentWhenActive="page" routerLink="/about" routerLinkActive="active" i18n>
         <sh-icon>info</sh-icon>
         About Duplicati
-      </button>
+      </a>
 
       <a href="https://docs.duplicati.com" target="_blank" action i18n>
         <sh-icon>files</sh-icon>

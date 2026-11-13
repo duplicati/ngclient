@@ -4,7 +4,7 @@ import { expect, test } from './fixtures/authenticated';
 test.use({ initialServerSettings: { '--retry-delay': '5s', '--removed': 'old' } });
 
 async function openAdvancedSettings(page: Page) {
-  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  await page.getByRole('link', { name: 'Settings', exact: true }).click();
   await expect(page).toHaveURL('/settings');
   const editor = page.locator('app-advanced-options-settings');
   await editor.scrollIntoViewIfNeeded();

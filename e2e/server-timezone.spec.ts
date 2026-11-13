@@ -8,7 +8,7 @@ const timezoneSelect = (page: Page) =>
     .locator('sh-select');
 
 test.beforeEach(async ({ authenticatedPage: page }) => {
-  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  await page.getByRole('link', { name: 'Settings', exact: true }).click();
   await expect(page).toHaveURL('/settings');
   await expect(page.getByRole('heading', { name: 'Settings', exact: true })).toBeVisible();
 });
