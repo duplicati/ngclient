@@ -83,7 +83,7 @@ test.describe('stable backup row identity', () => {
   const jobs = [backup('1', 'Documents'), backup('2', 'Photos'), backup('3', 'Music'), backup('4', 'Projects')];
   test.use({ initialBackups: [jobs, { scope: 'test' }] });
   for (const view of ['list', 'details', 'restore'] as const) {
-    test(`keeps job identity and focus on insertion and removal in ${view}`, async ({
+    test(`keeps job identity and focus through reordering in ${view}`, async ({
       authenticatedPage: page,
       serverApi,
     }) => {
@@ -109,13 +109,12 @@ test.describe('stable backup row identity', () => {
       await expect(rows.filter({ hasText: 'Archive' })).toHaveCount(1);
       await expect(action).toBeFocused();
       await expect(row).toHaveAttribute('data-track-probe', 'photos');
-      // Reordering must retain the job DOM, even when the browser blurs a moved node.
+      // A keyed DOM move must keep focus on the same job action.
       serverApi.sendBackupList([jobs[2], jobs[0], jobs[1], jobs[3], added]);
       await expect(rows.nth(0)).toContainText('Music');
       await expect(row).toHaveAttribute('data-track-probe', 'photos');
-      // Focus restoration across DOM moves is a separate concern from keyed row identity.
-      await action.focus();
       await expect(action).toBeFocused();
+      await page.screenshot({ path: `tmp/ngt079-20261114/${view}-reordered.png` });
       serverApi.sendBackupList([jobs[0], jobs[1], jobs[3], added]);
       await expect(rows.filter({ hasText: 'Music' })).toHaveCount(0);
       await expect(action).toBeFocused();
@@ -134,6 +133,17 @@ test.describe('stable backup row identity', () => {
       await expect(rows.filter({ hasText: 'Documents' })).toHaveCount(1);
       await expect(row).toHaveAttribute('data-track-probe', 'photos');
       await expect(search).toBeFocused();
+      // An explicit blur is intentional; a later update must not refocus the old action.
+      await action.focus();
+      await action.evaluate((node) => (node as HTMLElement).blur());
+      serverApi.sendBackupList([added, jobs[3], backup('2', 'Photos renamed'), jobs[0]]);
+      await expect(rows.nth(0)).toContainText('Archive');
+      await expect(action).not.toBeFocused();
+      // Removing the focused job must not transfer focus to another job.
+      await action.focus();
+      serverApi.sendBackupList([added, jobs[3], jobs[0]]);
+      await expect(row).toHaveCount(0);
+      await expect.poll(() => page.evaluate(() => document.activeElement === document.body)).toBe(true);
     });
   }
 });
