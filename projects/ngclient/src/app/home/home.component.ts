@@ -1,7 +1,7 @@
 import { KeyboardActionDirective } from '../core/directives/keyboard-action.directive';
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { form, FormField } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipButtonGroup } from '@ship-ui/core/ship-button-group';
@@ -38,7 +38,7 @@ import { RemoteControlState } from '../settings/remote-control/remote-control.st
     KeyboardActionDirective,
     RouterLink,
     NgTemplateOutlet,
-    FormsModule,
+    FormField,
     StatusBarComponent,
     ShipCard,
     ShipButton,
@@ -93,7 +93,8 @@ export default class HomeComponent {
   orderBy = this.#backupsState.orderBy;
   backups = this.#backupsState.backups;
   backupsLoading = this.#backupsState.backupsLoading;
-  searchTerm = signal('');
+  searchForm = form(signal({ query: '' }));
+  searchTerm = this.searchForm.query().value;
   showSearch = computed(() => this.backups().length > 3);
   filteredBackups = computed(() => {
     const backups = this.backups();
