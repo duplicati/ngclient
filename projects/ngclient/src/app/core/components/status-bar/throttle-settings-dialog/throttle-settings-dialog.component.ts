@@ -1,5 +1,17 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, output, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Directive,
+  effect,
+  ElementRef,
+  inject,
+  model,
+  OnInit,
+  output,
+  signal,
+  untracked,
+} from '@angular/core';
+import { form, FormField, FormValueControl } from '@angular/forms/signals';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipSelect } from '@ship-ui/core/ship-select';
@@ -47,9 +59,25 @@ const SUBMISSION_UNIT_THRESHOLDS = [
   { threshold: 1, unitPrefix: 'Byte' as keyof typeof UNIT_MAP },
 ];
 
+/** sh-select also dispatches input while resolving its computed input reference. */
+@Directive({ selector: 'input[appThrottleUnit]', host: { '(input)': 'updateValue()', '(blur)': 'touch.emit()' } })
+export class ThrottleUnitControl implements FormValueControl<string> {
+  #element = inject<ElementRef<HTMLInputElement>>(ElementRef);
+  value = model('');
+  touch = output<void>();
+  updateValue() {
+    untracked(() => this.value.set(this.#element.nativeElement.value));
+  }
+  #writeValue = effect(() => {
+    const value = this.value();
+    untracked(() => {
+      if (this.#element.nativeElement.value !== value) this.#element.nativeElement.value = value;
+    });
+  });
+}
 @Component({
   selector: 'app-throttle-settings-dialog',
-  imports: [FormsModule, ShipFormField, ShipSelect, ShipButton],
+  imports: [FormField, ThrottleUnitControl, ShipFormField, ShipSelect, ShipButton],
   templateUrl: './throttle-settings-dialog.component.html',
   styleUrl: './throttle-settings-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -61,10 +89,14 @@ export default class ThrottleSettingsDialogComponent implements OnInit {
 
   isSubmitting = signal<boolean>(false);
   sizeOptions = signal<(typeof BPS_SIZE_OPTIONS)[number][]>([...BPS_SIZE_OPTIONS]);
-  maxUpload = signal<number>(0);
-  maxDownload = signal<number>(0);
-  maxUploadUnit = signal<BpsSizeOptions>('mbps');
-  maxDownloadUnit = signal<BpsSizeOptions>('mbps');
+  throttleForm = form(
+    signal<{
+      maxUpload: number | null;
+      maxDownload: number | null;
+      maxUploadUnit: string;
+      maxDownloadUnit: string;
+    }>({ maxUpload: 0, maxDownload: 0, maxUploadUnit: 'mbps', maxDownloadUnit: 'mbps' })
+  );
 
   ngOnInit() {
     this.init();
@@ -85,7 +117,7 @@ export default class ThrottleSettingsDialogComponent implements OnInit {
   }
   convertFromBitsPerSecondUnits(
     displayValue: number,
-    displayUnit: BpsSizeOptions
+    displayUnit: string
   ): { valueForApi: number; unitPrefixForApi: keyof typeof UNIT_MAP } {
     let bitsPerSecond = 0;
 
@@ -127,8 +159,8 @@ export default class ThrottleSettingsDialogComponent implements OnInit {
             const apiUploadValue = parseFloat(match[1]);
             const apiUploadUnitSuffix = match[2];
             const converted = this.convertToBitsPerSecondUnits(apiUploadValue, apiUploadUnitSuffix);
-            this.maxUpload.set(converted.value);
-            this.maxUploadUnit.set(converted.unit);
+            this.throttleForm.maxUpload().value.set(converted.value);
+            this.throttleForm.maxUploadUnit().value.set(converted.unit);
           } else {
             console.warn('Unexpected max-upload-speed format from API:', rawUploadSpeedString);
             this.resetUpload();
@@ -144,8 +176,8 @@ export default class ThrottleSettingsDialogComponent implements OnInit {
             const apiDownloadValue = parseFloat(match[1]);
             const apiDownloadUnitSuffix = match[2];
             const converted = this.convertToBitsPerSecondUnits(apiDownloadValue, apiDownloadUnitSuffix);
-            this.maxDownload.set(converted.value);
-            this.maxDownloadUnit.set(converted.unit);
+            this.throttleForm.maxDownload().value.set(converted.value);
+            this.throttleForm.maxDownloadUnit().value.set(converted.unit);
           } else {
             console.warn('Unexpected max-download-speed format from API:', rawDownloadSpeedString);
             this.resetDownload();
@@ -164,13 +196,13 @@ export default class ThrottleSettingsDialogComponent implements OnInit {
   }
 
   resetDownload() {
-    this.maxDownload.set(0);
-    this.maxDownloadUnit.set('mbps');
+    this.throttleForm.maxDownload().value.set(0);
+    this.throttleForm.maxDownloadUnit().value.set('mbps');
   }
 
   resetUpload() {
-    this.maxUpload.set(0);
-    this.maxUploadUnit.set('mbps');
+    this.throttleForm.maxUpload().value.set(0);
+    this.throttleForm.maxUploadUnit().value.set('mbps');
   }
 
   // This will block decimal inputs (e.g., 1.5 mbps).
@@ -192,10 +224,10 @@ export default class ThrottleSettingsDialogComponent implements OnInit {
     let uploadSpeedPayload = '';
     let downloadSpeedPayload = '';
 
-    const maxUpload = this.maxUpload() ?? 0;
-    const maxUploadUnit = this.maxUploadUnit();
-    const maxDownload = this.maxDownload() ?? 0;
-    const maxDownloadUnit = this.maxDownloadUnit();
+    const maxUpload = this.throttleForm.maxUpload().value() ?? 0;
+    const maxUploadUnit = this.throttleForm.maxUploadUnit().value();
+    const maxDownload = this.throttleForm.maxDownload().value() ?? 0;
+    const maxDownloadUnit = this.throttleForm.maxDownloadUnit().value();
 
     if (maxUpload > 0) {
       const { valueForApi, unitPrefixForApi } = this.convertFromBitsPerSecondUnits(maxUpload, maxUploadUnit);
