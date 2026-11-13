@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  WritableSignal,
+  DestroyRef,
   computed,
   effect,
   inject,
@@ -75,12 +75,14 @@ export default class ServiceHubComponent {
   previousNotificationsCount = signal<number | null>(null);
 
   constructor() {
+    inject(DestroyRef).onDestroy(() => this.#stopPreviewTimer());
+
     effect(() => {
       const history = this.alertHistory();
       const notifications = this.notifications();
 
       if (notifications.length === 0) {
-        this.shownMessage.set(null);
+        this.resetPreviewMessage();
         return;
       }
 
@@ -93,22 +95,7 @@ export default class ServiceHubComponent {
 
         this.previousHistoryCount.set(history.length);
 
-        this.shownMessageInterval = setInterval(() => {
-          const message = this.shownMessage();
-
-          if (message?.countDown === 0) {
-            this.shownMessage.set(null);
-            this.shownMessageInterval = null;
-            return;
-          }
-
-          if (message !== null) {
-            (this.shownMessage as WritableSignal<ShipNotificationCountDown>).update((x) => ({
-              ...x,
-              countDown: x.countDown - 1,
-            }));
-          }
-        }, 1000);
+        this.#startPreviewTimer();
       } else if (history.length && this.previousHistoryCount() !== history.length && !this.isAlertsOpen()) {
         this.shownMessage.set({
           content: history[0],
@@ -118,22 +105,7 @@ export default class ServiceHubComponent {
 
         this.previousHistoryCount.set(history.length);
 
-        this.shownMessageInterval = setInterval(() => {
-          const message = this.shownMessage();
-
-          if (message?.countDown === 0) {
-            this.shownMessage.set(null);
-            this.shownMessageInterval = null;
-            return;
-          }
-
-          if (message !== null) {
-            (this.shownMessage as WritableSignal<ShipAlertItemCountDown>).update((x) => ({
-              ...x,
-              countDown: x.countDown - 1,
-            }));
-          }
-        }, 1000);
+        this.#startPreviewTimer();
       }
     });
 
@@ -144,9 +116,29 @@ export default class ServiceHubComponent {
     });
   }
 
+  #startPreviewTimer() {
+    this.#stopPreviewTimer();
+    this.shownMessageInterval = setInterval(() => {
+      const message = this.shownMessage();
+      if (message === null || message.countDown === 0) {
+        this.resetPreviewMessage();
+        return;
+      }
+
+      this.shownMessage.update((current) => current && { ...current, countDown: current.countDown - 1 });
+    }, 1000);
+  }
+
+  #stopPreviewTimer() {
+    if (this.shownMessageInterval !== null) {
+      clearInterval(this.shownMessageInterval);
+      this.shownMessageInterval = null;
+    }
+  }
+
   resetPreviewMessage() {
+    this.#stopPreviewTimer();
     this.shownMessage.set(null);
-    this.shownMessageInterval = null;
   }
 
   toggleAlerts() {
