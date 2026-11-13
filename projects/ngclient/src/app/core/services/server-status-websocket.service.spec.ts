@@ -1,7 +1,7 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
-import { Subject } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AccessTokenOutputDto } from '../openapi';
 import { AppAuthState } from '../states/app-auth.state';
@@ -67,7 +67,7 @@ describe('ServerStatusWebSocketService lifecycle', () => {
       token: signal('token'),
       xsrfQueryParam: signal(null),
       isLoggingOut: signal(false),
-      refreshToken: vi.fn(() => refresh),
+      refreshToken: vi.fn<() => Observable<AccessTokenOutputDto>>(() => refresh),
     };
     const dialogRef = { close: vi.fn(), component: { reconnectTimer: signal(0) } };
     const dialog = { open: vi.fn(() => dialogRef) };
@@ -267,5 +267,80 @@ describe('ServerStatusWebSocketService lifecycle', () => {
     vi.advanceTimersByTime(10000);
     expect(FakeWebSocket.instances).toHaveLength(1);
     expect(dialog.open).not.toHaveBeenCalled();
+  });
+  it('closes an active socket and detaches handlers when its injector is destroyed', () => {
+    const { socket } = setup();
+    TestBed.resetTestingModule();
+    expect(socket.close).toHaveBeenCalledOnce();
+    expect([socket.onopen, socket.onmessage, socket.onclose, socket.onerror]).toEqual([null, null, null, null]);
+    expect(service.shouldConnect()).toBe(false);
+    expect(service.connectionStatus()).toBe('disconnected');
+  });
+
+  it('cancels a retry and closes its dialog when its injector is destroyed', () => {
+    const { socket, dialogRef } = setup();
+    socket.disconnect();
+    TestBed.resetTestingModule();
+    vi.advanceTimersByTime(10000);
+    expect(FakeWebSocket.instances).toHaveLength(1);
+    expect(dialogRef.close).toHaveBeenCalledOnce();
+  });
+
+  it.each(['auth reply', '4401'])('releases the pending %s refresh on stop', (reason) => {
+    const { socket, refresh } = setup(true);
+    failAuth(socket, reason);
+    expect(refresh.observed).toBe(true);
+    service.stop();
+    expect(refresh.observed).toBe(false);
+  });
+
+  it.each(['auth reply', '4401'])('releases the pending %s refresh on injector destruction', (reason) => {
+    const { socket, refresh, dialog } = setup(true);
+    failAuth(socket, reason);
+    TestBed.resetTestingModule();
+    expect(refresh.observed).toBe(false);
+    refresh.next({ AccessToken: 'late-token' });
+    vi.advanceTimersByTime(10000);
+    expect(FakeWebSocket.instances).toHaveLength(1);
+    expect(dialog.open).not.toHaveBeenCalled();
+  });
+
+  it('cannot restart or reconnect after its injector is destroyed', () => {
+    setup();
+    TestBed.resetTestingModule();
+    service.start();
+    service.reconnect();
+    service.reconnectIfNeeded();
+    vi.advanceTimersByTime(10000);
+    expect(FakeWebSocket.instances).toHaveLength(1);
+    expect(service.shouldConnect()).toBe(false);
+  });
+
+  it('releases an old refresh when starting a replacement connection', () => {
+    const { socket, refresh } = setup(true);
+    failAuth(socket, '4401');
+    expect(refresh.observed).toBe(true);
+    service.start();
+    expect(refresh.observed).toBe(false);
+    const current = FakeWebSocket.instances[1];
+    current.open();
+    current.message({ Success: true });
+    refresh.next({ AccessToken: 'late-token' });
+    expect(FakeWebSocket.instances).toHaveLength(2);
+    expect(service.connectionStatus()).toBe('connected');
+  });
+  it('reconnects when refresh emits synchronously without leaving a second retry', () => {
+    const { socket, auth } = setup(true);
+    auth.refreshToken.mockImplementation(() => of({ AccessToken: 'fresh-token' }));
+    auth.token.set('fresh-token');
+    socket.disconnect(4401);
+    expect(FakeWebSocket.instances).toHaveLength(2);
+    const current = FakeWebSocket.instances[1];
+    current.open();
+    current.message({ Success: true });
+    vi.advanceTimersByTime(10000);
+    expect(FakeWebSocket.instances).toHaveLength(2);
+    expect(service.connectionStatus()).toBe('connected');
+    expect(current.send).toHaveBeenCalledWith(expect.stringContaining('fresh-token'));
   });
 });
