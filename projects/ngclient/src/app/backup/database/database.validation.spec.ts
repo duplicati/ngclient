@@ -1,13 +1,17 @@
-import { signal } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { of, Subject } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { DuplicatiServer } from '../../core/openapi';
 import { BackupsState } from '../../core/states/backups.state';
 import { ServerSettingsService } from '../../settings/server-settings.service';
+import StatusBarComponent from '../../core/components/status-bar/status-bar.component';
 import DatabaseComponent from './database.component';
+
+@Component({ selector: 'app-status-bar', template: '' })
+class StatusStub {}
 
 describe('database path validation lifetime', () => {
   beforeEach(() => vi.useFakeTimers());
@@ -16,7 +20,7 @@ describe('database path validation lifetime', () => {
     vi.useRealTimers();
   });
 
-  function setup() {
+  function setup(rendered = false) {
     const responses: Subject<unknown>[] = [];
     const validate = vi.fn(() => {
       const response = new Subject<unknown>();
@@ -24,7 +28,7 @@ describe('database path validation lifetime', () => {
       return response;
     });
     const backups = signal<Array<{ Backup: { ID: string; DBPath: string } }>>([]);
-    TestBed.configureTestingModule({
+    const testing = TestBed.configureTestingModule({
       imports: [DatabaseComponent],
       providers: [
         { provide: ActivatedRoute, useValue: { params: of({ id: '42' }) } },
@@ -33,7 +37,13 @@ describe('database path validation lifetime', () => {
         { provide: ShipDialogService, useValue: { open: vi.fn() } },
         { provide: ServerSettingsService, useValue: { reducedReporting: signal({ active: false }) } },
       ],
-    }).overrideComponent(DatabaseComponent, { set: { template: '', imports: [] } });
+    });
+    if (rendered)
+      testing.overrideComponent(DatabaseComponent, {
+        remove: { imports: [StatusBarComponent, RouterLink] },
+        add: { imports: [StatusStub] },
+      });
+    else testing.overrideComponent(DatabaseComponent, { set: { template: '', imports: [] } });
     const fixture = TestBed.createComponent(DatabaseComponent);
     fixture.detectChanges();
     const component = fixture.componentInstance;
@@ -46,6 +56,40 @@ describe('database path validation lifetime', () => {
     return { fixture, component, validate, responses, changePath, backups };
   }
 
+  it('validates the exact rendered path only after the existing debounce', async () => {
+    const { fixture, component, validate, responses } = setup(true);
+    const input = fixture.nativeElement.querySelector('input[type=text]') as HTMLInputElement;
+    input.value = '/data/path & spaces.sqlite';
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    expect(component.placementForm.path().value()).toBe('/data/path & spaces.sqlite');
+    expect(component.backupFilePath()).toBe('/data/path & spaces.sqlite');
+    await vi.advanceTimersByTimeAsync(499);
+    expect(validate).not.toHaveBeenCalled();
+    await vi.advanceTimersByTimeAsync(1);
+    fixture.detectChanges();
+    expect(validate).toHaveBeenCalledExactlyOnceWith({ body: { path: '/data/path & spaces.sqlite' } });
+    responses[0].next({});
+    fixture.detectChanges();
+    expect(component.isValidatedPath()).toBe(true);
+  });
+
+  it('updates the rendered path when resetting to the loaded database location', async () => {
+    const { fixture, component, backups } = setup(true);
+    backups.set([{ Backup: { ID: '42', DBPath: '/data/original.sqlite' } }]);
+    fixture.detectChanges();
+    const input = fixture.nativeElement.querySelector('input[type=text]') as HTMLInputElement;
+    expect(input.value).toBe('/data/original.sqlite');
+    input.value = '/data/edited.sqlite';
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    expect(component.pathHasChanged()).toBe(true);
+    component.resetDatabasePath();
+    fixture.detectChanges();
+    expect(input.value).toBe('/data/original.sqlite');
+    expect(component.pathHasChanged()).toBe(false);
+    await vi.advanceTimersByTimeAsync(500);
+  });
   it('does not let a previous path response replace the current successful validation', async () => {
     const { component, validate, responses, changePath } = setup();
     await changePath('/old.sqlite');
