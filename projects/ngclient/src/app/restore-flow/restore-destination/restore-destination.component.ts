@@ -8,7 +8,8 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { form, FormField } from '@angular/forms/signals';
+import { NullableTextControl } from '../../backup/general/nullable-text-control';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
@@ -34,7 +35,8 @@ import { RestoreFlowState } from '../restore-flow.state';
     SingleDestinationComponent,
     DestinationListComponent,
     DestinationListItemComponent,
-    FormsModule,
+    FormField,
+    NullableTextControl,
     ShipButton,
     ShipFormField,
     ShipMenu,
@@ -69,7 +71,8 @@ export default class RestoreDestinationComponent {
       ? this.#connectionStringsState.destinations().filter((d) => d.ID > 0 && !!d.BaseUrl?.trim())
       : []
   );
-  targetUrlCtrl = signal<string | null>(null);
+  targetUrlForm = form(signal<{ url: string | null }>({ url: null }));
+  targetUrlCtrl = this.targetUrlForm.url().value;
   targetUrlInitial = signal<string | null>(null);
   targetUrlDialogOpen = signal(false);
   toggleNewDestination = signal(true);
