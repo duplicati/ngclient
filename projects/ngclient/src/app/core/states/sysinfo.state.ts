@@ -219,6 +219,12 @@ export class SysinfoState {
     return serverOnlyOptions.some((x) => x.Name === 'use-file-watcher');
   });
 
+  /** The server has the MCP endpoint; reported whether the endpoint is switched on or off */
+  hasMcpServer = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v2:mcp:server');
+  });
+
   hasSyncMode = computed(() => {
     const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
     return apiExtensions.includes('v1:backup:sync-mode');

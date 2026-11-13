@@ -1,0 +1,87 @@
+@use '@ship-ui/core/styles/helpers' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: p2r(12);
+  width: 100%;
+}
+
+sh-alert,
+.token,
+.token-form {
+  width: 100%;
+}
+
+.empty,
+.hint {
+  color: var(--base-10);
+  margin: 0;
+}
+
+.created-token {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: p2r(8);
+  width: 100%;
+  padding: p2r(16);
+  border: 1px solid var(--base-4);
+  border-radius: var(--shape-2);
+}
+
+pre {
+  margin: 0;
+  padding: p2r(12);
+  background: var(--base-2);
+  border-radius: var(--shape-2);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  user-select: all;
+}
+
+.token {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: p2r(16);
+  padding: p2r(12 16);
+  border: 1px solid var(--base-4);
+  border-radius: var(--shape-2);
+
+  &.expired .token-details {
+    opacity: 0.6;
+  }
+}
+
+.token-details {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(2);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.token-form {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: p2r(12);
+  padding: p2r(16);
+  border: 1px solid var(--base-4);
+  border-radius: var(--shape-2);
+}
+
+.backup-list {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(4);
+  padding-left: p2r(24);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: p2r(8);
+}

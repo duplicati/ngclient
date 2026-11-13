@@ -137,11 +137,24 @@ describe('ServerSettingsService', () => {
             'hide-console-connection-status': value,
             'use-out-of-process-controller': value,
             'disable-file-watcher': value,
+            'enable-mcp-server': value,
           };
     getResponses[0].next(settings);
+    expect(service.isMcpServerEnabled()).toBe(expected);
     expect(service.isConsoleConnectionStatusHidden()).toBe(expected);
     expect(service.isControllerIpcEnabled()).toBe(expected);
     expect(service.isFileWatcherDisabled()).toBe(expected);
+  });
+
+  it.each([
+    [true, 'True'],
+    [false, 'False'],
+  ] as const)('writes the MCP server enabled state %s as %s', (enabled, value) => {
+    const { service, getResponses, patchSettings } = setup();
+    getResponses[0].next({ 'enable-mcp-server': '' });
+    subscriptions.push(service.setMcpServerEnabled(enabled).subscribe());
+    expect(patchSettings).toHaveBeenCalledExactlyOnceWith({ body: { 'enable-mcp-server': value } });
+    expect(service.isMcpServerEnabled()).toBe(enabled);
   });
 
   it.each([

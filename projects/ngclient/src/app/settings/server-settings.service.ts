@@ -12,6 +12,7 @@ const SHOWN_WELCOME_PAGE_KEY = 'shown-welcome-page-v1';
 const HIDE_CONSOLE_CONNECTION_STATUS_KEY = 'hide-console-connection-status';
 const USE_OUT_OF_PROCESS_CONTROLLER_KEY = 'use-out-of-process-controller';
 const DISABLE_FILE_WATCHER_KEY = 'disable-file-watcher';
+const ENABLE_MCP_SERVER_KEY = 'enable-mcp-server';
 const DISABLE_CONSOLE_CONTROL_KEY = 'disable-console-control';
 const DISABLE_TRAYICON_LOGIN_KEY = 'disable-tray-icon-login';
 const REMOTE_ACCESS_INTERFACE_KEY = 'server-listen-interface';
@@ -91,6 +92,10 @@ export class ServerSettingsService {
     return this.#isOptionTrue(DISABLE_FILE_WATCHER_KEY, this.serverSettings());
   });
 
+  isMcpServerEnabled = computed(() => {
+    return this.#isOptionTrue(ENABLE_MCP_SERVER_KEY, this.serverSettings());
+  });
+
   refreshServerSettings() {
     // If we have websocket connection, do not refresh via REST
     if (this.#serverState.getConnectionMethod() === 'websocket') return;
@@ -152,6 +157,10 @@ export class ServerSettingsService {
 
   setFileWatcherDisabled(disable: boolean) {
     return this.patchServerSetting(DISABLE_FILE_WATCHER_KEY, disable ? 'True' : 'False');
+  }
+
+  setMcpServerEnabled(enabled: boolean) {
+    return this.patchServerSetting(ENABLE_MCP_SERVER_KEY, enabled ? 'True' : 'False');
   }
 
   setDisableTrayIconLogin(disable: boolean) {

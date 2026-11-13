@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
@@ -22,6 +22,8 @@ import { AppAuthState } from '../core/states/app-auth.state';
 import { SysinfoState } from '../core/states/sysinfo.state';
 import { LayoutState } from '../layout/layout.state';
 import AdvancedOptionsSettingsComponent from './advanced-options-settings/advanced-options-settings.component';
+import { getMcpServerDisableWarning } from './mcp-tokens/mcp-token-settings';
+import { McpTokensComponent } from './mcp-tokens/mcp-tokens.component';
 import { RemoteControlComponent } from './remote-control/remote-control.component';
 import { RemoteControlState } from './remote-control/remote-control.state';
 import { ServerSettingsService } from './server-settings.service';
@@ -99,6 +101,7 @@ type TimeTypes = (typeof TIME_OPTIONS)[number]['value'];
     ReactiveFormsModule,
     StatusBarComponent,
     RemoteControlComponent,
+    McpTokensComponent,
     AdvancedOptionsSettingsComponent,
     ShipButton,
     ShipRadio,
@@ -294,6 +297,63 @@ export default class SettingsComponent {
     this.#serverSettingsService
       .setFileWatcherDisabled(!$event)
       .pipe(finalize(() => this.updatingFileWatcherState.set(false)))
+      .subscribe({
+        // The service restores the previous settings and the HTTP interceptor reports the error.
+        error: () => {},
+      });
+  }
+
+  hasMcpServer = this.#sysinfo.hasMcpServer;
+  isMcpServerEnabled = this.#serverSettingsService.isMcpServerEnabled;
+  updatingMcpServerState = signal(false);
+  /** The list of access tokens, which is shown while the MCP server is on */
+  mcpTokens = viewChild(McpTokensComponent);
+  /** What the toggle shows while the user is asked to confirm; null when it shows the setting */
+  #mcpServerToggleOverride = signal<boolean | null>(null);
+  mcpServerToggleChecked = computed(() => this.#mcpServerToggleOverride() ?? this.isMcpServerEnabled());
+
+  saveMcpServerState($event: boolean) {
+    const enabled = !!$event;
+    const warning = enabled ? null : getMcpServerDisableWarning(this.#getMcpTokenCount());
+    if (warning === null) {
+      this.#setMcpServerState(enabled);
+      return;
+    }
+
+    // The toggle has already moved to off. Holding that value here lets a cancel move it back,
+    // as the setting itself does not change and so would not update the toggle.
+    this.#mcpServerToggleOverride.set(false);
+    this.#dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: $localize`Turn off the MCP server`,
+        message: warning,
+        confirmText: $localize`Turn off and delete tokens`,
+        cancelText: $localize`Cancel`,
+      },
+      closed: (res) => {
+        if (res) this.#setMcpServerState(false);
+        else this.#mcpServerToggleOverride.set(null);
+      },
+    });
+  }
+
+  /** The number of access tokens, or null while the list has not been loaded */
+  #getMcpTokenCount(): number | null {
+    const mcpTokens = this.mcpTokens();
+    return mcpTokens && !mcpTokens.isLoading() ? mcpTokens.tokens().length : null;
+  }
+
+  #setMcpServerState(enabled: boolean) {
+    this.updatingMcpServerState.set(true);
+
+    this.#serverSettingsService
+      .setMcpServerEnabled(enabled)
+      .pipe(
+        finalize(() => {
+          this.updatingMcpServerState.set(false);
+          this.#mcpServerToggleOverride.set(null);
+        })
+      )
       .subscribe({
         // The service restores the previous settings and the HTTP interceptor reports the error.
         error: () => {},

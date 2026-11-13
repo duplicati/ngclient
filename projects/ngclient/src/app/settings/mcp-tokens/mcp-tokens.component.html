@@ -1,0 +1,177 @@
+@if (createdToken(); as created) {
+  <sh-alert type="primary" i18n>
+    The access token "{{ created.name }}" has been created. Copy it now: it is not stored and cannot be shown again.
+  </sh-alert>
+
+  <div class="created-token">
+    <sh-select [options]="agentOptions" label="label" value="id">
+      <label i18n>Set up the token in</label>
+      <input
+        type="text"
+        [ngModel]="selectedAgentId()"
+        (ngModelChange)="selectAgent($event)"
+        [ngModelOptions]="{ standalone: true }" />
+
+      <ng-template let-option>
+        {{ option.label }}
+      </ng-template>
+    </sh-select>
+
+    @if (selectedAgent(); as agent) {
+      <p class="hint">{{ agent.description }}</p>
+      <pre><code>{{ agent.snippet }}</code></pre>
+
+      <div class="actions">
+        <button type="button" shButton (click)="copy(agent.snippet)">
+          <sh-icon>{{ copied() ? 'check' : 'copy' }}</sh-icon>
+          <span i18n>Copy</span>
+        </button>
+        <button type="button" shButton class="raised" (click)="dismissCreatedToken()" i18n>
+          I have copied the token
+        </button>
+      </div>
+    }
+  </div>
+}
+
+@if (!isLoading() && tokens().length === 0) {
+  <p class="empty" i18n>No access tokens have been created.</p>
+}
+
+@for (token of tokens(); track token.Id) {
+  <div class="token" [class.expired]="token.Expired">
+    <div class="token-details">
+      <strong>{{ token.Name }}</strong>
+      <span>{{ levelLabel(token.Level) }}</span>
+      <span>
+        <ng-container i18n>Backups:</ng-container>
+        {{ describeBackups(token) }}
+      </span>
+      @if (token.RestoreRoots?.length) {
+        <span>
+          <ng-container i18n>Restore folders:</ng-container>
+          {{ token.RestoreRoots!.join(', ') }}
+        </span>
+      }
+      <span>
+        @if (token.Expired) {
+          <ng-container i18n>Expired</ng-container>
+        } @else {
+          <ng-container i18n>Expires</ng-container>
+        }
+        {{ token.Expires | date: 'mediumDate' }}
+      </span>
+    </div>
+
+    <button
+      type="button"
+      shButton
+      class="raised error"
+      [class.loading]="deletingId() === token.Id"
+      [disabled]="deletingId() !== null"
+      (click)="delete(token)"
+      i18n>
+      Delete
+    </button>
+  </div>
+}
+
+@if (showForm()) {
+  <div class="token-form">
+    <sh-form-field>
+      <label for="mcpTokenName" i18n>Name</label>
+      <input
+        type="text"
+        id="mcpTokenName"
+        autocomplete="off"
+        maxlength="100"
+        i18n-placeholder
+        placeholder="The agent the token is for"
+        [ngModel]="form().name"
+        (ngModelChange)="updateForm({ name: $event })"
+        [ngModelOptions]="{ standalone: true }" />
+    </sh-form-field>
+
+    <sh-select [options]="levelOptions" label="label" value="value">
+      <label i18n>Permission level</label>
+      <input
+        type="text"
+        [ngModel]="form().level"
+        (ngModelChange)="selectLevel($event)"
+        [ngModelOptions]="{ standalone: true }" />
+
+      <ng-template let-option>
+        {{ option.label }}
+      </ng-template>
+    </sh-select>
+
+    <sh-select [options]="lifetimeOptions" label="label" value="value">
+      <label i18n>Valid for</label>
+      <input
+        type="text"
+        [ngModel]="form().expiresIn"
+        (ngModelChange)="selectLifetime($event)"
+        [ngModelOptions]="{ standalone: true }" />
+
+      <ng-template let-option>
+        {{ option.label }}
+      </ng-template>
+    </sh-select>
+
+    <sh-checkbox
+      class="primary raised"
+      [checked]="form().allBackups"
+      (checkedChange)="updateForm({ allBackups: $event })"
+      i18n>
+      All backups, including ones created later
+    </sh-checkbox>
+
+    @if (!form().allBackups) {
+      <div class="backup-list">
+        @for (backup of backups(); track backup.id) {
+          <sh-checkbox
+            class="primary raised"
+            [checked]="isBackupSelected(backup.id)"
+            (checkedChange)="toggleBackup(backup.id, $event)">
+            {{ backup.name }}
+          </sh-checkbox>
+        } @empty {
+          <p i18n>There are no backups to choose from.</p>
+        }
+      </div>
+    }
+
+    @if (form().level === 'Restore') {
+      <sh-form-field>
+        <label for="mcpTokenRestoreRoots" i18n>Additional restore folders</label>
+        <textarea
+          id="mcpTokenRestoreRoots"
+          rows="2"
+          autocomplete="off"
+          [ngModel]="form().restoreRoots"
+          (ngModelChange)="updateForm({ restoreRoots: $event })"
+          [ngModelOptions]="{ standalone: true }"></textarea>
+      </sh-form-field>
+      <p class="hint" i18n>
+        The token can always restore files to where they were backed up from. To let it restore to other places, enter
+        the full paths of the folders it can restore into, one per line.
+      </p>
+    }
+
+    <div class="actions">
+      <button type="button" shButton [disabled]="isCreating()" (click)="closeForm()" i18n>Cancel</button>
+      <button
+        type="button"
+        shButton
+        class="raised primary"
+        [class.loading]="isCreating()"
+        [disabled]="isCreating() || formError() !== null"
+        (click)="create()"
+        i18n>
+        Create token
+      </button>
+    </div>
+  </div>
+} @else {
+  <button type="button" shButton class="raised" (click)="openForm()" i18n>Create access token</button>
+}

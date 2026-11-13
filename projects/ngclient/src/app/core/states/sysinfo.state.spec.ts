@@ -14,6 +14,18 @@ describe('SysinfoState server capabilities', () => {
   it.each([
     [undefined, false],
     [[], false],
+    [['v1:ipc:controller'], false],
+    [['v1:ipc:controller', 'v2:mcp:server'], true],
+  ])('reports the MCP server when the server lists its extension: %j', (extensions, expected) => {
+    const state = setup();
+    expect(state.hasMcpServer()).toBe(false);
+    state.systemInfo.set({ APIExtensions: extensions } as SystemInfoDto);
+    expect(state.hasMcpServer()).toBe(expected);
+  });
+
+  it.each([
+    [undefined, false],
+    [[], false],
     [[{ Name: 'store-task-config' }], false],
     [[{ Name: 'store-task-config' }, { Name: 'use-file-watcher' }], true],
   ])('reports the file watcher when the server lists its option: %j', (serverOnlyOptions, expected) => {

@@ -555,7 +555,7 @@
     </section>
   }
 
-  @if (hasIpcController() || hasFileWatcher()) {
+  @if (hasIpcController() || hasFileWatcher() || hasMcpServer()) {
     <section>
       <div class="left">
         <h3 i18n>Experimental options</h3>
@@ -591,6 +591,37 @@
             }
           </sh-toggle>
         }
+
+        @if (hasMcpServer()) {
+          <p i18n>MCP server</p>
+          <sh-toggle
+            class="primary raised"
+            [checked]="mcpServerToggleChecked()"
+            [disabled]="updatingMcpServerState()"
+            (checkedChange)="saveMcpServerState($event)">
+            @if (isMcpServerEnabled()) {
+              <label i18n>AI agents with an access token can use the MCP endpoint at /mcp</label>
+            } @else {
+              <label i18n>The MCP endpoint is disabled</label>
+            }
+          </sh-toggle>
+        }
+      </div>
+    </section>
+  }
+
+  @if (hasMcpServer() && isMcpServerEnabled()) {
+    <section>
+      <div class="left">
+        <h3 i18n>MCP access tokens</h3>
+        <p i18n>
+          An AI agent connects to the MCP endpoint with an access token. A token only works on the MCP endpoint, and can
+          be limited to a permission level and to selected backups.
+        </p>
+      </div>
+
+      <div class="right">
+        <app-mcp-tokens />
       </div>
     </section>
   }
