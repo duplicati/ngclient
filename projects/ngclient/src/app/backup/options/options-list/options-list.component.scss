@@ -4,6 +4,27 @@
   display: block;
 }
 
+.options-card {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(16);
+  padding: p2r(16);
+  border-radius: var(--shape-3);
+  background-color: var(--base-2);
+}
+
+.options-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: p2r(16);
+
+  h3 {
+    margin: 0;
+    font: var(--paragraph-10);
+  }
+}
+
 sh-select {
   --miw: p2r(120);
 }

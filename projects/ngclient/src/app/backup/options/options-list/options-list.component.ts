@@ -21,7 +21,6 @@ import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipMenu } from '@ship-ui/core/ship-menu';
 import { ShipSelect } from '@ship-ui/core/ship-select';
 import { ShipToggle } from '@ship-ui/core/ship-toggle';
-import { ShipToggleCard } from '@ship-ui/core/ship-toggle-card';
 import FileTreeComponent from '../../../core/components/file-tree/file-tree.component';
 import { SizeComponent } from '../../../core/components/size/size.component';
 import { TimespanComponent } from '../../../core/components/timespan/timespan.component';
@@ -51,7 +50,6 @@ type SettingItem = {
     TimespanComponent,
     NgTemplateOutlet,
 
-    ShipToggleCard,
     ShipFormField,
     ShipButton,
     ShipMenu,
