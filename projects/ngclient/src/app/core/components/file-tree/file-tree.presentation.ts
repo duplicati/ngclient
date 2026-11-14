@@ -1,5 +1,147 @@
 import type { SearchEntriesItemDto } from '../../openapi';
 import { FileTreeNode, ROOTPATH, TreeEvalEnum } from './file-tree.models';
+import { isFolderPath } from './file-tree-path-utils';
+
+/** A namespace separate from filesystem paths, also for groups at / or a drive root. */
+const restoreGroupId = (path: string) => 'restore-file-group:' + path;
+
+function restoreFileSelection(paths: readonly string[]) {
+  const included = new Set(paths.filter((path) => !path.startsWith('-')));
+  const excluded = new Set(paths.filter((path) => path.startsWith('-')).map((path) => path.slice(1)));
+  const folders = [...included].filter(isFolderPath);
+  const excludedFolders = [...excluded].filter(isFolderPath);
+  return (file: string) =>
+    (included.has(file) || folders.some((folder) => file.startsWith(folder))) &&
+    !excluded.has(file) &&
+    !excludedFolders.some((folder) => file.startsWith(folder));
+}
+
+/** Toggles saved file roots, not the synthetic parent, preserving selections outside the group. */
+export function toggleRestoreFileGroup(
+  paths: readonly string[],
+  members: readonly string[],
+  roots: readonly string[],
+  groupPath: string
+): string[] {
+  const allSelected = members.every(restoreFileSelection(paths));
+  const memberSet = new Set(members);
+  const rootSet = new Set(roots);
+  const result: string[] = [];
+  for (const path of paths) {
+    const excluded = path.startsWith('-');
+    const value = excluded ? path.slice(1) : path;
+    if (memberSet.has(value)) continue;
+    if (isFolderPath(value) && members.some((file) => file.startsWith(value))) {
+      // A manually entered ancestor can also select other roots: retain those roots explicitly.
+      result.push(
+        ...roots
+          .filter((root) => root.startsWith(value) && !memberSet.has(root))
+          .map((root) => (excluded ? '-' + root : root))
+      );
+    } else if (
+      !value.startsWith(groupPath) ||
+      rootSet.has(value) ||
+      roots.some((root) => isFolderPath(root) && value.startsWith(root))
+    ) {
+      result.push(path);
+    }
+  }
+  if (!allSelected) result.push(...members);
+  return [...new Set(result)];
+}
+
+type RestoreGroup = { path: string; children: Map<string, RestoreGroup | FileTreeNode>; files: string[] };
+const isRestoreGroup = (node: RestoreGroup | FileTreeNode): node is RestoreGroup => 'files' in node;
+
+/** Build a display hierarchy from saved file roots without listing or inventing folder metadata. */
+export function buildRestoreFileGroups(
+  roots: FileTreeNode[],
+  selection: readonly string[],
+  expanded: ReadonlySet<string>,
+  sort: FileTreeSortPreferences
+): FileTreeNode[] {
+  const folders = roots.filter((node) => node.cls === 'folder' && node.id);
+  const parents = (file: string): string[] => {
+    // Keep the original path spelling, drive, UNC share and separator. Relative/special paths stay unchanged.
+    const anchor = file.match(/^(?:[a-z]:[\\/]|\\\\[^\\]+\\[^\\]+\\|\/\/[^/]+\/[^/]+\/|\/)/i)?.[0];
+    if (!anchor) return [];
+    const sep = anchor.endsWith('\\') ? '\\' : '/';
+    const parts = file.slice(anchor.length).split(sep);
+    parts.pop();
+    const paths = [anchor];
+    for (const part of parts) {
+      if (!part) return [];
+      paths.push(paths[paths.length - 1] + part + sep);
+    }
+    return paths;
+  };
+  const files = roots.filter(
+    (node) =>
+      node.cls === 'file' &&
+      node.id &&
+      !node.remoteSource &&
+      !folders.some((folder) => node.id!.startsWith(folder.id!)) &&
+      parents(node.id).length > 0
+  );
+  if (files.length < 2) return roots;
+  const isSelected = restoreFileSelection(selection);
+  const top = new Map<string, RestoreGroup>();
+  for (const node of files) {
+    const paths = parents(node.id!);
+    let group: RestoreGroup | undefined;
+    for (const prefix of paths) {
+      const existing = group ? group.children.get(prefix) : top.get(prefix);
+      const next: RestoreGroup =
+        existing && isRestoreGroup(existing) ? existing : { path: prefix, children: new Map(), files: [] };
+      if (group) group.children.set(prefix, next);
+      else top.set(prefix, next);
+      next.files.push(node.id!);
+      group = next;
+    }
+    group!.children.set(node.id!, node);
+  }
+  const render = (initial: RestoreGroup, parentId = '', parentPath = ''): FileTreeNode => {
+    let group = initial;
+    // Compress ancestors that only contain another display group; do not add drive-to-leaf click chains.
+    while (group.children.size === 1) {
+      const child = group.children.values().next().value!;
+      if (!isRestoreGroup(child)) break;
+      group = child;
+    }
+    const id = restoreGroupId(group.path);
+    const count = group.files.filter(isSelected).length;
+    const children = expanded.has(id)
+      ? [...group.children.values()].map((child) =>
+          isRestoreGroup(child)
+            ? render(child, id, group.path)
+            : { ...child, text: child.id!.slice(group.path.length), parentPath: id }
+        )
+      : [];
+    return {
+      id,
+      text: parentPath ? group.path.slice(parentPath.length).replace(/[\\/]$/, '') : group.path,
+      parentPath: parentId,
+      cls: 'folder',
+      children,
+      iconCls: null,
+      check: false,
+      leaf: false,
+      resolvedpath: null,
+      hidden: false,
+      systemFile: false,
+      temporary: false,
+      symlink: false,
+      fileSize: -1,
+      restoreGroupPaths: group.files,
+      restoreGroupPath: group.path,
+      evalState: count === group.files.length ? TreeEvalEnum.Included : TreeEvalEnum.None,
+      isIndeterminate: count > 0 && count < group.files.length,
+    } satisfies FileTreeNode;
+  };
+  const result = [...roots.filter((node) => !files.includes(node)), ...[...top.values()].map((group) => render(group))];
+  sortFileTreeNodes(result, sort);
+  return result;
+}
 
 export interface FileTreeSortPreferences {
   foldersFirst: boolean;

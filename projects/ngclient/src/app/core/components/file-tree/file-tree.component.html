@@ -5,7 +5,10 @@
   </sh-button-group>
 }
 
-<div class="section" [class.hidden]="!searchMode() && pathDiscoveryMethod() !== 'browse'">
+<div
+  class="section"
+  [class.hidden]="!searchMode() && pathDiscoveryMethod() !== 'browse'"
+  [class.has-restore-groups]="hasRestoreFileGroups()">
   <div class="tree-header">
     <ng-content select="label" ngProjectAs="label"></ng-content>
 
@@ -25,6 +28,13 @@
     </button>
   </div>
 
+  @if (hasRestoreFileGroups()) {
+    <p class="restore-group-help" [id]="restoreGroupHelpId()" i18n>
+      File groups organize individually backed-up files. Selecting a group selects those files; the folder's own
+      attributes were not backed up.
+    </p>
+  }
+
   <div
     class="browse-files"
     [class.visualize-accepted]="accepts()"
@@ -32,6 +42,7 @@
     role="tree"
     aria-label="Files and folders"
     i18n-aria-label
+    [attr.aria-describedby]="hasRestoreFileGroups() ? restoreGroupHelpId() : null"
     [attr.aria-multiselectable]="multiSelect()"
     [attr.aria-disabled]="disabled() || null"
     [attr.aria-busy]="isLoading() !== null">
@@ -142,6 +153,9 @@
 
               <div class="text">
                 <span>{{ node.text }}</span>
+                @if (node.restoreGroupPaths) {
+                  <span class="size restore-group-label" i18n>(File group)</span>
+                }
                 @if (lockedLinkLabel(node); as label) {
                   <span class="size">({{ label }})</span>
                 }
