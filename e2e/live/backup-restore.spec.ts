@@ -4,15 +4,22 @@ import { join, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { test, expect } from './fixture';
 
-for (const mode of ['unencrypted', 'aes-saved', 'aes-direct'] as const) {
+for (const mode of ['unencrypted', 'aes-saved', 'aes-direct', 'aes-retry'] as const) {
   const encrypted = mode !== 'unencrypted';
-  const direct = mode === 'aes-direct';
-  test(`backs up ${encrypted ? 'AES-encrypted' : 'unencrypted'} local files and restores original contents${direct ? ' without saved settings' : ''}`, async ({
+  const retry = mode === 'aes-retry';
+  const direct = mode === 'aes-direct' || retry;
+  test(`backs up ${encrypted ? 'AES-encrypted' : 'unencrypted'} local files and restores original contents${retry ? ' after correcting a wrong passphrase' : direct ? ' without saved settings' : ''}`, async ({
     page,
     liveServer,
   }) => {
     const { api, directory, password } = liveServer;
-    const prefix = direct ? 'direct-encrypted-roundtrip' : encrypted ? 'encrypted-roundtrip' : 'roundtrip';
+    const prefix = retry
+      ? 'retry-encrypted-roundtrip'
+      : direct
+        ? 'direct-encrypted-roundtrip'
+        : encrypted
+          ? 'encrypted-roundtrip'
+          : 'roundtrip';
     const passphrase = randomUUID();
     const jobName = direct
       ? 'Live encrypted direct restore'
@@ -58,6 +65,12 @@ for (const mode of ['unencrypted', 'aes-saved', 'aes-direct'] as const) {
     expect(ID).toBeTruthy();
     let originalExists = true;
     const temporaryIds = new Set<string>();
+    let recoveryOrigin: number | undefined;
+    const restoreRequests: string[] = [];
+    page.on('request', (request) => {
+      if (request.method() === 'POST' && new URL(request.url()).pathname.endsWith('/restore'))
+        restoreRequests.push(request.url());
+    });
     try {
       const errors: string[] = [];
       page.on('pageerror', (error) => errors.push(error.message));
@@ -119,25 +132,62 @@ for (const mode of ['unencrypted', 'aes-saved', 'aes-direct'] as const) {
         await page.getByRole('button', { name: 'Override target URL', exact: true }).click();
         await page.getByRole('button', { name: 'Continue', exact: true }).click();
         await page.getByRole('button', { name: 'Skip test and continue', exact: true }).click();
-        const input = page.getByPlaceholder('Enter backup passphrase if defined.', { exact: true });
-        await input.fill(passphrase);
-        const createdTemporary = page.waitForResponse((response) => {
-          const url = new URL(response.url());
-          return (
-            response.request().method() === 'POST' &&
-            url.pathname === '/api/v1/backups' &&
-            url.searchParams.get('temporary') === 'true'
+        const enterPassphrase = async (value: string) => {
+          await page.getByPlaceholder('Enter backup passphrase if defined.', { exact: true }).fill(value);
+          const createdTemporary = page.waitForResponse((response) => {
+            const url = new URL(response.url());
+            return (
+              response.request().method() === 'POST' &&
+              url.pathname === '/api/v1/backups' &&
+              url.searchParams.get('temporary') === 'true'
+            );
+          });
+          await page.getByRole('button', { name: 'Continue', exact: true }).click();
+          const response = await createdTemporary;
+          expect(response.ok()).toBe(true);
+          const settings = response.request().postDataJSON().Backup.Settings as Array<{ Name: string; Value: string }>;
+          expect(settings.find((setting) => setting.Name.replace(/^--/, '') === 'passphrase')?.Value).toBe(value);
+          const temporary = await response.json();
+          expect(temporary.ID).toBeTruthy();
+          expect(temporary.ID).not.toBe(ID);
+          temporaryIds.add(temporary.ID);
+        };
+        if (retry) {
+          recoveryOrigin = await page.evaluate(() => performance.timeOrigin);
+          const repair = page.waitForResponse(
+            (response) =>
+              response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/repairupdate')
           );
-        });
-        await page.getByRole('button', { name: 'Continue', exact: true }).click();
-        const response = await createdTemporary;
-        expect(response.ok()).toBe(true);
-        const settings = response.request().postDataJSON().Backup.Settings as Array<{ Name: string; Value: string }>;
-        expect(settings.find((setting) => setting.Name.replace(/^--/, '') === 'passphrase')?.Value).toBe(passphrase);
-        const temporary = await response.json();
-        expect(temporary.ID).toBeTruthy();
-        expect(temporary.ID).not.toBe(ID);
-        temporaryIds.add(temporary.ID);
+          await enterPassphrase(randomUUID());
+          const repairResponse = await repair;
+          expect(repairResponse.ok()).toBe(true);
+          const { ID: repairTask } = await repairResponse.json();
+          expect(repairTask).toBeTruthy();
+          const dialog = page
+            .getByRole('dialog')
+            .filter({ has: page.getByRole('heading', { name: 'Restore database repair failed', exact: true }) });
+          await expect(dialog).toBeVisible({ timeout: 30_000 });
+          const taskResponse = await api.get(`/api/v1/task/${repairTask}`);
+          expect(taskResponse.ok()).toBe(true);
+          const failure = await taskResponse.json();
+          expect(failure.ErrorMessage || failure.Exception).toMatch(/decrypt|passphrase|password|key/i);
+          expect(restoreRequests).toHaveLength(0);
+          expect(await readdir(restored)).toEqual([]);
+          await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
+          await page.goBack();
+          await expect(page).toHaveURL(/\/restore-from-files\/(destination|encryption)$/);
+          if (new URL(page.url()).pathname.endsWith('/destination')) {
+            const setTarget = page.getByRole('button', { name: 'Set target URL', exact: true });
+            if (await setTarget.isVisible()) {
+              await setTarget.click();
+              await page.locator('#targetUrl').fill(pathToFileURL(remote).href);
+              await page.getByRole('button', { name: 'Override target URL', exact: true }).click();
+            }
+            await page.getByRole('button', { name: 'Continue', exact: true }).click();
+            await page.getByRole('button', { name: 'Skip test and continue', exact: true }).click();
+          }
+        }
+        await enterPassphrase(passphrase);
       } else {
         await page.locator('app-restore sh-card').filter({ hasText: jobName }).click();
       }
@@ -146,6 +196,7 @@ for (const mode of ['unencrypted', 'aes-saved', 'aes-direct'] as const) {
         .getByRole('treeitem')
         .filter({ has: page.locator('.text').getByText('Documents', { exact: true }) });
       await expect(folder).toBeVisible({ timeout: 20_000 });
+      if (retry) expect(await page.evaluate(() => performance.timeOrigin)).toBe(recoveryOrigin);
       await folder.press('ArrowRight');
       await expect(page.locator('app-file-tree .text').getByText('message.txt', { exact: true })).toBeVisible();
       await folder.locator('.text').getByText('Documents', { exact: true }).click();
@@ -180,6 +231,7 @@ for (const mode of ['unencrypted', 'aes-saved', 'aes-direct'] as const) {
         expect(await readFile(join(file.parentPath, file.name))).toEqual(expected);
       }
       expect(await readFile(join(documents, 'message.txt'))).not.toEqual(text);
+      expect(restoreRequests).toHaveLength(1);
       expect(errors).toEqual([]);
     } finally {
       for (const id of [...(originalExists ? [ID] : []), ...temporaryIds]) {
