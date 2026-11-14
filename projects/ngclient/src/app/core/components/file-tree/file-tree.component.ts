@@ -46,7 +46,12 @@ import { findIncludePickContaining, findIncludePicks, toggleInIncludePick } from
 import { BackupSettings, PagedListResult, FileTreeListingService } from './file-tree-listing.service';
 export type { BackupSettings } from './file-tree-listing.service';
 
-import { buildSearchResultTree, sortFileTreeNodes } from './file-tree.presentation';
+import {
+  buildRestoreFileGroups,
+  buildSearchResultTree,
+  sortFileTreeNodes,
+  toggleRestoreFileGroup,
+} from './file-tree.presentation';
 import {
   FileTreeNode,
   getInheritedExclusionState,
@@ -162,6 +167,8 @@ export default class FileTreeComponent {
   accepts = input<string | null | undefined>(null);
   startingPath = input<string | null>(null);
   rootPaths = input<string[]>([]);
+  /** Organize individually backed-up restore roots without selecting synthetic folder paths. */
+  groupFileRoots = input(false);
   initialNodes = input<TreeNodeDto[]>([]);
   // Metadata for the root paths, keyed by path, used to resolve display names
   rootMetadata = input<{ [path: string]: { [key: string]: string | null } | null | undefined }>({});
@@ -650,8 +657,18 @@ export default class FileTreeComponent {
 
       return root;
     });
-    return roots;
+    return this.groupFileRoots() && this.isByBackupSettings() && this.multiSelect()
+      ? buildRestoreFileGroups(roots, currentPaths, this.#expandedPaths(), {
+          foldersFirst: this.#fileTreeState.foldersFirst(),
+          caseSensitive: this.#fileTreeState.caseSensitiveSort(),
+        })
+      : roots;
   });
+
+  hasRestoreFileGroups = computed(() => this.treeStructure().some((node) => !!node.restoreGroupPaths));
+  restoreGroupHelpId() {
+    return this.#treeId + '-restore-groups-help';
+  }
 
   #resolveFilterGroups(currentPaths: string[]): string[] {
     const paths = structuredClone(currentPaths);
@@ -1022,6 +1039,7 @@ export default class FileTreeComponent {
   /** Accessible name for a tree row; badges that convey a state are announced since the badge icon is visual only. */
   treeItemLabel(node: FileTreeNode): string {
     const name = node.text ?? node.id ?? '';
+    if (node.restoreGroupPaths) return $localize`${name}:name: (File group)`;
     const badge = this.treeNodeBadge(node);
     const locked = this.lockedLinkLabel(node);
     if (locked && badge) return $localize`${name}:name: (${badge.label}:linkState:, ${locked}:accessState:)`;
@@ -1223,6 +1241,18 @@ export default class FileTreeComponent {
       return;
     this.#rangeAnchor = node.id ?? null;
 
+    if (node.restoreGroupPaths) {
+      this.currentPath.set(
+        toggleRestoreFileGroup(
+          this.currentPathArray(),
+          node.restoreGroupPaths,
+          this.rootPaths(),
+          node.restoreGroupPath!
+        ).join('\0')
+      );
+      return;
+    }
+
     const currentPaths = this.currentPathArray();
     const currentPathsWithRemotes = this.#resolveWithRemoteSource(currentPaths);
 
@@ -1274,6 +1304,12 @@ export default class FileTreeComponent {
   toggleNode($event: Event, path: string, node: FileTreeNode | null = null) {
     $event.stopPropagation();
     if (!node || !this.canExpandTreeNode(node)) return;
+    if (node.restoreGroupPaths) {
+      this.#expandedPaths.update((paths) =>
+        paths.has(path) ? new Set([...paths].filter((value) => !value.startsWith(path))) : new Set([...paths, path])
+      );
+      return;
+    }
     if (this.isTreeNodeExpanded(node)) {
       const prefix = node.id as string;
       this.#expandedPaths.update((paths) => new Set([...paths].filter((x) => !x.startsWith(prefix))));

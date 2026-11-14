@@ -28,6 +28,9 @@ export type TreeNode = TreeNodeDto & {
 };
 
 export type FileTreeNode = TreeNode & {
+  /** Display-only grouping of individually backed-up roots; never a restore path. */
+  restoreGroupPaths?: readonly string[];
+  restoreGroupPath?: string;
   children: FileTreeNode[];
   evalState: TreeEvalEnum;
   isIndeterminate: boolean;
