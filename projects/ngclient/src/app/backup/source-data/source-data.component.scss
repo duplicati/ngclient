@@ -129,6 +129,10 @@ sh-divider {
   user-select: text;
 }
 
+.source-path-resolved {
+  color: var(--base-8);
+}
+
 .bulk-textarea {
   width: 100%;
   font-family: monospace;

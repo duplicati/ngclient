@@ -141,7 +141,11 @@
                     </button>
                   }
                 } @else {
-                  <span class="source-path-text" [title]="path">{{ path }}</span>
+                  @let resolvedPath = resolvedShortcutPath(path);
+                  <span class="source-path-text" [title]="resolvedPath ?? path">{{ path }}</span>
+                  @if (resolvedPath) {
+                    <span class="source-path-text source-path-resolved">({{ resolvedPath }})</span>
+                  }
                   @if (isPickedFolder(path)) {
                     <button
                       shButton
