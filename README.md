@@ -90,6 +90,32 @@ the browser job does not rebuild the application. On failure, its artifacts
 include the HTML report, traces, and screenshots. Node.js runs the Playwright
 CLI; Bun remains the package manager and script launcher.
 
+### Optional real-server browser tests
+
+The `live` mode uses the same Playwright configuration but starts its own local
+Duplicati server, with a fresh data folder, random password and loopback ports.
+It does not accept an existing server URL. The production UI and all API/WebSocket
+traffic are real; the default browser tests continue to use controlled responses.
+
+After building the production UI and installing Chromium as above, run:
+
+```sh
+PLAYWRIGHT_MODE=live DUPLICATI_SERVER_PATH=/absolute/path/to/duplicati-server bun run test:e2e
+```
+
+In PowerShell, set `$env:PLAYWRIGHT_MODE = 'live'` and
+`$env:DUPLICATI_SERVER_PATH = 'C:/path/to/Duplicati.Server.exe'`, then run
+`bun run test:e2e`. Use an extracted server executable with its runtime and support
+files; a DLL alone is not supported. Clear the environment variables afterward to
+return to the default suite. This optional mode is not enabled in the existing CI.
+
+The first test edits an existing job, saves from another editor page, checks the
+server's stored settings and reloads the page. It creates only disposable job
+settings and local fixture files; it does not run a backup or delete remote data.
+The worker stops its own server/proxy in teardown. Logs, isolated server data and
+failure traces remain under `test-results` for diagnosis (normal Playwright output
+cleanup applies on the next run). Abruptly terminating the runner may bypass teardown.
+
 ### Testing the client on windows
 
 - Open windows on parallels then run backend on port 8200
