@@ -1,3 +1,4 @@
+import { HttpHeaders } from '@angular/common/http';
 import { client } from '../openapi/client.gen';
 
 /**
@@ -13,10 +14,22 @@ export function getApiBase(): string {
  */
 export function getApiConfigHeaders(): Record<string, string> {
   const headers = client.getConfig().headers;
-  if (!headers || typeof (headers as any).keys === 'function') {
-    // HttpHeaders instance or unset; we only ever set plain records here
+  if (!headers) {
     return {};
   }
+
+  // setConfig merges the headers into an HttpHeaders instance, even when given a plain record
+  if (headers instanceof HttpHeaders) {
+    const result: Record<string, string> = {};
+    for (const name of headers.keys()) {
+      const value = headers.get(name);
+      if (value !== null) {
+        result[name] = value;
+      }
+    }
+    return result;
+  }
+
   return headers as Record<string, string>;
 }
 
