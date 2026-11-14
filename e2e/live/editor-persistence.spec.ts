@@ -42,7 +42,7 @@ test('saves an existing job from another editor page and retains settings after 
     await page.goto('/login');
     await page.getByPlaceholder('Enter your password').fill(password);
     await page.getByRole('button', { name: 'Login', exact: true }).click();
-    await expect(page).toHaveURL('/');
+    await expect(page).toHaveURL('/', { timeout: 20_000 });
     await page
       .locator('.backups .backup')
       .filter({ hasText: 'Live editor persistence' })

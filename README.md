@@ -111,7 +111,10 @@ return to the default suite. This optional mode is not enabled in the existing C
 
 The first test edits an existing job, saves from another editor page, checks the
 server's stored settings and reloads the page. It creates only disposable job
-settings and local fixture files; it does not run a backup or delete remote data.
+settings and local fixture files. A second test starts a real local backup through
+the UI, changes the source files, then restores a selected folder and checks its
+text and binary contents byte for byte. Both tests use only the isolated fixture;
+they never delete remote data.
 The worker stops its own server/proxy in teardown. Logs, isolated server data and
 failure traces remain under `test-results` for diagnosis (normal Playwright output
 cleanup applies on the next run). Abruptly terminating the runner may bypass teardown.
