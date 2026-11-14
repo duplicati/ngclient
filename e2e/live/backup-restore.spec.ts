@@ -4,15 +4,21 @@ import { join, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { test, expect } from './fixture';
 
-for (const encrypted of [false, true]) {
-  test(`backs up ${encrypted ? 'AES-encrypted' : 'unencrypted'} local files and restores original contents`, async ({
+for (const mode of ['unencrypted', 'aes-saved', 'aes-direct'] as const) {
+  const encrypted = mode !== 'unencrypted';
+  const direct = mode === 'aes-direct';
+  test(`backs up ${encrypted ? 'AES-encrypted' : 'unencrypted'} local files and restores original contents${direct ? ' without saved settings' : ''}`, async ({
     page,
     liveServer,
   }) => {
     const { api, directory, password } = liveServer;
-    const prefix = encrypted ? 'encrypted-roundtrip' : 'roundtrip';
+    const prefix = direct ? 'direct-encrypted-roundtrip' : encrypted ? 'encrypted-roundtrip' : 'roundtrip';
     const passphrase = randomUUID();
-    const jobName = encrypted ? 'Live encrypted backup and restore' : 'Live backup and restore';
+    const jobName = direct
+      ? 'Live encrypted direct restore'
+      : encrypted
+        ? 'Live encrypted backup and restore'
+        : 'Live backup and restore';
     const source = join(directory, prefix + '-source');
     const documents = join(source, 'Documents');
     const remote = join(directory, prefix + '-remote');
@@ -50,6 +56,8 @@ for (const encrypted of [false, true]) {
     expect(created.ok(), await created.text()).toBe(true);
     const { ID } = await created.json();
     expect(ID).toBeTruthy();
+    let originalExists = true;
+    const temporaryIds = new Set<string>();
     try {
       const errors: string[] = [];
       page.on('pageerror', (error) => errors.push(error.message));
@@ -90,8 +98,49 @@ for (const encrypted of [false, true]) {
       // Original files now differ: the assertions below must verify the backed-up version.
       await writeFile(join(documents, 'message.txt'), 'Changed after the backup');
       await writeFile(join(documents, 'bytes.bin'), Buffer.from([9, 9, 9]));
+      if (direct) {
+        const deleted = await api.delete(`/api/v1/backup/${ID}`, {
+          params: { 'delete-local-db': 'true', 'delete-remote-files': 'false' },
+        });
+        expect(deleted.ok()).toBe(true);
+        originalExists = false;
+        const jobs = await api.get('/api/v1/backups');
+        expect(jobs.ok()).toBe(true);
+        expect(await jobs.json()).toEqual([]);
+        // Recreate the application state: no saved job or cached restore state is available.
+        await page.reload();
+        await expect(page.getByRole('heading', { name: 'Backups', exact: true })).toBeVisible({ timeout: 20_000 });
+      }
       await page.getByRole('link', { name: 'Restore', exact: true }).click();
-      await page.locator('app-restore sh-card').filter({ hasText: jobName }).click();
+      if (direct) {
+        await page.locator('app-restore sh-card').filter({ hasText: 'Direct restore from backup files' }).click();
+        await page.getByRole('button', { name: 'Set target URL', exact: true }).click();
+        await page.locator('#targetUrl').fill(pathToFileURL(remote).href);
+        await page.getByRole('button', { name: 'Override target URL', exact: true }).click();
+        await page.getByRole('button', { name: 'Continue', exact: true }).click();
+        await page.getByRole('button', { name: 'Skip test and continue', exact: true }).click();
+        const input = page.getByPlaceholder('Enter backup passphrase if defined.', { exact: true });
+        await input.fill(passphrase);
+        const createdTemporary = page.waitForResponse((response) => {
+          const url = new URL(response.url());
+          return (
+            response.request().method() === 'POST' &&
+            url.pathname === '/api/v1/backups' &&
+            url.searchParams.get('temporary') === 'true'
+          );
+        });
+        await page.getByRole('button', { name: 'Continue', exact: true }).click();
+        const response = await createdTemporary;
+        expect(response.ok()).toBe(true);
+        const settings = response.request().postDataJSON().Backup.Settings as Array<{ Name: string; Value: string }>;
+        expect(settings.find((setting) => setting.Name.replace(/^--/, '') === 'passphrase')?.Value).toBe(passphrase);
+        const temporary = await response.json();
+        expect(temporary.ID).toBeTruthy();
+        expect(temporary.ID).not.toBe(ID);
+        temporaryIds.add(temporary.ID);
+      } else {
+        await page.locator('app-restore sh-card').filter({ hasText: jobName }).click();
+      }
       const folder = page
         .locator('app-file-tree')
         .getByRole('treeitem')
@@ -104,7 +153,20 @@ for (const encrypted of [false, true]) {
       await page.locator('sh-radio').filter({ hasText: 'Pick location' }).click();
       await page.getByRole('button', { name: 'Manually type path', exact: true }).click();
       await page.locator('[formcontrolname=restoreFromPath]').fill(restored);
+      const copied = direct
+        ? page.waitForResponse(
+            (response) =>
+              response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/copytotemp')
+          )
+        : null;
       await page.getByRole('button', { name: 'Submit', exact: true }).click();
+      if (copied) {
+        const response = await copied;
+        expect(response.ok()).toBe(true);
+        const temporary = await response.json();
+        expect(temporary.ID).toBeTruthy();
+        temporaryIds.add(temporary.ID);
+      }
       await expect(page.locator('sh-card').filter({ hasText: 'Restore completed' })).toBeVisible({ timeout: 90_000 });
       const files = (await readdir(restored, { recursive: true, withFileTypes: true })).filter((entry) =>
         entry.isFile()
@@ -120,10 +182,12 @@ for (const encrypted of [false, true]) {
       expect(await readFile(join(documents, 'message.txt'))).not.toEqual(text);
       expect(errors).toEqual([]);
     } finally {
-      const deleted = await api.delete(`/api/v1/backup/${ID}`, {
-        params: { 'delete-local-db': 'true', 'delete-remote-files': 'false' },
-      });
-      expect(deleted.ok()).toBe(true);
+      for (const id of [...(originalExists ? [ID] : []), ...temporaryIds]) {
+        const deleted = await api.delete(`/api/v1/backup/${id}`, {
+          params: { 'delete-local-db': 'true', 'delete-remote-files': 'false' },
+        });
+        expect(deleted.ok()).toBe(true);
+      }
     }
   });
 }
