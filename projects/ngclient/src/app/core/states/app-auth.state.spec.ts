@@ -193,6 +193,18 @@ describe('AppAuthState', () => {
     expect(state.token()).toBe('websocket-token');
   });
 
+  it('sends the XSRF header of the API client with the proxy check', async () => {
+    const { state, http } = setup();
+    // As configureProxySupport does when the page is opened with ?SynoToken=...
+    client.setConfig({ headers: { 'X-Syno-Token': 'syno-token' } });
+
+    await firstValueFrom(state.checkProxyAuthed());
+
+    const [, , options] = http.post.mock.calls[0] as [string, null, { headers: HttpHeaders }];
+    expect(options.headers.get('X-Syno-Token')).toBe('syno-token');
+    expect(options.headers.get('custom-proxy-check')).toBe('true');
+  });
+
   it('returns false when proxy authentication is unavailable', async () => {
     const { state, http } = setup();
 

@@ -152,8 +152,13 @@ describe('proxy configuration utilities', () => {
     expect(getApiConfigHeaders()).toEqual({});
   });
 
-  it('returns no headers for an Angular HttpHeaders instance', () => {
-    client.getConfig.mockReturnValue({ headers: new HttpHeaders({ 'X-Test-XSRF': 'value' }) });
+  it('returns the headers of an Angular HttpHeaders instance', () => {
+    client.getConfig.mockReturnValue({ headers: new HttpHeaders({ 'X-Test-XSRF': 'value', 'X-Other': 'other' }) });
+    expect(getApiConfigHeaders()).toEqual({ 'X-Test-XSRF': 'value', 'X-Other': 'other' });
+  });
+
+  it('returns no headers for an empty Angular HttpHeaders instance', () => {
+    client.getConfig.mockReturnValue({ headers: new HttpHeaders() });
     expect(getApiConfigHeaders()).toEqual({});
   });
 });
