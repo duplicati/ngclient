@@ -24,6 +24,7 @@ import { TestState } from '../backup/source-data/target-url-dialog/test-url/test
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer, GetBackupResultDto, ListFilesetsResponseDto, SettingInputDto } from '../core/openapi';
 import { SysinfoState } from '../core/states/sysinfo.state';
+import { RestoreDraftsState } from '../restore/restore-drafts.state';
 import { ServerSettingsService } from '../settings/server-settings.service';
 import { createRestoreOptionsForm } from './options/options.component';
 import { resolveRestoreOptionDefaults } from './options/restore-option-defaults';
@@ -49,6 +50,7 @@ export class RestoreFlowState implements OnDestroy {
   #dialog = inject(ShipDialogService);
   #dupServer = inject(DuplicatiServer);
   #serverSettings = inject(ServerSettingsService);
+  #restoreDrafts = inject(RestoreDraftsState);
   #restoreOptionsInitializedForBackupId: string | null = null;
   #backupLoad: Subscription | undefined;
   #destroyed = false;
@@ -208,6 +210,8 @@ export class RestoreFlowState implements OnDestroy {
       .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
         next: (res) => {
+          // The draft has done its job once its restore has started
+          this.#restoreDrafts.forget(this.backupId());
           this.#router.navigate([`./${res.ID}`, 'progress'], { relativeTo: this.#route });
         },
         error: (err) => {
@@ -241,6 +245,7 @@ export class RestoreFlowState implements OnDestroy {
       },
       closed: (res) => {
         if (!res) return;
+        this.#restoreDrafts.forget(this.backupId());
         this.#resetAllForms();
         this.#router.navigate(['/']);
       },

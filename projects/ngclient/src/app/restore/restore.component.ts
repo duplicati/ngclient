@@ -1,6 +1,6 @@
 import { PreserveListFocusDirective } from '../core/directives/preserve-list-focus.directive';
 import { KeyboardActionDirective } from '../core/directives/keyboard-action.directive';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, untracked } from '@angular/core';
 import { form, FormField } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
 import { ShipButton } from '@ship-ui/core/ship-button';
@@ -14,6 +14,7 @@ import StatusBarComponent from '../core/components/status-bar/status-bar.compone
 import { BackupAndScheduleOutputDto, DuplicatiServer } from '../core/openapi';
 import { BackupsState } from '../core/states/backups.state';
 import { SysinfoState } from '../core/states/sysinfo.state';
+import { RestoreDraftsState } from './restore-drafts.state';
 
 @Component({
   selector: 'app-restore',
@@ -38,7 +39,16 @@ export default class RestoreComponent {
   #backupsState = inject(BackupsState);
   #dupServer = inject(DuplicatiServer);
 
-  #hasSyncRestore = inject(SysinfoState).hasSyncRestore;
+  #sysinfo = inject(SysinfoState);
+  #hasSyncRestore = this.#sysinfo.hasSyncRestore;
+  #restoreDrafts = inject(RestoreDraftsState);
+
+  /** Direct restores started earlier in this browser that the server still has */
+  restoreDrafts = this.#restoreDrafts.drafts;
+
+  #loadRestoreDrafts = effect(() => {
+    if (this.#sysinfo.hasTemporaryBackupList()) untracked(() => this.#restoreDrafts.load());
+  });
 
   // Servers that cannot restore a Sync job do not offer it
   backups = computed(() =>
@@ -60,6 +70,10 @@ export default class RestoreComponent {
 
   ngOnInit() {
     this.#backupsState.getBackups(true);
+  }
+
+  dismissRestoreDraft(id: string) {
+    this.#restoreDrafts.forget(id);
   }
 
   restoreNow(backup: BackupAndScheduleOutputDto) {

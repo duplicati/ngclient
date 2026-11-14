@@ -1012,6 +1012,12 @@ export type TempDiskSpaceResult = {
     RestoreCacheMax: number;
 };
 
+export type TemporaryBackupDto = {
+    ID?: string;
+    Name?: string | null;
+    TargetURL?: string | null;
+};
+
 export type TestFilterRequestDto = {
     Paths?: Array<string> | null;
     Sources?: Array<string> | null;
@@ -1586,6 +1592,22 @@ export type PostApiV1BackupsImportResponses = {
 };
 
 export type PostApiV1BackupsImportResponse = PostApiV1BackupsImportResponses[keyof PostApiV1BackupsImportResponses];
+
+export type GetApiV1BackupsTemporaryData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/backups/temporary';
+};
+
+export type GetApiV1BackupsTemporaryResponses = {
+    /**
+     * OK
+     */
+    200: Array<TemporaryBackupDto>;
+};
+
+export type GetApiV1BackupsTemporaryResponse = GetApiV1BackupsTemporaryResponses[keyof GetApiV1BackupsTemporaryResponses];
 
 export type GetApiV1BugreportByReportidData = {
     body?: never;

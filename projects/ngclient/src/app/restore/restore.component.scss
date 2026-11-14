@@ -33,6 +33,11 @@ sh-divider {
   cursor: pointer;
 }
 
+.restore-draft .text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 .no-matches {
   padding: p2r(32);
   text-align: center;

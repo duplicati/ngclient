@@ -81,4 +81,38 @@
       <sh-icon>play-circle</sh-icon>
     </button>
   </sh-card>
+
+  @if (restoreDrafts().length) {
+    <sh-divider i18n>Or continue a direct restore</sh-divider>
+
+    @for (draft of restoreDrafts(); track draft.id) {
+      <sh-card
+        appKeyboardAction
+        role="link"
+        class="type-a actionable restore-draft"
+        [routerLink]="['/restore-draft', draft.id]">
+        <img src="assets/images/backup.png" alt="" width="48px" />
+        <div class="text">
+          <h3>{{ draft.name ?? draft.targetUrl ?? draft.id }}</h3>
+          @if (draft.name && draft.targetUrl) {
+            <p>{{ draft.targetUrl }}</p>
+          }
+        </div>
+
+        <button
+          shButton
+          type="button"
+          class="small dismiss-draft"
+          aria-label="Dismiss"
+          i18n-aria-label
+          (click)="$event.stopPropagation(); dismissRestoreDraft(draft.id)">
+          <sh-icon>x-circle</sh-icon>
+        </button>
+        <button shButton tabindex="-1" i18n>
+          Continue
+          <sh-icon>arrow-right</sh-icon>
+        </button>
+      </sh-card>
+    }
+  }
 </section>
