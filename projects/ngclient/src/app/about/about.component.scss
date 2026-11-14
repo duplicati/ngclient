@@ -13,6 +13,15 @@
 
   sh-tabs {
     margin: p2r(0 32 32);
+
+    .navigation-links {
+      display: contents;
+    }
+
+    a[tab] {
+      padding: p2r(1 6);
+      text-decoration: none;
+    }
   }
 
   section {
