@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -41,6 +41,7 @@ export const createRestoreSelectFilesForm = () => {
     FormsModule,
     ReactiveFormsModule,
     DatePipe,
+    DecimalPipe,
     BytesPipe,
     FileTreeComponent,
     ShipButton,
