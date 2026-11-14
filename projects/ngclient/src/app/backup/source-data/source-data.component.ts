@@ -81,6 +81,21 @@ export default class SourceDataComponent {
     return size !== null && unit !== null ? `${size}${unit}` : null;
   });
   osType = this.#backupState.osType;
+  attributeExclusions = computed(() => {
+    const setting =
+      this.#backupState.settings().find((x) => x.Name?.replace(/^--/, '') === 'exclude-files-attributes') ??
+      this.#backupState.applicationOptions()?.find((x) => x.Name?.replace(/^--/, '') === 'exclude-files-attributes');
+    return (setting?.Value ?? '')
+      .split(',')
+      .map((value) => value.trim())
+      .filter(Boolean);
+  });
+  previewAttributes = computed(() =>
+    this.attributeExclusions().filter((value) => ['hidden', 'system', 'temporary'].includes(value.toLowerCase()))
+  );
+  editAttributeExclusions() {
+    this.#router.navigate(['options'], { relativeTo: this.#route.parent });
+  }
 
   pathSignal = this.sourceForm.path().value;
   pathArray = computed(
