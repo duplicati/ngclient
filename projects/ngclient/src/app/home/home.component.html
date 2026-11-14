@@ -148,6 +148,13 @@
                         Sync
                       </sh-chip>
                     }
+                    @let lastError = backup.Backup | lastRunError;
+                    @if (lastError) {
+                      <sh-chip class="simple error" [shTooltip]="lastError.message || null" i18n>
+                        <sh-icon>warning-circle</sh-icon>
+                        Last run failed
+                      </sh-chip>
+                    }
                     @if (isDisabled(backup)) {
                       <sh-chip class="simple warn" [shTooltip]="disabledTooltip" i18n>
                         <sh-icon>prohibit</sh-icon>
@@ -301,6 +308,13 @@
                       }
                     }
 
+                    @let lastError = backup.Backup | lastRunError;
+                    @if (lastError) {
+                      <sh-chip class="simple error" [shTooltip]="lastError.message || null" i18n>
+                        <sh-icon>warning-circle</sh-icon>
+                        Last run failed
+                      </sh-chip>
+                    }
                     @if (isDisabled(backup)) {
                       <sh-chip class="simple warn" [shTooltip]="disabledTooltip" i18n>
                         <sh-icon>prohibit</sh-icon>
@@ -411,6 +425,15 @@
                   </span>
                 } @else {
                   <ng-container>-</ng-container>
+                }
+                @if (!running) {
+                  @let lastError = backup.Backup | lastRunError;
+                  @if (lastError) {
+                    <sh-chip class="small simple error" [shTooltip]="lastError.message || null" i18n>
+                      <sh-icon>warning-circle</sh-icon>
+                      Failed
+                    </sh-chip>
+                  }
                 }
               </td>
               <td>

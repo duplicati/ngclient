@@ -102,3 +102,45 @@ test.describe('home backup state', () => {
     await expect(page).toHaveURL(/\/restore\/1(\/|$)/);
   });
 });
+
+test.describe('home last run failure', () => {
+  const withMetadata = (id: string, name: string, metadata: Record<string, string>) => {
+    const item = backup(id, name);
+    item.Backup.Metadata = { ...item.Backup.Metadata, ...metadata };
+    return item;
+  };
+
+  test.use({
+    initialBackups: [
+      [
+        withMetadata('1', 'Documents', {
+          LastBackupFinished: '20260921T100000Z',
+          LastErrorDate: '20260921T110000Z',
+          LastErrorMessage: 'The destination is unreachable',
+        }),
+        withMetadata('2', 'Photos', {
+          LastBackupFinished: '20260921T120000Z',
+          LastErrorDate: '20260921T110000Z',
+          LastErrorMessage: 'An older failure',
+        }),
+      ],
+      { scope: 'test' },
+    ],
+  });
+
+  test('marks only the backup whose latest run failed in both views', async ({ authenticatedPage: page }) => {
+    const documents = page.locator('.backups .backup').filter({ hasText: 'Documents' });
+    const photos = page.locator('.backups .backup').filter({ hasText: 'Photos' });
+    await expect(documents.locator('sh-chip.error')).toHaveText(/Last run failed/);
+    await expect(photos).toBeVisible();
+    await expect(photos.locator('sh-chip.error')).toHaveCount(0);
+
+    await documents.locator('sh-chip.error').hover();
+    await expect(page.getByText('The destination is unreachable')).toBeVisible();
+
+    await page.getByRole('button', { name: 'Details', exact: true }).click();
+    const table = page.locator('sh-table');
+    await expect(table.getByRole('row').filter({ hasText: 'Documents' }).locator('sh-chip.error')).toHaveText(/Failed/);
+    await expect(table.getByRole('row').filter({ hasText: 'Photos' }).locator('sh-chip.error')).toHaveCount(0);
+  });
+});
