@@ -115,8 +115,8 @@ unencrypted and AES-encrypted local backups through the UI, change the source
 files, then restore a selected folder and compare text and binary contents byte
 for byte. One AES case uses a generated, stored passphrase. Another deletes the
 original job and local DB, reloads the application, then enters the destination
-URL and passphrase in the direct-restore screens. A recovery case first enters an
-incorrect passphrase, checks the real database-repair error, then returns through
+URL and passphrase in the direct-restore screens. Recovery cases first leave the passphrase empty or enter an
+incorrect value, check the real fileset/database-repair error, then return through
 the UI to correct it and restore without reloading. AES cases check encrypted volume
 suffixes. All cases use only disposable fixture jobs/files and never delete remote data.
 The worker stops its own server/proxy in teardown. Logs, isolated server data and

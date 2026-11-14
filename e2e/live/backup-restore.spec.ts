@@ -4,22 +4,26 @@ import { join, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { test, expect } from './fixture';
 
-for (const mode of ['unencrypted', 'aes-saved', 'aes-direct', 'aes-retry'] as const) {
+for (const mode of ['unencrypted', 'aes-saved', 'aes-direct', 'aes-retry', 'aes-empty'] as const) {
   const encrypted = mode !== 'unencrypted';
   const retry = mode === 'aes-retry';
-  const direct = mode === 'aes-direct' || retry;
-  test(`backs up ${encrypted ? 'AES-encrypted' : 'unencrypted'} local files and restores original contents${retry ? ' after correcting a wrong passphrase' : direct ? ' without saved settings' : ''}`, async ({
+  const empty = mode === 'aes-empty';
+  const recovery = retry || empty;
+  const direct = mode === 'aes-direct' || recovery;
+  test(`backs up ${encrypted ? 'AES-encrypted' : 'unencrypted'} local files and restores original contents${empty ? ' after leaving the passphrase empty' : retry ? ' after correcting a wrong passphrase' : direct ? ' without saved settings' : ''}`, async ({
     page,
     liveServer,
   }) => {
     const { api, directory, password } = liveServer;
-    const prefix = retry
-      ? 'retry-encrypted-roundtrip'
-      : direct
-        ? 'direct-encrypted-roundtrip'
-        : encrypted
-          ? 'encrypted-roundtrip'
-          : 'roundtrip';
+    const prefix = empty
+      ? 'empty-encrypted-roundtrip'
+      : retry
+        ? 'retry-encrypted-roundtrip'
+        : direct
+          ? 'direct-encrypted-roundtrip'
+          : encrypted
+            ? 'encrypted-roundtrip'
+            : 'roundtrip';
     const passphrase = randomUUID();
     const jobName = direct
       ? 'Live encrypted direct restore'
@@ -65,6 +69,28 @@ for (const mode of ['unencrypted', 'aes-saved', 'aes-direct', 'aes-retry'] as co
     expect(ID).toBeTruthy();
     let originalExists = true;
     const temporaryIds = new Set<string>();
+    const deleteJob = async (id: string) => {
+      const response = await api.delete(`/api/v1/backup/${id}`, {
+        params: { 'delete-local-db': 'true', 'delete-remote-files': 'false' },
+      });
+      expect(response.ok()).toBe(true);
+      const deletion = await response.json();
+      expect(deletion.Status).toBe('OK');
+      if (deletion.ID != null) {
+        await expect
+          .poll(
+            async () => {
+              const result = await api.get(`/api/v1/task/${deletion.ID}`);
+              expect(result.ok()).toBe(true);
+              const state = await result.json();
+              expect(state.Status, state.ErrorMessage).not.toBe('Failed');
+              return state.Status;
+            },
+            { timeout: 30_000 }
+          )
+          .toBe('Completed');
+      }
+    };
     let recoveryOrigin: number | undefined;
     const restoreRequests: string[] = [];
     page.on('request', (request) => {
@@ -112,14 +138,18 @@ for (const mode of ['unencrypted', 'aes-saved', 'aes-direct', 'aes-retry'] as co
       await writeFile(join(documents, 'message.txt'), 'Changed after the backup');
       await writeFile(join(documents, 'bytes.bin'), Buffer.from([9, 9, 9]));
       if (direct) {
-        const deleted = await api.delete(`/api/v1/backup/${ID}`, {
-          params: { 'delete-local-db': 'true', 'delete-remote-files': 'false' },
-        });
-        expect(deleted.ok()).toBe(true);
+        await deleteJob(ID);
         originalExists = false;
-        const jobs = await api.get('/api/v1/backups');
-        expect(jobs.ok()).toBe(true);
-        expect(await jobs.json()).toEqual([]);
+        await expect
+          .poll(
+            async () => {
+              const jobs = await api.get('/api/v1/backups');
+              expect(jobs.ok()).toBe(true);
+              return jobs.json();
+            },
+            { timeout: 20_000 }
+          )
+          .toEqual([]);
         // Recreate the application state: no saved job or cached restore state is available.
         await page.reload();
         await expect(page.getByRole('heading', { name: 'Backups', exact: true })).toBeVisible({ timeout: 20_000 });
@@ -146,35 +176,59 @@ for (const mode of ['unencrypted', 'aes-saved', 'aes-direct', 'aes-retry'] as co
           const response = await createdTemporary;
           expect(response.ok()).toBe(true);
           const settings = response.request().postDataJSON().Backup.Settings as Array<{ Name: string; Value: string }>;
-          expect(settings.find((setting) => setting.Name.replace(/^--/, '') === 'passphrase')?.Value).toBe(value);
+          expect(settings.find((setting) => setting.Name.replace(/^--/, '') === 'passphrase')?.Value).toBe(
+            value || undefined
+          );
+          if (!value)
+            expect(settings.find((setting) => setting.Name.replace(/^--/, '') === 'no-encryption')?.Value).toBe('true');
           const temporary = await response.json();
           expect(temporary.ID).toBeTruthy();
           expect(temporary.ID).not.toBe(ID);
           temporaryIds.add(temporary.ID);
         };
-        if (retry) {
+        if (recovery) {
           recoveryOrigin = await page.evaluate(() => performance.timeOrigin);
-          const repair = page.waitForResponse(
-            (response) =>
-              response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/repairupdate')
-          );
-          await enterPassphrase(randomUUID());
-          const repairResponse = await repair;
-          expect(repairResponse.ok()).toBe(true);
-          const { ID: repairTask } = await repairResponse.json();
-          expect(repairTask).toBeTruthy();
-          const dialog = page
-            .getByRole('dialog')
-            .filter({ has: page.getByRole('heading', { name: 'Restore database repair failed', exact: true }) });
-          await expect(dialog).toBeVisible({ timeout: 30_000 });
-          const taskResponse = await api.get(`/api/v1/task/${repairTask}`);
-          expect(taskResponse.ok()).toBe(true);
-          const failure = await taskResponse.json();
-          expect(failure.ErrorMessage || failure.Exception).toMatch(/decrypt|passphrase|password|key/i);
-          expect(restoreRequests).toHaveLength(0);
-          expect(await readdir(restored)).toEqual([]);
-          await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
-          await page.goBack();
+          if (empty) {
+            const rejected = page.waitForResponse(
+              (response) =>
+                response.request().method() === 'POST' &&
+                new URL(response.url()).pathname === '/api/v2/backup/list-filesets'
+            );
+            await enterPassphrase('');
+            const response = await rejected;
+            const failure = await response.json();
+            expect(failure.Success).toBe(false);
+            expect(failure.StatusCode).toBe('EncryptedStorageNoPassphrase');
+            const dialog = page
+              .getByRole('dialog')
+              .filter({ has: page.getByRole('heading', { name: 'Failed to load backup filesets', exact: true }) });
+            await expect(dialog).toBeVisible({ timeout: 20_000 });
+            expect(restoreRequests).toHaveLength(0);
+            expect(await readdir(restored)).toEqual([]);
+            await dialog.getByRole('button', { name: 'OK', exact: true }).click();
+          } else {
+            const repair = page.waitForResponse(
+              (response) =>
+                response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/repairupdate')
+            );
+            await enterPassphrase(randomUUID());
+            const repairResponse = await repair;
+            expect(repairResponse.ok()).toBe(true);
+            const { ID: repairTask } = await repairResponse.json();
+            expect(repairTask).toBeTruthy();
+            const dialog = page
+              .getByRole('dialog')
+              .filter({ has: page.getByRole('heading', { name: 'Restore database repair failed', exact: true }) });
+            await expect(dialog).toBeVisible({ timeout: 30_000 });
+            const taskResponse = await api.get(`/api/v1/task/${repairTask}`);
+            expect(taskResponse.ok()).toBe(true);
+            const failure = await taskResponse.json();
+            expect(failure.ErrorMessage || failure.Exception).toMatch(/decrypt|passphrase|password|key/i);
+            expect(restoreRequests).toHaveLength(0);
+            expect(await readdir(restored)).toEqual([]);
+            await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
+            await page.goBack();
+          }
           await expect(page).toHaveURL(/\/restore-from-files\/(destination|encryption)$/);
           if (new URL(page.url()).pathname.endsWith('/destination')) {
             const setTarget = page.getByRole('button', { name: 'Set target URL', exact: true });
@@ -196,7 +250,7 @@ for (const mode of ['unencrypted', 'aes-saved', 'aes-direct', 'aes-retry'] as co
         .getByRole('treeitem')
         .filter({ has: page.locator('.text').getByText('Documents', { exact: true }) });
       await expect(folder).toBeVisible({ timeout: 20_000 });
-      if (retry) expect(await page.evaluate(() => performance.timeOrigin)).toBe(recoveryOrigin);
+      if (recovery) expect(await page.evaluate(() => performance.timeOrigin)).toBe(recoveryOrigin);
       await folder.press('ArrowRight');
       await expect(page.locator('app-file-tree .text').getByText('message.txt', { exact: true })).toBeVisible();
       await folder.locator('.text').getByText('Documents', { exact: true }).click();
@@ -235,10 +289,7 @@ for (const mode of ['unencrypted', 'aes-saved', 'aes-direct', 'aes-retry'] as co
       expect(errors).toEqual([]);
     } finally {
       for (const id of [...(originalExists ? [ID] : []), ...temporaryIds]) {
-        const deleted = await api.delete(`/api/v1/backup/${id}`, {
-          params: { 'delete-local-db': 'true', 'delete-remote-files': 'false' },
-        });
-        expect(deleted.ok()).toBe(true);
+        await deleteJob(id);
       }
     }
   });
