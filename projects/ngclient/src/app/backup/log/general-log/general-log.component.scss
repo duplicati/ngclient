@@ -162,6 +162,14 @@ details {
   gap: p2r(16);
 }
 
+.compare-version {
+  grid-column: 1/-1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: p2r(16);
+}
+
 .raw-log {
   grid-column: 1/-1;
   position: relative;
