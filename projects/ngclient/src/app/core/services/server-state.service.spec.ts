@@ -69,6 +69,83 @@ describe('ServerStateService', () => {
     return { service, websocket, longPoll, taskCompleted, requests, getTask, websocketState, longPollState, auth };
   };
 
+  it('releases task completion events and websocket waiters when its injector is destroyed', () => {
+    const { service, taskCompleted, getTask } = setup(true);
+    service.setConnectionMethod('websocket');
+    const next = vi.fn();
+    const complete = vi.fn();
+    const subscription = service.waitForTaskToComplete(40).subscribe({ next, complete });
+    expect(taskCompleted.observed).toBe(true);
+    TestBed.resetTestingModule();
+    expect(taskCompleted.observed).toBe(false);
+    expect(subscription.closed).toBe(true);
+    expect(complete).toHaveBeenCalledOnce();
+    taskCompleted.next({ ID: 40, Status: 'Completed' });
+    expect(next).not.toHaveBeenCalled();
+    expect(getTask).not.toHaveBeenCalled();
+  });
+
+  it('cancels the in-flight task read and completes all waiters without starting another task on destroy', () => {
+    const { service, requests, getTask } = setup();
+    const next = vi.fn();
+    const complete = vi.fn(() => service.waitForTaskToComplete(99).subscribe());
+    const first = service.waitForTaskToComplete(41).subscribe({ next, complete });
+    const second = service.waitForTaskToComplete(42).subscribe({ next, complete });
+    expect(requests[0].observed).toBe(true);
+    TestBed.resetTestingModule();
+    expect(requests[0].observed).toBe(false);
+    expect(first.closed).toBe(true);
+    expect(second.closed).toBe(true);
+    expect(complete).toHaveBeenCalledTimes(2);
+    requests[0].next({ ID: 41, Status: 'Completed' });
+    requests[0].error(new Error('late failure'));
+    expect(next).not.toHaveBeenCalled();
+    expect(getTask).toHaveBeenCalledTimes(1);
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it.each(['response', 'error'])('cancels the pending %s timer when its injector is destroyed', async (outcome) => {
+    const { service, requests, getTask } = setup();
+    const complete = vi.fn();
+    service.waitForTaskToComplete(43).subscribe({ complete });
+    if (outcome === 'response') {
+      requests[0].next({ ID: 43, Status: 'Running' });
+      requests[0].complete();
+    } else requests[0].error(new Error('temporary failure'));
+    expect(vi.getTimerCount()).toBe(1);
+    TestBed.resetTestingModule();
+    expect(vi.getTimerCount()).toBe(0);
+    expect(complete).toHaveBeenCalledOnce();
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(getTask).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not emit cached task results after its injector is destroyed', () => {
+    const { service, taskCompleted, getTask } = setup(true);
+    taskCompleted.next({ ID: 44, Status: 'Completed' });
+    TestBed.resetTestingModule();
+    const next = vi.fn();
+    const complete = vi.fn();
+    const subscription = service.waitForTaskToComplete(44).subscribe({ next, complete });
+    expect(subscription.closed).toBe(true);
+    expect(complete).toHaveBeenCalledOnce();
+    expect(next).not.toHaveBeenCalled();
+    expect(getTask).not.toHaveBeenCalled();
+  });
+
+  it('completes a wait subscribed after destruction without starting a task read', () => {
+    const { service, getTask } = setup();
+    const wait = service.waitForTaskToComplete(45);
+    TestBed.resetTestingModule();
+    const next = vi.fn();
+    const complete = vi.fn();
+    const subscription = wait.subscribe({ next, complete });
+    expect(subscription.closed).toBe(true);
+    expect(complete).toHaveBeenCalledOnce();
+    expect(next).not.toHaveBeenCalled();
+    expect(getTask).not.toHaveBeenCalled();
+    expect(vi.getTimerCount()).toBe(0);
+  });
   it('stops both transports when the session logs out', () => {
     const { websocket, longPoll, auth } = setup();
     expect(websocket.stop).not.toHaveBeenCalled();
