@@ -1,6 +1,6 @@
 <app-status-bar />
 
-<section>
+<section appPreserveListFocus>
   <h2 i18n>Where do you want to restore from?</h2>
 
   @defer (when !backupsLoading()) {
@@ -23,7 +23,7 @@
         </sh-form-field>
       }
 
-      @for (backup of filteredBackups(); track $index) {
+      @for (backup of filteredBackups(); track backup.Backup.ID ?? backup) {
         <sh-card appKeyboardAction role="link" class="type-a actionable" [routerLink]="['/restore', backup.Backup.ID]">
           <img src="assets/images/folder.png" alt="" width="48px" />
 
