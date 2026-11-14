@@ -271,6 +271,15 @@ export default class FileTreeComponent {
     choose: $localize`Choose what to include`,
     edit: $localize`Edit what is included`,
   };
+  readonly excludedDescendantsLabel = $localize`Some items inside this folder are excluded`;
+
+  treeItemDescription(node: FileTreeNode): string | null {
+    return (
+      [this.treeNodeLinkTarget(node), node.hasExcludedDescendants ? this.excludedDescendantsLabel : null]
+        .filter(Boolean)
+        .join('; ') || null
+    );
+  }
 
   isPickedFolder(node: FileTreeNode) {
     const folder = this.includePickFolder(node);
@@ -494,7 +503,7 @@ export default class FileTreeComponent {
       if (name) knownNames.set(path, name);
     }
 
-    return buildSearchResultTree({
+    const roots = buildSearchResultTree({
       searchResults,
       knownNames,
       showHiddenNodes,
@@ -511,6 +520,8 @@ export default class FileTreeComponent {
         caseSensitive: this.#fileTreeState.caseSensitiveSort(),
       },
     });
+    this.#markExcludedDescendants(roots, this.#resolveFilterGroups(currentPaths));
+    return roots;
   });
 
   #sortNodes(nodes: FileTreeNode[]) {
@@ -659,6 +670,7 @@ export default class FileTreeComponent {
 
       return root;
     });
+    this.#markExcludedDescendants(roots, currentPaths);
     return this.groupFileRoots() && this.isByBackupSettings() && this.multiSelect()
       ? buildRestoreFileGroups(roots, currentPaths, this.#expandedPaths(), {
           foldersFirst: this.#fileTreeState.foldersFirst(),
@@ -704,6 +716,28 @@ export default class FileTreeComponent {
     if (node.systemFile && attributes.has('system')) return $localize`Excluded: System`;
     if (node.temporary && attributes.has('temporary')) return $localize`Excluded: Temporary`;
     return undefined;
+  }
+
+  // Flags backed-up folders that have an explicitly excluded path below them, so the
+  // folder does not look fully backed up when something inside it is left out (#3191).
+  // Only exclude filters that are written as a path inside the folder are considered;
+  // regular expressions and filter groups would need every descendant to be evaluated.
+  #markExcludedDescendants(roots: FileTreeNode[], currentPaths: string[]) {
+    if (!this.multiSelect()) return;
+    const excludes = currentPaths.filter((x) => x.startsWith('-') && x.length > 1).map((x) => x.slice(1));
+    if (excludes.length === 0) return;
+
+    const stack = [...roots];
+    while (stack.length) {
+      const node = stack.pop()!;
+      stack.push(...node.children);
+      if (!node.id || node.isLoadMore || !this.#isFolder(node.id)) continue;
+      if (node.evalState !== TreeEvalEnum.Included && node.evalState !== TreeEvalEnum.IncludedByParent) continue;
+
+      const candidates = [this.#appendDirSep(node.id), this.#appendDirSep(this.#resolveNodeId(node) ?? node.id)];
+      if (excludes.some((x) => candidates.some((prefix) => x !== prefix && x.startsWith(prefix))))
+        node.hasExcludedDescendants = true;
+    }
   }
 
   #resolveFilterGroups(currentPaths: string[]): string[] {

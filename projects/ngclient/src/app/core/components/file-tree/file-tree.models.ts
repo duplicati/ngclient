@@ -36,6 +36,8 @@ export type FileTreeNode = TreeNode & {
   attributeExclusion?: string;
   evalState: TreeEvalEnum;
   isIndeterminate: boolean;
+  /** A backed-up folder with an explicitly excluded path somewhere below it. */
+  hasExcludedDescendants?: boolean;
   isSearchMatch?: boolean;
   isGenerated?: boolean;
   hasChildrenInSearch?: boolean;

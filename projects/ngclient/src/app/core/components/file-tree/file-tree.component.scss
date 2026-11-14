@@ -180,6 +180,11 @@
         border-color: var(--primary-4);
       }
 
+      &.partially-excluded {
+        border-style: dashed;
+        border-color: var(--primary-6);
+      }
+
       &.excluded .text {
         text-decoration: line-through;
         color: var(--base-7);
