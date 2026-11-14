@@ -9,7 +9,13 @@
 
   <div class="actions">
     @if (serverState()?.UpdaterState === 'Waiting') {
-      <button shButton (click)="checkForUpdates()" [class.loading]="checkingForUpdates()">Check for updates</button>
+      <button
+        shButton
+        (click)="checkForUpdates()"
+        [disabled]="checkingForUpdates()"
+        [class.loading]="checkingForUpdates()">
+        Check for updates
+      </button>
 
       @if (updateInstall.installSupported() && serverState()?.UpdatedVersion) {
         <button
@@ -36,7 +42,7 @@
         </a>
       }
     } @else if (serverState()?.UpdaterState === 'Checking') {
-      <button shButton (click)="checkForUpdates()">Checking for updates …</button>
+      <button shButton disabled>Checking for updates …</button>
     }
 
     @if (updateInstall.canCancel()) {
@@ -54,7 +60,9 @@
       }
     </div>
   } @else if (serverState()?.UpdatedVersion && !updateInstall.installSupported() && updateInstall.unsupportedReason()) {
-    <p class="update-note" i18n>The update cannot be installed automatically: {{ updateInstall.unsupportedReason() }}</p>
+    <p class="update-note" i18n>
+      The update cannot be installed automatically: {{ updateInstall.unsupportedReason() }}
+    </p>
   }
 
   <div>{{ generalInfo() }}</div>
