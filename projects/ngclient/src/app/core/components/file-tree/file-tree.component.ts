@@ -873,6 +873,7 @@ export default class FileTreeComponent {
                 fileSize: x.fileSize,
                 lastModified: (x as any)?.lastModified ?? null,
                 resolvedpath: x.resolvedpath,
+                symlinkTarget: x.symlinkTarget,
                 parentPath: this.getParentPath(x.id ?? ''),
               } as any as TreeNode;
               return node;
@@ -1017,6 +1018,11 @@ export default class FileTreeComponent {
 
   lockedLinkLabel(node: FileTreeNode): string | null {
     return node.symlink && node.kind === 'locked' ? this.#treeNodeBadges['locked'].label : null;
+  }
+
+  treeNodeLinkTarget(node: FileTreeNode): string | null {
+    const target = node.symlink ? node.symlinkTarget : null;
+    return target ? $localize`Link target: ${target}:target:` : null;
   }
 
   /** Accessible name for a tree row; badges that convey a state are announced since the badge icon is visual only. */

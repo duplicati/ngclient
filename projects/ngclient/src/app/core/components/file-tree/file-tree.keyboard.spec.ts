@@ -140,6 +140,53 @@ describe('file tree keyboard navigation', () => {
     expect(fixture.nativeElement.querySelector('sh-alert').textContent).toContain(message);
   });
 
+  it('shows a junction target without using it as the selected path', () => {
+    const { component } = setup(
+      { resolvePaths: true },
+      {
+        '/': [
+          { id: '/Link/', text: 'Link', cls: 'folder', symlink: true, resolvedpath: null, symlinkTarget: '/Target/' },
+          {
+            id: '%HOME%/Cookies/',
+            text: 'Cookies',
+            cls: 'folder',
+            symlink: true,
+            resolvedpath: '/home/user/Cookies/',
+            symlinkTarget: '/Target/',
+          },
+        ],
+      }
+    );
+    for (const [label, path] of [
+      ['Link', '/Link/'],
+      ['Cookies', '/home/user/Cookies/'],
+    ]) {
+      const link = row(label + ' (Symbolic link)');
+      expect(link.querySelector('.icon')?.getAttribute('title')).toBe('Link target: /Target/');
+      expect(link.getAttribute('aria-description')).toBe('Link target: /Target/');
+      press(link, 'Enter');
+      expect(component.currentPathArray()).toContain(path);
+      expect(component.currentPathResolved()).not.toContain('/Target/');
+      press(link, 'Enter');
+    }
+  });
+
+  it.each([null, undefined])('keeps the existing badge for a link with target %s', (symlinkTarget) => {
+    const { component } = setup(
+      { resolvePaths: true },
+      {
+        '/': [
+          { id: '/Link/', text: 'Link', cls: 'folder', symlink: true, symlinkTarget, resolvedpath: '/LegacyTarget/' },
+        ],
+      }
+    );
+    const link = row('Link (Symbolic link)');
+    expect(link.querySelector('.icon')?.getAttribute('title')).toBe('Symbolic link');
+    expect(link.hasAttribute('aria-description')).toBe(false);
+    press(link, 'Enter');
+    expect(component.currentPath()).toBe('/LegacyTarget/');
+  });
+
   it('has one Tab entry, hierarchical roles and a name for each node', () => {
     setup();
     const tree = fixture.nativeElement.querySelector('[role=tree]');
