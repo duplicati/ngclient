@@ -65,5 +65,29 @@
     </p>
   }
 
+  @if (databaseFieldsEncrypted() === true) {
+    <p class="database-encryption" i18n>The server database is encrypted.</p>
+  } @else if (databaseFieldsEncrypted() === false) {
+    <p class="database-encryption" i18n>The server database is not encrypted.</p>
+  }
+
+  @if (preloadSettingsPaths().length > 0) {
+    <div class="preload-paths">
+      <p i18n>Preload settings are read from these files, in this order:</p>
+      <ul>
+        @for (entry of preloadSettingsPaths(); track $index) {
+          <li>
+            <code>{{ entry.Path }}</code>
+            @if (entry.Exists) {
+              <span class="found" i18n>(found)</span>
+            } @else {
+              <span class="missing" i18n>(not found)</span>
+            }
+          </li>
+        }
+      </ul>
+    </div>
+  }
+
   <div>{{ generalInfo() }}</div>
 </section>

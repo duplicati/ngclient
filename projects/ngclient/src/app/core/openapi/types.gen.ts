@@ -635,6 +635,11 @@ export type PageInfo = {
     Pages?: number;
 };
 
+export type PreloadSettingsPathDto = {
+    Path: string | null;
+    Exists: boolean;
+};
+
 export type PurgeBrokenFilesRequestDto = {
     BackupId: string | null;
 };
@@ -921,6 +926,8 @@ export type SystemInfoDto = {
     PowerModeProviders: Array<string> | null;
     LocalLicenseStatus: LicenseStatusDto;
     RemoteLicenseStatus: LicenseStatusDto;
+    DatabaseFieldsEncrypted: boolean;
+    PreloadSettingsPaths: Array<PreloadSettingsPathDto> | null;
 };
 
 export type SystemStatusDto = {
@@ -1222,6 +1229,8 @@ export type SystemInfoDtoWritable = {
     PowerModeProviders: Array<string> | null;
     LocalLicenseStatus: LicenseStatusDto;
     RemoteLicenseStatus: LicenseStatusDto;
+    DatabaseFieldsEncrypted: boolean;
+    PreloadSettingsPaths: Array<PreloadSettingsPathDto> | null;
 };
 
 export type SystemStatusDtoWritable = {

@@ -27,6 +27,9 @@ export default class GeneralComponent {
   checkingForUpdates = signal(false);
   serverState = this.#serverState.serverState;
   duplicatiVersion = computed(() => this.#sysinfo.systemInfo()?.ServerVersionName ?? 'Unknown');
+  // Older servers do not report these, so the template leaves them out when missing
+  databaseFieldsEncrypted = computed(() => this.#sysinfo.systemInfo()?.DatabaseFieldsEncrypted);
+  preloadSettingsPaths = computed(() => this.#sysinfo.systemInfo()?.PreloadSettingsPaths ?? []);
   generalInfo = toSignal(
     defer(() => this.#dupServer.getApiV1Acknowledgements()).pipe(
       map((x) => x.Acknowledgements), // ? this.#sanitizer.bypassSecurityTrustHtml(x.Acknowledgements) : '')),

@@ -43,3 +43,21 @@ section {
 .update-note {
   color: var(--base-8);
 }
+
+section .preload-paths {
+  white-space: normal;
+
+  ul {
+    margin: p2r(8 0 0);
+    padding-left: p2r(20);
+  }
+
+  .found,
+  .missing {
+    margin-left: p2r(8);
+  }
+
+  .missing {
+    color: var(--base-8);
+  }
+}
