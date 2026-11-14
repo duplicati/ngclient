@@ -49,6 +49,13 @@
   </sh-toggle>
 
   @if (exportType() === 'file') {
+    @if (hasExportGlobalSettings()) {
+      <p i18n>
+        Global advanced options from server settings are included separately. Choose how to use them when importing.
+        Including passwords also includes passwords from those global options.
+      </p>
+    }
+
     <sh-toggle class="primary raised" i18n>
       Encrypt file
       <input type="checkbox" [formField]="exportForm.encryption" />

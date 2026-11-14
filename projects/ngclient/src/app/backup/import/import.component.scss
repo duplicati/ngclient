@@ -29,3 +29,18 @@ form {
 sh-file-upload {
   width: 100%;
 }
+
+.global-options {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(8);
+
+  select {
+    padding: p2r(12);
+    border: p2r(1) solid var(--base-4);
+    border-radius: p2r(4);
+    background: var(--base-1);
+    color: inherit;
+    font: inherit;
+  }
+}

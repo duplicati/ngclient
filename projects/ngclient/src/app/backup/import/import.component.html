@@ -22,7 +22,7 @@
   </h3>
 </header>
 
-<form autocomplete="off" novalidate (submit)="$event.preventDefault()">
+<form autocomplete="off" novalidate [attr.inert]="isImporting() ? '' : null" (submit)="$event.preventDefault()">
   <sh-file-upload [files]="selectedFile()" (filesChange)="onFileDropped($event)" accept=".json,.aes" />
 
   @if (isSecureFile()) {
@@ -41,4 +41,20 @@
     <label for="direct" i18n>Save now</label>
     <input type="checkbox" [formField]="importForm.direct" />
   </sh-toggle>
+
+  @if (hasGlobalOptionsImport()) {
+    <div class="global-options">
+      <label for="globalOptions" i18n>Global advanced options</label>
+      <select id="globalOptions" aria-describedby="globalOptionsHelp" [formField]="importForm.global_options">
+        @for (choice of globalOptionsChoices(); track choice.value) {
+          <option [value]="choice.value">{{ choice.label }}</option>
+        }
+      </select>
+    </div>
+    <p id="globalOptionsHelp" i18n>
+      If the file contains global advanced options, ignore them or merge them into this backup. The backup's own options
+      take precedence. To apply them to this server instead, enable Save now. Applying them affects all backups and
+      requires confirmation.
+    </p>
+  }
 </form>

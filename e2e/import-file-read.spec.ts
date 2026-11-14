@@ -96,8 +96,113 @@ test('a slower previous read cannot replace the latest selected configuration', 
   await submit.click();
   await expect.poll(() => requests.length).toBe(1);
   expect(requests[0].request().postDataJSON().config).toBe(json('Latest').toString('base64'));
+  expect(requests[0].request().postDataJSON()).not.toHaveProperty('global_options');
   await requests[0].fulfill({ json: { data: null } });
   await expect(page).toHaveURL('/');
+});
+
+test.describe('global advanced options import', () => {
+  test.beforeEach(async ({ page, serverApi }) => {
+    void serverApi;
+    await page.route('**/api/v1/systeminfo', (route) =>
+      route.fulfill({
+        json: {
+          Version: 'Browser test',
+          DefaultUsageReportLevel: 'information',
+          StartedBy: 'TrayIcon',
+          BackendModules: [],
+          EncryptionModules: [],
+          CompressionModules: [],
+          GenericModules: [],
+          Options: [],
+          ServerOnlyOptions: [],
+          SpecialFolders: [],
+          APIExtensions: [
+            'v1:websocket',
+            'v1:websocket:authenticate',
+            'v1:subscribe:backuplist',
+            'v1:subscribe:notifications',
+            'v1:subscribe:remotecontrol',
+            'v1:backup:export-global-settings',
+          ],
+        },
+      })
+    );
+  });
+
+  async function ready(page: Page) {
+    const controls = await openImport(page);
+    await controls.upload.setInputFiles({
+      name: 'globals.json',
+      mimeType: 'application/json',
+      buffer: Buffer.from(
+        JSON.stringify({
+          Backup: { Name: 'Imported job', Settings: [{ Name: '--blocksize', Value: '1MB' }] },
+          GlobalSettings: [{ Name: 'send-mail-subject', Value: 'Global report' }],
+        })
+      ),
+    });
+    await expect(controls.submit).toBeEnabled();
+    const choice = page.getByLabel('Global advanced options', { exact: true });
+    await expect(choice).toHaveValue('ignore');
+    const saveNow = controls.component
+      .locator('sh-toggle')
+      .filter({ hasText: 'Save now' })
+      .locator('input[type=checkbox]:not(.internal-input)');
+    return { ...controls, choice, saveNow };
+  }
+
+  test('keeps ignoring global options as the default', async ({ authenticatedPage: page }) => {
+    const { saveNow, submit, requests } = await ready(page);
+    await saveNow.check();
+    await submit.click();
+    await expect.poll(() => requests.length).toBe(1);
+    expect(requests[0].request().postDataJSON().global_options).toBe('ignore');
+    await requests[0].fulfill({ json: { data: null } });
+    await expect(page).toHaveURL('/');
+  });
+
+  test('selects merging with the keyboard and sends the selected policy', async ({ authenticatedPage: page }) => {
+    const { choice, saveNow, submit, requests } = await ready(page);
+    await choice.focus();
+    await choice.press('ArrowDown');
+    await choice.press('Enter');
+    await expect(choice).toHaveValue('merge');
+    await saveNow.check();
+    await submit.click();
+    await expect.poll(() => requests.length).toBe(1);
+    expect(requests[0].request().postDataJSON().global_options).toBe('merge');
+    await requests[0].fulfill({ json: { data: null } });
+    await expect(page).toHaveURL('/');
+  });
+
+  test('requires Save now and confirmation before applying server-wide options', async ({
+    authenticatedPage: page,
+  }, testInfo) => {
+    const { choice, saveNow, submit, requests } = await ready(page);
+    await expect(choice.locator('option[value=apply]')).toHaveCount(0);
+    await saveNow.check();
+    await choice.selectOption('apply');
+    await saveNow.uncheck();
+    await expect(choice).toHaveValue('ignore');
+    await expect(choice.locator('option[value=apply]')).toHaveCount(0);
+    await saveNow.check();
+    await choice.selectOption('apply');
+    await page.screenshot({ path: testInfo.outputPath('import-global-options.png'), fullPage: true });
+    await submit.click();
+    await expect(page.getByText('Apply global advanced options?', { exact: true })).toBeVisible();
+    await page.screenshot({ path: testInfo.outputPath('apply-confirmation.png'), fullPage: true });
+    expect(requests).toHaveLength(0);
+    await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+    expect(requests).toHaveLength(0);
+    await expect(submit).toBeEnabled();
+    await submit.click();
+    await page.getByRole('button', { name: 'Apply and import', exact: true }).click();
+    await expect.poll(() => requests.length).toBe(1);
+    expect(requests[0].request().postDataJSON()).toMatchObject({ direct: true, global_options: 'apply' });
+    await requests[0].fulfill({ json: { data: null } });
+    await expect(page).toHaveURL('/');
+  });
 });
 
 test('configuration import Back supports native new tabs and keyboard navigation without importing', async ({

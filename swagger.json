@@ -5011,6 +5011,10 @@
           "expand_env_vars": {
             "type": "boolean",
             "nullable": true
+          },
+          "global_options": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
