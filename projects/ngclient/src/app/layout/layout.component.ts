@@ -85,6 +85,7 @@ export default class LayoutComponent {
     this.#notificationState.init();
     this.#backupsState.getBackups(true);
     this.#idleLogout.watch(this.#destroyRef);
+    this.#layoutState.loadServerTheme();
   }
 
   serverSettingsEffect = effect(() => {

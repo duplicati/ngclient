@@ -9,7 +9,10 @@
     <!-- Generated icon CSS is copied as an asset; keep it as an external stylesheet. -->
     <link rel="stylesheet" href="assets/ship.css" data-beasties-skip />
     <script>
-      let theme = localStorage.getItem('v1:persist:duplicati:darkTheme') === 'true' ? 'dark' : 'light';
+      const savedTheme = localStorage.getItem('v1:persist:duplicati:darkTheme');
+      const dark =
+        savedTheme === 'true' || (savedTheme !== 'false' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      let theme = dark ? 'dark' : 'light';
       document.documentElement.classList.add(theme);
     </script>
     <style type="text/css">

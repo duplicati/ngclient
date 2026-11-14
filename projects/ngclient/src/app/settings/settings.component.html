@@ -104,7 +104,7 @@
   <section>
     <div class="left">
       <h3 i18n>Color theme</h3>
-      <p i18n>Customize your application theme</p>
+      <p i18n>Your choice is saved only in this browser and takes priority over the server default.</p>
     </div>
 
     <div class="right">
@@ -122,6 +122,55 @@
           (click)="setDarkMode()" />
         <!-- <img src="assets/images/system-theme.png" alt="system theme" /> -->
       </div>
+      <button
+        shButton
+        type="button"
+        class="small"
+        [attr.aria-pressed]="themePreferences.followsServerTheme()"
+        [class.primary]="themePreferences.followsServerTheme()"
+        (click)="themePreferences.useServerTheme()"
+        i18n>
+        Use server default
+      </button>
+    </div>
+  </section>
+
+  <section>
+    <div class="left">
+      <h3 i18n>Default theme for this server</h3>
+      <p i18n>
+        Used after sign-in by browsers without a personal choice. Changing this does not replace anyone's browser
+        preference.
+      </p>
+    </div>
+    <div class="right multiple">
+      @for (option of serverThemeOptions; track option.value) {
+        <button
+          shButton
+          type="button"
+          class="small"
+          [attr.aria-pressed]="themePreferences.serverTheme() === option.value"
+          [class.primary]="themePreferences.serverTheme() === option.value"
+          [disabled]="
+            !themePreferences.serverThemeLoaded() ||
+            themePreferences.serverThemeLoading() ||
+            themePreferences.serverThemeLoadError() ||
+            themePreferences.serverThemeSaving()
+          "
+          (click)="themePreferences.saveServerTheme(option.value)">
+          {{ option.label }}
+        </button>
+      }
+      @if (themePreferences.serverThemeLoadError()) {
+        <p role="alert" i18n>Could not load the server's default theme.</p>
+        <button shButton type="button" (click)="themePreferences.loadServerTheme()" i18n>Retry</button>
+      }
+      @if (themePreferences.serverThemeSaveError()) {
+        <p role="alert" i18n>Could not save the server's default theme. Please try again.</p>
+      }
+      @if (themePreferences.serverThemeSaving()) {
+        <p role="status" i18n>Saving default theme…</p>
+      }
     </div>
   </section>
 
