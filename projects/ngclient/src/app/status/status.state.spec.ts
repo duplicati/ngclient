@@ -1,6 +1,6 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { ObservableInput, of, Subject } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { StatusBarState, StatusWithContent } from '../core/components/status-bar/status-bar.state';
 import { DuplicatiServer } from '../core/openapi';
@@ -505,5 +505,148 @@ describe('StatusPageState without system status', () => {
     statusData.set({ TaskID: 7, Phase: 'Backup_Complete' });
     serverState.set({ ActiveTask: { Item1: 8, Item2: '2' } });
     expect(state.progress()).toBeNull();
+  });
+});
+
+describe('StatusPageState snapshot session lifecycle', () => {
+  let state: StatusPageState;
+  type Reply = { Success: boolean; Data: SystemStatusSnapshot };
+  let sequence = 0;
+  const reply = (name: string, intervalMs = 1000): Reply => ({
+    Success: true,
+    Data: {
+      Timestamp: new Date(Date.UTC(2026, 10, 13) + ++sequence * 1000).toISOString(),
+      IntervalMs: intervalMs,
+      Machine: { ProcessorCount: 4, CpuUsage: 0, TotalMemory: 8e9, AvailableMemory: 4e9 },
+      Processes: [],
+      Progress: null,
+      Queue: [
+        { TaskID: 7, BackupID: null, BackupName: name, Operation: 'Verify', Status: 'Waiting', TaskStarted: null },
+      ],
+    },
+  });
+  beforeEach(() => {
+    vi.useFakeTimers();
+    sequence = 0;
+  });
+  afterEach(() => {
+    state?.deactivateView();
+    TestBed.resetTestingModule();
+    vi.clearAllTimers();
+    vi.useRealTimers();
+  });
+
+  function setup(first?: ObservableInput<Reply>) {
+    const responses: Subject<Reply>[] = [];
+    const get = vi.fn((): ObservableInput<Reply> => {
+      const response = new Subject<Reply>();
+      responses.push(response);
+      return response;
+    });
+    if (first) get.mockReturnValueOnce(first);
+    const method = signal('longpoll');
+    TestBed.configureTestingModule({
+      providers: [
+        StatusPageState,
+        { provide: StatusBarState, useValue: { statusData: signal(null), serverState: signal(null) } },
+        {
+          provide: ServerStateService,
+          useValue: {
+            systemStatusState: signal(null),
+            taskQueueState: signal(null),
+            getConnectionMethod: () => method(),
+            subscribe: vi.fn(),
+            unsubscribe: vi.fn(),
+          },
+        },
+        { provide: SysinfoState, useValue: { hasSystemStatus: signal(true) } },
+        { provide: DuplicatiServer, useValue: { getApiV2SystemStatus: get } },
+      ],
+    });
+    state = TestBed.inject(StatusPageState);
+    state.activateView();
+    TestBed.tick();
+    return { responses, get, method };
+  }
+
+  it('unsubscribes the pending snapshot when the view is left', () => {
+    const { responses } = setup();
+    state.deactivateView();
+    TestBed.tick();
+    expect(responses[0].observed).toBe(false);
+    responses[0].next(reply('Late'));
+    expect(state.queue()).toEqual([]);
+  });
+
+  it('does not replace the current snapshot with a Promise response from the previous visit', async () => {
+    let resolve!: (value: Reply) => void;
+    const previous = new Promise<Reply>((done) => (resolve = done));
+    const { responses, get } = setup(previous);
+    state.deactivateView();
+    state.activateView();
+    TestBed.tick();
+    expect(get).toHaveBeenCalledTimes(2);
+    responses[0].next(reply('Current', 2000));
+    responses[0].complete();
+    TestBed.tick();
+    resolve(reply('Stale', 5000));
+    await vi.advanceTimersByTimeAsync(0);
+    TestBed.tick();
+    expect(state.queue()[0].BackupName).toBe('Current');
+    expect(state.sampleIntervalMs()).toBe(2000);
+  });
+
+  it.each(['success', 'error'])('does not schedule another loop when an old Promise ends with %s', async (outcome) => {
+    let resolve!: (value: Reply) => void;
+    let reject!: (reason: Error) => void;
+    const previous = new Promise<Reply>((done, fail) => {
+      resolve = done;
+      reject = fail;
+    });
+    const { get } = setup(previous);
+    state.deactivateView();
+    state.activateView();
+    TestBed.tick();
+    if (outcome === 'success') resolve(reply('Stale'));
+    else reject(new Error('old request failed'));
+    await vi.advanceTimersByTimeAsync(5000);
+    TestBed.tick();
+    expect(get).toHaveBeenCalledTimes(2); // The current session's read is still pending.
+  });
+
+  it('releases the REST read when switching to websocket and starts fresh when polling resumes', () => {
+    const { responses, method, get } = setup();
+    method.set('websocket');
+    TestBed.tick();
+    expect(responses[0].observed).toBe(false);
+    method.set('longpoll');
+    TestBed.tick();
+    expect(get).toHaveBeenCalledTimes(2);
+    expect(responses[1].observed).toBe(true);
+    responses[0].next(reply('Stale'));
+    expect(state.queue()).toEqual([]);
+  });
+
+  it('releases snapshot reads and timers on injector destruction and cannot reactivate', () => {
+    const { responses, get } = setup();
+    TestBed.resetTestingModule();
+    expect(responses[0].observed).toBe(false);
+    expect(vi.getTimerCount()).toBe(0);
+    state.activateView();
+    expect(vi.getTimerCount()).toBe(0);
+    expect(get).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps the normal error retry interval and stops retrying after leaving', async () => {
+    const { responses, get } = setup();
+    responses[0].error(new Error('temporary failure'));
+    await vi.advanceTimersByTimeAsync(999);
+    expect(get).toHaveBeenCalledTimes(1);
+    await vi.advanceTimersByTimeAsync(1);
+    expect(get).toHaveBeenCalledTimes(2);
+    state.deactivateView();
+    responses[1].complete();
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(get).toHaveBeenCalledTimes(2);
   });
 });
