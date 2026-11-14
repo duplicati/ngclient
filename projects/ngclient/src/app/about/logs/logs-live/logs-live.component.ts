@@ -4,6 +4,7 @@ import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipList } from '@ship-ui/core/ship-list';
 import { ShipTable } from '@ship-ui/core/ship-table';
+import { downloadJson, logFileName } from '../../../core/functions/download-json';
 import { LogMessageType } from '../../../core/openapi';
 import { LogsLiveState } from './logs-live.state';
 
@@ -48,6 +49,11 @@ export default class LogsLiveComponent {
     this.#logsLiveState.setBackupIdFilter(backupIdFilter);
     this.#logsLiveState.logLevel.set(level ?? (whenFilter || backupIdFilter ? 'Verbose' : 'Disabled'));
   });
+
+  /** Saves the entries shown, as the server returned them, to a JSON file */
+  downloadLog() {
+    downloadJson(this.logs(), logFileName('live-log', this.backupIdFilter()));
+  }
 
   toggleRow(id: number | null | undefined) {
     if (id == null) return;

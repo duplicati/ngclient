@@ -5,6 +5,7 @@ import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipTable } from '@ship-ui/core/ship-table';
 import { defer, finalize } from 'rxjs';
+import { downloadJson, logFileName } from '../../../core/functions/download-json';
 import { DuplicatiServer } from '../../../core/openapi';
 
 const COLUMNS = ['BackupID', 'Timestamp', 'Message', 'actions'] as const;
@@ -74,6 +75,11 @@ export default class LogsStoredComponent {
         // The interceptor presents the error; keep the cursor available for retry.
         error: () => {},
       });
+  }
+
+  /** Saves the entries loaded so far, as the server returned them, to a JSON file */
+  downloadLog() {
+    downloadJson(this.logs(), logFileName('stored-log'));
   }
 
   toggleRow(index: number) {
