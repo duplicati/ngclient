@@ -19,6 +19,7 @@ import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { defer, finalize } from 'rxjs';
 import { getBackendIcon, getBackendType } from '../backup/destination/destination.config-utilities';
 import { BackupProgressComponent } from '../core/components/backup-progress/backup-progress.component';
+import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import { PauseDialogComponent } from '../core/components/status-bar/pause-dialog/pause-dialog.component';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { StatusBarState } from '../core/components/status-bar/status-bar.state';
@@ -107,6 +108,7 @@ export default class HomeComponent {
   });
   startingBackup = this.#backupsState.startingBackup;
   deletingBackup = this.#backupsState.deletingBackup;
+  startingAllBackups = this.#backupsState.startingAllBackups;
   runningBackupId = this.#statusBarState.runningBackupId;
 
   getBackendType = getBackendType;
@@ -133,6 +135,14 @@ export default class HomeComponent {
         .filter((x): x is string => !!x && x !== String(running))
     );
   });
+
+  // Backups that "Start all" would queue: disabled, running and already queued backups are left out
+  startAllBackupIds = computed(() =>
+    this.backups()
+      .filter((x) => !this.isDisabled(x) && !this.isRunning(x.Backup?.ID) && !this.isQueued(x.Backup?.ID))
+      .map((x) => x.Backup?.ID)
+      .filter((x): x is string => !!x)
+  );
 
   isRunning(backupId: string | null | undefined) {
     const running = this.runningBackupId();
@@ -203,6 +213,24 @@ export default class HomeComponent {
 
   startBackup(id: string) {
     this.#statusBarState.resumeDialogCheck(() => this.#backupsState.startBackup(id));
+  }
+
+  startAllBackups() {
+    const ids = this.startAllBackupIds();
+    if (!ids.length) return;
+
+    this.#dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: $localize`Start all backups`,
+        message: $localize`Start ${ids.length}:count: backups now? They run one after another. Disabled backups and backups that are already running or queued are skipped.`,
+        confirmText: $localize`Start all`,
+        cancelText: $localize`Cancel`,
+      },
+      closed: (res) => {
+        if (!res) return;
+        this.#statusBarState.resumeDialogCheck(() => this.#backupsState.startBackups(ids));
+      },
+    });
   }
 
   openPauseDialog() {

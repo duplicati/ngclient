@@ -28,11 +28,25 @@
   </header>
 
   <div class="content">
-    <h2>
-      <ng-container i18n>My backups</ng-container>
+    <div class="content-header">
+      <h2 i18n>My backups</h2>
 
       @if (backups().length > 0) {
         <div class="actions">
+          @if (backups().length > 1) {
+            <button
+              type="button"
+              class="small"
+              shButton
+              [class.loading]="startingAllBackups()"
+              [disabled]="startingAllBackups() || startAllBackupIds().length === 0"
+              (click)="startAllBackups()"
+              i18n>
+              <sh-icon>play-circle</sh-icon>
+              Start all
+            </button>
+          }
+
           @if (showSearch()) {
             <sh-form-field class="small search">
               <input type="text" i18n-placeholder placeholder="Search backups..." [formField]="searchForm.query" />
@@ -107,7 +121,7 @@
           }
         </div>
       }
-    </h2>
+    </div>
 
     @defer (when !backupsLoading()) {
       @if (viewMode() === 'list') {

@@ -1,5 +1,5 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
-import { defer, finalize, take, tap } from 'rxjs';
+import { catchError, concatMap, defer, EMPTY, finalize, from, take, tap } from 'rxjs';
 import { randomUUID } from '../functions/crypto';
 import { localStorageSignal } from '../functions/localstorage-signal';
 import { DeleteApiV1BackupByIdData, DuplicatiServer, GetApiV1BackupsResponse, Options } from '../openapi';
@@ -112,6 +112,7 @@ export class BackupsState {
   #backupsLoading = signal(false);
   #startingBackup = signal<string | null>(null);
   #deletingBackup = signal<string | null>(null);
+  #startingAllBackups = signal(false);
 
   #timeType = localStorageSignal<TimeType>(LOCALSTORAGE_BACKUP_LIST_SHOW_ACTUAL_TIMES, 'relative');
   #orderBy = localStorageSignal<OrderBy>(LOCALSTORAGE_BACKUP_LIST_ORDER_BY, 'id');
@@ -123,6 +124,7 @@ export class BackupsState {
   backupsLoading = this.#backupsLoading.asReadonly();
   startingBackup = this.#startingBackup.asReadonly();
   deletingBackup = this.#deletingBackup.asReadonly();
+  startingAllBackups = this.#startingAllBackups.asReadonly();
   draftBackups = this.#draftBackups.asReadonly();
 
   #hasWebsocketBackupListUpdate = computed(
@@ -227,6 +229,32 @@ export class BackupsState {
         take(1),
         tap(() => this.getBackups(true)),
         finalize(() => this.#startingBackup.set(null))
+      )
+      .subscribe();
+  }
+
+  /**
+   * Starts several backups, one request at a time so the server queues them in the given order.
+   * A failed start does not stop the remaining ones. The list is refreshed once at the end.
+   */
+  startBackups(ids: string[]) {
+    if (!ids.length || this.#startingAllBackups()) return;
+    this.#startingAllBackups.set(true);
+
+    from(ids)
+      .pipe(
+        concatMap((id) => {
+          this.#startingBackup.set(id);
+          return defer(() => this.#dupServer.postApiV1BackupByIdStart({ path: { id } })).pipe(
+            take(1),
+            catchError(() => EMPTY)
+          );
+        }),
+        finalize(() => {
+          this.#startingBackup.set(null);
+          this.#startingAllBackups.set(false);
+          this.getBackups(true);
+        })
       )
       .subscribe();
   }
