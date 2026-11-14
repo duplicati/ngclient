@@ -309,6 +309,17 @@ export class BackupsState {
     );
   }
 
+  /**
+   * Skips the next scheduled run of a backup. The server moves the schedule to the slot after it,
+   * and the list is refreshed so the new schedule time is shown.
+   */
+  skipNextRun(id: string) {
+    return defer(() => this.#dupServer.postApiV1BackupByIdSkipNextRun({ path: { id } })).pipe(
+      take(1),
+      tap(() => this.getBackups(true))
+    );
+  }
+
   deleteBackup(deleteConfig: Options<DeleteApiV1BackupByIdData>) {
     return defer(() => this.#dupServer.deleteApiV1BackupById(deleteConfig)).pipe(take(1));
   }

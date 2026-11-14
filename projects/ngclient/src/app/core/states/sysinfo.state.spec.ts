@@ -83,6 +83,17 @@ describe('SysinfoState server capabilities', () => {
   });
 
   it.each([
+    [[], false],
+    [['v1:backup:enable-disable'], false],
+    [['v1:backup:skip-next-run'], true],
+  ])('reports skip-next-run support only when the server advertises it: %j', (extensions, expected) => {
+    const state = setup();
+    expect(state.hasSkipNextRun()).toBe(false);
+    state.systemInfo.set({ APIExtensions: extensions } as SystemInfoDto);
+    expect(state.hasSkipNextRun()).toBe(expected);
+  });
+
+  it.each([
     [[], false, false],
     [['v1:backup:sync-mode'], false, false],
     [['v1:backup:sync-snapshots'], true, false],

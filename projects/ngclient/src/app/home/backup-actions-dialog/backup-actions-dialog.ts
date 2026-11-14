@@ -9,9 +9,11 @@ export type BackupActionsDialogData = {
   isSync: boolean;
   isExternal: boolean;
   isDisabled: boolean;
+  isScheduled?: boolean;
 };
 
 export type BackupActionId =
+  | 'skip-next-run'
   | 'restore'
   | 'export'
   | 'enable'
@@ -89,6 +91,12 @@ export class BackupActionsDialog {
               ? $localize`Recover files from this sync job.`
               : $localize`Recover files from this backup.`,
             route: ['/restore', id],
+          }),
+          ...on(!!data.isScheduled && !isDisabled && this.#sysinfo.hasSkipNextRun(), {
+            id: 'skip-next-run',
+            icon: shIcon('shicon:skip-forward'),
+            label: $localize`Skip next run`,
+            description: $localize`Skip the next scheduled run.`,
           }),
           ...on(!isExternal, {
             id: 'export',

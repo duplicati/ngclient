@@ -345,6 +345,7 @@ export default class HomeComponent {
         isSync: backup.Backup.OperationType === 'Sync',
         isExternal: !!backup.Backup.ExternalID,
         isDisabled: this.isDisabled(backup),
+        isScheduled: !!backup.Schedule,
       },
       closed: (action) => {
         if (!action) return;
@@ -353,6 +354,7 @@ export default class HomeComponent {
         else if (action.id === 'test-restore') this.testRestore(id);
         else if (action.id === 'enable') this.setEnabled(id, true);
         else if (action.id === 'disable') this.setEnabled(id, false);
+        else if (action.id === 'skip-next-run') this.skipNextRun(id);
       },
     });
   }
@@ -391,6 +393,20 @@ export default class HomeComponent {
     this.loadingId.set(id);
     this.#backupsState
       .setBackupEnabled(id, enabled)
+      .pipe(finalize(() => this.loadingId.set(null)))
+      .subscribe({
+        next: () => {
+          this.successId.set(id);
+
+          setTimeout(() => this.successId.set(null), 2000);
+        },
+      });
+  }
+
+  skipNextRun(id: string) {
+    this.loadingId.set(id);
+    this.#backupsState
+      .skipNextRun(id)
       .pipe(finalize(() => this.loadingId.set(null)))
       .subscribe({
         next: () => {

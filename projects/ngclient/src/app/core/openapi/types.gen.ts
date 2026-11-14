@@ -854,6 +854,11 @@ export type SingleOperationTokenOutputDto = {
     Token?: string | null;
 };
 
+export type SkipNextRunOutputDto = {
+    Status?: string | null;
+    NextScheduledRun?: string;
+};
+
 export type SpecialFolderDto = {
     ID: string | null;
     Path: string | null;
@@ -2646,6 +2651,24 @@ export type PostApiV1BackupByIdDisableResponses = {
      */
     200: unknown;
 };
+
+export type PostApiV1BackupByIdSkipNextRunData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/backup/{id}/skip-next-run';
+};
+
+export type PostApiV1BackupByIdSkipNextRunResponses = {
+    /**
+     * OK
+     */
+    200: SkipNextRunOutputDto;
+};
+
+export type PostApiV1BackupByIdSkipNextRunResponse = PostApiV1BackupByIdSkipNextRunResponses[keyof PostApiV1BackupByIdSkipNextRunResponses];
 
 export type PostApiV1BackupByIdMovedbData = {
     body: UpdateDbPathInputDto;
