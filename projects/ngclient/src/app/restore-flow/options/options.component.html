@@ -247,10 +247,10 @@
   }
 
   <div class="form-actions">
-    <button shButton type="button" (click)="goBack()" i18n>
+    <a shButton [routerLink]="['../select-files']" i18n>
       <sh-icon>arrow-left</sh-icon>
       Go back
-    </button>
+    </a>
 
     <button shButton [class.loading]="isSubmitting()" class="raised primary" type="submit" i18n>
       <sh-icon>arrow-right</sh-icon>
