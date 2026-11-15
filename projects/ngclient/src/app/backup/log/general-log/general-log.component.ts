@@ -414,6 +414,8 @@ export class GeneralLogComponent {
                 Tags: backup.Backup?.Tags ?? [],
                 TargetURL: backup.Backup?.TargetURL,
                 ConnectionStringID: backup.Backup?.ConnectionStringID,
+                OperationType: backup.Backup?.OperationType,
+                Enabled: backup.Backup?.Enabled,
                 Sources: backup.Backup?.Sources ?? [],
                 Settings: updatedSettings,
                 Filters: backup.Backup?.Filters?.map((f) => ({

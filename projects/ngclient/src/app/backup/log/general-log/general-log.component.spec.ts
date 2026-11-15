@@ -1,7 +1,7 @@
 import { DecimalPipe } from '@angular/common';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { DuplicatiServer } from '../../../core/openapi';
 import { DayJsProvider } from '../../../core/providers/dayjs';
 import { BackupsState } from '../../../core/states/backups.state';
@@ -240,4 +240,80 @@ describe('GeneralLogComponent restore test section', () => {
     // The standalone entry already lists its errors at the top level, so the section does not repeat them
     expect(el.querySelectorAll('.log-line-row')).toHaveLength(1);
   });
+});
+
+describe('GeneralLogComponent warning suppression preserves the job', () => {
+  afterEach(() => TestBed.resetTestingModule());
+
+  for (const unsuppress of [false, true]) {
+    it.each([
+      { OperationType: 'Sync' as const, Enabled: true },
+      { OperationType: 'Sync' as const, Enabled: false },
+      { OperationType: 'Backup' as const, Enabled: true },
+      { OperationType: 'Backup' as const, Enabled: false },
+    ])(`${unsuppress ? 'unsuppress' : 'suppress'} preserves $OperationType and Enabled=$Enabled`, async (flags) => {
+      const warningId = 'SyncHandler-InvalidRemoteName';
+      const backup = {
+        Backup: {
+          ...flags,
+          Name: 'Existing job',
+          TargetURL: 'file:///destination',
+          Sources: ['/source/'],
+          Settings: [
+            { Name: '--keep-time', Value: '7D' },
+            { Name: '--suppress-warnings', Value: unsuppress ? `OtherWarning,${warningId}` : 'OtherWarning' },
+          ],
+        },
+        Schedule: { Time: '2026-11-16T13:00:00Z', Repeat: '1D', AllowedDays: ['Monday' as const] },
+      };
+      const put = vi.fn(async (_request: unknown) => ({ Status: 'OK' }));
+      const refresh = vi.fn();
+      TestBed.configureTestingModule({
+        imports: [GeneralLogComponent],
+        providers: [
+          DecimalPipe,
+          DayJsProvider,
+          {
+            provide: DuplicatiServer,
+            useValue: {
+              getApiV1BackupById: vi.fn(async () => structuredClone(backup)),
+              getApiV1BackupByIdLog: vi.fn(async () => []),
+              putApiV1BackupById: put,
+            },
+          },
+          { provide: BackupsState, useValue: { getBackups: refresh } },
+        ],
+      });
+      TestBed.overrideComponent(GeneralLogComponent, { set: { template: '', imports: [] } });
+      const fixture = TestBed.createComponent(GeneralLogComponent);
+      fixture.componentRef.setInput('backupId', '7');
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      fixture.componentInstance.toggleWarningSuppression(warningId);
+      await vi.waitFor(() => expect(put).toHaveBeenCalledOnce());
+      expect(put).toHaveBeenCalledWith({
+        path: { id: '7' },
+        body: {
+          Backup: expect.objectContaining({
+            ...flags,
+            Name: backup.Backup.Name,
+            TargetURL: backup.Backup.TargetURL,
+            Sources: backup.Backup.Sources,
+            Settings: [
+              { Name: '--keep-time', Value: '7D', Filter: undefined },
+              {
+                Name: '--suppress-warnings',
+                Value: unsuppress ? 'OtherWarning' : `OtherWarning,${warningId}`,
+                Filter: null,
+              },
+            ],
+          }),
+          Schedule: backup.Schedule,
+        },
+      });
+      expect(refresh).toHaveBeenCalledWith(true);
+      expect(fixture.componentInstance.isSuppressingWarning()).toBe(false);
+    });
+  }
 });
