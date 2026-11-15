@@ -72,6 +72,12 @@ describe('custom S3 providers', () => {
     ]);
   });
 
+  it('offers the Blomp endpoint before the backend list has it', () => {
+    const options = serverField('s3-blomp').loadOptions!(injectorWith([{ key: 'Other', value: 's3.other.net' }]))();
+    expect(options).toEqual([{ key: 'Blomp', value: 'storage.blomp.com' }]);
+    expect(serverField('s3-blomp').longDescription).toContain('storage.blomp.com');
+  });
+
   it('uses the custom server help text when given', () => {
     expect(serverField('s3-cloudflarer2').longDescription).toContain('r2.cloudflarestorage.com');
     expect(serverField('s3-wasabi').longDescription).toContain('Wasabi');
@@ -90,6 +96,7 @@ describe('custom S3 providers', () => {
     ['sos-ch-gva-2.exo.io', 's3-exoscale', 'Exoscale S3'],
     ['eu-001.s3.synologyc2.net', 's3-synologyc2', 'Synology C2 S3'],
     ['obs.eu-west-101.myhuaweicloud.eu', 's3-huawei', 'Huawei Cloud S3'],
+    ['storage.blomp.com', 's3-blomp', 'Blomp S3'],
   ])('recognises existing connections to %s', (host, customKey, display) => {
     const url = `s3://bucket?s3-server-name=${host}`;
     expect(getConfigurationByUrl(url).customKey).toBe(customKey);
