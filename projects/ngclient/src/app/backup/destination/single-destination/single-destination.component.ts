@@ -33,6 +33,7 @@ import FileTreeComponent from '../../../core/components/file-tree/file-tree.comp
 import { SizeComponent } from '../../../core/components/size/size.component';
 import { TimespanComponent } from '../../../core/components/timespan/timespan.component';
 import { ArgumentType, ICommandLineArgument, RemoteDestinationType } from '../../../core/openapi';
+import { TestDestinationService } from '../../../core/services/test-destination.service';
 import { WebModulesService } from '../../../core/services/webmodules.service';
 import { DestinationConfigState } from '../../../core/states/destinationconfig.state';
 import { SysinfoState } from '../../../core/states/sysinfo.state';
@@ -79,6 +80,14 @@ export function syncFreeTextSelection(select: ShipSelect, getValue: () => unknow
   queueMicrotask(() => select.setSelectedOptionsFromValue((getValue() ?? '').toString()));
 }
 
+/**
+ * True for an SSH destination without an approved host key. The folder listing can only report
+ * the unknown host key as an error, while the connection test asks the user to approve it.
+ */
+export function needsHostKeyApproval(url: string): boolean {
+  return /^ssh:\/\//i.test(url) && !/[?&]ssh-(fingerprint|accept-any-fingerprints)(=|&|$)/i.test(url);
+}
+
 @Component({
   selector: 'app-single-destination',
   imports: [
@@ -117,6 +126,7 @@ export class SingleDestinationComponent {
   #remoteControlState = inject(RemoteControlState);
   #webmoduleService = inject(WebModulesService);
   #dialogService = inject(ShipDialogService);
+  #testDestination = inject(TestDestinationService);
   injector = inject(Injector);
   targetUrl = model.required<string | null>();
   useBackupState = input(false);
@@ -532,6 +542,58 @@ export class SingleDestinationComponent {
   }
 
   browse(fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string, newValue: any) {
+    const url = this.targetUrl();
+    if (!url || !needsHostKeyApproval(url)) {
+      this.#openBrowseDialog(fieldGroup, fieldName);
+      return;
+    }
+
+    this.#approveHostKey(url).subscribe((approvedUrl) => {
+      if (approvedUrl === null || this.targetUrl() !== url) return;
+
+      if (approvedUrl !== url) {
+        // Load the approved URL now, so the picked folder is added to it rather than to the old one
+        this.destinationForm.set(this.#editSession.load(approvedUrl));
+        this.canEditFields.set(this.#editSession.canEdit);
+        this.targetUrl.set(approvedUrl);
+      }
+
+      this.#openBrowseDialog(fieldGroup, fieldName);
+    });
+  }
+
+  /**
+   * Tests the destination without dialogs, and asks to approve the host key only when the test reports one.
+   * Emits the URL to browse, with the approved host key, or null when the key was not approved.
+   */
+  #approveHostKey(url: string) {
+    const test = (suppressErrorDialogs: boolean) =>
+      this.#testDestination.testDestination(
+        url,
+        this.#resolveBackupId(),
+        this.#resolveConnectionStringId(),
+        this.sourcePrefix(),
+        0,
+        this.remoteType(),
+        suppressErrorDialogs,
+        'error',
+        true
+      );
+
+    return test(true).pipe(
+      switchMap((res) =>
+        res.action !== 'approve-host-key'
+          ? of(url)
+          : test(false).pipe(
+              map((approval) =>
+                approval.action === 'approve-host-key' && approval.suggestedUrl ? approval.suggestedUrl : null
+              )
+            )
+      )
+    );
+  }
+
+  #openBrowseDialog(fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string) {
     const dialogRef = this.#dialogService.open(BrowsePathDialog, {
       maxWidth: '700px',
       maxHeight: '80vh',
