@@ -79,6 +79,7 @@
               role="treeitem"
               [id]="treeItemId(node)"
               [attr.aria-label]="treeItemLabel(node)"
+              [attr.aria-description]="treeNodeLinkTarget(node)"
               [attr.aria-level]="data.level + 1"
               [attr.aria-posinset]="position + 1"
               [attr.aria-setsize]="treeSetSize(children)"
@@ -106,7 +107,7 @@
               <div
                 class="icon"
                 [class.file]="node.cls === 'file'"
-                [attr.title]="treeNodeBadge(node)?.label ?? null"
+                [attr.title]="treeNodeLinkTarget(node) ?? treeNodeBadge(node)?.label ?? null"
                 (click)="toggleTreeNode($event, node)">
                 @if (node.id !== '/') {
                   @if (isTreeNodeExpanded(node)) {
