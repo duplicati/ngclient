@@ -1,13 +1,15 @@
 import { defineConfig } from '@playwright/test';
 
 const mode = process.env['PLAYWRIGHT_MODE'] ?? 'e2e';
-if (mode !== 'e2e' && mode !== 'startup') throw new Error('PLAYWRIGHT_MODE must be e2e or startup');
+if (!['e2e', 'startup', 'live'].includes(mode)) throw new Error('PLAYWRIGHT_MODE must be e2e, startup or live');
 const startup = mode === 'startup';
+const live = mode === 'live';
 const baseURL = `http://127.0.0.1:${startup ? 3001 : 3000}`;
 
 export default defineConfig({
-  testDir: startup ? './benchmarks' : './e2e',
-  ...(startup ? { testMatch: 'startup-loading.benchmark.ts', timeout: 120_000 } : {}),
+  testDir: live ? './e2e/live' : startup ? './benchmarks' : './e2e',
+  testIgnore: live ? [] : ['**/live/**'],
+  ...(startup ? { testMatch: 'startup-loading.benchmark.ts', timeout: 120_000 } : live ? { timeout: 120_000 } : {}),
   fullyParallel: false,
   forbidOnly: !!process.env['CI'],
   retries: 0,
@@ -24,10 +26,12 @@ export default defineConfig({
     screenshot: startup ? 'off' : 'only-on-failure',
   },
   projects: [{ name: 'chromium', use: { browserName: 'chromium' } }],
-  webServer: {
-    command: startup ? 'bun benchmarks/server.ts' : 'bun run preview',
-    url: `${baseURL}/login`,
-    reuseExistingServer: false,
-    env: { HOST: '127.0.0.1', PORT: startup ? '3001' : '3000' },
-  },
+  webServer: live
+    ? undefined
+    : {
+        command: startup ? 'bun benchmarks/server.ts' : 'bun run preview',
+        url: `${baseURL}/login`,
+        reuseExistingServer: false,
+        env: { HOST: '127.0.0.1', PORT: startup ? '3001' : '3000' },
+      },
 });
