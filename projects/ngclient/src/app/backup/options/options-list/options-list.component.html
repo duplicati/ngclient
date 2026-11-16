@@ -1,6 +1,6 @@
-<sh-toggle-card [disableToggle]="true" [isActive]="true">
-  <ng-container title>
-    <ng-container i18n>Advanced options</ng-container>
+<section class="options-card">
+  <header class="options-header">
+    <h3 i18n>Advanced options</h3>
 
     <div class="actions">
       @if (showTextArea()) {
@@ -37,7 +37,7 @@
 
         @if (hasFreeTextSettings()) {
           <sh-menu>
-            <button shButton type="button" class="small">
+            <button shButton type="button" class="small" aria-label="More advanced option actions" i18n-aria-label>
               <sh-icon>dots-three-vertical</sh-icon>
             </button>
 
@@ -66,7 +66,7 @@
         }
       }
     </div>
-  </ng-container>
+  </header>
 
   @if (showTextArea()) {
     <textarea
@@ -352,7 +352,7 @@
       </div>
     }
   }
-</sh-toggle-card>
+</section>
 
 <ng-template #validateTemplate let-item>
   @if (item.Value !== undefined) {
