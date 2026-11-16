@@ -27,6 +27,7 @@ async function openConfigurationList(page: Page) {
 
 test('configuration list failure is retryable without presenting an empty destination', async ({
   authenticatedPage: page,
+  serverApi,
 }) => {
   const lists = await openConfigurationList(page);
   await lists[0].fulfill({ status: 500, json: { Error: 'Destination unavailable' } });
@@ -35,7 +36,14 @@ test('configuration list failure is retryable without presenting an empty destin
   await expect(page.getByRole('button', { name: 'Import selected', exact: true })).toBeDisabled();
   await page.getByRole('button', { name: 'Retry', exact: true }).click();
   await expect.poll(() => lists.length).toBe(2);
-  await expect(page.getByRole('status')).toContainText('Fetching backup configurations');
+  // An unrelated live notification must not interfere with the loading state.
+  serverApi.sendNotifications([
+    { ID: 1, Type: 'Information', Title: 'Background notification', Message: 'Server is running' },
+  ]);
+  await expect(page.locator('app-service-hub .preview-alert-wrap').getByRole('status')).toBeVisible();
+  await expect(page.locator('app-import-destination-select-config').getByRole('status')).toContainText(
+    'Fetching backup configurations'
+  );
   await expect(page.getByRole('alert')).toHaveCount(0);
   await lists[1].fulfill({
     json: [{ BackupId: 'saved', Name: 'Available configuration', TargetURLDisplay: 'file:///archive', Metadata: {} }],
@@ -47,7 +55,9 @@ test('configuration list failure is retryable without presenting an empty destin
 
 test('configuration list reports empty only after a successful response', async ({ authenticatedPage: page }) => {
   const lists = await openConfigurationList(page);
-  await expect(page.getByRole('status')).toContainText('Fetching backup configurations');
+  await expect(page.locator('app-import-destination-select-config').getByRole('status')).toContainText(
+    'Fetching backup configurations'
+  );
   await lists[0].fulfill({ json: [] });
   await expect(page.getByText('No backup configurations found at this destination.', { exact: true })).toBeVisible();
   await expect(page.getByRole('alert')).toHaveCount(0);

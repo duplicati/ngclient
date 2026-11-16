@@ -1,7 +1,9 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
+import { ShipSelect } from '@ship-ui/core/ship-select';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { BackupDto, DuplicatiServer } from '../../core/openapi';
 import { TimespanLiteralsService } from '../../core/services/timespan-literals.service';
@@ -14,6 +16,33 @@ import OptionsComponent from './options.component';
 describe('OptionsComponent form bindings', () => {
   let fixture: ComponentFixture<OptionsComponent>;
   let state: BackupState;
+
+  it('closes retention when focus leaves, while preserving focus within the select and the selected value', async () => {
+    await render([]);
+    const selectElement = fixture.debugElement.query(By.directive(ShipSelect));
+    const select = selectElement.componentInstance as ShipSelect;
+    const host = selectElement.nativeElement as HTMLElement;
+    const input = host.querySelector('input')!;
+    select.open();
+    fixture.detectChanges();
+    // jsdom has no native popover API; keep the real select and focus handling.
+    Object.assign(host.querySelector('[popover]')!, { showPopover: vi.fn(), hidePopover: vi.fn() });
+    await fixture.whenStable();
+
+    // Clicking a non-focusable option can blur the input without a new focus target.
+    input.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+    fixture.detectChanges();
+    expect(select.isOpen()).toBe(true);
+
+    input.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: host.querySelector('label') }));
+    fixture.detectChanges();
+    expect(select.isOpen()).toBe(true);
+
+    input.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: document.createElement('button') }));
+    fixture.detectChanges();
+    expect(select.isOpen()).toBe(false);
+    expect(state.optionsModel().backupRetention).toBe('all');
+  });
 
   async function render(settings: { Name: string; Value: string }[], sync = false) {
     TestBed.configureTestingModule({
