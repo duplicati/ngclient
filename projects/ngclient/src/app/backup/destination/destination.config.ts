@@ -2672,6 +2672,11 @@ export const DESTINATION_CONFIG: DestinationConfig = [
     serverDescription: $localize`The dosya S3 endpoint, s3.dosya.dev. Use your workspace ID as the bucket name; it is shown under Integrations > S3 in the dosya web app.`,
     searchTerms: 'dosya dosya.dev',
   }),
+  CreateCustomS3ProviderEntry('blomp', 'Blomp', null, 'assets/dest-icons/blomp.png', ['.blomp.com'], {
+    servers: [{ key: 'Blomp', value: 'storage.blomp.com' }],
+    serverDescription: $localize`The Blomp S3 endpoint, storage.blomp.com. Create an S3 key on the S3 keys page of the Blomp dashboard; the page also shows your bucket name, which is your email address with "@" written as "-at-".`,
+    searchTerms: 'blomp blomp.com',
+  }),
 ];
 
 export const S3_HOST_SUFFIX_MAP: Record<string, string> = {
@@ -2731,4 +2736,5 @@ export const S3_HOST_SUFFIX_MAP: Record<string, string> = {
   '.myhuaweicloud.eu': 'Huawei Cloud S3',
   '.myqcloud.com': 'Tencent Cloud S3',
   '.dosya.dev': 'dosya S3',
+  '.blomp.com': 'Blomp S3',
 };

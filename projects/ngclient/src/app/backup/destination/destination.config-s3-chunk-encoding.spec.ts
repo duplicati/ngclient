@@ -101,7 +101,7 @@ describe('S3 chunk encoding defaults', () => {
       expect(fromTargetPath(url)?.dynamic).toMatchObject({ [S3_DISABLE_CHUNK_ENCODING_OPTION]: 'false' });
     });
 
-    it.each(['s3-scaleway', 's3-storadera', 's3-ibmcos'])(
+    it.each(['s3-scaleway', 's3-storadera', 's3-ibmcos', 's3-blomp'])(
       '%s keeps chunk encoding enabled on new connections',
       (key) => {
         const url = getConfigurationByKey(key).mapper.default!('');
