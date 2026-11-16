@@ -1,5 +1,5 @@
-import { Injectable, computed, effect, inject, signal } from '@angular/core';
-import { defer, finalize } from 'rxjs';
+import { DestroyRef, Injectable, computed, effect, inject, signal } from '@angular/core';
+import { defer, finalize, Subscription } from 'rxjs';
 import { StatusBarState } from '../core/components/status-bar/status-bar.state';
 import { ActiveFile, ActiveTransfer, DuplicatiServer, IProgressEventData } from '../core/openapi';
 import { ServerStateService } from '../core/services/server-state.service';
@@ -70,6 +70,7 @@ const DOWNLOAD_ACTIONS = new Set(['Get']);
   providedIn: 'root',
 })
 export class StatusPageState {
+  #destroyRef = inject(DestroyRef);
   #statusBarState = inject(StatusBarState);
   #serverState = inject(ServerStateService);
   #sysinfo = inject(SysinfoState);
@@ -96,6 +97,7 @@ export class StatusPageState {
   #etaInterval: ReturnType<typeof setInterval> | null = null;
   #fallbackInterval: ReturnType<typeof setInterval> | null = null;
   #pollTimer: ReturnType<typeof setTimeout> | null = null;
+  #pollRequest: Subscription | null = null;
   #isPolling = false;
   #polledSnapshot = signal<SystemStatusSnapshot | null>(null);
   #isActive = signal(false);
@@ -245,7 +247,15 @@ export class StatusPageState {
     });
   }
 
+  constructor() {
+    this.#destroyRef.onDestroy(() => {
+      if (this.#isActive()) this.deactivateView();
+    });
+  }
+
   activateView() {
+    if (this.#destroyRef.destroyed) return;
+
     this.#viewActivatedAt = new Date();
 
     const statusData = this.#statusBarState.statusData();
@@ -293,27 +303,41 @@ export class StatusPageState {
       clearTimeout(this.#pollTimer);
       this.#pollTimer = null;
     }
+    const request = this.#pollRequest;
+    this.#pollRequest = null;
+    request?.unsubscribe();
   }
 
   #poll() {
     this.#pollTimer = null;
+    if (!this.#isPolling || this.#pollRequest) return;
+
+    // Register ownership before subscribing so synchronous completion is safe too.
+    const request = new Subscription();
+    this.#pollRequest = request;
 
     // The next request is scheduled when this one is done, so a slow connection does not queue
     // requests, and the interval follows the one the server sends with each snapshot
-    defer(() => this.#dupServer.getApiV2SystemStatus())
-      .pipe(
-        finalize(() => {
-          if (this.#isPolling) this.#pollTimer = setTimeout(() => this.#poll(), this.sampleIntervalMs());
+    request.add(
+      defer(() => this.#dupServer.getApiV2SystemStatus())
+        .pipe(
+          finalize(() => {
+            if (this.#pollRequest !== request) return;
+            this.#pollRequest = null;
+            request.unsubscribe();
+            if (this.#isPolling) this.#pollTimer = setTimeout(() => this.#poll(), this.sampleIntervalMs());
+          })
+        )
+        .subscribe({
+          next: (res) => {
+            if (this.#pollRequest !== request) return;
+            if (this.#isActive() && res.Success && res.Data) this.#polledSnapshot.set(res.Data as SystemStatusSnapshot);
+          },
+          error: () => {
+            // Keep the last snapshot; the next tick retries
+          },
         })
-      )
-      .subscribe({
-        next: (res) => {
-          if (this.#isActive() && res.Success && res.Data) this.#polledSnapshot.set(res.Data as SystemStatusSnapshot);
-        },
-        error: () => {
-          // Keep the last snapshot; the next tick retries
-        },
-      });
+    );
   }
 
   #startFallbackSampling() {
