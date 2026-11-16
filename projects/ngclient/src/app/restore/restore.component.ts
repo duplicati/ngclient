@@ -1,3 +1,4 @@
+import { PreserveListFocusDirective } from '../core/directives/preserve-list-focus.directive';
 import { KeyboardActionDirective } from '../core/directives/keyboard-action.directive';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { form, FormField } from '@angular/forms/signals';
@@ -17,6 +18,7 @@ import { SysinfoState } from '../core/states/sysinfo.state';
 @Component({
   selector: 'app-restore',
   imports: [
+    PreserveListFocusDirective,
     KeyboardActionDirective,
     FormField,
     StatusBarComponent,

@@ -1,3 +1,4 @@
+import { PreserveListFocusDirective } from '../core/directives/preserve-list-focus.directive';
 import { KeyboardActionDirective } from '../core/directives/keyboard-action.directive';
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
@@ -35,6 +36,7 @@ import { RemoteControlState } from '../settings/remote-control/remote-control.st
 @Component({
   selector: 'app-home',
   imports: [
+    PreserveListFocusDirective,
     KeyboardActionDirective,
     RouterLink,
     NgTemplateOutlet,
