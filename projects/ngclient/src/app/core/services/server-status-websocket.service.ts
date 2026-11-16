@@ -1,6 +1,6 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
-import { Observable, Subscriber } from 'rxjs';
+import { Observable, Subject, Subscriber, takeUntil } from 'rxjs';
 import { DisconnectedDialogComponent } from '../components/disconnected-dialog/disconnected-dialog.component';
 import {
   GetApiV1BackupsResponse,
@@ -85,6 +85,8 @@ const RECONNECT_DELAY_MS = 5000;
   providedIn: 'root',
 })
 export class ServerStatusWebSocketService {
+  #destroyRef = inject(DestroyRef);
+  #connectionEnded = new Subject<void>();
   #auth = inject(AppAuthState);
   #sysinfo = inject(SysinfoState);
   dialog = inject(ShipDialogService);
@@ -123,15 +125,24 @@ export class ServerStatusWebSocketService {
   #connectTimeout: ReturnType<typeof setTimeout> | null = null;
   #connectionGeneration = 0;
 
+  constructor() {
+    this.#destroyRef.onDestroy(() => {
+      this.stop();
+      this.#connectionEnded.complete();
+    });
+  }
+
   start() {
+    if (this.#destroyRef.destroyed) return;
     this.shouldConnect.set(true);
     this.#connect();
   }
 
   #connect(): void {
-    if (!this.shouldConnect()) return;
+    if (this.#destroyRef.destroyed || !this.shouldConnect()) return;
 
     const generation = ++this.#connectionGeneration;
+    this.#connectionEnded.next();
     this.#clearConnectTimeout();
     this.#closeSocket();
     this.#isHandlingAuthRefresh = false;
@@ -201,22 +212,25 @@ export class ServerStatusWebSocketService {
               this.#connectionStatus.set('disconnected');
 
               this.#isHandlingAuthRefresh = true;
-              this.#auth.refreshToken().subscribe({
-                next: () => {
-                  if (!this.#isCurrentConnection(generation)) return;
-                  this.#isHandlingAuthRefresh = false;
-                  this.reconnect();
-                },
-                error: (error: unknown) => {
-                  if (!this.#isCurrentConnection(generation)) return;
-                  this.#isHandlingAuthRefresh = false;
-                  console.error('Error refreshing token after WebSocket auth failed', error);
-                  // onclose may have skipped reconnect while this refresh was pending.
-                  if (this.shouldConnect() && !this.#auth.isLoggingOut()) {
-                    this.#showDisconnectedDialogAndScheduleReconnect();
-                  }
-                },
-              });
+              this.#auth
+                .refreshToken()
+                .pipe(takeUntil(this.#connectionEnded))
+                .subscribe({
+                  next: () => {
+                    if (!this.#isCurrentConnection(generation)) return;
+                    this.#isHandlingAuthRefresh = false;
+                    this.reconnect();
+                  },
+                  error: (error: unknown) => {
+                    if (!this.#isCurrentConnection(generation)) return;
+                    this.#isHandlingAuthRefresh = false;
+                    console.error('Error refreshing token after WebSocket auth failed', error);
+                    // onclose may have skipped reconnect while this refresh was pending.
+                    if (this.shouldConnect() && !this.#auth.isLoggingOut()) {
+                      this.#showDisconnectedDialogAndScheduleReconnect();
+                    }
+                  },
+                });
 
               return;
             }
@@ -286,22 +300,25 @@ export class ServerStatusWebSocketService {
       // If server closed with 4401 (auth expired), refresh token first then reconnect
       if (event.code === 4401) {
         this.#isHandlingAuthRefresh = true;
-        this.#auth.refreshToken().subscribe({
-          next: () => {
-            if (!this.#isCurrentConnection(generation)) return;
-            this.#isHandlingAuthRefresh = false;
-            this.reconnect();
-          },
-          error: (error: unknown) => {
-            if (!this.#isCurrentConnection(generation)) return;
-            console.error('Error refreshing token', error);
-            this.#isHandlingAuthRefresh = false;
-            // Refresh failed — fall back to timed reconnect, unless the failed refresh signed the session out
-            if (this.shouldConnect() && !this.#auth.isLoggingOut()) {
-              this.#showDisconnectedDialogAndScheduleReconnect();
-            }
-          },
-        });
+        this.#auth
+          .refreshToken()
+          .pipe(takeUntil(this.#connectionEnded))
+          .subscribe({
+            next: () => {
+              if (!this.#isCurrentConnection(generation)) return;
+              this.#isHandlingAuthRefresh = false;
+              this.reconnect();
+            },
+            error: (error: unknown) => {
+              if (!this.#isCurrentConnection(generation)) return;
+              console.error('Error refreshing token', error);
+              this.#isHandlingAuthRefresh = false;
+              // Refresh failed — fall back to timed reconnect, unless the failed refresh signed the session out
+              if (this.shouldConnect() && !this.#auth.isLoggingOut()) {
+                this.#showDisconnectedDialogAndScheduleReconnect();
+              }
+            },
+          });
         return;
       }
 
@@ -334,7 +351,7 @@ export class ServerStatusWebSocketService {
   }
 
   #showDisconnectedDialogAndScheduleReconnect() {
-    if (!this.shouldConnect()) return;
+    if (this.#destroyRef.destroyed || !this.shouldConnect()) return;
     const generation = this.#connectionGeneration;
     if (!this.#disconnectedDialog) {
       this.#disconnectedDialog = this.dialog.open(DisconnectedDialogComponent, {
@@ -385,6 +402,7 @@ export class ServerStatusWebSocketService {
   stop() {
     this.shouldConnect.set(false);
     ++this.#connectionGeneration;
+    this.#connectionEnded.next();
     this.#clearConnectTimeout();
     this.#closeSocket();
     this.#isHandlingAuthRefresh = false;
