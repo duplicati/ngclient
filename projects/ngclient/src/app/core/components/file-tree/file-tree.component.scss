@@ -46,6 +46,14 @@
       align-self: stretch;
     }
 
+    .section.has-restore-groups {
+      grid-template-rows: auto auto 1fr;
+      grid-template-areas:
+        'label toggle maximize'
+        'groups groups groups'
+        'tree tree tree';
+    }
+
     .tree-header {
       display: contents;
     }
@@ -100,6 +108,15 @@
   display: flex;
   flex-direction: column;
   gap: p2r(8);
+}
+
+.restore-group-help {
+  grid-area: groups;
+  margin: 0;
+}
+
+.restore-group-label {
+  margin-left: p2r(4);
 }
 
 .form-field.hidden {

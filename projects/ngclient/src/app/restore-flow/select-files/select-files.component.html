@@ -146,6 +146,7 @@
         <app-file-tree
           class="fill"
           [rootPaths]="rootPaths()"
+          [groupFileRoots]="!isSync() && !hasVirtualSources() && !extendedDataType()"
           [initialNodes]="initialNodes()"
           [rootMetadata]="rootMetadata()"
           [backupSettings]="backupSettings()"
