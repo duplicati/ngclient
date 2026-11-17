@@ -12,6 +12,8 @@
       [multiSelect]="true"
       [startingPath]="getPath()"
       [showFiles]="true"
+      [showHiddenNodes]="previewAttributes().length > 0"
+      [excludedAttributes]="previewAttributes()"
       [showUnrootedSources]="true"
       [enableIncludePicker]="true"
       (includePick)="openIncludePicker($event)"
@@ -182,6 +184,30 @@
     </app-toggle-card>
 
     <app-filters [(filters)]="filters" [osType]="osType() ?? ''" (filtersChange)="updateFilters($event)" />
+
+    <app-toggle-card class="attribute-exclusions" [disableToggle]="true">
+      <ng-container title i18n>File attributes</ng-container>
+      <p description i18n>Attribute exclusions are configured in Advanced options.</p>
+      @if (attributeExclusions().length) {
+        <p>
+          <span i18n>Excluded attributes:</span>
+          {{ attributeExclusions().join(', ') }}
+        </p>
+      } @else {
+        <p i18n>No attribute exclusions configured.</p>
+      }
+      <p i18n>
+        The tree marks exclusions by Hidden, System and Temporary attributes. Other attribute flags and remote sources
+        are not previewed.
+      </p>
+      <p i18n>
+        Explicitly added source files and folders are not excluded by their own attributes. Other backup exclusions may
+        still apply.
+      </p>
+      <button shButton type="button" class="small" (click)="editAttributeExclusions()" i18n>
+        Edit in Advanced options
+      </button>
+    </app-toggle-card>
 
     <app-toggle-card [disableToggle]="true">
       <ng-container title i18n>Exclude</ng-container>

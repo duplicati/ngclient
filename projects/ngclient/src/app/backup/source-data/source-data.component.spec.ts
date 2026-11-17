@@ -143,4 +143,39 @@ describe('SourceDataComponent form contracts', () => {
     expect(event.defaultPrevented).toBe(true);
     expect(navigate).toHaveBeenCalledWith(['destination'], expect.anything());
   });
+  it('summarizes the existing attribute option without dropping other flags', async () => {
+    await render();
+    const settings = [{ Name: '--exclude-files-attributes', Value: ' hIdDeN , SYSTEM,Archive ' }];
+    state.settings.set(settings);
+    await settle();
+    const summary = fixture.nativeElement.querySelector('.attribute-exclusions');
+    expect(summary?.textContent).toContain('hIdDeN');
+    expect(summary?.textContent).toContain('SYSTEM');
+    expect(summary?.textContent).toContain('Archive');
+    expect(state.settings()).toEqual(settings);
+    expect(fixture.componentInstance.previewAttributes()).toEqual(['hIdDeN', 'SYSTEM']);
+    summary?.querySelector('button').click();
+    expect(navigate).toHaveBeenCalledWith(['options'], { relativeTo: expect.anything() });
+  });
+  it('previews inherited attributes but respects an explicitly empty job override', async () => {
+    await render();
+    state.applicationOptions.set([
+      {
+        Name: '--exclude-files-attributes',
+        Value: 'Hidden,System,ReadOnly',
+        Filter: null,
+        Argument: { Name: 'exclude-files-attributes', Type: 'Flags' },
+      },
+    ]);
+    await settle();
+    expect(fixture.componentInstance.previewAttributes()).toEqual(['Hidden', 'System']);
+    expect(fixture.nativeElement.querySelector('.attribute-exclusions').textContent).toContain('ReadOnly');
+    state.settings.set([{ Name: '--exclude-files-attributes', Value: '' }]);
+    await settle();
+    expect(fixture.componentInstance.previewAttributes()).toEqual([]);
+    expect(fixture.nativeElement.querySelector('.attribute-exclusions').textContent).toContain(
+      'No attribute exclusions configured.'
+    );
+    expect(state.settings()).toEqual([{ Name: '--exclude-files-attributes', Value: '' }]);
+  });
 });

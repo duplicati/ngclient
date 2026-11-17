@@ -185,6 +185,25 @@
         color: var(--base-7);
       }
 
+      &.attribute-excluded.usually-hidden,
+      &.attribute-excluded {
+        opacity: 1;
+
+        .text {
+          text-decoration: none;
+
+          > span:first-child {
+            text-decoration: line-through;
+          }
+        }
+
+        .attribute-exclusion {
+          margin-left: p2r(4);
+          color: var(--base-10);
+          font-size: p2r(12);
+        }
+      }
+
       &.usually-hidden {
         opacity: 0.6;
       }

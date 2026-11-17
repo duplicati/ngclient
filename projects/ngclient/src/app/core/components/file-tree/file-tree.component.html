@@ -81,6 +81,9 @@
 
               <div class="text">
                 <span>{{ node.text }}</span>
+                @if (node.attributeExclusion) {
+                  <span class="attribute-exclusion">({{ node.attributeExclusion }})</span>
+                }
               </div>
             </div>
           } @else {
@@ -102,10 +105,13 @@
               [attr.aria-selected]="!multiSelect() ? treeSelectionState(node) : null"
               [attr.aria-checked]="multiSelect() ? treeSelectionState(node) : null"
               [class.accepted]="node.accepted === true"
-              [class.active]="node.evalState === TreeEvalEnum.Included"
+              [class.active]="node.evalState === TreeEvalEnum.Included && !node.attributeExclusion"
               [class.indeterminate]="node.isIndeterminate"
+              [class.attribute-excluded]="!!node.attributeExclusion"
               [class.excluded]="
-                node.evalState === TreeEvalEnum.Excluded || node.evalState === TreeEvalEnum.ExcludedByParent
+                node.attributeExclusion ||
+                node.evalState === TreeEvalEnum.Excluded ||
+                node.evalState === TreeEvalEnum.ExcludedByParent
               "
               [class.open]="isTreeNodeExpanded(node)"
               [class.usually-hidden]="node.hidden"
@@ -156,6 +162,9 @@
                 <span>{{ node.text }}</span>
                 @if (node.restoreGroupPaths) {
                   <span class="size restore-group-label" i18n>(File group)</span>
+                }
+                @if (node.attributeExclusion) {
+                  <span class="attribute-exclusion">({{ node.attributeExclusion }})</span>
                 }
                 @if (lockedLinkLabel(node); as label) {
                   <span class="size">({{ label }})</span>
