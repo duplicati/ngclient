@@ -1,4 +1,5 @@
-import { computed, DestroyRef, effect, inject, Injectable, signal } from '@angular/core';
+import { formatNumber } from '@angular/common';
+import { computed, DestroyRef, effect, inject, Injectable, LOCALE_ID, signal } from '@angular/core';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { defer, EMPTY, finalize, map, of, Subscription, switchMap } from 'rxjs';
 import { resolveStatusText, STATUS_STATES } from '../../constants/status-states.constant';
@@ -34,6 +35,7 @@ export type StatusWithContent = Status & {
 export class StatusBarState {
   #destroyRef = inject(DestroyRef);
   #bytesPipe = inject(BytesPipe);
+  #locale = inject(LOCALE_ID);
   #dupServer = inject(DuplicatiServer);
   #backupState = inject(BackupsState);
   #serverState = inject(ServerStateService);
@@ -334,7 +336,11 @@ export class StatusBarState {
   }
 
   #constructFileCountProgress(status: Status): string {
-    return $localize`Files processed ${status.ProcessedFileCount}/${status.TotalFileCount}`;
+    return $localize`Files processed ${this.#formatCount(status.ProcessedFileCount)}/${this.#formatCount(status.TotalFileCount)}`;
+  }
+
+  #formatCount(count: number | null | undefined): string {
+    return count == null || !Number.isFinite(count) ? `${count}` : formatNumber(count, this.#locale, '1.0-0');
   }
 
   #constructStatusText(status: Status): string {
@@ -354,7 +360,7 @@ export class StatusBarState {
         status.Phase === 'Sync_CountingFiles'
       ) {
         if (status.StillCounting || status.Phase === 'Sync_CountingFiles') {
-          text = `Counting (${status.TotalFileCount} files found, ${this.#bytesPipe.transform(status.TotalFileSize)})`;
+          text = `Counting (${this.#formatCount(status.TotalFileCount)} files found, ${this.#bytesPipe.transform(status.TotalFileSize)})`;
         } else {
           const unaccountedbytes = status.CurrentFilecomplete ? 0 : status.CurrentFileoffset;
           const filesleft = Math.max(0, status.TotalFileCount! - status.ProcessedFileCount!);
@@ -371,7 +377,8 @@ export class StatusBarState {
             // which is what the status page shows.
             if (hasTransfers || (status.BackendIsBlocking ?? false)) text = `Completing upload ${speedTxt}`;
           } else if (status.BackendIsBlocking ?? false) text = `Waiting for transfers ${speedTxt}`;
-          else text = `${restoringText}${filesleft} files (${this.#bytesPipe.transform(sizeleft)}) to go ${speedTxt}`;
+          else
+            text = `${restoringText}${this.#formatCount(filesleft)} files (${this.#bytesPipe.transform(sizeleft)}) to go ${speedTxt}`;
         }
       } else if (status.Phase === 'Backup_WaitForUpload' || status.Phase === 'Sync_WaitForUpload') {
         const speedTxt = this.#constructSpeedText(status);
@@ -384,7 +391,7 @@ export class StatusBarState {
           const filesleft = Math.max(0, status.TotalFileCount! - status.ProcessedFileCount!);
           const sizeleft = Math.max(0, status.TotalFileSize! - status.ProcessedFileSize!);
           const speedTxt = this.#constructSpeedText(status);
-          text = `Synchronizing secondary destination${destLabel}: ${filesleft} files (${this.#bytesPipe.transform(sizeleft)}) to go ${speedTxt}`;
+          text = `Synchronizing secondary destination${destLabel}: ${this.#formatCount(filesleft)} files (${this.#bytesPipe.transform(sizeleft)}) to go ${speedTxt}`;
         } else if (destLabel) {
           text = `${STATUS_STATES[status.Phase]}`.replace('…', `${destLabel} …`);
         }
