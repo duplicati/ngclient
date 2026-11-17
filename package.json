@@ -62,7 +62,7 @@
     "@angular/cli": "22.2.2",
     "@angular/compiler-cli": "22.2.1",
     "@hey-api/openapi-ts": "^0.99.0",
-    "@playwright/test": "1.63.0",
+    "@playwright/test": "1.65.1",
     "@types/node": "26",
     "baseline-browser-mapping": "^2.11.27",
     "istanbul-lib-instrument": "^6.0.3",
