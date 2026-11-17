@@ -188,6 +188,14 @@ export default class SourceDataComponent {
     return this.pickedFolders().has(path);
   }
 
+  /** The folder a shortcut source such as %HOME% points to on the server, or null for a plain path */
+  resolvedShortcutPath(path: string) {
+    if (!path.startsWith('%') || !path.endsWith('%')) return null;
+
+    const resolved = this.#sysInfo.resolveShorthandPath(path);
+    return resolved && resolved !== path ? resolved : null;
+  }
+
   openIncludePicker(folder: string) {
     const dialogRef = this.#dialog.open(IncludePickerDialog, {
       maxWidth: '700px',

@@ -28,7 +28,12 @@ describe('SourceDataComponent form contracts', () => {
     fixture.detectChanges();
   }
 
-  async function render() {
+  async function render(paths = original) {
+    const systemInfo = signal({
+      DirectorySeparator: '/',
+      OSType: 'Linux',
+      SpecialFolders: [{ ID: '%HOME%', Path: '/root' }],
+    });
     TestBed.configureTestingModule({
       imports: [SourceDataComponent],
       providers: [
@@ -45,18 +50,20 @@ describe('SourceDataComponent form contracts', () => {
         {
           provide: SysinfoState,
           useValue: {
-            systemInfo: signal({ DirectorySeparator: '/', OSType: 'Linux' }),
+            systemInfo,
             filterGroups: signal({}),
             hasV2FilterOperations: () => false,
             hasV2ListBackendOperations: () => false,
-            resolveShorthandPath: (path: string) => path,
+            resolveShorthandPath(path: string) {
+              return SysinfoState.prototype.resolveShorthandPath.call(this as unknown as SysinfoState, path);
+            },
           },
         },
       ],
     });
     state = TestBed.inject(BackupState);
     state.backupId.set('new');
-    state.sourceDataForm.controls.path.setValue(original);
+    state.sourceDataForm.controls.path.setValue(paths);
     state.sourceDataForm.controls.excludes.controls.filesLargerThan.setValue({ size: 12, unit: 'MB' });
     fixture = TestBed.createComponent(SourceDataComponent);
     await settle();
@@ -82,6 +89,20 @@ describe('SourceDataComponent form contracts', () => {
     expect(fixture.componentInstance.nonFilterPaths()).toEqual(['/documents/', '/music/']);
     expect(fixture.componentInstance.filters()).toEqual(['-*.tmp']);
     expect(fixture.componentInstance.filesLargerThan()).toBe('12MB');
+  });
+
+  it('shows the server folder a shortcut source such as %HOME% points to', async () => {
+    await render('%HOME%\0/documents/');
+    const rows = [...fixture.nativeElement.querySelectorAll('.paths .path')] as HTMLElement[];
+    const texts = rows.map((row) =>
+      [...row.querySelectorAll('.source-path-text')].map((x) => x.textContent?.trim()).join(' ')
+    );
+    expect(texts).toEqual(['%HOME% (/root)', '/documents/']);
+    expect(rows.map((row) => row.querySelector('.source-path-text')?.getAttribute('title'))).toEqual([
+      '/root',
+      '/documents/',
+    ]);
+    expect(state.sourceDataForm.controls.path.value).toBe('%HOME%\0/documents/');
   });
 
   it('adds a direct path once and clears its input while retaining filters', async () => {
