@@ -81,31 +81,20 @@ export default class ServiceHubComponent {
       const history = this.alertHistory();
       const notifications = this.notifications();
 
-      if (notifications.length === 0) {
+      const newAlert = this.previousHistoryCount() !== history.length;
+      const newNotification = this.previousNotificationsCount() !== notifications.length;
+      this.previousHistoryCount.set(history.length);
+      this.previousNotificationsCount.set(notifications.length);
+
+      // An operation result must remain visible even when there are no server notifications.
+      if (history.length && newAlert && !this.isAlertsOpen()) {
+        this.shownMessage.set({ content: history[0], countDown: 3, type: 'alert' });
+        this.#startPreviewTimer();
+      } else if (notifications.length && newNotification && !this.isNotificationsOpen()) {
+        this.shownMessage.set({ content: notifications[0], countDown: 3, type: 'notification' });
+        this.#startPreviewTimer();
+      } else if (notifications.length === 0 && this.shownMessage()?.type === 'notification') {
         this.resetPreviewMessage();
-        return;
-      }
-
-      if (notifications.length && this.previousHistoryCount() !== history.length && !this.isNotificationsOpen()) {
-        this.shownMessage.set({
-          content: notifications[0] as NotificationDto,
-          countDown: 3,
-          type: 'notification',
-        });
-
-        this.previousHistoryCount.set(history.length);
-
-        this.#startPreviewTimer();
-      } else if (history.length && this.previousHistoryCount() !== history.length && !this.isAlertsOpen()) {
-        this.shownMessage.set({
-          content: history[0],
-          countDown: 3,
-          type: 'alert',
-        });
-
-        this.previousHistoryCount.set(history.length);
-
-        this.#startPreviewTimer();
       }
     });
 
