@@ -11,6 +11,7 @@ async function setupAuthentication(
   const loginRequests: Route[] = [];
   const refreshRequests: Route[] = [];
   const settingsRequests: Route[] = [];
+  const uiSettings: Record<string, string> = {};
   const requests: Request[] = [];
   const unexpectedRequests: string[] = [];
   const socketTokens: string[] = [];
@@ -77,6 +78,11 @@ async function setupAuthentication(
     const request = route.request();
     const endpoint = new URL(request.url()).pathname;
     requests.push(request);
+    if (endpoint === '/api/v1/uisettings/ngclient' && ['GET', 'PATCH'].includes(request.method())) {
+      if (request.method() === 'PATCH') Object.assign(uiSettings, request.postDataJSON());
+      await route.fulfill({ json: uiSettings });
+      return;
+    }
     if (request.method() === 'POST' && endpoint === '/api/v1/auth/login') {
       loginRequests.push(route);
       return;
@@ -173,6 +179,7 @@ async function setupAuthentication(
     loginRequests,
     refreshRequests,
     settingsRequests,
+    uiSettings,
     requests,
     unexpectedRequests,
     socketTokens,

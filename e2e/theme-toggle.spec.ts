@@ -37,6 +37,8 @@ for (const initialDark of [false, true]) {
       await toggle.hover();
       await expect(page.getByRole('tooltip')).toHaveText(changedAction);
       expect(await page.evaluate((key) => localStorage.getItem(key), preferenceKey)).toBe(JSON.stringify(!initialDark));
+      expect(serverApi.uiSettings).not.toHaveProperty('theme');
+      expect(serverApi.requests.filter((request) => request.method() === 'PATCH')).toHaveLength(0);
 
       await page.reload();
       await expect.poll(() => serverApi.refreshRequests.length).toBe(1);
@@ -56,3 +58,73 @@ for (const initialDark of [false, true]) {
     });
   });
 }
+
+for (const serverDark of [false, true]) {
+  test.describe(`server preference ${serverDark ? 'dark' : 'light'}`, () => {
+    test.beforeEach(async ({ page, serverApi }) => {
+      serverApi.uiSettings.theme = serverDark ? 'dark' : 'light';
+      await page.addInitScript(({ key, dark }) => localStorage.setItem(key, JSON.stringify(dark)), {
+        key: preferenceKey,
+        dark: !serverDark,
+      });
+    });
+
+    test('keeps an explicit browser preference ahead of the server default', async ({
+      authenticatedPage: page,
+      serverApi,
+    }) => {
+      await expect(page.locator('html')).toHaveClass(serverDark ? /\blight\b/ : /\bdark\b/);
+      expect(serverApi.requests.some((request) => request.method() === 'PATCH')).toBe(false);
+      expect(await page.evaluate((key) => localStorage.getItem(key), preferenceKey)).toBe(JSON.stringify(!serverDark));
+    });
+  });
+}
+
+test.describe('server theme defaults', () => {
+  test.beforeEach(async ({ serverApi }) => {
+    serverApi.uiSettings.theme = 'dark';
+  });
+
+  test('a fresh browser inherits the default without persisting it as a personal choice', async ({
+    authenticatedPage: page,
+    serverApi,
+  }) => {
+    await expect(page.locator('html')).toHaveClass(/\bdark\b/);
+    expect(await page.evaluate((key) => localStorage.getItem(key), preferenceKey)).toBeNull();
+    await page.locator('app-layout [sidenav] header button').click();
+    await expect(page.locator('html')).toHaveClass(/\blight\b/);
+    expect(serverApi.uiSettings.theme).toBe('dark');
+    expect(serverApi.requests.filter((r) => r.method() === 'PATCH')).toHaveLength(0);
+  });
+
+  test('settings separates the browser override from the server default', async ({
+    authenticatedPage: page,
+    serverApi,
+  }) => {
+    await page.evaluate(() => {
+      history.pushState(null, '', '/settings');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
+    const defaults = page
+      .locator('section')
+      .filter({ has: page.getByRole('heading', { name: 'Default theme for this server', exact: true }) });
+    await defaults.getByRole('button', { name: 'Light', exact: true }).click();
+    await expect(defaults.getByRole('button', { name: 'Light', exact: true })).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('html')).toHaveClass(/\blight\b/);
+    expect(serverApi.uiSettings.theme).toBe('light');
+    await page.locator('app-layout [sidenav] header button').click();
+    await expect(page.locator('html')).toHaveClass(/\bdark\b/);
+    await defaults.getByRole('button', { name: 'Operating system', exact: true }).click();
+    await expect(defaults.getByRole('button', { name: 'Operating system', exact: true })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
+    await expect(page.locator('html')).toHaveClass(/\bdark\b/);
+    await page.getByRole('button', { name: 'Use server default', exact: true }).click();
+    expect(await page.evaluate((key) => localStorage.getItem(key), preferenceKey)).toBeNull();
+    await expect(page.getByRole('button', { name: 'Use server default', exact: true })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
+  });
+});

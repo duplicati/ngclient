@@ -31,6 +31,7 @@ describe('LayoutComponent sidenav links', () => {
             isNavOpen: signal(true),
             sidenavType: signal('simple'),
             toggleBodyClass: () => {},
+            loadServerTheme: () => {},
           },
         },
         { provide: BackupsState, useValue: { getBackups: () => {} } },

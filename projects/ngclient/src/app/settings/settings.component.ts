@@ -20,7 +20,7 @@ import { LANGUAGES, mapLocale } from '../core/locales/locales.utility';
 import { LOCALSTORAGE } from '../core/services/localstorage.token';
 import { AppAuthState } from '../core/states/app-auth.state';
 import { SysinfoState } from '../core/states/sysinfo.state';
-import { LayoutState } from '../layout/layout.state';
+import { LayoutState, ServerTheme } from '../layout/layout.state';
 import AdvancedOptionsSettingsComponent from './advanced-options-settings/advanced-options-settings.component';
 import { getMcpServerDisableWarning } from './mcp-tokens/mcp-token-settings';
 import { McpTokensComponent } from './mcp-tokens/mcp-tokens.component';
@@ -110,6 +110,12 @@ export default class SettingsComponent {
 
   sysinfo = this.#sysinfo.systemInfo;
   isDarkMode = this.#layoutState.isDarkMode;
+  themePreferences = this.#layoutState;
+  serverThemeOptions: { value: ServerTheme; label: string }[] = [
+    { value: 'system', label: $localize`Operating system` },
+    { value: 'light', label: $localize`Light` },
+    { value: 'dark', label: $localize`Dark` },
+  ];
 
   editAs = signal<'list' | 'text'>('list');
   previousLang = this.#initLang;
