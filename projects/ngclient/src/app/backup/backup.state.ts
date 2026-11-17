@@ -34,20 +34,20 @@ import { ConnectionStringsState } from '../core/states/connection-strings.state'
 import { SysinfoState } from '../core/states/sysinfo.state';
 import { ServerSettingsService } from '../settings/server-settings.service';
 import { FormView, getConfigurationByUrl } from './destination/destination.config-utilities';
-import { createGeneralForm, NONE_OPTION } from './models/general-form';
-import { BackupOptionsFormValue } from './models/backup-options';
 import {
   BackupTargetUrl,
-  mapBackupToGeneralForm,
-  mapBackupToSourceDataForm,
-  mapBackupToOptionsForm,
-  mapBackupFormToSettings,
   mapBackupFormToDto,
+  mapBackupFormToSettings,
+  mapBackupToGeneralForm,
+  mapBackupToOptionsForm,
+  mapBackupToSourceDataForm,
   secondaryDestinationError,
 } from './models/backup-form-mappers';
+import { BackupOptionsFormValue } from './models/backup-options';
+import { createGeneralForm, NONE_OPTION } from './models/general-form';
 import {
-  getNextRunDate,
   evaluateTimeString,
+  getNextRunDate,
   SCHEDULE_DEFAULT_OPTIONS,
   SCHEDULE_FIELD_DEFAULTS,
   scheduleOptionToSchedule,
@@ -95,6 +95,8 @@ export class BackupState {
   readonly scheduleModel = signal(SCHEDULE_FIELD_DEFAULTS());
   readonly scheduleForm = form(this.scheduleModel);
   scheduleType = signal<string>('daily');
+  runAfterBackupId = signal<string | null>(null);
+  runAfterAlways = signal(false);
   settings = signal<SettingInputDto[]>([]);
   readonly optionsModel = signal<BackupOptionsFormValue>({
     backupRetention: 'all',
@@ -435,6 +437,8 @@ export class BackupState {
 
   mapGeneralToForm(backup: BackupDto) {
     this.generalForm.patchValue(mapBackupToGeneralForm(backup));
+    this.runAfterBackupId.set(backup.RunAfterBackupID ?? null);
+    this.runAfterAlways.set(backup.RunAfterCondition === 'Always');
   }
 
   mapScheduleToForm(schedule: ScheduleDto | null) {
@@ -514,6 +518,9 @@ export class BackupState {
       general: this.generalForm.value,
       sourceData: this.sourceDataForm.value,
       schedule: this.getScheduleFormValue(),
+      runAfter: this.#sysinfo.hasBackupRunAfter()
+        ? { backupId: this.runAfterBackupId(), always: this.runAfterAlways() }
+        : null,
       targetUrls: this.targetUrls(),
       settings: this.mapFormsToSettings(),
     });
@@ -657,6 +664,8 @@ export class BackupState {
     this.generalForm.reset({ operationType: 'Backup' });
     this.sourceDataForm.reset();
     this.scheduleForm().reset(SCHEDULE_FIELD_DEFAULTS());
+    this.runAfterBackupId.set(null);
+    this.runAfterAlways.set(false);
     // this.optionsForm.remoteVolumeSize.set('50MB');
     this.optionsForm.backupRetention().value.set('all');
     this.optionsForm.syncSnapshotFolders().value.set(false);

@@ -64,6 +64,27 @@ describe('ServiceHub preview lifecycle', () => {
     expect(vi.getTimerCount()).toBe(0);
   });
 
+  it.each(['success', 'error'] as const)('previews a new %s alert without server notifications', (type) => {
+    notifications.set([]);
+    fixture.detectChanges();
+    TestBed.tick();
+    history.set([{ ...alert('verify'), title: 'Verify completed', type }]);
+    TestBed.tick();
+    expect(fixture.componentInstance.shownMessage()).toMatchObject({
+      type: 'alert',
+      content: { id: 'verify', type, title: 'Verify completed' },
+      countDown: 3,
+    });
+    expect(vi.getTimerCount()).toBe(1);
+  });
+
+  it('previews the new alert rather than an existing server notification', () => {
+    start();
+    history.set([alert('verify')]);
+    TestBed.tick();
+    expect(fixture.componentInstance.shownMessage()).toMatchObject({ type: 'alert', content: { id: 'verify' } });
+  });
+
   it('stops the timer when a preview is dismissed', () => {
     start();
     fixture.componentInstance.resetPreviewMessage();

@@ -2,6 +2,19 @@
   <sh-progress-bar class="indeterminate primary" />
 }
 
+<div class="log-toolbar">
+  <button
+    shButton
+    type="button"
+    class="small download-log"
+    (click)="downloadLog()"
+    [disabled]="!resource.hasValue() || resource.value().length === 0"
+    i18n>
+    <sh-icon>download-simple</sh-icon>
+    Download
+  </button>
+</div>
+
 @for (item of resource.value(); track $index) {
   <article class="log-entry">
     <header (click)="toggleOpenEntry(item.id)">

@@ -1,7 +1,8 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { ShipAlertService } from '@ship-ui/core/ship-alert';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { StatusBarState } from '../core/components/status-bar/status-bar.state';
 import { DuplicatiServer } from '../core/openapi';
@@ -137,5 +138,69 @@ describe('home start all backups', () => {
     expect(component.startAllBackupIds()).toEqual([]);
     component.startAllBackups();
     expect(dialog.open).not.toHaveBeenCalled();
+  });
+});
+
+describe('home verify files', () => {
+  afterEach(() => TestBed.resetTestingModule());
+  function setup(task: Record<string, unknown> | null) {
+    const verify = vi.fn(async () => ({ Status: 'OK', ID: 17 }));
+    const completed = new Subject<Record<string, unknown>>();
+    const waitForTaskToComplete = vi.fn(() => completed.asObservable());
+    const alerts = { success: vi.fn(), error: vi.fn() };
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: BackupsState,
+          useValue: { backups: signal([]), orderBy: signal('Name'), setOrderBy: vi.fn(), getBackups: vi.fn() },
+        },
+        { provide: StatusBarState, useValue: {} },
+        { provide: ServerStateService, useValue: { waitForTaskToComplete } },
+        { provide: DuplicatiServer, useValue: { postApiV1BackupByIdVerify: verify } },
+        { provide: SysinfoState, useValue: {} },
+        { provide: RemoteControlState, useValue: {} },
+        { provide: ShipDialogService, useValue: {} },
+        { provide: ShipAlertService, useValue: alerts },
+        { provide: LOCALSTORAGE, useValue: { getItemParsed: () => null, setItemParsed: vi.fn() } },
+      ],
+    });
+    const component = TestBed.runInInjectionContext(() => new HomeComponent());
+    const run = async () => {
+      component.verifyFiles('3');
+      await vi.waitFor(() => expect(waitForTaskToComplete).toHaveBeenCalled());
+      if (task) completed.next(task);
+    };
+    return { run, verify, waitForTaskToComplete, alerts };
+  }
+
+  it('reports a successful verification once the queued task completes', async () => {
+    const { run, verify, waitForTaskToComplete, alerts } = setup({ ID: 17, Status: 'Completed' });
+    await run();
+    expect(verify).toHaveBeenCalledWith({ path: { id: '3' } });
+    expect(waitForTaskToComplete).toHaveBeenCalledWith(17);
+    expect(alerts.success).toHaveBeenCalledTimes(1);
+    expect(alerts.error).not.toHaveBeenCalled();
+  });
+
+  it('reports a failed verification with the task error', async () => {
+    const { run, alerts } = setup({ ID: 17, Status: 'Failed', ErrorMessage: 'Found 2 remote file(s) with problems' });
+    await run();
+    expect(alerts.success).not.toHaveBeenCalled();
+    expect(alerts.error).toHaveBeenCalledTimes(1);
+    expect(alerts.error.mock.calls[0][0]).toContain('Found 2 remote file(s) with problems');
+  });
+
+  it('reports errors from a task that completed with errors in its results', async () => {
+    const { run, alerts } = setup({ ID: 17, Status: 'Completed', ErrorMessage: 'Got 3 error(s)' });
+    await run();
+    expect(alerts.success).not.toHaveBeenCalled();
+    expect(alerts.error.mock.calls[0][0]).toContain('Got 3 error(s)');
+  });
+
+  it('does not report anything while the verification is still queued or running', async () => {
+    const { run, alerts } = setup(null);
+    await run();
+    expect(alerts.success).not.toHaveBeenCalled();
+    expect(alerts.error).not.toHaveBeenCalled();
   });
 });

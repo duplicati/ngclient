@@ -4,6 +4,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { form, FormField } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
+import { ShipAlertService } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipButtonGroup } from '@ship-ui/core/ship-button-group';
 import { ShipCard } from '@ship-ui/core/ship-card';
@@ -16,8 +17,9 @@ import { ShipMenu } from '@ship-ui/core/ship-menu';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { ShipSort, ShipTable } from '@ship-ui/core/ship-table';
 import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
-import { defer, finalize } from 'rxjs';
+import { defer, finalize, take } from 'rxjs';
 import { getBackendIcon, getBackendType } from '../backup/destination/destination.config-utilities';
+import { getRunAfterName } from '../backup/schedule-v2/run-after';
 import { BackupProgressComponent } from '../core/components/backup-progress/backup-progress.component';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import { PauseDialogComponent } from '../core/components/status-bar/pause-dialog/pause-dialog.component';
@@ -73,6 +75,7 @@ export default class HomeComponent {
   #serverState = inject(ServerStateService);
   #dialog = inject(ShipDialogService);
   #sysinfo = inject(SysinfoState);
+  #alertService = inject(ShipAlertService);
 
   hasDeleteVersions = this.#sysinfo.hasV2DeleteVersions;
   hasSetVersionLabel = this.#sysinfo.hasV2SetVersionLabel;
@@ -81,6 +84,19 @@ export default class HomeComponent {
   hasPurgeFiles = this.#sysinfo.hasV2PurgeFiles;
   hasEnableDisable = this.#sysinfo.hasBackupEnableDisable;
   hasSyncRestore = this.#sysinfo.hasSyncRestore;
+
+  // The name of the job each job runs after, for the jobs that run after another job
+  runAfterNames = computed(() => {
+    const backups = this.#backupsState.backups();
+    const res: { [key: string]: string } = {};
+    if (!this.#sysinfo.hasBackupRunAfter()) return res;
+
+    backups.forEach((bk) => {
+      const name = getRunAfterName(backups, bk.Backup?.RunAfterBackupID);
+      if (bk.Backup?.ID && name) res[bk.Backup.ID] = name;
+    });
+    return res;
+  });
 
   MISSING_BACKUP_NAME = $localize`Backup name missing`;
   startLabel = $localize`Start`;
@@ -271,11 +287,28 @@ export default class HomeComponent {
     defer(() => this.#dupServer.postApiV1BackupByIdVerify({ path: { id } }))
       .pipe(finalize(() => this.loadingId.set(null)))
       .subscribe({
-        next: () => {
+        next: (res) => {
           this.successId.set(id);
 
           setTimeout(() => this.successId.set(null), 2000);
+
+          // The request only queues the verification; report its outcome once the task finishes
+          if (res?.ID != null) this.#reportVerifyResult(res.ID);
         },
+      });
+  }
+
+  #reportVerifyResult(taskId: number) {
+    this.#serverState
+      .waitForTaskToComplete(taskId)
+      .pipe(take(1))
+      .subscribe((task) => {
+        if (task.Status === 'Completed' && task.ErrorMessage == null) {
+          this.#alertService.success($localize`Verification of backup files completed successfully.`);
+        } else if (task.Status === 'Failed' || task.ErrorMessage != null) {
+          const reason = task.ErrorMessage || $localize`Unknown error`;
+          this.#alertService.error($localize`Verification of backup files failed: ${reason}`);
+        }
       });
   }
 

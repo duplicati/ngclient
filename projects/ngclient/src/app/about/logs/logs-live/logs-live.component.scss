@@ -72,3 +72,9 @@ code {
     margin-top: p2r(20);
   }
 }
+
+.log-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  padding: p2r(8 0);
+}

@@ -10,8 +10,11 @@ import { ShipSelect } from '@ship-ui/core/ship-select';
 import { ShipToggle } from '@ship-ui/core/ship-toggle';
 import { ShipToggleCard } from '@ship-ui/core/ship-toggle-card';
 import { DAYJS } from '../../core/providers/dayjs';
+import { BackupsState } from '../../core/states/backups.state';
+import { SysinfoState } from '../../core/states/sysinfo.state';
 import { BackupState } from '../backup.state';
 import { getLocalDateParts, getNextRunDate, SCHEDULE_DEFAULT_OPTIONS } from '../models/schedule-form';
+import { getRunAfterOptions, hasOwnTrigger, isSameRunAfterOptions } from './run-after';
 import { formatAllowedDays } from './schedule-summary';
 
 const UNIT_OPTIONS = [
@@ -68,6 +71,32 @@ export default class ScheduleComponent {
   #router = inject(Router);
   #route = inject(ActivatedRoute);
   #dayjs = inject(DAYJS);
+  #backupsState = inject(BackupsState);
+  #sysinfo = inject(SysinfoState);
+
+  hasRunAfter = this.#sysinfo.hasBackupRunAfter;
+  runAfterBackupId = this.#backupState.runAfterBackupId;
+  runAfterAlways = this.#backupState.runAfterAlways;
+  // The list of jobs is sent again whenever a job changes, so the options only change when their content does
+  runAfterOptions = computed(
+    () => getRunAfterOptions(this.#backupsState.backups(), this.#backupState.backupId(), this.runAfterBackupId()),
+    { equal: isSameRunAfterOptions }
+  );
+  // The section is hidden when there is no other job to pick
+  showRunAfter = computed(() => this.hasRunAfter() && this.runAfterOptions().length > 0);
+  // The picked job never starts by itself, so this job would only run when that job is started by hand
+  runAfterNeverTriggered = computed(() => {
+    const id = this.runAfterBackupId();
+    if (!id) return false;
+
+    const picked = this.#backupsState.backups().find((x) => x.Backup?.ID === id);
+    return !!picked && !hasOwnTrigger(picked);
+  });
+
+  constructor() {
+    // The editor can be opened directly, before anything has loaded the list of jobs
+    this.#backupsState.getBackups();
+  }
 
   unitOptions = UNIT_OPTIONS;
   scheduleForm = this.#backupState.scheduleForm;
@@ -137,6 +166,11 @@ export default class ScheduleComponent {
     } else {
       this.scheduleType.set('custom');
     }
+  }
+
+  setRunAfter(backupId: string | null | undefined) {
+    this.runAfterBackupId.set(backupId ? String(backupId) : null);
+    if (!backupId) this.runAfterAlways.set(false);
   }
 
   goBack() {

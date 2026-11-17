@@ -68,6 +68,13 @@ export default class OptionsComponent {
   retentionOptions = signal(RETENTION_OPTIONS);
   syncSnapshotOptionNames = SYNC_SNAPSHOT_OPTION_NAMES;
 
+  onRetentionFocusOut(event: FocusEvent, select: ShipSelect) {
+    const host = event.currentTarget as HTMLElement;
+    if (event.relatedTarget instanceof Node && !host.contains(event.relatedTarget)) {
+      select.close();
+    }
+  }
+
   updateRetention(value: string) {
     const option = RETENTION_OPTIONS.find((option) => option.value === value);
     if (option) this.optionsForm.backupRetention().value.set(option.value);

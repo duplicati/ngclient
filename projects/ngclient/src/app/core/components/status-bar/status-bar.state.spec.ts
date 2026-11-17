@@ -1,4 +1,6 @@
-import { signal } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
+import localeDe from '@angular/common/locales/de';
+import { LOCALE_ID, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -12,7 +14,7 @@ import { StatusBarState } from './status-bar.state';
 describe('StatusBarState estimated totals', () => {
   afterEach(() => TestBed.resetTestingModule());
 
-  const setup = (overrides: GetApiV1ProgressstateResponse = {}) => {
+  const setup = (overrides: GetApiV1ProgressstateResponse = {}, locale?: string) => {
     const progressState = signal<GetApiV1ProgressstateResponse>({
       TaskID: 42,
       Phase: 'Backup_ProcessingFiles',
@@ -29,6 +31,7 @@ describe('StatusBarState estimated totals', () => {
     TestBed.configureTestingModule({
       providers: [
         StatusBarState,
+        ...(locale ? [{ provide: LOCALE_ID, useValue: locale }] : []),
         { provide: BytesPipe, useValue: { transform: (bytes: number) => `${bytes} bytes` } },
         { provide: DuplicatiServer, useValue: {} },
         { provide: BackupsState, useValue: { getBackups: vi.fn(), getBackupById: vi.fn(() => null) } },
@@ -154,5 +157,31 @@ describe('StatusBarState estimated totals', () => {
     TestBed.tick();
     expect(state.statusData()!.progress).toBe(0);
     expect(state.statusData()!.statusText).not.toContain('to go');
+  });
+
+  it('groups the digits of the remaining file count', () => {
+    const { state } = setup({ TotalFileCount: 168340, ProcessedFileCount: 2 });
+    expect(state.statusData()!.statusText).toContain('168,338 files (800 bytes) to go');
+  });
+
+  it('groups the digits of the counted files while counting', () => {
+    const { state } = setup({ StillCounting: true, TotalFileCount: 1234567, TotalFileSize: 5 });
+    expect(state.statusData()!.statusText).toBe('Counting (1,234,567 files found, 5 bytes)');
+  });
+
+  it('groups the digits of the remaining files during secondary destination synchronization', () => {
+    const { state } = setup({ Phase: 'Backup_RemoteSynchronization', TotalFileCount: 12000, ProcessedFileCount: 0 });
+    expect(state.statusData()!.statusText).toContain(': 12,000 files (800 bytes) to go');
+  });
+
+  it('groups the digits of the processed file count', () => {
+    const { state } = setup({ TotalFileCount: 168338, ProcessedFileCount: 1000 });
+    expect(state.statusData()!.fileCountProgressText).toBe('Files processed 1,000/168,338');
+  });
+
+  it('uses the separator of the active locale', () => {
+    registerLocaleData(localeDe);
+    const { state } = setup({ TotalFileCount: 168340, ProcessedFileCount: 2 }, 'de');
+    expect(state.statusData()!.statusText).toContain('168.338 files');
   });
 });

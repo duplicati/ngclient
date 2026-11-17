@@ -1,9 +1,11 @@
 import { DatePipe, JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, input, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
+import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { defer, map } from 'rxjs';
+import { downloadJson, logFileName } from '../../../core/functions/download-json';
 import { DuplicatiServer } from '../../../core/openapi';
 
 type RemoteLogEntry = {
@@ -23,11 +25,13 @@ type RemoteLogEntryEvaluated = {
   path: string;
   data: unknown;
   rawData?: string;
+  // The row exactly as the server returned it, written to the downloaded file
+  raw: RemoteLogEntry;
 };
 
 @Component({
   selector: 'app-remote-log',
-  imports: [JsonPipe, ShipProgressBar, ShipIcon, DatePipe],
+  imports: [JsonPipe, ShipProgressBar, ShipIcon, DatePipe, ShipButton],
   templateUrl: './remote-log.component.html',
   styleUrl: './remote-log.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -71,11 +75,21 @@ export class RemoteLogComponent {
               path: y.Path,
               data,
               rawData,
+              raw: y,
             };
           });
         })
       ),
   });
+
+  /** Saves the loaded entries, as the server returned them, to a JSON file */
+  downloadLog() {
+    if (!this.resource.hasValue()) return;
+    downloadJson(
+      this.resource.value().map((x) => x.raw),
+      logFileName('remote-log', this.backupId())
+    );
+  }
 
   toggleOpenEntry(id: number) {
     if (this.openEntry() === id) {

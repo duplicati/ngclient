@@ -350,3 +350,9 @@ details {
     word-break: break-all;
   }
 }
+
+.log-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  padding: p2r(8 0);
+}

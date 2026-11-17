@@ -5,6 +5,7 @@ import {
   effect,
   ElementRef,
   inject,
+  linkedSignal,
   signal,
   viewChild,
 } from '@angular/core';
@@ -31,12 +32,34 @@ import { BackupState } from '../backup.state';
 import { NullableTextControl } from '../general/nullable-text-control';
 import { FiltersComponent } from '../components/filters/filters.component';
 import { getBackendIcon, getRemotePathDisplayName } from '../destination/destination.config-utilities';
+import { AttributeExclusionsDialog } from './attribute-exclusions-dialog/attribute-exclusions-dialog';
 import { CustomRemotePermissionsDialog } from './custom-remote-permissions-dialog/custom-remote-permissions-dialog';
 import { GoogleWorkspaceCountsDialog } from './googleworkspace-counts-dialog/googleworkspace-counts-dialog';
 import { IncludePickerDialog, IncludePickerResult } from './include-picker-dialog/include-picker-dialog';
 import { Office365CountsDialog } from './office365-counts-dialog/office365-counts-dialog';
 import { TargetDiskDialog } from './target-disk-dialog/target-disk-dialog';
 import { TargetUrlDialog } from './target-url-dialog/target-url-dialog';
+
+const ATTRIBUTE_OPTION = 'exclude-files-attributes';
+// Used when the server does not list the valid values for the option.
+const DEFAULT_ATTRIBUTES = [
+  'ReadOnly',
+  'Hidden',
+  'System',
+  'Directory',
+  'Archive',
+  'Device',
+  'Normal',
+  'Temporary',
+  'SparseFile',
+  'ReparsePoint',
+  'Compressed',
+  'Offline',
+  'NotContentIndexed',
+  'Encrypted',
+  'IntegrityStream',
+  'NoScrubData',
+];
 
 @Component({
   selector: 'app-source-data',
@@ -81,6 +104,48 @@ export default class SourceDataComponent {
     return size !== null && unit !== null ? `${size}${unit}` : null;
   });
   osType = this.#backupState.osType;
+  attributeExclusions = computed(() => {
+    const setting =
+      this.#backupState.settings().find((x) => x.Name?.replace(/^--/, '') === ATTRIBUTE_OPTION) ??
+      this.#backupState.applicationOptions()?.find((x) => x.Name?.replace(/^--/, '') === ATTRIBUTE_OPTION);
+    return (setting?.Value ?? '')
+      .split(',')
+      .map((value) => value.trim())
+      .filter(Boolean);
+  });
+  previewAttributes = computed(() =>
+    this.attributeExclusions().filter((value) => ['hidden', 'system', 'temporary'].includes(value.toLowerCase()))
+  );
+  // Collapsed while nothing is configured; follows the configuration but can still be toggled by hand.
+  attributeCardOpen = linkedSignal(() => this.attributeExclusions().length > 0);
+  editAttributeExclusions() {
+    const dialogRef = this.#dialog.open(AttributeExclusionsDialog, {
+      maxWidth: '500px',
+      maxHeight: '80vh',
+      width: '100%',
+      closeOnOutsideClick: false,
+      data: {
+        selected: this.attributeExclusions(),
+        options:
+          this.#backupState.advancedOptions().find((x) => x.name === ATTRIBUTE_OPTION)?.options ?? DEFAULT_ATTRIBUTES,
+      },
+    });
+
+    dialogRef.closed.subscribe((selected) => {
+      if (!selected) return;
+
+      const isAttributeOption = (x: { Name?: string | null }) => x.Name?.replace(/^--/, '') === ATTRIBUTE_OPTION;
+      const inherited = this.#backupState.applicationOptions()?.find(isAttributeOption)?.Value;
+      const Value = selected.join(',');
+
+      this.#backupState.settings.update((settings) => {
+        // An empty job value is only needed to override an inherited application-level value.
+        if (!Value && !inherited) return settings.filter((x) => !isAttributeOption(x));
+        if (!settings.some(isAttributeOption)) return [...settings, { Name: `--${ATTRIBUTE_OPTION}`, Value }];
+        return settings.map((x) => (isAttributeOption(x) ? { ...x, Value } : x));
+      });
+    });
+  }
 
   pathSignal = this.sourceForm.path().value;
   pathArray = computed(

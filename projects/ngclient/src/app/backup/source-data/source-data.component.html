@@ -12,6 +12,8 @@
       [multiSelect]="true"
       [startingPath]="getPath()"
       [showFiles]="true"
+      [showHiddenNodes]="previewAttributes().length > 0"
+      [excludedAttributes]="previewAttributes()"
       [showUnrootedSources]="true"
       [enableIncludePicker]="true"
       (includePick)="openIncludePicker($event)"
@@ -203,6 +205,29 @@
             (ngModelChange)="updateFilesLargerThan($event)"></app-size>
         </div>
       }
+    </app-toggle-card>
+
+    <app-toggle-card class="attribute-exclusions" [(isActive)]="attributeCardOpen">
+      <ng-container title>
+        <span i18n>File attributes</span>
+        <div class="spacer"></div>
+        <button shButton type="button" class="small" (click)="$event.stopPropagation(); editAttributeExclusions()" i18n>
+          <sh-icon>pencil</sh-icon>
+          Edit
+        </button>
+      </ng-container>
+      @if (attributeExclusions().length) {
+        <p>
+          <span i18n>Excluded attributes:</span>
+          {{ attributeExclusions().join(', ') }}
+        </p>
+      } @else {
+        <p i18n>No attribute exclusions configured.</p>
+      }
+      <p i18n>
+        The tree marks exclusions by Hidden, System and Temporary attributes. Other attribute flags and remote sources
+        are not previewed.
+      </p>
     </app-toggle-card>
   </div>
 </form>

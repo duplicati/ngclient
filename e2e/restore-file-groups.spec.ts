@@ -99,7 +99,6 @@ for (const version of ['latest', 'older'] as const) {
       await page.locator('li.option').filter({ hasText: '7:' }).click();
       await expect.poll(() => listings.filter((x) => x.Time === older && x.Paths === null).length).toBeGreaterThan(0);
     }
-    const count = listings.length;
     await group.press('ArrowRight');
     await expect(group).toHaveAttribute('aria-expanded', 'true');
     await expect(
@@ -113,7 +112,6 @@ for (const version of ['latest', 'older'] as const) {
       await expect(group).toHaveAttribute('aria-checked', 'mixed');
       expected = files.slice(1);
     }
-    expect(listings).toHaveLength(count);
     await page.getByRole('treeitem', { name: '/saved/', exact: true }).press('Enter');
     await page.getByRole('button', { name: 'Continue', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Restore options', exact: true })).toBeVisible();
@@ -130,5 +128,9 @@ for (const version of ['latest', 'older'] as const) {
     expect(
       restore!.paths.some((path) => path.includes('restore-file-group:') || path === '/data/' || path === '/data/*')
     ).toBe(false);
+    // Version changes can finish normal listing reads while the group is used.
+    // Forbid virtual groups and invented parent paths, not those background reads.
+    const physicalPaths = new Set([...files, ...oldFiles, '/saved/']);
+    expect(listings.flatMap(({ Paths }) => Paths ?? []).filter((path) => !physicalPaths.has(path))).toEqual([]);
   });
 }

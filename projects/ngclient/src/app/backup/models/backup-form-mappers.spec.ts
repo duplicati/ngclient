@@ -32,6 +32,7 @@ describe('backup form model boundaries', () => {
       general: { name: 'Backup', operationType: 'Backup' as const },
       sourceData: { path: '/source\0-*.tmp', excludes: { filesLargerThan: { size: 12, unit: 'MB' } } },
       schedule: null,
+      runAfter: null,
       targetUrls: [],
       settings: [...settings],
     };
@@ -44,6 +45,31 @@ describe('backup form model boundaries', () => {
       { Name: '--skip-files-larger-than', Value: '12MB' },
     ]);
     expect(form.settings).toEqual(settings);
+  });
+
+  it('sends the job to run after only when the server supports it', () => {
+    const form = {
+      general: { name: 'Backup', operationType: 'Backup' as const },
+      sourceData: { path: '/source' },
+      schedule: null,
+      targetUrls: [],
+      settings: [],
+    };
+
+    // Without the fields, the server keeps what is stored
+    const unsupported = mapBackupFormToDto({ ...form, runAfter: null }).Backup;
+    expect('RunAfterBackupID' in unsupported).toBe(false);
+    expect('RunAfterCondition' in unsupported).toBe(false);
+
+    const set = mapBackupFormToDto({ ...form, runAfter: { backupId: '4', always: true } }).Backup;
+    expect(set.RunAfterBackupID).toBe('4');
+    expect(set.RunAfterCondition).toBe('Always');
+
+    // An explicit null removes the stored reference
+    const cleared = mapBackupFormToDto({ ...form, runAfter: { backupId: null, always: false } }).Backup;
+    expect('RunAfterBackupID' in cleared).toBe(true);
+    expect(cleared.RunAfterBackupID).toBeNull();
+    expect(cleared.RunAfterCondition).toBe('Success');
   });
 
   it('preserves setting serialization and the caller ignore list without modifying input values', () => {

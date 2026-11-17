@@ -50,6 +50,8 @@ export type BackupDto = {
     ConnectionStringID?: number;
     OperationType?: OperationType;
     Enabled?: boolean;
+    RunAfterBackupID?: string | null;
+    RunAfterCondition?: RunAfterCondition;
     DBPath: string | null;
     DBPathExists: boolean;
     Sources: Array<string> | null;
@@ -72,6 +74,8 @@ export type BackupInputDto = {
     ConnectionStringID?: number;
     OperationType?: OperationType;
     Enabled?: boolean | null;
+    RunAfterBackupID?: string | null;
+    RunAfterCondition?: RunAfterCondition;
     Sources?: Array<string> | null;
     Settings?: Array<SettingInputDto> | null;
     Filters?: Array<FilterInputDto> | null;
@@ -623,6 +627,8 @@ export type ObjectResponseEnvelope = {
 
 export type OperationType = 'Backup' | 'Sync';
 
+export type RunAfterCondition = 'Success' | 'Always';
+
 export type PageInfo = {
     Page?: number;
     PageSize?: number;
@@ -1073,6 +1079,8 @@ export type BackupDtoWritable = {
     ConnectionStringID?: number;
     OperationType?: OperationType;
     Enabled?: boolean;
+    RunAfterBackupID?: string | null;
+    RunAfterCondition?: RunAfterCondition;
     DBPath: string | null;
     DBPathExists: boolean;
     Sources: Array<string> | null;

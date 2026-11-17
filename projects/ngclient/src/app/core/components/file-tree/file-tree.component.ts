@@ -162,6 +162,7 @@ export default class FileTreeComponent {
   multiSelect = input(false);
   disabled = input(false);
   showFiles = input(false);
+  excludedAttributes = input<readonly string[]>([]);
   selectFiles = input(false);
   onlySelectFolder = input(false);
   accepts = input<string | null | undefined>(null);
@@ -637,6 +638,7 @@ export default class FileTreeComponent {
           isIndeterminate: isLoadMore ? false : this.isIndeterminate(currentPaths, nodePath),
           evalState: evalState,
           children: [],
+          attributeExclusion: this.sourceAttributeExclusion(node, parentNode, currentPaths),
         };
 
         if (isLoadMore) {
@@ -668,6 +670,40 @@ export default class FileTreeComponent {
   hasRestoreFileGroups = computed(() => this.treeStructure().some((node) => !!node.restoreGroupPaths));
   restoreGroupHelpId() {
     return this.#treeId + '-restore-groups-help';
+  }
+
+  private sourceAttributeExclusion(
+    node: TreeNode,
+    parent: FileTreeNode | undefined,
+    paths: string[]
+  ): string | undefined {
+    if (this.isByBackupSettings() || !this.multiSelect() || this.excludedAttributes().length === 0) return undefined;
+    const sources = this.#resolveWithRemoteSource(paths.filter((path) => !this.#isFilter(path)));
+    const normalize = (path: string) => {
+      const expanded = path.replace(/^%[^%]+%/, (token) => this.#sysInfo.resolveShorthandPath(token));
+      return this.pathDelimiter() === '\\' ? expanded.toLowerCase() : expanded;
+    };
+    const resolved = normalize(node.resolvedpath ?? node.id ?? '');
+    const original = normalize(node.id ?? '');
+    // Explicit sources bypass attribute filtering in the backup engine.
+    const samePath = (a: string, b: string) => a.replace(/[\\/]$/, '') === b.replace(/[\\/]$/, '');
+    if (sources.some((path) => samePath(normalize(path), original) || samePath(normalize(path), resolved)))
+      return undefined;
+    if (
+      !sources.some((path) => {
+        if (!this.#isFolder(path)) return false;
+        const source = normalize(path);
+        const prefix = /[\\/]$/.test(source) ? source : source + this.pathDelimiter();
+        return original.startsWith(prefix) || resolved.startsWith(prefix);
+      })
+    )
+      return undefined;
+    if (parent?.attributeExclusion) return $localize`Excluded: parent`;
+    const attributes = new Set(this.excludedAttributes().map((value) => value.trim().toLowerCase()));
+    if (node.hidden && attributes.has('hidden')) return $localize`Excluded: Hidden`;
+    if (node.systemFile && attributes.has('system')) return $localize`Excluded: System`;
+    if (node.temporary && attributes.has('temporary')) return $localize`Excluded: Temporary`;
+    return undefined;
   }
 
   #resolveFilterGroups(currentPaths: string[]): string[] {
@@ -969,6 +1005,7 @@ export default class FileTreeComponent {
           state = true;
         else state = node.isIndeterminate ? 'mixed' : false;
       }
+      if (node.attributeExclusion && state !== null) state = false;
       states.set(id, state);
     }
     return states;
@@ -1044,7 +1081,10 @@ export default class FileTreeComponent {
 
   /** Accessible name for a tree row; badges that convey a state are announced since the badge icon is visual only. */
   treeItemLabel(node: FileTreeNode): string {
-    const name = node.text ?? node.id ?? '';
+    const baseName = node.text ?? node.id ?? '';
+    const name = node.attributeExclusion
+      ? $localize`${baseName}:name: (${node.attributeExclusion}:exclusion:)`
+      : baseName;
     if (node.restoreGroupPaths) return $localize`${name}:name: (File group)`;
     const badge = this.treeNodeBadge(node);
     const locked = this.lockedLinkLabel(node);
@@ -1221,7 +1261,11 @@ export default class FileTreeComponent {
       const current = this.#rangeRows().find((candidate) => candidate.id === row.id);
       if (!current || current.id === ROOTPATH || current.isLoadMore) continue;
       if (this.selectFiles() && current.cls === 'folder') continue;
-      if (current.evalState === TreeEvalEnum.Included || current.evalState === TreeEvalEnum.IncludedByParent) continue;
+      if (
+        !current.attributeExclusion &&
+        (current.evalState === TreeEvalEnum.Included || current.evalState === TreeEvalEnum.IncludedByParent)
+      )
+        continue;
       this.toggleSelectedNode(new Event('click'), current);
     }
     this.#rangeAnchor = anchor;
@@ -1262,7 +1306,8 @@ export default class FileTreeComponent {
     const currentPaths = this.currentPathArray();
     const currentPathsWithRemotes = this.#resolveWithRemoteSource(currentPaths);
 
-    const isChildOfSelected = this.isChildOfSelected(node);
+    // Selecting an attribute-excluded entry makes it an explicit source, which the engine preserves.
+    const isChildOfSelected = !node.attributeExclusion && this.isChildOfSelected(node);
     // Use the resolved path if we are resolving paths
     const nodeId = this.#resolveNodeId(node);
     const pathToTest = isChildOfSelected ? `-${nodeId}` : nodeId!;

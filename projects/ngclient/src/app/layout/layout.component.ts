@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
@@ -12,6 +12,7 @@ import ServiceHubComponent from '../core/components/service-hub/service-hub.comp
 import { GetApiV1ServersettingsResponse } from '../core/openapi';
 import { AppAuthState } from '../core/states/app-auth.state';
 import { BackupsState } from '../core/states/backups.state';
+import { IdleLogoutState } from '../core/states/idle-logout.state';
 import { RelayconfigState } from '../core/states/relayconfig.state';
 import { SysinfoState } from '../core/states/sysinfo.state';
 import { NotificationsState } from '../notifications/notifications.state';
@@ -50,6 +51,8 @@ export default class LayoutComponent {
   #sysInfoState = inject(SysinfoState);
   #router = inject(Router);
   #remoteControl = inject(RemoteControlState);
+  #idleLogout = inject(IdleLogoutState);
+  #destroyRef = inject(DestroyRef);
 
   relayIsEnabled = this.#relayConfigState.relayIsEnabled;
   isDarkMode = this.#layoutState.isDarkMode;
@@ -81,6 +84,7 @@ export default class LayoutComponent {
   ngOnInit() {
     this.#notificationState.init();
     this.#backupsState.getBackups(true);
+    this.#idleLogout.watch(this.#destroyRef);
   }
 
   serverSettingsEffect = effect(() => {

@@ -32,6 +32,8 @@ export type FileTreeNode = TreeNode & {
   restoreGroupPaths?: readonly string[];
   restoreGroupPath?: string;
   children: FileTreeNode[];
+  /** Local source attribute exclusion, separate from path-filter selection. */
+  attributeExclusion?: string;
   evalState: TreeEvalEnum;
   isIndeterminate: boolean;
   isSearchMatch?: boolean;

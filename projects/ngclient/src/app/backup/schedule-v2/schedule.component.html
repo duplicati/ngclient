@@ -149,6 +149,44 @@
   }
 }
 
+@if (showRunAfter()) {
+  <section class="run-after">
+    <h4 i18n>Run after another job</h4>
+    <p i18n>This job is also started each time the selected job finishes.</p>
+
+    <!-- The picker matches its value to the options only when the value is set,
+         so it is created again when the options change, as when the list of jobs arrives -->
+    @for (options of [runAfterOptions()]; track options) {
+      <sh-select [isClearable]="true" [options]="options" label="label" value="value">
+        <input
+          type="text"
+          [ngModel]="runAfterBackupId()"
+          (ngModelChange)="setRunAfter($event)"
+          i18n-placeholder
+          placeholder="Do not run after another job" />
+      </sh-select>
+    }
+
+    @if (runAfterBackupId()) {
+      <sh-toggle class="raised primary" i18n>
+        Also run when that job fails or is stopped
+        <input
+          type="checkbox"
+          id="runAfterAlways"
+          [ngModel]="runAfterAlways()"
+          (ngModelChange)="runAfterAlways.set($event)" />
+      </sh-toggle>
+
+      @if (runAfterNeverTriggered()) {
+        <p class="run-after-warning" i18n>
+          The selected job is disabled or does not run automatically, so this job only runs after it when that job is
+          started manually.
+        </p>
+      }
+    }
+  </section>
+}
+
 <div class="form-actions">
   <button shButton type="button" (click)="goBack()" i18n>
     <sh-icon>arrow-left</sh-icon>

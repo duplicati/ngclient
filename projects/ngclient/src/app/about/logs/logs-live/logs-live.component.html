@@ -1,6 +1,19 @@
 @if (logLevel() === 'Disabled') {
   <div class="live-view-disabled" i18n>Live logs are disabled</div>
 } @else {
+  <div class="log-toolbar">
+    <button
+      shButton
+      type="button"
+      class="small download-log"
+      (click)="downloadLog()"
+      [disabled]="logs().length === 0"
+      i18n>
+      <sh-icon>download-simple</sh-icon>
+      Download
+    </button>
+  </div>
+
   <sh-table
     [class.type-b]="true"
     [data]="logs()"

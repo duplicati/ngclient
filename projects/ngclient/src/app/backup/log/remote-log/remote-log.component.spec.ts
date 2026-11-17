@@ -100,10 +100,10 @@ describe('remote operation log mixed data', () => {
     open(fixture, 1);
     const write = clipboard();
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
-    fixture.nativeElement.querySelector('button').click();
+    fixture.nativeElement.querySelector('.log-content button').click();
     fixture.detectChanges();
     expect(write).toHaveBeenCalledExactlyOnceWith(expected);
-    expect(fixture.nativeElement.querySelector('button').textContent).toContain('Copied');
+    expect(fixture.nativeElement.querySelector('.log-content button').textContent).toContain('Copied');
     vi.advanceTimersByTime(3000);
     fixture.detectChanges();
     expect(fixture.componentInstance.copiedFromIndex()).toBeNull();
