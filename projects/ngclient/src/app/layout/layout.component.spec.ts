@@ -6,6 +6,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import ServiceHubComponent from '../core/components/service-hub/service-hub.component';
 import { AppAuthState } from '../core/states/app-auth.state';
 import { BackupsState } from '../core/states/backups.state';
+import { IdleLogoutState } from '../core/states/idle-logout.state';
 import { RelayconfigState } from '../core/states/relayconfig.state';
 import { SysinfoState } from '../core/states/sysinfo.state';
 import { NotificationsState } from '../notifications/notifications.state';
@@ -37,6 +38,7 @@ describe('LayoutComponent sidenav links', () => {
         { provide: ShipDialogService, useValue: { open: () => {} } },
         { provide: NotificationsState, useValue: { init: () => {} } },
         { provide: AppAuthState, useValue: { logout: () => {} } },
+        { provide: IdleLogoutState, useValue: { watch: () => {} } },
         {
           provide: ServerSettingsService,
           useValue: {
