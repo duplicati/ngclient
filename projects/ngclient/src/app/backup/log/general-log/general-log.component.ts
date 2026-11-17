@@ -10,6 +10,7 @@ import {
   signal,
 } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipDivider } from '@ship-ui/core/ship-divider';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
@@ -18,7 +19,7 @@ import { ShipToggleCard } from '@ship-ui/core/ship-toggle-card';
 import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { defer, finalize, map, switchMap } from 'rxjs';
 import { downloadJson, logFileName } from '../../../core/functions/download-json';
-import { DuplicatiServer, SettingDto, SettingInputDto } from '../../../core/openapi';
+import { DuplicatiServer, IListResultFileset, SettingDto, SettingInputDto } from '../../../core/openapi';
 import { BytesPipe } from '../../../core/pipes/byte.pipe';
 import { DurationFormatPipe } from '../../../core/pipes/duration.pipe';
 import { BackupsState } from '../../../core/states/backups.state';
@@ -94,6 +95,36 @@ type LogPagination = {
   previousOffsets: Array<number | undefined>;
 };
 
+// The version a backup creates is stamped when its database operation starts, which can be a little
+// before the result's BeginTime; a version clearly outside the run was made by another backup
+const VERSION_MATCH_SLACK_MS = 60_000;
+
+/**
+ * Finds the version number (0 is the newest) of the version a backup run created, by its time.
+ * Returns null when no version falls within the run, for example because nothing changed and the
+ * version was not kept, or because the version has since been deleted.
+ */
+export function findBackupVersion(
+  filesets: IListResultFileset[],
+  beginTime: string | undefined,
+  endTime: string | undefined
+): number | null {
+  const begin = Date.parse(beginTime ?? '');
+  if (Number.isNaN(begin)) return null;
+  const parsedEnd = Date.parse(endTime ?? '');
+  const end = Number.isNaN(parsedEnd) ? begin : parsedEnd;
+
+  let match: { version: number; distance: number } | null = null;
+  for (const fileset of filesets) {
+    const time = Date.parse(fileset.Time ?? '');
+    if (fileset.Version == null || Number.isNaN(time)) continue;
+    if (time < begin - VERSION_MATCH_SLACK_MS || time > end + VERSION_MATCH_SLACK_MS) continue;
+    const distance = Math.abs(time - begin);
+    if (match === null || distance < match.distance) match = { version: fileset.Version, distance };
+  }
+  return match?.version ?? null;
+}
+
 function parseLogLines(result: { Messages?: string[] | null; Warnings?: string[] | null; Errors?: string[] | null }) {
   return {
     messages: (result.Messages ?? []).map((line) => parseLogLine(line, 'information')),
@@ -123,6 +154,7 @@ function parseLogLines(result: { Messages?: string[] | null; Warnings?: string[]
 })
 export class GeneralLogComponent {
   #dupServer = inject(DuplicatiServer);
+  #router = inject(Router);
   #backupsState = inject(BackupsState);
   #sizePipe = new BytesPipe();
   #durationPipe = new DurationFormatPipe();
@@ -154,6 +186,13 @@ export class GeneralLogComponent {
         .map((id: string) => id.trim())
         .filter(Boolean)
     );
+  });
+
+  // Log entry whose comparison with the previous version is being looked up, and why one could not be shown
+  comparingEntry = signal<number | null>(null);
+  compareMessage = linkedSignal({
+    source: this.pagination,
+    computation: (): { id: number; text: string } | null => null,
   });
 
   openEntry = linkedSignal({ source: this.pagination, computation: (): number | null => null });
@@ -303,6 +342,41 @@ export class GeneralLogComponent {
     if (status === 'Fatal' || status === 'Error') return 'error';
     if (status === 'Warning') return 'warn';
     return item.data ? '' : 'unknown';
+  }
+
+  canCompareWithPreviousVersion(item: LogEntryEvaluated): boolean {
+    return item.data?.MainOperation === 'Backup' && item.data.ParsedResult !== 'Fatal';
+  }
+
+  // Opens the command editor with COMPARE between the version this backup created and the one before it (duplicati#4678)
+  compareWithPreviousVersion(item: LogEntryEvaluated) {
+    const backupId = this.backupId();
+    if (!backupId || this.comparingEntry() !== null) return;
+
+    this.comparingEntry.set(item.id);
+    this.compareMessage.set(null);
+
+    defer(() => this.#dupServer.getApiV1BackupByIdFilesets({ path: { id: backupId } }))
+      .pipe(finalize(() => this.comparingEntry.set(null)))
+      .subscribe({
+        next: (filesets) => {
+          const version = findBackupVersion(filesets, item.data?.BeginTime, item.data?.EndTime);
+          if (version === null) {
+            this.compareMessage.set({ id: item.id, text: $localize`This backup run has no version to compare.` });
+            return;
+          }
+          if (!filesets.some((x) => x.Version === version + 1)) {
+            this.compareMessage.set({ id: item.id, text: $localize`There is no earlier version to compare with.` });
+            return;
+          }
+          this.#router.navigate(['backup', backupId, 'commandline'], {
+            queryParams: { command: 'compare', base: version + 1, target: version },
+          });
+        },
+        error: () => {
+          this.compareMessage.set({ id: item.id, text: $localize`Could not load the backup versions.` });
+        },
+      });
   }
 
   toggleOpenEntry(item: LogEntryEvaluated) {

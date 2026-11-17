@@ -70,6 +70,26 @@
             </ng-container>
           </sh-toggle-card>
 
+          @if (canCompareWithPreviousVersion(item)) {
+            <div class="compare-version">
+              <button
+                shButton
+                type="button"
+                class="small"
+                (click)="compareWithPreviousVersion(item)"
+                [disabled]="comparingEntry() !== null"
+                i18n>
+                <sh-icon>git-diff</sh-icon>
+                Compare with previous version
+              </button>
+              @if (compareMessage(); as message) {
+                @if (message.id === item.id) {
+                  <p role="status">{{ message.text }}</p>
+                }
+              }
+            </div>
+          }
+
           @if (item.data?.MainOperation === 'Sync') {
             <sh-toggle-card [disableToggle]="true">
               <ng-container title>
