@@ -21,7 +21,6 @@ import { defer, finalize, take } from 'rxjs';
 import { getBackendIcon, getBackendType } from '../backup/destination/destination.config-utilities';
 import { getRunAfterName } from '../backup/schedule-v2/run-after';
 import { BackupProgressComponent } from '../core/components/backup-progress/backup-progress.component';
-import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import { PauseDialogComponent } from '../core/components/status-bar/pause-dialog/pause-dialog.component';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { StatusBarState } from '../core/components/status-bar/status-bar.state';
@@ -35,6 +34,7 @@ import { ServerStateService } from '../core/services/server-state.service';
 import { Backup, BackupsState, OrderBy, TimeType } from '../core/states/backups.state';
 import { SysinfoState } from '../core/states/sysinfo.state';
 import { RemoteControlState } from '../settings/remote-control/remote-control.state';
+import { StartAllDialog } from './start-all-dialog/start-all-dialog';
 
 @Component({
   selector: 'app-home',
@@ -232,18 +232,21 @@ export default class HomeComponent {
   }
 
   startAllBackups() {
-    const ids = this.startAllBackupIds();
-    if (!ids.length) return;
+    const ids = new Set(this.startAllBackupIds());
+    if (!ids.size) return;
 
-    this.#dialog.open(ConfirmDialogComponent, {
-      data: {
-        title: $localize`Start all backups`,
-        message: $localize`Start ${ids.length}:count: backups now? They run one after another. Disabled backups and backups that are already running or queued are skipped.`,
-        confirmText: $localize`Start all`,
-        cancelText: $localize`Cancel`,
-      },
-      closed: (res) => {
-        if (!res) return;
+    // Listed in the order shown on the page, which is also the order they are queued in
+    const backups = this.backups()
+      .filter((x) => !!x.Backup?.ID && ids.has(x.Backup.ID))
+      .map((x) => ({ id: x.Backup!.ID!, name: x.Backup?.Name ?? x.Backup!.ID! }));
+
+    this.#dialog.open(StartAllDialog, {
+      maxWidth: '500px',
+      maxHeight: '80vh',
+      width: '100%',
+      data: { backups },
+      closed: (ids) => {
+        if (!ids?.length) return;
         this.#statusBarState.resumeDialogCheck(() => this.#backupsState.startBackups(ids));
       },
     });

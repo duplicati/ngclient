@@ -107,7 +107,7 @@ describe('home start all backups', () => {
     return { component, dupServer, dialog, statusBar };
   }
 
-  it('asks first and then sends a start request for each enabled backup that is not running or queued', () => {
+  it('lists each enabled backup that is not running or queued and starts only the picked ones', () => {
     const { component, dupServer, dialog, statusBar } = setup(
       [backup('1'), backup('2', false), backup('3', true), backup('4'), backup('5')],
       '4',
@@ -116,18 +116,23 @@ describe('home start all backups', () => {
 
     component.startAllBackups();
     expect(dialog.open).toHaveBeenCalledOnce();
+    expect(dialog.open.mock.calls[0][1].data.backups).toEqual([
+      { id: '1', name: 'Backup 1' },
+      { id: '3', name: 'Backup 3' },
+    ]);
     expect(dupServer.postApiV1BackupByIdStart).not.toHaveBeenCalled();
 
-    dialog.open.mock.calls[0][1].closed(true);
+    dialog.open.mock.calls[0][1].closed(['3']);
     expect(statusBar.resumeDialogCheck).toHaveBeenCalledOnce();
-    expect(dupServer.postApiV1BackupByIdStart.mock.calls).toEqual([[{ path: { id: '1' } }], [{ path: { id: '3' } }]]);
+    expect(dupServer.postApiV1BackupByIdStart.mock.calls).toEqual([[{ path: { id: '3' } }]]);
   });
 
-  it('starts nothing when the confirmation is cancelled', () => {
+  it('starts nothing when the dialog is cancelled or nothing is picked', () => {
     const { component, dupServer, dialog } = setup([backup('1'), backup('2')]);
 
     component.startAllBackups();
-    dialog.open.mock.calls[0][1].closed(false);
+    dialog.open.mock.calls[0][1].closed(null);
+    dialog.open.mock.calls[0][1].closed([]);
 
     expect(dupServer.postApiV1BackupByIdStart).not.toHaveBeenCalled();
   });
