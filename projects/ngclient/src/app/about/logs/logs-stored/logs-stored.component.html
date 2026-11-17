@@ -1,5 +1,18 @@
 @let _logs = logs();
 
+<div class="log-toolbar">
+  <button
+    shButton
+    type="button"
+    class="small download-log"
+    (click)="downloadLog()"
+    [disabled]="_logs.length === 0"
+    i18n>
+    <sh-icon>download-simple</sh-icon>
+    Download
+  </button>
+</div>
+
 <sh-table class="type-b" [data]="_logs" [loading]="logsIsLoading()" [style.grid-template-columns]="'1fr 1fr 1fr auto'">
   <tr thead>
     <th i18n>Timestamp</th>

@@ -17,6 +17,7 @@ import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { ShipToggleCard } from '@ship-ui/core/ship-toggle-card';
 import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { defer, finalize, map, switchMap } from 'rxjs';
+import { downloadJson, logFileName } from '../../../core/functions/download-json';
 import { DuplicatiServer, SettingDto, SettingInputDto } from '../../../core/openapi';
 import { BytesPipe } from '../../../core/pipes/byte.pipe';
 import { DurationFormatPipe } from '../../../core/pipes/duration.pipe';
@@ -83,6 +84,8 @@ type LogEntryEvaluated = {
   exception: unknown;
   // The Warnings and Errors of data, of the restore test and of each secondary destination, split into time, level, tag and message
   logLines?: ParsedLogLines & { sync: ParsedLogLines[]; restoreTest?: ParsedLogLines };
+  // The row exactly as the server returned it, written to the downloaded file
+  raw: LogEntry;
 };
 
 type LogPagination = {
@@ -194,6 +197,7 @@ export class GeneralLogComponent {
               },
               rawMessage: data === undefined ? y.Message : undefined,
               exception: JSON.stringify(y.Exception) === '{}' ? null : y.Exception,
+              raw: y,
             };
           });
         })
@@ -221,6 +225,15 @@ export class GeneralLogComponent {
       offset,
       previousOffsets: [...page.previousOffsets, page.offset],
     }));
+  }
+
+  /** Saves the entries of the page shown, as the server returned them, to a JSON file */
+  downloadLog() {
+    if (!this.resource.hasValue()) return;
+    downloadJson(
+      this.resource.value().map((x) => x.raw),
+      logFileName('job-log', this.backupId())
+    );
   }
 
   loadNewer() {
