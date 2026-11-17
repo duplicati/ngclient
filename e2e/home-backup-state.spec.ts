@@ -26,6 +26,13 @@ test.describe('home backup state', () => {
     initialBackups: [[backup('1', 'Documents'), backup('2', 'Photos'), backup('3', 'Music', '0')], { scope: 'test' }],
   });
 
+  test('keeps the page heading separate from backup actions', async ({ authenticatedPage: page }) => {
+    await expect(page.getByRole('button', { name: 'Start all', exact: true })).toBeVisible();
+    const heading = page.getByRole('heading', { name: 'My backups', exact: true });
+    await expect(heading).toBeVisible();
+    await expect(heading.getByRole('button')).toHaveCount(0);
+  });
+
   test('marks queued backups in both views', async ({ authenticatedPage: page, serverApi }) => {
     serverApi.sendServerStatus({ SchedulerQueueIds: [{ Item1: 11, Item2: '2' }] });
 

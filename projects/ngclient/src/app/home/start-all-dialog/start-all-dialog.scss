@@ -1,0 +1,35 @@
+@use '@ship-ui/core/styles/helpers' as *;
+
+:host {
+  --dialog-p: #{p2r(24)};
+  display: flex;
+  flex-direction: column;
+  gap: p2r(16);
+}
+
+header {
+  display: flex;
+  padding: p2r(24 24 0);
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(16);
+}
+
+.list-actions {
+  display: flex;
+  flex-direction: row;
+  gap: p2r(8);
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(12);
+}
+
+footer {
+  z-index: 1;
+}

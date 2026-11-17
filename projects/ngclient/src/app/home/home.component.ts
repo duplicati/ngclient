@@ -34,6 +34,7 @@ import { ServerStateService } from '../core/services/server-state.service';
 import { Backup, BackupsState, OrderBy, TimeType } from '../core/states/backups.state';
 import { SysinfoState } from '../core/states/sysinfo.state';
 import { RemoteControlState } from '../settings/remote-control/remote-control.state';
+import { StartAllDialog } from './start-all-dialog/start-all-dialog';
 
 @Component({
   selector: 'app-home',
@@ -123,6 +124,7 @@ export default class HomeComponent {
   });
   startingBackup = this.#backupsState.startingBackup;
   deletingBackup = this.#backupsState.deletingBackup;
+  startingAllBackups = this.#backupsState.startingAllBackups;
   runningBackupId = this.#statusBarState.runningBackupId;
 
   getBackendType = getBackendType;
@@ -149,6 +151,14 @@ export default class HomeComponent {
         .filter((x): x is string => !!x && x !== String(running))
     );
   });
+
+  // Backups that "Start all" would queue: disabled, running and already queued backups are left out
+  startAllBackupIds = computed(() =>
+    this.backups()
+      .filter((x) => !this.isDisabled(x) && !this.isRunning(x.Backup?.ID) && !this.isQueued(x.Backup?.ID))
+      .map((x) => x.Backup?.ID)
+      .filter((x): x is string => !!x)
+  );
 
   isRunning(backupId: string | null | undefined) {
     const running = this.runningBackupId();
@@ -219,6 +229,27 @@ export default class HomeComponent {
 
   startBackup(id: string) {
     this.#statusBarState.resumeDialogCheck(() => this.#backupsState.startBackup(id));
+  }
+
+  startAllBackups() {
+    const ids = new Set(this.startAllBackupIds());
+    if (!ids.size) return;
+
+    // Listed in the order shown on the page, which is also the order they are queued in
+    const backups = this.backups()
+      .filter((x) => !!x.Backup?.ID && ids.has(x.Backup.ID))
+      .map((x) => ({ id: x.Backup!.ID!, name: x.Backup?.Name ?? x.Backup!.ID! }));
+
+    this.#dialog.open(StartAllDialog, {
+      maxWidth: '500px',
+      maxHeight: '80vh',
+      width: '100%',
+      data: { backups },
+      closed: (ids) => {
+        if (!ids?.length) return;
+        this.#statusBarState.resumeDialogCheck(() => this.#backupsState.startBackups(ids));
+      },
+    });
   }
 
   openPauseDialog() {

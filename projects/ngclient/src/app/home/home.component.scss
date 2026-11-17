@@ -4,10 +4,14 @@
   display: block;
 }
 
-h2 {
+.content-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  h2 {
+    margin: 0;
+  }
 }
 
 section {
@@ -46,7 +50,7 @@ sh-card {
   flex-direction: column;
   gap: p2r(16);
 
-  h2 {
+  .content-header {
     padding: p2r(0 32);
 
     @include breakpoint(-milli) {
