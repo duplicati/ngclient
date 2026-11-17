@@ -30,6 +30,16 @@ section {
   gap: p2r(12);
 }
 
+.after-action {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(12);
+
+  p {
+    margin: 0;
+  }
+}
+
 footer {
   z-index: 1;
 }

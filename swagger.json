@@ -1361,6 +1361,45 @@
         }
       }
     },
+    "/api/v1/serverstate/queue-completion-action": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueueCompletionActionDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QueueCompletionActionInputDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/v1/systeminfo": {
       "get": {
         "tags": [
@@ -3520,6 +3559,8 @@
           "IsUnencryptedOrPassphraseStored",
           "Metadata",
           "Name",
+          "RunAfterBackupID",
+          "RunAfterCondition",
           "Settings",
           "Sources",
           "Tags",
@@ -4915,6 +4956,10 @@
               "type": "string"
             },
             "nullable": true
+          },
+          "expand_env_vars": {
+            "type": "boolean",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -5749,13 +5794,6 @@
         ],
         "type": "string"
       },
-      "RunAfterCondition": {
-        "enum": [
-          "Success",
-          "Always"
-        ],
-        "type": "string"
-      },
       "PageInfo": {
         "type": "object",
         "properties": {
@@ -5820,6 +5858,40 @@
           "SuppressCompact": {
             "type": "boolean",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "QueueCompletionAction": {
+        "enum": [
+          "None",
+          "Shutdown",
+          "Reboot",
+          "RunScript"
+        ],
+        "type": "string"
+      },
+      "QueueCompletionActionDto": {
+        "type": "object",
+        "properties": {
+          "PendingAction": {
+            "$ref": "#/components/schemas/QueueCompletionAction"
+          },
+          "SupportedActions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QueueCompletionAction"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "QueueCompletionActionInputDto": {
+        "type": "object",
+        "properties": {
+          "Action": {
+            "$ref": "#/components/schemas/QueueCompletionAction"
           }
         },
         "additionalProperties": false
@@ -6040,6 +6112,13 @@
           }
         },
         "additionalProperties": false
+      },
+      "RunAfterCondition": {
+        "enum": [
+          "Success",
+          "Always"
+        ],
+        "type": "string"
       },
       "ScheduleDto": {
         "required": [
@@ -6401,6 +6480,9 @@
           "UpdateDownloadProgress": {
             "type": "number",
             "format": "double"
+          },
+          "QueueCompletionAction": {
+            "$ref": "#/components/schemas/QueueCompletionAction"
           },
           "Type": {
             "type": "string",

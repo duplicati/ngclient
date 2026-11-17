@@ -4,7 +4,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { form, FormField } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
-import { ShipAlertService } from '@ship-ui/core/ship-alert';
+import { ShipAlert, ShipAlertService } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipButtonGroup } from '@ship-ui/core/ship-button-group';
 import { ShipCard } from '@ship-ui/core/ship-card';
@@ -17,7 +17,7 @@ import { ShipMenu } from '@ship-ui/core/ship-menu';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { ShipSort, ShipTable } from '@ship-ui/core/ship-table';
 import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
-import { defer, finalize, take } from 'rxjs';
+import { catchError, defer, finalize, map, of, take } from 'rxjs';
 import { getBackendIcon, getBackendType } from '../backup/destination/destination.config-utilities';
 import { getRunAfterName } from '../backup/schedule-v2/run-after';
 import { BackupProgressComponent } from '../core/components/backup-progress/backup-progress.component';
@@ -25,7 +25,7 @@ import { PauseDialogComponent } from '../core/components/status-bar/pause-dialog
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
 import { StatusBarState } from '../core/components/status-bar/status-bar.state';
 import { localStorageSignal } from '../core/functions/localstorage-signal';
-import { BackupAndScheduleOutputDto, DuplicatiServer } from '../core/openapi';
+import { BackupAndScheduleOutputDto, DuplicatiServer, QueueCompletionAction } from '../core/openapi';
 import { BytesPipe } from '../core/pipes/byte.pipe';
 import { DurationFormatPipe } from '../core/pipes/duration.pipe';
 import { LastRunPipe } from '../core/pipes/last-run.pipe';
@@ -42,6 +42,7 @@ import { StartAllDialog } from './start-all-dialog/start-all-dialog';
     PreserveListFocusDirective,
     KeyboardActionDirective,
     RouterLink,
+    ShipAlert,
     NgTemplateOutlet,
     FormField,
     StatusBarComponent,
@@ -240,16 +241,66 @@ export default class HomeComponent {
       .filter((x) => !!x.Backup?.ID && ids.has(x.Backup.ID))
       .map((x) => ({ id: x.Backup!.ID!, name: x.Backup?.Name ?? x.Backup!.ID! }));
 
+    // The server knows if it is allowed to shut down the computer it runs on, so it is asked each
+    // time: the answer can change, such as when another user logs in. A server without the feature,
+    // or one that does not answer, gets the dialog without the choice.
+    if (!this.#sysinfo.hasQueueCompletionAction()) {
+      this.#openStartAllDialog(backups, []);
+      return;
+    }
+
+    if (this.#loadingAfterActions) return;
+    this.#loadingAfterActions = true;
+    defer(() => this.#dupServer.getApiV1ServerstateQueueCompletionAction())
+      .pipe(
+        take(1),
+        map((res) => res?.SupportedActions ?? []),
+        catchError(() => of<QueueCompletionAction[]>([])),
+        finalize(() => (this.#loadingAfterActions = false))
+      )
+      .subscribe((afterActions) => this.#openStartAllDialog(backups, afterActions));
+  }
+
+  #loadingAfterActions = false;
+
+  #openStartAllDialog(backups: { id: string; name: string }[], afterActions: QueueCompletionAction[]) {
     this.#dialog.open(StartAllDialog, {
       maxWidth: '500px',
       maxHeight: '80vh',
       width: '100%',
-      data: { backups },
-      closed: (ids) => {
-        if (!ids?.length) return;
-        this.#statusBarState.resumeDialogCheck(() => this.#backupsState.startBackups(ids));
+      data: { backups, afterActions },
+      closed: (result) => {
+        if (!result?.ids.length) return;
+        this.#statusBarState.resumeDialogCheck(() =>
+          this.#backupsState.startBackups(result.ids, result.afterAction, () =>
+            this.#alertService.error(
+              result.afterAction === 'Reboot'
+                ? $localize`The backups were started, but the computer will not be restarted when they complete.`
+                : result.afterAction === 'RunScript'
+                  ? $localize`The backups were started, but the script will not be run when they complete.`
+                  : $localize`The backups were started, but the computer will not be shut down when they complete.`
+            )
+          )
+        );
       },
     });
+  }
+
+  // What the server does to the computer when its queue has run empty
+  queueCompletionAction = computed(() => this.#serverState.serverState()?.QueueCompletionAction ?? 'None');
+  cancellingQueueCompletionAction = signal(false);
+
+  cancelQueueCompletionAction() {
+    if (this.cancellingQueueCompletionAction()) return;
+    this.cancellingQueueCompletionAction.set(true);
+    defer(() => this.#dupServer.postApiV1ServerstateQueueCompletionAction({ body: { Action: 'None' } }))
+      .pipe(
+        take(1),
+        finalize(() => this.cancellingQueueCompletionAction.set(false))
+      )
+      .subscribe({
+        error: () => this.#alertService.error($localize`Could not cancel. Please try again.`),
+      });
   }
 
   openPauseDialog() {

@@ -1,8 +1,14 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
-import { catchError, concatMap, defer, EMPTY, finalize, from, take, tap } from 'rxjs';
+import { catchError, concatMap, concatWith, defer, EMPTY, finalize, from, take, tap } from 'rxjs';
 import { randomUUID } from '../functions/crypto';
 import { localStorageSignal } from '../functions/localstorage-signal';
-import { DeleteApiV1BackupByIdData, DuplicatiServer, GetApiV1BackupsResponse, Options } from '../openapi';
+import {
+  DeleteApiV1BackupByIdData,
+  DuplicatiServer,
+  GetApiV1BackupsResponse,
+  Options,
+  QueueCompletionAction,
+} from '../openapi';
 import { ServerStateService } from '../services/server-state.service';
 import { SysinfoState } from './sysinfo.state';
 
@@ -236,10 +242,27 @@ export class BackupsState {
   /**
    * Starts several backups, one request at a time so the server queues them in the given order.
    * A failed start does not stop the remaining ones. The list is refreshed once at the end.
+   *
+   * With an action other than 'None', the server is asked to shut down or restart the computer
+   * when its queue has run empty. That request is sent last, as the server refuses it while
+   * nothing is running or queued.
    */
-  startBackups(ids: string[]) {
+  startBackups(ids: string[], afterAction: QueueCompletionAction = 'None', onAfterActionFailed: () => void = () => {}) {
     if (!ids.length || this.#startingAllBackups()) return;
     this.#startingAllBackups.set(true);
+
+    const setAfterAction =
+      afterAction === 'None'
+        ? EMPTY
+        : defer(() =>
+            this.#dupServer.postApiV1ServerstateQueueCompletionAction({ body: { Action: afterAction } })
+          ).pipe(
+            take(1),
+            catchError(() => {
+              onAfterActionFailed();
+              return EMPTY;
+            })
+          );
 
     from(ids)
       .pipe(
@@ -250,6 +273,7 @@ export class BackupsState {
             catchError(() => EMPTY)
           );
         }),
+        concatWith(setAfterAction),
         finalize(() => {
           this.#startingBackup.set(null);
           this.#startingAllBackups.set(false);

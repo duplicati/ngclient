@@ -50,8 +50,8 @@ export type BackupDto = {
     ConnectionStringID?: number;
     OperationType?: OperationType;
     Enabled?: boolean;
-    RunAfterBackupID?: string | null;
-    RunAfterCondition?: RunAfterCondition;
+    RunAfterBackupID: string | null;
+    RunAfterCondition: RunAfterCondition;
     DBPath: string | null;
     DBPathExists: boolean;
     Sources: Array<string> | null;
@@ -412,6 +412,7 @@ export type ImportBackupInputDto = {
     replace_settings?: {
         [key: string]: string;
     } | null;
+    expand_env_vars?: boolean | null;
 };
 
 export type ImportBackupOutputDto = {
@@ -627,8 +628,6 @@ export type ObjectResponseEnvelope = {
 
 export type OperationType = 'Backup' | 'Sync';
 
-export type RunAfterCondition = 'Success' | 'Always';
-
 export type PageInfo = {
     Page?: number;
     PageSize?: number;
@@ -645,6 +644,17 @@ export type PurgeFilesRequestDto = {
     Filters: Array<string> | null;
     Versions?: Array<number> | null;
     SuppressCompact?: boolean | null;
+};
+
+export type QueueCompletionAction = 'None' | 'Shutdown' | 'Reboot' | 'RunScript';
+
+export type QueueCompletionActionDto = {
+    PendingAction?: QueueCompletionAction;
+    SupportedActions?: Array<QueueCompletionAction> | null;
+};
+
+export type QueueCompletionActionInputDto = {
+    Action?: QueueCompletionAction;
 };
 
 export type RefreshTokenInputDto = {
@@ -710,6 +720,8 @@ export type RestoreTaskConfigElementDto = {
 export type RestoreTestRequestDto = {
     BackupId: string | null;
 };
+
+export type RunAfterCondition = 'Success' | 'Always';
 
 export type ScheduleDto = {
     ID: number;
@@ -794,6 +806,7 @@ export type ServerStatusDto = {
     UpdaterState: UpdatePollerStates;
     UpdateDownloadLink: string | null;
     UpdateDownloadProgress: number;
+    QueueCompletionAction?: QueueCompletionAction;
     readonly Type?: string | null;
 };
 
@@ -1079,8 +1092,8 @@ export type BackupDtoWritable = {
     ConnectionStringID?: number;
     OperationType?: OperationType;
     Enabled?: boolean;
-    RunAfterBackupID?: string | null;
-    RunAfterCondition?: RunAfterCondition;
+    RunAfterBackupID: string | null;
+    RunAfterCondition: RunAfterCondition;
     DBPath: string | null;
     DBPathExists: boolean;
     Sources: Array<string> | null;
@@ -1142,6 +1155,7 @@ export type ServerStatusDtoWritable = {
     UpdaterState: UpdatePollerStates;
     UpdateDownloadLink: string | null;
     UpdateDownloadProgress: number;
+    QueueCompletionAction?: QueueCompletionAction;
 };
 
 export type SettingDtoWritable = {
@@ -2042,6 +2056,36 @@ export type PostApiV1ServerstateResumeData = {
 };
 
 export type PostApiV1ServerstateResumeResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type GetApiV1ServerstateQueueCompletionActionData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/serverstate/queue-completion-action';
+};
+
+export type GetApiV1ServerstateQueueCompletionActionResponses = {
+    /**
+     * OK
+     */
+    200: QueueCompletionActionDto;
+};
+
+export type GetApiV1ServerstateQueueCompletionActionResponse = GetApiV1ServerstateQueueCompletionActionResponses[keyof GetApiV1ServerstateQueueCompletionActionResponses];
+
+export type PostApiV1ServerstateQueueCompletionActionData = {
+    body: QueueCompletionActionInputDto;
+    path?: never;
+    query?: never;
+    url: '/api/v1/serverstate/queue-completion-action';
+};
+
+export type PostApiV1ServerstateQueueCompletionActionResponses = {
     /**
      * OK
      */

@@ -60,6 +60,23 @@ sh-card {
       gap: p2r(8);
     }
   }
+
+  .queue-completion-action {
+    display: flex;
+    align-items: center;
+    gap: p2r(16);
+    padding: p2r(0 32);
+
+    sh-alert {
+      flex: 1 1 auto;
+    }
+
+    @include breakpoint(-milli) {
+      flex-direction: column;
+      align-items: stretch;
+      gap: p2r(8);
+    }
+  }
 }
 
 sh-menu {

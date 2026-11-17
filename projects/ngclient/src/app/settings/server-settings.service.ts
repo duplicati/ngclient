@@ -14,6 +14,7 @@ const USE_OUT_OF_PROCESS_CONTROLLER_KEY = 'use-out-of-process-controller';
 const DISABLE_FILE_WATCHER_KEY = 'disable-file-watcher';
 const ENABLE_MCP_SERVER_KEY = 'enable-mcp-server';
 const DISABLE_CONSOLE_CONTROL_KEY = 'disable-console-control';
+const POST_QUEUE_PROCESSING_SCRIPT_KEY = 'post-queue-processing-script';
 const DISABLE_TRAYICON_LOGIN_KEY = 'disable-tray-icon-login';
 const REMOTE_ACCESS_INTERFACE_KEY = 'server-listen-interface';
 const REMOTE_ACCESS_ALLOWED_HOSTNAMES_KEY = 'allowed-hostnames';
@@ -161,6 +162,11 @@ export class ServerSettingsService {
 
   setMcpServerEnabled(enabled: boolean) {
     return this.patchServerSetting(ENABLE_MCP_SERVER_KEY, enabled ? 'True' : 'False');
+  }
+
+  // The script that can be chosen to run when the server's queue has run empty; an empty path removes it
+  setPostQueueProcessingScript(path: string) {
+    return this.patchServerSetting(POST_QUEUE_PROCESSING_SCRIPT_KEY, path.trim());
   }
 
   setDisableTrayIconLogin(disable: boolean) {

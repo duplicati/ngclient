@@ -27,6 +27,16 @@
       </sh-checkbox>
     }
   </div>
+
+  @if (supportedAfterActions().length > 0) {
+    <div class="after-action">
+      <p i18n>When the queue has completed, including backups that were already queued or get queued meanwhile:</p>
+
+      <sh-select [isClearable]="false" [options]="afterActionOptions()" label="label" value="value">
+        <input type="text" [ngModel]="afterAction()" (ngModelChange)="setAfterAction($event)" />
+      </sh-select>
+    </div>
+  }
 </section>
 
 <footer footer class="sticky">

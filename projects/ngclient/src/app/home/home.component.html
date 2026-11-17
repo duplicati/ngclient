@@ -123,6 +123,41 @@
       }
     </div>
 
+    @if (queueCompletionAction() !== 'None') {
+      <div class="queue-completion-action">
+        <sh-alert class="warn">
+          @if (queueCompletionAction() === 'Reboot') {
+            <ng-container i18n>
+              The computer will restart when the running and queued tasks have completed.
+            </ng-container>
+          } @else if (queueCompletionAction() === 'RunScript') {
+            <ng-container i18n>
+              The script from the settings will run when the running and queued tasks have completed.
+            </ng-container>
+          } @else {
+            <ng-container i18n>
+              The computer will shut down when the running and queued tasks have completed.
+            </ng-container>
+          }
+        </sh-alert>
+        <button
+          type="button"
+          class="small"
+          shButton
+          [class.loading]="cancellingQueueCompletionAction()"
+          [disabled]="cancellingQueueCompletionAction()"
+          (click)="cancelQueueCompletionAction()">
+          @if (queueCompletionAction() === 'Reboot') {
+            <ng-container i18n>Cancel restart</ng-container>
+          } @else if (queueCompletionAction() === 'RunScript') {
+            <ng-container i18n>Cancel script</ng-container>
+          } @else {
+            <ng-container i18n>Cancel shutdown</ng-container>
+          }
+        </button>
+      </div>
+    }
+
     @defer (when !backupsLoading()) {
       @if (viewMode() === 'list') {
         <div class="backups" [class.fallback]="backups().length === 0">

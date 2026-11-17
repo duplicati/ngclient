@@ -20,6 +20,11 @@ describe('BackupsState start several backups', () => {
         responses.set(path.id, response);
         return response;
       }),
+      postApiV1ServerstateQueueCompletionAction: vi.fn((_: { body: { Action: string } }) => {
+        const response = new Subject<unknown>();
+        responses.set('after-action', response);
+        return response;
+      }),
       getApiV1Backups: vi.fn(),
     };
     const serverState = {
@@ -73,6 +78,47 @@ describe('BackupsState start several backups', () => {
     responses.get('2')!.next({});
 
     expect(dupServer.postApiV1BackupByIdStart.mock.calls.map((x) => x[0].path.id)).toEqual(['1', '2']);
+    expect(state.startingAllBackups()).toBe(false);
+  });
+
+  it('sets the shutdown action only after every backup is queued', () => {
+    const { state, dupServer, responses } = setup();
+    const failed = vi.fn();
+
+    state.startBackups(['1', '2'], 'Shutdown', failed);
+    responses.get('1')!.next({});
+    expect(dupServer.postApiV1ServerstateQueueCompletionAction).not.toHaveBeenCalled();
+
+    responses.get('2')!.next({});
+    expect(dupServer.postApiV1ServerstateQueueCompletionAction).toHaveBeenCalledExactlyOnceWith({
+      body: { Action: 'Shutdown' },
+    });
+    expect(state.startingAllBackups()).toBe(true);
+
+    responses.get('after-action')!.next({});
+    expect(state.startingAllBackups()).toBe(false);
+    expect(failed).not.toHaveBeenCalled();
+  });
+
+  it('reports when the server refuses the shutdown action', () => {
+    const { state, responses } = setup();
+    const failed = vi.fn();
+
+    state.startBackups(['1'], 'Reboot', failed);
+    responses.get('1')!.next({});
+    responses.get('after-action')!.error(new Error('There are no running or queued tasks to wait for'));
+
+    expect(failed).toHaveBeenCalledOnce();
+    expect(state.startingAllBackups()).toBe(false);
+  });
+
+  it('does not contact the server about shutting down when no action is picked', () => {
+    const { state, dupServer, responses } = setup();
+
+    state.startBackups(['1']);
+    responses.get('1')!.next({});
+
+    expect(dupServer.postApiV1ServerstateQueueCompletionAction).not.toHaveBeenCalled();
     expect(state.startingAllBackups()).toBe(false);
   });
 

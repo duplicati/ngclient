@@ -127,6 +127,12 @@ export class SysinfoState {
     return apiExtensions.includes('v1:backup:run-after');
   });
 
+  // The server can shut down or restart the computer when the task queue has run empty
+  hasQueueCompletionAction = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v1:serverstate:queue-completion-action');
+  });
+
   hasRestoreOptions = computed(() => {
     const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
     return apiExtensions.includes('v1:backup:restore-options');

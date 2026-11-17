@@ -362,6 +362,36 @@
     </div>
   </section>
 
+  @if (hasQueueCompletionAction()) {
+    <section>
+      <div class="left">
+        <h3 i18n>Script to run after the queue</h3>
+        <p i18n>
+          When starting all backups, you can choose to run this script once the queue has completed, for example to shut
+          down the computer in your own way. The script runs on the computer where Duplicati is running, and only when
+          you choose it. Enter the full path to an executable file; on Windows, use a program or a batch file.
+        </p>
+      </div>
+
+      <div class="right remote-access-form">
+        <sh-form-field>
+          <label for="postQueueScript" i18n>Script path</label>
+          <input type="text" id="postQueueScript" autocomplete="off" [(ngModel)]="postQueueScript" />
+        </sh-form-field>
+
+        <button
+          shButton
+          class="raised primary"
+          [class.loading]="updatingPostQueueScript()"
+          [disabled]="updatingPostQueueScript()"
+          (click)="updatePostQueueScript()"
+          i18n>
+          Update script
+        </button>
+      </div>
+    </section>
+  }
+
   @if (powerModeOptions().length > 0) {
     <section>
       <div class="left">

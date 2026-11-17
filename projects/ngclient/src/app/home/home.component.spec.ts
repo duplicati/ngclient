@@ -2,7 +2,7 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ShipAlertService } from '@ship-ui/core/ship-alert';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
-import { of, Subject } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { StatusBarState } from '../core/components/status-bar/status-bar.state';
 import { DuplicatiServer } from '../core/openapi';
@@ -75,8 +75,23 @@ describe('home start all backups', () => {
     return { Backup: { ID, Name: `Backup ${ID}`, ...(Enabled === undefined ? {} : { Enabled }) } };
   }
 
-  function setup(list: ReturnType<typeof backup>[], running: string | null = null, queued: string[] = []) {
-    const dupServer = { postApiV1BackupByIdStart: vi.fn(() => of({})), getApiV1Backups: vi.fn() };
+  function setup(
+    list: ReturnType<typeof backup>[],
+    running: string | null = null,
+    queued: string[] = [],
+    canSetAfterAction = true,
+    supportedActions: string[] | 'fails' = ['Shutdown', 'Reboot']
+  ) {
+    const dupServer = {
+      postApiV1BackupByIdStart: vi.fn(() => of({})),
+      postApiV1ServerstateQueueCompletionAction: vi.fn(() => of({})),
+      getApiV1ServerstateQueueCompletionAction: vi.fn(() =>
+        supportedActions === 'fails'
+          ? throwError(() => new Error('Not available'))
+          : of({ PendingAction: 'None', SupportedActions: supportedActions })
+      ),
+      getApiV1Backups: vi.fn(),
+    };
     const dialog = { open: vi.fn() };
     const statusBar = { runningBackupId: signal(running), resumeDialogCheck: vi.fn((cb: () => void) => cb()) };
     const serverState = {
@@ -94,7 +109,11 @@ describe('home start all backups', () => {
         { provide: DuplicatiServer, useValue: dupServer },
         {
           provide: SysinfoState,
-          useValue: { hasBackupEnableDisable: signal(true), hasBackupListSubscribeOption: signal(true) },
+          useValue: {
+            hasBackupEnableDisable: signal(true),
+            hasBackupListSubscribeOption: signal(true),
+            hasQueueCompletionAction: signal(canSetAfterAction),
+          },
         },
         { provide: RemoteControlState, useValue: {} },
         { provide: ShipDialogService, useValue: dialog },
@@ -122,9 +141,64 @@ describe('home start all backups', () => {
     ]);
     expect(dupServer.postApiV1BackupByIdStart).not.toHaveBeenCalled();
 
-    dialog.open.mock.calls[0][1].closed(['3']);
+    expect(dialog.open.mock.calls[0][1].data.afterActions).toEqual(['Shutdown', 'Reboot']);
+
+    dialog.open.mock.calls[0][1].closed({ ids: ['3'], afterAction: 'None' });
     expect(statusBar.resumeDialogCheck).toHaveBeenCalledOnce();
     expect(dupServer.postApiV1BackupByIdStart.mock.calls).toEqual([[{ path: { id: '3' } }]]);
+    expect(dupServer.postApiV1ServerstateQueueCompletionAction).not.toHaveBeenCalled();
+  });
+
+  it('asks the server to shut down after the picked backups are queued', () => {
+    const { component, dupServer, dialog } = setup([backup('1'), backup('2')]);
+
+    component.startAllBackups();
+    dialog.open.mock.calls[0][1].closed({ ids: ['1', '2'], afterAction: 'Shutdown' });
+
+    expect(dupServer.postApiV1BackupByIdStart.mock.calls.map((x) => (x as any)[0].path.id)).toEqual(['1', '2']);
+    expect(dupServer.postApiV1ServerstateQueueCompletionAction).toHaveBeenCalledExactlyOnceWith({
+      body: { Action: 'Shutdown' },
+    });
+    expect(dupServer.postApiV1ServerstateQueueCompletionAction.mock.invocationCallOrder[0]).toBeGreaterThan(
+      dupServer.postApiV1BackupByIdStart.mock.invocationCallOrder[1]
+    );
+  });
+
+  it('does not offer the shutdown choice on a server without the feature', () => {
+    const { component, dupServer, dialog } = setup([backup('1'), backup('2')], null, [], false);
+
+    component.startAllBackups();
+    expect(dupServer.getApiV1ServerstateQueueCompletionAction).not.toHaveBeenCalled();
+    expect(dialog.open.mock.calls[0][1].data.afterActions).toEqual([]);
+  });
+
+  it('offers only the actions the server is allowed to perform', () => {
+    const { component, dialog } = setup([backup('1'), backup('2')], null, [], true, ['Reboot']);
+
+    component.startAllBackups();
+    expect(dialog.open.mock.calls[0][1].data.afterActions).toEqual(['Reboot']);
+  });
+
+  it('still opens the dialog when the server does not tell what it is allowed to do', () => {
+    const { component, dialog } = setup([backup('1'), backup('2')], null, [], true, 'fails');
+
+    component.startAllBackups();
+    expect(dialog.open).toHaveBeenCalledOnce();
+    expect(dialog.open.mock.calls[0][1].data.afterActions).toEqual([]);
+
+    // The next attempt asks the server again
+    component.startAllBackups();
+    expect(dialog.open).toHaveBeenCalledTimes(2);
+  });
+
+  it('cancels a pending shutdown', () => {
+    const { component, dupServer } = setup([backup('1'), backup('2')]);
+
+    component.cancelQueueCompletionAction();
+    expect(dupServer.postApiV1ServerstateQueueCompletionAction).toHaveBeenCalledExactlyOnceWith({
+      body: { Action: 'None' },
+    });
+    expect(component.cancellingQueueCompletionAction()).toBe(false);
   });
 
   it('starts nothing when the dialog is cancelled or nothing is picked', () => {
@@ -132,9 +206,10 @@ describe('home start all backups', () => {
 
     component.startAllBackups();
     dialog.open.mock.calls[0][1].closed(null);
-    dialog.open.mock.calls[0][1].closed([]);
+    dialog.open.mock.calls[0][1].closed({ ids: [], afterAction: 'Shutdown' });
 
     expect(dupServer.postApiV1BackupByIdStart).not.toHaveBeenCalled();
+    expect(dupServer.postApiV1ServerstateQueueCompletionAction).not.toHaveBeenCalled();
   });
 
   it('does not open the dialog when every backup is skipped', () => {

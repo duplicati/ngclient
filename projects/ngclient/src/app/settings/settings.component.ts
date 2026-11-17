@@ -279,6 +279,19 @@ export default class SettingsComponent {
       });
   }
 
+  // The script that "Start all" can run when the queue has completed, on a server with that feature
+  hasQueueCompletionAction = this.#sysinfo.hasQueueCompletionAction;
+  postQueueScript = signal<string>('');
+  updatingPostQueueScript = signal(false);
+
+  updatePostQueueScript() {
+    this.updatingPostQueueScript.set(true);
+    this.#serverSettingsService
+      .setPostQueueProcessingScript(this.postQueueScript())
+      .pipe(finalize(() => this.updatingPostQueueScript.set(false)))
+      .subscribe();
+  }
+
   hasMcpServer = this.#sysinfo.hasMcpServer;
   isMcpServerEnabled = this.#serverSettingsService.isMcpServerEnabled;
   updatingMcpServerState = signal(false);
@@ -531,6 +544,7 @@ export default class SettingsComponent {
     this.allowRemoteAccess.set(serverSettings['server-listen-interface'] === 'any');
     this.allowedHostnames.set(serverSettings['allowed-hostnames']);
     this.loadedAllowedHostnames.set(serverSettings['allowed-hostnames']);
+    this.postQueueScript.set(serverSettings['post-queue-processing-script'] ?? '');
     this.consoleControlDisabled.set(serverSettings['disable-console-control'] === 'True' ? true : false);
     this.usageStatistics.set(toUsageStatisticsControlValue(serverSettings['usage-reporter-level']));
 
