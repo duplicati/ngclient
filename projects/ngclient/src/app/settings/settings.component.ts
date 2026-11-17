@@ -27,6 +27,7 @@ import { McpTokensComponent } from './mcp-tokens/mcp-tokens.component';
 import { RemoteControlComponent } from './remote-control/remote-control.component';
 import { RemoteControlState } from './remote-control/remote-control.state';
 import { ServerSettingsService } from './server-settings.service';
+import { SslCertificateComponent } from './ssl-certificate/ssl-certificate.component';
 import {
   SERVER_TIMEZONE_KEY,
   toServerTimezoneControlValue,
@@ -78,6 +79,7 @@ type TimeTypes = (typeof TIME_OPTIONS)[number]['value'];
     StatusBarComponent,
     RemoteControlComponent,
     McpTokensComponent,
+    SslCertificateComponent,
     AdvancedOptionsSettingsComponent,
     ShipButton,
     ShipRadio,

@@ -1,0 +1,15 @@
+@use '@ship-ui/core/styles/helpers' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: p2r(12);
+  width: 100%;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: p2r(8);
+}
