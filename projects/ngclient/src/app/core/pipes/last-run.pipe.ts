@@ -44,3 +44,48 @@ export class LastRunPipe implements PipeTransform {
     return getLastRunValue(job, field);
   }
 }
+
+export type LastRunError = {
+  date: string;
+  message: string;
+};
+
+// The server writes dates as basic ISO 8601 in UTC, e.g. 20260921T100045Z
+function parseServerDate(value: string | null | undefined): number | undefined {
+  const match = /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z$/.exec(value ?? '');
+  if (!match) return undefined;
+
+  const [, year, month, day, hour, minute, second] = match.map(Number);
+  return Date.UTC(year, month - 1, day, hour, minute, second);
+}
+
+/**
+ * Reads the error of the last run of a job, if the last run failed.
+ * The server records LastErrorDate and LastErrorMessage when a run fails, and the
+ * finished time when a run completes, so the newer of the two tells whether the
+ * latest attempt failed. This matches how the server decides the folder status.
+ * LastBackupDate is used for a backup job whose metadata predates the finished key.
+ */
+export function getLastRunError(job: JobWithMetadata | null | undefined): LastRunError | undefined {
+  const metadata = job?.Metadata;
+  const errorDate = metadata?.['LastErrorDate'];
+  const errorTime = parseServerDate(errorDate);
+  if (!metadata || !errorDate || errorTime === undefined) return undefined;
+
+  const finished =
+    getLastRunValue(job, 'finished') ?? (job?.OperationType === 'Sync' ? undefined : metadata['LastBackupDate']);
+  const finishedTime = parseServerDate(finished);
+  if (finishedTime !== undefined && errorTime < finishedTime) return undefined;
+
+  return { date: errorDate, message: metadata['LastErrorMessage'] ?? '' };
+}
+
+@Pipe({
+  name: 'lastRunError',
+  standalone: true,
+})
+export class LastRunErrorPipe implements PipeTransform {
+  transform(job: JobWithMetadata | null | undefined): LastRunError | undefined {
+    return getLastRunError(job);
+  }
+}
