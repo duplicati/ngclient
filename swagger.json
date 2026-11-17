@@ -3564,6 +3564,13 @@
           "Enabled": {
             "type": "boolean"
           },
+          "RunAfterBackupID": {
+            "type": "string",
+            "nullable": true
+          },
+          "RunAfterCondition": {
+            "$ref": "#/components/schemas/RunAfterCondition"
+          },
           "DBPath": {
             "type": "string",
             "nullable": true
@@ -3651,6 +3658,13 @@
           "Enabled": {
             "type": "boolean",
             "nullable": true
+          },
+          "RunAfterBackupID": {
+            "type": "string",
+            "nullable": true
+          },
+          "RunAfterCondition": {
+            "$ref": "#/components/schemas/RunAfterCondition"
           },
           "Sources": {
             "type": "array",
@@ -5732,6 +5746,13 @@
         "enum": [
           "Backup",
           "Sync"
+        ],
+        "type": "string"
+      },
+      "RunAfterCondition": {
+        "enum": [
+          "Success",
+          "Always"
         ],
         "type": "string"
       },

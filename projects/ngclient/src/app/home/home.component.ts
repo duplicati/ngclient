@@ -19,6 +19,7 @@ import { ShipSort, ShipTable } from '@ship-ui/core/ship-table';
 import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { defer, finalize, take } from 'rxjs';
 import { getBackendIcon, getBackendType } from '../backup/destination/destination.config-utilities';
+import { getRunAfterName } from '../backup/schedule-v2/run-after';
 import { BackupProgressComponent } from '../core/components/backup-progress/backup-progress.component';
 import { PauseDialogComponent } from '../core/components/status-bar/pause-dialog/pause-dialog.component';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
@@ -82,6 +83,19 @@ export default class HomeComponent {
   hasPurgeFiles = this.#sysinfo.hasV2PurgeFiles;
   hasEnableDisable = this.#sysinfo.hasBackupEnableDisable;
   hasSyncRestore = this.#sysinfo.hasSyncRestore;
+
+  // The name of the job each job runs after, for the jobs that run after another job
+  runAfterNames = computed(() => {
+    const backups = this.#backupsState.backups();
+    const res: { [key: string]: string } = {};
+    if (!this.#sysinfo.hasBackupRunAfter()) return res;
+
+    backups.forEach((bk) => {
+      const name = getRunAfterName(backups, bk.Backup?.RunAfterBackupID);
+      if (bk.Backup?.ID && name) res[bk.Backup.ID] = name;
+    });
+    return res;
+  });
 
   MISSING_BACKUP_NAME = $localize`Backup name missing`;
   startLabel = $localize`Start`;

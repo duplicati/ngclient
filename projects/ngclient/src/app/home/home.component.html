@@ -216,6 +216,14 @@
                         </p>
                       }
 
+                      @let runAfterName = runAfterNames()[backup.Backup.ID ?? ''];
+                      @if (runAfterName) {
+                        <p>
+                          <span i18n>Runs after:</span>
+                          <span class="time-value">{{ runAfterName }}</span>
+                        </p>
+                      }
+
                       <p>
                         <span i18n>Duration:</span>
                         @if (backup.Backup | lastRun: 'duration') {
@@ -407,6 +415,8 @@
                   <span class="time-value" [shTooltip]="next | relativeTime: timeType() !== 'actual'">
                     {{ next | relativeTime: timeType() === 'actual' }}
                   </span>
+                } @else if (runAfterNames()[backup.Backup.ID ?? '']; as runAfterName) {
+                  <span class="time-value" i18n>After {{ runAfterName }}</span>
                 } @else {
                   <ng-container>-</ng-container>
                 }

@@ -35,7 +35,7 @@ describe('backup save lifecycle', () => {
       providers: [
         BackupState,
         { provide: Router, useValue: { navigate } },
-        { provide: SysinfoState, useValue: { systemInfo: signal(null) } },
+        { provide: SysinfoState, useValue: { systemInfo: signal(null), hasBackupRunAfter: signal(false) } },
         { provide: ShipDialogService, useValue: { open: vi.fn() } },
         { provide: DuplicatiServer, useValue: { postApiV1Backups: create, putApiV1BackupById: update } },
         { provide: ServerSettingsService, useValue: {} },

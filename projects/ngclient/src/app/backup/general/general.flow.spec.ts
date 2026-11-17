@@ -49,6 +49,7 @@ describe('GeneralComponent editing contracts', () => {
           provide: SysinfoState,
           useValue: {
             hasSyncMode: signal(true),
+            hasBackupRunAfter: signal(false),
             systemInfo: signal({ EncryptionModules: [{ Key: 'aes', DisplayName: 'AES' }] }),
           },
         },
