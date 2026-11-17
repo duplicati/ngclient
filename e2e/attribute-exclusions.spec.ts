@@ -100,6 +100,15 @@ for (const { attributes, interaction } of [
         const add = page.getByRole('button', { name: 'Add advanced option', exact: true });
         await expect(add).toBeEnabled();
         if (interaction === 'keyboard') {
+          const retention = page.locator('sh-select').filter({ hasText: 'Backup retention' }).getByRole('combobox');
+          await retention.focus();
+          await expect(retention).toHaveAttribute('aria-expanded', 'true');
+          await page.getByRole('option', { name: 'Keep a specific number of backups', exact: true }).click();
+          await page.locator('#backupRetentionVersions').fill('7');
+          await retention.focus();
+          await expect(retention).toHaveAttribute('aria-expanded', 'true');
+          await add.focus();
+          await expect(retention).toHaveAttribute('aria-expanded', 'false');
           await page
             .getByRole('navigation', { name: 'Backup steps' })
             .getByRole('link', { name: 'Options', exact: true })
@@ -152,6 +161,9 @@ for (const { attributes, interaction } of [
     }
     await page.getByRole('button', { name: 'Submit', exact: true }).click();
     await expect.poll(() => saves).toBe(1);
+    if (interaction === 'keyboard') {
+      expect(settings.find((setting) => setting.Name.replace(/^--/, '') === 'keep-versions')?.Value).toBe('7');
+    }
     expect(
       settings
         .find((setting) => setting.Name.replace(/^--/, '') === 'exclude-files-attributes')
@@ -183,5 +195,6 @@ for (const { attributes, interaction } of [
     expect(settings.find((setting) => setting.Name === '--dry-run')?.Value).toBe('False');
     await openOptions(['Hidden', 'System', 'Archive']);
     await expect(toggle).not.toBeChecked();
+    if (interaction === 'keyboard') await expect(page.locator('#backupRetentionVersions')).toHaveValue('7');
   });
 }
