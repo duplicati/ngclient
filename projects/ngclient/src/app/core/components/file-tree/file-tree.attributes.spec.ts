@@ -73,9 +73,9 @@ describe('file tree attribute exclusion feedback', () => {
     const hidden = documents.children.find((n) => n.text === 'hidden.txt')!;
     const system = documents.children.find((n) => n.text === 'system.txt')!;
     const cache = documents.children.find((n) => n.text === 'cache')!;
-    expect(component.treeItemLabel(hidden)).toContain('Excluded by Hidden attribute');
-    expect(component.treeItemLabel(system)).toContain('Excluded by System attribute');
-    expect(component.treeItemLabel(cache.children[0])).toContain('Excluded by parent attribute');
+    expect(component.treeItemLabel(hidden)).toContain('Excluded: Hidden');
+    expect(component.treeItemLabel(system)).toContain('Excluded: System');
+    expect(component.treeItemLabel(cache.children[0])).toContain('Excluded: parent');
     expect(component.treeItemLabel(documents.children.find((n) => n.text === 'normal.txt')!)).not.toContain('Excluded');
     expect(component.currentPath()).toBe('/Documents/');
     fixture.componentRef.setInput('excludedAttributes', []);
@@ -98,7 +98,7 @@ describe('file tree attribute exclusion feedback', () => {
     expect(component.treeItemLabel(documents)).not.toContain('Excluded');
     expect(component.treeItemLabel(documents.children.find((n) => n.text === 'hidden.txt')!)).not.toContain('Excluded');
     expect(component.treeItemLabel(documents.children.find((n) => n.text === 'other.txt')!)).toContain(
-      'Excluded by Hidden attribute'
+      'Excluded: Hidden'
     );
   });
 
@@ -125,9 +125,7 @@ describe('file tree attribute exclusion feedback', () => {
     const folder = component.treeStructure()[0].children[0];
     expect(component.treeItemLabel(folder)).not.toContain('Excluded');
     expect(component.treeItemLabel(folder.children.find((n) => n.text === 'explicit.txt')!)).not.toContain('Excluded');
-    expect(component.treeItemLabel(folder.children.find((n) => n.text === 'child.txt')!)).toContain(
-      'Excluded by Hidden attribute'
-    );
+    expect(component.treeItemLabel(folder.children.find((n) => n.text === 'child.txt')!)).toContain('Excluded: Hidden');
   });
   it('selects an attribute-excluded file as an explicit source', () => {
     const { component } = setup({ rootPaths: ['/Documents/'], excludedAttributes: ['Hidden'], showHiddenNodes: true });
@@ -140,7 +138,7 @@ describe('file tree attribute exclusion feedback', () => {
     if (!component.isTreeNodeExpanded(root)) component.toggleNode(new Event('click'), root.id!, root);
     fixture.detectChanges();
     const hidden = component.treeStructure()[0].children.find((n) => n.text === 'hidden.txt')!;
-    expect(component.treeItemLabel(hidden)).toContain('Excluded by Hidden attribute');
+    expect(component.treeItemLabel(hidden)).toContain('Excluded: Hidden');
     component.toggleSelectedNode(new Event('click'), hidden);
     fixture.detectChanges();
     expect(component.currentPath().split('\0')).toContain('/Documents/hidden.txt');

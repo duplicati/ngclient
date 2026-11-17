@@ -2,7 +2,7 @@ import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { DuplicatiServer } from '../../core/openapi';
 import { TimespanLiteralsService } from '../../core/services/timespan-literals.service';
@@ -18,6 +18,8 @@ describe('SourceDataComponent form contracts', () => {
   let fixture: ComponentFixture<SourceDataComponent>;
   let state: BackupState;
   const navigate = vi.fn();
+  const dialogClosed = new Subject<string[] | null>();
+  const openDialog = vi.fn((..._args: unknown[]) => ({ closed: dialogClosed }));
   const original = '/documents/\0/music/\0-*.tmp';
 
   async function settle() {
@@ -33,7 +35,7 @@ describe('SourceDataComponent form contracts', () => {
         BackupState,
         { provide: Router, useValue: { navigate } },
         { provide: ActivatedRoute, useValue: { parent: {} } },
-        { provide: ShipDialogService, useValue: {} },
+        { provide: ShipDialogService, useValue: { open: openDialog } },
         { provide: DuplicatiServer, useValue: { postApiV1Filesystem: () => of([]) } },
         { provide: TimespanLiteralsService, useValue: {} },
         { provide: WebModulesService, useValue: {} },
@@ -154,8 +156,49 @@ describe('SourceDataComponent form contracts', () => {
     expect(summary?.textContent).toContain('Archive');
     expect(state.settings()).toEqual(settings);
     expect(fixture.componentInstance.previewAttributes()).toEqual(['hIdDeN', 'SYSTEM']);
-    summary?.querySelector('button').click();
-    expect(navigate).toHaveBeenCalledWith(['options'], { relativeTo: expect.anything() });
+  });
+  it('edits attribute exclusions in a dialog without leaving the page', async () => {
+    await render();
+    state.settings.set([
+      { Name: '--other', Value: '1' },
+      { Name: '--exclude-files-attributes', Value: 'Hidden,Archive' },
+    ]);
+    await settle();
+    fixture.nativeElement.querySelector('.attribute-exclusions button').click();
+    expect(navigate).not.toHaveBeenCalled();
+    expect(openDialog.mock.lastCall?.[1]).toMatchObject({ data: { selected: ['Hidden', 'Archive'] } });
+
+    dialogClosed.next(null);
+    expect(state.settings()[1].Value).toBe('Hidden,Archive');
+
+    dialogClosed.next(['Hidden', 'System']);
+    expect(state.settings()).toEqual([
+      { Name: '--other', Value: '1' },
+      { Name: '--exclude-files-attributes', Value: 'Hidden,System' },
+    ]);
+
+    // Clearing removes the job option unless it has to override an inherited value.
+    dialogClosed.next([]);
+    expect(state.settings()).toEqual([{ Name: '--other', Value: '1' }]);
+  });
+  it('keeps an empty job override when clearing inherited attribute exclusions', async () => {
+    await render();
+    state.applicationOptions.set([
+      {
+        Name: '--exclude-files-attributes',
+        Value: 'Hidden',
+        Filter: null,
+        Argument: { Name: 'exclude-files-attributes', Type: 'Flags' },
+      },
+    ]);
+    await settle();
+    fixture.nativeElement.querySelector('.attribute-exclusions button').click();
+    dialogClosed.next([]);
+    await settle();
+    expect(state.settings()).toEqual([{ Name: '--exclude-files-attributes', Value: '' }]);
+    expect(fixture.nativeElement.querySelector('.attribute-exclusions').textContent).toContain(
+      'No attribute exclusions configured.'
+    );
   });
   it('previews inherited attributes but respects an explicitly empty job override', async () => {
     await render();
@@ -177,5 +220,24 @@ describe('SourceDataComponent form contracts', () => {
       'No attribute exclusions configured.'
     );
     expect(state.settings()).toEqual([{ Name: '--exclude-files-attributes', Value: '' }]);
+  });
+  it('collapses the attribute card while nothing is configured and lets it be toggled', async () => {
+    await render();
+    const card = fixture.nativeElement.querySelector('.attribute-exclusions');
+    expect(card.classList).not.toContain('active');
+    card.querySelector('h3').click();
+    await settle();
+    expect(card.classList).toContain('active');
+    card.querySelector('h3').click();
+    await settle();
+    expect(card.classList).not.toContain('active');
+
+    // Editing must not toggle the card, but defining attributes opens it.
+    card.querySelector('button').click();
+    await settle();
+    expect(card.classList).not.toContain('active');
+    dialogClosed.next(['Hidden']);
+    await settle();
+    expect(card.classList).toContain('active');
   });
 });

@@ -698,11 +698,11 @@ export default class FileTreeComponent {
       })
     )
       return undefined;
-    if (parent?.attributeExclusion) return $localize`Excluded by parent attribute`;
+    if (parent?.attributeExclusion) return $localize`Excluded: parent`;
     const attributes = new Set(this.excludedAttributes().map((value) => value.trim().toLowerCase()));
-    if (node.hidden && attributes.has('hidden')) return $localize`Excluded by Hidden attribute`;
-    if (node.systemFile && attributes.has('system')) return $localize`Excluded by System attribute`;
-    if (node.temporary && attributes.has('temporary')) return $localize`Excluded by Temporary attribute`;
+    if (node.hidden && attributes.has('hidden')) return $localize`Excluded: Hidden`;
+    if (node.systemFile && attributes.has('system')) return $localize`Excluded: System`;
+    if (node.temporary && attributes.has('temporary')) return $localize`Excluded: Temporary`;
     return undefined;
   }
 
