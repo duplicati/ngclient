@@ -39,6 +39,7 @@ describe('LayoutComponent sidenav links', () => {
         { provide: ShipDialogService, useValue: { open: () => {} } },
         { provide: NotificationsState, useValue: { init: () => {} } },
         { provide: AppAuthState, useValue: { logout: () => {} } },
+        { provide: IdleLogoutState, useValue: { watch: () => {} } },
         {
           provide: ServerSettingsService,
           useValue: {

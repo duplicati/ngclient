@@ -1,3 +1,4 @@
+import { splitSize } from '../../core/functions/parse-size';
 import {
   BackupAndScheduleInputDto,
   BackupDto,
@@ -5,7 +6,6 @@ import {
   ScheduleInputDto,
   SettingInputDto,
 } from '../../core/openapi';
-import { splitSize } from '../../core/functions/parse-size';
 import { resolveBackupEncryptionSettings } from '../backup-encryption-settings';
 import {
   BackupOptionsFormValue,
@@ -67,8 +67,16 @@ export type BackupFormValue = {
   general: GeneralFormValue;
   sourceData: SourceDataFormValue;
   schedule: ScheduleInputDto | null;
+  runAfter: RunAfterFormValue | null;
   targetUrls: BackupTargetUrl[];
   settings: SettingInputDto[];
+};
+
+export type RunAfterFormValue = {
+  // The job this job runs after, or null if it does not run after another job
+  backupId: string | null;
+  // True if this job also runs when the other job fails or is stopped
+  always: boolean;
 };
 
 export function mapBackupToGeneralForm(backup: BackupDto) {
@@ -283,6 +291,12 @@ export function mapBackupFormToDto(form: BackupFormValue): BackupAndScheduleInpu
       TargetURL: targetUrl ?? null,
       ConnectionStringID: firstTarget?.connectionStringId ?? null,
       OperationType: (generalFormValue.operationType as OperationType) ?? 'Backup',
+      ...(form.runAfter
+        ? {
+            RunAfterBackupID: form.runAfter.backupId,
+            RunAfterCondition: form.runAfter.always ? 'Always' : 'Success',
+          }
+        : {}),
       Sources: pathFilters.filter((x) => !(x.startsWith('-') || x.startsWith('+'))),
       Settings: settings,
       Filters: pathFilters

@@ -20,17 +20,19 @@ describe('BackupState saved DTO contracts', () => {
     '--global-option': 'enabled',
     unrelated: 'ignore',
   });
+  const hasBackupRunAfter = signal(false);
   beforeEach(() => {
     vi.stubEnv('TZ', 'UTC');
     create.mockClear();
     update.mockClear();
+    hasBackupRunAfter.set(false);
     TestBed.configureTestingModule({
       providers: [
         BackupState,
         { provide: Router, useValue: { navigate: vi.fn() } },
         { provide: ShipDialogService, useValue: {} },
         { provide: DuplicatiServer, useValue: { postApiV1Backups: create, putApiV1BackupById: update } },
-        { provide: SysinfoState, useValue: { systemInfo: signal(null) } },
+        { provide: SysinfoState, useValue: { systemInfo: signal(null), hasBackupRunAfter } },
         { provide: ServerSettingsService, useValue: { serverSettings: settings } },
         { provide: TimespanLiteralsService, useValue: { fromString: () => ({ value: 2, unit: 'W' }) } },
         { provide: ConnectionStringsState, useValue: { destinations: signal([]), reload: vi.fn() } },
@@ -113,6 +115,37 @@ describe('BackupState saved DTO contracts', () => {
     });
     expect(mode === 'edit' ? create : update).not.toHaveBeenCalled();
     expect(state.isSubmitting()).toBe(false);
+  });
+
+  it('saves the job to run after when the server supports it', () => {
+    hasBackupRunAfter.set(true);
+    state.backupId.set('string');
+    load();
+    state.mapGeneralToForm({ ...loaded, RunAfterBackupID: '7', RunAfterCondition: 'Always' });
+    expect(state.runAfterBackupId()).toBe('7');
+    expect(state.runAfterAlways()).toBe(true);
+
+    state.submit(true);
+    expect(update).toHaveBeenCalledExactlyOnceWith({
+      path: { id: 'string' },
+      body: {
+        Backup: { ...expectedBackup, RunAfterBackupID: '7', RunAfterCondition: 'Always' },
+        Schedule: { Time: '2026-10-30T13:00:00.000Z', Repeat: '2W', AllowedDays: ['Monday', 'Friday'] },
+      },
+    });
+
+    // Removing the job sends an explicit null, so the server removes the stored reference
+    update.mockClear();
+    state.runAfterBackupId.set(null);
+    state.runAfterAlways.set(false);
+    state.submit(true);
+    expect(update).toHaveBeenCalledExactlyOnceWith({
+      path: { id: 'string' },
+      body: {
+        Backup: { ...expectedBackup, RunAfterBackupID: null, RunAfterCondition: 'Success' },
+        Schedule: { Time: '2026-10-30T13:00:00.000Z', Repeat: '2W', AllowedDays: ['Monday', 'Friday'] },
+      },
+    });
   });
 
   it('saves a Sync job without encryption or retention and with scheduling disabled', () => {

@@ -121,6 +121,12 @@ export class SysinfoState {
     return apiExtensions.includes('v1:backup:enable-disable');
   });
 
+  // A backup can be set to run each time another backup finishes
+  hasBackupRunAfter = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v1:backup:run-after');
+  });
+
   hasRestoreOptions = computed(() => {
     const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
     return apiExtensions.includes('v1:backup:restore-options');

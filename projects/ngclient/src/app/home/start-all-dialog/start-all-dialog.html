@@ -1,0 +1,38 @@
+<header>
+  <h3 class="title-30" i18n>Start all backups</h3>
+</header>
+
+<section content>
+  <p i18n>
+    Pick the backups to start. They run one after another. Disabled backups and backups that are already running or
+    queued are not listed.
+  </p>
+
+  <div class="list-actions">
+    <button shButton type="button" class="small" [disabled]="allSelected()" (click)="selectAll()" i18n>
+      Select&nbsp;all
+    </button>
+    <button shButton type="button" class="small" [disabled]="noneSelected()" (click)="selectNone()" i18n>
+      Select&nbsp;none
+    </button>
+  </div>
+
+  <div class="options">
+    @for (backup of backups(); track backup.id) {
+      <sh-checkbox
+        class="primary raised"
+        [checked]="selected().has(backup.id)"
+        (checkedChange)="toggle(backup.id, $event)">
+        {{ backup.name }}
+      </sh-checkbox>
+    }
+  </div>
+</section>
+
+<footer footer class="sticky">
+  <button shButton type="button" (click)="closed.emit(null)" i18n>Cancel</button>
+  <button shButton type="button" class="raised primary" [disabled]="noneSelected()" (click)="submit()" i18n>
+    Start
+    {selected().size, plural, =1 {1 backup} other {{{selected().size}} backups}}
+  </button>
+</footer>
