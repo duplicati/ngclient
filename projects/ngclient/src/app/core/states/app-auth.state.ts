@@ -171,6 +171,16 @@ export class AppAuthState {
     this.logout();
   }
 
+  /**
+   * Signs out a passphrase session that has been idle for too long.
+   * Relay and proxy sessions are signed in by something outside this interface, so they are left alone.
+   */
+  signOutAfterIdle() {
+    if (this.#relayConfigState.relayIsEnabled() || this.#isProxyAuthed()) return;
+
+    this.logout();
+  }
+
   logout() {
     this.#isLoggingOut.set(true);
     const { requestBody, local } = this.getRefreshNonceBody();

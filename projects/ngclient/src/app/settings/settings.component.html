@@ -202,6 +202,27 @@
 
   <section>
     <div class="left">
+      <h3 i18n>Sign out when idle</h3>
+      <p i18n>
+        The interface keeps you signed in for as long as it is open. Choose a time to be signed out automatically when
+        this browser has not been used for that long. The setting is stored in this browser only.
+      </p>
+    </div>
+
+    <div class="right">
+      <sh-select
+        [options]="idleLogoutOptions()"
+        value="value"
+        label="label"
+        [isClearable]="false"
+        (selectedOptionsChange)="updateIdleLogout($event)">
+        <input type="text" [ngModel]="idleLogoutCtrl()" [ngModelOptions]="{ standalone: true }" />
+      </sh-select>
+    </div>
+  </section>
+
+  <section>
+    <div class="left">
       <h3 i18n>Language</h3>
       <p i18n>Select a language for the platform</p>
     </div>

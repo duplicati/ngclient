@@ -37,6 +37,8 @@ import {
 import { debounceSignal } from '../core/functions/debounce-signal';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import { FileTreeState } from '../core/states/file-tree.state';
+import { IdleLogoutState } from '../core/states/idle-logout.state';
+import { toIdleLogoutMinutes, toIdleLogoutOptions } from './idle-logout-settings';
 import { RelayconfigState } from '../core/states/relayconfig.state';
 import {
   toUsageReporterLevel,
@@ -370,6 +372,18 @@ export default class SettingsComponent {
 
   cancelPasswordChange() {
     this.showPassphraseForm.set(false);
+  }
+
+  #idleLogout = inject(IdleLogoutState);
+  idleLogoutMinutes = this.#idleLogout.idleLogoutMinutes;
+  idleLogoutCtrl = computed(() => String(this.idleLogoutMinutes()));
+  idleLogoutOptions = computed(() => toIdleLogoutOptions(this.idleLogoutMinutes()));
+
+  updateIdleLogout(selected: unknown[]) {
+    const minutes = toIdleLogoutMinutes(selected, this.idleLogoutOptions());
+    if (minutes === null || minutes === this.idleLogoutMinutes()) return;
+
+    this.#idleLogout.setIdleLogoutMinutes(minutes);
   }
 
   languageOptions = signal([...LANGUAGES].sort((a, b) => a.label.localeCompare(b.label)));
