@@ -38,6 +38,8 @@ describe('BackupsState enable and disable', () => {
         IsTemporary: false,
         IsUnencryptedOrPassphraseStored: true,
         AdditionalTargetURLs: [],
+        RunAfterBackupID: null,
+        RunAfterCondition: 'Success',
         ...(enabled === undefined ? {} : { Enabled: enabled }),
       },
     };
