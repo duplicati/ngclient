@@ -62,6 +62,8 @@ describe('BackupsState list refresh transport and caching', () => {
         IsTemporary: false,
         IsUnencryptedOrPassphraseStored: true,
         AdditionalTargetURLs: [],
+        RunAfterBackupID: null,
+        RunAfterCondition: 'Success',
       },
     },
   ];
