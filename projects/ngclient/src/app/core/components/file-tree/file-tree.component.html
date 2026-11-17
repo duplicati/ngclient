@@ -93,7 +93,7 @@
               role="treeitem"
               [id]="treeItemId(node)"
               [attr.aria-label]="treeItemLabel(node)"
-              [attr.aria-description]="treeNodeLinkTarget(node)"
+              [attr.aria-description]="treeItemDescription(node)"
               [attr.aria-level]="data.level + 1"
               [attr.aria-posinset]="position + 1"
               [attr.aria-setsize]="treeSetSize(children)"
@@ -108,6 +108,8 @@
               [class.active]="node.evalState === TreeEvalEnum.Included && !node.attributeExclusion"
               [class.indeterminate]="node.isIndeterminate"
               [class.attribute-excluded]="!!node.attributeExclusion"
+              [class.partially-excluded]="node.hasExcludedDescendants === true"
+              [attr.title]="node.hasExcludedDescendants ? excludedDescendantsLabel : null"
               [class.excluded]="
                 node.attributeExclusion ||
                 node.evalState === TreeEvalEnum.Excluded ||
