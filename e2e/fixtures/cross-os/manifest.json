@@ -1,0 +1,26 @@
+[
+  {
+    "Path": "linux/duplicati-20261113T231007Z.dlist.zip",
+    "Sha256": "42f48fd8417023cc24a4dde7a71afad4abb24b09ce47d793d1ec8bb9ed99fd63"
+  },
+  {
+    "Path": "linux/duplicati-bd84a4d7385f948efb776491356eaf346.dblock.zip",
+    "Sha256": "61f8d7eb16f4d6721ec0c05d54b943e38e42df04fa71000c55b5fe2413963a64"
+  },
+  {
+    "Path": "linux/duplicati-if8ddf515745147819885757c4abb651a.dindex.zip",
+    "Sha256": "675abf19c9c00a6e733b1efdcf8e721ed389e2877cafdc8da12debeaba285828"
+  },
+  {
+    "Path": "windows/duplicati-20261113T231015Z.dlist.zip",
+    "Sha256": "a5e103adff61bd46a153b5a50531fe3f28b49f6f3a4484f9b90de3819eb4e249"
+  },
+  {
+    "Path": "windows/duplicati-bbcb2b5c4e1344bb9a97d035d06d9ff46.dblock.zip",
+    "Sha256": "7ad14c49197a2998af230d7f564345674393a5930dd6a78413bdd8e801ba3007"
+  },
+  {
+    "Path": "windows/duplicati-id9971f54a411463485b7e5eb69f38551.dindex.zip",
+    "Sha256": "caf60fc3b21db19978c36fd4c555bf8903eca3a9de82d4b1857909f6807401bc"
+  }
+]
