@@ -79,7 +79,7 @@ test.describe('operating system and server default modes', () => {
     serverApi,
   }) => {
     const trigger = page.getByRole('button', { name: /^Theme: / });
-    await expect(trigger).toHaveAccessibleName('Theme: Server default');
+    await expect(trigger).toHaveAccessibleName('Theme: Default');
     await expect(page.locator('html')).toHaveClass(/\bdark\b/);
 
     await chooseTheme(page, 'Operating system');
@@ -92,8 +92,8 @@ test.describe('operating system and server default modes', () => {
     await page.emulateMedia({ colorScheme: 'light' });
     await expect(page.locator('html')).toHaveClass(/\blight\b/);
 
-    await chooseTheme(page, 'Server default');
-    await expect(trigger).toHaveAccessibleName('Theme: Server default');
+    await chooseTheme(page, 'Default');
+    await expect(trigger).toHaveAccessibleName('Theme: Default');
     await expect(trigger.locator('sh-icon')).toHaveText('hard-drives');
     await expect(page.locator('html')).toHaveClass(/\bdark\b/);
     expect(await page.evaluate((key) => localStorage.getItem(key), preferenceKey)).toBeNull();
@@ -150,7 +150,7 @@ test.describe('server theme defaults', () => {
     });
     const defaults = page
       .locator('section')
-      .filter({ has: page.getByRole('heading', { name: 'Default theme for this server', exact: true }) });
+      .filter({ has: page.getByRole('heading', { name: 'Default theme', exact: true }) });
     const chooseDefault = async (name: string) => {
       await defaults.locator('sh-select').click();
       await page.locator('li.option').filter({ hasText: name }).click();
@@ -166,15 +166,15 @@ test.describe('server theme defaults', () => {
     await expect(defaults.locator('sh-select input')).toHaveValue('system');
     await expect.poll(() => serverApi.uiSettings.theme).toBe('system');
     await expect(page.locator('html')).toHaveClass(/\bdark\b/);
-    await page.getByRole('button', { name: 'Use server default', exact: true }).click();
-    expect(await page.evaluate((key) => localStorage.getItem(key), preferenceKey)).toBeNull();
-    await expect(page.getByRole('button', { name: 'Use server default', exact: true })).toHaveAttribute(
-      'aria-pressed',
-      'true'
-    );
     const personal = page
       .locator('section')
       .filter({ has: page.getByRole('heading', { name: 'Color theme', exact: true }) });
+    await personal.getByRole('button', { name: 'Default', exact: true }).click();
+    expect(await page.evaluate((key) => localStorage.getItem(key), preferenceKey)).toBeNull();
+    await expect(personal.getByRole('button', { name: 'Default', exact: true })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
     await personal.getByRole('button', { name: 'Operating system', exact: true }).click();
     await expect(personal.getByRole('button', { name: 'Operating system', exact: true })).toHaveAttribute(
       'aria-pressed',

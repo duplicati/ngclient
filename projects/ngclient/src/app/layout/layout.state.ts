@@ -19,7 +19,7 @@ export const THEME_OPTIONS: { value: ThemeMode; label: string }[] = [
   { value: 'light', label: $localize`Light` },
   { value: 'dark', label: $localize`Dark` },
   { value: 'system', label: $localize`Operating system` },
-  { value: 'server', label: $localize`Server default` },
+  { value: 'server', label: $localize`Default` },
 ];
 
 declare global {

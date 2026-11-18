@@ -50,6 +50,12 @@ import {
 
 type UpdateChannel = '' | 'stable' | 'beta' | 'experimental' | 'canary';
 
+const THEME_IMAGES: Record<ServerTheme, string> = {
+  light: 'assets/images/light-theme.png',
+  dark: 'assets/images/dark-theme.png',
+  system: 'assets/images/system-theme.png',
+};
+
 const TIME_OPTIONS = [
   {
     value: 'none',
@@ -112,11 +118,13 @@ export default class SettingsComponent {
 
   sysinfo = this.#sysinfo.systemInfo;
   themePreferences = this.#layoutState;
-  browserThemeOptions: { value: ThemeMode; label: string; image: string }[] = [
-    { value: 'light', label: $localize`Light`, image: 'assets/images/light-theme.png' },
-    { value: 'dark', label: $localize`Dark`, image: 'assets/images/dark-theme.png' },
-    { value: 'system', label: $localize`Operating system`, image: 'assets/images/system-theme.png' },
-  ];
+  // The server default tile previews whichever theme the server default currently resolves to.
+  themeOptions = computed<{ value: ThemeMode; label: string; image: string }[]>(() => [
+    { value: 'light', label: $localize`Light`, image: THEME_IMAGES.light },
+    { value: 'dark', label: $localize`Dark`, image: THEME_IMAGES.dark },
+    { value: 'system', label: $localize`Operating system`, image: THEME_IMAGES.system },
+    { value: 'server', label: $localize`Default`, image: THEME_IMAGES[this.#layoutState.serverTheme()] },
+  ]);
   serverThemeOptions: { value: ServerTheme; label: string }[] = [
     { value: 'system', label: $localize`Operating system` },
     { value: 'light', label: $localize`Light` },
