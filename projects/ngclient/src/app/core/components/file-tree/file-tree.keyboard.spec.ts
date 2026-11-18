@@ -233,6 +233,33 @@ describe('file tree keyboard navigation', () => {
     });
   });
 
+  it('reopens a previously loaded folder and returns focus to its child', () => {
+    const { component, list } = setup();
+    press(row('Documents'), 'ArrowRight');
+    press(row('Documents'), 'ArrowLeft');
+    expect(row('Documents').getAttribute('aria-expanded')).toBe('false');
+    press(row('Documents'), 'ArrowRight');
+    expect(row('Documents').getAttribute('aria-expanded')).toBe('true');
+    expect(document.activeElement).toBe(row('Documents'));
+    press(row('Documents'), 'ArrowRight');
+    expect(document.activeElement).toBe(row('notes.txt'));
+    expect(list).toHaveBeenCalledTimes(3);
+    expect(component.currentPath()).toBe('');
+  });
+
+  it('reopens an empty folder without repeatedly loading it while already expanded', () => {
+    const { list } = setup({}, { '/Documents/': [] });
+    press(row('Documents'), 'ArrowRight');
+    expect(row('Documents').getAttribute('aria-expanded')).toBe('true');
+    press(row('Documents'), 'ArrowRight');
+    expect(list).toHaveBeenCalledTimes(2);
+    press(row('Documents'), 'ArrowLeft');
+    press(row('Documents'), 'ArrowRight');
+    expect(row('Documents').getAttribute('aria-expanded')).toBe('true');
+    expect(list).toHaveBeenCalledTimes(3);
+    expect(document.activeElement).toBe(row('Documents'));
+  });
+
   it('toggles selection with Space and Enter while focus remains independent', () => {
     const { component } = setup();
     press(row('Documents'), ' ');
