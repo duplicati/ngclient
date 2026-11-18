@@ -22,8 +22,11 @@ const option = (page: Page, heading: string) =>
     .filter({ has: page.getByRole('heading', { name: heading, exact: true }) })
     .getByRole('checkbox');
 
-async function openDeletion(page: Page) {
+async function openDeletion(page: Page, usedElsewhere = false) {
   const deletes: Request[] = [];
+  await page.route('**/api/v1/backup/42/isdbusedelsewhere', (route) =>
+    route.fulfill({ json: { inuse: usedElsewhere } })
+  );
   await page.route('**/api/v1/filesystem/validate', (route) => route.fulfill({ json: {} }));
   await page.route('**/api/v1/backup/42*', async (route) => {
     expect(route.request().method()).toBe('DELETE');
@@ -121,5 +124,22 @@ test.describe('backup deletion', () => {
     const query = new URL(deletes[0].url()).searchParams;
     expect(query.get('delete-local-db')).toBe('false');
     expect(query.get('delete-remote-files')).toBe('true');
+  });
+});
+
+test.describe('shared command-line database deletion', () => {
+  test.use({ initialBackups: [[job('Backup')], { scope: 'test' }] });
+  test('keeps a shared database while deleting only the job configuration', async ({ authenticatedPage: page }) => {
+    const deletes = await openDeletion(page, true);
+    await expect(option(page, 'Delete local database')).toBeDisabled();
+    await expect(
+      page.getByText('This database is also used by the command line. The local database will be kept.')
+    ).toBeVisible();
+    await page.screenshot({ path: 'tmp/eight-prs-20261118/shared-db.png' });
+    await deleteButton(page).click();
+    await page.getByRole('dialog').getByRole('button', { name: 'Delete backup', exact: true }).click();
+    await expect(page).toHaveURL('/');
+    expect(deletes).toHaveLength(1);
+    expect(new URL(deletes[0].url()).searchParams.get('delete-local-db')).toBe('false');
   });
 });

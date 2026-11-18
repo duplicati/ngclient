@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -38,14 +38,25 @@ export default class DeleteBackupComponent {
   });
   fileCount = computed(() => parseInt(this.backup()?.Backup?.Metadata?.['TargetFilesCount'] ?? '0', 10));
 
+  databaseUsage = rxResource({
+    params: () => (this.backup()?.Backup?.DBPath ? { id: this.id() } : undefined),
+    stream: ({ params }) => defer(() => this.#dupServer.getApiV1BackupByIdIsdbusedelsewhere({ path: params })),
+  });
+  canDeleteLocalDb = computed(
+    () => !this.databaseUsage.isLoading() && !this.databaseUsage.error() && this.databaseUsage.value()?.inuse === false
+  );
+
   deleteLocalDb = signal(false);
   deleteRemoteFiles = signal(false);
   isDeleting = signal(false);
+  #keepSharedDatabase = effect(() => {
+    if (!this.canDeleteLocalDb()) this.deleteLocalDb.set(false);
+  });
 
   deleteBackup() {
     if (this.isDeleting()) return;
     const id = this.id();
-    const deleteLocalDb = this.deleteLocalDb();
+    const deleteLocalDb = this.canDeleteLocalDb() && this.deleteLocalDb();
     const deleteRemoteFiles = this.isSyncMode() ? undefined : this.deleteRemoteFiles();
 
     this.isDeleting.set(true);
