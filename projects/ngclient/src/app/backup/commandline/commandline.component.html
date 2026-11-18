@@ -11,13 +11,13 @@
   @if (!finishedLoading()) {
     <sh-progress-bar class="indeterminate primary"></sh-progress-bar>
   } @else {
-    <form [formGroup]="baseCmdForm">
+    <form>
       <sh-select [options]="commandOptions() ?? ['backup']" [inlineSearch]="true" placeholder="Select a command...">
         <label for="command" i18n>
           Command
           <sh-icon shTooltip="Choose the command to execute">question</sh-icon>
         </label>
-        <input type="text" id="command" formControlName="command" />
+        <input type="text" id="command" appNullableText [formField]="commandFields.command" />
       </sh-select>
 
       <sh-form-field>
@@ -25,7 +25,7 @@
           TargetUrl
           <sh-icon shTooltip="Enter the URL of the backup target">question</sh-icon>
         </label>
-        <textarea id="targetUrl" autocomplete="off" formControlName="targetUrl"></textarea>
+        <textarea id="targetUrl" autocomplete="off" appNullableText [formField]="commandFields.targetUrl"></textarea>
       </sh-form-field>
 
       <sh-form-field>
@@ -38,20 +38,21 @@
           id="arguments"
           autocomplete="off"
           rows="5"
-          formControlName="arguments"
+          appNullableText
+          [formField]="commandFields.arguments"
           placeholder="Enter one argument per line without quotes (e.g., *.txt)"></textarea>
       </sh-form-field>
     </form>
 
     <sh-divider i18n>Advanced options</sh-divider>
 
-    <form [formGroup]="standardFields">
+    <form>
       <sh-form-field>
         <label for="backup-id" i18n>
           Backup ID
           <sh-icon shTooltip="The ID of the backup configuration this run belongs to (can be empty)">question</sh-icon>
         </label>
-        <input id="backup-id" formControlName="backup-id" />
+        <input id="backup-id" appNullableText [formField]="metadataFields['backup-id']" />
       </sh-form-field>
 
       <sh-form-field>
@@ -59,7 +60,7 @@
           Backup Name
           <sh-icon shTooltip="The optional name of the backup">question</sh-icon>
         </label>
-        <input id="backup-name" formControlName="backup-name" />
+        <input id="backup-name" appNullableText [formField]="metadataFields['backup-name']" />
       </sh-form-field>
 
       <app-filters [(filters)]="filters" [osType]="osType() ?? ''" (filtersChange)="updateFilters($event)" />

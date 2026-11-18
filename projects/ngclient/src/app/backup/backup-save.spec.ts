@@ -15,6 +15,7 @@ describe('backup save lifecycle', () => {
   let state: BackupState;
   let response: Subject<any>;
   let connection: Subject<any>;
+  const open = vi.fn((_component: unknown, _options: { closed: (confirmed: boolean) => void }) => {});
   const create = vi.fn();
   const update = vi.fn();
   const saveConnection = vi.fn();
@@ -36,7 +37,7 @@ describe('backup save lifecycle', () => {
         BackupState,
         { provide: Router, useValue: { navigate } },
         { provide: SysinfoState, useValue: { systemInfo: signal(null), hasBackupRunAfter: signal(false) } },
-        { provide: ShipDialogService, useValue: { open: vi.fn() } },
+        { provide: ShipDialogService, useValue: { open } },
         { provide: DuplicatiServer, useValue: { postApiV1Backups: create, putApiV1BackupById: update } },
         { provide: ServerSettingsService, useValue: {} },
         { provide: TimespanLiteralsService, useValue: { fromString: () => null } },
@@ -75,6 +76,41 @@ describe('backup save lifecycle', () => {
     state.submit();
     expect(create.mock.calls[0][0].body.Backup.DBPath).toBeUndefined();
     expect(create.mock.calls[0][0].query).toBeUndefined();
+  });
+
+  it('asks before creating an unencrypted remote backup and permits cancellation or explicit confirmation', () => {
+    state.setTargetUrl('s3://bucket/backup');
+    state.submit();
+    state.submit();
+    expect(open).toHaveBeenCalledTimes(1);
+    expect(create).not.toHaveBeenCalled();
+    open.mock.calls[0][1].closed(false);
+    expect(create).not.toHaveBeenCalled();
+    state.submit();
+    open.mock.calls[1][1].closed(true);
+    expect(create).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not use a confirmation for a destination that was replaced while the dialog was open', () => {
+    state.setTargetUrl('s3://bucket/first');
+    state.submit();
+    expect(open).toHaveBeenCalledOnce();
+    state.setTargetUrl('s3://bucket/second');
+    open.mock.calls[0][1].closed(true);
+    expect(create).not.toHaveBeenCalled();
+    state.submit();
+    expect(open).toHaveBeenCalledTimes(2);
+  });
+
+  it.each(['edit', 'encrypted', 'sync'])('does not prompt for %s saves', (kind) => {
+    state.setTargetUrl('s3://bucket/backup');
+    if (kind === 'edit') state.backupId.set('42');
+    if (kind === 'encrypted')
+      state.generalForm.patchValue({ encryption: 'aes', password: 'secret', repeatPassword: 'secret' });
+    if (kind === 'sync') state.generalForm.controls.operationType.setValue('Sync');
+    state.submit();
+    expect(open).not.toHaveBeenCalled();
+    expect(kind === 'edit' ? update : create).toHaveBeenCalledOnce();
   });
 
   it('allows only one save while pending, and exits only once', () => {

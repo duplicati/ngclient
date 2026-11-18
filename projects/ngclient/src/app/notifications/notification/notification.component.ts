@@ -111,7 +111,7 @@ export class NotificationComponent {
   }
 
   doShowUpdate() {
-    this.#router.navigate(['/about/changelog']);
+    this.#router.navigate(['/about/changelog'], { queryParams: { 'from-update': true } });
   }
 
   doShowLink(link: string) {
@@ -128,25 +128,25 @@ export class NotificationComponent {
         },
       })
     ).subscribe({
-        next: (res) => {
-          if (!res.Token) {
-            this.#snackbar.error(`Failed to get bug report URL: No token generated`);
-            return;
-          }
+      next: (res) => {
+        if (!res.Token) {
+          this.#snackbar.error(`Failed to get bug report URL: No token generated`);
+          return;
+        }
 
-          const prefix = getApiBase();
-          const xsrfQuery = this.#auth.xsrfQueryParam();
-          const link = `${location.origin}${prefix}/api/v1/bugreport/${id}?token=${res.Token}${xsrfQuery ? `&${xsrfQuery}` : ''}`;
+        const prefix = getApiBase();
+        const xsrfQuery = this.#auth.xsrfQueryParam();
+        const link = `${location.origin}${prefix}/api/v1/bugreport/${id}?token=${res.Token}${xsrfQuery ? `&${xsrfQuery}` : ''}`;
 
-          item.DownloadLink = link;
-          this.#generatedDownloadLink.set(link);
+        item.DownloadLink = link;
+        this.#generatedDownloadLink.set(link);
 
-          this.triggerDownload(link);
-        },
-        error: (err) => {
-          this.#snackbar.error(`Failed to get bug report URL: ${err.message}`);
-        },
-      });
+        this.triggerDownload(link);
+      },
+      error: (err) => {
+        this.#snackbar.error(`Failed to get bug report URL: ${err.message}`);
+      },
+    });
   }
 
   triggerDownload(link: string) {

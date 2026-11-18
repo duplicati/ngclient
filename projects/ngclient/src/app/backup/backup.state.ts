@@ -124,11 +124,13 @@ export class BackupState {
   backupName = computed(() => this.generalFormSignal()?.name ?? '');
   #saveOperation = new AsyncOperation<unknown>();
   #saveContext: BackupSaveContext | null = null;
+  #encryptionConfirmation: { id: string | null; url: string } | null = null;
   saveState = this.#saveOperation.state;
   isSubmitting = this.#saveOperation.pending;
 
   constructor() {
     inject(DestroyRef).onDestroy(() => {
+      this.#encryptionConfirmation = null;
       this.#saveContext = null;
       this.#saveOperation.destroy();
     });
@@ -246,11 +248,55 @@ export class BackupState {
   }
 
   cancelSubmit() {
+    this.#encryptionConfirmation = null;
     this.#saveContext = null;
     this.#saveOperation.cancel();
   }
 
   submit(withoutExit = false) {
+    if (this.isSubmitting() || this.#encryptionConfirmation) return;
+    if (this.#needsEncryptionConfirmation()) {
+      const context = { id: this.backupId(), url: this.targetUrls()[0]?.url ?? '' };
+      this.#encryptionConfirmation = context;
+      this.#dialog.open(ConfirmDialogComponent, {
+        data: {
+          title: $localize`No encryption`,
+          message: $localize`This backup will be stored without encryption on remote storage. Anyone with access to the destination can read its contents.`,
+          confirmText: $localize`Continue without encryption`,
+          cancelText: $localize`Cancel`,
+        },
+        closed: (confirmed) => {
+          if (this.#encryptionConfirmation !== context) return;
+          this.#encryptionConfirmation = null;
+          if (
+            confirmed &&
+            this.backupId() === context.id &&
+            this.targetUrls()[0]?.url === context.url &&
+            this.#needsEncryptionConfirmation()
+          )
+            this.#submitConfirmed(withoutExit);
+        },
+      });
+      return;
+    }
+    this.#submitConfirmed(withoutExit);
+  }
+
+  #needsEncryptionConfirmation() {
+    if ((!this.isNew() && !this.isDraft()) || this.isSyncMode()) return false;
+    const backup = this.#mapFormsToBackup().Backup;
+    const target = backup?.TargetURL ?? '';
+    return (
+      target !== '' &&
+      !/^file:/i.test(target) &&
+      backup?.Settings?.some(
+        (setting) =>
+          (setting.Name ?? '').replace(/^--/, '') === 'no-encryption' && /^(true|1|yes)$/i.test(setting.Value ?? '')
+      )
+    );
+  }
+
+  #submitConfirmed(withoutExit: boolean) {
     if (this.targetUrls().slice(1).some(secondaryDestinationError)) {
       this.validateBeforeSubmit();
       return;
