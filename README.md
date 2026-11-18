@@ -128,6 +128,12 @@ and long-poll recovery, both with a successful refresh and with one deliberately
 injected refresh HTTP 503. All other auth/status traffic reaches the real server.
 They verify resumed subscriptions/state updates without a page reload. These four
 cases each wait for actual token expiry; browser time is not simulated.
+Destination-preservation cases compare the disposable server's stored URL with
+API and UI saves, including unknown providers, unreadable URLs, repeated/encoded
+parameters and masked credentials. They exercise mouse/keyboard saves and
+description-only edits without connecting to any remote provider or running a backup.
+These cases require a server containing the URL-masking fixes in Duplicati #7832,
+#7860 and #7898; older servers can fail even when the client preserves the URL.
 The worker stops its own server/proxy in teardown. Logs, isolated server data and
 failure traces remain under `test-results` for diagnosis (normal Playwright output
 cleanup applies on the next run). Abruptly terminating the runner may bypass teardown.
