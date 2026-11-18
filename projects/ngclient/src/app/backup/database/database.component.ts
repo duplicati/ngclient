@@ -36,6 +36,8 @@ export default class DatabaseComponent {
 
   backupId = toSignal<string>(this.#route.params.pipe(map((x) => x['id'])));
   activeBackup = computed(() => this.#backups.backups().find((x) => x.Backup?.ID === this.backupId()));
+  // The maintenance operations work on a backup database, which a Sync job does not have
+  isSync = computed(() => this.activeBackup()?.Backup?.OperationType === 'Sync');
 
   placementForm = form(signal({ path: '' }));
   backupFilePath = this.placementForm.path().value;
