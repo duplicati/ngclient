@@ -15,8 +15,15 @@
 
     <sh-checkbox class="primary raised">
       Delete local database
-      <input type="checkbox" [(ngModel)]="deleteLocalDb" />
+      <input type="checkbox" [(ngModel)]="deleteLocalDb" [disabled]="!canDeleteLocalDb()" />
     </sh-checkbox>
+    @if (databaseUsage.isLoading()) {
+      <p role="status" i18n>Checking whether the local database is shared…</p>
+    } @else if (databaseUsage.error()) {
+      <p role="status" i18n>The database usage could not be checked. The local database will be kept.</p>
+    } @else if (databaseUsage.value()?.inuse) {
+      <p role="status" i18n>This database is also used by the command line. The local database will be kept.</p>
+    }
   </section>
 }
 
