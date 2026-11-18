@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
+import { FormField, provideSignalFormsConfig } from '@angular/forms/signals';
+import { compatForm, NG_STATUS_CLASSES } from '@angular/forms/signals/compat';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { defer } from 'rxjs';
 import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
@@ -18,17 +20,19 @@ import { BackupState } from '../backup.state';
 import { FiltersComponent } from '../components/filters/filters.component';
 import { OptionsListComponent } from '../options/options-list/options-list.component';
 import { CommandlineService } from './commandline.service';
+import { NullableTextControl } from '../general/nullable-text-control';
 
 const fb = new FormBuilder();
 
 @Component({
   selector: 'app-commandline',
   imports: [
-    FormsModule,
+    FormField,
+    NullableTextControl,
     StatusBarComponent,
     OptionsListComponent,
     FiltersComponent,
-    ReactiveFormsModule,
+
     RouterLink,
     ShipFormField,
     ShipButton,
@@ -41,7 +45,7 @@ const fb = new FormBuilder();
   templateUrl: './commandline.component.html',
   styleUrl: './commandline.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [BackupState],
+  providers: [BackupState, provideSignalFormsConfig({ classes: NG_STATUS_CLASSES })],
 })
 export default class CommandlineComponent {
   #backupState = inject(BackupState);
@@ -72,6 +76,9 @@ export default class CommandlineComponent {
     targetUrl: fb.control(''),
     arguments: fb.control(''),
   });
+
+  commandFields = compatForm(signal(this.baseCmdForm.controls));
+  metadataFields = compatForm(signal(this.standardFields.controls));
 
   // The backup sources, which are the arguments of the backup command only
   #sources = '';
