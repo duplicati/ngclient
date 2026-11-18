@@ -20,7 +20,7 @@ import { LANGUAGES, mapLocale } from '../core/locales/locales.utility';
 import { LOCALSTORAGE } from '../core/services/localstorage.token';
 import { AppAuthState } from '../core/states/app-auth.state';
 import { SysinfoState } from '../core/states/sysinfo.state';
-import { LayoutState, ServerTheme } from '../layout/layout.state';
+import { LayoutState, ServerTheme, ThemeMode } from '../layout/layout.state';
 import AdvancedOptionsSettingsComponent from './advanced-options-settings/advanced-options-settings.component';
 import { getMcpServerDisableWarning } from './mcp-tokens/mcp-token-settings';
 import { McpTokensComponent } from './mcp-tokens/mcp-tokens.component';
@@ -49,6 +49,12 @@ import {
 } from './usage-statistics-settings';
 
 type UpdateChannel = '' | 'stable' | 'beta' | 'experimental' | 'canary';
+
+const THEME_IMAGES: Record<ServerTheme, string> = {
+  light: 'assets/images/light-theme.png',
+  dark: 'assets/images/dark-theme.png',
+  system: 'assets/images/system-theme.png',
+};
 
 const TIME_OPTIONS = [
   {
@@ -111,8 +117,14 @@ export default class SettingsComponent {
   #initLang = mapLocale(this.#ls.getItem('locale'));
 
   sysinfo = this.#sysinfo.systemInfo;
-  isDarkMode = this.#layoutState.isDarkMode;
   themePreferences = this.#layoutState;
+  // The server default tile previews whichever theme the server default currently resolves to.
+  themeOptions = computed<{ value: ThemeMode; label: string; image: string }[]>(() => [
+    { value: 'light', label: $localize`Light`, image: THEME_IMAGES.light },
+    { value: 'dark', label: $localize`Dark`, image: THEME_IMAGES.dark },
+    { value: 'system', label: $localize`Operating system`, image: THEME_IMAGES.system },
+    { value: 'server', label: $localize`Default`, image: THEME_IMAGES[this.#layoutState.serverTheme()] },
+  ]);
   serverThemeOptions: { value: ServerTheme; label: string }[] = [
     { value: 'system', label: $localize`Operating system` },
     { value: 'light', label: $localize`Light` },
@@ -565,14 +577,6 @@ export default class SettingsComponent {
     this.powerModeCtrl.set(powerModeValue);
     this.serverTimezone.set(toServerTimezoneControlValue(serverSettings[SERVER_TIMEZONE_KEY]));
   });
-
-  setDarkMode() {
-    this.#layoutState.setDarkMode();
-  }
-
-  setLightMode() {
-    this.#layoutState.setLightMode();
-  }
 
   changeDefaultClientTo(client: 'ngclient' | 'ngax') {
     if (this.defaultClient() === client) return;

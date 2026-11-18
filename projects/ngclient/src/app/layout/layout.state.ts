@@ -9,6 +9,18 @@ import { WINDOW } from '../core/providers/window';
 const UI_SETTINGS_SCHEME = 'ngclient';
 const THEME_KEY = 'theme';
 export type ServerTheme = 'system' | 'light' | 'dark';
+// 'server' follows the shared default; the other three are personal choices for this browser.
+export type ThemeMode = 'light' | 'dark' | 'system' | 'server';
+// Stored under the legacy `darkTheme` key so existing light/dark choices keep working: true = dark,
+// false = light, 'system' = operating system, absent = server default.
+type StoredTheme = boolean | 'system' | null;
+
+export const THEME_OPTIONS: { value: ThemeMode; label: string }[] = [
+  { value: 'light', label: $localize`Light` },
+  { value: 'dark', label: $localize`Dark` },
+  { value: 'system', label: $localize`Operating system` },
+  { value: 'server', label: $localize`Default` },
+];
 
 declare global {
   interface Window {
@@ -24,7 +36,7 @@ export class LayoutState {
   #document = inject(DOCUMENT);
   #platformId = inject(PLATFORM_ID);
   #dupServer = inject(DuplicatiServer);
-  #browserTheme = localStorageSignal<boolean | null>('darkTheme', null, true);
+  #browserTheme = localStorageSignal<StoredTheme>('darkTheme', null, true);
   #serverTheme = signal<ServerTheme>('system');
   #systemDark = signal(false);
   #destroyRef = inject(DestroyRef);
@@ -34,17 +46,23 @@ export class LayoutState {
   serverThemeLoadError = signal(false);
   serverThemeSaving = signal(false);
   serverThemeSaveError = signal(false);
-  followsServerTheme = computed(() => this.#browserTheme() === null);
+  themeMode = computed<ThemeMode>(() => {
+    const stored = this.#browserTheme();
+    if (stored === true) return 'dark';
+    if (stored === false) return 'light';
+    return stored === 'system' ? 'system' : 'server';
+  });
 
   #currentWidth = signal(this.#window.innerWidth);
   isMobile = computed(() => this.#currentWidth() < 1024);
   sidenavType = signal<ShipSidenavType>(this.isMobile() ? 'overlay' : '');
   isNavOpen = signal(false);
 
-  isDarkMode = computed(
-    () =>
-      this.#browserTheme() ?? (this.#serverTheme() === 'system' ? this.#systemDark() : this.#serverTheme() === 'dark')
-  );
+  isDarkMode = computed(() => {
+    const mode = this.themeMode();
+    const theme = mode === 'server' ? this.#serverTheme() : mode;
+    return theme === 'system' ? this.#systemDark() : theme === 'dark';
+  });
 
   darkModeEffect = effect(() => {
     if (this.isDarkMode()) {
@@ -80,20 +98,8 @@ export class LayoutState {
     this.isNavOpen.set(!this.isNavOpen());
   }
 
-  toggleBodyClass() {
-    this.#browserTheme.set(!this.isDarkMode());
-  }
-
-  setDarkMode() {
-    this.#browserTheme.set(true);
-  }
-
-  setLightMode() {
-    this.#browserTheme.set(false);
-  }
-
-  useServerTheme() {
-    this.#browserTheme.set(null);
+  setThemeMode(mode: ThemeMode) {
+    this.#browserTheme.set(mode === 'dark' ? true : mode === 'light' ? false : mode === 'system' ? 'system' : null);
   }
 
   // The shared value is only a default. Never copy it into the browser's personal preference.

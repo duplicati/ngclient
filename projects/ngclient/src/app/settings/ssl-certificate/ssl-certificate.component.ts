@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, InjectionToken, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
@@ -7,6 +7,11 @@ import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { defer, finalize, from, switchMap } from 'rxjs';
 import { DuplicatiServer } from '../../core/openapi';
 import { canUploadCertificate, isInsecureConnection, toUpdateCertificateRequest } from './ssl-certificate-settings';
+
+/** The address the page was loaded from, replaceable in tests */
+export const PAGE_LOCATION = new InjectionToken<Pick<Location, 'protocol' | 'hostname'>>('PAGE_LOCATION', {
+  factory: () => window.location,
+});
 
 /**
  * Uploads a PFX certificate that the server uses for HTTPS.
@@ -23,7 +28,7 @@ import { canUploadCertificate, isInsecureConnection, toUpdateCertificateRequest 
 export class SslCertificateComponent {
   #dupServer = inject(DuplicatiServer);
 
-  isInsecureConnection = isInsecureConnection(window.location.protocol);
+  isInsecureConnection = isInsecureConnection(inject(PAGE_LOCATION));
 
   files = signal<File[]>([]);
   password = signal('');

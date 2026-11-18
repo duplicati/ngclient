@@ -80,14 +80,31 @@ section {
   display: flex;
   gap: p2r(8);
 
-  img {
-    max-width: p2r(240);
-    border-radius: var(--shape-3);
+  button {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: p2r(160);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: p2r(4);
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--base-12);
+    font: inherit;
     cursor: pointer;
+  }
 
-    &.active {
-      border: 2px solid var(--primary-8);
-    }
+  img {
+    display: block;
+    width: 100%;
+    border: 2px solid transparent;
+    border-radius: var(--shape-3);
+  }
+
+  button.active img {
+    border-color: var(--primary-8);
   }
 }
 

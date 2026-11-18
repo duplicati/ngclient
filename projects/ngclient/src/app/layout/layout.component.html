@@ -3,19 +3,50 @@
     <header>
       <app-logo />
 
-      <button
-        shButton
-        type="button"
-        class="icon small"
-        [shTooltip]="themeToggleLabel()"
-        [attr.aria-label]="themeToggleLabel()"
-        (click)="toggleBodyClass()">
-        @if (isDarkMode()) {
-          <sh-icon>sun</sh-icon>
-        } @else {
-          <sh-icon>moon</sh-icon>
+      <sh-menu>
+        <button
+          shButton
+          type="button"
+          class="icon small"
+          [shTooltip]="themeMenuLabel()"
+          [attr.aria-label]="themeMenuLabel()">
+          <ng-container *ngTemplateOutlet="themeIcon; context: { $implicit: themeMode() }" />
+        </button>
+
+        <ng-container menu>
+          @for (option of themeOptions; track option.value) {
+            <button
+              type="button"
+              [class.active]="themeMode() === option.value"
+              [attr.aria-current]="themeMode() === option.value ? 'true' : null"
+              (click)="setThemeMode(option.value)">
+              <ng-container *ngTemplateOutlet="themeIcon; context: { $implicit: option.value }" />
+              {{ option.label }}
+              @if (themeMode() === option.value) {
+                <sh-icon suffix>check</sh-icon>
+              }
+            </button>
+          }
+        </ng-container>
+      </sh-menu>
+
+      <!-- Icon names must stay literal so the icon font generator includes them. -->
+      <ng-template #themeIcon let-mode>
+        @switch (mode) {
+          @case ('light') {
+            <sh-icon>sun</sh-icon>
+          }
+          @case ('dark') {
+            <sh-icon>moon</sh-icon>
+          }
+          @case ('system') {
+            <sh-icon>desktop</sh-icon>
+          }
+          @default {
+            <sh-icon>hard-drives</sh-icon>
+          }
         }
-      </button>
+      </ng-template>
     </header>
 
     <sh-list class="base-1 primary">

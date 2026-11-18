@@ -10,7 +10,7 @@ describe('LayoutState responsive navigation and theme', () => {
   afterEach(() => TestBed.resetTestingModule());
   function setup(
     width = 1200,
-    savedTheme: boolean | null = null,
+    savedTheme: boolean | 'system' | null = null,
     platform = 'browser',
     serverSettings: Promise<Record<string, string>> = Promise.resolve({}),
     systemDark = false
@@ -94,30 +94,46 @@ describe('LayoutState responsive navigation and theme', () => {
     const { state, storage, classes } = setup(1200, true);
     expect(classes.contains('dark')).toBe(true);
     expect(classes.contains('light')).toBe(false);
-    state.setLightMode();
+    state.setThemeMode('light');
     TestBed.tick();
     expect(classes.contains('light')).toBe(true);
     expect(classes.contains('dark')).toBe(false);
     expect(storage.setItemParsed).toHaveBeenLastCalledWith('darkTheme', false, true);
-    state.setDarkMode();
+    state.setThemeMode('dark');
     TestBed.tick();
     expect(classes.contains('dark')).toBe(true);
     expect(storage.setItemParsed).toHaveBeenLastCalledWith('darkTheme', true, true);
   });
 
-  it('starts with the light theme and toggles it persistently', () => {
-    const { state, storage, classes } = setup();
-    expect(classes.contains('light')).toBe(true);
-    state.toggleBodyClass();
-    TestBed.tick();
-    expect(classes.contains('dark')).toBe(true);
-    expect(storage.setItemParsed).toHaveBeenCalledWith('darkTheme', true, true);
+  it('starts on the server default and reports each stored choice as its mode', () => {
+    expect(setup().state.themeMode()).toBe('server');
+    TestBed.resetTestingModule();
+    expect(setup(1200, true).state.themeMode()).toBe('dark');
+    TestBed.resetTestingModule();
+    expect(setup(1200, false).state.themeMode()).toBe('light');
+    TestBed.resetTestingModule();
+    expect(setup(1200, 'system').state.themeMode()).toBe('system');
+    TestBed.resetTestingModule();
+    expect(setup(1200, 'blue' as never).state.themeMode()).toBe('server');
+  });
+
+  it('follows the operating system ahead of the server default when chosen explicitly', async () => {
+    const { state, storage, media } = setup(1200, null, 'browser', Promise.resolve({ theme: 'dark' }));
+    state.loadServerTheme();
+    await vi.waitFor(() => expect(state.isDarkMode()).toBe(true));
+    state.setThemeMode('system');
+    expect(state.themeMode()).toBe('system');
+    expect(state.isDarkMode()).toBe(false);
+    expect(storage.setItemParsed).toHaveBeenLastCalledWith('darkTheme', 'system', true);
+    media.dispatchEvent(Object.assign(new Event('change'), { matches: true }));
+    expect(state.isDarkMode()).toBe(true);
   });
 
   it('keeps ordinary theme selections private to this browser', () => {
     const { state, server } = setup();
-    state.setDarkMode();
-    state.toggleBodyClass();
+    state.setThemeMode('dark');
+    state.setThemeMode('system');
+    state.setThemeMode('server');
     expect(server.patchApiV1UisettingsByScheme).not.toHaveBeenCalled();
   });
 
@@ -151,9 +167,9 @@ describe('LayoutState responsive navigation and theme', () => {
     state.loadServerTheme();
     await vi.waitFor(() => expect(state.serverThemeLoaded()).toBe(true));
     expect(state.isDarkMode()).toBe(false);
-    state.useServerTheme();
+    state.setThemeMode('server');
     expect(state.isDarkMode()).toBe(true);
-    expect(state.followsServerTheme()).toBe(true);
+    expect(state.themeMode()).toBe('server');
     expect(storage.removeItem).toHaveBeenCalledWith('darkTheme');
   });
 
@@ -162,7 +178,7 @@ describe('LayoutState responsive navigation and theme', () => {
     expect(state.isDarkMode()).toBe(true);
     media.dispatchEvent(Object.assign(new Event('change'), { matches: false }));
     expect(state.isDarkMode()).toBe(false);
-    state.setDarkMode();
+    state.setThemeMode('dark');
     media.dispatchEvent(Object.assign(new Event('change'), { matches: false }));
     expect(state.isDarkMode()).toBe(true);
     TestBed.resetTestingModule();
@@ -233,7 +249,7 @@ describe('LayoutState responsive navigation and theme', () => {
     const pending = new Promise<Record<string, string>>((r) => (resolve = r));
     const { state } = setup(1200, false, 'browser', pending);
     state.loadServerTheme();
-    state.setLightMode();
+    state.setThemeMode('light');
     resolve({ theme: 'dark' });
     await new Promise((r) => setTimeout(r));
     expect(state.isDarkMode()).toBe(false);
