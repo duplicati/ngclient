@@ -7,12 +7,22 @@ import { mkdir, mkdtemp, readFile, stat } from 'node:fs/promises';
 import http from 'node:http';
 import net, { type Socket } from 'node:net';
 import { dirname, extname, join, resolve, sep } from 'node:path';
+import { DatabaseSync } from 'node:sqlite';
+import type { Duplex } from 'node:stream';
 
-type LiveServer = { url: string; password: string; directory: string; api: APIRequestContext };
+type LiveServer = {
+  url: string;
+  password: string;
+  directory: string;
+  api: APIRequestContext;
+  disconnectWebSockets: () => void;
+};
+type LiveServerOptions = { shortAccessTokens?: boolean; disableWebSocket?: boolean };
 
-export const test = base.extend<{}, { liveServer: LiveServer }>({
+export const test = base.extend<{}, { liveServer: LiveServer; liveServerOptions: LiveServerOptions }>({
+  liveServerOptions: [{}, { option: true, scope: 'worker' }],
   liveServer: [
-    async ({}, use, workerInfo) => {
+    async ({ liveServerOptions }, use, workerInfo) => {
       const executable = process.env['DUPLICATI_SERVER_PATH'];
       if (!executable || !(await stat(executable)).isFile()) {
         throw new Error('Set DUPLICATI_SERVER_PATH to a local Duplicati.Server executable (not a running server URL).');
@@ -29,25 +39,32 @@ export const test = base.extend<{}, { liveServer: LiveServer }>({
       const apiPort = (reservation.address() as net.AddressInfo).port;
       await new Promise<void>((resolve, reject) => reservation.close((error) => (error ? reject(error) : resolve())));
       const log = createWriteStream(join(directory, 'server.log'));
-      const child = spawn(
-        binary,
-        [
-          `--server-datafolder=${join(directory, 'data')}`,
-          '--allow-insecure-datafolder=true',
-          '--disable-db-encryption=true',
-          `--webservice-port=${apiPort}`,
-          '--webservice-interface=loopback',
-          `--webservice-password=${password}`,
-        ],
-        { cwd: dirname(binary), windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] }
-      );
-      child.stdout?.pipe(log, { end: false });
-      child.stderr?.pipe(log, { end: false });
       let startupError: Error | undefined;
-      child.on('error', (error) => {
-        startupError = error;
-      });
+      const startServer = () => {
+        startupError = undefined;
+        const process = spawn(
+          binary,
+          [
+            `--server-datafolder=${join(directory, 'data')}`,
+            '--allow-insecure-datafolder=true',
+            '--disable-db-encryption=true',
+            `--webservice-port=${apiPort}`,
+            '--webservice-interface=loopback',
+            `--webservice-password=${password}`,
+            ...(liveServerOptions.disableWebSocket ? ['--webservice-disable-api-extensions=v1:websocket'] : []),
+          ],
+          { cwd: dirname(binary), windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] }
+        );
+        process.stdout?.pipe(log, { end: false });
+        process.stderr?.pipe(log, { end: false });
+        process.on('error', (error) => {
+          startupError = error;
+        });
+        return process;
+      };
+      let child = startServer();
       const sockets = new Set<Socket>();
+      const webSockets = new Set<Duplex>();
       const track = (socket: Socket) => {
         sockets.add(socket);
         socket.once('close', () => sockets.delete(socket));
@@ -111,6 +128,8 @@ export const test = base.extend<{}, { liveServer: LiveServer }>({
           socket.destroy();
           return;
         }
+        webSockets.add(socket);
+        socket.once('close', () => webSockets.delete(socket));
         const upstream = track(
           net.connect(apiPort, '127.0.0.1', () => {
             upstream.write(
@@ -129,7 +148,7 @@ export const test = base.extend<{}, { liveServer: LiveServer }>({
         socket.on('error', () => upstream.destroy());
         socket.on('close', () => upstream.destroy());
       });
-      try {
+      const waitUntilReady = async () => {
         const deadline = Date.now() + 60_000;
         let ready = false;
         while (Date.now() < deadline) {
@@ -143,6 +162,31 @@ export const test = base.extend<{}, { liveServer: LiveServer }>({
           await new Promise((resolve) => setTimeout(resolve, 250));
         }
         if (!ready) throw new Error(`Duplicati did not start. See ${directory}/server.log`);
+      };
+      try {
+        await waitUntilReady();
+        if (liveServerOptions.shortAccessTokens) {
+          // Configure only the stopped, disposable server DB: the CLI token-duration
+          // option changes refresh tokens, not access-token lifetime.
+          const closed = once(child, 'close');
+          child.kill();
+          await closed;
+          const db = new DatabaseSync(join(directory, 'data', 'Duplicati-server.sqlite'));
+          try {
+            const row = db.prepare('SELECT BackupID, Value FROM Option WHERE Name = ?').get('jwt-config');
+            if (!row || typeof row.Value !== 'string') throw new Error('Missing isolated JWT configuration');
+            const config = JSON.parse(row.Value);
+            config.AccessTokenDurationInMinutes = 1;
+            const changed = db
+              .prepare('UPDATE Option SET Value = ? WHERE BackupID = ? AND Name = ?')
+              .run(JSON.stringify(config), row.BackupID, 'jwt-config');
+            if (Number(changed.changes) !== 1) throw new Error('Unexpected isolated JWT configuration count');
+          } finally {
+            db.close();
+          }
+          child = startServer();
+          await waitUntilReady();
+        }
         const login = await probe.post('/api/v1/auth/login', { data: { Password: password, RememberMe: false } });
         if (!login.ok()) throw new Error(`Isolated server login failed: ${login.status()}`);
         const { AccessToken } = await login.json();
@@ -156,7 +200,15 @@ export const test = base.extend<{}, { liveServer: LiveServer }>({
         if (!settings.ok()) throw new Error(`Fixture settings failed: ${settings.status()}`);
         proxy.listen(0, '127.0.0.1');
         await once(proxy, 'listening');
-        await use({ url: `http://127.0.0.1:${(proxy.address() as net.AddressInfo).port}`, password, directory, api });
+        await use({
+          url: `http://127.0.0.1:${(proxy.address() as net.AddressInfo).port}`,
+          password,
+          directory,
+          api,
+          disconnectWebSockets: () => {
+            for (const socket of webSockets) socket.destroy();
+          },
+        });
       } finally {
         await api?.dispose();
         await probe.dispose();

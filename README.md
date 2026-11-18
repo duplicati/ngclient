@@ -122,6 +122,12 @@ suffixes. Version-deletion cases select only the middle of three versions, cance
 then restore both surviving versions and compare text/binary contents. They check the
 Compact option against task logs and actual data-volume removal. All cases use only
 disposable fixture jobs/files; deletion and compaction touch only fixture-owned data.
+Authentication-recovery cases configure one-minute access tokens in the stopped,
+isolated server database, then wait for a real server-side 401. They cover WebSocket
+and long-poll recovery, both with a successful refresh and with one deliberately
+injected refresh HTTP 503. All other auth/status traffic reaches the real server.
+They verify resumed subscriptions/state updates without a page reload. These four
+cases each wait for actual token expiry; browser time is not simulated.
 The worker stops its own server/proxy in teardown. Logs, isolated server data and
 failure traces remain under `test-results` for diagnosis (normal Playwright output
 cleanup applies on the next run). Abruptly terminating the runner may bypass teardown.

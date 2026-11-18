@@ -218,6 +218,12 @@ export class BackupsState {
       .pipe(
         take(1),
         tap((res) => this.#backups.set(res)),
+        catchError(() => {
+          // The HTTP interceptor reports the failure. Keep the previous list,
+          // and do not cache a failed refresh as if it had succeeded.
+          if (this.#timestamp === now) this.#timestamp = timestamp;
+          return EMPTY;
+        }),
         finalize(() => this.#backupsLoading.set(false))
       )
       .subscribe();
