@@ -226,26 +226,11 @@ export default class CommandlineComponent {
     return stateId;
   }
 
-  // The log page links here to compare two versions (duplicati#4678). Only COMPARE with two version numbers is
-  // accepted, so a link cannot prefill another command; the user still reviews and runs it.
-  #applyCompareFromUrl(params: Record<string, unknown>) {
-    const isVersion = (x: unknown): x is string => typeof x === 'string' && /^\d+$/.test(x);
-    const base = params['base'];
-    const target = params['target'];
-    if (params['command'] !== 'compare' || !isVersion(base) || !isVersion(target)) return;
-
-    this.baseCmdForm.controls.command.setValue('compare');
-    this.baseCmdForm.controls.arguments.setValue([base, target].join('\n'));
-  }
-
   applyStateFromUrl() {
     const params = this.#route.snapshot.queryParams;
     const stateId = params['state'];
 
-    if (!stateId) {
-      this.#applyCompareFromUrl(params);
-      return;
-    }
+    if (!stateId) return;
 
     const state = this.#commandlineService.getState(stateId);
 

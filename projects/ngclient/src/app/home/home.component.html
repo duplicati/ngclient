@@ -710,6 +710,11 @@
       </button>
 
       @if (backup.Backup.OperationType !== 'Sync') {
+        <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'compare']" i18n>
+          <sh-icon>git-diff</sh-icon>
+          Compare versions
+        </button>
+
         @if (hasSetVersionLabel()) {
           <button type="button" [routerLink]="['/backup', backup.Backup.ID, 'version-labels']" i18n>
             <sh-icon>tag</sh-icon>
