@@ -31,7 +31,12 @@ for (const preference of [
     }
     if (preference.name === 'darkTheme') {
       await expect(page.locator('html')).toHaveClass(/\blight\b/);
-      await page.locator('app-layout [sidenav] > header button').click();
+      await page.getByRole('button', { name: /^Theme: / }).click();
+      await page
+        .locator('app-layout [sidenav] header')
+        .getByRole('listbox')
+        .getByRole('button', { name: 'Dark' })
+        .click();
       await expect(page.locator('html')).toHaveClass(/\bdark\b/);
       expect(await page.evaluate((key) => localStorage.getItem(key), preference.key)).toBe('true');
     }

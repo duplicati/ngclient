@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ShipButton } from '@ship-ui/core/ship-button';
@@ -5,6 +6,7 @@ import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { ShipDivider } from '@ship-ui/core/ship-divider';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipList } from '@ship-ui/core/ship-list';
+import { ShipMenu } from '@ship-ui/core/ship-menu';
 import { ShipSidenav } from '@ship-ui/core/ship-sidenav';
 import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import LogoComponent from '../core/components/logo/logo.component';
@@ -19,17 +21,19 @@ import { NotificationsState } from '../notifications/notifications.state';
 import { RemoteControlState } from '../settings/remote-control/remote-control.state';
 import { ServerSettingsService } from '../settings/server-settings.service';
 import { ChangePassphraseAlertDialogComponent } from './change-passphrase-alert-dialog/change-passphrase-alert-dialog.component';
-import { LayoutState } from './layout.state';
+import { LayoutState, THEME_OPTIONS, ThemeMode } from './layout.state';
 
 @Component({
   selector: 'app-layout',
   imports: [
+    NgTemplateOutlet,
     RouterOutlet,
     RouterLink,
     RouterLinkActive,
     ShipSidenav,
     ShipIcon,
     ShipList,
+    ShipMenu,
     ShipButton,
     ShipDivider,
     ShipTooltip,
@@ -55,10 +59,10 @@ export default class LayoutComponent {
   #destroyRef = inject(DestroyRef);
 
   relayIsEnabled = this.#relayConfigState.relayIsEnabled;
-  isDarkMode = this.#layoutState.isDarkMode;
-  themeToggleLabel = computed(() =>
-    this.isDarkMode() ? $localize`Switch to light mode` : $localize`Switch to dark mode`
-  );
+  themeMode = this.#layoutState.themeMode;
+  themeOptions = THEME_OPTIONS;
+  currentTheme = computed(() => THEME_OPTIONS.find((option) => option.value === this.themeMode()) ?? THEME_OPTIONS[0]);
+  themeMenuLabel = computed(() => $localize`Theme: ${this.currentTheme().label}`);
   isNavOpen = this.#layoutState.isNavOpen;
   sidenavType = this.#layoutState.sidenavType;
   hasShownPasswordDialog = false;
@@ -106,8 +110,8 @@ export default class LayoutComponent {
     }
   });
 
-  toggleBodyClass() {
-    this.#layoutState.toggleBodyClass();
+  setThemeMode(mode: ThemeMode) {
+    this.#layoutState.setThemeMode(mode);
   }
 
   changeDefaultClientTo(client: 'ngclient' | 'ngax') {

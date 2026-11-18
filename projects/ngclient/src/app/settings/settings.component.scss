@@ -79,15 +79,33 @@ section {
 .themes {
   display: flex;
   gap: p2r(8);
+  margin-bottom: p2r(12);
+
+  button {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: p2r(160);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: p2r(4);
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--base-12);
+    font: inherit;
+    cursor: pointer;
+  }
 
   img {
-    max-width: p2r(240);
+    display: block;
+    width: 100%;
+    border: 2px solid transparent;
     border-radius: var(--shape-3);
-    cursor: pointer;
+  }
 
-    &.active {
-      border: 2px solid var(--primary-8);
-    }
+  button.active img {
+    border-color: var(--primary-8);
   }
 }
 

@@ -20,7 +20,7 @@ import { LANGUAGES, mapLocale } from '../core/locales/locales.utility';
 import { LOCALSTORAGE } from '../core/services/localstorage.token';
 import { AppAuthState } from '../core/states/app-auth.state';
 import { SysinfoState } from '../core/states/sysinfo.state';
-import { LayoutState, ServerTheme } from '../layout/layout.state';
+import { LayoutState, ServerTheme, ThemeMode } from '../layout/layout.state';
 import AdvancedOptionsSettingsComponent from './advanced-options-settings/advanced-options-settings.component';
 import { getMcpServerDisableWarning } from './mcp-tokens/mcp-token-settings';
 import { McpTokensComponent } from './mcp-tokens/mcp-tokens.component';
@@ -111,8 +111,12 @@ export default class SettingsComponent {
   #initLang = mapLocale(this.#ls.getItem('locale'));
 
   sysinfo = this.#sysinfo.systemInfo;
-  isDarkMode = this.#layoutState.isDarkMode;
   themePreferences = this.#layoutState;
+  browserThemeOptions: { value: ThemeMode; label: string; image: string }[] = [
+    { value: 'light', label: $localize`Light`, image: 'assets/images/light-theme.png' },
+    { value: 'dark', label: $localize`Dark`, image: 'assets/images/dark-theme.png' },
+    { value: 'system', label: $localize`Operating system`, image: 'assets/images/system-theme.png' },
+  ];
   serverThemeOptions: { value: ServerTheme; label: string }[] = [
     { value: 'system', label: $localize`Operating system` },
     { value: 'light', label: $localize`Light` },
@@ -565,14 +569,6 @@ export default class SettingsComponent {
     this.powerModeCtrl.set(powerModeValue);
     this.serverTimezone.set(toServerTimezoneControlValue(serverSettings[SERVER_TIMEZONE_KEY]));
   });
-
-  setDarkMode() {
-    this.#layoutState.setDarkMode();
-  }
-
-  setLightMode() {
-    this.#layoutState.setLightMode();
-  }
 
   changeDefaultClientTo(client: 'ngclient' | 'ngax') {
     if (this.defaultClient() === client) return;
