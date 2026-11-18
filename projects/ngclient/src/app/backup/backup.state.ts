@@ -117,6 +117,7 @@ export class BackupState {
 
   targetUrlTestSignal = signal<TestState>(null);
   backupMetadata = signal<Record<string, string> | null>(null);
+  reusedDatabase = signal<{ url: string; path: string } | null>(null);
 
   isDraft = signal(false);
   backupId = signal<string | null>(null);
@@ -296,7 +297,10 @@ export class BackupState {
 
             return defer(() =>
               context.backupId === 'new' || !context.backupId || context.isDraft
-                ? this.#dupServer.postApiV1Backups({ body: backup })
+                ? this.#dupServer.postApiV1Backups({
+                    body: backup,
+                    ...(backup.Backup.DBPath ? { query: { existingdb: true } } : {}),
+                  })
                 : this.#dupServer.putApiV1BackupById({ path: { id: context.backupId }, body: backup })
             );
           }),
@@ -514,7 +518,7 @@ export class BackupState {
   }
 
   #mapFormsToBackup() {
-    return mapBackupFormToDto({
+    const backup = mapBackupFormToDto({
       general: this.generalForm.value,
       sourceData: this.sourceDataForm.value,
       schedule: this.getScheduleFormValue(),
@@ -524,6 +528,10 @@ export class BackupState {
       targetUrls: this.targetUrls(),
       settings: this.mapFormsToSettings(),
     });
+    const reused = this.reusedDatabase();
+    if (this.isNew() && !this.isSyncMode() && reused && reused.url === this.targetUrls()[0]?.url)
+      backup.Backup!.DBPath = reused.path;
+    return backup;
   }
 
   mapFormsToSettings(settingsIgnoreList: string[] = []) {
@@ -661,6 +669,7 @@ export class BackupState {
   }
 
   #resetAllForms() {
+    this.reusedDatabase.set(null);
     this.generalForm.reset({ operationType: 'Backup' });
     this.sourceDataForm.reset();
     this.scheduleForm().reset(SCHEDULE_FIELD_DEFAULTS());

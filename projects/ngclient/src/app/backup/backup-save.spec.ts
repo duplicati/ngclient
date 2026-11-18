@@ -57,6 +57,26 @@ describe('backup save lifecycle', () => {
     connection.complete();
   });
 
+  it('sends a chosen existing database only for the matching new destination', () => {
+    state.reusedDatabase.set({ url: 'file:///backup', path: '/shared.sqlite' });
+    state.submit();
+    expect(create.mock.calls[0][0].body.Backup.DBPath).toBe('/shared.sqlite');
+    expect(create.mock.calls[0][0].query).toEqual({ existingdb: true });
+    response.next({ ID: '42' });
+    state.setTargetUrl('file:///other');
+    state.submit();
+    expect(create.mock.calls[1][0].body.Backup.DBPath).toBeUndefined();
+    expect(create.mock.calls[1][0].query).toBeUndefined();
+  });
+
+  it('does not reuse a versioned database after switching the new job to Sync', () => {
+    state.reusedDatabase.set({ url: 'file:///backup', path: '/shared.sqlite' });
+    state.generalForm.controls.operationType.setValue('Sync');
+    state.submit();
+    expect(create.mock.calls[0][0].body.Backup.DBPath).toBeUndefined();
+    expect(create.mock.calls[0][0].query).toBeUndefined();
+  });
+
   it('allows only one save while pending, and exits only once', () => {
     state.submit();
     state.submit();

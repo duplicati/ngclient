@@ -23,7 +23,8 @@ import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { ShipSelect } from '@ship-ui/core/ship-select';
 import { ShipToggle } from '@ship-ui/core/ship-toggle';
 import { ShipToggleCard } from '@ship-ui/core/ship-toggle-card';
-import { IDynamicModule } from '../../core/openapi';
+import { defer, firstValueFrom } from 'rxjs';
+import { DuplicatiServer, IDynamicModule } from '../../core/openapi';
 import { ConnectionStringsState } from '../../core/states/connection-strings.state';
 import { DestinationTypeOption } from '../../core/states/destinationconfig.state';
 import { BackupState } from '../backup.state';
@@ -361,10 +362,25 @@ export default class DestinationComponent {
   }
 
   isAdvancing = signal(false);
+  databaseChoice = signal<{ url: string; path: string } | null>(null);
+  databaseLookupError = signal(false);
+
+  cancelDatabaseChoice() {
+    this.databaseChoice.set(null);
+  }
+
+  chooseDatabase(reuse: boolean) {
+    const choice = this.databaseChoice();
+    this.databaseChoice.set(null);
+    if (!choice || !this.isNew() || this.targetUrls()[0]?.url !== choice.url) return;
+    this.#backupState.reusedDatabase.set(reuse ? choice : null);
+    this.#navigateToNext();
+  }
 
   async next() {
-    if (this.isAdvancing() || this.hasInvalidSynchronization()) return;
+    if (this.isAdvancing() || this.databaseChoice() || this.hasInvalidSynchronization()) return;
     this.isAdvancing.set(true);
+    this.databaseLookupError.set(false);
     try {
       const isNew = this.#backupState.isNew();
 
@@ -396,6 +412,28 @@ export default class DestinationComponent {
         }
       }
 
+      if (this.#backupState.isSyncMode()) {
+        this.#navigateToNext();
+        return;
+      }
+
+      const url = this.targetUrls()[0]?.url;
+      const id = this.backupId();
+      if (!url) return;
+      try {
+        const database = await firstValueFrom(
+          defer(() => this.injector.get(DuplicatiServer).postApiV1RemoteoperationDbpath({ body: { path: url } }))
+        );
+        if (!this.isNew() || this.backupId() !== id || this.targetUrls()[0]?.url !== url) return;
+        if (database.Exists && database.Path) {
+          this.databaseChoice.set({ url, path: database.Path });
+          return;
+        }
+        this.#backupState.reusedDatabase.set(null);
+      } catch {
+        this.databaseLookupError.set(true);
+        return;
+      }
       this.#navigateToNext();
     } finally {
       this.isAdvancing.set(false);
