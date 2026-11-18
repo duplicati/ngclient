@@ -27,10 +27,10 @@ describe('LayoutComponent sidenav links', () => {
         {
           provide: LayoutState,
           useValue: {
-            isDarkMode: signal(false),
+            themeMode: signal('server'),
             isNavOpen: signal(true),
             sidenavType: signal('simple'),
-            toggleBodyClass: () => {},
+            setThemeMode: () => {},
             loadServerTheme: () => {},
           },
         },

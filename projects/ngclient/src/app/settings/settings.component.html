@@ -104,69 +104,56 @@
   <section>
     <div class="left">
       <h3 i18n>Color theme</h3>
-      <p i18n>Your choice is saved only in this browser and takes priority over the server default.</p>
+      <p i18n>Your choice is saved only in this browser. Default uses the default theme set below.</p>
     </div>
 
     <div class="right">
       <div class="themes">
-        <img
-          src="assets/images/light-theme.png"
-          [class.active]="!isDarkMode()"
-          alt="light theme"
-          (click)="setLightMode()" />
-
-        <img
-          src="assets/images/dark-theme.png"
-          [class.active]="isDarkMode()"
-          alt="dark theme"
-          (click)="setDarkMode()" />
-        <!-- <img src="assets/images/system-theme.png" alt="system theme" /> -->
+        @for (option of themeOptions(); track option.value) {
+          <button
+            type="button"
+            [class.active]="themePreferences.themeMode() === option.value"
+            [attr.aria-pressed]="themePreferences.themeMode() === option.value"
+            (click)="themePreferences.setThemeMode(option.value)">
+            <img [src]="option.image" alt="" />
+            {{ option.label }}
+          </button>
+        }
       </div>
-      <button
-        shButton
-        type="button"
-        class="small"
-        [attr.aria-pressed]="themePreferences.followsServerTheme()"
-        [class.primary]="themePreferences.followsServerTheme()"
-        (click)="themePreferences.useServerTheme()"
-        i18n>
-        Use server default
-      </button>
     </div>
   </section>
 
   <section>
     <div class="left">
-      <h3 i18n>Default theme for this server</h3>
-      <p i18n>
-        Used after sign-in by browsers without a personal choice. Changing this does not replace anyone's browser
-        preference.
-      </p>
+      <h3 i18n>Default theme</h3>
+      <p i18n>Used by any browser where no theme has been chosen. Changing it does not override anyone's own choice.</p>
     </div>
     <div class="right multiple">
-      @for (option of serverThemeOptions; track option.value) {
-        <button
-          shButton
-          type="button"
-          class="small"
-          [attr.aria-pressed]="themePreferences.serverTheme() === option.value"
-          [class.primary]="themePreferences.serverTheme() === option.value"
-          [disabled]="
-            !themePreferences.serverThemeLoaded() ||
-            themePreferences.serverThemeLoading() ||
-            themePreferences.serverThemeLoadError() ||
-            themePreferences.serverThemeSaving()
-          "
-          (click)="themePreferences.saveServerTheme(option.value)">
-          {{ option.label }}
-        </button>
-      }
+      <sh-select
+        [options]="serverThemeOptions"
+        [disabled]="
+          !themePreferences.serverThemeLoaded() ||
+          themePreferences.serverThemeLoading() ||
+          themePreferences.serverThemeLoadError() ||
+          themePreferences.serverThemeSaving()
+        "
+        value="value"
+        label="label"
+        [isClearable]="false">
+        <input
+          type="text"
+          aria-label="Default theme"
+          i18n-aria-label
+          [ngModel]="themePreferences.serverTheme()"
+          (ngModelChange)="themePreferences.saveServerTheme($event)"
+          [ngModelOptions]="{ standalone: true }" />
+      </sh-select>
       @if (themePreferences.serverThemeLoadError()) {
-        <p role="alert" i18n>Could not load the server's default theme.</p>
+        <p role="alert" i18n>Could not load the default theme.</p>
         <button shButton type="button" (click)="themePreferences.loadServerTheme()" i18n>Retry</button>
       }
       @if (themePreferences.serverThemeSaveError()) {
-        <p role="alert" i18n>Could not save the server's default theme. Please try again.</p>
+        <p role="alert" i18n>Could not save the default theme. Please try again.</p>
       }
       @if (themePreferences.serverThemeSaving()) {
         <p role="status" i18n>Saving default theme…</p>
