@@ -118,7 +118,10 @@ original job and local DB, reloads the application, then enters the destination
 URL and passphrase in the direct-restore screens. Recovery cases first leave the passphrase empty or enter an
 incorrect value, check the real fileset/database-repair error, then return through
 the UI to correct it and restore without reloading. AES cases check encrypted volume
-suffixes. All cases use only disposable fixture jobs/files and never delete remote data.
+suffixes. Version-deletion cases select only the middle of three versions, cancel before confirming,
+then restore both surviving versions and compare text/binary contents. They check the
+Compact option against task logs and actual data-volume removal. All cases use only
+disposable fixture jobs/files; deletion and compaction touch only fixture-owned data.
 The worker stops its own server/proxy in teardown. Logs, isolated server data and
 failure traces remain under `test-results` for diagnosis (normal Playwright output
 cleanup applies on the next run). Abruptly terminating the runner may bypass teardown.
