@@ -3,7 +3,7 @@ import { join, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { test, expect } from './fixture';
 
-test('saves an existing job from another editor page and retains settings after reload', async ({
+test('saves in place from all five existing-job pages and retains settings after reload', async ({
   page,
   liveServer,
 }, testInfo) => {
@@ -49,29 +49,45 @@ test('saves an existing job from another editor page and retains settings after 
       .getByRole('button', { name: 'Edit', exact: true })
       .click();
     await page.getByPlaceholder('Your backup description').fill('Saved through the real server');
-    await page.getByRole('link', { name: 'Options', exact: true }).click();
-    const saved = page.waitForResponse(
-      (response) => response.request().method() === 'PUT' && new URL(response.url()).pathname === `/api/v1/backup/${ID}`
-    );
-    await page.getByRole('button', { name: 'Save changes', exact: true }).press('Enter');
-    expect((await saved).ok()).toBe(true);
-    await expect(page.getByRole('status').filter({ hasText: 'Backup settings saved.' })).toBeVisible();
-    await expect(page).toHaveURL(`/backup/${ID}/options`);
-    const storedResponse = await api.get(`/api/v1/backup/${ID}`);
-    expect(storedResponse.ok()).toBe(true);
-    const stored = await storedResponse.json();
-    expect(stored.Backup.Description).toBe('Saved through the real server');
-    expect(stored.Backup.TargetURL).toBe(original.Backup.TargetURL);
-    expect(stored.Backup.Sources).toEqual(original.Backup.Sources);
-    for (const name of ['dry-run', 'exclude-files-attributes']) {
-      const value = (settings: Array<{ Name: string; Value: string }>) =>
-        settings.find((x) => x.Name.replace(/^--/, '') === name)?.Value;
-      expect(value(stored.Backup.Settings)).toBe(value(original.Backup.Settings));
+    const saves: string[] = [];
+    for (const [label, step] of [
+      ['Options', 'options'],
+      ['Schedule', 'schedule'],
+      ['Destination', 'destination'],
+      ['Source Data', 'source-data'],
+      ['General', 'general'],
+    ]) {
+      await page.getByRole('link', { name: label, exact: true }).click();
+      await expect(page).toHaveURL(`/backup/${ID}/${step}`);
+      const save = page.getByRole('button', { name: 'Save changes', exact: true });
+      await expect(save).toBeEnabled();
+      const pending = page.waitForResponse(
+        (r) => r.request().method() === 'PUT' && new URL(r.url()).pathname === `/api/v1/backup/${ID}`
+      );
+      if (step === 'schedule') await save.press('Enter');
+      else await save.click();
+      const response = await pending;
+      expect(response.ok(), await response.text()).toBe(true);
+      await expect(page.getByRole('status').filter({ hasText: 'Backup settings saved.' })).toBeVisible();
+      await expect(page).toHaveURL(`/backup/${ID}/${step}`);
+      const storedResponse = await api.get(`/api/v1/backup/${ID}`);
+      expect(storedResponse.ok()).toBe(true);
+      const stored = await storedResponse.json();
+      expect(stored.Backup.Description).toBe('Saved through the real server');
+      expect(stored.Backup.TargetURL).toBe(original.Backup.TargetURL);
+      expect(stored.Backup.Sources).toEqual(original.Backup.Sources);
+      for (const name of ['dry-run', 'exclude-files-attributes']) {
+        const value = (settings: Array<{ Name: string; Value: string }>) =>
+          settings.find((x) => x.Name.replace(/^--/, '') === name)?.Value;
+        expect(value(stored.Backup.Settings)).toBe(value(original.Backup.Settings));
+      }
+      await page.reload();
+      await expect(save).toBeEnabled();
+      await expect(page).toHaveURL(`/backup/${ID}/${step}`);
+      saves.push(step);
     }
-    await page.reload();
-    await expect(page.getByRole('button', { name: 'Save changes', exact: true })).toBeEnabled();
-    await page.getByRole('link', { name: 'General', exact: true }).click();
     await expect(page.getByPlaceholder('Your backup description')).toHaveValue('Saved through the real server');
+    expect(saves).toEqual(['options', 'schedule', 'destination', 'source-data', 'general']);
     expect(errors).toEqual([]);
     const info = await (await api.get('/api/v1/systeminfo')).json();
     await testInfo.attach('server-version', {
