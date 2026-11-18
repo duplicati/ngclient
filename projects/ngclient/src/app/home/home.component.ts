@@ -3,14 +3,13 @@ import { KeyboardActionDirective } from '../core/directives/keyboard-action.dire
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { form, FormField } from '@angular/forms/signals';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ShipAlert, ShipAlertService } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipButtonGroup } from '@ship-ui/core/ship-button-group';
 import { ShipCard } from '@ship-ui/core/ship-card';
 import { ShipChip } from '@ship-ui/core/ship-chip';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
-import { ShipDivider } from '@ship-ui/core/ship-divider';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipMenu } from '@ship-ui/core/ship-menu';
@@ -34,6 +33,7 @@ import { ServerStateService } from '../core/services/server-state.service';
 import { Backup, BackupsState, OrderBy, TimeType } from '../core/states/backups.state';
 import { SysinfoState } from '../core/states/sysinfo.state';
 import { RemoteControlState } from '../settings/remote-control/remote-control.state';
+import { BackupActionsDialog } from './backup-actions-dialog/backup-actions-dialog';
 import { StartAllDialog } from './start-all-dialog/start-all-dialog';
 
 @Component({
@@ -50,7 +50,6 @@ import { StartAllDialog } from './start-all-dialog/start-all-dialog';
     ShipButton,
     ShipIcon,
     ShipChip,
-    ShipDivider,
     ShipFormField,
     ShipMenu,
     ShipProgressBar,
@@ -78,14 +77,9 @@ export default class HomeComponent {
   #dialog = inject(ShipDialogService);
   #sysinfo = inject(SysinfoState);
   #alertService = inject(ShipAlertService);
+  #router = inject(Router);
 
-  hasDeleteVersions = this.#sysinfo.hasV2DeleteVersions;
-  hasSetVersionLabel = this.#sysinfo.hasV2SetVersionLabel;
-  hasBrokenFiles = this.#sysinfo.hasV2BrokenFiles;
-  hasRestoreTest = this.#sysinfo.hasV2RestoreTest;
-  hasPurgeFiles = this.#sysinfo.hasV2PurgeFiles;
   hasEnableDisable = this.#sysinfo.hasBackupEnableDisable;
-  hasSyncRestore = this.#sysinfo.hasSyncRestore;
 
   // The name of the job each job runs after, for the jobs that run after another job
   runAfterNames = computed(() => {
@@ -335,6 +329,32 @@ export default class HomeComponent {
 
   getBackupVersionCount(backup: BackupAndScheduleOutputDto | null): number {
     return parseInt(backup?.Backup?.Metadata?.['BackupListCount'] ?? '', 10) || 0;
+  }
+
+  openActions(backup: Backup) {
+    const id = backup.Backup.ID;
+    if (!id) return;
+
+    this.#dialog.open(BackupActionsDialog, {
+      maxWidth: '640px',
+      maxHeight: '90vh',
+      width: '100%',
+      data: {
+        id,
+        name: backup.Backup.Name ?? this.MISSING_BACKUP_NAME,
+        isSync: backup.Backup.OperationType === 'Sync',
+        isExternal: !!backup.Backup.ExternalID,
+        isDisabled: this.isDisabled(backup),
+      },
+      closed: (action) => {
+        if (!action) return;
+        if (action.route) this.#router.navigate(action.route);
+        else if (action.id === 'verify') this.verifyFiles(id);
+        else if (action.id === 'test-restore') this.testRestore(id);
+        else if (action.id === 'enable') this.setEnabled(id, true);
+        else if (action.id === 'disable') this.setEnabled(id, false);
+      },
+    });
   }
 
   verifyFiles(id: string) {

@@ -10,74 +10,84 @@
 
   <article>
     <h1 i18n>Local database for {{ activeBackup()?.Backup?.Name }}</h1>
-    <p i18n>
-      Each backup has a local database associated with it, which stores information about the remote backup on the local
-      machine. This makes it faster to perform many operations, and reduces the amount of data that needs to be
-      downloaded for each operation.
-    </p>
+    @if (isSync()) {
+      <p i18n>
+        Each sync job has a local database associated with it, which stores a record of the files at the destination,
+        the operations that are in progress, and the logs from each run. This makes it faster to find the files that
+        need to be copied, and makes it possible to continue after an interrupted run.
+      </p>
+    } @else {
+      <p i18n>
+        Each backup has a local database associated with it, which stores information about the remote backup on the
+        local machine. This makes it faster to perform many operations, and reduces the amount of data that needs to be
+        downloaded for each operation.
+      </p>
+    }
   </article>
 
-  <article>
-    <h2 i18n>Maintenance</h2>
-    <p i18n>
-      If the backup and the remote storage is out of sync, Duplicati will require that you perform a repair operation to
-      synchronize the database. If the repair is unsuccessful, you can delete the local database and re-generate. The
-      bug report button can be used to create a copy of the database with path information removed. This should only be
-      used if a developer requests to investigate an issue with your database.
-    </p>
-    @if (reducedReportingActive()) {
-      <p i18n>Bug report databases cannot be created while reduced reporting is active on this machine.</p>
-    }
+  @if (!isSync()) {
+    <article>
+      <h2 i18n>Maintenance</h2>
+      <p i18n>
+        If the backup and the remote storage is out of sync, Duplicati will require that you perform a repair operation
+        to synchronize the database. If the repair is unsuccessful, you can delete the local database and re-generate.
+        The bug report button can be used to create a copy of the database with path information removed. This should
+        only be used if a developer requests to investigate an issue with your database.
+      </p>
+      @if (reducedReportingActive()) {
+        <p i18n>Bug report databases cannot be created while reduced reporting is active on this machine.</p>
+      }
 
-    <div class="actions maintenance">
-      <button
-        shButton
-        i18n
-        [class.loading]="isRepairing()"
-        [disabled]="!isValidatedPath() || pathHasChanged()"
-        (click)="repairDatabase()">
-        <sh-icon>wrench</sh-icon>
-        Repair
-      </button>
-
-      <button
-        shButton
-        i18n
-        [class.loading]="isDeleting()"
-        [disabled]="!isValidatedPath() || pathHasChanged()"
-        (click)="deleteDatabase()">
-        <sh-icon>trash</sh-icon>
-        Delete
-      </button>
-
-      <button shButton i18n [class.loading]="isRestoring()" [disabled]="pathHasChanged()" (click)="restoreDatabase()">
-        <sh-icon>clock-counter-clockwise</sh-icon>
-        Recreate (delete and repair)
-      </button>
-
-      @if (!reducedReportingActive()) {
+      <div class="actions maintenance">
         <button
           shButton
           i18n
-          [class.loading]="isCreatingBugReport()"
-          [disabled]="isCreatingBugReport() || !isValidatedPath() || pathHasChanged()"
-          (click)="createErrorReport()">
-          <sh-icon>file-plus</sh-icon>
-          Create bug report database
+          [class.loading]="isRepairing()"
+          [disabled]="!isValidatedPath() || pathHasChanged()"
+          (click)="repairDatabase()">
+          <sh-icon>wrench</sh-icon>
+          Repair
         </button>
-      }
 
-      <button
-        shButton
-        i18n
-        [class.loading]="isCompacting()"
-        [disabled]="isCompacting() || !isValidatedPath() || pathHasChanged()"
-        (click)="compactDatabase()">
-        <sh-icon>file-archive</sh-icon>
-        Compact
-      </button>
-    </div>
-  </article>
+        <button
+          shButton
+          i18n
+          [class.loading]="isDeleting()"
+          [disabled]="!isValidatedPath() || pathHasChanged()"
+          (click)="deleteDatabase()">
+          <sh-icon>trash</sh-icon>
+          Delete
+        </button>
+
+        <button shButton i18n [class.loading]="isRestoring()" [disabled]="pathHasChanged()" (click)="restoreDatabase()">
+          <sh-icon>clock-counter-clockwise</sh-icon>
+          Recreate (delete and repair)
+        </button>
+
+        @if (!reducedReportingActive()) {
+          <button
+            shButton
+            i18n
+            [class.loading]="isCreatingBugReport()"
+            [disabled]="isCreatingBugReport() || !isValidatedPath() || pathHasChanged()"
+            (click)="createErrorReport()">
+            <sh-icon>file-plus</sh-icon>
+            Create bug report database
+          </button>
+        }
+
+        <button
+          shButton
+          i18n
+          [class.loading]="isCompacting()"
+          [disabled]="isCompacting() || !isValidatedPath() || pathHasChanged()"
+          (click)="compactDatabase()">
+          <sh-icon>file-archive</sh-icon>
+          Compact
+        </button>
+      </div>
+    </article>
+  }
 
   <article>
     <h2 i18n>Placement</h2>
@@ -102,14 +112,16 @@
         <sh-icon>floppy-disk</sh-icon>
         Save
       </button>
-      <button
-        shButton
-        i18n
-        [disabled]="!pathHasChanged() || isWaitingForValidation()"
-        (click)="saveAndRepairDatabasePath()">
-        <sh-icon>wrench</sh-icon>
-        Save & Repair
-      </button>
+      @if (!isSync()) {
+        <button
+          shButton
+          i18n
+          [disabled]="!pathHasChanged() || isWaitingForValidation()"
+          (click)="saveAndRepairDatabasePath()">
+          <sh-icon>wrench</sh-icon>
+          Save & Repair
+        </button>
+      }
       <button
         shButton
         i18n

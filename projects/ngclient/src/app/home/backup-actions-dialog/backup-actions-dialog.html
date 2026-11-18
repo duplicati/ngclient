@@ -1,0 +1,33 @@
+<header>
+  <h3 class="title-30">{{ data()?.name }}</h3>
+
+  <button type="button" shButton class="small" [attr.aria-label]="closeLabel" (click)="closed.emit(null)">
+    <sh-icon>x-bold</sh-icon>
+  </button>
+</header>
+
+<section content>
+  @for (group of groups(); track group.title) {
+    <div class="group">
+      <h4>{{ group.title }}</h4>
+
+      <div class="actions">
+        @for (action of group.actions; track action.id) {
+          <button
+            type="button"
+            class="action"
+            [class.danger]="action.danger"
+            [attr.aria-label]="action.label"
+            [attr.aria-describedby]="'backup-action-' + action.id"
+            (click)="closed.emit(action)">
+            <sh-icon>{{ action.icon }}</sh-icon>
+            <span class="text">
+              <strong>{{ action.label }}</strong>
+              <span [id]="'backup-action-' + action.id">{{ action.description }}</span>
+            </span>
+          </button>
+        }
+      </div>
+    </div>
+  }
+</section>

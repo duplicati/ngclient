@@ -1,0 +1,110 @@
+@use '@ship-ui/core/styles/helpers' as *;
+
+:host {
+  --dialog-p: #{p2r(24)};
+  display: flex;
+  flex-direction: column;
+  gap: p2r(16);
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: p2r(16);
+  padding: p2r(24 24 0);
+
+  h3 {
+    margin: 0;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(20);
+  padding-bottom: p2r(24);
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(8);
+
+  h4 {
+    margin: 0;
+    font: var(--paragraph-30);
+    color: var(--base-8);
+  }
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: p2r(8);
+
+  @include breakpoint(-milli) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.action {
+  appearance: none;
+  display: flex;
+  align-items: flex-start;
+  gap: p2r(12);
+  padding: p2r(12);
+  border: 1px solid var(--base-4);
+  border-radius: var(--shape-2);
+  background: var(--base-1);
+  color: var(--base-12);
+  text-align: left;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--base-2);
+    border-color: var(--primary-8);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-8);
+    outline-offset: 1px;
+  }
+
+  sh-icon {
+    flex: 0 0 auto;
+    font-size: p2r(20);
+    color: var(--primary-8);
+  }
+
+  .text {
+    display: flex;
+    flex-direction: column;
+    gap: p2r(2);
+    min-width: 0;
+  }
+
+  strong {
+    font: var(--paragraph-20);
+    font-weight: 600;
+  }
+
+  span span {
+    font: var(--paragraph-30);
+    color: var(--base-8);
+  }
+
+  &.danger {
+    sh-icon {
+      color: var(--error-8);
+    }
+
+    &:hover {
+      border-color: var(--error-8);
+    }
+  }
+}
