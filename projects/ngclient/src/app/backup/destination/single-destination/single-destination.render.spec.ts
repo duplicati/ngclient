@@ -26,7 +26,7 @@ describe('SingleDestinationComponent rendered editing', () => {
     await fixture.whenStable();
     fixture.detectChanges();
   }
-  async function setup() {
+  async function setup(target = url) {
     TestBed.configureTestingModule({
       imports: [SingleDestinationComponent],
       providers: [
@@ -39,6 +39,7 @@ describe('SingleDestinationComponent rendered editing', () => {
           provide: DestinationConfigState,
           useValue: {
             allModules: signal([
+              { Key: 'duplicati', Options: [{ Name: 'duplicati-backup-id', Type: 'String' }] },
               {
                 Key: 'ssh',
                 Options: [
@@ -55,7 +56,7 @@ describe('SingleDestinationComponent rendered editing', () => {
       ],
     });
     fixture = TestBed.createComponent(SingleDestinationComponent);
-    fixture.componentRef.setInput('targetUrl', url);
+    fixture.componentRef.setInput('targetUrl', target);
     const changed = vi.fn();
     fixture.componentInstance.targetUrl.subscribe(changed);
     await settle();
@@ -67,6 +68,23 @@ describe('SingleDestinationComponent rendered editing', () => {
     expect(fixture.nativeElement.querySelector('app-size input[type=number]').value).toBe('64');
     expect(fixture.nativeElement.querySelector('app-timespan input[type=number]').value).toBe('2');
     expect(fixture.componentInstance.targetUrl()).toBe(url);
+    expect(changed).not.toHaveBeenCalled();
+  });
+
+  it('offers console connection as a native link without rewriting the destination', async () => {
+    const changed = await setup('duplicati://');
+    expect(fixture.nativeElement.textContent).toContain('Connect');
+    const link = fixture.nativeElement.querySelector('a[href="/connect/logon"]') as HTMLAnchorElement;
+    expect(link).not.toBeNull();
+    expect(link.textContent).toContain('Connect');
+    let prevented: boolean | undefined;
+    link.addEventListener('click', (event) => {
+      prevented = event.defaultPrevented;
+      event.preventDefault();
+    });
+    link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, ctrlKey: true }));
+    expect(prevented).toBe(false);
+    expect(fixture.componentInstance.targetUrl()).toBe('duplicati://');
     expect(changed).not.toHaveBeenCalled();
   });
 
