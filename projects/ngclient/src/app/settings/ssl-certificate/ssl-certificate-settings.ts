@@ -14,8 +14,15 @@ export const toUpdateCertificateRequest = (pfx: ArrayBuffer, password: string): 
   Password: password,
 });
 
-/** The certificate and its password travel unencrypted unless the page itself was loaded over HTTPS */
-export const isInsecureConnection = (protocol: string) => protocol.toLowerCase() !== 'https:';
+/** Hosts that are the machine itself, where the traffic never reaches a network */
+const LOOPBACK_HOSTNAMES = ['localhost', '127.0.0.1'];
+
+/**
+ * The certificate and its password travel unencrypted unless the page itself was loaded over HTTPS.
+ * A page loaded from the machine itself is not at risk, as the traffic never leaves it.
+ */
+export const isInsecureConnection = ({ protocol, hostname }: Pick<Location, 'protocol' | 'hostname'>) =>
+  protocol.toLowerCase() !== 'https:' && !LOOPBACK_HOSTNAMES.includes(hostname.toLowerCase());
 
 /** The server refuses a PFX file without a password, so the upload needs both */
 export const canUploadCertificate = (files: File[], password: string) => files.length > 0 && password.trim() !== '';
