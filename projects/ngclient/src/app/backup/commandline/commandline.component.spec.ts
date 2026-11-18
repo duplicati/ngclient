@@ -1,5 +1,7 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { FormField } from '@angular/forms/signals';
+import { NullableTextControl } from '../general/nullable-text-control';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of, Subject } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -12,7 +14,7 @@ import { CommandlineService, CommandlineState } from './commandline.service';
 
 describe('command execution confirmation and arguments', () => {
   afterEach(() => TestBed.resetTestingModule());
-  function setup(saved?: CommandlineState) {
+  function setup(saved?: CommandlineState, queryParams: Record<string, string> = {}, renderFields = false) {
     const response = new Subject<{ Status: string; ID: string }>();
     const run = vi.fn(() => response);
     const navigate = vi.fn();
@@ -60,10 +62,19 @@ describe('command execution confirmation and arguments', () => {
         { provide: SysinfoState, useValue: { systemInfo: signal({ OSType: 'Linux' }) } },
       ],
     });
-    TestBed.overrideComponent(CommandlineComponent, { set: { template: '', imports: [], providers: [] } });
+    TestBed.overrideComponent(CommandlineComponent, {
+      set: {
+        template: renderFields
+          ? '<input id="test-command" appNullableText [formField]="commandFields.command" /><textarea id="test-args" appNullableText [formField]="commandFields.arguments"></textarea>'
+          : '',
+        imports: renderFields ? [FormField, NullableTextControl] : [],
+        providers: [],
+      },
+    });
     const fixture = TestBed.createComponent(CommandlineComponent);
     fixture.detectChanges();
     return {
+      fixture,
       component: fixture.componentInstance,
       response,
       run,
@@ -75,6 +86,26 @@ describe('command execution confirmation and arguments', () => {
       route,
     };
   }
+  it('keeps typed Signal Form fields connected to command changes and the submitted arguments', async () => {
+    const { fixture, component, confirm, run } = setup(undefined, {}, true);
+    const command = fixture.nativeElement.querySelector('#test-command') as HTMLInputElement;
+    command.value = 'test';
+    command.dispatchEvent(new Event('input', { bubbles: true }));
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(component.baseCmdForm.controls.command.value).toBe('test');
+    expect(component.baseCmdForm.controls.arguments.value).toBe('');
+    const args = fixture.nativeElement.querySelector('#test-args') as HTMLTextAreaElement;
+    args.value = '4';
+    args.dispatchEvent(new Event('input', { bubbles: true }));
+    fixture.detectChanges();
+    await fixture.whenStable();
+    component.submit();
+    confirm.mock.calls[0][0]();
+    expect(run).toHaveBeenCalledWith({ body: expect.arrayContaining(['test', 'file:///backup', '4']) });
+    expect(component.baseCmdForm.controls.arguments.value).toBe('4');
+  });
+
   it('does not execute or save editor state before the resume confirmation accepts', () => {
     const { component, run, confirm, saveState } = setup();
     component.submit();

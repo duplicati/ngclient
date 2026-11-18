@@ -227,6 +227,9 @@
   }
 
   <div class="form-actions">
+    @if (databaseLookupError()) {
+      <p role="status" i18n>The existing database could not be checked. Please try Continue again.</p>
+    }
     <button shButton type="button" (click)="goBack()" i18n>
       <sh-icon>arrow-left</sh-icon>
       Go back
@@ -244,6 +247,26 @@
     </button>
   </div>
 </form>
+
+@if (databaseChoice(); as database) {
+  <sh-dialog [isOpen]="true" (isOpenChange)="!$event && cancelDatabaseChoice()">
+    <header header><h2 i18n>Use existing database?</h2></header>
+    <div content>
+      <p i18n>
+        A local database for this destination already exists. Reuse it to share backup history with the command line, or
+        create a new database.
+      </p>
+      <p>{{ database.path }}</p>
+    </div>
+    <footer footer>
+      <button shButton type="button" (click)="cancelDatabaseChoice()" i18n>Cancel</button>
+      <button shButton type="button" (click)="chooseDatabase(false)" i18n>Create new database</button>
+      <button shButton type="button" class="primary raised" (click)="chooseDatabase(true)" i18n>
+        Use existing database
+      </button>
+    </footer>
+  </sh-dialog>
+}
 
 @if (targetUrlDialogOpen()) {
   <sh-dialog [(isOpen)]="targetUrlDialogOpen" [options]="{ maxWidth: '700px', width: '100%' }">

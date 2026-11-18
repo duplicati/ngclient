@@ -2,7 +2,7 @@ import { DecimalPipe } from '@angular/common';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
-import { Observable, of, Subject } from 'rxjs';
+import { Observable, of, Subject, throwError } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { DuplicatiServer } from '../../core/openapi';
 import { BackupsState } from '../../core/states/backups.state';
@@ -11,7 +11,11 @@ import DeleteBackupComponent from './delete-backup.component';
 afterEach(() => TestBed.resetTestingModule());
 
 describe('job deletion remote files option', () => {
-  async function setup(operationType?: 'Backup' | 'Sync', response: Observable<unknown> = of({})) {
+  async function setup(
+    operationType?: 'Backup' | 'Sync',
+    response: Observable<unknown> = of({}),
+    usage: Observable<{ inuse: boolean }> = of({ inuse: false })
+  ) {
     const remove = vi.fn(() => response);
     const open = vi.fn((_component: unknown, _options: { closed: (confirmed: boolean) => void }) => {});
     TestBed.configureTestingModule({
@@ -20,7 +24,13 @@ describe('job deletion remote files option', () => {
         DecimalPipe,
         provideRouter([]),
         { provide: ShipDialogService, useValue: { open } },
-        { provide: DuplicatiServer, useValue: { postApiV1FilesystemValidate: vi.fn(() => Promise.resolve({})) } },
+        {
+          provide: DuplicatiServer,
+          useValue: {
+            postApiV1FilesystemValidate: vi.fn(() => Promise.resolve({})),
+            getApiV1BackupByIdIsdbusedelsewhere: vi.fn(() => usage),
+          },
+        },
         {
           provide: BackupsState,
           useValue: {
@@ -46,6 +56,20 @@ describe('job deletion remote files option', () => {
     fixture.detectChanges();
     return { fixture, component: fixture.componentInstance, remove, open };
   }
+
+  it.each(['shared', 'failed'] as const)('keeps the database when its ownership check is %s', async (mode) => {
+    const usage = mode === 'shared' ? of({ inuse: true }) : throwError(() => new Error('Unavailable'));
+    const { component, fixture, open, remove } = await setup('Backup', of({}), usage);
+    const checkbox = fixture.nativeElement.querySelector('input[type=checkbox]') as HTMLInputElement;
+    expect(checkbox.disabled).toBe(true);
+    expect(fixture.nativeElement.textContent).toContain(mode === 'shared' ? 'command line' : 'could not be checked');
+    component.deleteLocalDb.set(true);
+    component.deleteBackup();
+    open.mock.calls[0][1].closed(true);
+    expect(remove).toHaveBeenCalledWith(
+      expect.objectContaining({ query: expect.objectContaining({ 'delete-local-db': false }) })
+    );
+  });
 
   it.each(['Backup', 'Sync'] as const)('exposes navigation links without deleting a %s job', async (operationType) => {
     const { fixture, component, remove, open } = await setup(operationType);

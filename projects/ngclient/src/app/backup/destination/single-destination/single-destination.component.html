@@ -683,10 +683,10 @@
               </button>
             } @else {
               <div class="info" i18n>Connect to the console to use Duplicati storage.</div>
-              <button shButton type="button" class="outlined" [routerLink]="['/connect/logon']" i18n>
+              <a shButton class="outlined" [routerLink]="['/connect/logon']" i18n>
                 Connect&nbsp;now
                 <sh-icon>arrow-right</sh-icon>
-              </button>
+              </a>
             }
           </div>
         }

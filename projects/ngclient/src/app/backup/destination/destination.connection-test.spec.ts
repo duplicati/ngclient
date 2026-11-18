@@ -44,13 +44,21 @@ describe('new backup destination connection testing', () => {
           { provide: Router, useValue: { navigate } },
           { provide: ActivatedRoute, useValue: { parent: {} } },
           { provide: ShipDialogService, useValue: { open } },
-          { provide: DuplicatiServer, useValue: { postApiV2DestinationTest: post } },
+          {
+            provide: DuplicatiServer,
+            useValue: {
+              postApiV2DestinationTest: post,
+              postApiV1RemoteoperationDbpath: () => Promise.resolve({ Exists: false }),
+            },
+          },
           { provide: SysinfoState, useValue: { hasV2TestOperations: () => true } },
           {
             provide: BackupState,
             useValue: {
               targetUrls,
               isNew: signal(true),
+              isSyncMode: signal(false),
+              reusedDatabase: signal(null),
               backupId: signal('new'),
               isConnectionStringSaved: signal(false),
               shouldAutoSave: () => false,
