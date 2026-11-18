@@ -1,6 +1,6 @@
 import { test as base, request, type APIRequestContext } from '@playwright/test';
 import { spawn } from 'node:child_process';
-import { randomUUID } from 'node:crypto';
+import { randomInt, randomUUID } from 'node:crypto';
 import { once } from 'node:events';
 import { createWriteStream } from 'node:fs';
 import { mkdir, mkdtemp, readFile, stat } from 'node:fs/promises';
@@ -198,8 +198,7 @@ export const test = base.extend<{}, { liveServer: LiveServer; liveServerOptions:
           data: { 'shown-welcome-page-v1': 'true', 'has-asked-for-password-change': 'true' },
         });
         if (!settings.ok()) throw new Error(`Fixture settings failed: ${settings.status()}`);
-        proxy.listen(0, '127.0.0.1');
-        await once(proxy, 'listening');
+        await listenOnBrowserSafePort(proxy);
         await use({
           url: `http://127.0.0.1:${(proxy.address() as net.AddressInfo).port}`,
           password,
@@ -231,3 +230,50 @@ export const test = base.extend<{}, { liveServer: LiveServer; liveServerOptions:
   },
 });
 export { expect } from '@playwright/test';
+
+export async function listenOnBrowserSafePort(
+  server: net.Server,
+  preferredPort = randomInt(49152, 65536)
+): Promise<number> {
+  // Chromium's standard restricted ports are below this dynamic/private range.
+  // A hint never permits a low port. Bind the actual proxy, without releasing
+  // a reservation and leaving a gap in which another process could take it.
+  let port =
+    Number.isInteger(preferredPort) && preferredPort >= 49152 && preferredPort <= 65535
+      ? preferredPort
+      : randomInt(49152, 65536);
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 32; attempt++) {
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const cleanup = () => {
+          server.off('error', onError);
+          server.off('listening', onListening);
+        };
+        const onError = (error: Error) => {
+          cleanup();
+          reject(error);
+        };
+        const onListening = () => {
+          cleanup();
+          resolve();
+        };
+        server.once('error', onError);
+        server.once('listening', onListening);
+        try {
+          server.listen(port, '127.0.0.1');
+        } catch (error) {
+          cleanup();
+          reject(error);
+        }
+      });
+      return port;
+    } catch (error) {
+      // Treat denied candidates as unavailable as well as ports already in use.
+      if (!['EADDRINUSE', 'EACCES'].includes((error as NodeJS.ErrnoException).code ?? '')) throw error;
+      lastError = error;
+      port = randomInt(49152, 65536);
+    }
+  }
+  throw new Error('No available browser-safe loopback port after 32 attempts', { cause: lastError });
+}
