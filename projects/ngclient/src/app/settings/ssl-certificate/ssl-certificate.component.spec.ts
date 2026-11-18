@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { Subject } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { DuplicatiServer } from '../../core/openapi';
-import { SslCertificateComponent } from './ssl-certificate.component';
+import { PAGE_LOCATION, SslCertificateComponent } from './ssl-certificate.component';
 import { canUploadCertificate, isInsecureConnection, toUpdateCertificateRequest } from './ssl-certificate-settings';
 
 const PFX_BYTES = new Uint8Array([0x30, 0x82, 0x00, 0xff, 0x80, 0x01]);
@@ -16,12 +16,16 @@ describe('ssl certificate settings', () => {
   });
 
   it.each([
-    ['http:', true],
-    ['HTTP:', true],
-    ['https:', false],
-    ['HTTPS:', false],
-  ])('treats protocol %s as insecure: %s', (protocol, insecure) => {
-    expect(isInsecureConnection(protocol)).toBe(insecure);
+    ['http:', 'duplicati.example.com', true],
+    ['HTTP:', '192.168.1.10', true],
+    ['https:', 'duplicati.example.com', false],
+    ['HTTPS:', 'duplicati.example.com', false],
+    ['http:', 'localhost', false],
+    ['http:', 'LOCALHOST', false],
+    ['http:', '127.0.0.1', false],
+    ['http:', 'localhost.example.com', true],
+  ])('treats %s//%s as insecure: %s', (protocol, hostname, insecure) => {
+    expect(isInsecureConnection({ protocol, hostname })).toBe(insecure);
   });
 
   it('needs a file and a password that is not blank', () => {
@@ -39,12 +43,15 @@ describe('ssl certificate component', () => {
     vi.restoreAllMocks();
   });
 
-  function setup() {
+  function setup(location = { protocol: 'http:', hostname: 'duplicati.example.com' }) {
     const response = new Subject<unknown>();
     const post = vi.fn(() => response);
     TestBed.configureTestingModule({
       imports: [SslCertificateComponent],
-      providers: [{ provide: DuplicatiServer, useValue: { postApiV1Uisettings: post } }],
+      providers: [
+        { provide: DuplicatiServer, useValue: { postApiV1Uisettings: post } },
+        { provide: PAGE_LOCATION, useValue: location },
+      ],
     });
     const fixture = TestBed.createComponent(SslCertificateComponent);
     fixture.detectChanges();
@@ -63,8 +70,12 @@ describe('ssl certificate component', () => {
 
   it('warns that the certificate is sent unencrypted when the page is not loaded over HTTPS', () => {
     const { element } = setup();
-    expect(window.location.protocol).toBe('http:');
     expect(element.querySelector('sh-alert')?.textContent).toContain('sent to the server unencrypted');
+  });
+
+  it.each(['localhost', '127.0.0.1'])('does not warn when the page is loaded over HTTP from %s', (hostname) => {
+    const { element } = setup({ protocol: 'http:', hostname });
+    expect(element.querySelector('sh-alert')).toBeNull();
   });
 
   it('posts the selected file as base64 with the typed password', async () => {
