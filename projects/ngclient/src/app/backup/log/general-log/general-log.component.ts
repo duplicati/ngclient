@@ -345,10 +345,28 @@ export class GeneralLogComponent {
   }
 
   canCompareWithPreviousVersion(item: LogEntryEvaluated): boolean {
-    return item.data?.MainOperation === 'Backup' && item.data.ParsedResult !== 'Fatal';
+    const data = item.data;
+    if (data?.MainOperation !== 'Backup' || data.ParsedResult === 'Fatal') return false;
+
+    // A run that changed nothing creates no version, as the server counts the same changes to decide.
+    // Results without the counts are left to the lookup of the version
+    if (data.AddedFiles == null) return true;
+    const changes = [
+      data.AddedFiles,
+      data.ModifiedFiles,
+      data.DeletedFiles,
+      data.AddedFolders,
+      data.ModifiedFolders,
+      data.DeletedFolders,
+      data.AddedSymlinks,
+      data.ModifiedSymlinks,
+      data.DeletedSymlinks,
+    ];
+    return changes.some((x) => (x ?? 0) > 0);
   }
 
-  // Opens the command editor with COMPARE between the version this backup created and the one before it (duplicati#4678)
+  // Opens the comparison of the version this backup created with the one before it,
+  // or with the one after it when it is the oldest (duplicati#4678)
   compareWithPreviousVersion(item: LogEntryEvaluated) {
     const backupId = this.backupId();
     if (!backupId || this.comparingEntry() !== null) return;
@@ -360,17 +378,29 @@ export class GeneralLogComponent {
       .pipe(finalize(() => this.comparingEntry.set(null)))
       .subscribe({
         next: (filesets) => {
+          if (filesets.length < 2) {
+            this.compareMessage.set({
+              id: item.id,
+              text: $localize`This backup has only one version, so there is nothing to compare with.`,
+            });
+            return;
+          }
           const version = findBackupVersion(filesets, item.data?.BeginTime, item.data?.EndTime);
           if (version === null) {
-            this.compareMessage.set({ id: item.id, text: $localize`This backup run has no version to compare.` });
+            this.compareMessage.set({
+              id: item.id,
+              text: $localize`The version this backup run created no longer exists, so there is nothing to compare.`,
+            });
             return;
           }
-          if (!filesets.some((x) => x.Version === version + 1)) {
-            this.compareMessage.set({ id: item.id, text: $localize`There is no earlier version to compare with.` });
+          // The oldest version has none before it, so it is compared with the one after it instead
+          const hasEarlier = filesets.some((x) => x.Version === version + 1);
+          if (!hasEarlier && !filesets.some((x) => x.Version === version - 1)) {
+            this.compareMessage.set({ id: item.id, text: $localize`There is no other version to compare with.` });
             return;
           }
-          this.#router.navigate(['backup', backupId, 'commandline'], {
-            queryParams: { command: 'compare', base: version + 1, target: version },
+          this.#router.navigate(['backup', backupId, 'compare'], {
+            queryParams: hasEarlier ? { base: version + 1, target: version } : { base: version, target: version - 1 },
           });
         },
         error: () => {

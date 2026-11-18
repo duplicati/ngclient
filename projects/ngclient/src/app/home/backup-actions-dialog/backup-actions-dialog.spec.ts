@@ -60,6 +60,7 @@ describe('backup actions dialog', () => {
       'export',
       'disable',
       'delete',
+      'compare',
       'version-labels',
       'delete-versions',
       'purge-files',

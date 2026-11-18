@@ -21,6 +21,7 @@ export type BackupActionId =
   | 'verify'
   | 'test-restore'
   | 'commandline'
+  | 'compare'
   | 'version-labels'
   | 'delete-versions'
   | 'purge-files'
@@ -129,6 +130,13 @@ export class BackupActionsDialog {
         actions: isSync
           ? []
           : [
+              {
+                id: 'compare',
+                icon: shIcon('shicon:git-diff'),
+                label: $localize`Compare versions`,
+                description: $localize`See what changed between two versions.`,
+                route: page('compare'),
+              },
               ...on(this.#sysinfo.hasV2SetVersionLabel(), {
                 id: 'version-labels',
                 icon: shIcon('shicon:tag'),

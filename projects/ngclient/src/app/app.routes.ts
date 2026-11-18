@@ -215,6 +215,11 @@ export const routes: Routes = [
                     loadComponent: () => import('./backup/version-labels/version-labels.component'),
                   },
                   {
+                    path: 'backup/:id/compare',
+                    canActivate: [RestoreJobGuard],
+                    loadComponent: () => import('./backup/compare-versions/compare-versions.component'),
+                  },
+                  {
                     path: 'backup/:id/broken-files',
                     canActivate: [RestoreJobGuard],
                     loadComponent: () => import('./backup/broken-files/broken-files.component'),

@@ -1,0 +1,204 @@
+<h3 i18n>Compare versions of {{ backup()?.Name }}</h3>
+
+@if (isLoading()) {
+  <div class="loading-state">
+    <sh-progress-bar class="primary indeterminate"></sh-progress-bar>
+    <p i18n>Fetching versions...</p>
+  </div>
+} @else if (loadFailed()) {
+  <div class="empty-state">
+    <p role="alert" i18n>Could not load the backup versions.</p>
+    <div>
+      <button shButton type="button" (click)="backupResource.reload(); versionsResource.reload()" i18n>Retry</button>
+    </div>
+  </div>
+} @else if (versions().length < 2) {
+  <div class="empty-state">
+    <p i18n>This backup needs at least two versions to compare.</p>
+  </div>
+} @else {
+  <p class="intro" i18n>
+    Pick two versions to see what was added, modified and deleted going from the first to the second.
+  </p>
+
+  <div class="pickers">
+    <sh-select [options]="versions()" [isClearable]="false" value="Version">
+      <label for="base-version" i18n>From version</label>
+      <input
+        id="base-version"
+        type="text"
+        i18n-placeholder
+        placeholder="Select a version..."
+        [(ngModel)]="baseVersion"
+        [disabled]="isComparing()" />
+
+      <ng-template let-option>
+        <div class="version-option">
+          {{ option.Version }}: {{ option.Time | date: 'medium' }}
+          @if (option.Label) {
+            <span class="label">{{ option.Label }}</span>
+          }
+        </div>
+      </ng-template>
+    </sh-select>
+
+    <button
+      shButton
+      type="button"
+      class="swap"
+      (click)="swapVersions()"
+      [disabled]="isComparing()"
+      i18n-aria-label
+      aria-label="Swap versions">
+      <sh-icon>arrows-left-right</sh-icon>
+    </button>
+
+    <sh-select [options]="versions()" [isClearable]="false" value="Version">
+      <label for="target-version" i18n>To version</label>
+      <input
+        id="target-version"
+        type="text"
+        i18n-placeholder
+        placeholder="Select a version..."
+        [(ngModel)]="targetVersion"
+        [disabled]="isComparing()" />
+
+      <ng-template let-option>
+        <div class="version-option">
+          {{ option.Version }}: {{ option.Time | date: 'medium' }}
+          @if (option.Label) {
+            <span class="label">{{ option.Label }}</span>
+          }
+        </div>
+      </ng-template>
+    </sh-select>
+
+    @if (isComparing()) {
+      <button shButton type="button" class="compare" (click)="cancel()" i18n>Cancel</button>
+    } @else {
+      <button shButton type="button" class="raised primary compare" (click)="compare()" [disabled]="!canCompare()" i18n>
+        <sh-icon>git-diff</sh-icon>
+        Compare
+      </button>
+    }
+  </div>
+
+  @if (sameVersion()) {
+    <p class="hint" role="status" i18n>Pick two different versions.</p>
+  }
+}
+
+@if (compared(); as cmp) {
+  <section class="comparison" aria-live="polite">
+    <h4 i18n>
+      Version {{ cmp.base.Version }} ({{ cmp.base.Time | date: 'medium' }}) to version {{ cmp.target.Version }} ({{
+        cmp.target.Time | date: 'medium'
+      }})
+    </h4>
+
+    @switch (state().status) {
+      @case ('queued') {
+        <sh-progress-bar class="primary indeterminate"></sh-progress-bar>
+        <p i18n>Waiting for the server to start the comparison...</p>
+      }
+      @case ('running') {
+        <sh-progress-bar class="primary indeterminate"></sh-progress-bar>
+        <p i18n>Comparing versions...</p>
+      }
+      @case ('failed') {
+        @let failed = $any(state());
+        <p class="failure" role="alert">{{ failed.message }}</p>
+        @if (failed.output.length) {
+          <pre class="output">{{ failed.output.join('\n') }}</pre>
+        }
+      }
+      @case ('done') {
+        @let res = result()!;
+
+        <div class="summary">
+          @for (changeType of changeTypes; track changeType.type) {
+            @let totals = res.totals[changeType.type];
+            <div class="summary-card {{ changeType.type }}">
+              <span class="count">{{ totalCount(changeType.type) | number }}</span>
+              <span class="name">{{ changeType.label }}</span>
+              <span class="breakdown" i18n>
+                Files: {{ totals.files | number }}, folders: {{ totals.folders | number }}, symlinks:
+                {{ totals.symlinks | number }}
+              </span>
+            </div>
+          }
+        </div>
+
+        @if (res.baseSize !== null && res.targetSize !== null) {
+          <p class="sizes" i18n>
+            Size of version {{ cmp.base.Version }}: {{ res.baseSize }}. Size of version {{ cmp.target.Version }}:
+            {{ res.targetSize }}.
+          </p>
+        }
+
+        @if (res.changes.length === 0) {
+          <p class="no-changes" i18n>No changes between these versions.</p>
+        } @else {
+          <div class="list-toolbar">
+            <sh-form-field class="filter">
+              <input
+                type="text"
+                i18n-placeholder
+                placeholder="Filter by path..."
+                i18n-aria-label
+                aria-label="Filter by path"
+                [ngModel]="filter()"
+                (ngModelChange)="updateFilter($event)" />
+              <sh-icon suffix>magnifying-glass</sh-icon>
+            </sh-form-field>
+
+            <div class="type-toggles">
+              @for (changeType of changeTypes; track changeType.type) {
+                <button
+                  type="button"
+                  class="type-toggle {{ changeType.type }}"
+                  [class.off]="hiddenTypes().has(changeType.type)"
+                  [attr.aria-pressed]="!hiddenTypes().has(changeType.type)"
+                  [disabled]="changeCounts()[changeType.type] === 0"
+                  (click)="toggleType(changeType.type)">
+                  <span class="marker" aria-hidden="true">{{ changeType.marker }}</span>
+                  {{ changeType.label }}
+                  {{ changeCounts()[changeType.type] | number }}
+                </button>
+              }
+            </div>
+          </div>
+
+          @if (filteredChanges().length === 0) {
+            <p class="no-changes" i18n>No changes match the filter.</p>
+          } @else {
+            <ul class="changes">
+              @for (change of visibleChanges(); track $index) {
+                <li class="change {{ change.type }}">
+                  <span class="marker" role="img" [attr.aria-label]="typeDisplay[change.type].label">
+                    {{ typeDisplay[change.type].marker }}
+                  </span>
+                  <sh-icon>{{ change.isFolder ? 'folder' : 'file' }}</sh-icon>
+                  <span class="path">{{ change.path }}</span>
+                </li>
+              }
+            </ul>
+
+            @if (filteredChanges().length > visibleChanges().length) {
+              <div class="more">
+                <span i18n>
+                  Showing {{ visibleChanges().length | number }} of {{ filteredChanges().length | number }} changes
+                </span>
+                <button shButton type="button" class="small" (click)="showMore()" i18n>Show more</button>
+              </div>
+            }
+          }
+
+          @if (res.omitted > 0) {
+            <p class="hint" i18n>{{ res.omitted | number }} more changes were not listed by the server.</p>
+          }
+        }
+      }
+    }
+  </section>
+}

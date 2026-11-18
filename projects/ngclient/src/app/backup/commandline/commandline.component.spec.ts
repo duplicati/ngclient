@@ -36,10 +36,7 @@ describe('command execution confirmation and arguments', () => {
       mapGeneralToForm: vi.fn(),
       mapOptionsToForms: vi.fn(),
     };
-    const route = {
-      params: of({ id: '42' }),
-      snapshot: { queryParams: saved ? { state: 'previous-state' } : queryParams },
-    };
+    const route = { params: of({ id: '42' }), snapshot: { queryParams: saved ? { state: 'previous-state' } : {} } };
     const backup = {
       ID: '42',
       Name: 'Documents',
@@ -223,37 +220,5 @@ describe('command execution confirmation and arguments', () => {
 
     component.baseCmdForm.controls.command.setValue('backup');
     expect(component.baseCmdForm.value.arguments).toBe('5');
-  });
-  it('runs COMPARE between the versions the log page links with (duplicati#4678)', () => {
-    const { component, confirm, run } = setup(undefined, { command: 'compare', base: '3', target: '2' });
-    expect(component.baseCmdForm.value).toEqual({ command: 'compare', targetUrl: 'file:///backup', arguments: '3\n2' });
-    component.submit();
-    confirm.mock.calls[0][0]();
-    expect(run).toHaveBeenCalledExactlyOnceWith({
-      body: [
-        'compare',
-        'file:///backup',
-        '3',
-        '2',
-        '--backup-name=Documents',
-        '--dbpath=/db/local.sqlite',
-        '--backup-id=42',
-        '--retry-count=7',
-        '--verbose=true',
-        '--disable-module=console-password-input',
-      ],
-    });
-  });
-  it.each([
-    { command: 'delete', base: '3', target: '2' },
-    { command: 'compare', base: '--version=0', target: '2' },
-    { command: 'compare', base: '3' },
-  ])('ignores link parameters other than COMPARE with two version numbers: %o', (queryParams) => {
-    const { component } = setup(undefined, queryParams as Record<string, string>);
-    expect(component.baseCmdForm.value).toEqual({
-      command: 'backup',
-      targetUrl: 'file:///backup',
-      arguments: '/source',
-    });
   });
 });
