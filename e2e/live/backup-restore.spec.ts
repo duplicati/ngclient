@@ -3,33 +3,39 @@ import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import { join, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { test, expect } from './fixture';
+import type { APIResponse } from '@playwright/test';
 
-for (const mode of ['unencrypted', 'aes-saved', 'aes-direct', 'aes-retry', 'aes-empty'] as const) {
+for (const mode of ['unencrypted', 'aes-saved', 'aes-direct', 'aes-retry', 'aes-empty', 'aes-wizard'] as const) {
+  const wizard = mode === 'aes-wizard';
   const encrypted = mode !== 'unencrypted';
   const retry = mode === 'aes-retry';
   const empty = mode === 'aes-empty';
   const recovery = retry || empty;
   const direct = mode === 'aes-direct' || recovery;
-  test(`backs up ${encrypted ? 'AES-encrypted' : 'unencrypted'} local files and restores original contents${empty ? ' after leaving the passphrase empty' : retry ? ' after correcting a wrong passphrase' : direct ? ' without saved settings' : ''}`, async ({
+  test(`backs up ${encrypted ? 'AES-encrypted' : 'unencrypted'} local files and restores original contents${wizard ? ' after creating it with the wizard' : empty ? ' after leaving the passphrase empty' : retry ? ' after correcting a wrong passphrase' : direct ? ' without saved settings' : ''}`, async ({
     page,
     liveServer,
   }) => {
     const { api, directory, password } = liveServer;
-    const prefix = empty
-      ? 'empty-encrypted-roundtrip'
-      : retry
-        ? 'retry-encrypted-roundtrip'
-        : direct
-          ? 'direct-encrypted-roundtrip'
-          : encrypted
-            ? 'encrypted-roundtrip'
-            : 'roundtrip';
+    const prefix = wizard
+      ? 'wizard-roundtrip'
+      : empty
+        ? 'empty-encrypted-roundtrip'
+        : retry
+          ? 'retry-encrypted-roundtrip'
+          : direct
+            ? 'direct-encrypted-roundtrip'
+            : encrypted
+              ? 'encrypted-roundtrip'
+              : 'roundtrip';
     const passphrase = randomUUID();
-    const jobName = direct
-      ? 'Live encrypted direct restore'
-      : encrypted
-        ? 'Live encrypted backup and restore'
-        : 'Live backup and restore';
+    const jobName = wizard
+      ? 'Live wizard backup and restore'
+      : direct
+        ? 'Live encrypted direct restore'
+        : encrypted
+          ? 'Live encrypted backup and restore'
+          : 'Live backup and restore';
     const source = join(directory, prefix + '-source');
     const documents = join(source, 'Documents');
     const remote = join(directory, prefix + '-remote');
@@ -42,28 +48,67 @@ for (const mode of ['unencrypted', 'aes-saved', 'aes-direct', 'aes-retry', 'aes-
     await writeFile(join(documents, 'message.txt'), text);
     await writeFile(join(documents, 'bytes.bin'), binary);
     await writeFile(join(source, 'unselected.txt'), 'This sibling must not be restored.');
-    const created = await api.post('/api/v1/backups', {
-      data: {
-        Backup: {
-          Name: jobName,
-          TargetURL: pathToFileURL(remote).href,
-          Sources: [source + sep],
-          Settings: [
-            ...(encrypted
-              ? [
-                  { Name: 'encryption-module', Value: 'aes' },
-                  { Name: 'passphrase', Value: passphrase },
-                ]
-              : [{ Name: '--no-encryption', Value: 'true' }]),
-            { Name: '--snapshot-policy', Value: 'off' },
-          ],
-          Filters: [],
-          Tags: [],
-          Metadata: {},
+    let created: Pick<APIResponse, 'ok' | 'text' | 'json'>;
+    if (wizard) {
+      test.setTimeout(180_000);
+      await page.goto('/login');
+      await page.getByPlaceholder('Enter your password').fill(password);
+      await page.getByRole('button', { name: 'Login', exact: true }).click();
+      await expect(page).toHaveURL('/');
+      await page.goto('/backup/new/general');
+      await page.getByPlaceholder('Your backup name').fill(jobName);
+      await page.locator('#password').fill(passphrase);
+      await page.locator('#repeatPassword').fill(passphrase);
+      await page.getByRole('button', { name: 'Continue', exact: true }).click();
+      await expect(page).toHaveURL('/backup/new/source-data');
+      const directPath = page.getByPlaceholder('Add a direct path');
+      await directPath.fill(source + sep);
+      await page.locator('app-source-data .row-inputs').filter({ has: directPath }).getByRole('button').click();
+      await page.getByRole('button', { name: 'Continue', exact: true }).click();
+      await expect(page).toHaveURL('/backup/new/destination');
+      await page.getByPlaceholder('Search for destination...').fill('File system');
+      await page
+        .locator('app-destination-list-item')
+        .filter({ hasText: 'File system' })
+        .getByRole('button', { name: 'Choose', exact: true })
+        .click();
+      await page.getByRole('button', { name: 'Manually type path', exact: true }).click();
+      await page.getByLabel('File path', { exact: false }).fill(remote);
+      await page.getByRole('button', { name: 'Continue', exact: true }).click();
+      await expect(page).toHaveURL('/backup/new/schedule');
+      await page.locator('app-schedule sh-select').first().click();
+      await page.locator('li.option').getByText("Don't run automatically", { exact: true }).click();
+      await page.getByRole('button', { name: 'Continue', exact: true }).click();
+      await expect(page).toHaveURL('/backup/new/options');
+      const saved = page.waitForResponse(
+        (response) => response.request().method() === 'POST' && new URL(response.url()).pathname === '/api/v1/backups'
+      );
+      await page.getByRole('button', { name: 'Submit', exact: true }).click();
+      created = await saved;
+    } else {
+      created = await api.post('/api/v1/backups', {
+        data: {
+          Backup: {
+            Name: jobName,
+            TargetURL: pathToFileURL(remote).href,
+            Sources: [source + sep],
+            Settings: [
+              ...(encrypted
+                ? [
+                    { Name: 'encryption-module', Value: 'aes' },
+                    { Name: 'passphrase', Value: passphrase },
+                  ]
+                : [{ Name: '--no-encryption', Value: 'true' }]),
+              { Name: '--snapshot-policy', Value: 'off' },
+            ],
+            Filters: [],
+            Tags: [],
+            Metadata: {},
+          },
+          Schedule: null,
         },
-        Schedule: null,
-      },
-    });
+      });
+    }
     expect(created.ok(), await created.text()).toBe(true);
     const { ID } = await created.json();
     expect(ID).toBeTruthy();
@@ -100,9 +145,11 @@ for (const mode of ['unencrypted', 'aes-saved', 'aes-direct', 'aes-retry', 'aes-
     try {
       const errors: string[] = [];
       page.on('pageerror', (error) => errors.push(error.message));
-      await page.goto('/login');
-      await page.getByPlaceholder('Enter your password').fill(password);
-      await page.getByRole('button', { name: 'Login', exact: true }).click();
+      if (!wizard) {
+        await page.goto('/login');
+        await page.getByPlaceholder('Enter your password').fill(password);
+        await page.getByRole('button', { name: 'Login', exact: true }).click();
+      }
       await expect(page).toHaveURL('/', { timeout: 20_000 });
       const row = page.locator('.backups .backup').filter({ hasText: jobName });
       const started = page.waitForResponse(
