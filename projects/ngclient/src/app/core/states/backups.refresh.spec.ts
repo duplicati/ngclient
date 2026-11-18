@@ -1,6 +1,6 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Subject } from 'rxjs';
+import { config, Subject } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { DuplicatiServer } from '../openapi';
 import { LOCALSTORAGE } from '../services/localstorage.token';
@@ -101,6 +101,33 @@ describe('BackupsState list refresh transport and caching', () => {
     vi.setSystemTime(Date.now() + 1);
     state.getBackups(true);
     expect(get).toHaveBeenCalledTimes(2);
+  });
+  it('keeps the last list and permits retry without an unhandled error after a failed refresh', async () => {
+    const { state, response, get } = setup();
+    state.getBackups();
+    response.next(list);
+    vi.setSystemTime(Date.now() + 100);
+    const failed = new Subject<BackupRes>();
+    const recovered = new Subject<BackupRes>();
+    get.mockReturnValueOnce(failed).mockReturnValueOnce(recovered);
+    const previous = config.onUnhandledError;
+    const unhandled = vi.fn();
+    config.onUnhandledError = unhandled;
+    try {
+      state.getBackups(true);
+      failed.error({ status: 503, message: 'Transient token refresh failure' });
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      expect.soft(unhandled).not.toHaveBeenCalled();
+      expect(state.backups()).toEqual(list);
+      expect(state.backupsLoading()).toBe(false);
+      state.getBackups(true);
+      expect(get).toHaveBeenCalledTimes(3);
+      recovered.next([]);
+      expect(state.backups()).toEqual([]);
+      expect(state.backupsLoading()).toBe(false);
+    } finally {
+      config.onUnhandledError = previous;
+    }
   });
   it('subscribes over WebSocket, applies notifications and avoids HTTP fetches', () => {
     const { state, server, get } = setup(true);
