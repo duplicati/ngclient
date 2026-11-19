@@ -284,7 +284,9 @@ export class StatusBarState {
       ) {
         pg = 0.9;
       } else if (status.Phase === 'Backup_Delete' || status.Phase === 'Backup_Compact') {
-        pg = 0.95;
+        // A server that reports compact progress puts it between 0.95 and 0.98
+        const reported = status.OverallProgress ?? 0;
+        pg = Number.isFinite(reported) ? Math.min(0.98, Math.max(0.95, reported)) : 0.95;
       } else if (status.Phase === 'Backup_VerificationUpload' || status.Phase === 'Backup_PostBackupVerify') {
         pg = 0.98;
       } else if (status.Phase === 'Backup_Complete' || status.Phase === 'Sync_Complete') {
