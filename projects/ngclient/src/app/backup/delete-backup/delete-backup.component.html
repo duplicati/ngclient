@@ -25,7 +25,7 @@
 
       <sh-checkbox class="primary raised">
         Delete local database
-        <input type="checkbox" [(ngModel)]="deleteLocalDb" [disabled]="!canDeleteLocalDb()" />
+        <input type="checkbox" [formField]="inputForm.deleteLocalDb" />
       </sh-checkbox>
       @if (databaseUsage.isLoading()) {
         <p role="status" i18n>Checking whether the local database is shared…</p>
@@ -59,7 +59,7 @@
 
       <sh-checkbox class="primary raised">
         Delete remote files
-        <input type="checkbox" [(ngModel)]="deleteRemoteFiles" />
+        <input type="checkbox" [formField]="inputForm.deleteRemoteFiles" />
       </sh-checkbox>
     </section>
   }
