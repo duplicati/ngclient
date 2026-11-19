@@ -95,11 +95,11 @@
           <div class="form-row">
             <sh-form-field>
               <label i18n>Name</label>
-              <input [(ngModel)]="editName" i18n-placeholder placeholder="Name" />
+              <input [formField]="inputForm.editName" appNullableText i18n-placeholder placeholder="Name" />
             </sh-form-field>
             <!-- <sh-form-field>
               <label i18n>Description</label>
-              <input [(ngModel)]="editDescription" i18n-placeholder placeholder="Description (optional)" />
+              <input [formField]="inputForm.editDescription" appNullableText i18n-placeholder placeholder="Description (optional)" />
             </sh-form-field> -->
           </div>
         }
