@@ -17,7 +17,8 @@ describe('Restore options for a PostgreSQL backup', () => {
 
   function setup(
     values: Partial<ReturnType<ReturnType<typeof createRestoreOptionsForm>['getRawValue']>>,
-    restoreModules: string[]
+    restoreModules: string[],
+    filesToRestore = '/backup/'
   ) {
     const optionsForm = createRestoreOptionsForm();
     optionsForm.patchValue({ handleExisting: 'overwrite', ...values });
@@ -25,6 +26,7 @@ describe('Restore options for a PostgreSQL backup', () => {
     optionsForm.valueChanges.subscribe(() => optionsFormSignal.set(optionsForm.getRawValue()));
     const submit = vi.fn();
     const setAlternateRestorePath = vi.fn();
+    const setAdditionalRestorePaths = vi.fn();
     const open = vi.fn();
     TestBed.configureTestingModule({
       imports: [OptionsComponent],
@@ -39,9 +41,10 @@ describe('Restore options for a PostgreSQL backup', () => {
             advancedOptions: signal([]),
             canRegisterRestoredItems: signal(false),
             backup: signal({ Backup: { ID: '1', Sources: [`@/backup|${SOURCE_URL}`] } }),
-            selectFilesFormSignal: signal({ filesToRestore: '/backup/tables/app.orders' }),
+            selectFilesFormSignal: signal({ filesToRestore }),
             submit,
             setAlternateRestorePath,
+            setAdditionalRestorePaths,
           },
         },
         {
@@ -59,7 +62,7 @@ describe('Restore options for a PostgreSQL backup', () => {
     }).overrideComponent(OptionsComponent, { set: { template: '', imports: [] } });
     const fixture = TestBed.createComponent(OptionsComponent);
     fixture.detectChanges();
-    return { component: fixture.componentInstance, optionsForm, submit, setAlternateRestorePath, open };
+    return { component: fixture.componentInstance, optionsForm, submit, setAlternateRestorePath, setAdditionalRestorePaths, open };
   }
 
   it('offers a database as the target only when the server can restore to one', () => {
@@ -94,6 +97,55 @@ describe('Restore options for a PostgreSQL backup', () => {
     expect(optionsForm.controls.handleExisting.value).toBe('saveTimestamp');
     expect(optionsForm.controls.includeMetadata.value).toBe(true);
     expect(submit).toHaveBeenCalledTimes(1);
+  });
+
+  it('restores a version from a failed backup only when asked', () => {
+    const { component, setAlternateRestorePath, setAdditionalRestorePaths } = setup(
+      { restoreFrom: 'same-custom', databaseAllowMixedVersions: true, databaseCreateTables: true },
+      ['postgresql']
+    );
+
+    expect(component.isDatabaseTablesOnly()).toBe(false);
+    component.submit();
+
+    expect(setAlternateRestorePath).toHaveBeenCalledWith(
+      `@${SOURCE_URL}&postgresql-restore-allow-mixed-versions=true`,
+      '@/backup'
+    );
+    expect(setAdditionalRestorePaths).not.toHaveBeenCalled();
+  });
+
+  it('loads only the rows when some of the database is selected, and restores the table of contents too', () => {
+    const { component, optionsForm, submit, setAlternateRestorePath, setAdditionalRestorePaths } = setup(
+      { restoreFrom: 'other-custom', databaseAllowMixedVersions: true },
+      ['postgresql'],
+      '/backup/tables/app.orders\0/backup/tables/app.customers'
+    );
+    component.remoteCustomTargetUrl.set(OTHER_URL);
+
+    expect(component.isDatabaseTablesOnly()).toBe(true);
+    component.submit();
+
+    expect(setAlternateRestorePath).toHaveBeenCalledWith(`@${OTHER_URL}&postgresql-restore-mode=tables`, '@/backup');
+    expect(setAdditionalRestorePaths).toHaveBeenCalledWith(['/backup/toc']);
+    expect(optionsForm.controls.handleExisting.value).toBe('saveTimestamp');
+    expect(submit).toHaveBeenCalledTimes(1);
+  });
+
+  it('creates missing tables and replaces rows when asked', () => {
+    const { component, optionsForm, setAlternateRestorePath } = setup(
+      { restoreFrom: 'same-custom', databaseCreateTables: true, databaseOverwrite: true, handleExisting: 'saveTimestamp' },
+      ['postgresql'],
+      '/backup/tables/'
+    );
+
+    component.submit();
+
+    expect(setAlternateRestorePath).toHaveBeenCalledWith(
+      `@${SOURCE_URL}&postgresql-restore-mode=tables&postgresql-restore-create-tables=true`,
+      '@/backup'
+    );
+    expect(optionsForm.controls.handleExisting.value).toBe('overwrite');
   });
 
   it('restores to another database, replacing tables when asked', () => {

@@ -13,6 +13,7 @@ export const POSTGRESQL_PASSWORD_OPTION = 'postgresql-password';
 export const POSTGRESQL_SSLMODE_OPTION = 'postgresql-sslmode';
 export const POSTGRESQL_SSLROOTCERT_OPTION = 'postgresql-sslrootcert';
 export const POSTGRESQL_CLIENT_PATH_OPTION = 'postgresql-client-path';
+export const POSTGRESQL_INCLUDE_LARGE_OBJECTS_OPTION = 'postgresql-include-large-objects';
 
 export const POSTGRESQL_DEFAULT_PORT = 5432;
 export const POSTGRESQL_DEFAULT_SSLMODE = 'require';

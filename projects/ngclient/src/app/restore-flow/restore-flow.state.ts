@@ -75,6 +75,8 @@ export class RestoreFlowState implements OnDestroy {
   extendedDataType = signal<string | null>(null);
   alternateRestorePath = signal<string | null>(null);
   alternateRestorePathSourcePrefix = signal<string | null>(null);
+  // Entries a restore target needs besides the ones that were selected
+  additionalRestorePaths = signal<string[]>([]);
   advancedOptions = signal<SettingInputDto[]>([]);
 
   // Hyper-V machines are stored below this virtual root in a backup
@@ -113,6 +115,7 @@ export class RestoreFlowState implements OnDestroy {
 
     this.isFileRestore.set(isFileRestore);
     this.alternateRestorePath.set(null);
+    this.additionalRestorePaths.set([]);
     this.extendedDataType.set(null);
     this.advancedOptions.set([]);
 
@@ -135,6 +138,13 @@ export class RestoreFlowState implements OnDestroy {
   setAlternateRestorePath(path: string | null, prefix: string | null) {
     this.alternateRestorePath.set(path);
     this.alternateRestorePathSourcePrefix.set(prefix);
+    // What one target needs is not carried over to another
+    this.additionalRestorePaths.set([]);
+  }
+
+  /** Sets entries to restore besides the selected ones; call after setting the restore path */
+  setAdditionalRestorePaths(paths: string[]) {
+    this.additionalRestorePaths.set(paths);
   }
 
   submit() {
@@ -187,10 +197,7 @@ export class RestoreFlowState implements OnDestroy {
       this.#dupServer.postApiV1BackupByIdRestore({
         path: { id: id ?? '' },
         body: {
-          paths:
-            selectFilesFormValue.filesToRestore
-              ?.split('\0')
-              .map((x) => (x.endsWith('/') || x.endsWith('\\') ? `${x}*` : x)) ?? [],
+          paths: this.#getRestorePaths(selectFilesFormValue.filesToRestore),
           passphrase: selectFilesFormValue.passphrase ?? null,
           time: selectedOption?.Time,
           restore_path: this.alternateRestorePath() ?? optionsValue.restoreFromPath,
@@ -214,6 +221,16 @@ export class RestoreFlowState implements OnDestroy {
           console.error('restore error', err);
         },
       });
+  }
+
+  #getRestorePaths(filesToRestore: string | null | undefined) {
+    const selected = filesToRestore?.split('\0') ?? [];
+    // Without a selection everything is restored, which already includes what the target needs
+    const additional = selected.some((x) => x !== '')
+      ? this.additionalRestorePaths().filter((x) => !selected.includes(x))
+      : [];
+
+    return [...selected, ...additional].map((x) => (x.endsWith('/') || x.endsWith('\\') ? `${x}*` : x));
   }
 
   #getRestoreOptions(registerRestoredItems: boolean) {

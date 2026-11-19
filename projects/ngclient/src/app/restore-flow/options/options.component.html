@@ -227,14 +227,46 @@
     <app-toggle-card [disableToggle]="true">
       <ng-container title i18n>Restore settings</ng-container>
 
-      <sh-toggle class="raised primary" i18n>
-        Replace the tables that exist in the database
-        <input type="checkbox" formControlName="databaseOverwrite" />
-      </sh-toggle>
+      @if (isDatabaseTablesOnly()) {
+        <p class="database-note" i18n>
+          Only some of the database is selected, so the rows of the selected tables are loaded into tables that exist.
+          Indexes, constraints and sequence values are not changed. Select the whole database to restore it with all
+          of its objects.
+        </p>
 
-      <p class="database-note" i18n>
-        Without this, a restore of the whole database needs an empty database and stops if it finds tables in it.
-      </p>
+        <sh-toggle class="raised primary" i18n>
+          Create the tables that are missing
+          <input type="checkbox" formControlName="databaseCreateTables" />
+        </sh-toggle>
+
+        <sh-toggle class="raised primary" i18n>
+          Replace the rows of the tables
+          <input type="checkbox" formControlName="databaseOverwrite" />
+        </sh-toggle>
+
+        <p class="database-note" i18n>
+          Without this, a table that already has rows is not loaded. A created table has no indexes or constraints.
+        </p>
+      } @else {
+        <sh-toggle class="raised primary" i18n>
+          Replace the tables that exist in the database
+          <input type="checkbox" formControlName="databaseOverwrite" />
+        </sh-toggle>
+
+        <p class="database-note" i18n>
+          Without this, a restore of the whole database needs an empty database and stops if it finds tables in it.
+        </p>
+
+        <sh-toggle class="raised primary" i18n>
+          Restore a version where a backup failed part-way
+          <input type="checkbox" formControlName="databaseAllowMixedVersions" />
+        </sh-toggle>
+
+        <p class="database-note" i18n>
+          Such a version holds some tables from an earlier backup, which may not fit the rest of the database. Without
+          this, its indexes and constraints are not created and the restore is reported as failed.
+        </p>
+      }
     </app-toggle-card>
   } @else if (isCustomRemoteRestore() && !isDiskTarget()) {
     <app-toggle-card [disableToggle]="true">

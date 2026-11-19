@@ -29,9 +29,12 @@ import {
 import {
   buildPostgresqlRestorePath,
   isPostgresqlSourceEntry,
+  isWholeDatabaseSelected,
   parsePostgresqlTarget,
+  postgresqlTableOfContentsPath,
   POSTGRESQL_EXTENDED_DATA_TYPE,
   POSTGRESQL_RESTORE_MODULE_KEY,
+  postgresqlTargetUrlFromSource,
 } from './postgresql-target';
 import { RESTORE_OPTION_DEFAULTS } from './restore-option-defaults';
 
@@ -54,6 +57,8 @@ export const createRestoreOptionsForm = () => {
     imageOverwrite: fb.control<boolean>(false),
     imagePreallocate: fb.control<boolean>(false),
     databaseOverwrite: fb.control<boolean>(false),
+    databaseCreateTables: fb.control<boolean>(false),
+    databaseAllowMixedVersions: fb.control<boolean>(false),
   });
 };
 
@@ -108,6 +113,18 @@ export default class OptionsComponent {
   /** Whether the restore writes to a PostgreSQL database */
   isDatabaseTarget = computed(() => this.isDatabaseBackup() && this.isCustomRemoteRestore());
 
+  /** The entries that were selected for restore; none means everything */
+  #selectedPaths = computed(() =>
+    (this.#restoreFlowState.selectFilesFormSignal()?.filesToRestore ?? '').split('\0').filter((x) => x !== '')
+  );
+
+  /**
+   * Whether only the rows of the selected tables are loaded. A whole database is restored with its
+   * objects, indexes and constraints, which needs every table, so a selection of tables is loaded into
+   * tables that exist.
+   */
+  isDatabaseTablesOnly = computed(() => !isWholeDatabaseSelected(this.#selectedPaths(), this.remoteCustomSourcePrefix()));
+
   /** The database the restore writes to, once one is chosen */
   databaseTarget = computed(() => (this.isDatabaseTarget() ? parsePostgresqlTarget(this.customDestinationUrl()) : null));
 
@@ -155,7 +172,10 @@ export default class OptionsComponent {
         )[0] ?? null
   );
 
-  remoteCustomSourceUrl = computed(() => this.remoteCustomSourceEntry()?.split('|')[1] ?? null);
+  // What is restored to is the source without the options only a backup uses
+  remoteCustomSourceUrl = computed(() =>
+    postgresqlTargetUrlFromSource(this.remoteCustomSourceEntry()?.split('|')[1] ?? null)
+  );
   remoteCustomSourcePrefix = computed(() => this.remoteCustomSourceEntry()?.split('|')[0] ?? null);
 
   customDestinationUrl = computed(() => {
@@ -332,7 +352,13 @@ export default class OptionsComponent {
     const restoreToImageFile = this.optionsFormSignal()?.restoreFrom === 'diskimage-file';
 
     if (restoreToCustomRemote && this.isDatabaseBackup()) {
-      const result = buildPostgresqlRestorePath(this.customDestinationUrl());
+      const value = this.optionsFormSignal();
+      const tablesOnly = this.isDatabaseTablesOnly();
+      const result = buildPostgresqlRestorePath(this.customDestinationUrl(), {
+        tablesOnly,
+        createTables: !!value?.databaseCreateTables,
+        allowMixedVersions: !!value?.databaseAllowMixedVersions,
+      });
 
       if ('error' in result) {
         const messages = {
@@ -356,6 +382,10 @@ export default class OptionsComponent {
         this.optionsFormSignal()?.databaseOverwrite ? 'overwrite' : 'saveTimestamp'
       );
       this.#restoreFlowState.setAlternateRestorePath(result.path, this.remoteCustomSourcePrefix());
+      // The rows of single tables are loaded with the columns and the encoding the table of contents records
+      const prefix = this.remoteCustomSourcePrefix();
+      if (tablesOnly && prefix)
+        this.#restoreFlowState.setAdditionalRestorePaths([postgresqlTableOfContentsPath(files, prefix)]);
       this.optionsForm.controls.includeMetadata.setValue(true);
       this.optionsForm.controls.permissions.setValue(true);
     } else if (restoreToCustomRemote) {
