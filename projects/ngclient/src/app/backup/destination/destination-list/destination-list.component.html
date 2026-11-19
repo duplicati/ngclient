@@ -5,9 +5,13 @@
         type="text"
         i18n-placeholder
         placeholder="Search for remote source..."
-        [(ngModel)]="destinationSearchTerm" />
+        [formField]="inputForm.destinationSearchTerm" />
     } @else {
-      <input type="text" i18n-placeholder placeholder="Search for destination..." [(ngModel)]="destinationSearchTerm" />
+      <input
+        type="text"
+        i18n-placeholder
+        placeholder="Search for destination..."
+        [formField]="inputForm.destinationSearchTerm" />
     }
   </sh-form-field>
   <sh-toggle [(checked)]="showAllDestinations" class="raised primary" i18n>Show&nbsp;all</sh-toggle>

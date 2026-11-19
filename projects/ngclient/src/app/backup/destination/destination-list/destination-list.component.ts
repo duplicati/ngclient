@@ -1,6 +1,6 @@
 import { KeyboardActionDirective } from '../../../core/directives/keyboard-action.directive';
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { form, FormField } from '@angular/forms/signals';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
@@ -15,7 +15,7 @@ import { DestinationListItemComponent } from '../destination-list-item/destinati
   imports: [
     KeyboardActionDirective,
     DestinationListItemComponent,
-    FormsModule,
+    FormField,
     ShipFormField,
     ShipButton,
     ShipIcon,
@@ -33,7 +33,8 @@ export class DestinationListComponent {
   moduleType = input<RemoteDestinationType>('Backend');
   setDestination = output<string>();
 
-  destinationSearchTerm = signal('');
+  inputForm = form(signal({ destinationSearchTerm: '' }));
+  destinationSearchTerm = this.inputForm.destinationSearchTerm().value;
   showAllDestinations = signal(false);
 
   destinationTypeOptions = computed(() => {
