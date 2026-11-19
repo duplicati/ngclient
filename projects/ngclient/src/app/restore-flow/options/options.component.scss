@@ -37,3 +37,32 @@ form {
   margin: 0;
   opacity: 0.8;
 }
+
+.database-target {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: p2r(12);
+
+  dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: p2r(4) p2r(16);
+    margin: 0;
+  }
+
+  dt {
+    opacity: 0.8;
+  }
+
+  dd {
+    margin: 0;
+    word-break: break-all;
+  }
+}
+
+.database-note {
+  margin: 0;
+  opacity: 0.8;
+}

@@ -35,6 +35,27 @@
             formControlName="restoreFrom"
             (click)="chooseCustomRemoteDestination()" />
         </sh-radio>
+      } @else if (isDatabaseBackup()) {
+        @if (canRestoreToDatabase()) {
+          <sh-radio class="raised primary" i18n>
+            Same PostgreSQL database
+            <input type="radio" name="restoreFrom" value="same-custom" formControlName="restoreFrom" />
+          </sh-radio>
+
+          <sh-radio class="raised primary" i18n>
+            Different PostgreSQL database
+            <input
+              type="radio"
+              name="restoreFrom"
+              value="other-custom"
+              formControlName="restoreFrom"
+              (click)="chooseCustomRemoteDestination()" />
+          </sh-radio>
+        } @else {
+          <p class="database-note" i18n>
+            This server cannot restore to a PostgreSQL database. The tables can be restored as files.
+          </p>
+        }
       } @else if (extendedDataType() === 'diskimage') {
         <sh-radio class="raised primary" i18n>
           Target disk
@@ -76,13 +97,37 @@
 
       @if (showCustomRemoteRestoreTree()) {
         <app-file-tree
-          [customRemoteMode]="extendedDataType()"
+          [customRemoteMode]="customRemoteTreeMode()"
           [backupId]="backupId()"
           [sourcePrefix]="remoteCustomSourcePrefix()"
           [destinationUrl]="customDestinationUrl()">
           <label for="path">Path</label>
           <input type="text" id="path" formControlName="restoreFromPath" />
         </app-file-tree>
+      }
+
+      @if (isDatabaseTarget()) {
+        <div class="database-target">
+          @if (databaseTarget(); as target) {
+            <dl>
+              <dt i18n>Host</dt>
+              <dd>{{ target.host }}{{ target.port ? ':' + target.port : '' }}</dd>
+              <dt i18n>Database</dt>
+              <dd>{{ target.database }}</dd>
+              <dt i18n>Username</dt>
+              <dd>{{ target.username }}</dd>
+            </dl>
+          } @else {
+            <p class="database-note" i18n>No database is chosen.</p>
+          }
+
+          @if (optionsFormSignal()?.restoreFrom === 'other-custom') {
+            <button shButton type="button" class="raised" (click)="chooseCustomRemoteDestination()" i18n>
+              <sh-icon>pencil-simple</sh-icon>
+              Change database
+            </button>
+          }
+        </div>
       }
 
       @if (optionsFormSignal()?.restoreFrom === 'diskimage-file') {
@@ -178,7 +223,20 @@
     }
   </app-toggle-card>
 
-  @if (isCustomRemoteRestore() && !isDiskTarget()) {
+  @if (isDatabaseTarget()) {
+    <app-toggle-card [disableToggle]="true">
+      <ng-container title i18n>Restore settings</ng-container>
+
+      <sh-toggle class="raised primary" i18n>
+        Replace the tables that exist in the database
+        <input type="checkbox" formControlName="databaseOverwrite" />
+      </sh-toggle>
+
+      <p class="database-note" i18n>
+        Without this, a restore of the whole database needs an empty database and stops if it finds tables in it.
+      </p>
+    </app-toggle-card>
+  } @else if (isCustomRemoteRestore() && !isDiskTarget()) {
     <app-toggle-card [disableToggle]="true">
       <ng-container title i18n>Restore settings</ng-container>
 

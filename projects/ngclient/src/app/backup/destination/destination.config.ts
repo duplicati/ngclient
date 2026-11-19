@@ -18,6 +18,21 @@ import {
   UrlLike,
   ValueOfDestinationFormGroup,
 } from './destination.config-utilities';
+import {
+  isPostgresqlConnectionString,
+  POSTGRESQL_CLIENT_PATH_OPTION,
+  POSTGRESQL_DATABASE_OPTION,
+  POSTGRESQL_DEFAULT_SOURCE_URL,
+  POSTGRESQL_HOST_OPTION,
+  POSTGRESQL_PASSWORD_OPTION,
+  POSTGRESQL_PORT_OPTION,
+  POSTGRESQL_SCHEME,
+  POSTGRESQL_SSLMODE_OPTION,
+  POSTGRESQL_SSLROOTCERT_OPTION,
+  POSTGRESQL_USERNAME_OPTION,
+  postgresqlConnectionStringToOptions,
+  postgresqlOptionsInUrlOrder,
+} from './destination.postgresql';
 import { parseS3EndpointUrl } from './destination.s3-endpoint';
 import {
   DIGITALOCEAN_SERVERS,
@@ -2464,6 +2479,91 @@ export const DESTINATION_CONFIG: DestinationConfig = [
           },
         };
       },
+    },
+  },
+  {
+    key: POSTGRESQL_SCHEME,
+    displayName: $localize`PostgreSQL`,
+    description: $localize`Create backups of a PostgreSQL database.`,
+    sourceDescription: $localize`Use a PostgreSQL database as a remote source.`,
+    searchTerms: 'postgres postgresql pg pgsql database sql supabase neon',
+    icon: 'assets/dest-icons/postgresql.svg',
+    dynamicFields: [
+      {
+        name: POSTGRESQL_HOST_OPTION,
+        type: 'Hostname',
+        order: 1,
+        shortDescription: $localize`Host`,
+        longDescription: $localize`The host name of the database server.`,
+        isMandatory: true,
+      },
+      {
+        name: POSTGRESQL_PORT_OPTION,
+        order: 2,
+        shortDescription: $localize`Port`,
+      },
+      {
+        name: POSTGRESQL_DATABASE_OPTION,
+        order: 3,
+        shortDescription: $localize`Database`,
+        longDescription: $localize`The name of the database to back up. A backup covers one database.`,
+        isMandatory: true,
+      },
+      {
+        name: POSTGRESQL_USERNAME_OPTION,
+        order: 4,
+        shortDescription: $localize`Username`,
+        longDescription: $localize`The role the backup connects as. A read-only role is enough.`,
+        isMandatory: true,
+      },
+      {
+        name: POSTGRESQL_PASSWORD_OPTION,
+        order: 5,
+        shortDescription: $localize`Password`,
+      },
+      {
+        name: POSTGRESQL_SSLMODE_OPTION,
+        order: 6,
+        shortDescription: $localize`TLS mode`,
+      },
+    ],
+    advancedFields: [
+      {
+        name: POSTGRESQL_SSLROOTCERT_OPTION,
+        type: 'FileTree',
+      },
+      {
+        name: POSTGRESQL_CLIENT_PATH_OPTION,
+        type: 'FolderTree',
+      },
+    ],
+    mapper: {
+      to: (fields: ValueOfDestinationFormGroup): string => {
+        const urlParams = toSearchParams(
+          postgresqlOptionsInUrlOrder({ ...(fields.advanced ?? {}), ...(fields.dynamic ?? {}) })
+        );
+        return `${POSTGRESQL_SCHEME}://${urlParams}`;
+      },
+      from: (destinationType: string, urlObj: UrlLike, plainPath: string) => {
+        // A pasted connection string has a host part; the source URL itself only has named options.
+        // The scheme is not checked here, as a URL with a host part is parsed with a stand-in scheme.
+        const { advanced, dynamic } = urlObj.hostname
+          ? { advanced: {}, dynamic: postgresqlConnectionStringToOptions(urlObj) }
+          : fromSearchParams(POSTGRESQL_SCHEME, urlObj);
+
+        return <ValueOfDestinationFormGroup>{
+          destinationType: POSTGRESQL_SCHEME,
+          advanced: {
+            ...advanced,
+          },
+          dynamic: {
+            ...dynamic,
+          },
+        };
+      },
+      // Hosting platforms hand out connection strings with either scheme
+      intercept: (urlObj: UrlLike) => isPostgresqlConnectionString(urlObj),
+      default: (backupName: string): string => POSTGRESQL_DEFAULT_SOURCE_URL,
     },
   },
   {
