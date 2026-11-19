@@ -1,3 +1,4 @@
+import { NullableTextControl } from '../backup/general/nullable-text-control';
 import { KeyboardActionDirective } from '../core/directives/keyboard-action.directive';
 import {
   ChangeDetectionStrategy,
@@ -11,7 +12,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subscription } from 'rxjs';
-import { FormsModule } from '@angular/forms';
+import { form, FormField } from '@angular/forms/signals';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipCard } from '@ship-ui/core/ship-card';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
@@ -47,9 +48,11 @@ import { ConnectionStringsState } from '../core/states/connection-strings.state'
     ShipIcon,
     ShipCard,
     ShipFormField,
+    NullableTextControl,
     ShipDivider,
     TestUrl,
-    FormsModule,
+    FormField,
+    NullableTextControl,
   ],
   templateUrl: './destinations.html',
   styleUrl: './destinations.scss',
@@ -78,8 +81,9 @@ export default class Destinations {
     this.selectedDestination() !== 'new' ? (this.selectedDestination() as ConnectionStringDto).ID : null
   );
 
-  editName = signal<string | null>(null);
-  editDescription = signal<string | null>(null);
+  inputForm = form(signal({ editName: null as string | null, editDescription: null as string | null }));
+  editName = this.inputForm.editName().value;
+  editDescription = this.inputForm.editDescription().value;
   editBaseUrl = signal<string | null>(null);
   initialBaseUrl = signal<string | null>(null);
 
