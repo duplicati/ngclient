@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipSelect } from '@ship-ui/core/ship-select';
@@ -50,6 +50,7 @@ export const SIZE_OPTIONS = [
 export class SizeComponent implements ControlValueAccessor {
   customId = input<string>();
   inputType = input<string | null>();
+  sizeChange = output<string>();
 
   timespan = signal(0);
   unit = signal('MB');
@@ -72,6 +73,7 @@ export class SizeComponent implements ControlValueAccessor {
     if (this.#writingValue || value === this.#lastValue) return;
     this.#lastValue = value;
     this.onChange(value);
+    this.sizeChange.emit(value);
   });
 
   writeValue(value: string): void {

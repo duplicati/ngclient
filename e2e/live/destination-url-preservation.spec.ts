@@ -5,6 +5,10 @@ import type { GetBackupResultDto } from '../../projects/ngclient/src/app/core/op
 import { test, expect } from './fixture';
 
 const cases = [
+  [
+    'azure-size',
+    'azure://archive?auth-username=fixture&auth-password=fixture-key&azure-upload-block-size=64MB&future=a+b&future=two&flag&empty=',
+  ],
   ['file', 'file://C:/Backup%20Files?future=a+b&future=two&flag&empty='],
   [
     'ssh',
@@ -125,6 +129,33 @@ for (const [label, url] of cases) {
       expect(writes).toHaveLength(0);
       expect(storedUrl()).toBe(url);
 
+      if (label === 'azure-size') {
+        const size = page
+          .locator('app-single-destination app-size')
+          .filter({ hasText: /size of each uploaded block/i });
+        const amount = size.getByRole('spinbutton');
+        const unit = size.locator('sh-select .selected-value');
+        await expect(amount).toHaveValue('64');
+        await expect(unit).toHaveText('MB');
+        await amount.fill('128');
+        await unit.click();
+        await page.getByRole('option', { name: 'KB', exact: true }).click();
+        const pending = page.waitForResponse(
+          (response) => response.request().method() === 'PUT' && new URL(response.url()).pathname === endpoint
+        );
+        await save.click();
+        const response = await pending;
+        expect(response.ok(), await response.text()).toBe(true);
+        expect(storedUrl()).toBe(url.replace('azure-upload-block-size=64MB', 'azure-upload-block-size=128KB'));
+        expect(advancedOptions(await get())).toEqual(expectedOptions);
+        await page.reload();
+        await expect(amount).toHaveValue('128');
+        await expect(unit).toHaveText('KB');
+        expect(writes).toHaveLength(1);
+        expect(unexpected).toEqual([]);
+        expect(errors).toEqual([]);
+        return;
+      }
       const actions: string[] = [];
       for (const action of ['mouse', 'reload-keyboard', 'description-only']) {
         if (action === 'reload-keyboard') {
