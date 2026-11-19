@@ -2,7 +2,7 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { config, ObservableInput, of, Subject, throwError } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { DuplicatiServer, ServerStatusDto } from '../../core/openapi';
+import { DuplicatiServer, ServerStatusDto, SystemInfoDto } from '../../core/openapi';
 import { ServerStateService } from '../../core/services/server-state.service';
 import { UpdateInstallService } from '../../core/services/update-install.service';
 import { SysinfoState } from '../../core/states/sysinfo.state';
@@ -138,5 +138,68 @@ describe('GeneralComponent update check lifecycle', () => {
     } finally {
       config.onUnhandledError = previous;
     }
+  });
+});
+
+// The server reports these in the system info (issue duplicati/duplicati#6611); the real state loads them.
+describe('GeneralComponent database encryption and preload settings', () => {
+  afterEach(() => TestBed.resetTestingModule());
+
+  function render(systemInfo: Partial<SystemInfoDto>) {
+    TestBed.configureTestingModule({
+      imports: [GeneralComponent],
+      providers: [
+        SysinfoState,
+        {
+          provide: DuplicatiServer,
+          useValue: {
+            getApiV1Systeminfo: () => of(systemInfo),
+            getApiV1Acknowledgements: () => new Subject<{ Acknowledgements: string }>(),
+          },
+        },
+        { provide: ServerStateService, useValue: { serverState: signal<Partial<ServerStatusDto>>({}) } },
+        {
+          provide: UpdateInstallService,
+          useValue: { installSupported: () => false, canCancel: () => false, installing: () => false },
+        },
+      ],
+    });
+    TestBed.inject(SysinfoState).preload();
+    const fixture = TestBed.createComponent(GeneralComponent);
+    fixture.detectChanges();
+    return fixture.nativeElement as HTMLElement;
+  }
+
+  it('says the database is encrypted and lists the preload paths with which are found', () => {
+    const element = render({
+      DatabaseFieldsEncrypted: true,
+      PreloadSettingsPaths: [
+        { Path: '/data/preload.json', Exists: false },
+        { Path: '/opt/duplicati/preload.json', Exists: true },
+      ],
+    });
+    expect(element.querySelector('.database-encryption')?.textContent).toContain('The server database is encrypted.');
+    const items = Array.from(element.querySelectorAll('.preload-paths li')).map((x) => [
+      x.querySelector('code')?.textContent,
+      x.querySelector('span')?.textContent?.trim(),
+    ]);
+    expect(items).toEqual([
+      ['/data/preload.json', '(not found)'],
+      ['/opt/duplicati/preload.json', '(found)'],
+    ]);
+  });
+
+  it('says the database is not encrypted', () => {
+    const element = render({ DatabaseFieldsEncrypted: false, PreloadSettingsPaths: [] });
+    expect(element.querySelector('.database-encryption')?.textContent).toContain(
+      'The server database is not encrypted.'
+    );
+    expect(element.querySelector('.preload-paths')).toBeNull();
+  });
+
+  it('shows neither for a server that does not report them', () => {
+    const element = render({ ServerVersionName: 'Old server' });
+    expect(element.querySelector('.database-encryption')).toBeNull();
+    expect(element.querySelector('.preload-paths')).toBeNull();
   });
 });
