@@ -12,6 +12,7 @@ export const POSTGRESQL_USERNAME_OPTION = 'postgresql-username';
 export const POSTGRESQL_PASSWORD_OPTION = 'postgresql-password';
 export const POSTGRESQL_SSLMODE_OPTION = 'postgresql-sslmode';
 export const POSTGRESQL_SSLROOTCERT_OPTION = 'postgresql-sslrootcert';
+export const POSTGRESQL_SSLROOTCERT_CONTENT_OPTION = 'postgresql-sslrootcert-content';
 export const POSTGRESQL_CLIENT_PATH_OPTION = 'postgresql-client-path';
 export const POSTGRESQL_INCLUDE_LARGE_OBJECTS_OPTION = 'postgresql-include-large-objects';
 

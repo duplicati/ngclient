@@ -106,4 +106,22 @@ describe('PostgreSQL source mapper', () => {
     expect(getConfigurationByUrl('ssh://db.example.com/app').key).toBe('ssh');
     expect(getConfigurationByUrl(POSTGRESQL_DEFAULT_SOURCE_URL).key).toBe(POSTGRESQL_SCHEME);
   });
+
+  it('keeps a root certificate given as text through a save and a load', () => {
+    const pem = '-----BEGIN CERTIFICATE-----\nMIIBszCC+/=\n-----END CERTIFICATE-----\n';
+    const url = postgresql.mapper.to({
+      destinationType: POSTGRESQL_SCHEME,
+      custom: {},
+      advanced: { 'postgresql-sslrootcert-content': pem },
+      dynamic: {
+        'postgresql-host': 'db.example.com',
+        'postgresql-database': 'app',
+        'postgresql-username': 'backup',
+        'postgresql-sslmode': 'verify-full',
+      },
+    } as ValueOfDestinationFormGroup);
+
+    expect(url).not.toContain('\n');
+    expect(fromTargetPath(url)!.advanced).toEqual({ 'postgresql-sslrootcert-content': pem });
+  });
 });

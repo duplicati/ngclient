@@ -28,6 +28,7 @@ import {
   POSTGRESQL_PORT_OPTION,
   POSTGRESQL_SCHEME,
   POSTGRESQL_SSLMODE_OPTION,
+  POSTGRESQL_SSLROOTCERT_CONTENT_OPTION,
   POSTGRESQL_SSLROOTCERT_OPTION,
   POSTGRESQL_USERNAME_OPTION,
   postgresqlConnectionStringToOptions,
@@ -2531,6 +2532,14 @@ export const DESTINATION_CONFIG: DestinationConfig = [
       {
         name: POSTGRESQL_SSLROOTCERT_OPTION,
         type: 'FileTree',
+        accepts: '.crt,.pem,.cer,',
+      },
+      {
+        // The certificate itself, pasted or dropped as a file, for where there is no file to point to
+        name: POSTGRESQL_SSLROOTCERT_CONTENT_OPTION,
+        type: 'FreeText',
+        shortDescription: $localize`Root certificate`,
+        longDescription: $localize`The root certificate the server certificate is verified against, as PEM text. Use this or the path to a certificate file, not both.`,
       },
       {
         name: POSTGRESQL_CLIENT_PATH_OPTION,
