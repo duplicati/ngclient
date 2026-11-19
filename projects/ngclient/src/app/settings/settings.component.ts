@@ -1,3 +1,4 @@
+import { disabled, form, FormField } from '@angular/forms/signals';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
@@ -80,6 +81,7 @@ type TimeTypes = (typeof TIME_OPTIONS)[number]['value'];
 @Component({
   selector: 'app-settings',
   imports: [
+    FormField,
     FormsModule,
     ReactiveFormsModule,
     StatusBarComponent,
@@ -372,8 +374,11 @@ export default class SettingsComponent {
   #auth = inject(AppAuthState);
   showPassphraseForm = signal(false);
   isUpdating = signal(false);
-  passphrase = signal('');
-  repeatPassphrase = signal('');
+  inputForm = form(signal({ passphrase: '', repeatPassphrase: '' }), (fields) =>
+    disabled(fields.repeatPassphrase, ({ valueOf }) => valueOf(fields.passphrase).length === 0)
+  );
+  passphrase = this.inputForm.passphrase().value;
+  repeatPassphrase = this.inputForm.repeatPassphrase().value;
   passwordUpdated = signal(false);
 
   updatePassphrase() {
