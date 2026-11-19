@@ -9,14 +9,28 @@ import { BackupsState } from '../../core/states/backups.state';
 import DeleteBackupComponent from './delete-backup.component';
 
 afterEach(() => TestBed.resetTestingModule());
+type JobDetails = { Backup?: { ID: string; Name: string; DBPath?: string; OperationType?: 'Backup' | 'Sync' } };
 
 describe('job deletion remote files option', () => {
   async function setup(
     operationType?: 'Backup' | 'Sync',
     response: Observable<unknown> = of({}),
-    usage: Observable<{ inuse: boolean }> = of({ inuse: false })
+    usage: Observable<{ inuse: boolean }> = of({ inuse: false }),
+    details?: Observable<JobDetails>,
+    cold = false,
+    wait = true
   ) {
     const remove = vi.fn(() => response);
+    const job = (id: string) => ({
+      Backup: {
+        ID: id,
+        Name: 'Test job',
+        OperationType: operationType,
+        DBPath: '/db',
+        Metadata: { TargetFilesCount: '2' },
+      },
+    });
+    const load = vi.fn(({ path }: { path: { id: string } }): Observable<JobDetails> => details ?? of(job(path.id)));
     const open = vi.fn((_component: unknown, _options: { closed: (confirmed: boolean) => void }) => {});
     TestBed.configureTestingModule({
       imports: [DeleteBackupComponent],
@@ -29,20 +43,13 @@ describe('job deletion remote files option', () => {
           useValue: {
             postApiV1FilesystemValidate: vi.fn(() => Promise.resolve({})),
             getApiV1BackupByIdIsdbusedelsewhere: vi.fn(() => usage),
+            getApiV1BackupById: load,
           },
         },
         {
           provide: BackupsState,
           useValue: {
-            getBackupById: () => ({
-              Backup: {
-                ID: '42',
-                Name: 'Test job',
-                OperationType: operationType,
-                DBPath: '/db',
-                Metadata: { TargetFilesCount: '2' },
-              },
-            }),
+            getBackupById: () => (cold ? null : job('42')),
             deleteBackup: remove,
           },
         },
@@ -52,10 +59,69 @@ describe('job deletion remote files option', () => {
     const fixture = TestBed.createComponent(DeleteBackupComponent);
     fixture.componentRef.setInput('id', '42');
     fixture.detectChanges();
+    if (wait) await fixture.whenStable();
+    fixture.detectChanges();
+    return { fixture, component: fixture.componentInstance, remove, open, load };
+  }
+
+  it('loads a cold route by ID and prevents deletion until its details arrive', async () => {
+    const details = new Subject<JobDetails>();
+    const { fixture, component, load, open } = await setup(
+      'Backup',
+      of({}),
+      of({ inuse: false }),
+      details,
+      true,
+      false
+    );
+    expect(fixture.nativeElement.querySelector('.actions button').disabled).toBe(true);
+    component.deleteBackup();
+    expect(open).not.toHaveBeenCalled();
+    expect(load).toHaveBeenCalledWith({ path: { id: '42' } });
+    details.next({ Backup: { ID: '42', Name: 'Cold job', DBPath: '/db', OperationType: 'Backup' } });
+    details.complete();
     await fixture.whenStable();
     fixture.detectChanges();
-    return { fixture, component: fixture.componentInstance, remove, open };
-  }
+    expect(fixture.nativeElement.querySelector('h3').textContent).toContain('Cold job');
+    expect(fixture.nativeElement.querySelector('.actions button').disabled).toBe(false);
+  });
+
+  it('keeps deletion disabled when loading fails and supports retry', async () => {
+    const { fixture, load, component, open } = await setup(
+      'Backup',
+      of({}),
+      of({ inuse: false }),
+      throwError(() => new Error('offline')),
+      true
+    );
+    expect(fixture.nativeElement.querySelector('.actions button').disabled).toBe(true);
+    component.deleteBackup();
+    expect(open).not.toHaveBeenCalled();
+    load.mockReturnValue(of({ Backup: { ID: '42', Name: 'Recovered job' } }));
+    const retry = Array.from(fixture.nativeElement.querySelectorAll('button') as NodeListOf<HTMLButtonElement>).find(
+      (b) => b.textContent?.includes('Retry')
+    );
+    expect(retry).toBeTruthy();
+    retry!.click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('h3').textContent).toContain('Recovered job');
+    expect(fixture.nativeElement.querySelector('.actions button').disabled).toBe(false);
+  });
+
+  it('does not submit a confirmation from the previous route', async () => {
+    const { fixture, component, open, remove } = await setup('Backup');
+    component.deleteRemoteFiles.set(true);
+    component.deleteBackup();
+    fixture.componentRef.setInput('id', '43');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    open.mock.calls[0][1].closed(true);
+    expect(remove).not.toHaveBeenCalled();
+    expect(component.deleteRemoteFiles()).toBe(false);
+  });
 
   it.each(['shared', 'failed'] as const)('keeps the database when its ownership check is %s', async (mode) => {
     const usage = mode === 'shared' ? of({ inuse: true }) : throwError(() => new Error('Unavailable'));

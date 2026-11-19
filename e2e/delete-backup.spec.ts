@@ -22,13 +22,16 @@ const option = (page: Page, heading: string) =>
     .filter({ has: page.getByRole('heading', { name: heading, exact: true }) })
     .getByRole('checkbox');
 
-async function openDeletion(page: Page, usedElsewhere = false) {
+async function openDeletion(page: Page, usedElsewhere = false, operationType: 'Backup' | 'Sync' = 'Backup') {
   const deletes: Request[] = [];
   await page.route('**/api/v1/backup/42/isdbusedelsewhere', (route) =>
     route.fulfill({ json: { inuse: usedElsewhere } })
   );
   await page.route('**/api/v1/filesystem/validate', (route) => route.fulfill({ json: {} }));
   await page.route('**/api/v1/backup/42*', async (route) => {
+    if (route.request().method() === 'GET') {
+      return route.fulfill({ json: job(operationType) });
+    }
     expect(route.request().method()).toBe('DELETE');
     deletes.push(route.request());
     await route.fulfill({ json: {} });
@@ -48,7 +51,7 @@ test.describe('Sync job deletion', () => {
   test.use({ initialBackups: [[job('Sync')], { scope: 'test' }] });
 
   test('omits remote deletion while keeping local database deletion available', async ({ authenticatedPage: page }) => {
-    const deletes = await openDeletion(page);
+    const deletes = await openDeletion(page, false, 'Sync');
     await expect(page.getByRole('heading', { name: 'Delete remote files', exact: true })).toHaveCount(0);
     await expect(option(page, 'Delete remote files')).toHaveCount(0);
     await option(page, 'Delete local database').check();
