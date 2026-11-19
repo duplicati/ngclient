@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { form, FormField } from '@angular/forms/signals';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import FileTreeComponent from '../../../../core/components/file-tree/file-tree.component';
 import { RemoteDestinationType } from '../../../../core/openapi';
 
 @Component({
   selector: 'app-browse-path-dialog',
-  imports: [ShipButton, FileTreeComponent, FormsModule],
+  imports: [ShipButton, FileTreeComponent, FormField],
   templateUrl: './browse-path-dialog.html',
   styleUrl: './browse-path-dialog.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,7 +21,8 @@ export class BrowsePathDialog {
   }>();
   closed = output<string | null>();
 
-  path = signal<string>('');
+  inputForm = form(signal({ path: '' as string }));
+  path = this.inputForm.path().value;
   destinationUrl = signal<string>('');
   backupId = signal<string>('');
   connectionStringId = signal<number | null>(null);
