@@ -27,6 +27,10 @@ const cases = [
     's3',
     's3://BucketName/archive?s3-server-name=s3.example.invalid&auth-password=fixture-secret&future=a+b&future=two&flag&empty=',
   ],
+  [
+    'storage-id',
+    'duplicati://?duplicati-backup-id=original&duplicati-auth-apiid=fixture-id&duplicati-auth-apikey=fixture-key&future=a+b',
+  ],
   ['pcloud', 'pcloud://api.pcloud.com/Folder?authid=fixture-authid&future=a+b&future=two&flag&empty='],
   ['ssh-multiline', 'ssh://fixture@Example.COM/archive?ssh-key=initial&future=a+b&future=two&flag&empty='],
   ['unsupported', 'future-backend://example.invalid/archive?future=a+b&future=two&flag&empty='],
@@ -125,6 +129,34 @@ for (const [label, url] of cases) {
       await page.getByPlaceholder('Enter your password').fill(password);
       await page.getByRole('button', { name: 'Login', exact: true }).click();
       await expect(page).toHaveURL('/');
+      if (label === 'storage-id') {
+        await page.goto(`/backup/${id}/destination`);
+        const editor = page.getByRole('textbox', { name: /Unique Backup ID/i });
+        const edit = page.getByRole('button', { name: 'Edit backup ID', exact: true });
+        await expect(editor).toHaveValue('original');
+        await expect(editor).toBeDisabled();
+        await edit.press('Enter');
+        await expect(editor).toBeEnabled();
+        await expect(edit).toHaveCount(0);
+        const replacement = 'archive & 2026';
+        await editor.fill(replacement);
+        const pending = page.waitForResponse(
+          (response) => response.request().method() === 'PUT' && new URL(response.url()).pathname === endpoint
+        );
+        await page.getByRole('button', { name: 'Save changes', exact: true }).click();
+        const response = await pending;
+        expect(response.ok(), await response.text()).toBe(true);
+        expect(storedUrl()).toBe(url.replace('backup-id=original', 'backup-id=' + encodeURIComponent(replacement)));
+        expect(advancedOptions(await get())).toEqual(expectedOptions);
+        await page.reload();
+        await expect(editor).toHaveValue(replacement);
+        await expect(editor).toBeDisabled();
+        await expect(edit).toBeEnabled();
+        expect(writes).toHaveLength(1);
+        expect(unexpected).toEqual([]);
+        expect(errors).toEqual([]);
+        return;
+      }
       await page.goto(`/backup/${id}/destination`);
       const save = page.getByRole('button', { name: 'Save changes', exact: true });
       if (label === 's3-boolean') {
