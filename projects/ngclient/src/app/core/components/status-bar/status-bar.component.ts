@@ -4,6 +4,7 @@ import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipMenu } from '@ship-ui/core/ship-menu';
+import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { ServerSettingsService } from '../../../settings/server-settings.service';
 import { DuplicatiServer } from '../../openapi';
 import { ServerStateService } from '../../services/server-state.service';
@@ -23,6 +24,7 @@ import ThrottleSettingsDialogComponent from './throttle-settings-dialog/throttle
     ShipIcon,
     ShipButton,
     ShipMenu,
+    ShipTooltip,
     MobileMenuToggleComponent,
     BackupProgressComponent,
   ],
@@ -31,6 +33,7 @@ import ThrottleSettingsDialogComponent from './throttle-settings-dialog/throttle
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class StatusBarComponent {
+  readonly throttleLabel = $localize`Throttle network speed`;
   #dupServer = inject(DuplicatiServer);
   #statusBarState = inject(StatusBarState);
   #dialog = inject(ShipDialogService);

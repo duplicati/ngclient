@@ -33,7 +33,11 @@
         }
       </button>
 
-      <button shButton (click)="openThrottleSettingsDialog()">
+      <button
+        shButton
+        [attr.aria-label]="throttleLabel"
+        [shTooltip]="throttleLabel"
+        (click)="openThrottleSettingsDialog()">
         <sh-icon>speedometer</sh-icon>
       </button>
     </div>

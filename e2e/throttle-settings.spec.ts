@@ -1,17 +1,19 @@
 import { expect, test } from './fixtures/authenticated';
+import type { Page } from '@playwright/test';
 
 test.use({ initialServerSettings: { 'max-upload-speed': '8MB', 'max-download-speed': '2GB' } });
 
-test.beforeEach(async ({ authenticatedPage: page }) => {
+async function openThrottle(page: Page) {
   await page
     .locator('.desktop-actions')
     .getByRole('button')
     .filter({ has: page.locator('sh-icon').getByText('speedometer', { exact: true }) })
     .click();
   await expect(page.getByRole('heading', { name: 'Throttle network speed' })).toBeVisible();
-});
+}
 
 test('loads limits and lets the user cancel changes without saving', async ({ authenticatedPage: page, serverApi }) => {
+  await openThrottle(page);
   const dialog = page.getByRole('dialog');
   const upload = dialog.locator('.field-row').filter({ hasText: 'Max upload speed' });
   const download = dialog.locator('.field-row').filter({ hasText: 'Max download speed' });
@@ -26,10 +28,29 @@ test('loads limits and lets the user cancel changes without saving', async ({ au
   expect(serverApi.settingsRequests).toHaveLength(0);
 });
 
+test('names the toolbar action and supports its tooltip and keyboard activation', async ({
+  authenticatedPage: page,
+  serverApi,
+}) => {
+  const desktop = page.locator('.desktop-actions');
+  const throttle = desktop.getByRole('button', { name: 'Throttle network speed', exact: true });
+  await expect(throttle).toBeVisible();
+  await throttle.hover();
+  await expect(page.getByRole('tooltip')).toContainText('Throttle network speed');
+  await desktop.getByRole('button', { name: 'Pause', exact: true }).focus();
+  await page.keyboard.press('Tab');
+  await expect(throttle).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('heading', { name: 'Throttle network speed' })).toBeVisible();
+  await page.getByRole('dialog').getByRole('button', { name: 'Cancel', exact: true }).click();
+  expect(serverApi.settingsRequests).toHaveLength(0);
+});
+
 test('preserves edits after a rejected update and saves them on retry', async ({
   authenticatedPage: page,
   serverApi,
 }) => {
+  await openThrottle(page);
   const dialog = page.getByRole('dialog');
   const upload = dialog.locator('.field-row').filter({ hasText: 'Max upload speed' }).getByRole('spinbutton');
   const download = dialog.locator('.field-row').filter({ hasText: 'Max download speed' }).getByRole('spinbutton');
