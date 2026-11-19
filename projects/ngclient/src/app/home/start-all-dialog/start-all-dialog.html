@@ -33,7 +33,7 @@
       <p i18n>When the queue has completed, including backups that were already queued or get queued meanwhile:</p>
 
       <sh-select [isClearable]="false" [options]="afterActionOptions()" label="label" value="value">
-        <input type="text" [ngModel]="afterAction()" (ngModelChange)="setAfterAction($event)" />
+        <input type="text" [formField]="afterActionForm.afterAction" />
       </sh-select>
     </div>
   }
