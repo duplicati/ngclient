@@ -1,3 +1,4 @@
+import { form, FormField } from '@angular/forms/signals';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -38,6 +39,7 @@ export const createRestoreSelectFilesForm = () => {
 @Component({
   selector: 'app-select-files',
   imports: [
+    FormField,
     FormsModule,
     ReactiveFormsModule,
     DatePipe,
@@ -101,7 +103,8 @@ export default class SelectFilesComponent {
   #searchContext: string | null = null;
   #destroySearch = inject(DestroyRef).onDestroy(() => this.#searchSubscription?.unsubscribe());
 
-  searchAllVersions = signal(false);
+  inputForm = form(signal({ searchQuery: '', searchAllVersions: false }));
+  searchAllVersions = this.inputForm.searchAllVersions().value;
   searchPage = signal(0);
   searchPages = signal(0);
   searchError = signal(false);
@@ -119,7 +122,7 @@ export default class SelectFilesComponent {
 
   // Search functionality
   canSearch = computed(() => this.#sysinfo.hasV2ListOperations() && !this.isSync());
-  searchQuery = signal<string>('');
+  searchQuery = this.inputForm.searchQuery().value;
   isSearching = signal(false);
   searchResults = signal<SearchEntriesItemDto[]>([]);
   searchParentMetadata = signal<{ [path: string]: { [key: string]: string | null } }>({});
