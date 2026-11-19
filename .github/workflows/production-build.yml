@@ -69,7 +69,8 @@ jobs:
   browser-tests:
     needs: production-build
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # The budget includes Chromium's system dependency installation on a fresh runner.
+    timeout-minutes: 15
 
     steps:
       - name: Checkout code
