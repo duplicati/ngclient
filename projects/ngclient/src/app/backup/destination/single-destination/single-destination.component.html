@@ -476,10 +476,17 @@
               "></ng-container>
           </label>
           <input
+            #integerInput
             type="number"
             [id]="formFieldId"
-            [ngModel]="formInput"
-            (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
+            [formField]="destinationIntegerField(item.fieldGroup, item.formView.name)"
+            (input)="
+              updateFieldValue(
+                item.fieldGroup,
+                item.formView.name,
+                integerInput.value === '' ? null : integerInput.valueAsNumber
+              )
+            " />
           <sh-icon prefix>numpad</sh-icon>
         </sh-form-field>
       } @else if (item.formView.type === 'Boolean') {

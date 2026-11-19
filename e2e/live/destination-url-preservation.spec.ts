@@ -14,6 +14,7 @@ const cases = [
     'webdav',
     'webdavs://Example.COM/archive%2fpart?auth-username=fixture-user&auth-password=fixture%2525secret&future=a+b&future=two&flag&empty=',
   ],
+  ['ssh-port', 'ssh://fixture@Example.COM:22/archive?future=a+b&future=two&flag&empty='],
   [
     's3',
     's3://BucketName/archive?s3-server-name=s3.example.invalid&auth-password=fixture-secret&future=a+b&future=two&flag&empty=',
@@ -115,6 +116,26 @@ for (const [label, url] of cases) {
       const save = page.getByRole('button', { name: 'Save changes', exact: true });
       await expect(save).toBeEnabled();
       await expect(page.locator('app-single-destination')).toBeVisible();
+      if (label === 'ssh-port') {
+        const port = page.getByRole('spinbutton', { name: 'Port', exact: true });
+        await expect(port).toHaveValue('22');
+        expect(writes).toHaveLength(0);
+        await port.fill('2222');
+        const pending = page.waitForResponse(
+          (response) => response.request().method() === 'PUT' && new URL(response.url()).pathname === endpoint
+        );
+        await save.click();
+        const response = await pending;
+        expect(response.ok(), await response.text()).toBe(true);
+        expect(storedUrl()).toBe(url.replace(':22/', ':2222/'));
+        expect(advancedOptions(await get())).toEqual(expectedOptions);
+        await page.reload();
+        await expect(port).toHaveValue('2222');
+        expect(writes).toHaveLength(1);
+        expect(unexpected).toEqual([]);
+        expect(errors).toEqual([]);
+        return;
+      }
       if (label === 'unparseable') {
         await expect(
           page.getByText('The destination URL could not be read into the fields below', { exact: false })
