@@ -1,3 +1,4 @@
+import { form, FormField } from '@angular/forms/signals';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -50,7 +51,17 @@ const CHANGE_TYPES: { type: CompareChangeType; label: string; marker: string }[]
 
 @Component({
   selector: 'app-compare-versions',
-  imports: [FormsModule, ShipButton, ShipFormField, ShipIcon, ShipProgressBar, ShipSelect, DatePipe, DecimalPipe],
+  imports: [
+    FormField,
+    FormsModule,
+    ShipButton,
+    ShipFormField,
+    ShipIcon,
+    ShipProgressBar,
+    ShipSelect,
+    DatePipe,
+    DecimalPipe,
+  ],
   templateUrl: './compare-versions.component.html',
   styleUrl: './compare-versions.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -121,7 +132,8 @@ export default class CompareVersionsComponent {
     return state.status === 'done' ? state.result : null;
   });
 
-  filter = signal('');
+  inputForm = form(signal({ filter: '' }));
+  filter = this.inputForm.filter().value;
   hiddenTypes = signal<ReadonlySet<CompareChangeType>>(new Set());
   limit = signal(CHANGES_PAGE_SIZE);
 
@@ -303,6 +315,10 @@ export default class CompareVersionsComponent {
 
   updateFilter(value: string) {
     this.filter.set(value);
+    this.resetFilterLimit();
+  }
+
+  resetFilterLimit() {
     this.limit.set(CHANGES_PAGE_SIZE);
   }
 

@@ -147,8 +147,8 @@
                 placeholder="Filter by path..."
                 i18n-aria-label
                 aria-label="Filter by path"
-                [ngModel]="filter()"
-                (ngModelChange)="updateFilter($event)" />
+                [formField]="inputForm.filter"
+                (input)="resetFilterLimit()" />
               <sh-icon suffix>magnifying-glass</sh-icon>
             </sh-form-field>
 
