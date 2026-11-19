@@ -1,13 +1,17 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, linkedSignal, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule } from '@angular/forms';
+import { form, FormField } from '@angular/forms/signals';
 import { ShipSelect } from '@ship-ui/core/ship-select';
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';
-import { isSelectBlankingEvent, syncFreeTextSelection } from './single-destination.component';
+import {
+  DestinationFreeTextControl,
+  isSelectBlankingEvent,
+  syncFreeTextSelection,
+} from './single-destination.component';
 
 /** Mirrors the free-text server select in single-destination.component.html. */
 @Component({
-  imports: [ShipSelect, FormsModule],
+  imports: [ShipSelect, FormField, DestinationFreeTextControl],
   template: `
     <sh-select
       #select
@@ -18,12 +22,13 @@ import { isSelectBlankingEvent, syncFreeTextSelection } from './single-destinati
       [isClearable]="false"
       label="key"
       value="value">
-      <input type="text" [ngModel]="value()" (input)="onInput($event)" />
+      <input type="text" appDestinationFreeText [formField]="field" (valueChange)="value.set($event)" />
     </sh-select>
   `,
 })
 class FreeTextSelectHost {
   value = signal('');
+  field = form(linkedSignal(() => this.value()));
   options = computed(() => {
     const options = [{ key: 'Region A', value: 'a.example.com' }];
     const current = this.value();
@@ -33,11 +38,6 @@ class FreeTextSelectHost {
 
   onClosed(select: ShipSelect) {
     syncFreeTextSelection(select, () => this.value());
-  }
-
-  onInput(event: Event) {
-    if (isSelectBlankingEvent(event)) return;
-    this.value.set((event.target as HTMLInputElement).value);
   }
 }
 

@@ -4,18 +4,23 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  Directive,
   effect,
+  ElementRef,
   inject,
   Injector,
   input,
   linkedSignal,
   model,
+  output,
   signal,
+  untracked,
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { form, FormField } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
+import type { FormValueControl } from '@angular/forms/signals';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
@@ -72,6 +77,29 @@ export function isSelectBlankingEvent(event: Event): boolean {
   return !event.isTrusted && (event.target as HTMLInputElement | null)?.value === '';
 }
 
+/** ShipSelect's input setter updates its selection, so write outside template rendering. */
+@Directive({
+  selector: 'input[appDestinationFreeText]',
+  host: { '(input)': 'updateValue($event)', '(blur)': 'touch.emit()' },
+})
+export class DestinationFreeTextControl implements FormValueControl<string> {
+  #input = inject<ElementRef<HTMLInputElement>>(ElementRef).nativeElement;
+  value = model('');
+  touch = output<void>();
+
+  updateValue(event: Event) {
+    if (isSelectBlankingEvent(event)) return;
+    untracked(() => this.value.set(this.#input.value));
+  }
+
+  #writeValue = effect(() => {
+    const value = this.value();
+    untracked(() => {
+      if (this.#input.value !== value) this.#input.value = value;
+    });
+  });
+}
+
 /**
  * Makes a closed free-text select show the value the form holds. When the dropdown closes
  * after the user typed, sh-select keeps the last picked option selected and displays it,
@@ -104,6 +132,7 @@ export function needsHostKeyApproval(url: string): boolean {
     SizeComponent,
     TimespanComponent,
     FileDropTextareaComponent,
+    DestinationFreeTextControl,
 
     ShipAlert,
     ShipFormField,
@@ -495,13 +524,25 @@ export class SingleDestinationComponent {
 
   pasteUrlPlaceholder = $localize`Pick a server, or paste a URL from your provider`;
 
-  onFreeTextSelectClosed(select: ShipSelect, fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string) {
-    syncFreeTextSelection(select, () => this.destinationForm()[fieldGroup][fieldName]);
+  #freeTextValues = linkedSignal(() => {
+    const values = this.destinationForm();
+    const config = this.destinationFormConfig();
+    const fields = (group: keyof DestinationFormValues): Record<string, string> =>
+      Object.fromEntries(
+        (config?.[group] ?? [])
+          .filter((field) => field.type === 'NonValidatedSelectableString')
+          .map(({ name }) => [name, String(values[group][name] ?? '')])
+      );
+    return { custom: fields('custom'), dynamic: fields('dynamic'), advanced: fields('advanced') };
+  });
+  #freeTextForm = form(this.#freeTextValues);
+
+  destinationFreeTextField(group: keyof DestinationFormValues, name: string) {
+    return this.#freeTextForm[group][name];
   }
 
-  onFreeTextInput(fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string, event: Event) {
-    if (isSelectBlankingEvent(event)) return;
-    this.updateFieldValue(fieldGroup, fieldName, (event.target as HTMLInputElement).value);
+  onFreeTextSelectClosed(select: ShipSelect, fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string) {
+    syncFreeTextSelection(select, () => this.destinationForm()[fieldGroup][fieldName]);
   }
 
   onFieldPaste(fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string, event: ClipboardEvent) {
