@@ -11,6 +11,7 @@ import { defer, finalize, switchMap } from 'rxjs';
 import { BackupAndScheduleInputDto, DuplicatiServer } from '../../core/openapi';
 import { BackupDraft } from '../../core/states/backups.state';
 import { SysinfoState } from '../../core/states/sysinfo.state';
+import { RestoreDraftsState } from '../restore-drafts.state';
 
 @Component({
   selector: 'app-restore-from-config',
@@ -23,6 +24,7 @@ export default class RestoreFromConfigComponent {
   #shipAlertService = inject(ShipAlertService);
   #dupServer = inject(DuplicatiServer);
   #router = inject(Router);
+  #restoreDrafts = inject(RestoreDraftsState);
   #hasSyncRestore = inject(SysinfoState).hasSyncRestore;
 
   isRestoring = signal(false);
@@ -99,6 +101,7 @@ export default class RestoreFromConfigComponent {
       )
       .subscribe({
         next: (res) => {
+          this.#restoreDrafts.remember(res.ID);
           this.#router.navigate(['/restore-draft', res.ID]);
         },
         error: (err) => {

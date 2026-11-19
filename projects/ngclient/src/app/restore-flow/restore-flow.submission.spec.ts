@@ -52,6 +52,16 @@ describe('RestoreFlowState restore request submission', () => {
     });
     return { state, response, restore, navigate, route };
   }
+  it('forgets the draft once its restore has started', () => {
+    localStorage.setItem('v1:duplicati:restoreDrafts', JSON.stringify(['other', '42']));
+    const { state, response } = setup();
+    state.submit();
+    expect(JSON.parse(localStorage.getItem('v1:duplicati:restoreDrafts')!)).toEqual(['other', '42']);
+    response.next({ ID: 123 });
+    response.complete();
+    expect(JSON.parse(localStorage.getItem('v1:duplicati:restoreDrafts')!)).toEqual(['other']);
+    localStorage.removeItem('v1:duplicati:restoreDrafts');
+  });
   it('sends the chosen version, exact files, recursive folders and safe restore options', () => {
     const { state, restore, response, navigate, route } = setup();
     state.selectOption.set('7');

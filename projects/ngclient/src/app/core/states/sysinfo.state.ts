@@ -254,6 +254,12 @@ export class SysinfoState {
     return apiExtensions.includes('v1:backup:sync-restore');
   });
 
+  /** The temporary backups made for a direct restore can be listed */
+  hasTemporaryBackupList = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v1:backups:temporary');
+  });
+
   defaultOAuthUrl = computed(() => {
     const url = this.systemInfo()?.DefaultOAuthURL ?? 'https://duplicati-oauth-handler.appspot.com/';
     if (url.endsWith('/refresh')) return url.slice(0, -'/refresh'.length);

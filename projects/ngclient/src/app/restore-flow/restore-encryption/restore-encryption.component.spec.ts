@@ -127,6 +127,16 @@ describe('restore temporary job encryption', () => {
       expect(component.creatingTemporaryBackup()).toBe(false);
     }
   );
+  it('remembers the temporary job so the restore page can offer to continue it', () => {
+    localStorage.removeItem('v1:duplicati:restoreDrafts');
+    const { component, response } = setup();
+    component.next();
+    expect(localStorage.getItem('v1:duplicati:restoreDrafts')).toBeNull();
+    response.next({ ID: 'temporary-42' });
+    response.complete();
+    expect(JSON.parse(localStorage.getItem('v1:duplicati:restoreDrafts') ?? '[]')).toEqual(['temporary-42']);
+    localStorage.removeItem('v1:duplicati:restoreDrafts');
+  });
   it('keeps a saved destination reference when creating the temporary restore job', () => {
     const { component, create, state } = setup();
     state.destinationConnectionStringId.set(7);

@@ -9,6 +9,7 @@ import { ShipToggleCard } from '@ship-ui/core/ship-toggle-card';
 import { defer, finalize } from 'rxjs';
 import { OptionsListComponent } from '../../backup/options/options-list/options-list.component';
 import { DuplicatiServer, SettingInputDto } from '../../core/openapi';
+import { RestoreDraftsState } from '../../restore/restore-drafts.state';
 import { RestoreFlowState } from '../restore-flow.state';
 
 @Component({
@@ -21,6 +22,7 @@ import { RestoreFlowState } from '../restore-flow.state';
 export default class RestoreEncryptionComponent {
   #dupServer = inject(DuplicatiServer);
   #restoreFlowState = inject(RestoreFlowState);
+  #restoreDrafts = inject(RestoreDraftsState);
   #router = inject(Router);
   #route = inject(ActivatedRoute);
 
@@ -82,6 +84,7 @@ export default class RestoreEncryptionComponent {
         next: (backup) => {
           const id = backup.ID!;
 
+          this.#restoreDrafts.remember(id);
           this.#router.navigate([`/restore-draft/${id}`]);
         },
         error: (err) => {

@@ -581,6 +581,28 @@
         }
       }
     },
+    "/api/v1/backups/temporary": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TemporaryBackupDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/bugreport/{reportid}": {
       "get": {
         "tags": [
@@ -7308,6 +7330,23 @@
           "RestoreCacheMax": {
             "type": "integer",
             "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TemporaryBackupDto": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string"
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "TargetURL": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

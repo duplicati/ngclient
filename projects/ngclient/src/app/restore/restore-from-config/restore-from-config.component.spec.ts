@@ -78,6 +78,17 @@ describe('restore from configuration Signal Form', () => {
     expect(component.isRestoring()).toBe(false);
   });
 
+  it('remembers the temporary job so the restore page can offer to continue it', () => {
+    localStorage.removeItem('v1:duplicati:restoreDrafts');
+    const { component, imported } = setup();
+    component.importForm.config().value.set('AAH/');
+    component.submit();
+    imported.next({ data: { Backup: { Name: 'restored', OperationType: 'Backup', TargetURL: 'file:///archive' } } });
+    imported.complete();
+    expect(JSON.parse(localStorage.getItem('v1:duplicati:restoreDrafts') ?? '[]')).toEqual(['temporary-42']);
+    localStorage.removeItem('v1:duplicati:restoreDrafts');
+  });
+
   it('renders a null passphrase as empty without changing its submitted value', () => {
     const { fixture, component, importConfig } = setup();
     component.importForm.passphrase().value.set(null);
