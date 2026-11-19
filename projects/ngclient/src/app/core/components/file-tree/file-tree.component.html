@@ -267,7 +267,7 @@
       </div>
 
       <sh-form-field>
-        <textarea id="targetUrl" autocomplete="off" [(ngModel)]="createFolderPath"></textarea>
+        <textarea id="targetUrl" autocomplete="off" [formField]="inputForm.createFolderPath" appNullableText></textarea>
       </sh-form-field>
     </div>
 

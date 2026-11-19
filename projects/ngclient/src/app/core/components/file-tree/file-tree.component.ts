@@ -1,3 +1,4 @@
+import { NullableTextControl } from '../../../backup/general/nullable-text-control';
 import { DatePipe, NgTemplateOutlet } from '@angular/common';
 import {
   afterNextRender,
@@ -14,7 +15,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { FormsModule } from '@angular/forms';
+import { form, FormField } from '@angular/forms/signals';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { ShipButton } from '@ship-ui/core/ship-button';
@@ -130,11 +131,13 @@ const LOAD_MORE_ID_SUFFIX = '\0load-more';
     ShipToggle,
     ShipIcon,
     ShipFormField,
+    NullableTextControl,
     ShipList,
     ShipProgressBar,
     ShipDialog,
     NgTemplateOutlet,
-    FormsModule,
+    FormField,
+    NullableTextControl,
     BytesPipe,
     DatePipe,
     ShipAlert,
@@ -241,7 +244,8 @@ export default class FileTreeComponent {
     'mssql:database': { icon: shIcon('shicon:database'), label: $localize`SQL Server database`, replacesIcon: true },
   };
   createFolderDialogOpen = signal(false);
-  createFolderPath = signal<string | null>(null);
+  inputForm = form(signal({ createFolderPath: null as string | null }));
+  createFolderPath = this.inputForm.createFolderPath().value;
   errorMessage = signal<string | null>(null);
   anyRemoteSourcesLoaded = signal(false);
 
