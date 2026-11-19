@@ -57,6 +57,11 @@ label {
   gap: p2r(8);
 }
 
+.destination-enumeration {
+  display: grid;
+  gap: p2r(4);
+}
+
 .raw-text-area {
   min-height: 12rem;
   white-space: pre;
