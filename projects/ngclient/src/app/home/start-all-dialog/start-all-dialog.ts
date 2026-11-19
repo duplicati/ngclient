@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { form, FormField } from '@angular/forms/signals';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipCheckbox } from '@ship-ui/core/ship-checkbox';
 import { ShipSelect } from '@ship-ui/core/ship-select';
@@ -21,7 +21,7 @@ const AFTER_ACTION_LABELS: StartAllDialogAfterActionOption[] = [
 
 @Component({
   selector: 'app-start-all-dialog',
-  imports: [FormsModule, ShipButton, ShipCheckbox, ShipSelect],
+  imports: [FormField, ShipButton, ShipCheckbox, ShipSelect],
   templateUrl: './start-all-dialog.html',
   styleUrl: './start-all-dialog.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -46,7 +46,9 @@ export class StartAllDialog {
   allSelected = computed(() => this.selected().size === this.backups().length);
   noneSelected = computed(() => this.selected().size === 0);
 
-  afterAction = signal<QueueCompletionAction>('None');
+  readonly afterActionModel = signal({ afterAction: 'None' });
+  readonly afterActionForm = form(this.afterActionModel);
+  readonly afterAction = this.afterActionForm.afterAction().value;
 
   // Every backup starts out picked, so confirming right away starts them all
   dataEffect = effect(() => {
@@ -75,12 +77,13 @@ export class StartAllDialog {
   submit() {
     // Emit in the listed order, as the backups are queued one after another
     const selected = this.selected();
-    const afterAction = this.afterAction();
+    const afterAction =
+      this.supportedAfterActions().find((option) => option.value === this.afterAction())?.value ?? 'None';
     this.closed.emit({
       ids: this.backups()
         .map((x) => x.id)
         .filter((id) => selected.has(id)),
-      afterAction: this.supportedAfterActions().some((x) => x.value === afterAction) ? afterAction : 'None',
+      afterAction,
     });
   }
 }
