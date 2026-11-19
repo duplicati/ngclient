@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { FormsModule } from '@angular/forms';
+import { disabled, form, FormField } from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipCheckbox } from '@ship-ui/core/ship-checkbox';
@@ -14,7 +14,7 @@ import { BackupsState } from '../../core/states/backups.state';
 
 @Component({
   selector: 'app-delete-backup',
-  imports: [ShipCheckbox, ShipButton, ShipIcon, BytesPipe, FormsModule, RouterLink],
+  imports: [ShipCheckbox, ShipButton, ShipIcon, BytesPipe, FormField, RouterLink],
   templateUrl: './delete-backup.component.html',
   styleUrl: './delete-backup.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,8 +54,11 @@ export default class DeleteBackupComponent {
     () => !this.databaseUsage.isLoading() && !this.databaseUsage.error() && this.databaseUsage.value()?.inuse === false
   );
 
-  deleteLocalDb = signal(false);
-  deleteRemoteFiles = signal(false);
+  inputForm = form(signal({ deleteLocalDb: false, deleteRemoteFiles: false }), (fields) =>
+    disabled(fields.deleteLocalDb, () => !this.canDeleteLocalDb())
+  );
+  deleteLocalDb = this.inputForm.deleteLocalDb().value;
+  deleteRemoteFiles = this.inputForm.deleteRemoteFiles().value;
   isDeleting = signal(false);
   #routeVersion = 0;
   #resetForRoute = effect(() => {
