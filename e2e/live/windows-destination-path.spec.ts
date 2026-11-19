@@ -10,8 +10,10 @@ test('keeps a Windows drive path intact while typing, saving and reloading', asy
   expect(info.DirectorySeparator).toBe('\\');
   const source = join(directory, 'drive-source'),
     remote = join(directory, 'drive-remote');
+  const picked = join(directory, 'tree destination');
   await mkdir(source);
   await mkdir(remote);
+  await mkdir(picked);
   const created = await api.post('/api/v1/backups', {
     data: {
       Backup: {
@@ -79,6 +81,33 @@ test('keeps a Windows drive path intact while typing, saving and reloading', asy
     await expect(page.getByRole('button', { name: 'Save changes', exact: true })).toBeEnabled();
     if (!(await input.isVisible())) await manual.click();
     await expect(input).toHaveValue('C:\\Backup');
+
+    const reset = await api.put(`/api/v1/backup/${id}`, {
+      data: { ...stored, Backup: { ...stored.Backup, TargetURL: `file:///${encodeURIComponent(remote + sep)}` } },
+    });
+    expect(reset.ok(), await reset.text()).toBe(true);
+    await page.reload();
+    const picker = page.locator('app-single-destination app-file-tree');
+    await picker.getByRole('button', { name: 'Browse path', exact: true }).click();
+    const folder = picker.getByRole('treeitem', { name: 'tree destination', exact: true });
+    await folder.click();
+    await expect(folder).toHaveAttribute('aria-selected', 'true');
+    const pickedSave = page.waitForResponse(
+      (r) => r.request().method() === 'PUT' && new URL(r.url()).pathname === `/api/v1/backup/${id}`
+    );
+    await page.getByRole('button', { name: 'Save changes', exact: true }).click();
+    const pickedResponse = await pickedSave;
+    expect(pickedResponse.ok(), await pickedResponse.text()).toBe(true);
+    const pickedStoredResponse = await api.get(`/api/v1/backup/${id}`);
+    expect(pickedStoredResponse.ok()).toBe(true);
+    const pickedStored = await pickedStoredResponse.json();
+    expect(windowsPath(pickedStored.Backup.TargetURL).replace(/\\$/, '')).toBe(picked);
+    await page.reload();
+    await picker.getByRole('button', { name: 'Browse path', exact: true }).click();
+    await expect(folder).toHaveAttribute('aria-selected', 'true');
+    await manual.click();
+    expect((await input.inputValue()).replace(/\\$/, '')).toBe(picked);
+
     expect(errors).toEqual([]);
     expect(operations).toEqual([]);
     await testInfo.attach('windows-path-results', {
@@ -86,6 +115,7 @@ test('keeps a Windows drive path intact while typing, saving and reloading', asy
       body: JSON.stringify({
         typed,
         stored: stored.Backup.TargetURL,
+        picked: pickedStored.Backup.TargetURL,
         server: info.ServerVersionName,
         runtime: info.CLRVersion,
         operations,
