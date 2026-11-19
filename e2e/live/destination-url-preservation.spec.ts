@@ -165,6 +165,24 @@ for (const [label, url] of cases) {
       );
       expect(storedUrl()).toBe(url);
       expect(writes).toHaveLength(3);
+      if (label === 'ssh') {
+        await page.goto(`/backup/${id}/destination`);
+        const server = page.locator('app-single-destination').getByRole('textbox', { name: /^Server\b/ });
+        await expect(server).toHaveValue('Example.COM');
+        await server.fill('edited.example.invalid');
+        const pending = page.waitForResponse(
+          (response) => response.request().method() === 'PUT' && new URL(response.url()).pathname === endpoint
+        );
+        await save.click();
+        const response = await pending;
+        expect(response.ok(), await response.text()).toBe(true);
+        expect(storedUrl()).toBe(url.replace('Example.COM', 'edited.example.invalid'));
+        expect(advancedOptions(await get())).toEqual(expectedOptions);
+        await page.reload();
+        await expect(server).toHaveValue('edited.example.invalid');
+        expect(writes).toHaveLength(4);
+        actions.push('edit-ssh-server-and-reload');
+      }
       expect(unexpected).toEqual([]);
       expect(errors).toEqual([]);
       const info = await (await api.get('/api/v1/systeminfo')).json();
