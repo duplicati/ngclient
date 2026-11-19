@@ -15,6 +15,7 @@ describe('backup actions dialog', () => {
           provide: SysinfoState,
           useValue: {
             hasSyncRestore: flag,
+            hasSkipNextRun: flag,
             hasBackupEnableDisable: flag,
             hasV2RestoreTest: flag,
             hasV2SetVersionLabel: flag,
@@ -110,5 +111,23 @@ describe('backup actions dialog', () => {
     fixture.nativeElement.querySelector('header button').click();
 
     expect(emitted).toEqual([null]);
+  });
+  it('offers skipping only for enabled scheduled jobs on supported servers', () => {
+    const { fixture, ids } = setup({ isScheduled: true });
+    expect(ids()).toContain('skip-next-run');
+    fixture.componentRef.setInput('data', {
+      id: '42',
+      name: 'Documents',
+      isSync: false,
+      isExternal: false,
+      isDisabled: true,
+      isScheduled: true,
+    });
+    fixture.detectChanges();
+    expect(ids()).not.toContain('skip-next-run');
+  });
+
+  it('does not offer skipping without server support', () => {
+    expect(setup({ isScheduled: true }, false).ids()).not.toContain('skip-next-run');
   });
 });

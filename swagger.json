@@ -2313,6 +2313,35 @@
         }
       }
     },
+    "/api/v1/backup/{id}/skip-next-run": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkipNextRunOutputDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/backup/{id}/movedb": {
       "post": {
         "tags": [
@@ -6637,6 +6666,20 @@
           "Token": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SkipNextRunOutputDto": {
+        "type": "object",
+        "properties": {
+          "Status": {
+            "type": "string",
+            "nullable": true
+          },
+          "NextScheduledRun": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "additionalProperties": false

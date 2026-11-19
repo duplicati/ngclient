@@ -133,6 +133,11 @@ export class SysinfoState {
     return apiExtensions.includes('v1:serverstate:queue-completion-action');
   });
 
+  hasSkipNextRun = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v1:backup:skip-next-run');
+  });
+
   hasRestoreOptions = computed(() => {
     const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
     return apiExtensions.includes('v1:backup:restore-options');
