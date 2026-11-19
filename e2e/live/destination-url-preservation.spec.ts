@@ -1,4 +1,4 @@
-import { mkdir } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
 import { join, sep } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 import type { GetBackupResultDto } from '../../projects/ngclient/src/app/core/openapi';
@@ -30,6 +30,7 @@ const cases = [
   ['pcloud', 'pcloud://api.pcloud.com/Folder?authid=fixture-authid&future=a+b&future=two&flag&empty='],
   ['ssh-multiline', 'ssh://fixture@Example.COM/archive?ssh-key=initial&future=a+b&future=two&flag&empty='],
   ['unsupported', 'future-backend://example.invalid/archive?future=a+b&future=two&flag&empty='],
+  ['ssh-keyfile', 'ssh://fixture@Example.COM/archive?ssh-keyfile=initial&future=a+b&future=two&flag&empty='],
   [
     'ftp-encoding',
     'ftp://Example.COM/a%2Fb%20c?auth-username=u&empty=&plus=a+b&space=a%20b&double=%2520&auth-password=x%26y%3D&flag&dup=1&dup=2&ftp-ssl-protocols=Tls12%2CTls13',
@@ -60,7 +61,7 @@ function advancedOptions(job: GetBackupResultDto) {
     .sort((a, b) => a.Name!.localeCompare(b.Name!));
 }
 
-for (const [label, url] of cases) {
+for (const [label, fixtureUrl] of cases) {
   test(`${label}: API and untouched editor saves retain the exact destination and advanced options`, async ({
     page,
     liveServer,
@@ -68,6 +69,16 @@ for (const [label, url] of cases) {
     const { api, directory, password } = liveServer;
     const source = join(directory, `source-${label}`);
     await mkdir(source);
+    const initialKey = join(source, 'initial.key');
+    const selectedKey = join(source, 'selected.key');
+    const url =
+      label === 'ssh-keyfile'
+        ? fixtureUrl.replace('ssh-keyfile=initial', 'ssh-keyfile=' + encodeURIComponent(initialKey))
+        : fixtureUrl;
+    if (label === 'ssh-keyfile') {
+      await writeFile(initialKey, 'fixture');
+      await writeFile(selectedKey, 'fixture');
+    }
     const created = await api.post('/api/v1/backups', {
       data: {
         Backup: {
@@ -126,6 +137,33 @@ for (const [label, url] of cases) {
       await page.getByRole('button', { name: 'Login', exact: true }).click();
       await expect(page).toHaveURL('/');
       await page.goto(`/backup/${id}/destination`);
+      if (label === 'ssh-keyfile') {
+        const picker = page
+          .locator('app-single-destination app-file-tree')
+          .filter({ hasText: /path to a private key/i });
+        await expect(picker.getByRole('treeitem', { name: 'initial.key', exact: true })).toBeVisible();
+        expect(writes).toHaveLength(0);
+        await picker.getByRole('treeitem', { name: 'selected.key', exact: true }).click();
+        const pending = page.waitForResponse(
+          (response) => response.request().method() === 'PUT' && new URL(response.url()).pathname === endpoint
+        );
+        await page.getByRole('button', { name: 'Save changes', exact: true }).click();
+        const response = await pending;
+        expect(response.ok(), await response.text()).toBe(true);
+        expect(storedUrl()).toBe(url.replace(encodeURIComponent(initialKey), encodeURIComponent(selectedKey)));
+        expect(advancedOptions(await get())).toEqual(expectedOptions);
+        await page.reload();
+        await expect(picker.getByRole('treeitem', { name: 'selected.key', exact: true })).toHaveAttribute(
+          'aria-selected',
+          'true'
+        );
+        await picker.getByRole('button', { name: 'Manually type path', exact: true }).click();
+        await expect(picker.getByRole('textbox')).toHaveValue(selectedKey);
+        expect(writes).toHaveLength(1);
+        expect(unexpected).toEqual([]);
+        expect(errors).toEqual([]);
+        return;
+      }
       const save = page.getByRole('button', { name: 'Save changes', exact: true });
       if (label === 's3-boolean') {
         const tls = page.getByRole('checkbox', { name: /Use TLS/ });

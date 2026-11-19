@@ -59,6 +59,7 @@ import {
 } from '../destination.config-utilities';
 import { copyDestinationForm, DestinationEditSession } from '../destination-edit-session';
 import { BrowsePathDialog } from './browse-path-dialog/browse-path-dialog';
+import { NullableTextControl } from '../../general/nullable-text-control';
 
 /** ShipSelect serializes multiple choices into a comma-separated input value. */
 @Directive({
@@ -159,6 +160,7 @@ export function needsHostKeyApproval(url: string): boolean {
     RouterLink,
 
     FileTreeComponent,
+    NullableTextControl,
     SizeComponent,
     TimespanComponent,
     DestinationFlagsControl,
@@ -760,6 +762,23 @@ export class SingleDestinationComponent {
   }
 
   #oauthInProgress = signal(false);
+
+  #pathValues = linkedSignal(() => {
+    const values = this.destinationForm();
+    const config = this.destinationFormConfig();
+    const paths = (group: keyof DestinationFormValues): Record<string, string | null> =>
+      Object.fromEntries(
+        (config?.[group] ?? [])
+          .filter(({ type }) => type === 'FileTree')
+          .map(({ name }) => [name, String(values[group][name] ?? '')])
+      );
+    return { custom: paths('custom'), dynamic: paths('dynamic'), advanced: paths('advanced') };
+  });
+  #pathForm = form(this.#pathValues);
+
+  destinationPathField(group: keyof DestinationFormValues, name: string) {
+    return this.#pathForm[group][name];
+  }
 
   #resolveBackupId() {
     return this.useBackupState() ? this.#backupState.backupId() : this.backupId();

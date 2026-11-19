@@ -171,9 +171,10 @@
           </label>
           <input
             type="text"
+            appNullableText
             [id]="formFieldId"
-            [ngModel]="formInput"
-            (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
+            [formField]="destinationPathField(item.fieldGroup, item.formView.name)"
+            (valueChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
         </app-file-tree>
       } @else if (item.formView.type === 'FolderTree') {
         <app-file-tree
