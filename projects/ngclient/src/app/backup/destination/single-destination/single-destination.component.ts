@@ -4,18 +4,23 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  Directive,
   effect,
+  ElementRef,
   inject,
   Injector,
   input,
   linkedSignal,
   model,
+  output,
   signal,
+  untracked,
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { form, FormField } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
+import type { FormValueControl } from '@angular/forms/signals';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
@@ -54,6 +59,36 @@ import {
 } from '../destination.config-utilities';
 import { copyDestinationForm, DestinationEditSession } from '../destination-edit-session';
 import { BrowsePathDialog } from './browse-path-dialog/browse-path-dialog';
+
+/** ShipSelect serializes multiple choices into a comma-separated input value. */
+@Directive({
+  selector: 'input[appDestinationFlags]',
+  host: { '(input)': 'updateValue()', '(blur)': 'touch.emit()' },
+})
+export class DestinationFlagsControl implements FormValueControl<string> {
+  #input = inject<ElementRef<HTMLInputElement>>(ElementRef).nativeElement;
+  #writingValue = false;
+  value = model('');
+  touch = output<void>();
+
+  updateValue() {
+    if (!this.#writingValue) untracked(() => this.value.set(this.#input.value));
+  }
+
+  #writeValue = effect(() => {
+    const value = this.value();
+    untracked(() => {
+      if (this.#input.value === value) return;
+      // The select can emit input again while applying a programmatic value.
+      this.#writingValue = true;
+      try {
+        this.#input.value = value;
+      } finally {
+        this.#writingValue = false;
+      }
+    });
+  });
+}
 
 type DestinationConfig = {
   destinationType: string;
@@ -103,6 +138,7 @@ export function needsHostKeyApproval(url: string): boolean {
     FileTreeComponent,
     SizeComponent,
     TimespanComponent,
+    DestinationFlagsControl,
     FileDropTextareaComponent,
 
     ShipAlert,
@@ -552,6 +588,23 @@ export class SingleDestinationComponent {
     }
 
     return options;
+  }
+
+  #flagValues = linkedSignal(() => {
+    const values = this.destinationForm();
+    const config = this.destinationFormConfig();
+    const flags = (group: keyof DestinationFormValues): Record<string, string> =>
+      Object.fromEntries(
+        (config?.[group] ?? [])
+          .filter((field) => field.type === 'Flags')
+          .map(({ name }) => [name, String(values[group][name] ?? '')])
+      );
+    return { custom: flags('custom'), dynamic: flags('dynamic'), advanced: flags('advanced') };
+  });
+  #flagsForm = form(this.#flagValues);
+
+  destinationFlagsField(group: keyof DestinationFormValues, name: string) {
+    return this.#flagsForm[group][name];
   }
 
   #oauthInProgress = signal(false);

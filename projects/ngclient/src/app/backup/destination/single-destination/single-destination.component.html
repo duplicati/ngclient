@@ -540,9 +540,10 @@
             </label>
             <input
               type="text"
-              id="text"
-              [ngModel]="formInput"
-              (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
+              appDestinationFlags
+              [id]="formFieldId"
+              [formField]="destinationFlagsField(item.fieldGroup, item.formView.name)"
+              (valueChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
           </sh-select>
 
           <ng-template let-option #optionTemplate>
