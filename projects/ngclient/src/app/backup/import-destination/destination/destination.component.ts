@@ -1,3 +1,4 @@
+import { NullableTextControl } from '../../general/nullable-text-control';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -8,7 +9,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { form, FormField } from '@angular/forms/signals';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
@@ -33,9 +34,11 @@ import { ImportDestinationState } from '../import-destination.state';
     SingleDestinationComponent,
     DestinationListComponent,
     DestinationListItemComponent,
-    FormsModule,
+    FormField,
+    NullableTextControl,
     ShipButton,
     ShipFormField,
+    NullableTextControl,
     ShipMenu,
     ShipIcon,
     ShipDialog,
@@ -59,7 +62,8 @@ export default class DestinationComponent {
 
   testSignal = this.#importDestinationState.destinationTestSignal;
   targetUrlModel = this.#importDestinationState.destinationTargetUrl;
-  targetUrlCtrl = signal<string | null>(null);
+  inputForm = form(signal({ targetUrlCtrl: null as string | null }));
+  targetUrlCtrl = this.inputForm.targetUrlCtrl().value;
   targetUrlInitial = signal<string | null>(null);
   targetUrlDialogOpen = signal(false);
   toggleNewDestination = signal(true);

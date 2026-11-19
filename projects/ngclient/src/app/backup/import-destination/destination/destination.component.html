@@ -1,6 +1,6 @@
 @let hasDestination = !!targetUrlModel();
 
-<form #formRef (submit)="next()">
+<form #formRef (submit)="$event.preventDefault(); next()">
   <header>
     <h3 class="title-30">
       <span i18n>Backup destination</span>
@@ -96,7 +96,7 @@
 
     <div content>
       <sh-form-field>
-        <textarea id="targetUrl" autocomplete="off" [(ngModel)]="targetUrlCtrl"></textarea>
+        <textarea id="targetUrl" autocomplete="off" [formField]="inputForm.targetUrlCtrl" appNullableText></textarea>
       </sh-form-field>
     </div>
 
