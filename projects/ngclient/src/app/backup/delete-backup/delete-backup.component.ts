@@ -26,10 +26,18 @@ export default class DeleteBackupComponent {
   #router = inject(Router);
 
   id = input.required<string>();
-  backup = computed(() => this.#backupsState.getBackupById(this.id()));
+  backupResource = rxResource({
+    params: () => ({ id: this.id() }),
+    stream: ({ params }) => defer(() => this.#dupServer.getApiV1BackupById({ path: params })),
+  });
+  backup = computed(() =>
+    !this.backupResource.isLoading() && this.backupResource.hasValue() ? this.backupResource.value() : undefined
+  );
+  canDelete = computed(() => this.backup()?.Backup?.ID === this.id());
   isSyncMode = computed(() => this.backup()?.Backup?.OperationType === 'Sync');
   noLocalDbResource = rxResource({
-    params: () => ({ dbPath: this.backup()?.Backup?.DBPath }),
+    params: () =>
+      this.canDelete() && this.backup()?.Backup?.DBPath ? { dbPath: this.backup()!.Backup!.DBPath } : undefined,
     stream: ({ params }) =>
       defer(() => this.#dupServer.postApiV1FilesystemValidate({ body: { path: params.dbPath } })).pipe(
         map(() => true),
@@ -39,7 +47,7 @@ export default class DeleteBackupComponent {
   fileCount = computed(() => parseInt(this.backup()?.Backup?.Metadata?.['TargetFilesCount'] ?? '0', 10));
 
   databaseUsage = rxResource({
-    params: () => (this.backup()?.Backup?.DBPath ? { id: this.id() } : undefined),
+    params: () => (this.canDelete() && this.backup()?.Backup?.DBPath ? { id: this.id() } : undefined),
     stream: ({ params }) => defer(() => this.#dupServer.getApiV1BackupByIdIsdbusedelsewhere({ path: params })),
   });
   canDeleteLocalDb = computed(
@@ -49,13 +57,22 @@ export default class DeleteBackupComponent {
   deleteLocalDb = signal(false);
   deleteRemoteFiles = signal(false);
   isDeleting = signal(false);
+  #routeVersion = 0;
+  #resetForRoute = effect(() => {
+    this.id();
+    this.#routeVersion++;
+    this.deleteLocalDb.set(false);
+    this.deleteRemoteFiles.set(false);
+    this.isDeleting.set(false);
+  });
   #keepSharedDatabase = effect(() => {
     if (!this.canDeleteLocalDb()) this.deleteLocalDb.set(false);
   });
 
   deleteBackup() {
-    if (this.isDeleting()) return;
+    if (!this.canDelete() || this.isDeleting()) return;
     const id = this.id();
+    const version = this.#routeVersion;
     const deleteLocalDb = this.canDeleteLocalDb() && this.deleteLocalDb();
     const deleteRemoteFiles = this.isSyncMode() ? undefined : this.deleteRemoteFiles();
 
@@ -68,6 +85,7 @@ export default class DeleteBackupComponent {
         cancelText: $localize`Cancel`,
       },
       closed: (res) => {
+        if (version !== this.#routeVersion) return;
         if (!res) {
           this.isDeleting.set(false);
           return;
@@ -80,10 +98,14 @@ export default class DeleteBackupComponent {
               ...(deleteRemoteFiles === undefined ? {} : { 'delete-remote-files': deleteRemoteFiles }),
             },
           })
-          .pipe(finalize(() => this.isDeleting.set(false)))
+          .pipe(
+            finalize(() => {
+              if (version === this.#routeVersion) this.isDeleting.set(false);
+            })
+          )
           .subscribe({
             next: () => {
-              this.#router.navigate(['/']);
+              if (version === this.#routeVersion) this.#router.navigate(['/']);
             },
             // HTTP errors are reported by the shared interceptor; finalize permits retry.
             error: () => {},
