@@ -52,12 +52,17 @@ export class RemoteControlState {
 
   state = signal<State>('unknown');
   claimUrl = signal<string | null>(null);
+  // Set while the console has asked this client to stay disconnected
+  pausedUntil = signal<Date | null>(null);
   registrationForm = form(signal({ registerUrl: '', customRegisterUrl: '' }));
   registerUrl = this.registrationForm.registerUrl().value;
   customRegisterUrl = this.registrationForm.customRegisterUrl().value;
   statusMessage = computed(() => {
     const state = this.state();
+    const pausedUntil = this.pausedUntil();
 
+    if (state === 'connecting' && pausedUntil)
+      return $localize`Console connection is paused by the console until ${pausedUntil.toLocaleString()}`;
     if (state === 'connecting') return $localize`Console connection is enabled but not connected`;
     if (state === 'connected') return $localize`Connected to console`;
     if (state === 'registering') return $localize`Registering machine...`;
@@ -110,6 +115,9 @@ export class RemoteControlState {
 
   #updateLocalViewState(data: RemoteControlStatusOutput) {
     data.RegistrationUrl && this.claimUrl.set(data.RegistrationUrl);
+
+    const pausedUntil = data.PausedUntil ? new Date(data.PausedUntil) : null;
+    this.pausedUntil.set(pausedUntil && !isNaN(pausedUntil.getTime()) ? pausedUntil : null);
 
     if (data.IsConnected) {
       this.state.set('connected');

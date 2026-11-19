@@ -665,6 +665,7 @@ export type RemoteControlStatusOutput = {
     CanEnable?: boolean;
     IsEnabled?: boolean;
     IsConnected?: boolean;
+    PausedUntil?: string | null;
     IsRegistering?: boolean;
     IsRegisteringFaulted?: boolean;
     IsRegisteringCompleted?: boolean;
