@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, InjectionToken, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { form, FormField } from '@angular/forms/signals';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipFileUpload } from '@ship-ui/core/ship-file-upload';
@@ -20,7 +20,7 @@ export const PAGE_LOCATION = new InjectionToken<Pick<Location, 'protocol' | 'hos
  */
 @Component({
   selector: 'app-ssl-certificate',
-  imports: [FormsModule, ShipAlert, ShipButton, ShipFileUpload, ShipFormField],
+  imports: [FormField, ShipAlert, ShipButton, ShipFileUpload, ShipFormField],
   templateUrl: './ssl-certificate.component.html',
   styleUrl: './ssl-certificate.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,7 +31,9 @@ export class SslCertificateComponent {
   isInsecureConnection = isInsecureConnection(inject(PAGE_LOCATION));
 
   files = signal<File[]>([]);
-  password = signal('');
+  readonly passwordModel = signal({ password: '' });
+  readonly passwordForm = form(this.passwordModel);
+  readonly password = this.passwordForm.password().value;
   isUploading = signal(false);
   uploaded = signal(false);
   canUpload = computed(() => !this.isUploading() && canUploadCertificate(this.files(), this.password()));
