@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { form, FormField } from '@angular/forms/signals';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import FileTreeComponent from '../../../core/components/file-tree/file-tree.component';
@@ -31,7 +31,7 @@ export type IncludePickerResult = {
  */
 @Component({
   selector: 'app-include-picker-dialog',
-  imports: [ShipButton, ShipIcon, FileTreeComponent, FormsModule],
+  imports: [ShipButton, ShipIcon, FileTreeComponent, FormField],
   templateUrl: './include-picker-dialog.html',
   styleUrl: './include-picker-dialog.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,7 +50,8 @@ export class IncludePickerDialog {
   remoteSource = computed(() => this.data()?.remoteSource ?? null);
 
   // The tree's value: picks as plain paths, excludes as -paths, joined with \0
-  path = signal<string>('');
+  inputForm = form(signal({ path: '' as string }));
+  path = this.inputForm.path().value;
   // The current pick as the tree's value
   existingValue = computed<string | null>(() => {
     const data = this.data();
