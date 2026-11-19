@@ -19,6 +19,10 @@ const cases = [
     'ssh://fixture-user:fixture-secret@Example.COM:022/archive%2fpart?auth-password=p%2525&buffer-size=64MB&future=a+b&future=two&flag&empty=',
   ],
   [
+    'webdav-password',
+    'webdavs://Example.COM/archive?auth-username=fixture&auth-password=initial&future=a+b&future=two&flag&empty=',
+  ],
+  [
     'webdav',
     'webdavs://Example.COM/archive%2fpart?auth-username=fixture-user&auth-password=fixture%2525secret&future=a+b&future=two&flag&empty=',
   ],
@@ -150,6 +154,37 @@ for (const [label, url] of cases) {
         return;
       }
       await expect(save).toBeEnabled();
+      if (label === 'webdav-password') {
+        const passwordInput = page.locator('app-single-destination input[autocomplete="new-password"]');
+        const secretFrom = (target: string) => new URL(target).searchParams.get('auth-password');
+        const mask = secretFrom(initial.Backup!.TargetURL!);
+        expect(mask).toMatch(/^\*+$/);
+        await expect(passwordInput).toHaveValue(mask!);
+        expect(writes).toHaveLength(0);
+        const replacement = 'fixture + & % password';
+        await passwordInput.fill(replacement);
+        const saveDestination = async () => {
+          const pending = page.waitForResponse(
+            (response) => response.request().method() === 'PUT' && new URL(response.url()).pathname === endpoint
+          );
+          await save.click();
+          const response = await pending;
+          expect(response.ok(), await response.text()).toBe(true);
+          return response.request().postDataJSON() as GetBackupResultDto;
+        };
+        expect(secretFrom((await saveDestination()).Backup!.TargetURL!)).toBe(replacement);
+        const expectedUrl = url.replace('auth-password=initial', 'auth-password=' + encodeURIComponent(replacement));
+        expect(storedUrl()).toBe(expectedUrl);
+        await page.reload();
+        await expect(passwordInput).toHaveValue(mask!);
+        expect(secretFrom((await saveDestination()).Backup!.TargetURL!)).toBe(mask);
+        expect(storedUrl()).toBe(expectedUrl);
+        expect(advancedOptions(await get())).toEqual(expectedOptions);
+        expect(writes).toHaveLength(2);
+        expect(unexpected).toEqual([]);
+        expect(errors).toEqual([]);
+        return;
+      }
       await expect(page.locator('app-single-destination')).toBeVisible();
       if (label === 'ssh-port') {
         const port = page.getByRole('spinbutton', { name: 'Port', exact: true });
