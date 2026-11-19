@@ -76,3 +76,35 @@ test('leaving About detaches its pending update check and its late response cann
   await requests[1].fulfill({ json: {} });
   await expect(nextCheck).toBeEnabled();
 });
+
+test('shows the result of a check started from the page once the server reports that it finished', async ({
+  authenticatedPage: page,
+  serverApi: api,
+}) => {
+  const requests: Route[] = [];
+  await page.route('**/api/v1/updates/check', (route) => {
+    requests.push(route);
+  });
+  api.sendServerStatus({
+    UpdaterState: 'Waiting',
+    UpdateCheckFinished: '2026-11-19T01:00:00Z',
+    UpdateCheckError: 'An earlier failure',
+  });
+  const check = await openGeneral(page);
+  const result = page.locator('.update-check-result');
+  await expect(result).toHaveCount(0);
+
+  await check.click();
+  await expect.poll(() => requests.length).toBe(1);
+  await requests[0].fulfill({ json: {} });
+  await expect(check).toBeEnabled();
+  await expect(result).toHaveCount(0);
+  api.sendServerStatus({ UpdateCheckFinished: '2026-11-19T02:00:00Z', UpdateCheckError: 'Connection refused' });
+  await expect(result).toHaveText('Could not check for updates: Connection refused');
+
+  await check.click();
+  await expect.poll(() => requests.length).toBe(2);
+  await requests[1].fulfill({ json: {} });
+  api.sendServerStatus({ UpdateCheckFinished: '2026-11-19T03:00:00Z', UpdateCheckError: null });
+  await expect(result).toHaveText('You are running the latest version');
+});

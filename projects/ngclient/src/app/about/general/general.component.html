@@ -50,6 +50,12 @@
     }
   </div>
 
+  @if (checkResult() === 'error') {
+    <p class="update-check-result error" i18n>Could not check for updates: {{ serverState()?.UpdateCheckError }}</p>
+  } @else if (checkResult() === 'up-to-date') {
+    <p class="update-check-result" i18n>You are running the latest version</p>
+  }
+
   @if (updateInstall.installing()) {
     <div class="update-status">
       <span>{{ updateInstall.stateLabel() }}</span>

@@ -32,7 +32,12 @@ describe('GeneralComponent update check lifecycle', () => {
         { provide: SysinfoState, useValue: { systemInfo: signal({ ServerVersionName: 'Test version' }) } },
         {
           provide: UpdateInstallService,
-          useValue: { installSupported: () => false, canCancel: () => false, installing: () => false },
+          useValue: {
+            installSupported: () => false,
+            canCancel: () => false,
+            installing: () => false,
+            unsupportedReason: () => null,
+          },
         },
       ],
     });
@@ -120,6 +125,90 @@ describe('GeneralComponent update check lifecycle', () => {
     expect(component.checkingForUpdates()).toBe(false);
     component.checkForUpdates();
     expect(check).toHaveBeenCalledTimes(2);
+  });
+
+  describe('result of a check started from the page', () => {
+    function start(initial: Partial<ServerStatusDto>) {
+      const context = setup();
+      context.serverState.set({ UpdaterState: 'Waiting', ...initial });
+      context.fixture.detectChanges();
+      (context.fixture.nativeElement.querySelector('button') as HTMLButtonElement).click();
+      context.requests[0].next({});
+      context.requests[0].complete();
+      context.fixture.detectChanges();
+      const result = () =>
+        (
+          context.fixture.nativeElement.querySelector('.update-check-result') as HTMLElement | null
+        )?.textContent?.trim();
+      const finish = (state: Partial<ServerStatusDto>) => {
+        context.serverState.set({ UpdaterState: 'Waiting', ...state });
+        context.fixture.detectChanges();
+      };
+      return { ...context, result, finish };
+    }
+
+    it('shows why the check failed once the server reports that it finished', () => {
+      const { result, finish, serverState, fixture } = start({
+        UpdateCheckFinished: '2026-11-19T01:00:00Z',
+        UpdateCheckError: 'An earlier failure',
+      });
+      expect(result()).toBeUndefined();
+      serverState.set({ UpdaterState: 'Checking', UpdateCheckFinished: '2026-11-19T01:00:00Z' });
+      fixture.detectChanges();
+      expect(result()).toBeUndefined();
+      finish({ UpdateCheckFinished: '2026-11-19T02:00:00Z', UpdateCheckError: 'Connection refused' });
+      expect(result()).toBe('Could not check for updates: Connection refused');
+    });
+
+    it('tells a second failure from the first by the finish time, without seeing the checking state', () => {
+      const { result, finish } = start({ UpdateCheckFinished: '2026-11-19T01:00:00Z', UpdateCheckError: 'Timeout' });
+      finish({ UpdateCheckFinished: '2026-11-19T01:00:00Z', UpdateCheckError: 'Timeout' });
+      expect(result()).toBeUndefined();
+      finish({ UpdateCheckFinished: '2026-11-19T02:00:00Z', UpdateCheckError: 'Timeout' });
+      expect(result()).toBe('Could not check for updates: Timeout');
+    });
+
+    it('says the version is the latest when the first check finds no update', () => {
+      const { result, finish } = start({});
+      finish({ UpdateCheckFinished: '2026-11-19T02:00:00Z', UpdateCheckError: null });
+      expect(result()).toBe('You are running the latest version');
+    });
+
+    it('shows no result when the check found an update, as the update is offered instead', () => {
+      const { result, finish } = start({});
+      finish({ UpdateCheckFinished: '2026-11-19T02:00:00Z', UpdatedVersion: '2.3.0.0' });
+      expect(result()).toBeUndefined();
+    });
+
+    it('shows no result from a server that does not report the finish time', () => {
+      const { result, finish } = start({});
+      finish({ UpdatedVersion: null });
+      expect(result()).toBeUndefined();
+    });
+
+    it('shows no result for a check that was not started from the page', () => {
+      const { fixture, serverState } = setup();
+      serverState.set({
+        UpdaterState: 'Waiting',
+        UpdateCheckFinished: '2026-11-19T02:00:00Z',
+        UpdateCheckError: 'Timeout',
+      });
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('.update-check-result')).toBeNull();
+    });
+
+    it('does not take a later check as the result of a request that failed', () => {
+      const { fixture, requests, serverState } = setup();
+      (fixture.nativeElement.querySelector('button') as HTMLButtonElement).click();
+      requests[0].error(new Error('refused'));
+      serverState.set({
+        UpdaterState: 'Waiting',
+        UpdateCheckFinished: '2026-11-19T02:00:00Z',
+        UpdateCheckError: 'Timeout',
+      });
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('.update-check-result')).toBeNull();
+    });
   });
 
   it('allows retry after an error without reporting an unhandled RxJS error', async () => {

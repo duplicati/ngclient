@@ -810,6 +810,8 @@ export type ServerStatusDto = {
     LastNotificationUpdateID: number;
     UpdatedVersion: string | null;
     UpdaterState: UpdatePollerStates;
+    UpdateCheckError?: string | null;
+    UpdateCheckFinished?: string | null;
     UpdateDownloadLink: string | null;
     UpdateDownloadProgress: number;
     QueueCompletionAction?: QueueCompletionAction;
@@ -1172,6 +1174,8 @@ export type ServerStatusDtoWritable = {
     LastNotificationUpdateID: number;
     UpdatedVersion: string | null;
     UpdaterState: UpdatePollerStates;
+    UpdateCheckError?: string | null;
+    UpdateCheckFinished?: string | null;
     UpdateDownloadLink: string | null;
     UpdateDownloadProgress: number;
     QueueCompletionAction?: QueueCompletionAction;

@@ -6524,6 +6524,15 @@
           "UpdaterState": {
             "$ref": "#/components/schemas/UpdatePollerStates"
           },
+          "UpdateCheckError": {
+            "type": "string",
+            "nullable": true
+          },
+          "UpdateCheckFinished": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "UpdateDownloadLink": {
             "type": "string",
             "nullable": true
