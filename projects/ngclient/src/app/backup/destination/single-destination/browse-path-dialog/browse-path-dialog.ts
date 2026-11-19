@@ -3,10 +3,11 @@ import { form, FormField } from '@angular/forms/signals';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import FileTreeComponent from '../../../../core/components/file-tree/file-tree.component';
 import { RemoteDestinationType } from '../../../../core/openapi';
+import { NullableTextControl } from '../../../general/nullable-text-control';
 
 @Component({
   selector: 'app-browse-path-dialog',
-  imports: [ShipButton, FileTreeComponent, FormField],
+  imports: [ShipButton, FileTreeComponent, FormField, NullableTextControl],
   templateUrl: './browse-path-dialog.html',
   styleUrl: './browse-path-dialog.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,14 +22,14 @@ export class BrowsePathDialog {
   }>();
   closed = output<string | null>();
 
-  inputForm = form(signal({ path: '' as string }));
+  inputForm = form(signal({ path: '' as string | null }));
   path = this.inputForm.path().value;
   destinationUrl = signal<string>('');
   backupId = signal<string>('');
   connectionStringId = signal<number | null>(null);
   sourcePrefix = signal<string | null>(null);
   destinationType = signal<RemoteDestinationType>('Backend');
-  isValid = computed(() => this.path().length > 0);
+  isValid = computed(() => !!this.path());
 
   dataEffect = effect(() => {
     const data = this.data();
