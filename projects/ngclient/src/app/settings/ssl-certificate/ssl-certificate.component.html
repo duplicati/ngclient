@@ -16,14 +16,7 @@
 
 <sh-form-field>
   <label for="sslCertificatePassword" i18n>Certificate password</label>
-  <input
-    type="password"
-    id="sslCertificatePassword"
-    name="sslCertificatePassword"
-    autocomplete="off"
-    [ngModel]="password()"
-    (ngModelChange)="password.set($event)"
-    [ngModelOptions]="{ standalone: true }" />
+  <input type="password" id="sslCertificatePassword" autocomplete="off" [formField]="passwordForm.password" />
 </sh-form-field>
 
 <div class="actions">
