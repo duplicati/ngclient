@@ -458,6 +458,23 @@ export class SingleDestinationComponent {
     });
   }
 
+  #timeValues = linkedSignal(() => {
+    const values = this.destinationForm();
+    const config = this.destinationFormConfig();
+    const times = (group: keyof DestinationFormValues): Record<string, string> =>
+      Object.fromEntries(
+        (config?.[group] ?? [])
+          .filter(({ type }) => type === 'Timespan' || type === 'DateTime')
+          .map(({ name }) => [name, String(values[group][name] ?? '')])
+      );
+    return { custom: times('custom'), dynamic: times('dynamic'), advanced: times('advanced') };
+  });
+  #timeForm = form(this.#timeValues);
+
+  destinationTimeField(group: keyof DestinationFormValues, name: string) {
+    return this.#timeForm[group][name];
+  }
+
   isTrue(value: any): boolean {
     if (typeof value === 'boolean') {
       return value;

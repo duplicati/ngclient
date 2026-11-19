@@ -552,8 +552,8 @@
       } @else if (item.formView.type === 'Timespan' || item.formView.type === 'DateTime') {
         <app-timespan
           [inputType]="item.formView.name"
-          [ngModel]="formInput"
-          (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)"
+          [formField]="destinationTimeField(item.fieldGroup, item.formView.name)"
+          (timeChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)"
           [customId]="formFieldId">
           <label [for]="formFieldId">
             @if (item.formView.isMandatory && isFieldEmpty) {

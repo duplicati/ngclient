@@ -26,6 +26,10 @@ const cases = [
   ],
   ['interleaved-secrets', 's3://bucket/a%2Fb?AUTH-PASSWORD=one&keep=middle&auth-password=two&flag'],
   ['unparseable', 'ssh://undefined/path?future=a+b&future=two&empty=&flag'],
+  [
+    'sharepoint-time',
+    'mssp://Example.COM/archive?auth-username=fixture&auth-password=fixture-key&web-timeout=2m&future=a+b&future=two&flag&empty=',
+  ],
 ] as const;
 
 const settings = [
@@ -126,6 +130,33 @@ for (const [label, url] of cases) {
       expect(storedUrl()).toBe(url);
 
       const actions: string[] = [];
+      if (label === 'sharepoint-time') {
+        const timespan = page
+          .locator('app-single-destination app-timespan')
+          .filter({ hasText: /SharePoint web operations/i });
+        const amount = timespan.getByRole('spinbutton');
+        const unit = timespan.locator('button.trigger');
+        await expect(amount).toHaveValue('2');
+        await expect(unit).toHaveText('Minutes');
+        await amount.fill('7');
+        await unit.click();
+        await page.getByRole('button', { name: 'Hours', exact: true }).click();
+        const pending = page.waitForResponse(
+          (response) => response.request().method() === 'PUT' && new URL(response.url()).pathname === endpoint
+        );
+        await save.click();
+        const response = await pending;
+        expect(response.ok(), await response.text()).toBe(true);
+        expect(storedUrl()).toBe(url.replace('web-timeout=2m', 'web-timeout=7h'));
+        expect(advancedOptions(await get())).toEqual(expectedOptions);
+        await page.reload();
+        await expect(amount).toHaveValue('7');
+        await expect(unit).toHaveText('Hours');
+        expect(writes).toHaveLength(1);
+        expect(unexpected).toEqual([]);
+        expect(errors).toEqual([]);
+        return;
+      }
       for (const action of ['mouse', 'reload-keyboard', 'description-only']) {
         if (action === 'reload-keyboard') {
           await page.reload();
