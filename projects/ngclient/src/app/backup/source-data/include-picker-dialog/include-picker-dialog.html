@@ -18,7 +18,7 @@
     [showFiles]="true"
     [backupId]="backupId()">
     <label for="include-picker-path" i18n>Picked paths</label>
-    <input type="text" id="include-picker-path" [(ngModel)]="path" />
+    <input type="text" id="include-picker-path" [formField]="inputForm.path" />
   </app-file-tree>
 
   <p class="summary">
