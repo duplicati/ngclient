@@ -8,9 +8,9 @@ import ChangelogComponent from './changelog.component';
 describe('changelog version selection', () => {
   afterEach(() => TestBed.resetTestingModule());
 
-  function setup(fromUpdate?: string) {
+  function setup(fromUpdate?: string, markdown = '# Release notes') {
     const params = new BehaviorSubject(convertToParamMap(fromUpdate ? { 'from-update': fromUpdate } : {}));
-    const load = vi.fn(() => of({ Changelog: '# Release notes' }));
+    const load = vi.fn(() => of({ Changelog: markdown }));
     TestBed.configureTestingModule({
       imports: [ChangelogComponent],
       providers: [
@@ -22,6 +22,25 @@ describe('changelog version selection', () => {
     fixture.detectChanges();
     return { fixture, params, load };
   }
+
+  it('renders only the Markdown content without a SafeValue diagnostic suffix', () => {
+    const { fixture } = setup(undefined, '\uFEFF# Release notes\n\n[Details](https://example.com/notes)');
+    const output = fixture.nativeElement.querySelector('.markdown-output') as HTMLElement;
+    expect(output.textContent!.trim()).toBe('Release notes\nDetails');
+    expect(output.querySelector('h1')!.textContent).toBe('Release notes');
+    expect(output.querySelector('a')!.getAttribute('href')).toBe('https://example.com/notes');
+  });
+
+  it('keeps Angular sanitization for HTML embedded in release notes', () => {
+    const { fixture } = setup(
+      undefined,
+      '<img src="x" onerror="alert(1)"><script>alert(2)</script><a href="javascript:alert(3)">unsafe</a>'
+    );
+    const output = fixture.nativeElement.querySelector('.markdown-output') as HTMLElement;
+    expect(output.querySelector('script')).toBeNull();
+    expect(output.querySelector('img')!.hasAttribute('onerror')).toBe(false);
+    expect(output.querySelector('a')!.getAttribute('href')).not.toMatch(/^javascript:/i);
+  });
 
   it('requests the available update when opened from an update notification', () => {
     const { load, fixture } = setup('true');

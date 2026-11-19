@@ -18,10 +18,12 @@ test('Show Update opens available notes and ordinary changelog navigation restor
   await expect(page).toHaveURL('/about/changelog?from-update=true');
   if (await page.locator('.alert-stream-modal').isVisible())
     await page.locator('app-service-hub > button').nth(1).click();
-  await expect(page.getByRole('heading', { name: /^Available update notes/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Available update notes', exact: true })).toBeVisible();
+  await expect(page.locator('.markdown-output')).toHaveText('Available update notes');
   await page.screenshot({ path: 'tmp/eight-prs-20261118/changelog.png' });
   await page.getByRole('tab', { name: 'Changelog', exact: true }).click();
   await expect(page).toHaveURL('/about/changelog');
-  await expect(page.getByRole('heading', { name: /^Installed version notes/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Installed version notes', exact: true })).toBeVisible();
+  await expect(page.locator('.markdown-output')).toHaveText('Installed version notes');
   expect(queries).toEqual([true, false]);
 });
