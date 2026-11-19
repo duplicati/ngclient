@@ -220,6 +220,20 @@
         <label for="path">Path</label>
         <input type="text" id="path" formControlName="restoreFromPath" />
       </app-file-tree>
+
+      @if (canRestoreToDownload()) {
+        <sh-radio class="raised primary" i18n>
+          Download in the browser
+          <input type="radio" name="restoreFrom" value="download" formControlName="restoreFrom" />
+        </sh-radio>
+
+        @if (optionsFormSignal()?.restoreFrom === 'download') {
+          <p class="download-note" i18n>
+            The files are restored to a temporary folder on the server, packed into one file, and offered in a
+            notification. Use it for a few files, as a large restore needs the space twice.
+          </p>
+        }
+      }
     }
   </app-toggle-card>
 

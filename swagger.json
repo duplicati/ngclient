@@ -6095,6 +6095,10 @@
               "nullable": true
             },
             "nullable": true
+          },
+          "download": {
+            "type": "boolean",
+            "nullable": true
           }
         },
         "additionalProperties": false

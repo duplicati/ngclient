@@ -707,6 +707,7 @@ export type RestoreInputDto = {
     options?: {
         [key: string]: string | null;
     } | null;
+    download?: boolean | null;
 };
 
 export type RestoreTaskConfigElementDto = {

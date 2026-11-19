@@ -149,6 +149,37 @@ export class NotificationComponent {
     });
   }
 
+  doDownloadRestore(item: ExtendedNotificationDto) {
+    const id = item.Action!.slice('restore:download:'.length);
+
+    defer(() =>
+      this.#dupServer.postApiV1AuthIssuetokenByOperation({
+        path: {
+          operation: 'restore-download',
+        },
+      })
+    ).subscribe({
+      next: (res) => {
+        if (!res.Token) {
+          this.#snackbar.error($localize`Failed to get the download URL: No token generated`);
+          return;
+        }
+
+        const prefix = getApiBase();
+        const xsrfQuery = this.#auth.xsrfQueryParam();
+        const link = `${location.origin}${prefix}/api/v1/restore-download/${id}?token=${encodeURIComponent(res.Token)}${xsrfQuery ? `&${xsrfQuery}` : ''}`;
+
+        item.DownloadLink = link;
+        this.#generatedDownloadLink.set(link);
+
+        this.triggerDownload(link);
+      },
+      error: (err) => {
+        this.#snackbar.error($localize`Failed to get the download URL: ${err.message}`);
+      },
+    });
+  }
+
   triggerDownload(link: string) {
     const a = document.createElement('a');
     a.href = link;

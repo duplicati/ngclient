@@ -54,6 +54,7 @@ describe('Restore options back navigation', () => {
           useValue: {
             systemInfo: signal({ DirectorySeparator: '/' }),
             hasRestoreOptions: signal(false),
+            hasRestoreDownload: signal(false),
             restoreDestinationProviderModules: signal([]),
           },
         },

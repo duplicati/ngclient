@@ -7,7 +7,13 @@ const older = '2026-11-01T12:00:00Z';
 const started = '2026-11-07T12:00:00Z';
 const taskId = 73;
 
-async function openRestore(page: Page, loginRequests: Route[], separator: string, source: string) {
+async function openRestore(
+  page: Page,
+  loginRequests: Route[],
+  separator: string,
+  source: string,
+  extraExtensions: string[] = []
+) {
   await page.route('**/api/v1/systeminfo', (route) =>
     route.fulfill({
       json: {
@@ -28,6 +34,7 @@ async function openRestore(page: Page, loginRequests: Route[], separator: string
           'v1:subscribe:remotecontrol',
           'v2:backup:list-filesets',
           'v2:backup:list-folder',
+          ...extraExtensions,
         ],
       },
     })
@@ -213,6 +220,29 @@ for (const scenario of [
     expect(body.paths).not.toContain(scenario.source + 'unselected.txt');
   });
 }
+
+test('restores to a browser download when the server offers it', async ({ page, serverApi }) => {
+  const { restores, tasks } = await openRestore(page, serverApi.loginRequests, '/', '/archive/', [
+    'v1:backup:restore-download',
+  ]);
+  await selectOlderFiles(page);
+  await expect(page.locator('.download-note')).toHaveCount(0);
+  await page.locator('sh-radio').filter({ hasText: 'Download in the browser' }).click();
+  await expect(page.locator('.download-note')).toBeVisible();
+  const body = await completeTask(page, restores, tasks);
+  expect(body).toMatchObject({ time: older, download: true, restore_path: null });
+});
+
+test('does not offer a browser download when the server does not report it', async ({ page, serverApi }) => {
+  const { restores, tasks } = await openRestore(page, serverApi.loginRequests, '/', '/archive/');
+  await selectOlderFiles(page);
+  await expect(page.locator('sh-radio').filter({ hasText: 'Pick location' })).toBeVisible();
+  await expect(page.locator('sh-radio').filter({ hasText: 'Download in the browser' })).toHaveCount(0);
+  await chooseDestination(page, '/restored');
+  const body = await completeTask(page, restores, tasks);
+  expect(body).not.toHaveProperty('download');
+  expect(body.restore_path).toBe('/restored');
+});
 
 test('shows a failed restore task as a failure rather than a successful completion', async ({ page, serverApi }) => {
   const { restores, tasks } = await openRestore(page, serverApi.loginRequests, '/', '/archive/');

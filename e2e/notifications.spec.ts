@@ -113,3 +113,26 @@ test('an open empty list receives pushed notifications and returns to empty when
   await expect(bell(page)).not.toHaveClass(/\berror\b/);
   expect(serverApi.requests.filter((request) => request.method() === 'DELETE')).toHaveLength(0);
 });
+
+test('a restore download notification gets a token for the download and links to the file', async ({
+  authenticatedPage: page,
+  serverApi,
+}) => {
+  const tokens: Route[] = [];
+  await page.route('**/api/v1/auth/issuetoken/*', (route) => {
+    tokens.push(route);
+  });
+  // The file itself is not fetched in the test
+  await page.route('**/api/v1/restore-download/**', (route) => route.abort());
+  serverApi.sendNotifications([{ ...notification(55), Action: 'restore:download:9' }]);
+  const panel = await openNotifications(page);
+
+  await row(panel, 55).getByRole('button', { name: 'Download', exact: true }).click();
+  await expect.poll(() => tokens.length).toBe(1);
+  expect(new URL(tokens[0].request().url()).pathname).toBe('/api/v1/auth/issuetoken/restore-download');
+  await tokens[0].fulfill({ json: { Token: 'one/time+token' } });
+
+  const link = row(panel, 55).getByRole('link', { name: /right click/ });
+  await expect(link).toHaveAttribute('href', /\/api\/v1\/restore-download\/9\?token=one%2Ftime%2Btoken/);
+  await expect(row(panel, 55).getByRole('button', { name: 'Download', exact: true })).toHaveCount(0);
+});

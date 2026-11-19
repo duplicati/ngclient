@@ -26,6 +26,10 @@
         <button shButton class="small outlined" (click)="doDownloadBugreport(_notification)" i18n>Download</button>
       }
 
+      @if (_notification.Action?.startsWith('restore:download:') && !downloadLink()) {
+        <button shButton class="small outlined" (click)="doDownloadRestore(_notification)" i18n>Download</button>
+      }
+
       @if (_notification.Action === 'update:new') {
         <div class="message">
           <ng-container i18n>New update found:</ng-container>
