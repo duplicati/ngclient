@@ -7,6 +7,10 @@ import { test, expect } from './fixture';
 const cases = [
   ['file', 'file://C:/Backup%20Files?future=a+b&future=two&flag&empty='],
   [
+    's3-boolean',
+    's3://bucket/archive?s3-server-name=s3.example.invalid&use-ssl=false&future=a+b&future=two&flag&empty=',
+  ],
+  [
     'ssh',
     'ssh://fixture-user:fixture-secret@Example.COM:022/archive%2fpart?auth-password=p%2525&buffer-size=64MB&future=a+b&future=two&flag&empty=',
   ],
@@ -113,6 +117,28 @@ for (const [label, url] of cases) {
       await expect(page).toHaveURL('/');
       await page.goto(`/backup/${id}/destination`);
       const save = page.getByRole('button', { name: 'Save changes', exact: true });
+      if (label === 's3-boolean') {
+        const tls = page.getByRole('checkbox', { name: /Use TLS/ });
+        await expect(tls).not.toBeChecked();
+        expect(writes).toHaveLength(0);
+        for (const enabled of [true, false]) {
+          await tls.setChecked(enabled);
+          const pending = page.waitForResponse(
+            (response) => response.request().method() === 'PUT' && new URL(response.url()).pathname === endpoint
+          );
+          await save.click();
+          const response = await pending;
+          expect(response.ok(), await response.text()).toBe(true);
+          expect(storedUrl()).toBe(url.replace('use-ssl=false', `use-ssl=${enabled}`));
+          expect(advancedOptions(await get())).toEqual(expectedOptions);
+          await page.reload();
+          await expect(tls).toBeChecked({ checked: enabled });
+        }
+        expect(writes).toHaveLength(2);
+        expect(unexpected).toEqual([]);
+        expect(errors).toEqual([]);
+        return;
+      }
       await expect(save).toBeEnabled();
       await expect(page.locator('app-single-destination')).toBeVisible();
       if (label === 'unparseable') {
