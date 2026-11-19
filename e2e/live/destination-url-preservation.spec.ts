@@ -19,6 +19,7 @@ const cases = [
     's3://BucketName/archive?s3-server-name=s3.example.invalid&auth-password=fixture-secret&future=a+b&future=two&flag&empty=',
   ],
   ['pcloud', 'pcloud://api.pcloud.com/Folder?authid=fixture-authid&future=a+b&future=two&flag&empty='],
+  ['ssh-multiline', 'ssh://fixture@Example.COM/archive?ssh-key=initial&future=a+b&future=two&flag&empty='],
   ['unsupported', 'future-backend://example.invalid/archive?future=a+b&future=two&flag&empty='],
   [
     'ftp-encoding',
@@ -119,6 +120,35 @@ for (const [label, url] of cases) {
         await expect(
           page.getByText('The destination URL could not be read into the fields below', { exact: false })
         ).toBeVisible();
+      }
+      if (label === 'ssh-multiline') {
+        const textarea = page.locator('app-single-destination app-file-drop-textarea textarea');
+        const text = 'fixture first line\n\nfixture second + & line\n';
+        await expect(textarea).toBeVisible();
+        expect(writes).toHaveLength(0);
+        await textarea.fill(text);
+        const saveDestination = async () => {
+          const pending = page.waitForResponse(
+            (response) => response.request().method() === 'PUT' && new URL(response.url()).pathname === endpoint
+          );
+          await save.click();
+          const response = await pending;
+          expect(response.ok(), await response.text()).toBe(true);
+        };
+        await saveDestination();
+        const saved = url.replace('ssh-key=initial', 'ssh-key=' + encodeURIComponent(text));
+        expect(storedUrl()).toBe(saved);
+        await page.reload();
+        // The server may mask the key on GET. An untouched save must keep the original text.
+        const reloadedUrl = (await get()).Backup!.TargetURL!;
+        await expect(textarea).toHaveValue(new URL(reloadedUrl).searchParams.get('ssh-key')!);
+        await saveDestination();
+        expect(storedUrl()).toBe(saved);
+        expect(advancedOptions(await get())).toEqual(expectedOptions);
+        expect(writes).toHaveLength(2);
+        expect(unexpected).toEqual([]);
+        expect(errors).toEqual([]);
+        return;
       }
       // Allow the form's initial render/effects to run, without editing anything.
       await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
