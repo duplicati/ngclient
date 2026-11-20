@@ -72,10 +72,13 @@ label {
   flex-direction: row;
   gap: 8px;
   align-items: flex-end;
-  sh-select {
-    width: 100%;
-  }
 }
+.restore-backup-picker {
+  display: grid;
+  flex: 1;
+  gap: p2r(4);
+}
+
 .duplicati-backup-id-console {
   display: flex;
   flex-direction: row;

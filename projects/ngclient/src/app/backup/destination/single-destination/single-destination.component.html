@@ -618,21 +618,24 @@
                   </button>
                 </div>
               } @else {
-                <sh-select [options]="restoreBackupIdOptions()" [isClearable]="false">
+                <div class="restore-backup-picker">
                   <label [for]="formFieldId">
                     <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
                     <span i18n>Pick the backup to restore from</span>
                   </label>
-                  <input
-                    type="text"
+                  <select
+                    #backupPicker
                     [id]="formFieldId"
-                    [ngModel]="formInput"
-                    (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
-                </sh-select>
-
-                <ng-template let-option #backupIdOptionTemplate>
-                  {{ option.key }} {{ option.value && option.value != option.key ? '(' + option.value + ')' : '' }}
-                </ng-template>
+                    [formField]="restoreBackupForm.backupId"
+                    (change)="updateFieldValue(item.fieldGroup, item.formView.name, backupPicker.value)">
+                    @if (!restoreBackupIdOptions().includes(formInput)) {
+                      <option [value]="formInput ?? ''" disabled>{{ formInput }}</option>
+                    }
+                    @for (backupId of restoreBackupIdOptions(); track $index) {
+                      <option [value]="backupId">{{ backupId }}</option>
+                    }
+                  </select>
+                </div>
               }
             } @else {
               <sh-form-field>
