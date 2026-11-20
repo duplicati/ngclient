@@ -448,12 +448,13 @@
       </div>
 
       <div class="right">
-        <sh-select [options]="powerModeOptions()" value="value" label="label" [isClearable]="false">
-          <input
-            type="text"
-            [ngModel]="powerModeCtrl()"
-            (ngModelChange)="updatePowerMode($event)"
-            [ngModelOptions]="{ standalone: true }" />
+        <sh-select
+          [options]="powerModeOptions()"
+          value="value"
+          label="label"
+          [isClearable]="false"
+          (selectedOptionsChange)="updatePowerMode($event)">
+          <input type="text" appNullableText [formField]="powerModeField" />
         </sh-select>
       </div>
     </section>
