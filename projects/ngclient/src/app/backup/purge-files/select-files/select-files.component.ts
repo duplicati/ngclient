@@ -1,3 +1,4 @@
+import { form, FormField } from '@angular/forms/signals';
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -17,6 +18,7 @@ import { PurgeFilesState } from '../purge-files.state';
 @Component({
   selector: 'app-purge-select-files',
   imports: [
+    FormField,
     FormsModule,
     DatePipe,
     FileTreeComponent,
@@ -52,7 +54,8 @@ export default class PurgeSelectFilesComponent {
 
   // Search functionality
   canSearch = computed(() => this.#sysinfo.hasV2ListOperations());
-  searchQuery = signal('');
+  inputForm = form(signal({ searchQuery: '' }));
+  searchQuery = this.inputForm.searchQuery().value;
   isSearching = signal(false);
   searchResults = signal<SearchEntriesItemDto[]>([]);
   hasSearched = signal(false);

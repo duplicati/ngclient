@@ -47,8 +47,7 @@
           <input
             type="text"
             id="search"
-            [(ngModel)]="searchQuery"
-            [ngModelOptions]="{ standalone: true }"
+            [formField]="inputForm.searchQuery"
             (keydown.enter)="$event.preventDefault(); performSearch()"
             i18n-placeholder
             placeholder="Enter search term..." />
