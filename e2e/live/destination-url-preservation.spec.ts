@@ -185,6 +185,37 @@ for (const [label, url] of cases) {
       }
       expect(unexpected).toEqual([]);
       expect(errors).toEqual([]);
+      if (label === 's3') {
+        const field = page.locator('app-single-destination sh-select').filter({
+          has: page.locator('label', { hasText: /^\s*Server\b/ }),
+        });
+        const server = field.getByRole('combobox');
+        await page.goto(`/backup/${id}/destination`);
+        await expect(field.locator('.selected-value')).toHaveText('s3.example.invalid');
+
+        for (const host of ['s3.wasabisys.com', 'custom-s3.example.invalid']) {
+          await field.locator('.selected-value').click();
+          if (host === 's3.wasabisys.com') {
+            await page.getByRole('option', { name: /s3\.wasabisys\.com/ }).click();
+          } else {
+            await server.fill(host);
+            await server.press('Tab');
+          }
+          const pending = page.waitForResponse(
+            (response) => response.request().method() === 'PUT' && new URL(response.url()).pathname === endpoint
+          );
+          await save.click();
+          const response = await pending;
+          expect(response.ok(), await response.text()).toBe(true);
+          expect(new URL(String(storedUrl())).searchParams.get('s3-server-name')).toBe(host);
+          expect(advancedOptions(await get())).toEqual(expectedOptions);
+          await page.reload();
+          await expect(field.locator('.selected-value')).toContainText(host);
+        }
+        expect(writes).toHaveLength(5);
+        expect(unexpected).toEqual([]);
+        expect(errors).toEqual([]);
+      }
       const info = await (await api.get('/api/v1/systeminfo')).json();
       await testInfo.attach('destination-preservation', {
         body: JSON.stringify(

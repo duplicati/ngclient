@@ -412,10 +412,11 @@
 
             <input
               type="text"
+              appDestinationFreeText
               [id]="formFieldId"
-              [ngModel]="formInput"
+              [formField]="destinationFreeTextField(item.fieldGroup, item.formView.name)"
               (paste)="onFieldPaste(item.fieldGroup, item.formView.name, $event)"
-              (input)="onFreeTextInput(item.fieldGroup, item.formView.name, $event)" />
+              (valueChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
           </sh-select>
 
           <!-- The free-text row has only a value, so show it without brackets -->
