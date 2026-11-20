@@ -87,10 +87,9 @@
             <textarea
               wrap="off"
               class="bulk-textarea"
-              [(ngModel)]="bulkPaths"
-              [ngModelOptions]="{ updateOn: 'blur', standalone: true }"
+              [formField]="bulkPathsForm"
               rows="10"
-              (ngModelChange)="savePathBulkEdit()"></textarea>
+              (blur)="savePathBulkEdit()"></textarea>
           </sh-form-field>
         } @else {
           @for (path of nonFilterPaths(); track $index) {

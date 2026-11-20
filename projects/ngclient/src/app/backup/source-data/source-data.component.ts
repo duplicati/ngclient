@@ -232,6 +232,7 @@ export default class SourceDataComponent {
   addingNewPath = signal(false);
   bulkPathEditMode = signal(false);
   bulkPaths = signal('');
+  bulkPathsForm = form(this.bulkPaths);
   mobileMenuOpen = signal(false);
   backupId = this.#backupState.backupId();
   isLocalDiskSupported = computed(() =>
@@ -395,6 +396,8 @@ export default class SourceDataComponent {
   }
 
   savePathBulkEdit() {
+    if (this.bulkPaths() === (this.nonFilterPaths()?.join('\n') ?? '')) return;
+
     const newPaths =
       this.bulkPaths()
         .split('\n')
