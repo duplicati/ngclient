@@ -1,6 +1,8 @@
 <header>
   @if (data()?.module === 'googleworkspace') {
     <h3 class="title-30" i18n>Google Workspace permissions</h3>
+  } @else if (data()?.module === 'postgresql') {
+    <h3 class="title-30" i18n>PostgreSQL database checks</h3>
   } @else {
     <h3 class="title-30" i18n>Microsoft 365 permissions</h3>
   }

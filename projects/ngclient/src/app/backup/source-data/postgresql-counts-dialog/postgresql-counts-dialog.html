@@ -1,0 +1,43 @@
+<header>
+  <h3 class="title-30" i18n>PostgreSQL database</h3>
+</header>
+
+<section content>
+  @switch (status()) {
+    @case ('loading') {
+      <div class="state loading">
+        <sh-icon>spinner</sh-icon>
+        <span i18n>Loading counts…</span>
+      </div>
+    }
+    @case ('error') {
+      <div class="state error">
+        <sh-icon>warning</sh-icon>
+        <span>{{ error() }}</span>
+      </div>
+    }
+    @case ('success') {
+      @let result = counts()!;
+
+      <div class="counts">
+        <section class="group">
+          <h4 i18n>Database</h4>
+          <dl>
+            <div>
+              <dt i18n>Tables</dt>
+              <dd>{{ result.tables.total }}</dd>
+            </div>
+            <div class="total">
+              <dt i18n>Size on the server</dt>
+              <dd>{{ result.database.sizeBytes | bytes: false : true }}</dd>
+            </div>
+          </dl>
+        </section>
+      </div>
+    }
+  }
+</section>
+
+<footer footer>
+  <button shButton type="button" (click)="closed.emit()" i18n>Close</button>
+</footer>

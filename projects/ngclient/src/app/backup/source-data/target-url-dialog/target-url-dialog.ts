@@ -4,13 +4,17 @@ import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { IDynamicModule, RemoteDestinationType } from '../../../core/openapi';
 import { DestinationListItemComponent } from '../../destination/destination-list-item/destination-list-item.component';
+import { POSTGRESQL_SCHEME } from '../../destination/destination.postgresql';
 import { DestinationListComponent } from '../../destination/destination-list/destination-list.component';
 import { getConfigurationByKey } from '../../destination/destination.config-utilities';
 import { SingleDestinationComponent } from '../../destination/single-destination/single-destination.component';
 import { CustomRemotePermissionsDialog } from '../custom-remote-permissions-dialog/custom-remote-permissions-dialog';
 import { GoogleWorkspaceCountsDialog } from '../googleworkspace-counts-dialog/googleworkspace-counts-dialog';
 import { Office365CountsDialog } from '../office365-counts-dialog/office365-counts-dialog';
+import { PostgresqlCountsDialog } from '../postgresql-counts-dialog/postgresql-counts-dialog';
 import { TestExpectation, TestState, TestUrl } from './test-url/test-url';
+
+const POSTGRESQL_URL_PREFIX = `${POSTGRESQL_SCHEME}://`;
 
 @Component({
   selector: 'app-target-url-dialog',
@@ -66,12 +70,13 @@ export class TargetUrlDialog {
   /** The URL has to be tested before it can be used, and before the source tools can check it */
   untested = computed(() => this.testSignal() === null || this.testSignal() === 'testing');
 
-  /** Microsoft 365 and Google Workspace sources can show item counts and check permissions */
+  /** Microsoft 365, Google Workspace and PostgreSQL sources can show item counts and check permissions */
   workspaceModule = computed(() => {
     if (this.moduleType() !== 'SourceProvider') return null;
     const url = this.targetUrlModel() ?? '';
     if (url.startsWith('office365://')) return 'office365';
     if (url.startsWith('googleworkspace://')) return 'googleworkspace';
+    if (url.startsWith(POSTGRESQL_URL_PREFIX)) return POSTGRESQL_SCHEME;
     return null;
   });
 
@@ -87,7 +92,8 @@ export class TargetUrlDialog {
       data: { url, sourcePrefix: this.sourcePrefix() ?? '', backupId: this.backupId() },
     };
     if (module === 'office365') this.#dialog.open(Office365CountsDialog, options);
-    else this.#dialog.open(GoogleWorkspaceCountsDialog, options);
+    else if (module === 'googleworkspace') this.#dialog.open(GoogleWorkspaceCountsDialog, options);
+    else this.#dialog.open(PostgresqlCountsDialog, options);
   }
 
   openPermissions() {

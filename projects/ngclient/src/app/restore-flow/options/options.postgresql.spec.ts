@@ -71,13 +71,23 @@ describe('Restore options for a PostgreSQL backup', () => {
     expect(setup({ restoreFrom: 'pickLocation' }, ['office365']).component.canRestoreToDatabase()).toBe(false);
   });
 
+  it('checks the database as the target of a restore', () => {
+    const { component, open } = setup({ restoreFrom: 'same-custom' }, ['postgresql']);
+
+    component.checkPermissions();
+
+    expect(open).toHaveBeenCalledTimes(1);
+    expect(open.mock.calls[0][1].data).toMatchObject({ module: 'postgresql', mode: 'restore' });
+    expect(open.mock.calls[0][1].data.url).toContain('postgresql://');
+  });
+
   it('shows no path tree for a database and names the target', () => {
     const { component } = setup({ restoreFrom: 'same-custom' }, ['postgresql']);
 
     expect(component.isDatabaseTarget()).toBe(true);
     expect(component.showCustomRemoteRestoreTree()).toBe(false);
     expect(component.customRemoteTreeMode()).toBeNull();
-    expect(component.canCheckPermissions()).toBe(false);
+    expect(component.canCheckPermissions()).toBe(true);
     expect(component.databaseTarget()).toEqual({
       host: 'db.example.com',
       port: '5432',

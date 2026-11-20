@@ -54,7 +54,11 @@ describe('CustomRemotePermissionsDialog', () => {
     const service = {
       getOffice365Permissions: vi.fn(() => response.asObservable()),
       getGsuitePermissions: vi.fn(() => response.asObservable()),
-    } satisfies Pick<WebModulesService, 'getOffice365Permissions' | 'getGsuitePermissions'>;
+      getPostgresqlPermissions: vi.fn(() => response.asObservable()),
+    } satisfies Pick<
+      WebModulesService,
+      'getOffice365Permissions' | 'getGsuitePermissions' | 'getPostgresqlPermissions'
+    >;
     TestBed.configureTestingModule({
       imports: [CustomRemotePermissionsDialog],
       providers: [{ provide: WebModulesService, useValue: service }],
@@ -109,6 +113,23 @@ describe('CustomRemotePermissionsDialog', () => {
       expect(component.status()).toBe('success');
       expect(element.querySelector('.loading')).toBeNull();
     });
+  });
+
+  it.each([
+    { mode: 'backup', forRestore: false },
+    { mode: 'restore', forRestore: true },
+  ] as const)('checks a PostgreSQL database for a $mode', ({ mode, forRestore }) => {
+    const data = { ...defaultData, module: 'postgresql' as const, url: 'postgresql://?postgresql-host=db', mode };
+    const { service, element } = setup(data);
+    expect(service.getPostgresqlPermissions).toHaveBeenCalledExactlyOnceWith(
+      data.url,
+      data.sourcePrefix,
+      data.backupId,
+      forRestore
+    );
+    expect(service.getOffice365Permissions).not.toHaveBeenCalled();
+    expect(service.getGsuitePermissions).not.toHaveBeenCalled();
+    expect(element.querySelector('h3')?.textContent).toBe('PostgreSQL database checks');
   });
 
   it.each([

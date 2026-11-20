@@ -10,7 +10,7 @@ import { ShipToggle } from '@ship-ui/core/ship-toggle';
 import { OptionsListComponent } from '../../backup/options/options-list/options-list.component';
 import { CustomRemotePermissionsDialog } from '../../backup/source-data/custom-remote-permissions-dialog/custom-remote-permissions-dialog';
 import { TargetUrlDialog } from '../../backup/source-data/target-url-dialog/target-url-dialog';
-import { POSTGRESQL_DEFAULT_SOURCE_URL } from '../../backup/destination/destination.postgresql';
+import { POSTGRESQL_DEFAULT_SOURCE_URL, POSTGRESQL_SCHEME } from '../../backup/destination/destination.postgresql';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
@@ -222,14 +222,16 @@ export default class OptionsComponent {
   canCheckPermissions = computed(() => {
     const type = this.extendedDataType();
     return (
-      (type === 'o365' || type === 'gsuite') && this.isCustomRemoteRestore() && this.customDestinationUrl() !== null
+      (type === 'o365' || type === 'gsuite' || type === POSTGRESQL_EXTENDED_DATA_TYPE) &&
+      this.isCustomRemoteRestore() &&
+      this.customDestinationUrl() !== null
     );
   });
 
   checkPermissions() {
     const url = this.customDestinationUrl();
     const type = this.extendedDataType();
-    if (!url || (type !== 'o365' && type !== 'gsuite')) return;
+    if (!url || (type !== 'o365' && type !== 'gsuite' && type !== POSTGRESQL_EXTENDED_DATA_TYPE)) return;
 
     this.#dialog.open(CustomRemotePermissionsDialog, {
       maxWidth: '700px',
@@ -239,7 +241,7 @@ export default class OptionsComponent {
         url,
         sourcePrefix: this.remoteCustomSourcePrefix() ?? '',
         backupId: this.backupId(),
-        module: type === 'o365' ? 'office365' : 'googleworkspace',
+        module: type === 'o365' ? 'office365' : type === 'gsuite' ? 'googleworkspace' : POSTGRESQL_SCHEME,
         mode: 'restore',
       },
     });
