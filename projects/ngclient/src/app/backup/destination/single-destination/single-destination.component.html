@@ -730,11 +730,12 @@
             </label>
 
             <input
+              #filenCode
               type="text"
               [id]="formFieldId"
-              [ngModel]="formInput"
+              [formField]="filenAuthForm.code"
               autocomplete="off"
-              (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
+              (input)="updateFieldValue(item.fieldGroup, item.formView.name, filenCode.value)" />
 
             <sh-icon prefix>textbox</sh-icon>
             <button
