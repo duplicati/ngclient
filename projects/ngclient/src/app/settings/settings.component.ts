@@ -152,7 +152,7 @@ export default class SettingsComponent {
 
   editAs = signal<'list' | 'text'>('list');
   previousLang = this.#initLang;
-  langCtrl = signal<string>(this.#initLang);
+  languageField = form(signal<string>(this.#initLang));
   powerModeCtrl = signal<string>('');
   powerModeField = form(linkedSignal(() => this.powerModeCtrl()));
   usageStatistics = signal<UsageStatisticsControlValue>('default');
@@ -484,9 +484,7 @@ export default class SettingsComponent {
   });
   timeTypeField = form(linkedSignal(() => this.timeType()));
 
-  // Bound to the select's selection event rather than the input's ngModelChange:
-  // the inline search types into the same input, so ngModelChange would fire
-  // with search text (which can coincide with a language code such as "da").
+  // Only a selected option changes the locale. The same input also handles inline search.
   updateLocale(selected: unknown[]) {
     const newLocale = (selected[0] as { value?: string } | undefined)?.value;
     if (!newLocale || newLocale === this.previousLang) return;
