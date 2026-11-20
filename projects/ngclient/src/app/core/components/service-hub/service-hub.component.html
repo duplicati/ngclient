@@ -32,13 +32,19 @@
 @if (isNotificationsOpen()) {
   <div class="alert-stream-modal">
     <div class="alert-stream-modal-content">
-      <h6 class="paragraph-20" i18n>
-        Notifications
+      <div class="alert-stream-modal-header">
+        <h6 class="paragraph-20" i18n>
+          Notifications
 
-        <button shButton (click)="toggleNotifications()">
-          <sh-icon>x-circle</sh-icon>
-        </button>
-      </h6>
+          <button shButton (click)="toggleNotifications()">
+            <sh-icon>x-circle</sh-icon>
+          </button>
+        </h6>
+
+        @if (notifications().length > 1) {
+          <button shButton class="dismiss-all" (click)="dismissAllNotifications()" i18n>Dismiss all</button>
+        }
+      </div>
 
       <div class="alert-stream-modal-list-scroller" #scroller>
         <div class="alert-stream-modal-list">
@@ -52,13 +58,19 @@
 @if (isAlertsOpen()) {
   <div class="alert-stream-modal">
     <div class="alert-stream-modal-content">
-      <h6 class="paragraph-20" i18n>
-        Alerts
+      <div class="alert-stream-modal-header">
+        <h6 class="paragraph-20" i18n>
+          Alerts
 
-        <button shButton (click)="toggleAlerts()">
-          <sh-icon>x-circle</sh-icon>
-        </button>
-      </h6>
+          <button shButton (click)="toggleAlerts()">
+            <sh-icon>x-circle</sh-icon>
+          </button>
+        </h6>
+
+        @if (alertHistory().length > 1) {
+          <button shButton class="dismiss-all" (click)="dismissAllAlerts()" i18n>Dismiss all</button>
+        }
+      </div>
 
       <div class="alert-stream-modal-list-scroller" #scroller>
         <div class="alert-stream-modal-list">

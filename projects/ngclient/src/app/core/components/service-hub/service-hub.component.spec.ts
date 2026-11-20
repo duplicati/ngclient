@@ -1,4 +1,4 @@
-import { signal } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ShipAlertItemInternal, ShipAlertService } from '@ship-ui/core/ship-alert';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -128,5 +128,88 @@ describe('ServiceHub preview lifecycle', () => {
     expect(fixture.componentInstance.isNotificationsOpen()).toBe(false);
     expect(fixture.componentInstance.shownMessage()).toBeNull();
     expect(vi.getTimerCount()).toBe(0);
+  });
+});
+
+describe('ServiceHub dismiss all', () => {
+  let fixture: ComponentFixture<ServiceHubComponent>;
+  const notifications = signal<NotificationDto[]>([]);
+  const history = signal<ShipAlertItemInternal[]>([]);
+  const deleteAllNotifications = vi.fn(() => notifications.set([]));
+
+  function alert(id: string): ShipAlertItemInternal {
+    return { id, title: 'Alert', type: 'error', isOpen: true, animateIn: false, animateOut: false };
+  }
+
+  function setup(panel: 'alerts' | 'notifications') {
+    // The test DOM does not implement scrollTo, which the panel calls when it opens.
+    HTMLElement.prototype.scrollTo ??= () => {};
+    TestBed.configureTestingModule({
+      imports: [ServiceHubComponent],
+      providers: [
+        { provide: NotificationsState, useValue: { notifications, deleteAllNotifications } },
+        {
+          provide: ShipAlertService,
+          useValue: {
+            alertHistory: history,
+            alertHistoryIsOpen: signal(false),
+            alertHistoryIsHidden: signal(false),
+          },
+        },
+      ],
+    });
+    // Keep the real template. Only child component rendering is stubbed.
+    TestBed.overrideComponent(ServiceHubComponent, { set: { imports: [], schemas: [CUSTOM_ELEMENTS_SCHEMA] } });
+    fixture = TestBed.createComponent(ServiceHubComponent);
+    if (panel === 'alerts') fixture.componentInstance.isAlertsOpen.set(true);
+    else fixture.componentInstance.isNotificationsOpen.set(true);
+    fixture.detectChanges();
+  }
+
+  function dismissAllButton(): HTMLButtonElement | undefined {
+    fixture.detectChanges();
+    return Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('button')).find(
+      (element) => element.textContent?.trim() === 'Dismiss all'
+    );
+  }
+
+  afterEach(() => {
+    fixture?.destroy();
+    TestBed.resetTestingModule();
+    deleteAllNotifications.mockClear();
+  });
+
+  it.each([0, 1])('hides the button with %s alerts', (count) => {
+    notifications.set([]);
+    history.set(Array.from({ length: count }, (_, index) => alert(`a${index}`)));
+    setup('alerts');
+    expect(dismissAllButton()).toBeUndefined();
+  });
+
+  it('clears every alert', () => {
+    notifications.set([]);
+    history.set([alert('a'), alert('b')]);
+    setup('alerts');
+    dismissAllButton()!.click();
+    expect(history()).toEqual([]);
+    expect(dismissAllButton()).toBeUndefined();
+    expect(fixture.componentInstance.isAlertsOpen()).toBe(false);
+  });
+
+  it.each([0, 1])('hides the button with %s notifications', (count) => {
+    history.set([]);
+    notifications.set(Array.from({ length: count }, (_, index) => ({ ID: index }) as NotificationDto));
+    setup('notifications');
+    expect(dismissAllButton()).toBeUndefined();
+  });
+
+  it('dismisses every notification with one request', () => {
+    history.set([]);
+    notifications.set([{ ID: 1 }, { ID: 2 }] as NotificationDto[]);
+    setup('notifications');
+    dismissAllButton()!.click();
+    expect(deleteAllNotifications).toHaveBeenCalledOnce();
+    expect(dismissAllButton()).toBeUndefined();
+    expect(fixture.componentInstance.isNotificationsOpen()).toBe(false);
   });
 });

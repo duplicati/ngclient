@@ -152,6 +152,16 @@ export default class ServiceHubComponent {
     this.#shipAlertService.removeAlert(id);
   }
 
+  dismissAllAlerts() {
+    this.alertHistory.set([]);
+    this.isAlertsOpen.set(false);
+  }
+
+  dismissAllNotifications() {
+    this.#notificationsState.deleteAllNotifications();
+    this.isNotificationsOpen.set(false);
+  }
+
   private scrollToBottom() {
     if (this.scroller() && this.scroller()?.nativeElement) {
       this.scroller()!.nativeElement.scrollTo(0, this.scroller()!.nativeElement.scrollHeight);

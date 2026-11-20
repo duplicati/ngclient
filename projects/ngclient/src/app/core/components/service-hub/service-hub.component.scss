@@ -113,13 +113,32 @@
   border: 1px solid var(--base-4);
   background-color: var(--base-1);
   border-radius: var(--shape-2);
+}
 
+.alert-stream-modal-header {
+  padding: p2r(16);
+  border-bottom: 1px solid var(--base-4);
+  display: flex;
+  align-items: center;
+  gap: p2r(8);
+
+  // The title and close button are one translated message, so the heading is flattened
+  // to let "Dismiss all" sit between them without changing that message.
   h6 {
-    padding: p2r(16);
-    border-bottom: 1px solid var(--base-4);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    display: contents;
+
+    button {
+      order: 1;
+      margin-left: auto;
+    }
+  }
+
+  .dismiss-all {
+    margin-left: auto;
+  }
+
+  &:has(.dismiss-all) h6 button {
+    margin-left: 0;
   }
 }
 
