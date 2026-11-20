@@ -177,7 +177,6 @@ describe('CustomRemotePermissionsDialog', () => {
   it.each([
     { name: 'data', data: null },
     { name: 'URL', data: { ...defaultData, url: '' } },
-    { name: 'source prefix', data: { ...defaultData, sourcePrefix: '' } },
     {
       name: 'module',
       data: { url: defaultData.url, sourcePrefix: defaultData.sourcePrefix, backupId: null, mode: 'backup' as const },
@@ -190,6 +189,12 @@ describe('CustomRemotePermissionsDialog', () => {
     expect(element.querySelector('table')).toBeNull();
     expect(service.getOffice365Permissions).not.toHaveBeenCalled();
     expect(service.getGsuitePermissions).not.toHaveBeenCalled();
+  });
+
+  it('checks a new source that has no prefix yet', () => {
+    const { component, service } = setup({ ...defaultData, sourcePrefix: '', backupId: null });
+    expect(component.status()).toBe('loading');
+    expect(service.getOffice365Permissions).toHaveBeenCalledExactlyOnceWith(defaultData.url, '', null);
   });
 
   it.each([

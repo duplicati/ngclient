@@ -25,9 +25,10 @@ export class Office365CountsDialog {
   #loadEffect = effect((onCleanup) => {
     const data = this.data();
     const url = data?.url;
-    const sourcePrefix = data?.sourcePrefix;
+    // A new source has no prefix yet; the server only needs one to unmask a saved source's URL
+    const sourcePrefix = data?.sourcePrefix ?? '';
     const backupId = data?.backupId ?? null;
-    if (!url || !sourcePrefix) {
+    if (!url) {
       this.status.set('error');
       this.error.set($localize`No URL provided`);
       return;

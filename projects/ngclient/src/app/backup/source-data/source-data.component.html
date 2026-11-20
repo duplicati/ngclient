@@ -44,7 +44,7 @@
     </div>
     <app-toggle-card [disableToggle]="true">
       <ng-container title>
-        <span i18n>Paths</span>
+        <span i18n>Source paths</span>
         <div class="spacer"></div>
         @if (!bulkPathEditMode()) {
           @if (isLocalDiskSupported()) {
@@ -76,7 +76,7 @@
         </sh-menu>
       </ng-container>
       @if (!bulkPathEditMode()) {
-        <p description i18n>Manually add a path.</p>
+        <p description i18n>Content that is included in the backup</p>
       } @else {
         <p description i18n>Edit paths as text, one per line.</p>
       }
@@ -114,38 +114,41 @@
                 </button>
               } @else {
                 @if (path.startsWith('@')) {
-                  <sh-chip>
-                    <img class="provider-icon" [src]="getBackendIcon(path)" alt="Provider icon" />
-                    {{ getRemotePathDisplayName(path) }}
-                  </sh-chip>
-                  @if (path.includes('|office365://') || path.includes('|googleworkspace://')) {
-                    <button
-                      shButton
-                      type="button"
-                      class="small"
-                      (click)="openCustomRemoteCounts(path)"
-                      i18n-title
-                      title="Show item counts">
-                      <sh-icon>info</sh-icon>
-                    </button>
-                  }
-                  @if (path.includes('|office365://') || path.includes('|googleworkspace://')) {
-                    <button
-                      shButton
-                      type="button"
-                      class="small"
-                      (click)="openCustomRemotePermissions(path)"
-                      i18n-title
-                      title="Check permissions">
-                      <sh-icon>shield-check</sh-icon>
-                    </button>
-                  }
+                  @let remoteLocation = getRemotePathLocation(path);
+                  <span class="source-path-label">
+                    <span class="source-path-icon" aria-hidden="true">
+                      <img class="provider-icon" [src]="getBackendIcon(path)" alt="" />
+                    </span>
+                    <span class="source-path-texts">
+                      <span class="source-path-text"
+                        ><strong class="source-path-shortcut">{{ getRemotePathDisplayName(path) }}</strong></span
+                      >
+                      @if (remoteLocation) {
+                        <span class="source-path-text source-path-resolved" [title]="remoteLocation">{{
+                          remoteLocation
+                        }}</span>
+                      }
+                    </span>
+                  </span>
                 } @else {
                   @let resolvedPath = resolvedShortcutPath(path);
-                  <span class="source-path-text" [title]="resolvedPath ?? path">{{ path }}</span>
-                  @if (resolvedPath) {
-                    <span class="source-path-text source-path-resolved">({{ resolvedPath }})</span>
-                  }
+                  @let pathIcon = sourcePathIcon(path);
+                  <span class="source-path-label">
+                    <span class="source-path-icon" aria-hidden="true">
+                      <sh-icon class="primary">{{ pathIcon.icon }}</sh-icon>
+                      @if (pathIcon.badge) {
+                        <sh-icon class="icon-badge primary">{{ pathIcon.badge.icon }}</sh-icon>
+                      }
+                    </span>
+                    <span class="source-path-texts">
+                      @let displayParts = displayPathParts(path);
+                      <!-- Kept on one line: the text is white-space: pre-wrap -->
+                      <span class="source-path-text" [title]="path">@if (displayParts) {<strong class="source-path-shortcut">{{ displayParts.name }}</strong>}{{ displayParts?.rest ?? path }}</span>
+                      @if (resolvedPath) {
+                        <span class="source-path-text source-path-resolved" [title]="resolvedPath">({{ resolvedPath }})</span>
+                      }
+                    </span>
+                  </span>
                   @if (isPickedFolder(path)) {
                     <button
                       shButton
@@ -191,7 +194,7 @@
 
     <app-toggle-card [disableToggle]="true">
       <ng-container title i18n>Exclude</ng-container>
-      <p description i18n>Choose if there’s any files you want to exclude.</p>
+      <p description i18n>Choose any files you want to exclude.</p>
 
       <sh-toggle
         class="raised primary"
@@ -209,29 +212,28 @@
             (ngModelChange)="updateFilesLargerThan($event)"></app-size>
         </div>
       }
-    </app-toggle-card>
 
-    <app-toggle-card class="attribute-exclusions" [(isActive)]="attributeCardOpen">
-      <ng-container title>
-        <span i18n>File attributes</span>
-        <div class="spacer"></div>
-        <button shButton type="button" class="small" (click)="$event.stopPropagation(); editAttributeExclusions()" i18n>
-          <sh-icon>pencil</sh-icon>
-          Edit
-        </button>
-      </ng-container>
-      @if (attributeExclusions().length) {
-        <p>
-          <span i18n>Excluded attributes:</span>
-          {{ attributeExclusions().join(', ') }}
+      <section class="attribute-exclusions">
+        <div class="attribute-exclusions-header">
+          <span class="attribute-exclusions-title" i18n>File attributes</span>
+          <button shButton type="button" class="small" (click)="editAttributeExclusions()" i18n>
+            <sh-icon>pencil</sh-icon>
+            Edit
+          </button>
+        </div>
+        @if (attributeExclusions().length) {
+          <p>
+            <span i18n>Excluded attributes:</span>
+            {{ attributeExclusions().join(', ') }}
+          </p>
+        } @else {
+          <p i18n>No attribute exclusions configured.</p>
+        }
+        <p class="attribute-exclusions-note" i18n>
+          The tree marks exclusions by Hidden, System and Temporary attributes. Other attribute flags and remote sources
+          are not previewed.
         </p>
-      } @else {
-        <p i18n>No attribute exclusions configured.</p>
-      }
-      <p i18n>
-        The tree marks exclusions by Hidden, System and Temporary attributes. Other attribute flags and remote sources
-        are not previewed.
-      </p>
+      </section>
     </app-toggle-card>
   </div>
 </form>

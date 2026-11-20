@@ -57,10 +57,11 @@ export class CustomRemotePermissionsDialog {
   #loadEffect = effect((onCleanup) => {
     const data = this.data();
     const url = data?.url;
-    const sourcePrefix = data?.sourcePrefix;
+    // A new source has no prefix yet; the server only needs one to unmask a saved source's URL
+    const sourcePrefix = data?.sourcePrefix ?? '';
     const backupId = data?.backupId ?? null;
     const module = data?.module;
-    if (!url || !sourcePrefix || !module) {
+    if (!url || !module) {
       this.status.set('error');
       this.error.set($localize`No URL provided`);
       return;

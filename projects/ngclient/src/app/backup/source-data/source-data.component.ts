@@ -5,7 +5,6 @@ import {
   effect,
   ElementRef,
   inject,
-  linkedSignal,
   signal,
   viewChild,
 } from '@angular/core';
@@ -14,7 +13,6 @@ import { form, FormField } from '@angular/forms/signals';
 import { compatForm } from '@angular/forms/signals/compat';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipButton } from '@ship-ui/core/ship-button';
-import { ShipChip } from '@ship-ui/core/ship-chip';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
@@ -23,20 +21,20 @@ import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { ShipToggle } from '@ship-ui/core/ship-toggle';
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
 import { applyIncludePick, findIncludePicks, remoteSourceFor } from '../../core/components/file-tree/include-pick';
+import { TreeNodeBadge, treeNodeBadgeForKind } from '../../core/components/file-tree/tree-node-badges';
 import { SizeComponent } from '../../core/components/size/size.component';
 import { splitSize } from '../../core/functions/parse-size';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
+import { defer } from 'rxjs';
+import { DuplicatiServer } from '../../core/openapi';
 import { WebModulesService } from '../../core/services/webmodules.service';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 import { BackupState } from '../backup.state';
 import { NullableTextControl } from '../general/nullable-text-control';
 import { FiltersComponent } from '../components/filters/filters.component';
-import { getBackendIcon, getRemotePathDisplayName } from '../destination/destination.config-utilities';
+import { getBackendIcon, getRemotePathDisplayName, getSimplePath } from '../destination/destination.config-utilities';
 import { AttributeExclusionsDialog } from './attribute-exclusions-dialog/attribute-exclusions-dialog';
-import { CustomRemotePermissionsDialog } from './custom-remote-permissions-dialog/custom-remote-permissions-dialog';
-import { GoogleWorkspaceCountsDialog } from './googleworkspace-counts-dialog/googleworkspace-counts-dialog';
 import { IncludePickerDialog, IncludePickerResult } from './include-picker-dialog/include-picker-dialog';
-import { Office365CountsDialog } from './office365-counts-dialog/office365-counts-dialog';
 import { TargetDiskDialog } from './target-disk-dialog/target-disk-dialog';
 import { TargetUrlDialog } from './target-url-dialog/target-url-dialog';
 
@@ -61,6 +59,47 @@ const DEFAULT_ATTRIBUTES = [
   'NoScrubData',
 ];
 
+// Shortcut tokens named the way the server names them in the folder tree (Duplicati SpecialFolders.cs)
+const SHORTCUT_NAMES: Record<string, string> = {
+  '%MY_DOCUMENTS%': 'Documents',
+  '%MY_MUSIC%': 'Music',
+  '%MY_PICTURES%': 'Pictures',
+  '%MY_VIDEOS%': 'Videos',
+  '%MY_MOVIES%': 'Movies',
+  '%MY_DOWNLOADS%': 'Downloads',
+  '%MY_PUBLIC%': 'Public',
+  '%DESKTOP%': 'Desktop',
+  '%APPDATA%': 'Application Data',
+  '%HOME%': 'Home',
+  '%HYPERV%': 'Hyper-V Machines',
+  '%MSSQL%': 'Microsoft SQL Server',
+};
+const WINDOWS_SHORTCUT_NAMES: Record<string, string> = {
+  '%MY_DOCUMENTS%': 'My Documents',
+  '%MY_MUSIC%': 'My Music',
+  '%MY_PICTURES%': 'My Pictures',
+  '%MY_VIDEOS%': 'My Videos',
+};
+const QNAP_SHARE_PREFIX = '%QNAP_SHARE_';
+const HYPERV_VM_PATH = /^%HYPERV%[\\/]+([^\\/]+)/i;
+
+/** The tree node kind the server reports for a source path, so the list shows the same badge as the tree */
+function sourcePathKind(path: string): string | null {
+  if (/^[A-Za-z]:[\\/]?$/.test(path)) return 'drive';
+
+  const token = /^%[^%]+%/.exec(path)?.[0];
+  if (!token) return null;
+
+  const segments = path.slice(token.length).split(/[\\/]/).filter(Boolean).length;
+  const upper = token.toUpperCase();
+  if (upper === '%HYPERV%') return segments === 0 ? 'hyperv' : segments === 1 ? 'hyperv:virtualmachine' : null;
+  // Subfolders are plain folders in the tree; only the shortcut folder itself carries a badge
+  if (segments > 0) return null;
+  if (upper === '%MSSQL%') return 'mssql';
+  if (token.startsWith(QNAP_SHARE_PREFIX)) return 'qnap:share';
+  return 'special:' + token.slice(1, -1).toLowerCase();
+}
+
 @Component({
   selector: 'app-source-data',
   imports: [
@@ -77,7 +116,6 @@ const DEFAULT_ATTRIBUTES = [
     FileTreeComponent,
     ToggleCardComponent,
     SizeComponent,
-    ShipChip,
   ],
   templateUrl: './source-data.component.html',
   styleUrl: './source-data.component.scss',
@@ -90,6 +128,35 @@ export default class SourceDataComponent {
   #route = inject(ActivatedRoute);
   #sysInfo = inject(SysinfoState);
   #webModules = inject(WebModulesService);
+  #dupServer = inject(DuplicatiServer);
+
+  // Hyper-V sources are stored by machine GUID; the server listing of %HYPERV% names them
+  #hypervNames = signal<Record<string, string>>({});
+  #hypervNamesRequested = false;
+  #loadHypervNames = effect(() => {
+    if (this.#hypervNamesRequested) return;
+    if (!(this.nonFilterPaths() ?? []).some((path) => HYPERV_VM_PATH.test(path))) return;
+
+    this.#hypervNamesRequested = true;
+    defer(() =>
+      this.#dupServer.postApiV1Filesystem({
+        query: { showHidden: true, onlyFolders: true },
+        body: { path: '%HYPERV%' },
+      })
+    ).subscribe({
+      next: (nodes) => {
+        const names: Record<string, string> = {};
+        for (const node of nodes ?? []) {
+          const id = node.id ? HYPERV_VM_PATH.exec(node.id)?.[1] : undefined;
+          const name = (node as { Metadata?: Record<string, string | null> }).Metadata?.['hyperv:Name'] ?? node.text;
+          if (id && name) names[id.toLowerCase()] = name;
+        }
+        this.#hypervNames.set(names);
+      },
+      // Without names the paths keep showing the machine GUID
+      error: () => {},
+    });
+  });
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
   // Keep the shared controls as the single source of truth during the staged migration.
   sourceForm = compatForm(
@@ -117,7 +184,6 @@ export default class SourceDataComponent {
     this.attributeExclusions().filter((value) => ['hidden', 'system', 'temporary'].includes(value.toLowerCase()))
   );
   // Collapsed while nothing is configured; follows the configuration but can still be toggled by hand.
-  attributeCardOpen = linkedSignal(() => this.attributeExclusions().length > 0);
   editAttributeExclusions() {
     const dialogRef = this.#dialog.open(AttributeExclusionsDialog, {
       maxWidth: '500px',
@@ -188,12 +254,49 @@ export default class SourceDataComponent {
     return this.pickedFolders().has(path);
   }
 
+  // A readable form of a source path for the list, e.g. %MY_DOCUMENTS%/Screenshots/ -> Documents/Screenshots
+  displayPath(path: string) {
+    const parts = this.displayPathParts(path);
+    return parts ? parts.name + parts.rest : path;
+  }
+
+  /** The shortcut name and the remainder of a source path such as %MY_DOCUMENTS%/Screenshots/, or null for a plain path */
+  displayPathParts(path: string) {
+    const token = /^%[^%]+%/.exec(path)?.[0];
+    if (!token) return null;
+
+    const isWindows = this.#sysInfo.systemInfo()?.OSType === 'Windows';
+    const name = token.startsWith(QNAP_SHARE_PREFIX)
+      ? token.slice(QNAP_SHARE_PREFIX.length, -1)
+      : ((isWindows ? WINDOWS_SHORTCUT_NAMES[token] : undefined) ?? SHORTCUT_NAMES[token]);
+    if (!name) return null;
+
+    let rest = path.slice(token.length).replace(/[\\/]+$/, '');
+    const vmId = HYPERV_VM_PATH.exec(path)?.[1];
+    const vmName = vmId ? this.#hypervNames()[vmId.toLowerCase()] : undefined;
+    if (vmId && vmName) rest = rest.replace(vmId, vmName);
+    return { name, rest };
+  }
+
+  /** The icon and corner badge for a source row, matching how the folder tree draws the same entry */
+  sourcePathIcon(path: string): { icon: string; badge: TreeNodeBadge | null } {
+    const badge = treeNodeBadgeForKind(sourcePathKind(path));
+    if (badge?.replacesIcon) return { icon: badge.icon, badge: null };
+    return { icon: /[\\/%]$/.test(path) ? 'folder' : 'file', badge };
+  }
+
   /** The folder a shortcut source such as %HOME% points to on the server, or null for a plain path */
   resolvedShortcutPath(path: string) {
-    if (!path.startsWith('%') || !path.endsWith('%')) return null;
+    // Resolve a leading %TOKEN% so subfolders such as %DESKTOP%/notes/ also show their target
+    const token = /^%[^%]+%/.exec(path)?.[0];
+    if (!token) return null;
 
-    const resolved = this.#sysInfo.resolveShorthandPath(path);
-    return resolved && resolved !== path ? resolved : null;
+    const resolvedToken = this.#sysInfo.resolveShorthandPath(token);
+    if (!resolvedToken || resolvedToken === token) return null;
+
+    const rest = path.slice(token.length);
+    const base = /^[\\/]/.test(rest) ? resolvedToken.replace(/[\\/]+$/, '') : resolvedToken;
+    return base + rest;
   }
 
   openIncludePicker(folder: string) {
@@ -437,59 +540,14 @@ export default class SourceDataComponent {
     return getRemotePathDisplayName(url);
   }
 
-  openCustomRemoteCounts(path: string) {
-    if (!path || !path.startsWith('@')) return;
-    const parts = path.split('|');
-    if (parts.length !== 2) return;
-
-    const sourcePrefix = parts[0];
-    const url = parts[1];
-
-    const options = {
-      maxWidth: '500px',
-      width: '100%',
-      closeOnOutsideClick: true,
-      data: {
-        url,
-        sourcePrefix,
-        backupId: this.backupId,
-      },
-    };
-
-    if (url.startsWith('office365://')) {
-      this.#dialog.open(Office365CountsDialog, options);
-    } else if (url.startsWith('googleworkspace://')) {
-      this.#dialog.open(GoogleWorkspaceCountsDialog, options);
-    }
-  }
-
-  openCustomRemotePermissions(path: string) {
-    if (!path || !path.startsWith('@')) return;
-    const parts = path.split('|');
-    if (parts.length !== 2) return;
-
-    const module = parts[1].startsWith('office365://')
-      ? 'office365'
-      : parts[1].startsWith('googleworkspace://')
-        ? 'googleworkspace'
-        : null;
-    if (!module) return;
-
-    const sourcePrefix = parts[0];
-    const url = parts[1];
-
-    this.#dialog.open(CustomRemotePermissionsDialog, {
-      maxWidth: '700px',
-      width: '100%',
-      closeOnOutsideClick: true,
-      data: {
-        url,
-        sourcePrefix,
-        backupId: this.backupId,
-        module,
-        mode: 'backup',
-      },
-    });
+  /** Where a remote source points, as host and path without the query string that may carry credentials */
+  getRemotePathLocation(path: string | null | undefined) {
+    if (!path) return '';
+    const url = path.split('|')[1];
+    if (!url) return '';
+    // A local disk is named by its device, e.g. diskimage:///dev/sda -> /dev/sda
+    if (url.startsWith('diskimage://')) return url.slice('diskimage://'.length);
+    return getSimplePath(url);
   }
 
   toggleFilesLargerThan($event: boolean) {
