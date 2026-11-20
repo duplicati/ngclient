@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, input, signal, untracked } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal, untracked } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
@@ -65,6 +65,7 @@ const SHORT_FIELD_TYPES = [
 export class TimespanComponent implements ControlValueAccessor {
   customId = input<string>();
   inputType = input<string | null>();
+  timeChange = output<string>();
 
   timespan = signal(0);
   #defaultUnit = 'D';
@@ -100,6 +101,7 @@ export class TimespanComponent implements ControlValueAccessor {
     if (value === this.#lastValue) return;
     this.#lastValue = value;
     this.onChange(value);
+    this.timeChange.emit(value);
   });
 
   inputTypeEffect = effect(() => {

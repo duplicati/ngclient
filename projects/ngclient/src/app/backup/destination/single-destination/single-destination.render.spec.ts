@@ -26,7 +26,7 @@ describe('SingleDestinationComponent rendered editing', () => {
     await fixture.whenStable();
     fixture.detectChanges();
   }
-  async function setup(target = url) {
+  async function setup(target = url, timeType: 'Timespan' | 'DateTime' = 'Timespan') {
     TestBed.configureTestingModule({
       imports: [SingleDestinationComponent],
       providers: [
@@ -46,7 +46,7 @@ describe('SingleDestinationComponent rendered editing', () => {
                   { Name: 'auth-password', Type: 'Password' },
                   { Name: 'ssh-key', Type: 'Password' },
                   { Name: 'buffer-size', Type: 'Size' },
-                  { Name: 'web-timeout', Type: 'Timespan' },
+                  { Name: 'web-timeout', Type: timeType },
                 ],
               },
             ]),
@@ -114,4 +114,24 @@ describe('SingleDestinationComponent rendered editing', () => {
     await settle();
     expect(fixture.componentInstance.targetUrl()).toBe(url.replace('buffer-size=64MB', 'buffer-size=128MB'));
   });
+
+  it.each(['Timespan', 'DateTime'] as const)(
+    'edits and reloads a %s without touching other URL tokens',
+    async (type) => {
+      await setup(url, type);
+      const number = fixture.nativeElement.querySelector('app-timespan input[type=number]') as HTMLInputElement;
+      number.value = '7';
+      number.dispatchEvent(new Event('input', { bubbles: true }));
+      await settle();
+      const saved = fixture.componentInstance.targetUrl()!;
+      expect(saved).toBe(url.replace('web-timeout=2m', 'web-timeout=7m'));
+
+      fixture.destroy();
+      TestBed.resetTestingModule();
+      const changed = await setup(saved, type);
+      expect(fixture.nativeElement.querySelector('app-timespan input[type=number]').value).toBe('7');
+      expect(fixture.nativeElement.querySelector('app-timespan button.trigger').textContent.trim()).toBe('Minutes');
+      expect(changed).not.toHaveBeenCalled();
+    }
+  );
 });
