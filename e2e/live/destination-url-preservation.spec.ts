@@ -35,6 +35,7 @@ const cases = [
     'ftp://Example.COM/a%2Fb%20c?auth-username=u&empty=&plus=a+b&space=a%20b&double=%2520&auth-password=x%26y%3D&flag&dup=1&dup=2&ftp-ssl-protocols=Tls12%2CTls13',
   ],
   ['interleaved-secrets', 's3://bucket/a%2Fb?AUTH-PASSWORD=one&keep=middle&auth-password=two&flag'],
+  ['s3-path', 's3://bucket/original?s3-server-name=s3.example.invalid&future=a+b&future=two&flag&empty='],
   ['unparseable', 'ssh://undefined/path?future=a+b&future=two&empty=&flag'],
   [
     'sharepoint-time',
@@ -297,6 +298,54 @@ for (const [label, url] of cases) {
         await expect(page.getByRole('status').filter({ hasText: 'Backup settings saved.' })).toBeVisible();
         await expect(save).toBeEnabled();
         actions.push(action);
+      }
+      if (label === 's3-path') {
+        const path = page.getByRole('textbox', { name: 'Folder path', exact: true });
+        const savePath = async () => {
+          const pending = page.waitForResponse(
+            (response) => response.request().method() === 'PUT' && new URL(response.url()).pathname === endpoint
+          );
+          await save.click();
+          const response = await pending;
+          expect(response.ok(), await response.text()).toBe(true);
+          await page.reload();
+        };
+        await page.goto(`/backup/${id}/destination`);
+        await expect(path).toHaveValue('original');
+        expect(writes).toHaveLength(3);
+        await path.fill('manual folder');
+        await savePath();
+        const manualUrl = url.replace('/original?', '/manual%20folder?');
+        expect(storedUrl()).toBe(manualUrl);
+        await expect(path).toHaveValue('manual folder');
+
+        // Use the real server for persistence, with a deterministic remote folder listing.
+        const listedUrls: string[] = [];
+        await page.route('**/api/v2/destination/list', (route) => {
+          listedUrls.push(route.request().postDataJSON().DestinationUrl);
+          return route.fulfill({
+            json: {
+              Success: true,
+              Data: { Items: [{ Path: '/picked/', Size: -1, Metadata: null }], HasMore: false, Offset: 0 },
+            },
+          });
+        });
+        await page.getByRole('button', { name: 'Browse ...', exact: true }).click();
+        const dialog = page
+          .getByRole('dialog')
+          .filter({ has: page.getByRole('heading', { name: 'Select destination folder' }) });
+        await dialog.getByRole('treeitem', { name: 'picked', exact: true }).click();
+        await dialog.getByRole('button', { name: 'Use this folder', exact: true }).click();
+        expect(listedUrls).toContain(manualUrl);
+        await expect(path).toHaveValue('manual folder/picked/');
+        await savePath();
+        expect(storedUrl()).toBe(manualUrl.replace('/manual%20folder?', '/manual%20folder/picked/?'));
+        await expect(path).toHaveValue('manual folder/picked/');
+        expect(advancedOptions(await get())).toEqual(expectedOptions);
+        expect(writes).toHaveLength(5);
+        expect(unexpected).toEqual([]);
+        expect(errors).toEqual([]);
+        return;
       }
       await page.reload();
       await expect(page.getByPlaceholder('Your backup description')).toHaveValue(
