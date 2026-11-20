@@ -10,6 +10,7 @@ import { ShipToggle } from '@ship-ui/core/ship-toggle';
 import { OptionsListComponent } from '../../backup/options/options-list/options-list.component';
 import { CustomRemotePermissionsDialog } from '../../backup/source-data/custom-remote-permissions-dialog/custom-remote-permissions-dialog';
 import { TargetUrlDialog } from '../../backup/source-data/target-url-dialog/target-url-dialog';
+import { POSTGRESQL_DEFAULT_SOURCE_URL } from '../../backup/destination/destination.postgresql';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
@@ -25,6 +26,16 @@ import {
   imageFormatFromName,
   setImageExtension,
 } from './image-file-target';
+import {
+  buildPostgresqlRestorePath,
+  isPostgresqlSourceEntry,
+  isWholeDatabaseSelected,
+  parsePostgresqlTarget,
+  postgresqlTableOfContentsPath,
+  POSTGRESQL_EXTENDED_DATA_TYPE,
+  POSTGRESQL_RESTORE_MODULE_KEY,
+  postgresqlTargetUrlFromSource,
+} from './postgresql-target';
 import { RESTORE_OPTION_DEFAULTS } from './restore-option-defaults';
 
 const fb = new FormBuilder();
@@ -45,6 +56,9 @@ export const createRestoreOptionsForm = () => {
     imageFormat: fb.control<ImageFileFormat>('raw'),
     imageOverwrite: fb.control<boolean>(false),
     imagePreallocate: fb.control<boolean>(false),
+    databaseOverwrite: fb.control<boolean>(false),
+    databaseCreateTables: fb.control<boolean>(false),
+    databaseAllowMixedVersions: fb.control<boolean>(false),
   });
 };
 
@@ -88,6 +102,32 @@ export default class OptionsComponent {
     this.#sysinfoState.restoreDestinationProviderModules().some((x) => x.Key === IMAGE_FILE_MODULE_KEY)
   );
 
+  /** Whether the server can restore to a PostgreSQL database */
+  canRestoreToDatabase = computed(() =>
+    this.#sysinfoState.restoreDestinationProviderModules().some((x) => x.Key === POSTGRESQL_RESTORE_MODULE_KEY)
+  );
+
+  /** Whether the backup holds a PostgreSQL database */
+  isDatabaseBackup = computed(() => this.extendedDataType() === POSTGRESQL_EXTENDED_DATA_TYPE);
+
+  /** Whether the restore writes to a PostgreSQL database */
+  isDatabaseTarget = computed(() => this.isDatabaseBackup() && this.isCustomRemoteRestore());
+
+  /** The entries that were selected for restore; none means everything */
+  #selectedPaths = computed(() =>
+    (this.#restoreFlowState.selectFilesFormSignal()?.filesToRestore ?? '').split('\0').filter((x) => x !== '')
+  );
+
+  /**
+   * Whether only the rows of the selected tables are loaded. A whole database is restored with its
+   * objects, indexes and constraints, which needs every table, so a selection of tables is loaded into
+   * tables that exist.
+   */
+  isDatabaseTablesOnly = computed(() => !isWholeDatabaseSelected(this.#selectedPaths(), this.remoteCustomSourcePrefix()));
+
+  /** The database the restore writes to, once one is chosen */
+  databaseTarget = computed(() => (this.isDatabaseTarget() ? parsePostgresqlTarget(this.customDestinationUrl()) : null));
+
   /** Whether the restore writes a disk, either a physical disk or an image file */
   isDiskTarget = computed(() => {
     const mode = this.optionsFormSignal()?.restoreFrom;
@@ -115,6 +155,8 @@ export default class OptionsComponent {
       return 'gsuite';
     } else if (type === 'diskimage') {
       return 'diskimage';
+    } else if (type === POSTGRESQL_EXTENDED_DATA_TYPE) {
+      return POSTGRESQL_EXTENDED_DATA_TYPE;
     }
     return null;
   });
@@ -124,11 +166,16 @@ export default class OptionsComponent {
       this.#restoreFlowState
         .backup()
         ?.Backup?.Sources?.filter(
-          (x) => x.startsWith('@') && (x.includes('|office365://') || x.includes('|googleworkspace://'))
+          (x) =>
+            (x.startsWith('@') && (x.includes('|office365://') || x.includes('|googleworkspace://'))) ||
+            isPostgresqlSourceEntry(x)
         )[0] ?? null
   );
 
-  remoteCustomSourceUrl = computed(() => this.remoteCustomSourceEntry()?.split('|')[1] ?? null);
+  // What is restored to is the source without the options only a backup uses
+  remoteCustomSourceUrl = computed(() =>
+    postgresqlTargetUrlFromSource(this.remoteCustomSourceEntry()?.split('|')[1] ?? null)
+  );
   remoteCustomSourcePrefix = computed(() => this.remoteCustomSourceEntry()?.split('|')[0] ?? null);
 
   customDestinationUrl = computed(() => {
@@ -146,7 +193,14 @@ export default class OptionsComponent {
     return null;
   });
 
+  /** The mode of the tree that picks a path in the restore target; a database has no paths to pick */
+  customRemoteTreeMode = computed(() => {
+    const type = this.extendedDataType();
+    return type === POSTGRESQL_EXTENDED_DATA_TYPE ? null : type;
+  });
+
   showCustomRemoteRestoreTree = computed(() => {
+    if (this.isDatabaseBackup()) return false;
     if (this.optionsFormSignal()?.restoreFrom === 'same-custom' && this.customDestinationUrl() && this.backupId()) {
       return true;
     }
@@ -191,7 +245,13 @@ export default class OptionsComponent {
   }
 
   chooseCustomRemoteDestination() {
-    const defaultUrlPrefix = this.extendedDataType() === 'o365' ? 'office365://' : 'googleworkspace://';
+    const type = this.extendedDataType();
+    const defaultUrlPrefix =
+      type === POSTGRESQL_EXTENDED_DATA_TYPE
+        ? POSTGRESQL_DEFAULT_SOURCE_URL
+        : type === 'o365'
+          ? 'office365://'
+          : 'googleworkspace://';
 
     const dialogRef = this.#dialog.open(TargetUrlDialog, {
       maxWidth: '700px',
@@ -291,7 +351,44 @@ export default class OptionsComponent {
     const restoreToTargetDisk = this.optionsFormSignal()?.restoreFrom === 'diskimage';
     const restoreToImageFile = this.optionsFormSignal()?.restoreFrom === 'diskimage-file';
 
-    if (restoreToCustomRemote) {
+    if (restoreToCustomRemote && this.isDatabaseBackup()) {
+      const value = this.optionsFormSignal();
+      const tablesOnly = this.isDatabaseTablesOnly();
+      const result = buildPostgresqlRestorePath(this.customDestinationUrl(), {
+        tablesOnly,
+        createTables: !!value?.databaseCreateTables,
+        allowMixedVersions: !!value?.databaseAllowMixedVersions,
+      });
+
+      if ('error' in result) {
+        const messages = {
+          'missing-target': $localize`Please choose the database to restore to.`,
+          'incomplete-target': $localize`The database to restore to needs a host, a database name and a username.`,
+        };
+
+        this.#dialog.open(ConfirmDialogComponent, {
+          data: {
+            title: $localize`No database specified`,
+            message: messages[result.error],
+            confirmText: $localize`OK`,
+            cancelText: undefined,
+          },
+        });
+        return;
+      }
+
+      // Tables in the target database are only replaced when allowed
+      this.optionsForm.controls.handleExisting.setValue(
+        this.optionsFormSignal()?.databaseOverwrite ? 'overwrite' : 'saveTimestamp'
+      );
+      this.#restoreFlowState.setAlternateRestorePath(result.path, this.remoteCustomSourcePrefix());
+      // The rows of single tables are loaded with the columns and the encoding the table of contents records
+      const prefix = this.remoteCustomSourcePrefix();
+      if (tablesOnly && prefix)
+        this.#restoreFlowState.setAdditionalRestorePaths([postgresqlTableOfContentsPath(files, prefix)]);
+      this.optionsForm.controls.includeMetadata.setValue(true);
+      this.optionsForm.controls.permissions.setValue(true);
+    } else if (restoreToCustomRemote) {
       let path = this.optionsFormSignal()?.restoreFromPath;
       if (path && path.startsWith('/')) {
         path = path.substring(1);

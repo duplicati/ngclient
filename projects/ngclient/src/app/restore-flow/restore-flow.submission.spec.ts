@@ -115,6 +115,35 @@ describe('RestoreFlowState restore request submission', () => {
       })
     );
   });
+  it('restores the entries a target needs along with the selected ones', () => {
+    const { state, restore } = setup();
+    state.setAlternateRestorePath('@postgresql://?postgresql-host=db', '@/data');
+    state.setAdditionalRestorePaths(['/data/toc', '/data/file.txt']);
+    state.submit();
+    expect(restore).toHaveBeenCalledWith(
+      expect.objectContaining({
+        body: expect.objectContaining({
+          paths: ['/data/file.txt', '/data/folder/*', 'C:\\folder\\*', '/data/toc'],
+        }),
+      })
+    );
+  });
+  it('adds nothing when everything is restored, and forgets what another target needed', () => {
+    const { state, restore } = setup();
+    state.setAdditionalRestorePaths(['/data/toc']);
+    state.selectFilesForm.patchValue({ filesToRestore: '' });
+    state.submit();
+    expect(restore).toHaveBeenLastCalledWith(
+      expect.objectContaining({ body: expect.objectContaining({ paths: [''] }) })
+    );
+
+    state.selectFilesForm.patchValue({ filesToRestore: '/data/file.txt' });
+    state.setAlternateRestorePath(null, null);
+    state.submit();
+    expect(restore).toHaveBeenLastCalledWith(
+      expect.objectContaining({ body: expect.objectContaining({ paths: ['/data/file.txt'] }) })
+    );
+  });
   it('normalizes advanced option names while preserving their values', () => {
     const { state, restore } = setup();
     state.advancedOptions.set([
