@@ -189,6 +189,8 @@ export class RestoreFlowState implements OnDestroy {
 
   #submitRestore(id: string) {
     const optionsValue = this.optionsForm.value;
+    // A restore for download goes to a temporary folder on the server, so it has no path
+    const download = optionsValue.restoreFrom === 'download';
     const selectFilesFormValue = this.selectFilesForm.value;
     const _selectedOption = this.selectOption();
     const selectedOption = this.versionOptions()?.find(
@@ -202,7 +204,7 @@ export class RestoreFlowState implements OnDestroy {
           paths: this.#getRestorePaths(selectFilesFormValue.filesToRestore),
           passphrase: selectFilesFormValue.passphrase ?? null,
           time: selectedOption?.Time,
-          restore_path: this.alternateRestorePath() ?? optionsValue.restoreFromPath,
+          restore_path: download ? null : (this.alternateRestorePath() ?? optionsValue.restoreFromPath),
           overwrite: optionsValue.handleExisting === 'overwrite',
           permissions: optionsValue.permissions,
           skip_metadata: !optionsValue.includeMetadata,
@@ -211,6 +213,7 @@ export class RestoreFlowState implements OnDestroy {
           options: this.#getRestoreOptions(
             this.canRegisterRestoredItems() && (optionsValue.registerRestoredItems ?? false)
           ),
+          ...(download ? { download: true } : {}),
         },
       })
     )

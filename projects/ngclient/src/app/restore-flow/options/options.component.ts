@@ -43,7 +43,7 @@ const fb = new FormBuilder();
 export const createRestoreOptionsForm = () => {
   return fb.group({
     restoreFrom: fb.control<
-      'original' | 'pickLocation' | 'same-custom' | 'other-custom' | 'diskimage' | 'diskimage-file'
+      'original' | 'pickLocation' | 'download' | 'same-custom' | 'other-custom' | 'diskimage' | 'diskimage-file'
     >('original'),
     restoreFromPath: fb.control<string>(''),
     handleExisting: fb.control<'overwrite' | 'saveTimestamp'>(RESTORE_OPTION_DEFAULTS.handleExisting),
@@ -91,6 +91,7 @@ export default class OptionsComponent {
   extendedData = this.#restoreFlowState.extendedDataType;
   advancedOptions = this.#restoreFlowState.advancedOptions;
   hasRestoreOptions = this.#sysinfoState.hasRestoreOptions;
+  canRestoreToDownload = this.#sysinfoState.hasRestoreDownload;
   canRegisterRestoredItems = this.#restoreFlowState.canRegisterRestoredItems;
   /** A Sync job copies files back as they are on the destination, without backup metadata or engine options */
   isSync = computed(() => this.#restoreFlowState.backup()?.Backup?.OperationType === 'Sync');

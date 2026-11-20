@@ -142,6 +142,12 @@ export class SysinfoState {
     return apiExtensions.includes('v1:backup:skip-next-run');
   });
 
+  // The server can restore to a file that the browser downloads; not reported when the server turns it off
+  hasRestoreDownload = computed(() => {
+    const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
+    return apiExtensions.includes('v1:backup:restore-download');
+  });
+
   hasRestoreOptions = computed(() => {
     const apiExtensions = this.systemInfo()?.APIExtensions ?? [];
     return apiExtensions.includes('v1:backup:restore-options');
