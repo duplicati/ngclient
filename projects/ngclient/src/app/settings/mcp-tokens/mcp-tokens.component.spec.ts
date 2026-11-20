@@ -9,6 +9,8 @@ import { SysinfoState } from '../../core/states/sysinfo.state';
 import { McpTokensComponent } from './mcp-tokens.component';
 
 it('submits the token name and restore paths entered in the form', async () => {
+  HTMLElement.prototype.showPopover ??= vi.fn();
+  HTMLElement.prototype.hidePopover ??= vi.fn();
   const post = vi.fn(() => of({ Data: { Token: { Name: 'Agent' }, AccessToken: 'fixture-token' } }));
   TestBed.configureTestingModule({
     providers: [
@@ -20,10 +22,25 @@ it('submits the token name and restore paths entered in the form', async () => {
   });
   const fixture = TestBed.createComponent(McpTokensComponent);
   fixture.componentInstance.openForm();
-  fixture.componentInstance.selectLevel('Restore');
   fixture.detectChanges();
   await fixture.whenStable();
   const root = fixture.nativeElement as HTMLElement;
+  const [level, lifetime] = root.querySelectorAll<HTMLElement>('sh-select');
+  for (const [select, label, value] of [
+    [level, 'Backup:', 'Backup'],
+    [level, 'Restore:', 'Restore'],
+    [lifetime, '1 day', '1D'],
+  ] as const) {
+    select.querySelector<HTMLElement>('sh-form-field')!.click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    Array.from(select.querySelectorAll<HTMLElement>('li.option'))
+      .find((option) => option.textContent.trim().startsWith(label))!
+      .click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(select.querySelector('input')?.value).toBe(value);
+  }
   for (const [selector, value] of [
     ['#mcpTokenName', ' Agent '],
     ['#mcpTokenRestoreRoots', '/tmp/a\n/tmp/b'],
@@ -34,6 +51,11 @@ it('submits the token name and restore paths entered in the form', async () => {
   }
   fixture.componentInstance.create();
   expect(post).toHaveBeenCalledWith({
-    body: expect.objectContaining({ Name: 'Agent', Level: 'Restore', RestoreRoots: ['/tmp/a', '/tmp/b'] }),
+    body: expect.objectContaining({
+      Name: 'Agent',
+      Level: 'Restore',
+      ExpiresIn: '1D',
+      RestoreRoots: ['/tmp/a', '/tmp/b'],
+    }),
   });
 });
