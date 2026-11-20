@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { form, FormField, maxLength } from '@angular/forms/signals';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
@@ -10,6 +10,7 @@ import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipSelect } from '@ship-ui/core/ship-select';
 import { defer, finalize } from 'rxjs';
+import { NullableTextControl } from '../../backup/general/nullable-text-control';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer, McpTokenDto, McpTokenLevel } from '../../core/openapi';
 import { BackupsState } from '../../core/states/backups.state';
@@ -31,7 +32,18 @@ import { getMcpAgentInstructions, MCP_AGENT_OPTIONS, McpAgentId } from './mcp-ag
  */
 @Component({
   selector: 'app-mcp-tokens',
-  imports: [DatePipe, FormsModule, FormField, ShipAlert, ShipButton, ShipCheckbox, ShipFormField, ShipIcon, ShipSelect],
+  imports: [
+    DatePipe,
+    FormsModule,
+    FormField,
+    NullableTextControl,
+    ShipAlert,
+    ShipButton,
+    ShipCheckbox,
+    ShipFormField,
+    ShipIcon,
+    ShipSelect,
+  ],
   templateUrl: './mcp-tokens.component.html',
   styleUrl: './mcp-tokens.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -53,6 +65,8 @@ export class McpTokensComponent {
   showForm = signal(false);
   form = signal(emptyMcpTokenForm());
   tokenFields = form(this.form, (fields) => maxLength(fields.name, 100));
+  levelField = form(linkedSignal<string>(() => this.form().level));
+  lifetimeField = form(linkedSignal(() => this.form().expiresIn));
   /** The token that was just created; the server does not give it out again */
   createdToken = signal<{ name: string; token: string } | null>(null);
   copied = signal(false);
@@ -119,12 +133,14 @@ export class McpTokensComponent {
   }
 
   // The selects can be cleared, which must not leave the token without a level or a lifetime
-  selectLevel(level: McpTokenLevel | null | undefined | '') {
-    if (level) this.updateForm({ level });
+  selectLevel(options: unknown[]) {
+    const level = this.levelOptions.find((option) => option === options[0])?.value;
+    if (level && level !== this.form().level) this.updateForm({ level });
   }
 
-  selectLifetime(expiresIn: string | null | undefined) {
-    if (expiresIn) this.updateForm({ expiresIn });
+  selectLifetime(options: unknown[]) {
+    const expiresIn = this.lifetimeOptions.find((option) => option === options[0])?.value;
+    if (expiresIn && expiresIn !== this.form().expiresIn) this.updateForm({ expiresIn });
   }
 
   isBackupSelected(id: string) {
