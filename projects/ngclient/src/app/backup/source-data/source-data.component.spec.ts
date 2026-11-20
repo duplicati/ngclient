@@ -14,6 +14,9 @@ import { ServerSettingsService } from '../../settings/server-settings.service';
 import { BackupState } from '../backup.state';
 import SourceDataComponent from './source-data.component';
 
+// The file tree scrolls to a selected remote source on a timer that can outlive a test; jsdom has no scrollIntoView
+Element.prototype.scrollIntoView ??= () => {};
+
 describe('SourceDataComponent form contracts', () => {
   let fixture: ComponentFixture<SourceDataComponent>;
   let state: BackupState;
@@ -21,6 +24,7 @@ describe('SourceDataComponent form contracts', () => {
   const dialogClosed = new Subject<string[] | null>();
   const openDialog = vi.fn((..._args: unknown[]) => ({ closed: dialogClosed }));
   const original = '/documents/\0/music/\0-*.tmp';
+  const listFilesystem = vi.fn((..._args: unknown[]) => of([] as unknown[]));
 
   async function settle() {
     fixture.detectChanges();
@@ -41,7 +45,7 @@ describe('SourceDataComponent form contracts', () => {
         { provide: Router, useValue: { navigate } },
         { provide: ActivatedRoute, useValue: { parent: {} } },
         { provide: ShipDialogService, useValue: { open: openDialog } },
-        { provide: DuplicatiServer, useValue: { postApiV1Filesystem: () => of([]) } },
+        { provide: DuplicatiServer, useValue: { postApiV1Filesystem: listFilesystem } },
         { provide: TimespanLiteralsService, useValue: {} },
         { provide: WebModulesService, useValue: {} },
         { provide: ServerSettingsService, useValue: {} },
@@ -97,12 +101,80 @@ describe('SourceDataComponent form contracts', () => {
     const texts = rows.map((row) =>
       [...row.querySelectorAll('.source-path-text')].map((x) => x.textContent?.trim()).join(' ')
     );
-    expect(texts).toEqual(['%HOME% (/root)', '/documents/']);
+    expect(texts).toEqual(['Home (/root)', '/documents/']);
     expect(rows.map((row) => row.querySelector('.source-path-text')?.getAttribute('title'))).toEqual([
-      '/root',
+      '%HOME%',
       '/documents/',
     ]);
     expect(state.sourceDataForm.controls.path.value).toBe('%HOME%\0/documents/');
+  });
+
+  it('shows the resolved server folder for a subfolder of a shortcut source', async () => {
+    await render('%HOME%/notes/\0%UNKNOWN%/x/');
+    expect(fixture.componentInstance.resolvedShortcutPath('%HOME%/notes/')).toBe('/root/notes/');
+    expect(fixture.componentInstance.resolvedShortcutPath('%UNKNOWN%/x/')).toBeNull();
+    const rows = [...fixture.nativeElement.querySelectorAll('.paths .path')] as HTMLElement[];
+    expect(rows[0].querySelector('.source-path-resolved')?.textContent?.trim()).toBe('(/root/notes/)');
+    expect(rows[1].querySelector('.source-path-resolved')).toBeNull();
+    expect(rows.map((row) => row.querySelector('.source-path-text')?.textContent?.trim())).toEqual([
+      'Home/notes',
+      '%UNKNOWN%/x/',
+    ]);
+    expect(rows.map((row) => row.querySelector('.source-path-shortcut')?.textContent)).toEqual(['Home', undefined]);
+  });
+
+  it('draws each source with the folder or file icon and badge the folder tree uses', async () => {
+    await render('%MY_DOCUMENTS%\0%DESKTOP%/notes/\0/data/report.txt\0%HYPERV%\\abc-123');
+    const rows = [...fixture.nativeElement.querySelectorAll('.paths .path')] as HTMLElement[];
+    const icons = rows.map((row) =>
+      [...row.querySelectorAll('.source-path-icon sh-icon')].map((x) => x.textContent?.trim())
+    );
+    expect(icons).toEqual([['folder', 'file-text'], ['folder'], ['file'], ['monitor']]);
+  });
+
+  it('draws remote sources like local ones without exposing the URL query', async () => {
+    await render('@/mnt/dupl-s3|s3://bucket/backups?auth-password=secret\0@/mnt/dupl-disk|diskimage:///dev/sda');
+    const rows = [...fixture.nativeElement.querySelectorAll('.paths .path')] as HTMLElement[];
+    expect(rows.map((row) => !!row.querySelector('.source-path-icon img.provider-icon'))).toEqual([true, true]);
+    const locations = rows.map((row) => row.querySelector('.source-path-resolved')?.textContent?.trim());
+    expect(locations).toEqual(['bucket/backups', '/dev/sda']);
+    expect(fixture.nativeElement.querySelector('.paths')?.textContent).not.toContain('secret');
+  });
+
+  it('names shortcut tokens the way the server folder tree does', async () => {
+    await render();
+    const component = fixture.componentInstance;
+    expect(component.displayPath('%MY_DOCUMENTS%/Screenshots/')).toBe('Documents/Screenshots');
+    expect(component.displayPath('%DESKTOP%')).toBe('Desktop');
+    expect(component.displayPath('%QNAP_SHARE_Multimedia%/Photos/')).toBe('Multimedia/Photos');
+    expect(component.displayPath('%HYPERV%')).toBe('Hyper-V Machines');
+    expect(component.displayPath('%HYPERV%\\abc-123')).toBe('Hyper-V Machines\\abc-123');
+    expect(component.displayPath('%MSSQL%')).toBe('Microsoft SQL Server');
+    expect(component.displayPath('/Applications/')).toBe('/Applications/');
+  });
+
+  it('names Hyper-V machines from the server listing and keeps the GUID when unknown', async () => {
+    const hypervCalls = () =>
+      listFilesystem.mock.calls.filter((call) => (call[0] as { body: { path: string } }).body.path === '%HYPERV%');
+    listFilesystem.mockImplementation((options: unknown) =>
+      (options as { body: { path: string } }).body.path !== '%HYPERV%' ? of([]) : of([
+        { id: '%HYPERV%\\AAAA-1111\\', text: 'AAAA-1111', Metadata: { 'hyperv:Name': 'Web server' } },
+        { id: '%HYPERV%\\bbbb-2222', text: 'Build agent' },
+      ])
+    );
+    await render('%HYPERV%\\aaaa-1111\0%HYPERV%\\bbbb-2222\\disk.vhdx\0%HYPERV%\\cccc-3333');
+    expect(hypervCalls()).toHaveLength(1);
+    const component = fixture.componentInstance;
+    expect(component.displayPath('%HYPERV%\\aaaa-1111')).toBe('Hyper-V Machines\\Web server');
+    expect(component.displayPath('%HYPERV%\\bbbb-2222\\disk.vhdx')).toBe('Hyper-V Machines\\Build agent\\disk.vhdx');
+    expect(component.displayPath('%HYPERV%\\cccc-3333')).toBe('Hyper-V Machines\\cccc-3333');
+    listFilesystem.mockImplementation(() => of([]));
+  });
+
+  it('does not list Hyper-V machines when no source uses them', async () => {
+    await render();
+    const paths = listFilesystem.mock.calls.map((call) => (call[0] as { body: { path: string } }).body.path);
+    expect(paths).not.toContain('%HYPERV%');
   });
 
   it('adds a direct path once and clears its input while retaining filters', async () => {
@@ -242,23 +314,13 @@ describe('SourceDataComponent form contracts', () => {
     );
     expect(state.settings()).toEqual([{ Name: '--exclude-files-attributes', Value: '' }]);
   });
-  it('collapses the attribute card while nothing is configured and lets it be toggled', async () => {
+  it('keeps the size limit and attribute exclusions together in the Exclude card', async () => {
     await render();
-    const card = fixture.nativeElement.querySelector('.attribute-exclusions');
-    expect(card.classList).not.toContain('active');
-    card.querySelector('h3').click();
-    await settle();
-    expect(card.classList).toContain('active');
-    card.querySelector('h3').click();
-    await settle();
-    expect(card.classList).not.toContain('active');
-
-    // Editing must not toggle the card, but defining attributes opens it.
-    card.querySelector('button').click();
-    await settle();
-    expect(card.classList).not.toContain('active');
-    dialogClosed.next(['Hidden']);
-    await settle();
-    expect(card.classList).toContain('active');
+    const cards = [...fixture.nativeElement.querySelectorAll('app-toggle-card')] as HTMLElement[];
+    const exclude = cards.find((card) => card.querySelector('.attribute-exclusions'))!;
+    expect(exclude.textContent).toContain('Choose any files you want to exclude.');
+    expect(exclude.querySelector('sh-toggle')?.textContent).toContain('Files larger than');
+    expect(exclude.querySelector('.attribute-exclusions-title')?.textContent).toBe('File attributes');
+    expect(cards.filter((card) => card.querySelector('.attribute-exclusions'))).toHaveLength(1);
   });
 });

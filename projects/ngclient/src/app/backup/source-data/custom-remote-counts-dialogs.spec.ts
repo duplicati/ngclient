@@ -184,10 +184,15 @@ describe.each(dialogs)('$name counts dialog', (dialog) => {
     }
   });
 
+  it('counts a new source that has no prefix yet', () => {
+    const { component, server } = setup({ url: dialog.url, sourcePrefix: '', backupId: null });
+    expect(server[dialog.method]).toHaveBeenCalledExactlyOnceWith(dialog.url, '', null);
+    expect(component.status()).toBe('loading');
+  });
+
   it.each([
     { name: 'missing data', data: null },
     { name: 'missing URL', data: { url: '', sourcePrefix: 'source-1', backupId: null } },
-    { name: 'missing source prefix', data: { url: dialog.url, sourcePrefix: '', backupId: null } },
   ])('shows an input error without requesting counts for $name', ({ data }) => {
     const { component, server, element } = setup(data);
     expect(component.status()).toBe('error');

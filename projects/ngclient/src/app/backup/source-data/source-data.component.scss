@@ -110,14 +110,9 @@ sh-divider {
   gap: p2r(4);
   align-items: center;
 
-  sh-chip {
-    width: 100%;
-  }
-
   .provider-icon {
-    width: p2r(16);
-    height: p2r(16);
-    margin-right: p2r(8);
+    width: p2r(24);
+    height: p2r(24);
   }
 }
 
@@ -129,8 +124,57 @@ sh-divider {
   user-select: text;
 }
 
+.source-path-label {
+  display: flex;
+  align-items: flex-start;
+  gap: p2r(10);
+  min-width: 0;
+}
+
+.source-path-texts {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+// Folder/file icon with the same corner badge the file tree uses for the entry. As tall as
+// one line of text, so it never makes a row taller, and aligned with the name on the first line.
+.source-path-icon {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: p2r(28);
+  height: p2r(24);
+
+  sh-icon {
+    font-size: p2r(24);
+  }
+
+  .icon-badge {
+    position: absolute;
+    right: p2r(-1);
+    bottom: p2r(-1);
+    font-size: p2r(14);
+    line-height: 1;
+    border-radius: 50%;
+    background: var(--base-2);
+    box-shadow: 0 0 0 p2r(1) var(--base-2);
+    pointer-events: none;
+  }
+}
+
+.source-path-shortcut {
+  font-weight: 600;
+}
+
+// One line with an ellipsis; the full folder is in the title
 .source-path-resolved {
   color: var(--base-8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .bulk-textarea {
@@ -149,4 +193,28 @@ sh-divider {
 
 .spacer {
   flex: 1;
+}
+
+// File attribute exclusions, a section of the Exclude card below the size limit
+.attribute-exclusions {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(8);
+  padding-top: p2r(16);
+  border-top: 1px solid var(--base-4);
+
+  p {
+    color: var(--base-8);
+  }
+}
+
+.attribute-exclusions-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: p2r(8);
+}
+
+.attribute-exclusions-note {
+  font: var(--paragraph-30);
 }

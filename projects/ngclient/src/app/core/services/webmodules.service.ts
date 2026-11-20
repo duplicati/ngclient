@@ -358,9 +358,7 @@ export class WebModulesService {
         { headers }
       )
       .pipe(
-        map((x) => this.#defaultMapResultObjToArray(x)),
-        map((res) => res.find((r) => r.key === 'counts')?.value as string),
-        map((counts) => JSON.parse(counts) as T)
+        map((x) => JSON.parse(this.#customRemoteResult(x, 'counts')) as T)
       );
   }
 
@@ -395,9 +393,22 @@ export class WebModulesService {
         { headers: { 'Content-Type': 'application/json' } }
       )
       .pipe(
-        map((x) => this.#defaultMapResultObjToArray(x)),
-        map((res) => res.find((r) => r.key === 'permissions')?.value as string),
-        map((permissions) => JSON.parse(permissions) as CustomRemotePermissionStatus[])
+        map((x) => JSON.parse(this.#customRemoteResult(x, 'permissions')) as CustomRemotePermissionStatus[])
       );
+  }
+
+  /**
+   * Reads one value from a web module reply. A failing module (e.g. a misconfigured tenant)
+   * still answers with HTTP 200, but with status FAILED and the reason under "error".
+   */
+  #customRemoteResult(output: WebModuleOutputDto, key: string) {
+    const error = output.Result?.['error'];
+    if (output.Status === 'FAILED' || error) {
+      throw new Error(error || $localize`The server could not complete the request`);
+    }
+
+    const value = output.Result?.[key];
+    if (!value) throw new Error($localize`The server returned no result`);
+    return value;
   }
 }

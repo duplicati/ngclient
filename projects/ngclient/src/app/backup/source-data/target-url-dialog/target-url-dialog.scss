@@ -21,3 +21,10 @@ section {
 footer {
   z-index: 1;
 }
+
+// Source tools sit at the start of the footer, apart from the dialog's own actions
+.footer-tools {
+  display: flex;
+  gap: p2r(8);
+  margin-right: auto;
+}

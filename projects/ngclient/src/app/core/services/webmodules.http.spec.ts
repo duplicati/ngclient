@@ -132,6 +132,20 @@ describe('WebModulesService HTTP operations', () => {
       expect(observer.complete).not.toHaveBeenCalled();
     });
 
+    it.each([
+      { name: 'the module failure message', response: { Status: 'FAILED', Result: { error: 'Invalid client secret' } }, message: 'Invalid client secret' },
+      { name: 'a fallback for a failure without a message', response: { Status: 'FAILED', Result: null }, message: 'The server could not complete the request' },
+      { name: 'a fallback for a reply without the result', response: { Status: 'OK', Result: {} }, message: 'The server returned no result' },
+    ])('reports $name instead of a JSON parse error', ({ response, message }) => {
+      const service = setup();
+      const observer = observe(service[method]('source://tenant', '', null));
+
+      http.expectOne(endpoint).flush(response);
+
+      expect(observer.error).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ message }));
+      expect(observer.next).not.toHaveBeenCalled();
+    });
+
     it('propagates invalid result JSON without a success result', () => {
       const service = setup();
       const observer = observe(service[method]('source://tenant', 'source-1', null));

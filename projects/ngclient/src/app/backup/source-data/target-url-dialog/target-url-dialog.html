@@ -37,12 +37,24 @@
 </section>
 
 <footer footer class="sticky">
+  @if (hasDestination && workspaceModule()) {
+    <div class="footer-tools">
+      <button shButton type="button" [disabled]="untested()" (click)="openCounts()" i18n>
+        <sh-icon>info</sh-icon>
+        Show item counts
+      </button>
+      <button shButton type="button" [disabled]="untested()" (click)="openPermissions()" i18n>
+        <sh-icon>shield-check</sh-icon>
+        Check permissions
+      </button>
+    </div>
+  }
   <button shButton type="button" (click)="closed.emit(null)" i18n>Cancel</button>
   <button
     shButton
     type="button"
     class="raised primary"
-    [disabled]="!hasDestination || testSignal() === null || testSignal() === 'testing'"
+    [disabled]="!hasDestination || untested()"
     [class.loading]="testSignal() === 'testing'"
     (click)="submit()"
     i18n>
