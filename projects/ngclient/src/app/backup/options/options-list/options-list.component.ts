@@ -178,9 +178,14 @@ export class OptionsListComponent {
       .join('\n');
   });
 
-  updateSettingsFromText(newValue: any) {
-    if (typeof newValue !== 'string') return;
+  settingsTextForm = form(linkedSignal(() => (this.showTextArea() ? this.settingsAsText() : '')));
 
+  saveSettingsText() {
+    const text = this.settingsTextForm().value();
+    if (text !== this.settingsAsText()) this.updateSettingsFromText(text);
+  }
+
+  updateSettingsFromText(newValue: string) {
     const newSettings = parseKeyValueTextToSettings(newValue);
     this.options.update(() => newSettings);
   }
