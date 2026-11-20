@@ -26,6 +26,22 @@ export default class GeneralComponent {
   isLoading = signal(true);
   checkingForUpdates = signal(false);
   serverState = this.#serverState.serverState;
+
+  // The finish time of the last check when this page started a check, undefined until it does.
+  // The finish time changing tells that the check finished, also when the checking state was missed.
+  #checkStartedAfter = signal<string | null | undefined>(undefined);
+
+  // The result of the check started from this page. A server that does not report
+  // the finish time never shows a result, as it cannot tell a failed check from no update.
+  checkResult = computed<'error' | 'up-to-date' | null>(() => {
+    const startedAfter = this.#checkStartedAfter();
+    const state = this.serverState();
+    const finished = state?.UpdateCheckFinished;
+    if (startedAfter === undefined || state?.UpdaterState !== 'Waiting' || !finished || finished === startedAfter)
+      return null;
+    if (state.UpdateCheckError) return 'error';
+    return state.UpdatedVersion ? null : 'up-to-date';
+  });
   duplicatiVersion = computed(() => this.#sysinfo.systemInfo()?.ServerVersionName ?? 'Unknown');
   // Older servers do not report these, so the template leaves them out when missing
   databaseFieldsEncrypted = computed(() => this.#sysinfo.systemInfo()?.DatabaseFieldsEncrypted);
@@ -42,6 +58,7 @@ export default class GeneralComponent {
       return;
 
     this.checkingForUpdates.set(true);
+    this.#checkStartedAfter.set(this.serverState()?.UpdateCheckFinished ?? null);
 
     defer(() => this.#dupServer.postApiV1UpdatesCheck())
       .pipe(
@@ -49,6 +66,7 @@ export default class GeneralComponent {
         finalize(() => this.checkingForUpdates.set(false))
       )
       // HTTP errors are presented by the interceptor; allow a later retry.
-      .subscribe({ error: () => {} });
+      // The check did not start, so a later check that finishes is not its result.
+      .subscribe({ error: () => this.#checkStartedAfter.set(undefined) });
   }
 }
