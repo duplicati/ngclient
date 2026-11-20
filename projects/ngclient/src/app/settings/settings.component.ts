@@ -184,7 +184,7 @@ export default class SettingsComponent {
   }
 
   allowRemoteAccess = signal(false); // if true then send 'any' if false then send 'loopback'
-  allowedHostnames = signal<string>('');
+  allowedHostnamesForm = form(signal({ hostnames: '' }));
   loadedAllowedHostnames = signal<string>('');
   updatingRemoteAccess = signal(false);
   updatingAllowedHosts = signal(false);
@@ -221,7 +221,7 @@ export default class SettingsComponent {
   }
 
   updateAllowedHostnames() {
-    const allowedHostnames = this.allowedHostnames();
+    const allowedHostnames = this.allowedHostnamesForm.hostnames().value();
 
     this.updatingAllowedHosts.set(true);
 
@@ -567,7 +567,7 @@ export default class SettingsComponent {
     this.disableTrayIconLogin.set(serverSettings['disable-tray-icon-login'] === 'False' ? false : true);
     this.updateChannel.set(serverSettings['update-channel'] as UpdateChannel);
     this.allowRemoteAccess.set(serverSettings['server-listen-interface'] === 'any');
-    this.allowedHostnames.set(serverSettings['allowed-hostnames']);
+    this.allowedHostnamesForm.hostnames().value.set(serverSettings['allowed-hostnames'] ?? '');
     this.loadedAllowedHostnames.set(serverSettings['allowed-hostnames']);
     this.postQueueScript.set(serverSettings['post-queue-processing-script'] ?? '');
     this.consoleControlDisabled.set(serverSettings['disable-console-control'] === 'True' ? true : false);

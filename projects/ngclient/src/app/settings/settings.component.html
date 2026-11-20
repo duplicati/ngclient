@@ -350,7 +350,7 @@
       @if (allowRemoteAccess()) {
         <sh-form-field>
           <label for="allowedHostnames" i18n>Allowed hostnames</label>
-          <textarea type="text" id="allowedHostnames" [(ngModel)]="allowedHostnames"></textarea>
+          <textarea id="allowedHostnames" [formField]="allowedHostnamesForm.hostnames"></textarea>
         </sh-form-field>
 
         <sh-alert type="primary" i18n>
