@@ -246,6 +246,28 @@ describe('ScheduleComponent run after another job', () => {
     TestBed.resetTestingModule();
   });
 
+  it('stores and clears the predecessor selected with the picker', async () => {
+    HTMLElement.prototype.showPopover ??= vi.fn();
+    HTMLElement.prototype.hidePopover ??= vi.fn();
+    await renderSchedule(true, '3');
+    section()!.querySelector<HTMLElement>('sh-select sh-form-field')!.click();
+    await render();
+    Array.from(section()!.querySelectorAll<HTMLElement>('li.option'))
+      .find((option) => option.textContent.trim() === 'Nightly')!
+      .click();
+    await render();
+    expect(state.runAfterBackupId()).toBe('1');
+    expect(selectedLabel()).toBe('Nightly');
+
+    state.runAfterAlways.set(true);
+    Array.from(section()!.querySelectorAll<HTMLElement>('sh-select sh-icon[suffix]'))
+      .find((icon) => icon.textContent.trim() === 'x-bold')!
+      .click();
+    await render();
+    expect(state.runAfterBackupId()).toBeNull();
+    expect(state.runAfterAlways()).toBe(false);
+  });
+
   it('hides the choice when the server cannot run a job after another job', async () => {
     await renderSchedule(false, '3');
     expect(section()).toBeNull();

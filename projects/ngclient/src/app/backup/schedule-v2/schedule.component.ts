@@ -78,6 +78,7 @@ export default class ScheduleComponent {
 
   hasRunAfter = this.#sysinfo.hasBackupRunAfter;
   runAfterBackupId = this.#backupState.runAfterBackupId;
+  runAfterField = form(linkedSignal(() => this.runAfterBackupId()));
   runAfterAlways = this.#backupState.runAfterAlways;
   runAfterAlwaysForm = form(this.runAfterAlways);
   // The list of jobs is sent again whenever a job changes, so the options only change when their content does
@@ -175,6 +176,15 @@ export default class ScheduleComponent {
     } else {
       this.scheduleType.set('custom');
     }
+  }
+
+  selectRunAfter(selected: unknown[]) {
+    const option = this.runAfterOptions().find((entry) => entry === selected[0]);
+    if (option && option.value !== this.runAfterBackupId()) this.setRunAfter(option.value);
+  }
+
+  clearRunAfterIfEmpty(value: string) {
+    if (!value && this.runAfterBackupId()) this.setRunAfter(null);
   }
 
   setRunAfter(backupId: string | null | undefined) {
