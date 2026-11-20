@@ -10,7 +10,7 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
@@ -19,6 +19,7 @@ import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { ShipSelect } from '@ship-ui/core/ship-select';
 import { defer, finalize, Subject, Subscription, take, takeUntil } from 'rxjs';
+import { NullableTextControl } from '../../backup/general/nullable-text-control';
 import FileTreeComponent, { BackupSettings } from '../../core/components/file-tree/file-tree.component';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer, SearchEntriesItemDto, TreeNodeDto } from '../../core/openapi';
@@ -40,7 +41,7 @@ export const createRestoreSelectFilesForm = () => {
   selector: 'app-select-files',
   imports: [
     FormField,
-    FormsModule,
+    NullableTextControl,
     ReactiveFormsModule,
     DatePipe,
     DecimalPipe,
@@ -76,6 +77,7 @@ export default class SelectFilesComponent {
   selectFilesForm = this.#restoreFlowState.selectFilesForm;
   selectFilesFormSignal = this.#restoreFlowState.selectFilesFormSignal;
   selectOption = this.#restoreFlowState.selectOption;
+  versionField = form(this.selectOption);
   backupId = this.#restoreFlowState.backupId;
   versionOptionsLoading = this.#restoreFlowState.versionOptionsLoading;
   waitingForBackup = this.#restoreFlowState.waitingForBackup;

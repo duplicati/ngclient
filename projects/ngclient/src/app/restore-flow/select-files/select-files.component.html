@@ -11,8 +11,8 @@
         type="text"
         i18n-placeholder
         placeholder="Select an option..."
-        [(ngModel)]="selectOption"
-        [ngModelOptions]="{ standalone: true }" />
+        appNullableText
+        [formField]="versionField" />
 
       <ng-template let-option>
         <div class="custom-option">
