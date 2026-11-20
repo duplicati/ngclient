@@ -29,8 +29,8 @@
         type="text"
         i18n-placeholder
         placeholder="Select a version..."
-        [(ngModel)]="baseVersion"
-        [disabled]="isComparing()" />
+        appNullableText
+        [formField]="baseVersionField" />
 
       <ng-template let-option>
         <div class="version-option">
@@ -60,8 +60,8 @@
         type="text"
         i18n-placeholder
         placeholder="Select a version..."
-        [(ngModel)]="targetVersion"
-        [disabled]="isComparing()" />
+        appNullableText
+        [formField]="targetVersionField" />
 
       <ng-template let-option>
         <div class="version-option">
