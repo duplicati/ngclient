@@ -305,11 +305,12 @@
               "></ng-container>
           </label>
           <input
+            #passwordInput
             [type]="$any(item.formView).showPassword ? 'text' : 'password'"
             autocomplete="new-password"
             [id]="formFieldId"
-            [ngModel]="formInput"
-            (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
+            [formField]="destinationPasswordField(item.fieldGroup, item.formView.name)"
+            (input)="updateFieldValue(item.fieldGroup, item.formView.name, passwordInput.value)" />
 
           @if (item.oauthField === item.formView.name) {
             <span
