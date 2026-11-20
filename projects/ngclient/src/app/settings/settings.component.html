@@ -425,7 +425,7 @@
       <div class="right remote-access-form">
         <sh-form-field>
           <label for="postQueueScript" i18n>Script path</label>
-          <input type="text" id="postQueueScript" autocomplete="off" [(ngModel)]="postQueueScript" />
+          <input type="text" id="postQueueScript" autocomplete="off" [formField]="postQueueScriptForm.path" />
         </sh-form-field>
 
         <button
