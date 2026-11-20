@@ -1,4 +1,5 @@
-import { form, FormField } from '@angular/forms/signals';
+import { disabled, form, FormField } from '@angular/forms/signals';
+import { NullableTextControl } from '../general/nullable-text-control';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -12,7 +13,6 @@ import {
   untracked,
 } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
@@ -53,7 +53,7 @@ const CHANGE_TYPES: { type: CompareChangeType; label: string; marker: string }[]
   selector: 'app-compare-versions',
   imports: [
     FormField,
-    FormsModule,
+    NullableTextControl,
     ShipButton,
     ShipFormField,
     ShipIcon,
@@ -120,6 +120,8 @@ export default class CompareVersionsComponent {
 
   state = signal<CompareState>({ status: 'idle' });
   isComparing = computed(() => ['queued', 'running'].includes(this.state().status));
+  baseVersionField = form(this.baseVersion, (field) => disabled(field, () => this.isComparing()));
+  targetVersionField = form(this.targetVersion, (field) => disabled(field, () => this.isComparing()));
   // The versions of the comparison shown, which stay as they are when the selects are changed afterwards
   compared = computed(() => {
     const state = this.state();

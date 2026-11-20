@@ -93,6 +93,18 @@ test('the two newest versions are compared when Compare is pressed', async ({ au
   await expect(component.locator('.change .path')).toHaveText(['/home/user/report.docx']);
 });
 
+test('compares the versions chosen in both pickers', async ({ authenticatedPage: page }) => {
+  const { component, commands } = await openCompare(page);
+  await component.locator('sh-select').filter({ hasText: 'From version' }).click();
+  await page.locator('li.option').filter({ hasText: '2:' }).click();
+  await component.locator('sh-select').filter({ hasText: 'To version' }).click();
+  await page.locator('li.option').filter({ hasText: 'Before upgrade' }).click();
+  await component.getByRole('button', { name: 'Compare', exact: true }).click();
+
+  await expect(page).toHaveURL('/backup/42/compare?base=2&target=1');
+  await expect.poll(() => commands[0]?.slice(0, 4)).toEqual(['compare', 'file:///backups/documents', '2', '1']);
+});
+
 test('the versions of a link are compared right away', async ({ authenticatedPage: page }) => {
   const { component, commands } = await openCompare(page, '?base=2&target=1');
 
