@@ -14,7 +14,8 @@ import { BackupsState } from '../../core/states/backups.state';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 import { BackupState } from '../backup.state';
 import { NullableTextControl } from '../general/nullable-text-control';
-import { getLocalDateParts, getNextRunDate, SCHEDULE_DEFAULT_OPTIONS } from '../models/schedule-form';
+import { getNextRunDate, SCHEDULE_DEFAULT_OPTIONS } from '../models/schedule-form';
+import { ScheduleCalendarControl } from './schedule-calendar-control';
 import { getRunAfterOptions, hasOwnTrigger, isSameRunAfterOptions } from './run-after';
 import { formatAllowedDays } from './schedule-summary';
 
@@ -55,6 +56,7 @@ const UNIT_OPTIONS = [
     FormsModule,
     FormField,
     NullableTextControl,
+    ScheduleCalendarControl,
     ShipFormField,
     ShipToggle,
     ShipIcon,
@@ -104,18 +106,10 @@ export default class ScheduleComponent {
 
   unitOptions = UNIT_OPTIONS;
   scheduleForm = this.#backupState.scheduleForm;
-  datepickerDate = computed(() => {
-    const value = this.scheduleForm.nextTime.date().value();
-    if (!value) return null;
-
-    // The picker parses strings with new Date(), treating YYYY-MM-DD as UTC.
-    // Pass the selected calendar day as a local Date instead.
-    const { year, month, day } = getLocalDateParts(value);
-    return new Date(year, month, day);
-  });
   scheduleType = this.#backupState.scheduleType;
   scheduleTypeField = form(linkedSignal<string>(() => this.scheduleType()));
   scheduleOptions = SCHEDULE_DEFAULT_OPTIONS;
+
   scheduleSummary = computed(() => {
     if (!this.scheduleForm.autoRun().value()) {
       return {
