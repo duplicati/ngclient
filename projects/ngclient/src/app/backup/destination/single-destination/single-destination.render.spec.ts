@@ -44,6 +44,7 @@ describe('SingleDestinationComponent rendered editing', () => {
                 Key: 'ssh',
                 Options: [
                   { Name: 'auth-password', Type: 'Password' },
+                  { Name: 'ssh-key', Type: 'Password' },
                   { Name: 'buffer-size', Type: 'Size' },
                   { Name: 'web-timeout', Type: 'Timespan' },
                 ],
@@ -85,6 +86,23 @@ describe('SingleDestinationComponent rendered editing', () => {
     link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, ctrlKey: true }));
     expect(prevented).toBe(false);
     expect(fixture.componentInstance.targetUrl()).toBe('duplicati://');
+    expect(changed).not.toHaveBeenCalled();
+  });
+
+  it('edits and reloads multiline destination text with blank lines and a trailing newline', async () => {
+    const initial = url + '&ssh-key=initial';
+    await setup(initial);
+    const textarea = fixture.nativeElement.querySelector('app-file-drop-textarea textarea') as HTMLTextAreaElement;
+    const text = 'first line\n\nsecond + & line\n';
+    textarea.value = text;
+    textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    await settle();
+    const saved = fixture.componentInstance.targetUrl()!;
+    expect(saved).toBe(initial.replace('ssh-key=initial', 'ssh-key=' + encodeURIComponent(text)));
+    fixture.destroy();
+    TestBed.resetTestingModule();
+    const changed = await setup(saved);
+    expect(fixture.nativeElement.querySelector('app-file-drop-textarea textarea').value).toBe(text);
     expect(changed).not.toHaveBeenCalled();
   });
 

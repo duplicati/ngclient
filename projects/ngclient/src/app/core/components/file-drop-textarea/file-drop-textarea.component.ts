@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, effect, ElementRef, input, signal, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  ElementRef,
+  input,
+  output,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
@@ -21,6 +30,7 @@ import { ShipIcon } from '@ship-ui/core/ship-icon';
 export class FileDropTextareaComponent implements ControlValueAccessor {
   customId = input<string>();
   content = signal('');
+  contentEdit = output<string>();
   readonly = signal(false);
   placeholder = input<string | null>($localize`Drop a file here or use the browse button`);
 
@@ -49,7 +59,7 @@ export class FileDropTextareaComponent implements ControlValueAccessor {
     const reader = new FileReader();
     reader.onload = () => {
       if (this.readonly()) return;
-      this.content.set(reader.result as string);
+      this.updateContent(reader.result as string);
     };
     reader.readAsText(file);
   }
@@ -58,6 +68,11 @@ export class FileDropTextareaComponent implements ControlValueAccessor {
     if (this.readonly()) return false;
     this.fileInputRef()?.nativeElement.click();
     return false;
+  }
+
+  updateContent(value: string) {
+    this.content.set(value);
+    this.contentEdit.emit(value);
   }
 
   private onChange: (value: string) => void = () => {};

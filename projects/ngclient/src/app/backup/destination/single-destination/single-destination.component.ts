@@ -558,6 +558,23 @@ export class SingleDestinationComponent {
     });
   }
 
+  #multilineValues = linkedSignal(() => {
+    const values = this.destinationForm();
+    const config = this.destinationFormConfig();
+    const multiline = (group: keyof DestinationFormValues): Record<string, string> =>
+      Object.fromEntries(
+        (config?.[group] ?? [])
+          .filter(({ type }) => type === 'FreeText')
+          .map(({ name }) => [name, String(values[group][name] ?? '')])
+      );
+    return { custom: multiline('custom'), dynamic: multiline('dynamic'), advanced: multiline('advanced') };
+  });
+  #multilineForm = form(this.#multilineValues);
+
+  destinationMultilineField(group: keyof DestinationFormValues, name: string) {
+    return this.#multilineForm[group][name];
+  }
+
   pasteUrlPlaceholder = $localize`Pick a server, or paste a URL from your provider`;
 
   #freeTextValues = linkedSignal(() => {

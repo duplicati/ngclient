@@ -580,8 +580,8 @@
         </app-timespan>
       } @else if (item.formView.type === 'FreeText') {
         <app-file-drop-textarea
-          [ngModel]="formInput"
-          (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)"
+          [formField]="destinationMultilineField(item.fieldGroup, item.formView.name)"
+          (contentEdit)="updateFieldValue(item.fieldGroup, item.formView.name, $event)"
           [customId]="formFieldId"
           [placeholder]="item.formView.longDescription">
           <label>

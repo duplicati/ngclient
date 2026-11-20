@@ -6,7 +6,12 @@
 </div>
 
 <div class="textarea-container textarea-wrap" (drop)="onFileDrop($event)" (dragover)="onDragOver($event)">
-  <textarea [placeholder]="placeholder()" [(ngModel)]="content" [disabled]="readonly()" rows="10"></textarea>
+  <textarea
+    [placeholder]="placeholder()"
+    [ngModel]="content()"
+    (ngModelChange)="updateContent($event)"
+    [disabled]="readonly()"
+    rows="10"></textarea>
 </div>
 
 <input #fileInput type="file" class="hidden" [disabled]="readonly()" (change)="onFileSelected($event)" />
