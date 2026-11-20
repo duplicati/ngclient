@@ -433,8 +433,8 @@
       } @else if (item.formView.type === 'Size') {
         <app-size
           [inputType]="item.Name"
-          [ngModel]="formInput"
-          (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)"
+          [formField]="destinationSizeField(item.fieldGroup, item.formView.name)"
+          (sizeChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)"
           [customId]="formFieldId">
           <label [for]="formFieldId">
             @if (item.formView.isMandatory && isFieldEmpty) {

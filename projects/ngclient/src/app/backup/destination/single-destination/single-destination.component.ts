@@ -598,6 +598,23 @@ export class SingleDestinationComponent {
     });
   }
 
+  #sizeValues = linkedSignal(() => {
+    const values = this.destinationForm();
+    const config = this.destinationFormConfig();
+    const sizes = (group: keyof DestinationFormValues): Record<string, string> =>
+      Object.fromEntries(
+        (config?.[group] ?? [])
+          .filter((field) => field.type === 'Size')
+          .map(({ name }) => [name, String(values[group][name] ?? '')])
+      );
+    return { custom: sizes('custom'), dynamic: sizes('dynamic'), advanced: sizes('advanced') };
+  });
+  #sizeForm = form(this.#sizeValues);
+
+  destinationSizeField(group: keyof DestinationFormValues, name: string) {
+    return this.#sizeForm[group][name];
+  }
+
   removeAdvancedOption(fieldName: string) {
     this.#updateDestinationForm((form) => {
       delete form.advanced[fieldName];
