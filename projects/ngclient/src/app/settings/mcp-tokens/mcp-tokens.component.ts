@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { form, FormField, maxLength } from '@angular/forms/signals';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
@@ -10,6 +10,7 @@ import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipSelect } from '@ship-ui/core/ship-select';
 import { defer, finalize } from 'rxjs';
+import { NullableTextControl } from '../../backup/general/nullable-text-control';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer, McpTokenDto, McpTokenLevel } from '../../core/openapi';
 import { BackupsState } from '../../core/states/backups.state';
@@ -31,7 +32,18 @@ import { getMcpAgentInstructions, MCP_AGENT_OPTIONS, McpAgentId } from './mcp-ag
  */
 @Component({
   selector: 'app-mcp-tokens',
-  imports: [DatePipe, FormsModule, FormField, ShipAlert, ShipButton, ShipCheckbox, ShipFormField, ShipIcon, ShipSelect],
+  imports: [
+    DatePipe,
+    FormsModule,
+    FormField,
+    NullableTextControl,
+    ShipAlert,
+    ShipButton,
+    ShipCheckbox,
+    ShipFormField,
+    ShipIcon,
+    ShipSelect,
+  ],
   templateUrl: './mcp-tokens.component.html',
   styleUrl: './mcp-tokens.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -59,6 +71,7 @@ export class McpTokensComponent {
 
   agentOptions = MCP_AGENT_OPTIONS;
   selectedAgentId = signal<McpAgentId>(MCP_AGENT_OPTIONS[0].id);
+  agentField = form(linkedSignal<string>(() => this.selectedAgentId()));
   /** How to give the new token to the selected agent */
   selectedAgent = computed(() => {
     const created = this.createdToken();
@@ -184,8 +197,9 @@ export class McpTokensComponent {
     this.createdToken.set(null);
   }
 
-  selectAgent(id: McpAgentId | null | undefined | '') {
-    if (!id) return;
+  selectAgent(selected: unknown[]) {
+    const id = this.agentOptions.find((agent) => agent === selected[0])?.id;
+    if (!id || id === this.selectedAgentId()) return;
     this.selectedAgentId.set(id);
     this.copied.set(false);
   }
