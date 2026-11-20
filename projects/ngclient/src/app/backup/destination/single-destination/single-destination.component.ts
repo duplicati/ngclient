@@ -551,6 +551,27 @@ export class SingleDestinationComponent {
     return false;
   }
 
+  #integerValues = linkedSignal(() => {
+    const values = this.destinationForm();
+    const config = this.destinationFormConfig();
+    const integers = (group: keyof DestinationFormValues): Record<string, number | null> =>
+      Object.fromEntries(
+        (config?.[group] ?? [])
+          .filter(({ type }) => type === 'Integer')
+          .map(({ name }) => {
+            const value = values[group][name];
+            const number = value == null || value === '' ? NaN : Number(value);
+            return [name, Number.isFinite(number) ? number : null];
+          })
+      );
+    return { custom: integers('custom'), dynamic: integers('dynamic'), advanced: integers('advanced') };
+  });
+  #integerForm = form(this.#integerValues);
+
+  destinationIntegerField(group: keyof DestinationFormValues, name: string) {
+    return this.#integerForm[group][name];
+  }
+
   onKeyDown(
     fieldGroup: 'custom' | 'dynamic' | 'advanced',
     fieldName: string,
