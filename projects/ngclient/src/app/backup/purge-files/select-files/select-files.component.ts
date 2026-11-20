@@ -1,6 +1,6 @@
 import { form, FormField } from '@angular/forms/signals';
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, linkedSignal, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ShipButton } from '@ship-ui/core/ship-button';
@@ -9,6 +9,7 @@ import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { ShipSelect } from '@ship-ui/core/ship-select';
 import { defer, finalize } from 'rxjs';
+import { NullableTextControl } from '../../general/nullable-text-control';
 import FileTreeComponent, { BackupSettings } from '../../../core/components/file-tree/file-tree.component';
 import { DuplicatiServer, SearchEntriesItemDto } from '../../../core/openapi';
 import { BytesPipe } from '../../../core/pipes/byte.pipe';
@@ -19,6 +20,7 @@ import { PurgeFilesState } from '../purge-files.state';
   selector: 'app-purge-select-files',
   imports: [
     FormField,
+    NullableTextControl,
     FormsModule,
     DatePipe,
     FileTreeComponent,
@@ -44,6 +46,7 @@ export default class PurgeSelectFilesComponent {
   versions = this.#state.versions;
   isLoadingVersions = this.#state.isLoadingVersions;
   selectedVersion = this.#state.selectedVersion;
+  versionField = form(linkedSignal(() => this.selectedVersion()));
   selectedPaths = this.#state.selectedPaths;
   selectedPathsForm = form(this.selectedPaths);
   selectedPathsArray = this.#state.selectedPathsArray;
@@ -75,7 +78,11 @@ export default class PurgeSelectFilesComponent {
     this.loadVersion({ id, time: option.Time });
   });
 
-  onVersionChange(version: string) {
+  onVersionChange(selected: unknown[]) {
+    const option = this.versions().find((entry) => entry === selected[0]);
+    if (!option) return;
+    const version = String(option.Version);
+    if (version === this.selectedVersion()) return;
     this.selectedPaths.set('');
     this.clearSearch();
     this.selectedVersion.set(version);
