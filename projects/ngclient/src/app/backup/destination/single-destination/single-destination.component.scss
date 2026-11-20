@@ -9,6 +9,32 @@
 .advanced-options {
   position: relative;
   z-index: 1;
+  border-radius: var(--shape-3);
+  background-color: var(--base-2);
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: p2r(8);
+    padding: p2r(16);
+  }
+
+  h3 {
+    margin: 0;
+    font: var(--paragraph-10);
+  }
+}
+
+.advanced-options-content {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(16);
+  padding: 0 p2r(16) p2r(16);
+
+  &:empty {
+    padding-bottom: 0;
+  }
 }
 
 textarea ~ grammarly-extension {

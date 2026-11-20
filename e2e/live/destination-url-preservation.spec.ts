@@ -303,6 +303,37 @@ for (const [label, url] of cases) {
         'Changed without editing the destination'
       );
       expect(storedUrl()).toBe(url);
+      if (label === 'file') {
+        await page.goto(`/backup/${id}/destination`);
+        const openTextEditor = async () => {
+          await page.getByRole('button', { name: 'Advanced option actions', exact: true }).click();
+          await page.getByRole('button', { name: /Edit contents as text/ }).click();
+        };
+        await openTextEditor();
+        const text = page.getByPlaceholder('Paste advanced options here, one per line.');
+        const previous = await text.inputValue();
+        const custom = 'one + two&x=3';
+        const draft = `${previous}\n\n  fixture-extra = ${custom}  `;
+        await text.fill(draft);
+        await expect(text).toHaveValue(draft);
+        expect(writes).toHaveLength(3);
+        expect(storedUrl()).toBe(url);
+        const pending = page.waitForResponse(
+          (response) => response.request().method() === 'PUT' && new URL(response.url()).pathname === endpoint
+        );
+        await save.click();
+        const response = await pending;
+        expect(response.ok(), await response.text()).toBe(true);
+        expect(storedUrl()).toBe(url + '&fixture-extra=' + encodeURIComponent(custom));
+        expect(advancedOptions(await get())).toEqual(expectedOptions);
+        await page.reload();
+        await openTextEditor();
+        await expect(text).toHaveValue(`${previous}\nfixture-extra=${custom}`);
+        expect(writes).toHaveLength(4);
+        expect(unexpected).toEqual([]);
+        expect(errors).toEqual([]);
+        return;
+      }
       expect(writes).toHaveLength(3);
       if (label === 'ssh') {
         await page.goto(`/backup/${id}/destination`);

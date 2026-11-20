@@ -64,9 +64,9 @@
     }
   }
 
-  <sh-toggle-card [disableToggle]="true" class="advanced-options">
-    <ng-container title>
-      <ng-container i18n>Advanced options</ng-container>
+  <section class="advanced-options">
+    <header>
+      <h3 i18n>Advanced options</h3>
 
       @let _nonSelectedAdvancedFormViews = nonSelectedAdvancedFormViews();
 
@@ -98,7 +98,7 @@
           </sh-menu>
 
           <sh-menu>
-            <button shButton type="button" class="small">
+            <button shButton type="button" class="small" aria-label="Advanced option actions" i18n-aria-label>
               <sh-icon>dots-three-vertical</sh-icon>
             </button>
 
@@ -111,36 +111,38 @@
           </sh-menu>
         </div>
       }
-    </ng-container>
+    </header>
 
-    @if (showTextArea()) {
-      <textarea
-        class="raw-text-area"
-        wrap="off"
-        [ngModel]="settingsAsText()"
-        (ngModelChange)="updateSettingsFromText($event)"
-        [ngModelOptions]="{ updateOn: 'blur' }"
-        placeholder="Paste advanced options here, one per line."></textarea>
-    } @else {
-      @for (optionName of advancedFormFieldNames(); track $index) {
-        @let formView = getFormView('advanced', optionName) ?? getDefaultFormView(optionName);
+    <div class="advanced-options-content">
+      @if (showTextArea()) {
+        <textarea
+          #settingsText
+          class="raw-text-area"
+          wrap="off"
+          [formField]="settingsTextForm.text"
+          (blur)="updateSettingsFromText(settingsText.value)"
+          placeholder="Paste advanced options here, one per line."></textarea>
+      } @else {
+        @for (optionName of advancedFormFieldNames(); track $index) {
+          @let formView = getFormView('advanced', optionName) ?? getDefaultFormView(optionName);
 
-        <ng-container
-          *ngTemplateOutlet="
-            fieldTemplate;
-            context: {
-              $implicit: {
-                index: $index,
-                formView: formView,
-                fieldGroup: 'advanced',
-                destinationType: _destinationType,
-                oauthField: config.oauthField,
-              },
-            }
-          "></ng-container>
+          <ng-container
+            *ngTemplateOutlet="
+              fieldTemplate;
+              context: {
+                $implicit: {
+                  index: $index,
+                  formView: formView,
+                  fieldGroup: 'advanced',
+                  destinationType: _destinationType,
+                  oauthField: config.oauthField,
+                },
+              }
+            "></ng-container>
+        }
       }
-    }
-  </sh-toggle-card>
+    </div>
+  </section>
 
   <ng-template #fieldTemplate let-item>
     <div class="field-row" [class.single-field]="item.fieldGroup !== 'advanced'">

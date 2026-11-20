@@ -23,6 +23,7 @@ import { RouterLink } from '@angular/router';
 import type { FormValueControl } from '@angular/forms/signals';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
+import { debounce } from '@angular/forms/signals';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
@@ -31,7 +32,6 @@ import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { ShipSelect } from '@ship-ui/core/ship-select';
 import { ShipSpinner } from '@ship-ui/core/ship-spinner';
 import { ShipToggle } from '@ship-ui/core/ship-toggle';
-import { ShipToggleCard } from '@ship-ui/core/ship-toggle-card';
 import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { catchError, distinctUntilChanged, finalize, map, merge, of, switchMap, tap } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../core/components/confirm-dialog/confirm-dialog.component';
@@ -169,7 +169,6 @@ export function needsHostKeyApproval(url: string): boolean {
     ShipFormField,
     ShipButton,
     ShipIcon,
-    ShipToggleCard,
     ShipMenu,
     ShipSelect,
     ShipTooltip,
@@ -924,8 +923,13 @@ export class SingleDestinationComponent {
       .join('\n');
   });
 
-  updateSettingsFromText(newValue: any) {
-    if (typeof newValue !== 'string') return;
+  #settingsTextDraft = linkedSignal(() => ({ text: this.settingsAsText() }));
+  settingsTextForm = form(this.#settingsTextDraft, (fields) => {
+    debounce(fields.text, 'blur');
+  });
+
+  updateSettingsFromText(newValue: string) {
+    if (newValue === this.settingsAsText()) return;
 
     const newSettings = parseKeyValueTextToObject(newValue);
     this.#updateDestinationForm((form) => {
