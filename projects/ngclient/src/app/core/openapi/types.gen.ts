@@ -2897,7 +2897,9 @@ export type PostApiV1BackupByIdCopytotempData = {
     path: {
         id: string;
     };
-    query?: never;
+    query?: {
+        destination?: string;
+    };
     url: '/api/v1/backup/{id}/copytotemp';
 };
 

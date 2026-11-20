@@ -2751,6 +2751,13 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "destination",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
