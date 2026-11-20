@@ -84,12 +84,9 @@
         type="text"
         id="mcpTokenName"
         autocomplete="off"
-        maxlength="100"
         i18n-placeholder
         placeholder="The agent the token is for"
-        [ngModel]="form().name"
-        (ngModelChange)="updateForm({ name: $event })"
-        [ngModelOptions]="{ standalone: true }" />
+        [formField]="tokenFields.name" />
     </sh-form-field>
 
     <sh-select [options]="levelOptions" label="label" value="value">
@@ -148,9 +145,7 @@
           id="mcpTokenRestoreRoots"
           rows="2"
           autocomplete="off"
-          [ngModel]="form().restoreRoots"
-          (ngModelChange)="updateForm({ restoreRoots: $event })"
-          [ngModelOptions]="{ standalone: true }"></textarea>
+          [formField]="tokenFields.restoreRoots"></textarea>
       </sh-form-field>
       <p class="hint" i18n>
         The token can always restore files to where they were backed up from. To let it restore to other places, enter
