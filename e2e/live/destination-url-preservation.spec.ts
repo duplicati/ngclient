@@ -22,7 +22,7 @@ const cases = [
   ['unsupported', 'future-backend://example.invalid/archive?future=a+b&future=two&flag&empty='],
   [
     'ftp-encoding',
-    'ftp://Example.COM/a%2Fb%20c?auth-username=u&empty=&plus=a+b&space=a%20b&double=%2520&auth-password=x%26y%3D&flag&dup=1&dup=2',
+    'ftp://Example.COM/a%2Fb%20c?auth-username=u&empty=&plus=a+b&space=a%20b&double=%2520&auth-password=x%26y%3D&flag&dup=1&dup=2&ftp-ssl-protocols=Tls12%2CTls13',
   ],
   ['interleaved-secrets', 's3://bucket/a%2Fb?AUTH-PASSWORD=one&keep=middle&auth-password=two&flag'],
   ['unparseable', 'ssh://undefined/path?future=a+b&future=two&empty=&flag'],
@@ -217,6 +217,44 @@ for (const [label, url] of cases) {
         expect(errors).toEqual([]);
       }
       const info = await (await api.get('/api/v1/systeminfo')).json();
+      if (label === 'ftp-encoding') {
+        await page.goto(`/backup/${id}/destination`);
+        const labelText = /^\s*Configure the SSL policy to use when encryption is enabled/;
+        const field = page.locator('app-single-destination sh-select').filter({
+          has: page.locator('label', { hasText: labelText }),
+        });
+        const chips = field.locator('.selected-value sh-chip');
+        await expect(chips).toHaveCount(2);
+        await expect(chips.filter({ hasText: 'Tls12' })).toBeVisible();
+        await expect(chips.filter({ hasText: 'Tls13' })).toBeVisible();
+        await field.locator('label', { hasText: labelText }).click();
+        await page.getByRole('option', { name: 'Tls12', exact: true }).click();
+        await page.getByRole('option', { name: 'Tls11', exact: true }).click();
+        await field.getByRole('combobox', { includeHidden: true }).press('Tab');
+        await expect(page.getByRole('listbox')).toBeHidden();
+
+        const pending = page.waitForResponse(
+          (response) => response.request().method() === 'PUT' && new URL(response.url()).pathname === endpoint
+        );
+        await save.click();
+        const response = await pending;
+        expect(response.ok(), await response.text()).toBe(true);
+        const savedUrl = String(storedUrl());
+        const previousParams = new URL(url).searchParams;
+        const savedParams = new URL(savedUrl).searchParams;
+        expect(savedParams.get('ftp-ssl-protocols')?.split(',').sort()).toEqual(['Tls11', 'Tls13']);
+        savedParams.delete('ftp-ssl-protocols');
+        previousParams.delete('ftp-ssl-protocols');
+        expect([...savedParams]).toEqual([...previousParams]);
+        expect(advancedOptions(await get())).toEqual(expectedOptions);
+        await page.reload();
+        await expect(chips).toHaveCount(2);
+        await expect(chips.filter({ hasText: 'Tls11' })).toBeVisible();
+        await expect(chips.filter({ hasText: 'Tls13' })).toBeVisible();
+        expect(writes).toHaveLength(4);
+        expect(unexpected).toEqual([]);
+        expect(errors).toEqual([]);
+      }
       await testInfo.attach('destination-preservation', {
         body: JSON.stringify(
           {

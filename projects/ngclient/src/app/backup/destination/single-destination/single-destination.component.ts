@@ -60,6 +60,36 @@ import {
 import { copyDestinationForm, DestinationEditSession } from '../destination-edit-session';
 import { BrowsePathDialog } from './browse-path-dialog/browse-path-dialog';
 
+/** ShipSelect serializes multiple choices into a comma-separated input value. */
+@Directive({
+  selector: 'input[appDestinationFlags]',
+  host: { '(input)': 'updateValue()', '(blur)': 'touch.emit()' },
+})
+export class DestinationFlagsControl implements FormValueControl<string> {
+  #input = inject<ElementRef<HTMLInputElement>>(ElementRef).nativeElement;
+  #writingValue = false;
+  value = model('');
+  touch = output<void>();
+
+  updateValue() {
+    if (!this.#writingValue) untracked(() => this.value.set(this.#input.value));
+  }
+
+  #writeValue = effect(() => {
+    const value = this.value();
+    untracked(() => {
+      if (this.#input.value === value) return;
+      // The select can emit input again while applying a programmatic value.
+      this.#writingValue = true;
+      try {
+        this.#input.value = value;
+      } finally {
+        this.#writingValue = false;
+      }
+    });
+  });
+}
+
 type DestinationConfig = {
   destinationType: string;
   oauthField: string | null;
@@ -131,6 +161,7 @@ export function needsHostKeyApproval(url: string): boolean {
     FileTreeComponent,
     SizeComponent,
     TimespanComponent,
+    DestinationFlagsControl,
     FileDropTextareaComponent,
     DestinationFreeTextControl,
 
@@ -620,6 +651,23 @@ export class SingleDestinationComponent {
     }
 
     return options;
+  }
+
+  #flagValues = linkedSignal(() => {
+    const values = this.destinationForm();
+    const config = this.destinationFormConfig();
+    const flags = (group: keyof DestinationFormValues): Record<string, string> =>
+      Object.fromEntries(
+        (config?.[group] ?? [])
+          .filter((field) => field.type === 'Flags')
+          .map(({ name }) => [name, String(values[group][name] ?? '')])
+      );
+    return { custom: flags('custom'), dynamic: flags('dynamic'), advanced: flags('advanced') };
+  });
+  #flagsForm = form(this.#flagValues);
+
+  destinationFlagsField(group: keyof DestinationFormValues, name: string) {
+    return this.#flagsForm[group][name];
   }
 
   #oauthInProgress = signal(false);
