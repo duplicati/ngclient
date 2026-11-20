@@ -70,9 +70,11 @@ export class CustomRemotePermissionsDialog {
     this.status.set('loading');
 
     const request =
-      module === 'googleworkspace'
-        ? this.#webModules.getGsuitePermissions(url, sourcePrefix, backupId)
-        : this.#webModules.getOffice365Permissions(url, sourcePrefix, backupId);
+      module === 'postgresql'
+        ? this.#webModules.getPostgresqlPermissions(url, sourcePrefix, backupId, data?.mode === 'restore')
+        : module === 'googleworkspace'
+          ? this.#webModules.getGsuitePermissions(url, sourcePrefix, backupId)
+          : this.#webModules.getOffice365Permissions(url, sourcePrefix, backupId);
 
     const subscription = request.subscribe({
       next: (result) => {

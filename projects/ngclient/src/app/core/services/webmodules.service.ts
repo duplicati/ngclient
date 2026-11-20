@@ -90,7 +90,17 @@ export type GoogleWorkspaceCounts = {
 };
 
 /** The custom-remote modules that support the `CheckPermissions` and `CountItems` operations. */
-export type CustomRemoteModule = 'office365' | 'googleworkspace';
+/** What the postgresql `CountItems` operation returns: the tables of the database and its size on the server. */
+export type PostgresqlCounts = {
+  tables: { total: number };
+  database: { sizeBytes: number };
+};
+
+export type CustomRemoteModule = 'office365' | 'googleworkspace' | 'postgresql';
+
+/** The option that tells the postgresql module what the database is checked for, and its value for a restore */
+const POSTGRESQL_PURPOSE_OPTION = 'purpose';
+const POSTGRESQL_RESTORE_PURPOSE = 'restore';
 
 /** A single permission status entry returned by the custom-remote `CheckPermissions` operation. */
 export type CustomRemotePermissionStatus = {
@@ -332,6 +342,13 @@ export class WebModulesService {
   }
 
   /**
+   * Counts the tables of a PostgreSQL database and reads its size, as the server reports it.
+   */
+  getPostgresqlCounts(url: string, sourcePrefix: string, backupId: string | null) {
+    return this.#getCustomRemoteCounts<PostgresqlCounts>('postgresql', url, sourcePrefix, backupId);
+  }
+
+  /**
    * Runs the `CountItems` operation for a custom-remote module and parses the JSON result.
    *
    * Counting items in a large tenant can take a while, so when the websocket
@@ -368,7 +385,7 @@ export class WebModulesService {
    * backup and/or restore and whether they are currently enabled.
    */
   getOffice365Permissions(url: string, sourcePrefix: string, backupId: string | null) {
-    return this.#getCustomRemotePermissions('office365', url, sourcePrefix, backupId);
+    return this.#getCustomRemotePermissions('office365', url, sourcePrefix, backupId, {});
   }
 
   /**
@@ -377,10 +394,30 @@ export class WebModulesService {
    * backup and/or restore and whether they are currently enabled.
    */
   getGsuitePermissions(url: string, sourcePrefix: string, backupId: string | null) {
-    return this.#getCustomRemotePermissions('googleworkspace', url, sourcePrefix, backupId);
+    return this.#getCustomRemotePermissions('googleworkspace', url, sourcePrefix, backupId, {});
   }
 
-  #getCustomRemotePermissions(module: CustomRemoteModule, url: string, sourcePrefix: string, backupId: string | null) {
+  /**
+   * Checks what a backup of a PostgreSQL database needs of it: the connection, the server version and
+   * what the role can read. For a restore it checks what the database needs as the target instead.
+   */
+  getPostgresqlPermissions(url: string, sourcePrefix: string, backupId: string | null, forRestore: boolean) {
+    return this.#getCustomRemotePermissions(
+      'postgresql',
+      url,
+      sourcePrefix,
+      backupId,
+      forRestore ? { [POSTGRESQL_PURPOSE_OPTION]: POSTGRESQL_RESTORE_PURPOSE } : {}
+    );
+  }
+
+  #getCustomRemotePermissions(
+    module: CustomRemoteModule,
+    url: string,
+    sourcePrefix: string,
+    backupId: string | null,
+    moduleOptions: Record<string, string>
+  ) {
     return this.#http
       .post<WebModuleOutputDto>(
         `${getApiBase()}/api/v1/webmodule/${module}`,
@@ -389,6 +426,7 @@ export class WebModulesService {
           'source-prefix': sourcePrefix,
           operation: 'CheckPermissions',
           url,
+          ...moduleOptions,
         }),
         { headers: { 'Content-Type': 'application/json' } }
       )

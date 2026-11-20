@@ -6,6 +6,7 @@ import { RemoteDestinationType } from '../../../core/openapi';
 import { CustomRemotePermissionsDialog } from '../custom-remote-permissions-dialog/custom-remote-permissions-dialog';
 import { GoogleWorkspaceCountsDialog } from '../googleworkspace-counts-dialog/googleworkspace-counts-dialog';
 import { Office365CountsDialog } from '../office365-counts-dialog/office365-counts-dialog';
+import { PostgresqlCountsDialog } from '../postgresql-counts-dialog/postgresql-counts-dialog';
 import { TargetUrlDialog } from './target-url-dialog';
 
 describe('TargetUrlDialog workspace tools', () => {
@@ -80,6 +81,21 @@ describe('TargetUrlDialog workspace tools', () => {
     finishTest();
     footerButtons()[0].click();
     expect(open).toHaveBeenLastCalledWith(GoogleWorkspaceCountsDialog, expect.anything());
+  });
+
+  it('opens the database counts and checks for a PostgreSQL source', () => {
+    render('postgresql://?postgresql-host=db', '/dupl-postgresql-abc');
+    finishTest();
+    const [counts, permissions] = footerButtons();
+
+    counts.click();
+    expect(open).toHaveBeenLastCalledWith(PostgresqlCountsDialog, expect.anything());
+
+    permissions.click();
+    expect(open).toHaveBeenLastCalledWith(
+      CustomRemotePermissionsDialog,
+      expect.objectContaining({ data: expect.objectContaining({ module: 'postgresql', mode: 'backup' }) })
+    );
   });
 
   it('keeps the tools disabled until the URL has been tested, like the submit button', () => {
