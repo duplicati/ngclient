@@ -413,6 +413,7 @@ export type ImportBackupInputDto = {
         [key: string]: string;
     } | null;
     expand_env_vars?: boolean | null;
+    global_options?: string | null;
 };
 
 export type ImportBackupOutputDto = {

@@ -17,6 +17,10 @@ export class SysinfoState {
   isLoaded = signal(false);
   systemInfo = signal<SystemInfoDto | null>(null);
 
+  hasExportGlobalSettings = computed(() =>
+    (this.systemInfo()?.APIExtensions ?? []).includes('v1:backup:export-global-settings')
+  );
+
   filterGroups = signal<FilterGroups | null>(null);
   backendModules = computed(() => {
     // KEEP - for debugging to find a field by type

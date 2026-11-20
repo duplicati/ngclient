@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
 import { form, FormField } from '@angular/forms/signals';
 import { NullableTextControl } from '../general/nullable-text-control';
 import { Router, RouterLink } from '@angular/router';
@@ -11,8 +11,9 @@ import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipToggle } from '@ship-ui/core/ship-toggle';
 import { defer, finalize } from 'rxjs';
 import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/confirm-dialog.component';
-import { DuplicatiServer } from '../../core/openapi';
+import { DuplicatiServer, ImportBackupInputDto } from '../../core/openapi';
 import { BackupDraft, BackupsState } from '../../core/states/backups.state';
+import { SysinfoState } from '../../core/states/sysinfo.state';
 
 @Component({
   selector: 'app-import',
@@ -37,6 +38,7 @@ export default class ImportComponent {
   #dupServer = inject(DuplicatiServer);
   #backupsState = inject(BackupsState);
   #router = inject(Router);
+  hasGlobalOptionsImport = inject(SysinfoState).hasExportGlobalSettings;
 
   isImporting = signal(false);
   isSecureFile = signal(false);
@@ -49,8 +51,21 @@ export default class ImportComponent {
       import_metadata: boolean;
       direct: boolean;
       passphrase: string | null;
-    }>({ config: '', cmdline: false, import_metadata: false, direct: false, passphrase: '' })
+      global_options: string;
+    }>({ config: '', cmdline: false, import_metadata: false, direct: false, passphrase: '', global_options: 'ignore' })
   );
+
+  globalOptionsChoices = computed(() => [
+    { value: 'ignore', label: $localize`Ignore` },
+    { value: 'merge', label: $localize`Merge into this backup` },
+    ...(this.importForm.direct().value() ? [{ value: 'apply', label: $localize`Apply to server settings` }] : []),
+  ]);
+
+  #resetGlobalOptionsChoice = effect(() => {
+    if (!this.importForm.direct().value() && this.importForm.global_options().value() === 'apply') {
+      this.importForm.global_options().value.set('ignore');
+    }
+  });
 
   selectedFile = signal<File[]>([]);
   #reader: FileReader | null = null;
@@ -71,6 +86,7 @@ export default class ImportComponent {
     this.isValid.set(false);
     this.isSecureFile.set(false);
     this.importForm.config().value.set('');
+    this.importForm.global_options().value.set('ignore');
 
     if (file) {
       const reader = new FileReader();
@@ -176,13 +192,42 @@ export default class ImportComponent {
   }
 
   submit() {
-    if (this.#reader || !this.importForm.config().value()) return;
+    if (this.#destroyed || this.isImporting() || this.#reader || !this.importForm.config().value()) return;
+    const { global_options: selected, ...values } = this.importForm().value();
+    const globalOptions = selected === 'merge' || (selected === 'apply' && values.direct) ? selected : 'ignore';
+    const body: ImportBackupInputDto = {
+      ...values,
+      ...(this.hasGlobalOptionsImport() ? { global_options: globalOptions } : {}),
+    };
     this.isImporting.set(true);
-    const isDirectImport = this.importForm.direct().value();
+
+    if (body.global_options === 'apply') {
+      let decided = false;
+      this.#dialog.open(ConfirmDialogComponent, {
+        data: {
+          title: $localize`Apply global advanced options?`,
+          message: $localize`This changes this server's settings for all backups. Imported values replace matching global options; other global options are kept. Continue?`,
+          confirmText: $localize`Apply and import`,
+          cancelText: $localize`Cancel`,
+        },
+        closed: (confirmed) => {
+          if (decided || this.#destroyed) return;
+          decided = true;
+          if (confirmed) this.#import(body);
+          else this.isImporting.set(false);
+        },
+      });
+      return;
+    }
+    this.#import(body);
+  }
+
+  #import(body: ImportBackupInputDto) {
+    const isDirectImport = body.direct;
 
     defer(() =>
       this.#dupServer.postApiV1BackupsImport({
-        body: this.importForm().value(),
+        body,
       })
     )
       .pipe(finalize(() => this.isImporting.set(false)))

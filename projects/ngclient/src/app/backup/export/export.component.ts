@@ -18,6 +18,7 @@ import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/con
 import { DuplicatiServer } from '../../core/openapi';
 import { PasswordGeneratorService } from '../../core/services/password-generator.service';
 import { BackupsState } from '../../core/states/backups.state';
+import { SysinfoState } from '../../core/states/sysinfo.state';
 import { getApiBase, getApiConfigHeaders } from '../../core/utils/proxy-config.util';
 
 @Component({
@@ -47,6 +48,7 @@ export default class ExportComponent {
   #router = inject(Router);
   #httpClient = inject(HttpClient);
   #backups = inject(BackupsState);
+  hasExportGlobalSettings = inject(SysinfoState).hasExportGlobalSettings;
 
   isRequiredError = (error: { kind: string }) => error.kind === 'required';
   isMinLengthError = (error: { kind: string }) => error.kind === 'minLength';
