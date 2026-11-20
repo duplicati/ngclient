@@ -267,7 +267,14 @@ describe('ScheduleComponent run after another job', () => {
     expect(section()!.querySelector('#runAfterAlways')).not.toBeNull();
     expect(section()!.querySelector('.run-after-warning')).toBeNull();
 
-    state.runAfterAlways.set(true);
+    const checkbox = section()!.querySelector<HTMLInputElement>('#runAfterAlways')!;
+    checkbox.click();
+    await render();
+    expect(state.runAfterAlways()).toBe(true);
+    checkbox.click();
+    await render();
+    expect(state.runAfterAlways()).toBe(false);
+    checkbox.click();
     fixture.componentInstance.setRunAfter(null);
     await render();
     expect(state.runAfterBackupId()).toBeNull();

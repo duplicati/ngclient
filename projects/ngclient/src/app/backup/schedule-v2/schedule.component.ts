@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { FormField } from '@angular/forms/signals';
+import { form, FormField } from '@angular/forms/signals';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipDatepickerInput } from '@ship-ui/core/ship-datepicker';
@@ -77,6 +77,7 @@ export default class ScheduleComponent {
   hasRunAfter = this.#sysinfo.hasBackupRunAfter;
   runAfterBackupId = this.#backupState.runAfterBackupId;
   runAfterAlways = this.#backupState.runAfterAlways;
+  runAfterAlwaysForm = form(this.runAfterAlways);
   // The list of jobs is sent again whenever a job changes, so the options only change when their content does
   runAfterOptions = computed(
     () => getRunAfterOptions(this.#backupsState.backups(), this.#backupState.backupId(), this.runAfterBackupId()),
