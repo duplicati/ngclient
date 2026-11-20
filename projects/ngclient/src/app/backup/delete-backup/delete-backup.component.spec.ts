@@ -6,10 +6,20 @@ import { Observable, of, Subject, throwError } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { DuplicatiServer } from '../../core/openapi';
 import { BackupsState } from '../../core/states/backups.state';
+import { SysinfoState } from '../../core/states/sysinfo.state';
 import DeleteBackupComponent from './delete-backup.component';
 
 afterEach(() => TestBed.resetTestingModule());
-type JobDetails = { Backup?: { ID: string; Name: string; DBPath?: string; OperationType?: 'Backup' | 'Sync' } };
+type JobDetails = {
+  Backup?: {
+    ID: string;
+    Name: string;
+    DBPath?: string;
+    OperationType?: 'Backup' | 'Sync';
+    AdditionalTargetURLs?: { UrlKey: string; TargetUrl: string }[];
+  };
+};
+const destinationExtension = 'v1:backup:delete-remote-destinations';
 
 describe('job deletion remote files option', () => {
   async function setup(
@@ -18,7 +28,8 @@ describe('job deletion remote files option', () => {
     usage: Observable<{ inuse: boolean }> = of({ inuse: false }),
     details?: Observable<JobDetails>,
     cold = false,
-    wait = true
+    wait = true,
+    extensions: string[] = []
   ) {
     const remove = vi.fn(() => response);
     const job = (id: string) => ({
@@ -38,6 +49,7 @@ describe('job deletion remote files option', () => {
         DecimalPipe,
         provideRouter([]),
         { provide: ShipDialogService, useValue: { open } },
+        { provide: SysinfoState, useValue: { systemInfo: () => ({ APIExtensions: extensions }) } },
         {
           provide: DuplicatiServer,
           useValue: {
@@ -63,6 +75,47 @@ describe('job deletion remote files option', () => {
     fixture.detectChanges();
     return { fixture, component: fixture.componentInstance, remove, open, load };
   }
+
+  it.each([
+    { extensions: [], operationType: 'Backup', selected: [], expected: { 'delete-remote-files': false } },
+    { extensions: [destinationExtension], operationType: 'Sync', selected: [], expected: {} },
+    { extensions: [destinationExtension], operationType: 'Backup', selected: [], expected: {} },
+    {
+      extensions: [destinationExtension],
+      operationType: 'Backup',
+      selected: ['secondary', 'primary'],
+      expected: { 'remote-destinations': ['primary', 'secondary'] },
+    },
+  ] as const)(
+    'sends compatible deletion parameters for %#',
+    async ({ extensions, operationType, selected, expected }) => {
+      const details = of({
+        Backup: {
+          ID: '42',
+          Name: 'Test job',
+          DBPath: '/db',
+          OperationType: operationType,
+          AdditionalTargetURLs: [{ UrlKey: 'secondary', TargetUrl: 'file:///secondary' }],
+        },
+      });
+      const { component, open, remove } = await setup(
+        operationType,
+        of({}),
+        of({ inuse: false }),
+        details,
+        false,
+        true,
+        [...extensions]
+      );
+      for (const key of selected) component.toggleDestination(key, true);
+      component.deleteBackup();
+      open.mock.calls[0][1].closed(true);
+      expect(remove).toHaveBeenCalledExactlyOnceWith({
+        path: { id: '42' },
+        query: { 'delete-local-db': false, ...expected },
+      });
+    }
+  );
 
   it('loads a cold route by ID and prevents deletion until its details arrive', async () => {
     const details = new Subject<JobDetails>();
