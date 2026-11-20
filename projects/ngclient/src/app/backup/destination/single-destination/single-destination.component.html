@@ -234,14 +234,16 @@
               "></ng-container>
           </label>
 
-          <input
-            [type]="item.formView.type === 'Email' ? 'email' : 'text'"
-            [id]="formFieldId"
-            [ngModel]="formInput"
-            autocomplete="off"
-            (keydown)="onKeyDown(item.fieldGroup, item.formView.name, item.formView.type, $event)"
-            (paste)="onFieldPaste(item.fieldGroup, item.formView.name, $event)"
-            (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
+          @if (destinationTextField(item.fieldGroup, item.formView.name); as textField) {
+            <input
+              [type]="item.formView.type === 'Email' ? 'email' : 'text'"
+              [id]="formFieldId"
+              [formField]="textField"
+              autocomplete="off"
+              (keydown)="onKeyDown(item.fieldGroup, item.formView.name, item.formView.type, $event)"
+              (paste)="onFieldPaste(item.fieldGroup, item.formView.name, $event)"
+              (input)="updateFieldValue(item.fieldGroup, item.formView.name, $event.target.value)" />
+          }
 
           @let inputValue = fieldValue;
           @let hasLeadingSlashes = hasLeadingSlash(inputValue ?? '');

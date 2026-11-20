@@ -8,11 +8,13 @@ import {
   inject,
   Injector,
   input,
+  linkedSignal,
   model,
   signal,
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { form, FormField } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
@@ -91,6 +93,7 @@ export function needsHostKeyApproval(url: string): boolean {
 @Component({
   selector: 'app-single-destination',
   imports: [
+    FormField,
     KeyboardActionDirective,
     ReactiveFormsModule,
     FormsModule,
@@ -157,6 +160,26 @@ export class SingleDestinationComponent {
 
   advancedFormFieldNames = computed(() => Object.keys(this.destinationForm().advanced ?? {}));
   destinationFormConfig = signal<DestinationConfig | null>(null);
+
+  // Keep unedited provider defaults and URL tokens out of the input model's writes.
+  #destinationTextValues = linkedSignal(() => {
+    const values = this.destinationForm();
+    const config = this.destinationFormConfig();
+    const fields = (group: 'custom' | 'dynamic' | 'advanced') => {
+      // Unknown saved advanced options also get a text editor.
+      const names = new Set([...Object.keys(values[group]), ...(config?.[group] ?? []).map(({ name }) => name)]);
+      return Object.fromEntries([...names].map((name) => [name, String(values[group][name] ?? '')]));
+    };
+
+    return { custom: fields('custom'), dynamic: fields('dynamic'), advanced: fields('advanced') };
+  });
+  destinationTextForm = form(this.#destinationTextValues);
+
+  destinationTextField(group: 'custom' | 'dynamic' | 'advanced', name: string) {
+    // Field-tree lookup itself is untracked. Recheck when the provider adds or removes a field.
+    this.#destinationTextValues();
+    return this.destinationTextForm[group][name];
+  }
 
   showTextArea = signal(false);
   hasV2ListBackendOperations = this.#sysinfo.hasV2ListBackendOperations;
