@@ -103,6 +103,28 @@ describe('OptionsComponent form bindings', () => {
     expect(element.value).toBe(edited);
   });
 
+  it('updates the saved retention setting only after selecting a policy', async () => {
+    HTMLElement.prototype.showPopover ??= vi.fn();
+    HTMLElement.prototype.hidePopover ??= vi.fn();
+    await render([{ Name: 'keep-time', Value: '3D' }]);
+    const host = fixture.debugElement.query(By.directive(ShipSelect)).nativeElement as HTMLElement;
+    const selectInput = host.querySelector('input')!;
+    expect(selectInput.value).toBe('time');
+    host.querySelector<HTMLElement>('sh-form-field')!.click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(state.mapFormsToSettings()).toContainEqual({ Name: 'keep-time', Value: '3D' });
+    Array.from(host.querySelectorAll<HTMLElement>('li.option'))
+      .find((option) => option.textContent.includes('Keep a specific number of backups'))!
+      .click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    await input('#backupRetentionVersions', '7');
+    const settings = state.mapFormsToSettings();
+    expect(settings).toContainEqual({ Name: 'keep-versions', Value: '7' });
+    expect(settings.some((setting) => setting.Name === 'keep-time')).toBe(false);
+  });
+
   it('keeps an empty number null and resets the form without disconnecting the rendered input', async () => {
     await render([{ Name: 'keep-versions', Value: '5' }]);
     await input('#backupRetentionVersions', '');

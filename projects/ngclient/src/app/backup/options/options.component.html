@@ -35,9 +35,10 @@
       [isClearable]="false"
       value="value"
       label="name"
+      (selectedOptionsChange)="updateRetention($event)"
       (focusout)="onRetentionFocusOut($event, retentionSelect)">
       <label for="size" i18n>Backup retention</label>
-      <input type="text" [ngModel]="optionsForm.backupRetention().value()" (ngModelChange)="updateRetention($event)" />
+      <input type="text" appNullableText [formField]="retentionField" />
     </sh-select>
 
     @if (optionsForm.backupRetention().value() === 'all') {
