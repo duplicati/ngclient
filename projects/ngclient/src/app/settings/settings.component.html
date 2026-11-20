@@ -484,7 +484,7 @@
           [isClearable]="false"
           [inlineSearch]="true"
           (selectedOptionsChange)="updateServerTimezone($event)">
-          <input type="text" [ngModel]="serverTimezone()" [ngModelOptions]="{ standalone: true }" />
+          <input type="text" appNullableText [formField]="serverTimezoneField" />
 
           <!-- The select takes the first TemplateRef in its content as the option template, and an @if block is one:
                without this template the spinner block below would be rendered in place of the selected label -->

@@ -74,11 +74,12 @@ test.describe('saving time zones', () => {
     });
   }
 
-  test('finds a time zone by typing part of its id', async ({ authenticatedPage: page, serverApi }) => {
+  test('searches by time zone ID and saves only after selection', async ({ authenticatedPage: page, serverApi }) => {
     const select = timezoneSelect(page);
     await select.locator('sh-form-field').click();
-    await select.locator('input').fill('copenh');
+    await select.locator('input').fill('Europe/Copenhagen');
     await expect(page.getByRole('option')).toHaveCount(1);
+    expect(serverApi.settingsRequests).toHaveLength(0);
     await page.getByRole('option', { name: '(UTC+01:00) Central European Time', exact: true }).click();
     await expect.poll(() => serverApi.settingsRequests.length).toBe(1);
     expect(serverApi.settingsRequests[0].request().postDataJSON()).toEqual({ 'server-timezone': 'Europe/Copenhagen' });
