@@ -170,11 +170,7 @@
     @if (runAfterBackupId()) {
       <sh-toggle class="raised primary" i18n>
         Also run when that job fails or is stopped
-        <input
-          type="checkbox"
-          id="runAfterAlways"
-          [ngModel]="runAfterAlways()"
-          (ngModelChange)="runAfterAlways.set($event)" />
+        <input type="checkbox" id="runAfterAlways" [formField]="runAfterAlwaysForm" />
       </sh-toggle>
 
       @if (runAfterNeverTriggered()) {
