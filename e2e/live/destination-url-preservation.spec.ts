@@ -204,6 +204,27 @@ for (const [label, url] of cases) {
         ),
         contentType: 'application/json',
       });
+      if (label === 'pcloud') {
+        await page.goto(`/backup/${id}/destination`);
+        const region = page.locator('app-single-destination select').filter({
+          has: page.locator('option[value="api.pcloud.com"]'),
+        });
+        await expect(region).toHaveValue('api.pcloud.com');
+        await region.selectOption('eapi.pcloud.com');
+        const pending = page.waitForResponse(
+          (response) => response.request().method() === 'PUT' && new URL(response.url()).pathname === endpoint
+        );
+        await save.click();
+        const response = await pending;
+        expect(response.ok(), await response.text()).toBe(true);
+        expect(storedUrl()).toBe(url.replace('api.pcloud.com', 'eapi.pcloud.com'));
+        expect(advancedOptions(await get())).toEqual(expectedOptions);
+        await page.reload();
+        await expect(region).toHaveValue('eapi.pcloud.com');
+        expect(writes).toHaveLength(4);
+        expect(unexpected).toEqual([]);
+        expect(errors).toEqual([]);
+      }
     } finally {
       const deleted = await api.delete(endpoint, {
         params: { 'delete-local-db': 'false', 'delete-remote-files': 'false' },

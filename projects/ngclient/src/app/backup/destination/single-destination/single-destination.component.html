@@ -336,14 +336,10 @@
         </sh-form-field>
       } @else if (item.formView.type === 'Enumeration') {
         @let options = mapOptions(item.formView);
+        @let field = destinationChoiceField(item.fieldGroup, item.formView.name);
 
-        @if (options) {
-          <sh-select
-            [options]="options"
-            [isClearable]="false"
-            [optionTemplate]="enumOptionTemplate"
-            label="key"
-            value="value">
+        @if (options && field) {
+          <div class="destination-enumeration">
             <label [for]="formFieldId">
               @if (item.formView.isMandatory && isFieldEmpty) {
                 <sup i18n-shTooltip shTooltip="This field is mandatory">*</sup>
@@ -363,16 +359,21 @@
                   }
                 "></ng-container>
             </label>
-            <input
-              type="text"
+            <select
+              #choiceSelect
               [id]="formFieldId"
-              [ngModel]="formInput"
-              (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
-          </sh-select>
-
-          <ng-template let-option #enumOptionTemplate>
-            {{ option.key }} {{ option.value && option.value != option.key ? '(' + option.value + ')' : '' }}
-          </ng-template>
+              [formField]="field"
+              (change)="updateFieldValue(item.fieldGroup, item.formView.name, choiceSelect.value)">
+              @if (!hasChoice(options, formInput)) {
+                <option [value]="formInput ?? ''" disabled>{{ formInput }}</option>
+              }
+              @for (option of options; track $index) {
+                <option [value]="option.value ?? ''">
+                  {{ option.key }} {{ option.value && option.value !== option.key ? '(' + option.value + ')' : '' }}
+                </option>
+              }
+            </select>
+          </div>
         }
       } @else if (item.formView.type === 'NonValidatedSelectableString') {
         @let options = mapOptionsWithFreeText(item.formView, formInput);
