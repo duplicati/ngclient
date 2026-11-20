@@ -59,6 +59,7 @@ import {
 } from '../destination.config-utilities';
 import { copyDestinationForm, DestinationEditSession } from '../destination-edit-session';
 import { BrowsePathDialog } from './browse-path-dialog/browse-path-dialog';
+import { NullableTextControl } from '../../general/nullable-text-control';
 
 /** ShipSelect serializes multiple choices into a comma-separated input value. */
 @Directive({
@@ -159,6 +160,7 @@ export function needsHostKeyApproval(url: string): boolean {
     RouterLink,
 
     FileTreeComponent,
+    NullableTextControl,
     SizeComponent,
     TimespanComponent,
     DestinationFlagsControl,
@@ -818,6 +820,23 @@ export class SingleDestinationComponent {
             )
       )
     );
+  }
+
+  #folderValues = linkedSignal(() => {
+    const values = this.destinationForm();
+    const config = this.destinationFormConfig();
+    const folders = (group: keyof DestinationFormValues): Record<string, string | null> =>
+      Object.fromEntries(
+        (config?.[group] ?? [])
+          .filter(({ type }) => type === 'FolderTree')
+          .map(({ name }) => [name, String(values[group][name] ?? '')])
+      );
+    return { custom: folders('custom'), dynamic: folders('dynamic'), advanced: folders('advanced') };
+  });
+  #folderForm = form(this.#folderValues);
+
+  destinationFolderField(group: keyof DestinationFormValues, name: string) {
+    return this.#folderForm[group][name];
   }
 
   #openBrowseDialog(fieldGroup: 'custom' | 'dynamic' | 'advanced', fieldName: string) {
