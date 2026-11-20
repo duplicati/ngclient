@@ -47,21 +47,29 @@ describe('FiltersComponent', () => {
     component.toggleBulkFilterEdit();
 
     expect(component.bulkFilterEditMode()).toBe(true);
-    expect(component.bulkFilters()).toBe('+important\n-*.tmp\n-cache/');
+    fixture.detectChanges();
+    const textarea = fixture.nativeElement.querySelector('textarea') as HTMLTextAreaElement;
+    expect(textarea.value).toBe('+important\n-*.tmp\n-cache/');
+    textarea.dispatchEvent(new Event('blur'));
+    expect(component.bulkFilterEditMode()).toBe(true);
   });
 
   it('normalizes and deduplicates filters saved from the bulk editor', () => {
-    component.bulkFilterEditMode.set(true);
-    component.bulkFilters.set(`
+    component.toggleBulkFilterEdit();
+    fixture.detectChanges();
+    const textarea = fixture.nativeElement.querySelector('textarea') as HTMLTextAreaElement;
+    textarea.value = `
       +important
       invalid
       -*.tmp
       +important
 
       -cache/
-    `);
+    `;
+    textarea.dispatchEvent(new Event('input'));
+    expect(component.filters()).toEqual([]);
 
-    component.saveBulkFilterEdit();
+    textarea.dispatchEvent(new Event('blur'));
 
     expect(component.filters()).toEqual(['+important', '-*.tmp', '-cache/']);
     expect(component.bulkFilterEditMode()).toBe(false);
