@@ -54,8 +54,7 @@
             <input
               type="text"
               id="search"
-              [(ngModel)]="searchQuery"
-              [ngModelOptions]="{ standalone: true }"
+              [formField]="inputForm.searchQuery"
               (keydown.enter)="$event.preventDefault(); performSearch()"
               i18n-placeholder
               placeholder="Enter search term..." />
@@ -81,11 +80,7 @@
           }
         </div>
         <label class="search-scope">
-          <input
-            type="checkbox"
-            [ngModel]="searchAllVersions()"
-            (ngModelChange)="searchAllVersions.set($event)"
-            [ngModelOptions]="{ standalone: true }" />
+          <input type="checkbox" [formField]="inputForm.searchAllVersions" />
           <span i18n>Search all versions</span>
         </label>
         @if (searchError()) {
