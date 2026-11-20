@@ -1,4 +1,4 @@
-import { form, FormField } from '@angular/forms/signals';
+import { applyEach, form, FormField, max, min } from '@angular/forms/signals';
 import { NullableTextControl } from '../general/nullable-text-control';
 import { KeyboardActionDirective } from '../../core/directives/keyboard-action.directive';
 import {
@@ -8,10 +8,11 @@ import {
   effect,
   inject,
   Injector,
+  linkedSignal,
   signal,
   viewChildren,
 } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
@@ -87,7 +88,6 @@ export type DestinationFormGroupValue = ReturnType<typeof createDestinationFormG
     DestinationListItemComponent,
     TestUrl,
 
-    FormsModule,
     ShipButton,
     ShipFormField,
     ShipMenu,
@@ -120,7 +120,22 @@ export default class DestinationComponent {
 
   targetUrls = this.#backupState.targetUrls;
   synchronizationMode = secondaryDestinationMode;
-  synchronizationCount = secondaryDestinationCount;
+  synchronizationValues = linkedSignal(() =>
+    this.targetUrls().map((target) => {
+      const count = secondaryDestinationCount(target);
+      return {
+        mode: secondaryDestinationMode(target) as string | null,
+        interval: target.interval ?? '',
+        count: typeof count === 'number' ? count : null,
+      };
+    })
+  );
+  synchronizationForm = form(this.synchronizationValues, (fields) => {
+    applyEach(fields, (row) => {
+      min(row.count, 1);
+      max(row.count, 2147483647);
+    });
+  });
   synchronizationError = secondaryDestinationError;
   hasInvalidSynchronization = computed(() => this.targetUrls().slice(1).some(secondaryDestinationError));
   #synchronizationModes = [

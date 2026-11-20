@@ -1,7 +1,7 @@
 @let currentTargets = targetUrls();
 @let hasDestination = currentTargets.length > 0;
 
-<form #formRef autocomplete="off" (submit)="next()">
+<form #formRef autocomplete="off" (submit)="$event.preventDefault(); next()">
   <div style="position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden">
     <input type="text" name="fake_email" tabindex="-1" />
     <input type="password" name="fake_password" tabindex="-1" />
@@ -64,20 +64,21 @@
                   <label [for]="'sync-mode-' + dest.uiKey" i18n>Synchronization mode</label>
                   <input
                     type="text"
+                    #modeInput
+                    appNullableText
                     [id]="'sync-mode-' + dest.uiKey"
-                    [ngModel]="synchronizationMode(dest)"
-                    (ngModelChange)="updateSynchronizationMode($index, $event)"
-                    [ngModelOptions]="{ standalone: true }" />
+                    [formField]="synchronizationForm[$index]!.mode"
+                    (input)="updateSynchronizationMode($index, modeInput.value)" />
                 </sh-select>
                 @if (synchronizationMode(dest) === 'interval') {
                   <sh-form-field>
                     <label [for]="'sync-interval-' + dest.uiKey" i18n>Synchronization interval</label>
                     <input
                       type="text"
+                      #intervalInput
                       [id]="'sync-interval-' + dest.uiKey"
-                      [ngModel]="dest.interval"
-                      (ngModelChange)="updateSynchronizationInterval($index, $event)"
-                      [ngModelOptions]="{ standalone: true }"
+                      [formField]="synchronizationForm[$index]!.interval"
+                      (input)="updateSynchronizationInterval($index, intervalInput.value)"
                       placeholder="7D"
                       [attr.aria-invalid]="synchronizationError(dest) === 'interval'" />
                   </sh-form-field>
@@ -90,13 +91,11 @@
                     <label [for]="'sync-count-' + dest.uiKey" i18n>Backup count</label>
                     <input
                       type="number"
-                      min="1"
-                      max="2147483647"
                       step="1"
+                      #countInput
                       [id]="'sync-count-' + dest.uiKey"
-                      [ngModel]="synchronizationCount(dest)"
-                      (ngModelChange)="updateSynchronizationCount($index, $event)"
-                      [ngModelOptions]="{ standalone: true }"
+                      [formField]="synchronizationForm[$index]!.count"
+                      (input)="updateSynchronizationCount($index, countInput.value ? countInput.valueAsNumber : null)"
                       [attr.aria-invalid]="synchronizationError(dest) === 'count'" />
                   </sh-form-field>
                   @if (synchronizationError(dest) === 'count') {
