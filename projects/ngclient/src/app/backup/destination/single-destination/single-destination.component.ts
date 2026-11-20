@@ -687,6 +687,23 @@ export class SingleDestinationComponent {
     return null;
   }
 
+  #booleanValues = linkedSignal(() => {
+    const values = this.destinationForm();
+    const config = this.destinationFormConfig();
+    const booleans = (group: keyof DestinationFormValues): Record<string, boolean> =>
+      Object.fromEntries(
+        (config?.[group] ?? [])
+          .filter(({ type }) => type === 'Boolean')
+          .map(({ name }) => [name, this.isTrue(values[group][name])])
+      );
+    return { custom: booleans('custom'), dynamic: booleans('dynamic'), advanced: booleans('advanced') };
+  });
+  #booleanForm = form(this.#booleanValues);
+
+  destinationBooleanField(group: keyof DestinationFormValues, name: string) {
+    return this.#booleanForm[group][name];
+  }
+
   mapOptionsWithFreeText(
     item: FormView,
     freeText: string | null | undefined

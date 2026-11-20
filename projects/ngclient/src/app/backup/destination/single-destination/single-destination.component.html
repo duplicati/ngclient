@@ -504,11 +504,11 @@
           </label>
 
           <input
+            #booleanInput
             type="checkbox"
-            [checked]="isTrue(formInput)"
-            (change)="
-              updateFieldValue(item.fieldGroup, item.formView.name, $event.target.checked ? 'true' : 'false')
-            " />
+            [id]="formFieldId"
+            [formField]="destinationBooleanField(item.fieldGroup, item.formView.name)"
+            (change)="updateFieldValue(item.fieldGroup, item.formView.name, booleanInput.checked ? 'true' : 'false')" />
         </sh-toggle>
       } @else if (item.formView.type === 'Flags') {
         @let options = mapOptions(item.formView);
