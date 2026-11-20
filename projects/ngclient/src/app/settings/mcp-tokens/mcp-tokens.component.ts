@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { form, FormField, maxLength } from '@angular/forms/signals';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipCheckbox } from '@ship-ui/core/ship-checkbox';
@@ -30,7 +31,7 @@ import { getMcpAgentInstructions, MCP_AGENT_OPTIONS, McpAgentId } from './mcp-ag
  */
 @Component({
   selector: 'app-mcp-tokens',
-  imports: [DatePipe, FormsModule, ShipAlert, ShipButton, ShipCheckbox, ShipFormField, ShipIcon, ShipSelect],
+  imports: [DatePipe, FormsModule, FormField, ShipAlert, ShipButton, ShipCheckbox, ShipFormField, ShipIcon, ShipSelect],
   templateUrl: './mcp-tokens.component.html',
   styleUrl: './mcp-tokens.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,6 +52,7 @@ export class McpTokensComponent {
   deletingId = signal<string | null>(null);
   showForm = signal(false);
   form = signal(emptyMcpTokenForm());
+  tokenFields = form(this.form, (fields) => maxLength(fields.name, 100));
   /** The token that was just created; the server does not give it out again */
   createdToken = signal<{ name: string; token: string } | null>(null);
   copied = signal(false);
