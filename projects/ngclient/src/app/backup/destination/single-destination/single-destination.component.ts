@@ -1,3 +1,4 @@
+import { disabled } from '@angular/forms/signals';
 import { KeyboardActionDirective } from '../../../core/directives/keyboard-action.directive';
 import { NgTemplateOutlet } from '@angular/common';
 import {
@@ -973,17 +974,19 @@ export class SingleDestinationComponent {
     });
   }
 
-  getIsDisabled(formFieldId: string): boolean {
-    const inputElement = document.getElementById(formFieldId) as HTMLInputElement | null;
-    return inputElement?.disabled ?? true;
-  }
-
-  toggleDisabled(formFieldId: string) {
-    const inputElement = document.getElementById(formFieldId) as HTMLInputElement | null;
-    if (inputElement) {
-      inputElement.disabled = !inputElement.disabled;
-    }
-  }
+  #showStorageIdEditor = computed(
+    () =>
+      this.destinationFormConfig()?.destinationType === 'duplicati' &&
+      !this.isRestoreFlow() &&
+      !!(this.hasManualStorageOptions() || (this.isConnectedToConsole() && this.hasStorageApiKey()))
+  );
+  storageIdEditable = linkedSignal({ source: this.#showStorageIdEditor, computation: () => false });
+  #storageIdValues = linkedSignal(() => ({
+    backupId: String(this.destinationForm().dynamic['duplicati-backup-id'] ?? ''),
+  }));
+  storageIdForm = form(this.#storageIdValues, (fields) => {
+    disabled(fields.backupId, () => !this.storageIdEditable());
+  });
 
   openConsole() {
     this.#remoteControlState.openConsole();

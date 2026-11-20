@@ -672,18 +672,24 @@
                     "></ng-container>
                 </label>
                 <input
-                  [type]="'text'"
+                  #storageIdInput
+                  type="text"
                   [id]="formFieldId"
-                  [ngModel]="formInput"
+                  [formField]="storageIdForm.backupId"
                   autocomplete="off"
                   [placeholder]="item.formView.longDescription"
-                  [disabled]="true"
-                  (ngModelChange)="updateFieldValue(item.fieldGroup, item.formView.name, $event)" />
+                  (input)="updateFieldValue(item.fieldGroup, item.formView.name, storageIdInput.value)" />
 
                 <sh-icon prefix>textbox</sh-icon>
               </sh-form-field>
-              @if (getIsDisabled(formFieldId)) {
-                <button shButton type="button" class="outlined" (click)="toggleDisabled(formFieldId)" i18n>
+              @if (!storageIdEditable()) {
+                <button
+                  shButton
+                  type="button"
+                  class="outlined"
+                  aria-label="Edit backup ID"
+                  i18n-aria-label
+                  (click)="storageIdEditable.set(true)">
                   <sh-icon>pencil</sh-icon>
                 </button>
               }
