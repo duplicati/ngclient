@@ -92,7 +92,7 @@
       [searchMode]="isSearchMode()"
       [searchResults]="searchResults()">
       <label for="path" i18n>Path</label>
-      <input type="text" id="path" [(ngModel)]="selectedPaths" [ngModelOptions]="{ standalone: true }" />
+      <input type="text" id="path" [formField]="selectedPathsForm" />
     </app-file-tree>
   }
 }
