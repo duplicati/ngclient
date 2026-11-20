@@ -283,7 +283,7 @@
 
     <div content>
       <sh-form-field>
-        <textarea id="targetUrl" autocomplete="off" [(ngModel)]="targetUrlCtrl"></textarea>
+        <textarea id="targetUrl" autocomplete="off" [formField]="inputForm.targetUrlCtrl" appNullableText></textarea>
       </sh-form-field>
     </div>
 

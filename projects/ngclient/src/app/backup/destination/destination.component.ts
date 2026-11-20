@@ -1,3 +1,5 @@
+import { form, FormField } from '@angular/forms/signals';
+import { NullableTextControl } from '../general/nullable-text-control';
 import { KeyboardActionDirective } from '../../core/directives/keyboard-action.directive';
 import {
   ChangeDetectionStrategy,
@@ -77,6 +79,8 @@ export type DestinationFormGroupValue = ReturnType<typeof createDestinationFormG
 @Component({
   selector: 'app-destination',
   imports: [
+    FormField,
+    NullableTextControl,
     KeyboardActionDirective,
     SingleDestinationComponent,
     DestinationListComponent,
@@ -154,7 +158,8 @@ export default class DestinationComponent {
     this.#backupState.updateTargetSynchronization(index, { options: { ...options, count } });
   }
   targetUrlModel = computed(() => this.targetUrls()[0]?.url ?? null);
-  targetUrlCtrl = signal<string | null>(null);
+  inputForm = form(signal({ targetUrlCtrl: null as string | null }));
+  targetUrlCtrl = this.inputForm.targetUrlCtrl().value;
   targetUrlInitial = signal<string | null>(null);
   currentEditingIndex = signal<number | null>(null);
   targetUrlDialogOpen = signal(false);
