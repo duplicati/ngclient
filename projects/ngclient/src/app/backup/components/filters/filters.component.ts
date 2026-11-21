@@ -17,6 +17,7 @@ import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipMenu } from '@ship-ui/core/ship-menu';
 import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
+import { form as signalForm } from '@angular/forms/signals';
 import ToggleCardComponent from '../../../core/components/toggle-card/toggle-card.component';
 import { NewFilterComponent } from '../../source-data/new-filter/new-filter.component';
 
@@ -43,7 +44,8 @@ export class FiltersComponent {
   osType = input<string>('');
   disableToggle = input<boolean>(true);
 
-  bulkFilterEditMode = signal(false);
+  bulkFilterEditModeField = signalForm(signal(false));
+  bulkFilterEditMode = this.bulkFilterEditModeField().value;
   bulkFilters = signal('');
   bulkFiltersForm = form(this.bulkFilters);
   lastAddedIndex = signal<number | null>(null);
