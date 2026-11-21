@@ -1,3 +1,4 @@
+import { form } from '@angular/forms/signals';
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, inject, input, signal } from '@angular/core';
 import { ShipButton } from '@ship-ui/core/ship-button';
@@ -38,7 +39,8 @@ export default class LogsLiveComponent {
     this.#logsLiveState.isPolling.set(polling);
   });
 
-  openRowId = signal<number | null>(null);
+  openRowIdField = form(signal<number | null>(null));
+  openRowId = this.openRowIdField().value;
 
   filterEffect = effect(() => {
     const whenFilter = this.whenFilter() ?? null;
