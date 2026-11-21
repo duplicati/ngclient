@@ -77,7 +77,9 @@ describe('TimespanComponent form values', () => {
     const component = await setup();
     const changed = vi.fn();
     component.registerOnChange(changed);
-    component.timespan.set(8);
+    const input = fixture.nativeElement.querySelector('input[type=number]') as HTMLInputElement;
+    input.value = '8';
+    input.dispatchEvent(new Event('input'));
     fixture.detectChanges();
     expect(changed).toHaveBeenLastCalledWith('8D');
     component.updateUnit('W');
