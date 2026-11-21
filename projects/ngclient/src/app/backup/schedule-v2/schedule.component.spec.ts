@@ -164,7 +164,7 @@ describe('ScheduleComponent date picker', () => {
     });
     expect(state.scheduleForm.nextTime.time().dirty()).toBe(true);
     expect(state.scheduleForm.nextTime.time().touched()).toBe(true);
-    state.scheduleForm().reset({ ...state.scheduleModel(), nextTime: { date: '2026-09-07', time: '11:30' } });
+    state.scheduleForm().reset({ ...state.scheduleForm().value(), nextTime: { date: '2026-09-07', time: '11:30' } });
     fixture.detectChanges();
     await fixture.whenStable();
     expect(time.value).toBe('11:30');
