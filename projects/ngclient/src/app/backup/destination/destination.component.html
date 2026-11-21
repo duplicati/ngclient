@@ -52,8 +52,13 @@
 
             @if (!dest.connectionStringId) {
               <div class="options-row" style="margin: 0 1rem 1rem 1rem">
-                <sh-toggle [color]="'primary'" [variant]="'raised'" [(checked)]="dest.save">
-                  <span label i18n>Save as connection string</span>
+                <sh-toggle [color]="'primary'" [variant]="'raised'">
+                  <label [for]="'save-connection-' + dest.uiKey" i18n>Save as connection string</label>
+                  <input
+                    type="checkbox"
+                    [id]="'save-connection-' + dest.uiKey"
+                    [formField]="targetForms[$index]!.save"
+                    (keydown.space)="$event.stopPropagation()" />
                 </sh-toggle>
               </div>
             }
