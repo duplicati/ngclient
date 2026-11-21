@@ -15,7 +15,10 @@ it('submits the token name and restore paths entered in the form', async () => {
   TestBed.configureTestingModule({
     providers: [
       { provide: DuplicatiServer, useValue: { getApiV2McpTokens: () => of({ Data: [] }), postApiV2McpTokens: post } },
-      { provide: BackupsState, useValue: { backups: signal([]), getBackups: () => {} } },
+      {
+        provide: BackupsState,
+        useValue: { backups: signal([{ Backup: { ID: '42', Name: 'Documents' } }]), getBackups: () => {} },
+      },
       { provide: SysinfoState, useValue: { systemInfo: signal(null) } },
       { provide: ShipDialogService, useValue: {} },
     ],
@@ -49,12 +52,16 @@ it('submits the token name and restore paths entered in the form', async () => {
     input.value = value;
     input.dispatchEvent(new Event('input', { bubbles: true }));
   }
+  root.querySelector<HTMLInputElement>('#mcp-all-backups')!.click();
+  fixture.detectChanges();
+  root.querySelector<HTMLInputElement>('.backup-list input:not(.internal-input)')!.click();
   fixture.componentInstance.create();
   expect(post).toHaveBeenCalledWith({
     body: expect.objectContaining({
       Name: 'Agent',
       Level: 'Restore',
       ExpiresIn: '1D',
+      BackupIds: ['42'],
       RestoreRoots: ['/tmp/a', '/tmp/b'],
     }),
   });
