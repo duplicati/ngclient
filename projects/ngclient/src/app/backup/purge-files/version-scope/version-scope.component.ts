@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, linkedSignal, signal } from '@angular/core';
 import { disabled, form, FormField } from '@angular/forms/signals';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
@@ -34,6 +34,11 @@ export default class PurgeVersionScopeComponent {
   versionScope = this.#state.versionScope;
   versionScopeField = form(this.versionScope);
   specificVersions = this.#state.specificVersions;
+  specificVersionsForm = form(
+    linkedSignal(() =>
+      Object.fromEntries(this.versions().map(({ Version }) => [String(Version), this.isVersionSelected(Version)]))
+    )
+  );
   selectedVersion = this.#state.selectedVersion;
   selectedVersionItem = this.#state.selectedVersionItem;
   selectedPathsArray = this.#state.selectedPathsArray;
