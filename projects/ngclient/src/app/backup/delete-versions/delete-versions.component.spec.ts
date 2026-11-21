@@ -91,7 +91,7 @@ describe('backup version deletion confirmation', () => {
     const { component, open, remove, navigate } = await setup();
     component.toggleSelected(9, null);
     component.toggleSelected(0, null);
-    component.performCompact.set(compact);
+    component.compactField().value.set(compact);
     component.deleteVersions();
     expect(remove).not.toHaveBeenCalled();
     open.mock.calls[0][1].closed(true);
