@@ -3,6 +3,7 @@ import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/f
 import { disabled, form, FormField } from '@angular/forms/signals';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipSelect } from '@ship-ui/core/ship-select';
+import { NullableTextControl } from '../../../backup/general/nullable-text-control';
 import { splitSize } from '../../functions/parse-size';
 
 const PER_SECOND_FIELDS = ['throttle-upload', 'throttle-download'];
@@ -36,7 +37,7 @@ export const SIZE_OPTIONS = [
 
 @Component({
   selector: 'app-size',
-  imports: [ShipSelect, ShipFormField, FormsModule, FormField],
+  imports: [ShipSelect, ShipFormField, FormsModule, FormField, NullableTextControl],
   templateUrl: './size.component.html',
   styleUrl: './size.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,7 +55,8 @@ export class SizeComponent implements ControlValueAccessor {
   sizeChange = output<string>();
 
   timespan = signal<number | null>(0);
-  unit = signal('MB');
+  unit = signal<string | null>('MB');
+  unitField = form(this.unit);
   sizeOptions = signal(SIZE_OPTIONS);
   readonly = signal(false);
   amountField = form(this.timespan, (field) => disabled(field, () => this.readonly()));

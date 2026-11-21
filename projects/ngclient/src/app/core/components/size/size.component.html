@@ -16,7 +16,7 @@
   [style.--miw]="0"
   [readonly]="readonly()"
   [isClearable]="false">
-  <input type="text" [(ngModel)]="unit" />
+  <input type="text" appNullableText [formField]="unitField" />
 
   <ng-template let-option>{{ option.label }}{{ hasPerSecond() ? '/s' : '' }}</ng-template>
 </sh-select>
