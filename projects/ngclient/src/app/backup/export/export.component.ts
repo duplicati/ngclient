@@ -53,10 +53,16 @@ export default class ExportComponent {
   isRequiredError = (error: { kind: string }) => error.kind === 'required';
   isMinLengthError = (error: { kind: string }) => error.kind === 'minLength';
   isExporting = signal(false);
-  exportType = signal<'file' | 'cmd'>('file');
   exportedCmd = signal<string | null>(null);
   exportForm = form(
-    signal<{ exportPasswords: boolean; encryption: boolean; password: string | null; repeatPassword: string | null }>({
+    signal<{
+      mode: 'file' | 'cmd';
+      exportPasswords: boolean;
+      encryption: boolean;
+      password: string | null;
+      repeatPassword: string | null;
+    }>({
+      mode: 'file',
       exportPasswords: true,
       encryption: false,
       password: '',
@@ -85,6 +91,7 @@ export default class ExportComponent {
   );
 
   exportFormSignal = this.exportForm().value;
+  exportType = this.exportForm.mode().value;
   encryptionFieldSignal = computed(
     () => (this.exportFormSignal()?.encryption ?? false) && this.exportType() === 'file'
   );
