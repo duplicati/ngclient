@@ -91,6 +91,15 @@ describe('OptionsComponent form bindings', () => {
     TestBed.resetTestingModule();
   });
 
+  it('shares advanced option edits with the backup settings', async () => {
+    await render([{ Name: '--retry-delay', Value: '10s' }]);
+    const field = fixture.componentInstance.advancedOptionsField;
+    expect(field().value()).toContainEqual(expect.objectContaining({ Name: '--retry-delay', Value: '10s' }));
+    field().value.set([{ Name: '--retry-delay', Value: '20s' }]);
+
+    expect(state.mapFormsToSettings()).toContainEqual(expect.objectContaining({ Name: '--retry-delay', Value: '20s' }));
+  });
+
   it.each([
     ['keep-versions', '5', '#backupRetentionVersions', '7'],
     ['keep-time', '3D', '#backupRetentionTime', '9'],
