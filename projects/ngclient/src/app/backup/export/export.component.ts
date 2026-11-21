@@ -99,7 +99,8 @@ export default class ExportComponent {
     this.#backups.backups().find((x) => x.Backup?.ID === this.#route.snapshot.params['id'])
   );
 
-  showPassword = signal(false);
+  passwordVisibilityField = form(signal(false));
+  showPassword = this.passwordVisibilityField().value;
   copiedPassword = signal(false);
   showCopyPassword = signal(false);
   calculatePasswordStrength = computed(() => {
