@@ -89,8 +89,8 @@ describe('backup version deletion confirmation', () => {
 
   it.each([true, false])('deletes selected IDs only after confirmation with compact=%s', async (compact) => {
     const { component, open, remove, navigate } = await setup();
-    component.toggleSelected(9, null);
-    component.toggleSelected(0, null);
+    component.versionsForm[2]!.Selected().value.set(true);
+    component.versionsForm[0]!.Selected().value.set(true);
     component.compactField().value.set(compact);
     component.deleteVersions();
     expect(remove).not.toHaveBeenCalled();
