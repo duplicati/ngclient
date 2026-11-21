@@ -68,7 +68,7 @@ describe('OptionsComponent form bindings', () => {
       ],
     });
     state = TestBed.inject(BackupState);
-    state.generalForm.controls.operationType.setValue(sync ? 'Sync' : 'Backup');
+    state.operationType.set(sync ? 'Sync' : 'Backup');
     state.mapOptionsToForms({ Settings: settings } as BackupDto);
     fixture = TestBed.createComponent(OptionsComponent);
     fixture.detectChanges();

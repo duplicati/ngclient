@@ -108,7 +108,8 @@ describe('GeneralComponent editing contracts', () => {
     await settle();
     expect(fixture.nativeElement.querySelector('input[placeholder="Your backup name"]').value).toBe('Loaded');
     expect(fixture.nativeElement.querySelector('#backupDescription').value).toBe('From server');
-    state.generalForm.reset({ operationType: 'Backup' });
+    state.generalForm.reset();
+    state.operationType.set('Backup');
     await settle();
     expect(fixture.nativeElement.querySelector('input[placeholder="Your backup name"]').value).toBe('');
     expect(state.generalForm.controls.name.pristine).toBe(true);
@@ -158,12 +159,12 @@ describe('GeneralComponent editing contracts', () => {
     await input('#repeatPassword', 'secret');
     (fixture.nativeElement.querySelector('button[value=Sync]') as HTMLButtonElement).click();
     await settle();
-    expect(state.generalForm.controls.operationType.value).toBe('Sync');
+    expect(state.operationType()).toBe('Sync');
     expect(fixture.nativeElement.querySelector('sh-select')).toBeNull();
     expect(state.mapFormsToSettings()).toEqual([{ Name: '--no-encryption', Value: 'True' }]);
     (fixture.nativeElement.querySelector('button[value=Backup]') as HTMLButtonElement).click();
     await settle();
-    expect(state.generalForm.controls.operationType.value).toBe('Backup');
+    expect(state.operationType()).toBe('Backup');
     expect(state.generalForm.controls.password.value).toBe('secret');
     expect(fixture.nativeElement.querySelector('#password').value).toBe('secret');
   });

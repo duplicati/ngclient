@@ -70,7 +70,7 @@ describe('BackupState retention policy editing', () => {
   });
   it('omits backup retention options for synchronization jobs', () => {
     load('retention-policy', '1W:1D,4W:1W,12M:1M');
-    state.generalForm.controls.operationType.setValue('Sync');
+    state.operationType.set('Sync');
     expect(savedRetention()).toEqual([]);
   });
 });

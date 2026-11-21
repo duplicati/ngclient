@@ -23,6 +23,7 @@ import {
   BackupDto,
   DuplicatiServer,
   ICommandLineArgument,
+  OperationType,
   ScheduleDto,
   SettingDto,
   SettingInputDto,
@@ -91,6 +92,8 @@ export class BackupState {
   #connectionStringsState = inject(ConnectionStringsState);
 
   generalForm = createGeneralForm();
+  operationTypeField = form(signal<OperationType>('Backup'));
+  operationType = this.operationTypeField().value;
   sourceDataForm = createSourceDataForm();
   readonly scheduleForm = form(signal(SCHEDULE_FIELD_DEFAULTS()));
   scheduleType = signal<string>('daily');
@@ -150,7 +153,7 @@ export class BackupState {
   isNew = computed(() => this.backupId() === 'new');
   shouldAutoSave = computed(() => !this.isDraft() && !this.isNew());
   osType = computed(() => this.#sysinfo.systemInfo()?.OSType);
-  isSyncMode = computed(() => this.generalForm.controls.operationType.value === 'Sync');
+  isSyncMode = computed(() => this.operationType() === 'Sync');
 
   isConnectionStringSaved = computed(() => {
     const targetUrl = this.targetUrlModel();
@@ -163,7 +166,6 @@ export class BackupState {
   sourceDataFormSignal = toSignal(this.sourceDataForm.valueChanges);
   generalFormSignal = toSignal(this.generalForm.valueChanges);
   encryptionFieldSignal = toSignal(this.generalForm.controls.encryption.valueChanges);
-  operationTypeFieldSignal = toSignal(this.generalForm.controls.operationType.valueChanges);
 
   advancedOptions = computed(() => {
     return this.#sysinfo.systemInfo()?.Options?.map(this.#mapCommandLineArgumentsToFormViews) ?? [];
@@ -371,7 +373,7 @@ export class BackupState {
     const backup = this.#mapFormsToBackup();
 
     const isNameValid = (backup.Backup.Name ?? '').trim() !== '';
-    const isSyncMode = this.generalForm.controls.operationType.value === 'Sync';
+    const isSyncMode = this.operationType() === 'Sync';
     const isUsingEncryption =
       !isSyncMode &&
       this.generalForm.controls.encryption.value !== '' &&
@@ -487,7 +489,9 @@ export class BackupState {
   }
 
   mapGeneralToForm(backup: BackupDto) {
-    this.generalForm.patchValue(mapBackupToGeneralForm(backup));
+    const { operationType, ...general } = mapBackupToGeneralForm(backup);
+    this.generalForm.patchValue(general);
+    this.operationType.set(operationType ?? 'Backup');
     this.runAfterBackupId.set(backup.RunAfterBackupID ?? null);
     this.runAfterAlways.set(backup.RunAfterCondition === 'Always');
     this.descriptionField().value.set(backup.Description ?? '');
@@ -576,6 +580,7 @@ export class BackupState {
       targetUrls: this.targetUrls(),
       settings: this.mapFormsToSettings(),
     });
+    backup.Backup!.OperationType = this.operationType();
     const reused = this.reusedDatabase();
     if (this.isNew() && !this.isSyncMode() && reused && reused.url === this.targetUrls()[0]?.url)
       backup.Backup!.DBPath = reused.path;
@@ -585,7 +590,7 @@ export class BackupState {
 
   mapFormsToSettings(settingsIgnoreList: string[] = []) {
     return mapBackupFormToSettings(
-      this.generalForm.value,
+      { ...this.generalForm.value, operationType: this.operationType() },
       this.optionsModel(),
       this.settings(),
       this.isSyncMode(),
@@ -719,7 +724,8 @@ export class BackupState {
 
   #resetAllForms() {
     this.reusedDatabase.set(null);
-    this.generalForm.reset({ operationType: 'Backup' });
+    this.generalForm.reset();
+    this.operationTypeField().reset('Backup');
     this.sourceDataForm.reset();
     this.scheduleForm().reset(SCHEDULE_FIELD_DEFAULTS());
     this.runAfterBackupId.set(null);

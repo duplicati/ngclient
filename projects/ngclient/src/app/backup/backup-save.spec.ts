@@ -72,7 +72,7 @@ describe('backup save lifecycle', () => {
 
   it('does not reuse a versioned database after switching the new job to Sync', () => {
     state.reusedDatabase.set({ url: 'file:///backup', path: '/shared.sqlite' });
-    state.generalForm.controls.operationType.setValue('Sync');
+    state.operationType.set('Sync');
     state.submit();
     expect(create.mock.calls[0][0].body.Backup.DBPath).toBeUndefined();
     expect(create.mock.calls[0][0].query).toBeUndefined();
@@ -107,7 +107,7 @@ describe('backup save lifecycle', () => {
     if (kind === 'edit') state.backupId.set('42');
     if (kind === 'encrypted')
       state.generalForm.patchValue({ encryption: 'aes', password: 'secret', repeatPassword: 'secret' });
-    if (kind === 'sync') state.generalForm.controls.operationType.setValue('Sync');
+    if (kind === 'sync') state.operationType.set('Sync');
     state.submit();
     expect(open).not.toHaveBeenCalled();
     expect(kind === 'edit' ? update : create).toHaveBeenCalledOnce();
