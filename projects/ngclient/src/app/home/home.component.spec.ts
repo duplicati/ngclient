@@ -17,11 +17,12 @@ describe('home search Signal Form', () => {
   afterEach(() => TestBed.resetTestingModule());
   function setup(names: Array<string | null> = ['Alpha', 'Beta', 'Gamma', 'Delta']) {
     const backups = signal(names.map((Name) => ({ Backup: { Name } })));
+    const setOrderBy = vi.fn();
     TestBed.configureTestingModule({
       providers: [
         {
           provide: BackupsState,
-          useValue: { backups, orderBy: signal('Name'), setOrderBy: vi.fn(), getBackups: vi.fn() },
+          useValue: { backups, orderBy: signal('name'), setOrderBy, getBackups: vi.fn() },
         },
         { provide: StatusBarState, useValue: {} },
         { provide: ServerStateService, useValue: {} },
@@ -33,12 +34,21 @@ describe('home search Signal Form', () => {
       ],
     });
     const component = TestBed.runInInjectionContext(() => new HomeComponent());
-    return { component, backups };
+    return { component, backups, setOrderBy };
   }
   it('trims and ignores case while matching backup names', async () => {
     const { component } = await setup();
     component.searchForm.query().value.set('  aLpHa  ');
     expect(component.filteredBackups().map((x) => x.Backup.Name)).toEqual(['Alpha']);
+  });
+  it('initializes the sort field from backup state and persists a change', () => {
+    const { component, setOrderBy } = setup();
+    expect(component.sortField().value()).toBe('name');
+    TestBed.tick();
+    component.sortByColumn.set('-name');
+    TestBed.tick();
+    expect(component.sortField().value()).toBe('-name');
+    expect(setOrderBy).toHaveBeenLastCalledWith('-name');
   });
   it('returns every backup when the query is cleared or only whitespace', async () => {
     const { component, backups } = await setup();
