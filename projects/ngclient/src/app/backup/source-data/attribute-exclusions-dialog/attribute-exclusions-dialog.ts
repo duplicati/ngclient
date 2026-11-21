@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, linkedSignal, output } from '@angular/core';
+import { form, FormField } from '@angular/forms/signals';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipCheckbox } from '@ship-ui/core/ship-checkbox';
 
 @Component({
   selector: 'app-attribute-exclusions-dialog',
-  imports: [ShipButton, ShipCheckbox],
+  imports: [ShipButton, ShipCheckbox, FormField],
   templateUrl: './attribute-exclusions-dialog.html',
   styleUrl: './attribute-exclusions-dialog.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -16,7 +17,6 @@ export class AttributeExclusionsDialog {
   }>();
   closed = output<string[] | null>();
 
-  selected = signal<string[]>([]);
   // Keep configured values the server does not list, so saving never drops them silently.
   options = computed(() => {
     const options = this.data()?.options ?? [];
@@ -24,21 +24,16 @@ export class AttributeExclusionsDialog {
     return [...options, ...(this.data()?.selected ?? []).filter((x) => !known.has(x.toLowerCase()))];
   });
 
-  dataEffect = effect(() => {
-    this.selected.set(this.data()?.selected ?? []);
+  selected = linkedSignal(() => {
+    const selected = new Set(this.data()?.selected.map((option) => option.toLowerCase()));
+    return Object.fromEntries(
+      this.options().map((option) => [option.toLowerCase(), selected.has(option.toLowerCase())])
+    );
   });
-
-  isSelected(option: string) {
-    return this.selected().some((x) => x.toLowerCase() === option.toLowerCase());
-  }
-
-  toggle(option: string, checked: boolean) {
-    const others = this.selected().filter((x) => x.toLowerCase() !== option.toLowerCase());
-    this.selected.set(checked ? [...others, option] : others);
-  }
+  selectionForm = form(this.selected);
 
   submit() {
     // Emit in the listed order so the saved value is stable regardless of click order.
-    this.closed.emit(this.options().filter((x) => this.isSelected(x)));
+    this.closed.emit(this.options().filter((option) => this.selected()[option.toLowerCase()]));
   }
 }
