@@ -34,6 +34,7 @@ describe('live log cursor, accumulation and polling', () => {
   it('requests the configured level and page size, then records the highest ID and newest-first order', () => {
     const { state, poll, responses } = setup();
     state.updateLogLevel('Warning');
+    expect(state.logLevelField().value()).toBe('Warning');
     state.pagination.set({ offset: 0, pagesize: 25 });
     state.loadLogs();
     expect(poll).toHaveBeenCalledExactlyOnceWith({ query: { id: 0, level: 'Warning', pagesize: 25 } });

@@ -1,4 +1,5 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
+import { form } from '@angular/forms/signals';
 import { defer, finalize, Subscription } from 'rxjs';
 import { DuplicatiServer, LogEntry, LogMessageType } from '../../../core/openapi';
 
@@ -55,7 +56,8 @@ export class LogsLiveState {
   #pollingGeneration = 0;
 
   LOG_LEVELS = LOG_LEVELS;
-  logLevel = signal('Disabled');
+  logLevelField = form(signal('Disabled'));
+  logLevel = this.logLevelField().value;
   logLevelByLabel = computed(() => LOG_LEVELS.find((level) => level.value === this.logLevel())?.label);
 
   whenFilter = signal<number | null>(null);
