@@ -65,7 +65,7 @@ describe('command execution confirmation and arguments', () => {
     TestBed.overrideComponent(CommandlineComponent, {
       set: {
         template: renderFields
-          ? '<input id="test-command" appNullableText [formField]="commandFields.command" /><textarea id="test-args" appNullableText [formField]="commandFields.arguments"></textarea>'
+          ? '<input id="test-command" appNullableText [formField]="commandFields.command" (valueChange)="updateCommandArguments($event)" /><textarea id="test-args" appNullableText [formField]="commandFields.arguments"></textarea>'
           : '',
         imports: renderFields ? [FormField, NullableTextControl] : [],
         providers: [],
@@ -93,8 +93,8 @@ describe('command execution confirmation and arguments', () => {
     command.dispatchEvent(new Event('input', { bubbles: true }));
     fixture.detectChanges();
     await fixture.whenStable();
-    expect(component.baseCmdForm.controls.command.value).toBe('test');
-    expect(component.baseCmdForm.controls.arguments.value).toBe('');
+    expect(component.commandModel().command).toBe('test');
+    expect(component.commandModel().arguments).toBe('');
     const args = fixture.nativeElement.querySelector('#test-args') as HTMLTextAreaElement;
     args.value = '4';
     args.dispatchEvent(new Event('input', { bubbles: true }));
@@ -103,7 +103,7 @@ describe('command execution confirmation and arguments', () => {
     component.submit();
     confirm.mock.calls[0][0]();
     expect(run).toHaveBeenCalledWith({ body: expect.arrayContaining(['test', 'file:///backup', '4']) });
-    expect(component.baseCmdForm.controls.arguments.value).toBe('4');
+    expect(component.commandModel().arguments).toBe('4');
   });
 
   it('does not execute or save editor state before the resume confirmation accepts', () => {
@@ -116,7 +116,8 @@ describe('command execution confirmation and arguments', () => {
   });
   it('sends separate arguments and filters, and preserves spaces without shell quoting', () => {
     const { component, confirm, run, state } = setup();
-    component.baseCmdForm.patchValue({
+    component.commandModel.set({
+      targetUrl: component.commandModel().targetUrl,
       command: 'test',
       arguments: ['/source path', '', '/second'].join(String.fromCharCode(10)),
     });
@@ -186,7 +187,7 @@ describe('command execution confirmation and arguments', () => {
     };
     const { component, state, getState } = setup(saved);
     expect(getState).toHaveBeenCalledExactlyOnceWith('previous-state');
-    expect(component.baseCmdForm.value).toEqual({
+    expect(component.commandModel()).toEqual({
       command: 'list',
       targetUrl: 'file:///other',
       arguments: 'pattern with spaces',
@@ -203,22 +204,26 @@ describe('command execution confirmation and arguments', () => {
   });
   it('fills the backup sources as arguments of the backup command only', () => {
     const { component } = setup();
-    expect(component.baseCmdForm.value.arguments).toBe('/source');
+    expect(component.commandModel().arguments).toBe('/source');
 
     // The sources are not arguments of other commands, test takes a number of samples (duplicati#4082)
-    component.baseCmdForm.controls.command.setValue('test');
-    expect(component.baseCmdForm.value.arguments).toBe('');
+    component.commandFields.command().value.set('test');
+    component.updateCommandArguments('test');
+    expect(component.commandModel().arguments).toBe('');
 
-    component.baseCmdForm.controls.command.setValue('backup');
-    expect(component.baseCmdForm.value.arguments).toBe('/source');
+    component.commandFields.command().value.set('backup');
+    component.updateCommandArguments('backup');
+    expect(component.commandModel().arguments).toBe('/source');
   });
   it('keeps arguments the user typed when the command changes', () => {
     const { component } = setup();
-    component.baseCmdForm.controls.arguments.setValue('5');
-    component.baseCmdForm.controls.command.setValue('test');
-    expect(component.baseCmdForm.value.arguments).toBe('5');
+    component.commandFields.arguments().value.set('5');
+    component.commandFields.command().value.set('test');
+    component.updateCommandArguments('test');
+    expect(component.commandModel().arguments).toBe('5');
 
-    component.baseCmdForm.controls.command.setValue('backup');
-    expect(component.baseCmdForm.value.arguments).toBe('5');
+    component.commandFields.command().value.set('backup');
+    component.updateCommandArguments('backup');
+    expect(component.commandModel().arguments).toBe('5');
   });
 });

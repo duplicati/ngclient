@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder } from '@angular/forms';
-import { FormField, provideSignalFormsConfig } from '@angular/forms/signals';
+import { form, FormField, provideSignalFormsConfig } from '@angular/forms/signals';
 import { compatForm, NG_STATUS_CLASSES } from '@angular/forms/signals/compat';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { defer } from 'rxjs';
@@ -71,13 +71,12 @@ export default class CommandlineComponent {
     filters: fb.array<string>([]),
   });
 
-  baseCmdForm = fb.group({
-    command: fb.control('backup'),
-    targetUrl: fb.control(''),
-    arguments: fb.control(''),
+  commandModel = signal<{ command: string | null; targetUrl: string | null; arguments: string | null }>({
+    command: 'backup',
+    targetUrl: '',
+    arguments: '',
   });
-
-  commandFields = compatForm(signal(this.baseCmdForm.controls));
+  commandFields = form(this.commandModel);
   metadataFields = compatForm(signal(this.standardFields.controls));
 
   // The backup sources, which are the arguments of the backup command only
@@ -85,11 +84,11 @@ export default class CommandlineComponent {
 
   // Other commands take other arguments, test takes a number of samples (duplicati#4082),
   // so the sources are only kept while they are unchanged and the command is backup
-  #commandChanges = this.baseCmdForm.controls.command.valueChanges.pipe(takeUntilDestroyed()).subscribe((command) => {
-    const args = this.baseCmdForm.controls.arguments;
-    if (command !== 'backup' && args.value === this.#sources) args.setValue('');
-    else if (command === 'backup' && args.value === '') args.setValue(this.#sources);
-  });
+  updateCommandArguments(command: string | null) {
+    const args = this.commandFields.arguments().value;
+    if (command !== 'backup' && args() === this.#sources) args.set('');
+    else if (command === 'backup' && args() === '') args.set(this.#sources);
+  }
 
   finishedLoading = this.#backupState.finishedLoading;
   backupId = this.#backupState.backupId;
@@ -157,7 +156,7 @@ export default class CommandlineComponent {
   #submit() {
     this.isSubmitting.set(true);
     const stateId = this.updateUrl();
-    const baseCmd = this.baseCmdForm.value;
+    const baseCmd = this.commandModel();
     const targetUrl = baseCmd.targetUrl ?? '';
     const baseArgs = (baseCmd.arguments ?? '').split('\n') ?? [];
     const args = [targetUrl, ...baseArgs].filter((x) => x.length > 0);
@@ -201,14 +200,15 @@ export default class CommandlineComponent {
     if (!targetBaseUrl) return;
 
     this.#sources = backup.Sources?.join('\n') ?? '';
-    this.baseCmdForm.patchValue({
-      targetUrl: targetBaseUrl ?? '',
-      arguments: this.baseCmdForm.value.command === 'backup' ? this.#sources : '',
-    });
+    this.commandModel.update((model) => ({
+      ...model,
+      targetUrl: targetBaseUrl,
+      arguments: model.command === 'backup' ? this.#sources : '',
+    }));
   }
 
   updateUrl() {
-    const baseCmd = this.baseCmdForm.value;
+    const baseCmd = this.commandModel();
     const stdForm = this.standardFields.value;
     const filters = stdForm.filters ?? [];
     const options = this.settings();
@@ -243,7 +243,7 @@ export default class CommandlineComponent {
 
     if (!state) return;
 
-    this.baseCmdForm.patchValue({
+    this.commandModel.set({
       command: state.command,
       targetUrl: state.targetUrl,
       arguments: state.arguments,
