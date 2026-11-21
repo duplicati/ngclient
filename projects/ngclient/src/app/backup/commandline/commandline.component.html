@@ -68,7 +68,7 @@
         <input id="backup-name" appNullableText [formField]="metadataFields['backup-name']" />
       </sh-form-field>
 
-      <app-filters [(filters)]="filters" [osType]="osType() ?? ''" (filtersChange)="updateFilters($event)" />
+      <app-filters [(filters)]="filters" [osType]="osType() ?? ''" />
     </form>
 
     <app-options-list [(options)]="settings" [hasFreeTextSettings]="true" />
