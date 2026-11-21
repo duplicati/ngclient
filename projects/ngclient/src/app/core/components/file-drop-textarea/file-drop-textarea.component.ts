@@ -8,7 +8,8 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { disabled, form, FormField } from '@angular/forms/signals';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 
@@ -17,7 +18,7 @@ import { ShipIcon } from '@ship-ui/core/ship-icon';
   templateUrl: './file-drop-textarea.component.html',
   styleUrls: ['./file-drop-textarea.component.scss'],
   standalone: true,
-  imports: [FormsModule, ShipIcon, ShipButton],
+  imports: [FormField, ShipIcon, ShipButton],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
@@ -29,9 +30,10 @@ import { ShipIcon } from '@ship-ui/core/ship-icon';
 })
 export class FileDropTextareaComponent implements ControlValueAccessor {
   customId = input<string>();
-  content = signal('');
-  contentEdit = output<string>();
   readonly = signal(false);
+  textForm = form(signal({ content: '' }), (fields) => disabled(fields.content, () => this.readonly()));
+  content = this.textForm.content().value;
+  contentEdit = output<string>();
   placeholder = input<string | null>($localize`Drop a file here or use the browse button`);
 
   fileInputRef = viewChild<ElementRef<HTMLInputElement>>('fileInput');

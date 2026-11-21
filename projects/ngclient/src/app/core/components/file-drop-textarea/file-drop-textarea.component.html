@@ -8,9 +8,9 @@
 <div class="textarea-container textarea-wrap" (drop)="onFileDrop($event)" (dragover)="onDragOver($event)">
   <textarea
     [placeholder]="placeholder()"
-    [ngModel]="content()"
-    (ngModelChange)="updateContent($event)"
-    [disabled]="readonly()"
+    #textarea
+    [formField]="textForm.content"
+    (input)="contentEdit.emit(textarea.value)"
     rows="10"></textarea>
 </div>
 

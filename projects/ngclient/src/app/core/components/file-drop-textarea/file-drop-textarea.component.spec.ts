@@ -87,6 +87,19 @@ describe('disabled file-drop form control', () => {
     expect(component.content()).toBe('New configuration');
     expect(changed).toHaveBeenCalledExactlyOnceWith('New configuration');
   });
+  it('propagates typed multiline text through the form and edit output', async () => {
+    const { component, changed } = await setup();
+    const edited = vi.fn();
+    component.contentEdit.subscribe(edited);
+    const textarea = fixture.nativeElement.querySelector('textarea') as HTMLTextAreaElement;
+    textarea.value = 'First line\nSecond line';
+    textarea.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect(component.content()).toBe(textarea.value);
+    expect(changed).toHaveBeenCalledExactlyOnceWith(textarea.value);
+    expect(edited).toHaveBeenCalledExactlyOnceWith(textarea.value);
+  });
   it('allows file selection again after the control is re-enabled', async () => {
     const { component, changed } = await setup(true);
     select(component);
