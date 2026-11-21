@@ -18,7 +18,7 @@
         [class.loading]="isExporting()"
         [disabled]="
           exportForm().invalid() ||
-          (showCopyPassword() && !copiedPassword()) ||
+          (showCopyPassword() && !passwordCopied()) ||
           (encryptionFieldSignal() && exportForm.repeatPassword().value() !== exportForm.password().value())
         ">
         <sh-icon>export</sh-icon>
@@ -141,7 +141,7 @@
 
         @if (showCopyPassword()) {
           <button shButton type="button" class="small copy" (click)="copyPassword()" i18n>
-            @if (copiedPassword()) {
+            @if (passwordCopied()) {
               <sh-icon class="sh-success">check</sh-icon>
               Copied password
             } @else {
