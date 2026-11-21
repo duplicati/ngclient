@@ -30,7 +30,8 @@ export class SslCertificateComponent {
 
   isInsecureConnection = isInsecureConnection(inject(PAGE_LOCATION));
 
-  files = signal<File[]>([]);
+  filesField = form(signal<File[]>([]));
+  files = this.filesField().value;
   readonly passwordModel = signal({ password: '' });
   readonly passwordForm = form(this.passwordModel);
   readonly password = this.passwordForm.password().value;
