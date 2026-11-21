@@ -219,8 +219,9 @@
 
   <div class="footer">
     @if (!accepts() && !isByBackupSettings() && customRemoteMode() === null && !searchMode()) {
-      <sh-toggle [(checked)]="_showHiddenNodes" class="primary raised browse-files-toggle" i18n>
+      <sh-toggle class="primary raised browse-files-toggle" i18n>
         Show hidden {{ showFiles() ? 'files' : 'folders' }}
+        <input type="checkbox" [formField]="showHiddenField" />
       </sh-toggle>
     }
 

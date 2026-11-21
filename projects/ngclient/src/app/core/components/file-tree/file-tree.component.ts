@@ -191,6 +191,7 @@ export default class FileTreeComponent {
   searchParentMetadata = input<{ [path: string]: { [key: string]: string | null } | null | undefined }>({});
 
   _showHiddenNodes = signal(false);
+  showHiddenField = form(this._showHiddenNodes);
   maximized = signal(false);
   maximizeLabels = {
     maximize: $localize`Maximize file tree`,
