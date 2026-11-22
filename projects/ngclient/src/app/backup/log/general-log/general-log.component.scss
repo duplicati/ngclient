@@ -21,28 +21,30 @@
 .log-entry {
   display: flex;
   flex-direction: column;
-  cursor: pointer;
-
-  header {
+  .log-entry-toggle {
     display: flex;
     align-items: center;
     gap: p2r(8);
     padding: p2r(16);
+    width: 100%;
+    border: 0;
     border-bottom: 1px solid var(--base-4);
     background-color: var(--base-1);
+    color: inherit;
+    font: var(--paragraph-30);
+    text-align: start;
     cursor: pointer;
 
     &:hover {
       background-color: var(--base-2);
     }
 
-    h3 {
-      font: var(--paragraph-30);
-      margin: 0;
+    &:focus-visible {
+      outline: 2px solid var(--base-12);
+      outline-offset: -2px;
     }
 
-    p {
-      font: var(--paragraph-30);
+    .log-summary {
       color: var(--base-8);
     }
   }

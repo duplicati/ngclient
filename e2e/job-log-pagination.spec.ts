@@ -38,8 +38,15 @@ test('older job logs use an ID cursor, retry a failed page, and return to newer 
   await expect(log.getByRole('alert')).toHaveText('Could not load log entries.');
   await log.getByRole('button', { name: 'Retry', exact: true }).click();
   await expect(log.locator('article.log-entry')).toHaveCount(2);
-  await log.locator('article.log-entry').first().locator('header').click();
+  const entry = log.locator('article.log-entry header').first().getByRole('button');
+  await expect(entry).toHaveAttribute('aria-expanded', 'false');
+  await entry.press('Enter');
+  await expect(entry).toHaveAttribute('aria-expanded', 'true');
   await expect(log.locator('.raw-log code')).toHaveText('Log 1300');
+  await entry.press('Space');
+  await expect(entry).toBeFocused();
+  await expect(entry).toHaveAttribute('aria-expanded', 'false');
+  await expect(log.locator('.raw-log code')).toHaveCount(0);
   await expect(log.getByRole('button', { name: 'Older entries', exact: true })).toBeDisabled();
   await log.getByRole('button', { name: 'Newer entries', exact: true }).click();
   await expect(log.locator('article.log-entry')).toHaveCount(100);

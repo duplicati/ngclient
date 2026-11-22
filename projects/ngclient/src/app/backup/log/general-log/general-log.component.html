@@ -24,20 +24,22 @@
 
 @for (item of resource.hasValue() ? resource.value() : []; track item.id) {
   <article class="log-entry">
-    <header (click)="toggleOpenEntry(item)">
-      <div class="status" [class]="getStatusClass(item)"></div>
-      <h3>{{ item.timestamp | date: 'medium' }}</h3>
-      <p>
-        {{ item.data?.MainOperation || item.type }}
+    <header>
+      <button
+        type="button"
+        class="log-entry-toggle"
+        [attr.aria-expanded]="item.id === openEntry()"
+        (click)="toggleOpenEntry(item)">
+        <span class="status" [class]="getStatusClass(item)"></span>
+        <span>{{ item.timestamp | date: 'medium' }}</span>
+        <span class="log-summary">
+          {{ item.data?.MainOperation || item.type }}
 
-        {{ getLocalizedSummary(item) }}
-      </p>
-
-      <div class="spacer"></div>
-
-      <div class="action">
-        <sh-icon class="toggle-indicator" [class.open]="item.id === openEntry()">caret-down</sh-icon>
-      </div>
+          {{ getLocalizedSummary(item) }}
+        </span>
+        <span class="spacer"></span>
+        <sh-icon class="toggle-indicator" [class.open]="item.id === openEntry()" aria-hidden="true">caret-down</sh-icon>
+      </button>
     </header>
 
     @if (item.id === openEntry()) {
