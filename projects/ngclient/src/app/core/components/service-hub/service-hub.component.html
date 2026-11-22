@@ -1,8 +1,24 @@
-<button shButton [class]="alertHistory().length ? 'error' : ''" (click)="toggleAlerts()">
+<button
+  #alertsButton
+  type="button"
+  shButton
+  [class]="alertHistory().length ? 'error' : ''"
+  [attr.aria-label]="alertsLabel"
+  [attr.aria-expanded]="isAlertsOpen()"
+  [shTooltip]="alertsLabel"
+  (click)="toggleAlerts()">
   <sh-icon>info</sh-icon>
 </button>
 
-<button shButton [class]="notifications().length ? 'error' : ''" (click)="toggleNotifications()">
+<button
+  #notificationsButton
+  type="button"
+  shButton
+  [class]="notifications().length ? 'error' : ''"
+  [attr.aria-label]="notificationsLabel"
+  [attr.aria-expanded]="isNotificationsOpen()"
+  [shTooltip]="notificationsLabel"
+  (click)="toggleNotifications()">
   @if (this.notifications().length) {
     <sh-icon>bell-ringing</sh-icon>
   } @else {
@@ -36,7 +52,12 @@
         <h6 class="paragraph-20" i18n>
           Notifications
 
-          <button shButton (click)="toggleNotifications()">
+          <button
+            type="button"
+            shButton
+            aria-label="Close notifications"
+            i18n-aria-label
+            (click)="closeNotifications()">
             <sh-icon>x-circle</sh-icon>
           </button>
         </h6>
@@ -62,7 +83,12 @@
         <h6 class="paragraph-20" i18n>
           Alerts
 
-          <button shButton (click)="toggleAlerts()">
+          <button
+            type="button"
+            shButton
+            aria-label="Close alerts"
+            i18n-aria-label
+            (click)="closeAlerts()">
             <sh-icon>x-circle</sh-icon>
           </button>
         </h6>

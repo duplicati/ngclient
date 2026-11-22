@@ -15,6 +15,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ShipAlert, ShipAlertItemInternal, ShipAlertService } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { NotificationComponent } from '../../../notifications/notification/notification.component';
 import { NotificationsComponent } from '../../../notifications/notifications.component';
 import { NotificationsState } from '../../../notifications/notifications.state';
@@ -43,6 +44,7 @@ type Interval = ReturnType<typeof setInterval>;
     ShipAlert,
     ShipIcon,
     ShipButton,
+    ShipTooltip,
     ShipAlert,
     NotificationsComponent,
     NotificationComponent,
@@ -52,6 +54,23 @@ type Interval = ReturnType<typeof setInterval>;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ServiceHubComponent {
+  readonly alertsLabel = $localize`Alerts`;
+  readonly notificationsLabel = $localize`Notifications`;
+  private readonly alertsButton = viewChild.required('alertsButton', { read: ElementRef<HTMLButtonElement> });
+  private readonly notificationsButton = viewChild.required('notificationsButton', {
+    read: ElementRef<HTMLButtonElement>,
+  });
+
+  closeAlerts() {
+    this.toggleAlerts();
+    this.alertsButton().nativeElement.focus();
+  }
+
+  closeNotifications() {
+    this.toggleNotifications();
+    this.notificationsButton().nativeElement.focus();
+  }
+
   #shipAlertService = inject(ShipAlertService);
   #notificationsState = inject(NotificationsState);
 

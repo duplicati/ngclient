@@ -1,6 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ShipAlertItemInternal, ShipAlertService } from '@ship-ui/core/ship-alert';
+import { ShipTooltip } from '@ship-ui/core/ship-tooltip';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { NotificationsState } from '../../../notifications/notifications.state';
 import { NotificationDto } from '../../openapi';
@@ -159,7 +160,7 @@ describe('ServiceHub dismiss all', () => {
       ],
     });
     // Keep the real template. Only child component rendering is stubbed.
-    TestBed.overrideComponent(ServiceHubComponent, { set: { imports: [], schemas: [CUSTOM_ELEMENTS_SCHEMA] } });
+    TestBed.overrideComponent(ServiceHubComponent, { set: { imports: [ShipTooltip], schemas: [CUSTOM_ELEMENTS_SCHEMA] } });
     fixture = TestBed.createComponent(ServiceHubComponent);
     if (panel === 'alerts') fixture.componentInstance.isAlertsOpen.set(true);
     else fixture.componentInstance.isNotificationsOpen.set(true);
