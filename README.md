@@ -107,7 +107,12 @@ In PowerShell, set `$env:PLAYWRIGHT_MODE = 'live'` and
 `$env:DUPLICATI_SERVER_PATH = 'C:/path/to/Duplicati.Server.exe'`, then run
 `bun run test:e2e`. Use an extracted server executable with its runtime and support
 files; a DLL alone is not supported. Clear the environment variables afterward to
-return to the default suite. This optional mode is not enabled in the existing CI.
+return to the default suite.
+
+To run the core live scenarios on GitHub, open the **Production Build** workflow,
+select **Run workflow**, and enable **Run the real-server backup and restore
+smoke suite**. The job verifies a pinned Duplicati release before running the
+backup, restore, and job deletion specs against the production build.
 
 The first test edits an existing job, saves from another editor page, checks the
 server's stored settings and reloads the page. Round-trip cases start real

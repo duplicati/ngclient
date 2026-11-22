@@ -3,6 +3,10 @@ name: Production Build
 on:
   workflow_dispatch:
     inputs:
+      live_backup_tests:
+        description: Run the real-server backup and restore smoke suite
+        type: boolean
+        default: false
       startup_measurements:
         description: Measure startup and first navigation in a dedicated job
         type: boolean
@@ -110,6 +114,61 @@ jobs:
           path: |
             playwright-report
             test-results
+          retention-days: 7
+
+  live-browser-tests:
+    if: github.event_name == 'workflow_dispatch' && inputs.live_backup_tests
+    needs: production-build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '26'
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - uses: actions/download-artifact@v8
+        with:
+          name: production-browser
+          path: dist/ngclient/browser
+      - run: bunx playwright install --with-deps --only-shell chromium
+
+      - name: Download and verify Duplicati
+        env:
+          DUPLICATI_VERSION: 2.4.1.101_canary_2026-11-07
+          DUPLICATI_SHA256: 2fe174fadd3fe41f05cc6179ab890f68ee83c4bb09b6b57a432a662374699686
+        run: |
+          set -euo pipefail
+          archive="duplicati-${DUPLICATI_VERSION}-linux-x64-gui.zip"
+          curl --fail --silent --show-error --location --retry 3 \
+            "https://github.com/duplicati/duplicati/releases/download/v${DUPLICATI_VERSION}/${archive}" \
+            --output "$RUNNER_TEMP/$archive"
+          echo "$DUPLICATI_SHA256  $RUNNER_TEMP/$archive" | sha256sum --check
+          unzip -q "$RUNNER_TEMP/$archive" -d "$RUNNER_TEMP/duplicati"
+          server="$(find "$RUNNER_TEMP/duplicati" -type f -name duplicati-server -print -quit)"
+          test -n "$server"
+          test -x "$server"
+          echo "DUPLICATI_SERVER_PATH=$server" >> "$GITHUB_ENV"
+
+      - name: Test backup creation, execution, restore and deletion
+        env:
+          PLAYWRIGHT_MODE: live
+        run: bun run test:e2e backup-restore.spec.ts delete-backup.spec.ts
+
+      - name: Upload live browser diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: live-playwright-diagnostics
+          path: |
+            playwright-report
+            test-results/**/*.zip
+            test-results/**/*.png
+            test-results/**/*.webm
+            test-results/**/error-context.md
+            test-results/live-server-*/server.log
           retention-days: 7
 
   startup-measurements:
