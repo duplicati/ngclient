@@ -33,7 +33,11 @@
         </ng-template>
       }
 
-      <sh-progress-bar class="raised primary" [value]="statusData()!.progress * 100" />
+      @let progress = statusData()!.progress;
+      <sh-progress-bar
+        class="raised primary"
+        [class.indeterminate]="progress < 0"
+        [value]="progress < 0 ? undefined : progress * 100" />
     } @else if (!backupId() && (nextBackup().backup || nextBackup().time)) {
       <div class="label" i18n>
         {{ nextBackup().backup?.Backup?.Name }} -

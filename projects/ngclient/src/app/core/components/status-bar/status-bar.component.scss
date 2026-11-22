@@ -26,12 +26,13 @@
 }
 
 .global-progress {
-  flex: 1 0;
-  min-width: p2r(300);
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .current-backup-actions {
   display: flex;
+  flex-shrink: 0;
   gap: p2r(8);
 
   .desktop-actions {
@@ -59,6 +60,12 @@
       top: p2r(-4);
       right: p2r(-4);
     }
+  }
+}
+
+@include breakpoint(-milli) {
+  .current-backup {
+    align-items: flex-start;
   }
 }
 
