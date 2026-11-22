@@ -11,6 +11,7 @@ RUN bun --version
 
 # Copy lock files
 COPY package.json bun.lock ./
+COPY patches ./patches
 
 # Define the build-time variable with a default value
 ARG WS_URL=wss://localhost:8080

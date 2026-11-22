@@ -1,0 +1,13 @@
+diff --git a/fesm2022/ship-ui-core-ship-tooltip.mjs b/fesm2022/ship-ui-core-ship-tooltip.mjs
+index d96648451c07aef7bb21fa1dbb8fa2b43a033d62..e3f30c34f0401666e98333f75a879be7c7a1f251 100644
+--- a/fesm2022/ship-ui-core-ship-tooltip.mjs
++++ b/fesm2022/ship-ui-core-ship-tooltip.mjs
+@@ -205,7 +205,7 @@ class ShipTooltip {
+     #DEBOUNCE_DELAY;
+     onMouseEnter(event) {
+         event.stopPropagation();
+-        if (openRef && openRef.component.anchorName !== this.anchorName) {
++        if (openRef && (openRef.component.anchorName !== this.anchorName || this.destroyTimeout)) {
+             openRef.component.#cleanupTooltip(true);
+         }
+         else {
