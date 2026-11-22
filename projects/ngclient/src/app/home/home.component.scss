@@ -193,6 +193,57 @@ tr.running td {
   background: var(--primary-2);
 }
 
+.job-details .job-details-actions {
+  position: sticky;
+  inset-inline-end: 0;
+  z-index: 1;
+  border-inline-start: 1px solid var(--base-4);
+  background: var(--base-1);
+}
+
+.job-details th.job-details-actions {
+  z-index: 2;
+  background: var(--base-2);
+}
+
+.job-details tr.running .job-details-actions {
+  background: var(--primary-2);
+}
+
+@include breakpoint(-milli) {
+  section {
+    gap: p2r(24);
+    padding-block: p2r(16);
+  }
+
+  header,
+  .content .content-header,
+  .backups {
+    padding-inline: p2r(16);
+  }
+
+  header {
+    gap: p2r(8);
+
+    sh-card {
+      gap: p2r(8);
+      padding: p2r(12);
+
+      img {
+        width: p2r(32);
+      }
+
+      .text {
+        min-width: 0;
+      }
+    }
+  }
+
+  .backup {
+    padding: p2r(16);
+  }
+}
+
 // A disabled backup is skipped by the scheduler; dim its details but keep the tags and actions readable
 .backup.disabled .text,
 tr.disabled td:not(:last-child) {

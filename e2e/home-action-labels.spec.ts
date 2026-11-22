@@ -23,6 +23,25 @@ const backup = (id: string, name: string, external = false) => ({
   Schedule: null,
 });
 test.use({ initialBackups: [[backup('42', 'Documents'), backup('43', 'Managed', true)], { scope: 'test' }] });
+
+test('keeps the details actions usable without scrolling the table on a narrow screen', async ({
+  authenticatedPage: page,
+}) => {
+  await page.setViewportSize({ width: 360, height: 800 });
+  await page.getByRole('button', { name: 'Details', exact: true }).click();
+  const row = page.getByRole('row').filter({ hasText: 'Documents' });
+  const more = row.getByRole('button', { name: 'More actions', exact: true });
+  await expect(more).toBeInViewport({ ratio: 1 });
+  expect(
+    await more.evaluate((button) => {
+      const box = button.getBoundingClientRect();
+      return button.contains(document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2));
+    })
+  ).toBe(true);
+  await more.press('Enter');
+  await expect(page.getByRole('button', { name: 'Log', exact: true })).toBeVisible();
+});
+
 function iconButton(page: Page, row: Locator, icon: string) {
   return row.locator('button').filter({ has: page.locator('sh-icon', { hasText: icon }) });
 }
