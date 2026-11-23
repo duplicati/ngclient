@@ -42,10 +42,9 @@
       <textarea
         class="bulk-textarea"
         wrap="off"
-        [(ngModel)]="bulkFilters"
-        [ngModelOptions]="{ updateOn: 'blur', standalone: true }"
+        [formField]="bulkFiltersForm"
         rows="10"
-        (ngModelChange)="saveBulkFilterEdit()"></textarea>
+        (blur)="saveBulkFilterEdit()"></textarea>
     </sh-form-field>
   } @else {
     <div class="filters" #filtersContainer>

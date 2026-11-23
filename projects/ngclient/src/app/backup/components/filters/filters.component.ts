@@ -11,7 +11,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { form, FormField } from '@angular/forms/signals';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
@@ -23,7 +23,7 @@ import { NewFilterComponent } from '../../source-data/new-filter/new-filter.comp
 @Component({
   selector: 'app-filters',
   imports: [
-    FormsModule,
+    FormField,
     ShipButton,
     ShipIcon,
     ShipMenu,
@@ -45,6 +45,7 @@ export class FiltersComponent {
 
   bulkFilterEditMode = signal(false);
   bulkFilters = signal('');
+  bulkFiltersForm = form(this.bulkFilters);
   lastAddedIndex = signal<number | null>(null);
 
   filtersContainer = viewChild.required<ElementRef<HTMLDivElement>>('filtersContainer');
@@ -74,6 +75,8 @@ export class FiltersComponent {
   }
 
   saveBulkFilterEdit() {
+    if (this.bulkFilters() === this.filters().join('\n')) return;
+
     const newFilters = this.bulkFilters()
       .split('\n')
       .map((f) => f.trim())
