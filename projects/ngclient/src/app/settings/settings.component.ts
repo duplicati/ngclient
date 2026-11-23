@@ -1,5 +1,15 @@
 import { disabled, form, FormField } from '@angular/forms/signals';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  linkedSignal,
+  signal,
+  viewChild,
+} from '@angular/core';
+import { NullableTextControl } from '../backup/general/nullable-text-control';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
@@ -82,6 +92,7 @@ type TimeTypes = (typeof TIME_OPTIONS)[number]['value'];
   selector: 'app-settings',
   imports: [
     FormField,
+    NullableTextControl,
     FormsModule,
     ReactiveFormsModule,
     StatusBarComponent,
@@ -444,6 +455,7 @@ export default class SettingsComponent {
   usageStatisticsOptions = signal(USAGE_STATISTICS_OPTIONS);
 
   serverTimezone = signal<string>(toServerTimezoneControlValue(''));
+  serverTimezoneField = form(linkedSignal(() => this.serverTimezone()));
   updatingServerTimezone = signal(false);
   // Only servers reporting their time zones get the control: without the list there is nothing to pick from
   hasServerTimezones = computed(() => this.#sysinfo.timeZones().length > 0);
@@ -475,7 +487,7 @@ export default class SettingsComponent {
     window.location.reload();
   }
 
-  // Bound to the selection event rather than ngModelChange, as the inline search types into the same input
+  // Only an option selection may save the time zone. The field also receives inline search text.
   updateServerTimezone(selected: unknown[]) {
     const newValue = (selected[0] as { value?: string } | undefined)?.value;
     if (!newValue || newValue === this.serverTimezone()) return;
