@@ -2408,7 +2408,6 @@ export type DeleteApiV1BackupByIdData = {
     };
     query?: {
         'delete-remote-files'?: boolean;
-        'remote-destinations'?: Array<string>;
         'delete-local-db'?: boolean;
         force?: boolean;
         'remote-destinations'?: Array<string>;
