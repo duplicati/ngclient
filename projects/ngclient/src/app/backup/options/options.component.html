@@ -109,6 +109,8 @@
   <app-options-list
     [(options)]="settings"
     [applicationOptions]="applicationOptions()"
+    [showEmailReports]="true"
+    [backupId]="savedBackupId()"
     [hasFreeTextSettings]="true"
     [hiddenOptions]="[
       '--skip-files-larger-than',

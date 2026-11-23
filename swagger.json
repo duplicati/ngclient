@@ -552,6 +552,28 @@
         }
       }
     },
+    "/api/v1/backups/temporary": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TemporaryBackupDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/backups/import": {
       "post": {
         "tags": [
@@ -574,28 +596,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ImportBackupOutputDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/backups/temporary": {
-      "get": {
-        "tags": [
-          "Duplicati.Server"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TemporaryBackupDto"
-                  }
                 }
               }
             }
@@ -1191,6 +1191,37 @@
           },
           "required": true
         },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/restore-download/{id}": {
+      "get": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -1822,16 +1853,6 @@
             }
           },
           {
-            "name": "remote-destinations",
-            "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          },
-          {
             "name": "delete-local-db",
             "in": "query",
             "schema": {
@@ -1843,6 +1864,16 @@
             "in": "query",
             "schema": {
               "type": "boolean"
+            }
+          },
+          {
+            "name": "remote-destinations",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           }
         ],
@@ -3112,6 +3143,35 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TempDiskSpaceResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/report/test-email": {
+      "post": {
+        "tags": [
+          "Duplicati.Server"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TestEmailRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TestEmailResponseDto"
                 }
               }
             }
@@ -4658,6 +4718,13 @@
           "Exception": {
             "type": "string",
             "nullable": true
+          },
+          "FailedDestinations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -5888,6 +5955,23 @@
         },
         "additionalProperties": false
       },
+      "PreloadSettingsPathDto": {
+        "required": [
+          "Exists",
+          "Path"
+        ],
+        "type": "object",
+        "properties": {
+          "Path": {
+            "type": "string",
+            "nullable": true
+          },
+          "Exists": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "PurgeBrokenFilesRequestDto": {
         "required": [
           "BackupId"
@@ -5989,6 +6073,11 @@
           },
           "IsConnected": {
             "type": "boolean"
+          },
+          "PausedUntil": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
           },
           "IsRegistering": {
             "type": "boolean"
@@ -6785,6 +6874,7 @@
           "CLRVersion",
           "CompressionModules",
           "ConnectionModules",
+          "DatabaseFieldsEncrypted",
           "DataFolder",
           "DefaultOAuthURL",
           "DefaultOAuthURLv2",
@@ -6807,6 +6897,7 @@
           "PasswordPlaceholder",
           "PathSeparator",
           "PowerModeProviders",
+          "PreloadSettingsPaths",
           "RemoteControlDashboardUrl",
           "RemoteControlRegistrationUrl",
           "RemoteLicenseStatus",
@@ -7095,6 +7186,16 @@
           },
           "RemoteLicenseStatus": {
             "$ref": "#/components/schemas/LicenseStatusDto"
+          },
+          "DatabaseFieldsEncrypted": {
+            "type": "boolean"
+          },
+          "PreloadSettingsPaths": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PreloadSettingsPathDto"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -7415,7 +7516,8 @@
         "type": "object",
         "properties": {
           "ID": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "Name": {
             "type": "string",
@@ -7423,6 +7525,69 @@
           },
           "TargetURL": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TestEmailRequestDto": {
+        "type": "object",
+        "properties": {
+          "Options": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "nullable": true
+            },
+            "nullable": true
+          },
+          "BackupId": {
+            "type": "string",
+            "nullable": true
+          },
+          "IncludeGlobalOptions": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TestEmailResponseDto": {
+        "required": [
+          "Error",
+          "StatusCode",
+          "Success"
+        ],
+        "type": "object",
+        "properties": {
+          "Success": {
+            "type": "boolean"
+          },
+          "Error": {
+            "type": "string",
+            "nullable": true
+          },
+          "StatusCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "Data": {
+            "$ref": "#/components/schemas/TestEmailResult"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TestEmailResult": {
+        "required": [
+          "Log"
+        ],
+        "type": "object",
+        "properties": {
+          "Log": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
             "nullable": true
           }
         },
