@@ -73,6 +73,7 @@ export class McpTokensComponent {
 
   agentOptions = MCP_AGENT_OPTIONS;
   selectedAgentId = signal<McpAgentId>(MCP_AGENT_OPTIONS[0].id);
+  agentField = form(linkedSignal<string>(() => this.selectedAgentId()));
   /** How to give the new token to the selected agent */
   selectedAgent = computed(() => {
     const created = this.createdToken();
@@ -200,8 +201,9 @@ export class McpTokensComponent {
     this.createdToken.set(null);
   }
 
-  selectAgent(id: McpAgentId | null | undefined | '') {
-    if (!id) return;
+  selectAgent(selected: unknown[]) {
+    const id = this.agentOptions.find((agent) => agent === selected[0])?.id;
+    if (!id || id === this.selectedAgentId()) return;
     this.selectedAgentId.set(id);
     this.copied.set(false);
   }

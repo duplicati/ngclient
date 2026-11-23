@@ -58,4 +58,22 @@ it('submits the token name and restore paths entered in the form', async () => {
       RestoreRoots: ['/tmp/a', '/tmp/b'],
     }),
   });
+
+  HTMLElement.prototype.showPopover ??= vi.fn();
+  HTMLElement.prototype.hidePopover ??= vi.fn();
+  fixture.componentInstance.copied.set(true);
+  fixture.detectChanges();
+  await fixture.whenStable();
+  const agent = root.querySelector<HTMLElement>('.created-token sh-select')!;
+  agent.querySelector<HTMLElement>('sh-form-field')!.click();
+  fixture.detectChanges();
+  await fixture.whenStable();
+  Array.from(agent.querySelectorAll<HTMLElement>('li.option'))
+    .find((option) => option.textContent.trim() === 'Codex CLI')!
+    .click();
+  fixture.detectChanges();
+  await fixture.whenStable();
+  expect(agent.querySelector('input')?.value).toBe('codex');
+  expect(root.querySelector('.created-token code')?.textContent).toContain('[mcp_servers.duplicati]');
+  expect(fixture.componentInstance.copied()).toBe(false);
 });

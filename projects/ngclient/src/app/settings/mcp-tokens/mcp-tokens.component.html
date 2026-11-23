@@ -4,13 +4,9 @@
   </sh-alert>
 
   <div class="created-token">
-    <sh-select [options]="agentOptions" label="label" value="id">
+    <sh-select [options]="agentOptions" label="label" value="id" (selectedOptionsChange)="selectAgent($event)">
       <label i18n>Set up the token in</label>
-      <input
-        type="text"
-        [ngModel]="selectedAgentId()"
-        (ngModelChange)="selectAgent($event)"
-        [ngModelOptions]="{ standalone: true }" />
+      <input type="text" appNullableText [formField]="agentField" />
 
       <ng-template let-option>
         {{ option.label }}
