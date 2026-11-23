@@ -40,6 +40,31 @@
             <sh-icon>arrow-right</sh-icon>
           </button>
         </sh-card>
+        @if (backup.Backup.ID; as id) {
+          @if (hasRestoreDestination()) {
+            <details #secondaryPicker (toggle)="loadSecondaryDestinations(id, secondaryPicker.open)">
+              <summary i18n>Restore {{ backup.Backup.Name }} from a secondary destination</summary>
+              @let destinations = secondaryDestinations()[id];
+              @if (destinations === 'loading') {
+                <p role="status" i18n>Loading secondary destinations…</p>
+              } @else if (destinations === 'error') {
+                <button shButton type="button" (click)="loadSecondaryDestinations(id, true)" i18n>Retry</button>
+              } @else if (destinations) {
+                @for (destination of destinations; track destination.UrlKey) {
+                  <button
+                    shButton
+                    type="button"
+                    [disabled]="copyingDestination()"
+                    (click)="restoreFromDestination(backup.Backup.ID, destination.UrlKey)">
+                    {{ destinationLabel(destination.TargetUrl, $index) }}
+                  </button>
+                } @empty {
+                  <p i18n>No secondary destinations are configured.</p>
+                }
+              }
+            </details>
+          }
+        }
       } @empty {
         <div class="no-matches" i18n>No backups match "{{ searchTerm() }}"</div>
       }
