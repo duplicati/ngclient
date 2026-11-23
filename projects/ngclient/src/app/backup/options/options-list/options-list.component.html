@@ -72,9 +72,8 @@
     <textarea
       class="raw-text-area"
       wrap="off"
-      [ngModel]="settingsAsText()"
-      (ngModelChange)="updateSettingsFromText($event)"
-      [ngModelOptions]="{ updateOn: 'blur' }"
+      [formField]="settingsTextForm"
+      (blur)="saveSettingsText()"
       placeholder="Paste advanced options here, one per line."></textarea>
   } @else {
     @if (selectedSettings().length === 0) {

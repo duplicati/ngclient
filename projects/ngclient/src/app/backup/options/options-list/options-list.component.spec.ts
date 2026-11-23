@@ -96,6 +96,26 @@ describe('OptionsListComponent option editing', () => {
     expect(component.options()).toEqual([expect.objectContaining({ Name: 'custom-name', Value: 'changed=value' })]);
   });
 
+  it('applies edits in the advanced options textarea on blur', async () => {
+    const component = setup([{ Name: 'retries', Value: '3' }], true, definitions);
+    component.showTextArea.set(true);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const textarea = fixture.nativeElement.querySelector('textarea.raw-text-area') as HTMLTextAreaElement;
+    expect(textarea.value).toBe('retries=3');
+    textarea.value = 'retries=8\ncustom-name=custom=value';
+    textarea.dispatchEvent(new Event('input'));
+    await fixture.whenStable();
+    expect(component.options()).toEqual([{ Name: 'retries', Value: '3' }]);
+
+    textarea.dispatchEvent(new Event('blur'));
+    await fixture.whenStable();
+    expect(component.options()).toEqual([
+      expect.objectContaining({ Name: 'retries', Value: '8' }),
+      expect.objectContaining({ Name: 'custom-name', Value: 'custom=value' }),
+    ]);
+  });
+
   it.each([
     ['hidden,system', ['Hidden', 'System']],
     ['Hidden,System', ['Hidden', 'System']],
