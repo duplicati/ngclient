@@ -131,6 +131,7 @@ export default class SettingsComponent {
 
   sysinfo = this.#sysinfo.systemInfo;
   themePreferences = this.#layoutState;
+  serverThemeField = form(linkedSignal<string>(() => this.themePreferences.serverTheme()));
   // The server default tile previews whichever theme the server default currently resolves to.
   themeOptions = computed<{ value: ThemeMode; label: string; image: string }[]>(() => [
     { value: 'light', label: $localize`Light`, image: THEME_IMAGES.light },
@@ -143,6 +144,11 @@ export default class SettingsComponent {
     { value: 'light', label: $localize`Light` },
     { value: 'dark', label: $localize`Dark` },
   ];
+
+  selectServerTheme(selected: unknown[]) {
+    const theme = this.serverThemeOptions.find((option) => option === selected[0])?.value;
+    if (theme) this.themePreferences.saveServerTheme(theme);
+  }
 
   editAs = signal<'list' | 'text'>('list');
   previousLang = this.#initLang;

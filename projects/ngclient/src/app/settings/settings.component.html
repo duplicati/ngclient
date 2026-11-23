@@ -139,14 +139,9 @@
         "
         value="value"
         label="label"
-        [isClearable]="false">
-        <input
-          type="text"
-          aria-label="Default theme"
-          i18n-aria-label
-          [ngModel]="themePreferences.serverTheme()"
-          (ngModelChange)="themePreferences.saveServerTheme($event)"
-          [ngModelOptions]="{ standalone: true }" />
+        [isClearable]="false"
+        (selectedOptionsChange)="selectServerTheme($event)">
+        <input type="text" aria-label="Default theme" i18n-aria-label appNullableText [formField]="serverThemeField" />
       </sh-select>
       @if (themePreferences.serverThemeLoadError()) {
         <p role="alert" i18n>Could not load the default theme.</p>
