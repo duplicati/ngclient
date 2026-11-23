@@ -46,7 +46,23 @@
     </a>
   </section>
 
-  @if (noLocalDb && !isSyncMode()) {
+  @if (remoteDestinations().length) {
+    <section>
+      <h4 i18n>Delete remote files</h4>
+      <p i18n>
+        Select the destinations whose backup files you want to delete. Files at unselected destinations will be kept.
+      </p>
+      @for (destination of remoteDestinations(); track destination.key) {
+        <sh-checkbox
+          class="primary raised"
+          [checked]="selectedDestinationKeys().includes(destination.key)"
+          [disabled]="isDeleting()"
+          (checkedChange)="toggleDestination(destination.key, $event)">
+          {{ destination.label }}
+        </sh-checkbox>
+      }
+    </section>
+  } @else if (noLocalDb && !isSyncMode()) {
     <section>
       @let fileSize = _backup?.Backup?.Metadata?.['TargetFilesSize'] ?? 0;
 

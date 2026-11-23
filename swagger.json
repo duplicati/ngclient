@@ -1822,6 +1822,16 @@
             }
           },
           {
+            "name": "remote-destinations",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
             "name": "delete-local-db",
             "in": "query",
             "schema": {

@@ -11,6 +11,7 @@ import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/con
 import { DuplicatiServer } from '../../core/openapi';
 import { BytesPipe } from '../../core/pipes/byte.pipe';
 import { BackupsState } from '../../core/states/backups.state';
+import { SysinfoState } from '../../core/states/sysinfo.state';
 
 @Component({
   selector: 'app-delete-backup',
@@ -24,6 +25,7 @@ export default class DeleteBackupComponent {
   #dialog = inject(ShipDialogService);
   #backupsState = inject(BackupsState);
   #router = inject(Router);
+  #sysinfo = inject(SysinfoState);
 
   id = input.required<string>();
   backupResource = rxResource({
@@ -35,6 +37,47 @@ export default class DeleteBackupComponent {
   );
   canDelete = computed(() => this.backup()?.Backup?.ID === this.id());
   isSyncMode = computed(() => this.backup()?.Backup?.OperationType === 'Sync');
+  remoteDestinations = computed(() => {
+    const backup = this.backup()?.Backup;
+    const secondary = backup?.AdditionalTargetURLs ?? [];
+    if (
+      !secondary.length ||
+      this.isSyncMode() ||
+      !this.#sysinfo.systemInfo()?.APIExtensions?.includes('v1:backup:delete-remote-destinations')
+    )
+      return [];
+
+    const destinations = [
+      { key: 'primary', label: this.destinationLabel($localize`Primary destination`, backup?.TargetURL) },
+    ];
+    secondary.forEach((destination, index) => {
+      if (destination.UrlKey) {
+        destinations.push({
+          key: destination.UrlKey,
+          label: this.destinationLabel(
+            $localize`Secondary destination ${index + 1}:destinationNumber:`,
+            destination.TargetUrl
+          ),
+        });
+      }
+    });
+    return destinations;
+  });
+  selectedDestinationKeys = signal<string[]>([]);
+
+  private destinationLabel(label: string, target: string | null | undefined) {
+    if (!target) return label;
+    try {
+      const url = new URL(target);
+      return `${label} — ${url.protocol}//${url.host}${url.pathname}`;
+    } catch {
+      return label;
+    }
+  }
+
+  toggleDestination(key: string, checked: boolean) {
+    this.selectedDestinationKeys.update((keys) => (checked ? [...keys, key] : keys.filter((entry) => entry !== key)));
+  }
   noLocalDbResource = rxResource({
     params: () =>
       this.canDelete() && this.backup()?.Backup?.DBPath ? { dbPath: this.backup()!.Backup!.DBPath } : undefined,
@@ -66,6 +109,7 @@ export default class DeleteBackupComponent {
     this.#routeVersion++;
     this.deleteLocalDb.set(false);
     this.deleteRemoteFiles.set(false);
+    this.selectedDestinationKeys.set([]);
     this.isDeleting.set(false);
   });
   #keepSharedDatabase = effect(() => {
@@ -77,13 +121,17 @@ export default class DeleteBackupComponent {
     const id = this.id();
     const version = this.#routeVersion;
     const deleteLocalDb = this.canDeleteLocalDb() && this.deleteLocalDb();
-    const deleteRemoteFiles = this.isSyncMode() ? undefined : this.deleteRemoteFiles();
+    const destinations = this.remoteDestinations().filter(({ key }) => this.selectedDestinationKeys().includes(key));
+    const deleteRemoteFiles =
+      this.isSyncMode() || this.remoteDestinations().length ? undefined : this.deleteRemoteFiles();
 
     this.isDeleting.set(true);
     this.#dialog.open(ConfirmDialogComponent, {
       data: {
         title: $localize`Confirm delete`,
-        message: $localize`Are you sure you want to delete this backup?`,
+        message: destinations.length
+          ? $localize`Delete this backup and its remote files from the following destinations? ${destinations.map(({ label }) => label).join(', ')}:destinations:`
+          : $localize`Are you sure you want to delete this backup?`,
         confirmText: $localize`Delete backup`,
         cancelText: $localize`Cancel`,
       },
@@ -98,6 +146,7 @@ export default class DeleteBackupComponent {
             path: { id },
             query: {
               'delete-local-db': deleteLocalDb,
+              ...(destinations.length ? { 'remote-destinations': destinations.map(({ key }) => key) } : {}),
               ...(deleteRemoteFiles === undefined ? {} : { 'delete-remote-files': deleteRemoteFiles }),
             },
           })
