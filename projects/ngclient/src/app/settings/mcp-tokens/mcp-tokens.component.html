@@ -89,26 +89,18 @@
         [formField]="tokenFields.name" />
     </sh-form-field>
 
-    <sh-select [options]="levelOptions" label="label" value="value">
+    <sh-select [options]="levelOptions" label="label" value="value" (selectedOptionsChange)="selectLevel($event)">
       <label i18n>Permission level</label>
-      <input
-        type="text"
-        [ngModel]="form().level"
-        (ngModelChange)="selectLevel($event)"
-        [ngModelOptions]="{ standalone: true }" />
+      <input type="text" appNullableText [formField]="levelField" />
 
       <ng-template let-option>
         {{ option.label }}
       </ng-template>
     </sh-select>
 
-    <sh-select [options]="lifetimeOptions" label="label" value="value">
+    <sh-select [options]="lifetimeOptions" label="label" value="value" (selectedOptionsChange)="selectLifetime($event)">
       <label i18n>Valid for</label>
-      <input
-        type="text"
-        [ngModel]="form().expiresIn"
-        (ngModelChange)="selectLifetime($event)"
-        [ngModelOptions]="{ standalone: true }" />
+      <input type="text" appNullableText [formField]="lifetimeField" />
 
       <ng-template let-option>
         {{ option.label }}
