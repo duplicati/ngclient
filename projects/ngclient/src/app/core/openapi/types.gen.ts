@@ -321,6 +321,7 @@ export type GetTaskStateDto = {
     TaskFinished?: string | null;
     ErrorMessage?: string | null;
     Exception?: string | null;
+    FailedDestinations?: Array<string> | null;
 };
 
 export type ICommandLineArgument = {
@@ -1029,9 +1030,28 @@ export type TempDiskSpaceResult = {
 };
 
 export type TemporaryBackupDto = {
-    ID?: string;
+    ID?: string | null;
     Name?: string | null;
     TargetURL?: string | null;
+};
+
+export type TestEmailRequestDto = {
+    Options?: {
+        [key: string]: string | null;
+    } | null;
+    BackupId?: string | null;
+    IncludeGlobalOptions?: boolean | null;
+};
+
+export type TestEmailResponseDto = {
+    Success: boolean;
+    Error: string | null;
+    StatusCode: string | null;
+    Data?: TestEmailResult;
+};
+
+export type TestEmailResult = {
+    Log: Array<string> | null;
 };
 
 export type TestFilterRequestDto = {
@@ -1597,22 +1617,6 @@ export type PostApiV1BackupsResponses = {
 
 export type PostApiV1BackupsResponse = PostApiV1BackupsResponses[keyof PostApiV1BackupsResponses];
 
-export type PostApiV1BackupsImportData = {
-    body: ImportBackupInputDto;
-    path?: never;
-    query?: never;
-    url: '/api/v1/backups/import';
-};
-
-export type PostApiV1BackupsImportResponses = {
-    /**
-     * OK
-     */
-    200: ImportBackupOutputDto;
-};
-
-export type PostApiV1BackupsImportResponse = PostApiV1BackupsImportResponses[keyof PostApiV1BackupsImportResponses];
-
 export type GetApiV1BackupsTemporaryData = {
     body?: never;
     path?: never;
@@ -1628,6 +1632,22 @@ export type GetApiV1BackupsTemporaryResponses = {
 };
 
 export type GetApiV1BackupsTemporaryResponse = GetApiV1BackupsTemporaryResponses[keyof GetApiV1BackupsTemporaryResponses];
+
+export type PostApiV1BackupsImportData = {
+    body: ImportBackupInputDto;
+    path?: never;
+    query?: never;
+    url: '/api/v1/backups/import';
+};
+
+export type PostApiV1BackupsImportResponses = {
+    /**
+     * OK
+     */
+    200: ImportBackupOutputDto;
+};
+
+export type PostApiV1BackupsImportResponse = PostApiV1BackupsImportResponses[keyof PostApiV1BackupsImportResponses];
 
 export type GetApiV1BugreportByReportidData = {
     body?: never;
@@ -1980,6 +2000,24 @@ export type PostApiV1RemoteoperationCreateData = {
 };
 
 export type PostApiV1RemoteoperationCreateResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type GetApiV1RestoreDownloadByIdData = {
+    body?: never;
+    path: {
+        id: number;
+    };
+    query: {
+        token: string;
+    };
+    url: '/api/v1/restore-download/{id}';
+};
+
+export type GetApiV1RestoreDownloadByIdResponses = {
     /**
      * OK
      */
@@ -2373,6 +2411,7 @@ export type DeleteApiV1BackupByIdData = {
         'remote-destinations'?: Array<string>;
         'delete-local-db'?: boolean;
         force?: boolean;
+        'remote-destinations'?: Array<string>;
     };
     url: '/api/v1/backup/{id}';
 };
@@ -3140,6 +3179,22 @@ export type PostApiV2SystemTempDiskSpaceResponses = {
 };
 
 export type PostApiV2SystemTempDiskSpaceResponse = PostApiV2SystemTempDiskSpaceResponses[keyof PostApiV2SystemTempDiskSpaceResponses];
+
+export type PostApiV2ReportTestEmailData = {
+    body: TestEmailRequestDto;
+    path?: never;
+    query?: never;
+    url: '/api/v2/report/test-email';
+};
+
+export type PostApiV2ReportTestEmailResponses = {
+    /**
+     * OK
+     */
+    200: TestEmailResponseDto;
+};
+
+export type PostApiV2ReportTestEmailResponse = PostApiV2ReportTestEmailResponses[keyof PostApiV2ReportTestEmailResponses];
 
 export type PostApiV2FilesystemTestFilterData = {
     body: TestFilterRequestDto;

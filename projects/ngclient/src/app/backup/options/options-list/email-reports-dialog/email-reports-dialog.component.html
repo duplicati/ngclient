@@ -1,0 +1,268 @@
+<header>
+  <h3 i18n>Configure email reports</h3>
+  <p i18n>Get an email with the result when an operation finishes.</p>
+</header>
+
+<section content>
+  @if (hasInherited()) {
+    <sh-alert color="primary" i18n>
+      The global settings already send reports to {{ inherited().to }}. Settings you fill in here override them for this
+      backup; empty fields use the global value.
+    </sh-alert>
+  }
+
+  <fieldset>
+    <legend i18n>Recipient</legend>
+
+    <sh-form-field>
+      <label for="email-reports-to" i18n>Send reports to</label>
+      <input
+        id="email-reports-to"
+        type="text"
+        autocomplete="email"
+        [placeholder]="inherited().to ?? 'you@example.com'"
+        [(ngModel)]="to" />
+      <sh-icon prefix>envelope</sh-icon>
+    </sh-form-field>
+    <p class="hint" i18n>Separate multiple addresses with commas.</p>
+
+    <sh-form-field>
+      <label for="email-reports-from" i18n>Sender</label>
+      <input
+        id="email-reports-from"
+        type="text"
+        [placeholder]="inherited().from ?? 'Duplicati <no-reply@example.com>'"
+        [(ngModel)]="from" />
+      <sh-icon prefix>user</sh-icon>
+    </sh-form-field>
+  </fieldset>
+
+  <fieldset>
+    <legend i18n>Mail server</legend>
+
+    <div class="preset-row">
+      <sh-menu>
+        <button shButton type="button" class="outlined small" i18n>
+          Fill in for a provider
+          <sh-icon>caret-down</sh-icon>
+        </button>
+
+        <ng-container menu>
+          @for (preset of smtpPresets; track preset.name) {
+            <button type="button" (click)="applyPreset(preset, usernameInput)">{{ preset.name }}</button>
+          }
+        </ng-container>
+      </sh-menu>
+    </div>
+
+    <sh-form-field>
+      <label for="email-reports-url">
+        <ng-container i18n>SMTP server URL</ng-container>
+        <span class="muted" i18n>(recommended)</span>
+      </label>
+      <input
+        id="email-reports-url"
+        type="text"
+        [placeholder]="inherited().url ?? 'smtps://smtp.example.com:465'"
+        [(ngModel)]="url" />
+      <sh-icon prefix>hard-drives</sh-icon>
+    </sh-form-field>
+    @if (smtpPreset(); as preset) {
+      <p class="hint">{{ preset.note }}</p>
+    } @else {
+      <p class="hint" i18n>
+        Use your email provider's SMTP server, for example smtps://smtp.example.com:465. Without one, Duplicati sends
+        straight to the recipient's mail server, and most providers reject that or mark it as spam. Separate fallback
+        servers with semicolons.
+      </p>
+    }
+    @if (hasNoServer() && effectiveRecipient()) {
+      <sh-alert color="warn" i18n>
+        No mail server is set. Emails sent directly from a home or office network usually end up in spam or are
+        rejected. Add your provider's SMTP server unless you run your own mail server.
+      </sh-alert>
+    }
+
+    <div class="row">
+      <sh-form-field>
+        <label for="email-reports-username" i18n>Username</label>
+        <input
+          #usernameInput
+          id="email-reports-username"
+          type="text"
+          autocomplete="off"
+          [placeholder]="inherited().username ?? ''"
+          [(ngModel)]="username" />
+        <sh-icon prefix>user-circle</sh-icon>
+      </sh-form-field>
+
+      <sh-form-field>
+        <label for="email-reports-password" i18n>Password</label>
+        <input
+          id="email-reports-password"
+          autocomplete="new-password"
+          [type]="showPassword() ? 'text' : 'password'"
+          [placeholder]="inherited().password ? inheritedPasswordText : ''"
+          [(ngModel)]="password" />
+        <sh-icon prefix>password</sh-icon>
+        <button
+          suffix
+          type="button"
+          class="icon-button"
+          [attr.aria-pressed]="showPassword()"
+          aria-label="Show password"
+          i18n-aria-label
+          (click)="showPassword.set(!showPassword())">
+          @if (showPassword()) {
+            <sh-icon>eye</sh-icon>
+          } @else {
+            <sh-icon>eye-slash</sh-icon>
+          }
+        </button>
+      </sh-form-field>
+    </div>
+    @if (isPasswordMasked()) {
+      <p class="hint" i18n>The saved password is kept unless you change it.</p>
+    }
+  </fieldset>
+
+  <fieldset>
+    <legend i18n>When to send</legend>
+
+    <div class="levels" role="group" aria-labelledby="email-reports-levels-label">
+      <span id="email-reports-levels-label" class="label" i18n>Send an email when the result is</span>
+      <div class="checkboxes">
+        @for (level of levelOptions; track level) {
+          <sh-checkbox
+            class="primary raised"
+            [checked]="levels().includes(level)"
+            (checkedChange)="toggleLevel(level, $event)">
+            {{ levelLabels[level] }}
+          </sh-checkbox>
+        }
+      </div>
+      @if (levelsError()) {
+        <p class="error" role="alert" i18n>Pick at least one result.</p>
+      }
+    </div>
+
+    <sh-select [options]="operationOptions()" [selectMultiple]="true" [optionTemplate]="plainOption">
+      <label for="email-reports-operations" i18n>For these operations</label>
+      <input id="email-reports-operations" type="text" [(ngModel)]="operations" />
+    </sh-select>
+    @if (operationsError()) {
+      <p class="error" role="alert" i18n>Pick at least one operation.</p>
+    }
+  </fieldset>
+
+  <details>
+    <summary i18n>Message and connection options</summary>
+
+    <div class="details-content">
+      <sh-form-field>
+        <label for="email-reports-subject" i18n>Subject</label>
+        <input
+          id="email-reports-subject"
+          type="text"
+          [placeholder]="inherited().subject ?? 'Duplicati %OPERATIONNAME% report for %backup-name%'"
+          [(ngModel)]="subject" />
+        <sh-icon prefix>textbox</sh-icon>
+      </sh-form-field>
+      <p class="hint" i18n>Placeholders such as %OPERATIONNAME%, %PARSEDRESULT% and %backup-name% are filled in.</p>
+
+      <sh-form-field>
+        <label for="email-reports-body" i18n>Message body</label>
+        <textarea
+          id="email-reports-body"
+          rows="4"
+          [placeholder]="inherited().body ?? defaultBodyText"
+          [(ngModel)]="body"></textarea>
+      </sh-form-field>
+      <p class="hint" i18n>Use %RESULT% to insert the result. You can also enter the path to a template file.</p>
+
+      <sh-checkbox class="primary raised" [(checked)]="bodyHtml" i18n>The message body is HTML</sh-checkbox>
+
+      <sh-select [options]="formatOptions()" [isClearable]="false" [optionTemplate]="plainOption">
+        <label for="email-reports-format" i18n>Result format</label>
+        <input id="email-reports-format" type="text" [(ngModel)]="format" />
+      </sh-select>
+
+      <sh-checkbox class="primary raised" [(checked)]="acceptAnyCertificate" i18n>
+        Accept any SSL certificate from the mail server
+      </sh-checkbox>
+      @if (acceptAnyCertificate()) {
+        <sh-alert color="warn" i18n>
+          Only use this for servers with a self-signed certificate. It could allow someone between you and the server
+          perform a man-in-the-middle attack and read the login details.
+        </sh-alert>
+      }
+    </div>
+  </details>
+
+  @if (supportsTestEmail()) {
+    <div class="test">
+      <div class="test-actions">
+        <button
+          shButton
+          type="button"
+          class="outlined"
+          [class.loading]="isTesting()"
+          [disabled]="!canTest()"
+          (click)="sendTestEmail()">
+          <sh-icon>paper-plane-tilt</sh-icon>
+          <ng-container i18n>Send test email</ng-container>
+        </button>
+
+        @if (!effectiveRecipient()) {
+          <span class="muted" i18n>Enter a recipient to send a test email.</span>
+        }
+      </div>
+
+      <div role="status" aria-live="polite">
+        @switch (testState().status) {
+          @case ('sending') {
+            <div class="sending">
+              <p class="muted" i18n>Sending test email to {{ effectiveRecipient() }}…</p>
+              <button shButton type="button" class="small" (click)="stopTest()" i18n>Stop</button>
+            </div>
+          }
+          @case ('stopped') {
+            <p class="muted" i18n>The test was stopped.</p>
+          }
+          @case ('success') {
+            @if ($any(testState()).withoutServer) {
+              <sh-alert color="warn" i18n>
+                The recipient's mail server accepted the email. Without your own mail server it may land in spam, so
+                check the spam folder of {{ effectiveRecipient() }} too.
+              </sh-alert>
+            } @else {
+              <sh-alert color="success" i18n>
+                The test email was sent. Check the inbox of {{ effectiveRecipient() }}.
+              </sh-alert>
+            }
+          }
+          @case ('failed') {
+            <sh-alert color="error">
+              <ng-container i18n>The test email could not be sent:</ng-container>
+              {{ testError() }}
+            </sh-alert>
+          }
+        }
+      </div>
+
+      @if (testLog().length > 0) {
+        <details class="output">
+          <summary i18n>Server messages</summary>
+          <pre>{{ testLog().join('\n') }}</pre>
+        </details>
+      }
+    </div>
+  }
+</section>
+
+<footer footer>
+  <button shButton type="button" (click)="cancel()" i18n>Cancel</button>
+  <button shButton type="button" class="raised primary" [disabled]="!isValid()" (click)="save()" i18n>Apply</button>
+</footer>
+
+<ng-template #plainOption let-option>{{ option }}</ng-template>

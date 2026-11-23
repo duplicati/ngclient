@@ -1,4 +1,4 @@
-import { expect, test as base, type Page, type Request, type Route, type WebSocketRoute } from '@playwright/test';
+import { test as base, expect, type Page, type Request, type Route, type WebSocketRoute } from '@playwright/test';
 
 export const sessionNonceKey = 'refreshNonce';
 export const persistentNonceKey = 'v1:persist:duplicati:refreshNonce';
@@ -7,7 +7,7 @@ async function setupAuthentication(
   page: Page,
   initialBackups: unknown[],
   initialServerSettings: Record<string, string>,
-  extraApiExtensions: string[]
+  extraApiExtensions: string[] = []
 ) {
   const loginRequests: Route[] = [];
   const refreshRequests: Route[] = [];

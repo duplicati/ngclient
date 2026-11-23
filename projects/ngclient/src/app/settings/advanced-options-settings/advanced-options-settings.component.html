@@ -26,6 +26,6 @@
 
 <div class="options-editor" [attr.aria-busy]="isSubmitting()" [attr.inert]="isSubmitting() ? '' : null">
   @defer (when !isLoadingOptions()) {
-    <app-options-list [(options)]="settings" [hasFreeTextSettings]="true" />
+    <app-options-list [(options)]="settings" [hasFreeTextSettings]="true" [showEmailReports]="true" />
   }
 </div>

@@ -35,32 +35,45 @@
           </ng-container>
         </sh-menu>
 
-        @if (hasFreeTextSettings()) {
+        @if (hasFreeTextSettings() || showEmailReports()) {
           <sh-menu>
             <button shButton type="button" class="small" aria-label="More advanced option actions" i18n-aria-label>
               <sh-icon>dots-three-vertical</sh-icon>
             </button>
 
             <ng-container menu>
-              <button shButton type="button" class="outlined small" (click)="addFreeTextSetting()" i18n>
-                <sh-icon>pen</sh-icon>
-                New custom option
-              </button>
+              @if (hasFreeTextSettings()) {
+                <button shButton type="button" class="outlined small" (click)="addFreeTextSetting()" i18n>
+                  <sh-icon>pen</sh-icon>
+                  New custom option
+                </button>
 
-              <button shButton type="button" class="small" (click)="showTextArea.set(true)">
-                <sh-icon>link</sh-icon>
-                Edit contents as text
-              </button>
+                <button shButton type="button" class="small" (click)="showTextArea.set(true)">
+                  <sh-icon>link</sh-icon>
+                  Edit contents as text
+                </button>
 
-              <button
-                shButton
-                type="button"
-                class="outlined small"
-                (click)="showOptionNames.set(!showOptionNames())"
-                i18n>
-                <sh-icon>wrench</sh-icon>
-                Toggle option names
-              </button>
+                <button
+                  shButton
+                  type="button"
+                  class="outlined small"
+                  (click)="showOptionNames.set(!showOptionNames())"
+                  i18n>
+                  <sh-icon>wrench</sh-icon>
+                  Toggle option names
+                </button>
+              }
+
+              @if (showEmailReports()) {
+                <button shButton type="button" class="small" (click)="openEmailReportsDialog()">
+                  <sh-icon>envelope</sh-icon>
+                  @if (hasEmailReports()) {
+                    <ng-container i18n>Edit email reports</ng-container>
+                  } @else {
+                    <ng-container i18n>Configure email reports</ng-container>
+                  }
+                </button>
+              }
             </ng-container>
           </sh-menu>
         }

@@ -21,6 +21,7 @@ import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipMenu } from '@ship-ui/core/ship-menu';
 import { ShipSelect } from '@ship-ui/core/ship-select';
 import { ShipToggle } from '@ship-ui/core/ship-toggle';
+import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import FileTreeComponent from '../../../core/components/file-tree/file-tree.component';
 import { SizeComponent } from '../../../core/components/size/size.component';
 import { TimespanComponent } from '../../../core/components/timespan/timespan.component';
@@ -28,6 +29,8 @@ import { SettingDto, SettingInputDto } from '../../../core/openapi';
 import { SysinfoState } from '../../../core/states/sysinfo.state';
 import { FormView, parseKeyValueTextToSettings } from '../../destination/destination.config-utilities';
 import { OPTIONS_LIST_CUSTOM_CONFIG } from './options-list.config';
+import { EmailReportsDialogComponent } from './email-reports-dialog/email-reports-dialog.component';
+import { applyEmailValues, EMAIL_OPTIONS, optionKey } from './email-reports-dialog/email-reports';
 import { isOptionTrue, optionDisplayValue, OptionValueControl, serializeOptionValue } from './option-value-control';
 
 type SettingItem = {
@@ -64,6 +67,7 @@ type SettingItem = {
 })
 export class OptionsListComponent {
   #sysInfo = inject(SysinfoState);
+  #dialog = inject(ShipDialogService);
 
   options = model.required<SettingInputDto[]>();
   // Keep form metadata out of the DTO objects, and preserve absent/null values on load.
@@ -85,6 +89,10 @@ export class OptionsListComponent {
   hiddenOptions = input<string[]>([]);
   hasFreeTextSettings = input(false);
   applicationOptions = input<SettingDto[] | null | undefined>();
+  /** Shows the "Configure email reports" action, for places where reports are sent */
+  showEmailReports = input(false);
+  /** The id of a saved backup, so a test email can use its stored (masked) password */
+  backupId = input<string | null | undefined>(null);
   showTextArea = signal(false);
   showOptionNames = signal(false);
 
@@ -262,6 +270,27 @@ export class OptionsListComponent {
   removeSetting(settingToRemove: SettingItem) {
     this.options.update((settings) => {
       return settings.filter((setting) => setting.Name !== settingToRemove.Name);
+    });
+  }
+
+  hasEmailReports = computed(() =>
+    this.options().some((s) => optionKey(s.Name) === EMAIL_OPTIONS.to && `${s.Value ?? ''}`.trim() !== '')
+  );
+
+  openEmailReportsDialog() {
+    this.#dialog.open(EmailReportsDialogComponent, {
+      maxWidth: '640px',
+      width: '100%',
+      data: {
+        options: this.options(),
+        inherited: this.applicationOptions(),
+        inheritsGlobalOptions: this.applicationOptions() !== undefined,
+        backupId: this.backupId(),
+      },
+      closed: (values) => {
+        if (!values) return;
+        this.options.update((settings) => applyEmailValues(settings, values));
+      },
     });
   }
 }

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FormField } from '@angular/forms/signals';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -62,6 +62,10 @@ export default class OptionsComponent {
   settings = this.#backupState.settings;
   optionsForm = this.#backupState.optionsForm;
   applicationOptions = this.#backupState.applicationOptions;
+  /** Only a backup stored on the server has a password the server can fill in for a test email */
+  savedBackupId = computed(() =>
+    this.#backupState.isNew() || this.#backupState.isDraft() ? null : this.#backupState.backupId()
+  );
   isSyncMode = this.#backupState.isSyncMode;
   hasSyncSnapshots = inject(SysinfoState).hasSyncSnapshots;
 
