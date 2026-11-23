@@ -8,7 +8,7 @@
         {{ statusData()!.statusText }}
       </div>
 
-      @if (statusData()?.BackendFileSize) {
+      @if (statusData()?.fileStatusText) {
         <div class="file-status-text" [shTooltip]="fileStatusTooltip">
           {{ statusData()!.fileStatusText }}
         </div>

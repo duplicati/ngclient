@@ -78,18 +78,15 @@ describe('StatusBarState file progress', () => {
       expect(state.statusData()!.fileStatusText).toBe(`empty.txt | File processed: ${offset} bytes/${size} bytes`);
     });
 
-    it('retains the percentage and chooses the correct progress fields for a positive size', () => {
-      const usesBackend = phase !== 'Restore_DownloadingRemoteFiles';
+    it('uses the progress of the named file independently of the backend transfer', () => {
       const { state } = setup({
         Phase: phase,
         CurrentFileoffset: 25,
         CurrentFilesize: 100,
         BackendFileProgress: 50,
-        BackendFileSize: 100,
+        BackendFileSize: 200,
       });
-      expect(state.statusData()!.fileStatusText).toBe(
-        `empty.txt | File processed: ${usesBackend ? 50 : 25} bytes/100 bytes - ${usesBackend ? '50.0' : '25.0'}%`
-      );
+      expect(state.statusData()!.fileStatusText).toBe('empty.txt | File processed: 25 bytes/100 bytes - 25.0%');
     });
   });
 

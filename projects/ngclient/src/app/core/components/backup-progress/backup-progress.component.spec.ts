@@ -72,6 +72,19 @@ describe('BackupProgressComponent task visibility', () => {
     expect(fixture.nativeElement.textContent).toContain('No scheduled tasks');
   });
 
+  it('shows the current file before any backend transfer starts', () => {
+    const { runningBackupId, statusData } = setup('42');
+    statusData.update((value) => ({
+      ...value,
+      BackendFileSize: 0,
+      fileStatusText: 'first.txt | File processed: 1 MB/2 MB',
+    }));
+    runningBackupId.set(42);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.file-status-text')?.textContent).toContain('first.txt');
+  });
+
   it('renders the next scheduled job while idle', () => {
     const { serverState } = setup();
     serverState.set({
