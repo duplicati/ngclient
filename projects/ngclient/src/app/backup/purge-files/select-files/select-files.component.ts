@@ -45,6 +45,7 @@ export default class PurgeSelectFilesComponent {
   isLoadingVersions = this.#state.isLoadingVersions;
   selectedVersion = this.#state.selectedVersion;
   selectedPaths = this.#state.selectedPaths;
+  selectedPathsForm = form(this.selectedPaths);
   selectedPathsArray = this.#state.selectedPathsArray;
 
   backupSettings = signal<BackupSettings | null>(null);
