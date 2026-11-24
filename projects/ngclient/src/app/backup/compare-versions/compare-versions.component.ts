@@ -136,7 +136,8 @@ export default class CompareVersionsComponent {
 
   inputForm = form(signal({ filter: '' }));
   filter = this.inputForm.filter().value;
-  hiddenTypes = signal<ReadonlySet<CompareChangeType>>(new Set());
+  hiddenTypesField = form(signal<ReadonlySet<CompareChangeType>>(new Set()));
+  hiddenTypes = this.hiddenTypesField().value;
   limit = signal(CHANGES_PAGE_SIZE);
 
   changeCounts = computed(() => {
