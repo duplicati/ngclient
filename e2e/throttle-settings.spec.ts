@@ -46,6 +46,29 @@ test('names the toolbar action and supports its tooltip and keyboard activation'
   expect(serverApi.settingsRequests).toHaveLength(0);
 });
 
+test('reopens the tooltip when the mouse returns during cleanup', async ({ authenticatedPage: page }) => {
+  const throttle = page.getByRole('button', { name: 'Throttle network speed', exact: true });
+  const tooltip = page.locator('ship-tooltip-wrapper:popover-open');
+  const now = new Date();
+  await page.clock.install({ time: now });
+  await page.clock.pauseAt(new Date(now.getTime() + 1000));
+
+  await throttle.dispatchEvent('mouseenter');
+  await page.clock.runFor(16);
+  await expect(tooltip).toHaveText('Throttle network speed');
+
+  await throttle.dispatchEvent('mouseleave');
+  await page.clock.runFor(60);
+  await expect(tooltip).toHaveCount(0);
+  await throttle.dispatchEvent('mouseenter');
+  await page.clock.runFor(130);
+  await expect(tooltip).toHaveText('Throttle network speed');
+
+  await throttle.dispatchEvent('mouseleave');
+  await page.clock.runFor(150);
+  await expect(tooltip).toHaveCount(0);
+});
+
 test('preserves edits after a rejected update and saves them on retry', async ({
   authenticatedPage: page,
   serverApi,

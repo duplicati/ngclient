@@ -73,5 +73,8 @@
     "vitest": "^5.0.3",
     "xml2js": "^0.6.2"
   },
-  "packageManager": "bun@1.4.4"
+  "packageManager": "bun@1.4.4",
+  "patchedDependencies": {
+    "@ship-ui/core@0.23.5": "patches/@ship-ui%2Fcore@0.23.5.patch"
+  }
 }

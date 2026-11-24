@@ -38,6 +38,9 @@
       },
     },
   },
+  "patchedDependencies": {
+    "@ship-ui/core@0.23.5": "patches/@ship-ui%2Fcore@0.23.5.patch",
+  },
   "packages": {
     "@acemir/cssom": ["@acemir/cssom@0.9.31", "", {}, ""],
 
