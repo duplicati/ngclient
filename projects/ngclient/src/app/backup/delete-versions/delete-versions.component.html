@@ -60,5 +60,8 @@
   </button>
 </div>
 <div class="sub-actions">
-  <sh-checkbox class="primary raised" [(checked)]="performCompact" i18n>Compact after deletion</sh-checkbox>
+  <sh-checkbox class="primary raised" i18n>
+    Compact after deletion
+    <input type="checkbox" [formField]="compactField" />
+  </sh-checkbox>
 </div>
