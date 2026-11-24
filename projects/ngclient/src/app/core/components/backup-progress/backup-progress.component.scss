@@ -44,6 +44,11 @@
   }
 }
 
+:host-context(app-status-bar) .progress-section {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 :host-context(app-status-bar) sh-progress-bar {
   position: absolute;
   bottom: 0;

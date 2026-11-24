@@ -115,6 +115,28 @@ for (const view of ['list', 'details'] as const) {
   });
 }
 
+test('keeps the status bar menu inside a narrow viewport while a backup runs', async ({
+  authenticatedPage: page,
+  serverApi,
+}) => {
+  await installOperations(page);
+  await page.setViewportSize({ width: 360, height: 800 });
+  const toolbar = page.locator('app-status-bar');
+  const menu = toolbar.getByRole('button', { name: 'More options' });
+  await expect(menu).toBeInViewport({ ratio: 1 });
+  const idle = await menu.boundingBox();
+
+  serverApi.sendServerStatus({
+    ActiveTask: { Item1: 73, Item2: '42' },
+    SchedulerQueueIds: [{ Item1: 73, Item2: '42' }],
+  });
+  await expect(toolbar.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '42');
+  await expect(menu).toBeInViewport({ ratio: 1 });
+  const running = await menu.boundingBox();
+  expect(running?.x).toBe(idle?.x);
+  expect(running?.y).toBe(idle?.y);
+});
+
 test('a paused server starts nothing on cancel and waits for resume before starting the chosen backup', async ({
   authenticatedPage: page,
   serverApi,

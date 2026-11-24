@@ -85,6 +85,22 @@ describe('BackupProgressComponent task visibility', () => {
     expect(fixture.nativeElement.querySelector('.file-status-text')?.textContent).toContain('first.txt');
   });
 
+  it('uses indeterminate progress until the current phase has a percentage', () => {
+    const { runningBackupId, statusData } = setup();
+    runningBackupId.set('42');
+    statusData.update((value) => ({ ...value, progress: -1 }));
+    fixture.detectChanges();
+
+    const bar = fixture.nativeElement.querySelector('sh-progress-bar');
+    expect(bar.classList.contains('indeterminate')).toBe(true);
+    expect(bar.hasAttribute('aria-valuenow')).toBe(false);
+
+    statusData.update((value) => ({ ...value, progress: 0.25 }));
+    fixture.detectChanges();
+    expect(bar.classList.contains('indeterminate')).toBe(false);
+    expect(bar.getAttribute('aria-valuenow')).toBe('25');
+  });
+
   it('renders the next scheduled job while idle', () => {
     const { serverState } = setup();
     serverState.set({
