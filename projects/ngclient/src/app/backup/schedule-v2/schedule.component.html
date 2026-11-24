@@ -1,10 +1,15 @@
 <h3 class="title-30" i18n>Schedule</h3>
 
-<sh-select [isClearable]="false" [options]="scheduleOptions" label="key" value="value">
+<sh-select
+  [isClearable]="false"
+  [options]="scheduleOptions"
+  label="key"
+  value="value"
+  (selectedOptionsChange)="selectScheduleType($event)">
   <input
     type="text"
-    [ngModel]="scheduleType()"
-    (ngModelChange)="updateScheduleType($event)"
+    appNullableText
+    [formField]="scheduleTypeField"
     i18n-placeholder
     placeholder="Select an option..." />
 </sh-select>
