@@ -21,7 +21,9 @@ const initialNotifications = () => [notification(11), notification(22, 'Warning'
 const bell = (page: Page) =>
   page.locator('app-service-hub > button').filter({ has: page.locator('sh-icon', { hasText: /^bell(-ringing)?$/ }) });
 const row = (panel: Locator, id: number) =>
-  panel.locator('app-notification').filter({ hasText: new RegExp(`Notification ${id}\\b`) });
+  panel.locator('app-notification').filter({
+    has: panel.page().getByText(`Notification ${id}`, { exact: true }),
+  });
 const titles = (panel: Locator) => panel.locator('app-notification [ship-alert-title]');
 
 async function openNotifications(page: Page) {
@@ -71,6 +73,9 @@ test('notification updates render severity and dismissal sends the selected ID a
   await expect(row(panel, 11).locator('sh-alert')).toHaveClass(/\bprimary\b/);
   await expect(row(panel, 22).locator('sh-alert')).toHaveClass(/\bwarn\b/);
   await expect(row(panel, 33).locator('sh-alert')).toHaveClass(/\berror\b/);
+  await expect(row(panel, 11).locator('strong')).toHaveCount(0);
+  await expect(row(panel, 22).getByText('Warning', { exact: true })).toBeVisible();
+  await expect(row(panel, 33).getByText('Error', { exact: true })).toBeVisible();
 
   await row(panel, 22).getByRole('button', { name: 'Dismiss', exact: true }).click();
   await expect.poll(() => requests.length).toBe(1);

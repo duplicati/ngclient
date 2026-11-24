@@ -4,6 +4,25 @@
   display: block;
 }
 
+sh-alert.warn,
+sh-alert.error {
+  color: var(--base-12);
+  border-inline-start: p2r(4) solid var(--notification-accent);
+
+  .message,
+  .severity {
+    color: var(--base-12);
+  }
+}
+
+sh-alert.warn {
+  --notification-accent: var(--warn-9);
+}
+
+sh-alert.error {
+  --notification-accent: var(--error-9);
+}
+
 .content {
   margin-top: p2r(8);
   display: flex;

@@ -4,6 +4,12 @@
   <div ship-alert-title>{{ _notification.Title }}</div>
 
   <div ship-alert-content class="content">
+    @if (_notification.Type === 'Warning') {
+      <strong class="severity" i18n>Warning</strong>
+    } @else if (_notification.Type === 'Error') {
+      <strong class="severity" i18n>Error</strong>
+    }
+
     @if (_notification.Action !== 'update:new' && _notification.Action !== 'update:manual') {
       <div class="message">
         {{ _notification.Message }}
