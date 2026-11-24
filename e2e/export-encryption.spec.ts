@@ -128,3 +128,12 @@ test('encrypted export retains required, minimum-length and matching-password ch
   await expect(submit).toBeEnabled();
   expect(tokens).toHaveLength(0);
 });
+
+test('switching to command line clears the file-only encryption selection', async ({ authenticatedPage: page }) => {
+  const { form, encrypt } = await openExport(page);
+  await encrypt.check();
+  await form.getByRole('button', { name: 'As command line' }).click();
+  await expect(encrypt).toHaveCount(0);
+  await form.getByRole('button', { name: 'To file' }).click();
+  await expect(encrypt).not.toBeChecked();
+});
