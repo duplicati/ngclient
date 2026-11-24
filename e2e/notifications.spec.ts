@@ -40,6 +40,25 @@ async function holdDismissals(page: Page) {
   return requests;
 }
 
+test('names the alert and notification controls and exposes their expanded state', async ({
+  authenticatedPage: page,
+}) => {
+  const hub = page.locator('app-service-hub');
+  for (const name of ['Alerts', 'Notifications']) {
+    const button = hub.getByRole('button', { name, exact: true });
+    await expect(button).toHaveAttribute('aria-expanded', 'false');
+    await button.hover();
+    await expect(page.getByRole('tooltip')).toHaveText(name);
+    await page.getByRole('heading', { name: 'My backups' }).hover();
+    await expect(page.getByRole('tooltip')).toHaveCount(0);
+    await button.press('Enter');
+    await expect(button).toHaveAttribute('aria-expanded', 'true');
+    await hub.getByRole('button', { name: `Close ${name.toLowerCase()}` }).press('Enter');
+    await expect(button).toHaveAttribute('aria-expanded', 'false');
+    await expect(button).toBeFocused();
+  }
+});
+
 test('notification updates render severity and dismissal sends the selected ID after the list changes', async ({
   authenticatedPage: page,
   serverApi,
