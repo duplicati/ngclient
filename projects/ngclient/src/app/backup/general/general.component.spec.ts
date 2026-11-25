@@ -96,6 +96,14 @@ describe('GeneralComponent encryption fields', () => {
     expect(element.textContent).toContain('Encrypted backup');
   });
 
+  it('does not label an existing unencrypted backup as encrypted', () => {
+    const element = createFixture({ encryption: NONE_OPTION.Key });
+
+    expect(element.querySelector('sh-select')).toBeNull();
+    expect(element.textContent).not.toContain('Encrypted backup');
+    expect(element.textContent).toContain('Backup is not encrypted');
+  });
+
   it('keeps encryption fields available for a new backup', () => {
     const element = createFixture({ isNew: true });
 
