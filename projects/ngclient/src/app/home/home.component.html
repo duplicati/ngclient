@@ -383,7 +383,7 @@
         </div>
       } @else if (viewMode() === 'details') {
         <sh-table
-          class="type-b"
+          class="type-b job-details"
           [data]="filteredBackups()"
           [loading]="backupsLoading()"
           [(sortByColumn)]="sortByColumn">
@@ -417,7 +417,7 @@
               <ng-container *ngTemplateOutlet="sortIcons" />
             </th>
             <th i18n>Version</th>
-            <th i18n>Actions</th>
+            <th class="job-details-actions" scope="col" i18n>Actions</th>
           </tr>
 
           @for (backup of filteredBackups(); track backup.Backup.ID ?? backup) {
@@ -532,7 +532,7 @@
                 }
               </td>
 
-              <td>
+              <td class="job-details-actions">
                 <ng-container *ngTemplateOutlet="actions; context: { $implicit: backup }"></ng-container>
               </td>
             </tr>
