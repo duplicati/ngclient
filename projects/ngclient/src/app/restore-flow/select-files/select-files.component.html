@@ -164,7 +164,7 @@
           [searchParentMetadata]="searchParentMetadata()"
           (hasExtendedData)="extendedDataType.set($event)">
           <label for="path" i18n>Path</label>
-          <input type="text" id="path" formControlName="filesToRestore" />
+          <input type="text" id="path" appNullableText [formField]="selectedFilesField" />
         </app-file-tree>
       }
     }

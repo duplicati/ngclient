@@ -107,7 +107,7 @@ test('selects an older search hit and submits its timestamp and exact path for r
   await expect(page.getByRole('button', { name: 'Continue', exact: true })).toBeDisabled();
   expect(searches).toEqual([expect.objectContaining({ Version: null, Time: null })]);
   await hits.nth(1).getByRole('button', { name: 'Select this version', exact: true }).click();
-  await expect(page.locator('input[formcontrolname=filesToRestore]')).toHaveValue('/data/report.txt');
+  await expect(page.locator('app-select-files app-file-tree input#path')).toHaveValue('/data/report.txt');
   await expect(page.locator('app-select-files sh-select input')).toHaveValue('7');
   await page.getByRole('button', { name: 'Continue', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Restore options', exact: true })).toBeVisible();

@@ -1,4 +1,5 @@
 import { form, FormField } from '@angular/forms/signals';
+import { compatForm } from '@angular/forms/signals/compat';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -75,6 +76,7 @@ export default class SelectFilesComponent {
   #activeRepairIds = signal<string[]>([]);
 
   selectFilesForm = this.#restoreFlowState.selectFilesForm;
+  selectedFilesField = compatForm(signal({ path: this.selectFilesForm.controls.filesToRestore })).path;
   selectFilesFormSignal = this.#restoreFlowState.selectFilesFormSignal;
   selectOption = this.#restoreFlowState.selectOption;
   versionField = form(this.selectOption);
@@ -449,7 +451,7 @@ export default class SelectFilesComponent {
     this.abortLoading$.next(true);
     this.selectOption.set(option.Version.toString());
     const path = result.IsDirectory && !/[\\/]$/.test(result.Path) ? result.Path + '/' : result.Path;
-    this.selectFilesForm.controls.filesToRestore.setValue(path);
+    this.selectedFilesField().value.set(path);
     this.clearSearch();
   }
 
