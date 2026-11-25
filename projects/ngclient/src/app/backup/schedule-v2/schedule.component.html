@@ -162,11 +162,19 @@
     <!-- The picker matches its value to the options only when the value is set,
          so it is created again when the options change, as when the list of jobs arrives -->
     @for (options of [runAfterOptions()]; track options) {
-      <sh-select [isClearable]="true" [options]="options" label="label" value="value">
+      <sh-select
+        [isClearable]="true"
+        [options]="options"
+        label="label"
+        value="value"
+        (selectedOptionsChange)="selectRunAfter($event)"
+        (cleared)="setRunAfter(null)">
         <input
+          #runAfterInput
           type="text"
-          [ngModel]="runAfterBackupId()"
-          (ngModelChange)="setRunAfter($event)"
+          appNullableText
+          [formField]="runAfterField"
+          (input)="clearRunAfterIfEmpty(runAfterInput.value)"
           i18n-placeholder
           placeholder="Do not run after another job" />
       </sh-select>
