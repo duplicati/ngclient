@@ -152,7 +152,7 @@ export default class CompareVersionsComponent {
       (x) => !hidden.has(x.type) && (filter === '' || x.path.toLowerCase().includes(filter))
     );
   });
-  visibleChanges = computed(() => this.filteredChanges().slice(0, this.limit()));
+  visibleChanges = computed(() => this.filteredChanges().slice(0, this.displayLimit()));
 
   #run?: Subscription;
   // The command being run on the server, which is aborted when its result is no longer wanted
@@ -213,7 +213,7 @@ export default class CompareVersionsComponent {
     this.#cancel();
     this.filter.set('');
     this.hiddenTypes.set(new Set());
-    this.limit.set(CHANGES_PAGE_SIZE);
+    this.displayLimit.set(CHANGES_PAGE_SIZE);
 
     const versions = { base: base.Version, target: target.Version };
     this.state.set({ status: 'queued', ...versions });
@@ -313,7 +313,7 @@ export default class CompareVersionsComponent {
       if (!next.delete(type)) next.add(type);
       return next;
     });
-    this.limit.set(CHANGES_PAGE_SIZE);
+    this.displayLimit.set(CHANGES_PAGE_SIZE);
   }
 
   updateFilter(value: string) {
@@ -322,11 +322,14 @@ export default class CompareVersionsComponent {
   }
 
   resetFilterLimit() {
-    this.limit.set(CHANGES_PAGE_SIZE);
+    this.displayLimit.set(CHANGES_PAGE_SIZE);
   }
 
+  displayLimitField = form(this.limit);
+  displayLimit = this.displayLimitField().value;
+
   showMore() {
-    this.limit.update((x) => x + CHANGES_PAGE_SIZE);
+    this.displayLimit.update((x) => x + CHANGES_PAGE_SIZE);
   }
 
   totalCount(type: CompareChangeType): number {
