@@ -7,7 +7,8 @@ async function setupAuthentication(
   page: Page,
   initialBackups: unknown[],
   initialServerSettings: Record<string, string>,
-  extraApiExtensions: string[] = []
+  extraApiExtensions: string[] = [],
+  powerModeProviders: string[] = []
 ) {
   const loginRequests: Route[] = [];
   const refreshRequests: Route[] = [];
@@ -59,6 +60,7 @@ async function setupAuthentication(
         { ID: 'Europe/Copenhagen', DisplayName: '(UTC+01:00) Central European Time', CurrentUTCOffset: '01:00:00' },
         { ID: 'America/New_York', DisplayName: 'Eastern Time', CurrentUTCOffset: '-05:00:00' },
       ],
+      PowerModeProviders: powerModeProviders,
       APIExtensions: [
         'v1:websocket',
         'v1:websocket:authenticate',
@@ -202,12 +204,20 @@ export const test = base.extend<{
   initialBackups: unknown[];
   initialServerSettings: Record<string, string>;
   extraApiExtensions: string[];
+  powerModeProviders: string[];
 }>({
   initialBackups: [[], { option: true }],
   initialServerSettings: [{}, { option: true }],
   extraApiExtensions: [[], { option: true }],
-  serverApi: async ({ page, initialBackups, initialServerSettings, extraApiExtensions }, use) => {
-    const api = await setupAuthentication(page, initialBackups, initialServerSettings, extraApiExtensions);
+  powerModeProviders: [[], { option: true }],
+  serverApi: async ({ page, initialBackups, initialServerSettings, extraApiExtensions, powerModeProviders }, use) => {
+    const api = await setupAuthentication(
+      page,
+      initialBackups,
+      initialServerSettings,
+      extraApiExtensions,
+      powerModeProviders
+    );
     await use(api);
     expect(api.unexpectedRequests, 'Unexpected API or WebSocket requests').toEqual([]);
     expect(api.pageErrors, 'Unhandled browser errors').toEqual([]);
