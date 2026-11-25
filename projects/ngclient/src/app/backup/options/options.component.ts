@@ -1,6 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { FormField } from '@angular/forms/signals';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, linkedSignal, signal, viewChild } from '@angular/core';
+import { form, FormField } from '@angular/forms/signals';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
@@ -9,6 +8,7 @@ import { ShipSelect } from '@ship-ui/core/ship-select';
 import { TimespanComponent } from '../../core/components/timespan/timespan.component';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 import { BackupState } from '../backup.state';
+import { NullableTextControl } from '../general/nullable-text-control';
 import { OptionsListComponent } from './options-list/options-list.component';
 
 import { RetentionType, SYNC_SNAPSHOT_OPTION_NAMES } from '../models/backup-options';
@@ -39,8 +39,8 @@ const RETENTION_OPTIONS: { value: RetentionType; name: string }[] = [
 @Component({
   selector: 'app-advanced-options-settings',
   imports: [
-    FormsModule,
     FormField,
+    NullableTextControl,
     OptionsListComponent,
     TimespanComponent,
     ShipButton,
@@ -70,6 +70,7 @@ export default class OptionsComponent {
   hasSyncSnapshots = inject(SysinfoState).hasSyncSnapshots;
 
   retentionOptions = signal(RETENTION_OPTIONS);
+  retentionField = form(linkedSignal<string>(() => this.optionsForm.backupRetention().value()));
   syncSnapshotOptionNames = SYNC_SNAPSHOT_OPTION_NAMES;
 
   onRetentionFocusOut(event: FocusEvent, select: ShipSelect) {
@@ -79,9 +80,10 @@ export default class OptionsComponent {
     }
   }
 
-  updateRetention(value: string) {
-    const option = RETENTION_OPTIONS.find((option) => option.value === value);
-    if (option) this.optionsForm.backupRetention().value.set(option.value);
+  updateRetention(selected: unknown[]) {
+    const option = this.retentionOptions().find((entry) => entry === selected[0]);
+    const retention = this.optionsForm.backupRetention().value;
+    if (option && option.value !== retention()) retention.set(option.value);
   }
 
   goBack() {
