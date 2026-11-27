@@ -7,7 +7,6 @@ const fb = new FormBuilder();
 export const createGeneralForm = (
   defaults = {
     name: '',
-    description: '',
     encryption: '',
     password: '',
     repeatPassword: '',
@@ -17,7 +16,6 @@ export const createGeneralForm = (
 ) => {
   return fb.group({
     name: fb.control<string>(defaults.name, [Validators.required]),
-    description: fb.control<string>(defaults.description),
     encryption: fb.control<string>(defaults.encryption, [watchField()]),
     password: fb.control<string>(defaults.password, [
       validateWhen((t) => t?.value.encryption !== '-', [Validators.required]),

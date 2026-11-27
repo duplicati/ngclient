@@ -121,6 +121,7 @@ export class BackupState {
 
   isDraft = signal(false);
   backupId = signal<string | null>(null);
+  descriptionField = form(signal<string | null>(''));
   backupName = computed(() => this.generalFormSignal()?.name ?? '');
   #saveOperation = new AsyncOperation<unknown>();
   #saveContext: BackupSaveContext | null = null;
@@ -366,6 +367,7 @@ export class BackupState {
   validateBeforeSubmit() {
     this.generalForm.markAllAsTouched();
     this.sourceDataForm.markAllAsTouched();
+    this.descriptionField().markAsTouched();
 
     const backup = this.#mapFormsToBackup();
 
@@ -489,6 +491,7 @@ export class BackupState {
     this.generalForm.patchValue(mapBackupToGeneralForm(backup));
     this.runAfterBackupId.set(backup.RunAfterBackupID ?? null);
     this.runAfterAlways.set(backup.RunAfterCondition === 'Always');
+    this.descriptionField().value.set(backup.Description ?? '');
   }
 
   mapScheduleToForm(schedule: ScheduleDto | null) {
@@ -577,6 +580,7 @@ export class BackupState {
     const reused = this.reusedDatabase();
     if (this.isNew() && !this.isSyncMode() && reused && reused.url === this.targetUrls()[0]?.url)
       backup.Backup!.DBPath = reused.path;
+    backup.Backup!.Description = this.descriptionField().value();
     return backup;
   }
 
@@ -728,5 +732,6 @@ export class BackupState {
     this.optionsForm.syncSnapshotDisableHardlinks().value.set(false);
     this.settings.set([]);
     this.targetUrls.set([]);
+    this.descriptionField().reset(null);
   }
 }
