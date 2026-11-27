@@ -56,7 +56,7 @@ export default class GeneralComponent {
   // Keep the existing controls as the single source of truth during the staged migration.
   generalForm = compatForm(signal(this.#backupState.generalForm.controls));
   encryptionFieldSignal = computed(() => this.generalForm.encryption().value());
-  operationTypeFieldSignal = computed(() => this.generalForm.operationType().value() ?? 'Backup');
+  operationTypeFieldSignal = this.#backupState.operationType;
   encryptionOptions = this.#backupState.encryptionOptions;
   isNew = this.#backupState.isNew;
   isDraft = this.#backupState.isDraft;
@@ -78,7 +78,7 @@ export default class GeneralComponent {
   });
 
   updateOperationType(value: string | number | null) {
-    if (value === 'Backup' || value === 'Sync') this.generalForm.operationType().value.set(value);
+    if (value === 'Backup' || value === 'Sync') this.#backupState.operationType.set(value);
   }
 
   descriptionField = this.#backupState.descriptionField;

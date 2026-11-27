@@ -11,7 +11,6 @@ export const createGeneralForm = (
     password: '',
     repeatPassword: '',
     compression: '',
-    operationType: 'Backup' as OperationType,
   }
 ) => {
   return fb.group({
@@ -23,7 +22,6 @@ export const createGeneralForm = (
     repeatPassword: fb.control<string>(defaults.repeatPassword, [
       validateWhen((t) => t?.value.encryption !== '-', [Validators.required]),
     ]),
-    operationType: fb.control<OperationType>(defaults.operationType),
   });
 };
 
@@ -32,4 +30,4 @@ export const NONE_OPTION = {
   DisplayName: 'None',
 };
 
-export type GeneralFormValue = ReturnType<typeof createGeneralForm>['value'];
+export type GeneralFormValue = ReturnType<typeof createGeneralForm>['value'] & { operationType?: OperationType | null };

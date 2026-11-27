@@ -30,7 +30,6 @@ describe('GeneralComponent encryption fields', () => {
       password: encryption === NONE_OPTION.Key ? '' : 'secret',
       repeatPassword: encryption === NONE_OPTION.Key ? '' : 'secret',
       compression: '',
-      operationType,
     });
 
     TestBed.configureTestingModule({
@@ -50,7 +49,7 @@ describe('GeneralComponent encryption fields', () => {
             descriptionField: form(signal<string | null>('')),
             generalFormSignal: signal(generalForm.getRawValue()),
             encryptionFieldSignal: signal(encryption),
-            operationTypeFieldSignal: signal(operationType),
+            operationType: signal(operationType),
             encryptionOptions: signal([NONE_OPTION, { Key: 'aes', DisplayName: 'AES' }]),
             isNew: signal(isNew),
             isDraft: signal(isDraft),
