@@ -56,6 +56,24 @@ describe('file tree attribute exclusion feedback', () => {
     return { component, list };
   }
 
+  it('shows and hides hidden entries when the footer toggle changes', () => {
+    const { component } = setup();
+    const nodes = [
+      { id: '/.hidden/', text: '.hidden', cls: 'folder' as const, hidden: true, parentPath: '/' },
+    ] as Parameters<FileTreeComponent['visibleTreeChildren']>[0];
+    const checkbox = fixture.nativeElement.querySelector(
+      '.browse-files-toggle input:not(.internal-input)'
+    ) as HTMLInputElement;
+
+    expect(component.visibleTreeChildren(nodes)).toEqual([]);
+    checkbox.click();
+    fixture.detectChanges();
+    expect(component.visibleTreeChildren(nodes)).toEqual(nodes);
+    checkbox.click();
+    fixture.detectChanges();
+    expect(component.visibleTreeChildren(nodes)).toEqual([]);
+  });
+
   it('marks matching attributes and descendants without changing selected paths', () => {
     const { component } = setup({ excludedAttributes: ['Hidden', 'System'], showHiddenNodes: true });
     component.currentPath.set('/Documents/');
