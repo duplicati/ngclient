@@ -244,8 +244,8 @@
       @if (isDatabaseTablesOnly()) {
         <p class="database-note" i18n>
           Only some of the database is selected, so the rows of the selected tables are loaded into tables that exist.
-          Indexes, constraints and sequence values are not changed. Select the whole database to restore it with all
-          of its objects.
+          Indexes, constraints and sequence values are not changed. Select the whole database to restore it with all of
+          its objects.
         </p>
 
         <sh-toggle class="raised primary" i18n>
@@ -297,12 +297,12 @@
 
       <sh-radio class="raised primary" i18n>
         Overwrite
-        <input type="radio" name="handleExisting" value="overwrite" formControlName="handleExisting" />
+        <input type="radio" value="overwrite" [formField]="handleExistingField" />
       </sh-radio>
 
       <sh-radio class="raised primary" i18n>
         Save different versions with timestamp in file name
-        <input type="radio" name="handleExisting" value="saveTimestamp" formControlName="handleExisting" />
+        <input type="radio" value="saveTimestamp" [formField]="handleExistingField" />
       </sh-radio>
     </app-toggle-card>
 

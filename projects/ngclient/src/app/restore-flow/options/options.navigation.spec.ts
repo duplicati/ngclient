@@ -1,6 +1,7 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
+import { FormField } from '@angular/forms/signals';
 import { provideRouter, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { ShipButton } from '@ship-ui/core/ship-button';
@@ -63,7 +64,7 @@ describe('Restore options back navigation', () => {
     });
     TestBed.overrideComponent(OptionsComponent, {
       set: {
-        imports: [ReactiveFormsModule, RouterLink, ShipButton, ShipIcon],
+        imports: [ReactiveFormsModule, FormField, RouterLink, ShipButton, ShipIcon],
         // Keep the actual template and native form controls; isolate unrelated custom child controls.
         schemas: [CUSTOM_ELEMENTS_SCHEMA],
       },

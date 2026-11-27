@@ -203,7 +203,7 @@ for (const scenario of [
     if (scenario.overwrite) {
       await page.locator('sh-radio').filter({ hasText: 'Overwrite' }).click();
     } else {
-      await expect(page.locator('[formcontrolname=handleExisting][value=saveTimestamp]')).toBeChecked();
+      await expect(page.locator('input[type=radio][value=saveTimestamp]')).toBeChecked();
     }
     const body = await completeTask(page, restores, tasks);
     expect(body).toMatchObject({
