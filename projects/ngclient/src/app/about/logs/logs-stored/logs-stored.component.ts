@@ -1,3 +1,4 @@
+import { form } from '@angular/forms/signals';
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -39,10 +40,13 @@ export default class LogsStoredComponent {
   noMoreItems = signal(false);
   logsIsLoading = signal(false);
   logs = signal<LogEvent[]>([]);
-  pagination = signal<Pagination>({
-    offsetTime: undefined,
-    pagesize: 10,
-  });
+  paginationField = form(
+    signal<Pagination>({
+      offsetTime: undefined,
+      pagesize: 10,
+    })
+  );
+  pagination = this.paginationField().value;
 
   paginationEffect = effect(() => {
     const _ = this.pagination();
