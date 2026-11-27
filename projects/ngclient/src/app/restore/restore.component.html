@@ -35,36 +35,38 @@
             </p>
           </div>
 
-          <button shButton tabindex="-1" i18n>
-            Restore
-            <sh-icon>arrow-right</sh-icon>
-          </button>
+          @let targets = secondaryTargets(backup.Backup);
+          <div class="restore-action" [class.split]="targets.length">
+            <button shButton tabindex="-1" i18n>
+              Restore
+              <sh-icon>arrow-right</sh-icon>
+            </button>
+
+            @if (targets.length) {
+              <sh-menu class="secondary-menu" (click)="$event.stopPropagation()">
+                <button
+                  shButton
+                  type="button"
+                  [disabled]="copyingDestination()"
+                  aria-label="Restore from a secondary destination"
+                  i18n-aria-label
+                  i18n-title
+                  title="Restore from a secondary destination">
+                  <sh-icon>caret-down</sh-icon>
+                </button>
+
+                <ng-container menu>
+                  <span class="menu-header" i18n>Restore from a secondary destination</span>
+                  @for (destination of targets; track destination.UrlKey) {
+                    <button type="button" (click)="restoreFromDestination(backup.Backup.ID, destination.UrlKey)">
+                      {{ destinationName(destination.TargetUrl) }}
+                    </button>
+                  }
+                </ng-container>
+              </sh-menu>
+            }
+          </div>
         </sh-card>
-        @if (backup.Backup.ID; as id) {
-          @if (hasRestoreDestination()) {
-            <details #secondaryPicker (toggle)="loadSecondaryDestinations(id, secondaryPicker.open)">
-              <summary i18n>Restore {{ backup.Backup.Name }} from a secondary destination</summary>
-              @let destinations = secondaryDestinations()[id];
-              @if (destinations === 'loading') {
-                <p role="status" i18n>Loading secondary destinations…</p>
-              } @else if (destinations === 'error') {
-                <button shButton type="button" (click)="loadSecondaryDestinations(id, true)" i18n>Retry</button>
-              } @else if (destinations) {
-                @for (destination of destinations; track destination.UrlKey) {
-                  <button
-                    shButton
-                    type="button"
-                    [disabled]="copyingDestination()"
-                    (click)="restoreFromDestination(backup.Backup.ID, destination.UrlKey)">
-                    {{ destinationLabel(destination.TargetUrl, $index) }}
-                  </button>
-                } @empty {
-                  <p i18n>No secondary destinations are configured.</p>
-                }
-              }
-            </details>
-          }
-        }
       } @empty {
         <div class="no-matches" i18n>No backups match "{{ searchTerm() }}"</div>
       }

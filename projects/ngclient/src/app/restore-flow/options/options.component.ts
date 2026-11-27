@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { FormField } from '@angular/forms/signals';
@@ -17,6 +18,7 @@ import { ConfirmDialogComponent } from '../../core/components/confirm-dialog/con
 import FileTreeComponent from '../../core/components/file-tree/file-tree.component';
 import ToggleCardComponent from '../../core/components/toggle-card/toggle-card.component';
 import { SysinfoState } from '../../core/states/sysinfo.state';
+import { secondaryDestinationName } from '../../restore/secondary-destination-name';
 import { RestoreFlowState } from '../restore-flow.state';
 import {
   buildImageFileRestorePath,
@@ -48,6 +50,8 @@ export const createRestoreOptionsForm = () => {
       'original' | 'pickLocation' | 'download' | 'same-custom' | 'other-custom' | 'diskimage' | 'diskimage-file'
     >('original'),
     restoreFromPath: fb.control<string>(''),
+    // The url key of the secondary destination to read from; empty reads the primary destination
+    restoreSource: fb.control<string>(''),
     handleExisting: fb.nonNullable.control<'overwrite' | 'saveTimestamp'>(RESTORE_OPTION_DEFAULTS.handleExisting),
     permissions: fb.control<boolean>(RESTORE_OPTION_DEFAULTS.permissions),
     includeMetadata: fb.control<boolean>(RESTORE_OPTION_DEFAULTS.includeMetadata),
@@ -67,6 +71,7 @@ export const createRestoreOptionsForm = () => {
 @Component({
   selector: 'app-advanced-options-settings',
   imports: [
+    NgTemplateOutlet,
     ReactiveFormsModule,
     FormField,
     ToggleCardComponent,
@@ -101,6 +106,14 @@ export default class OptionsComponent {
   isSync = computed(() => this.#restoreFlowState.backup()?.Backup?.OperationType === 'Sync');
 
   remoteCustomTargetUrl = signal<string | null>(null);
+
+  /** The secondary destinations the restore can read from instead of the primary destination */
+  secondaryDestinations = this.#restoreFlowState.secondaryDestinations;
+
+  destinationLabel(target: string | null) {
+    const name = secondaryDestinationName(target);
+    return name ? $localize`Secondary destination: ${name}` : $localize`Secondary destination`;
+  }
 
   /** Whether the server can restore a disk image to an image file */
   canRestoreToImageFile = computed(() =>

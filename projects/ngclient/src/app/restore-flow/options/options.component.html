@@ -1,3 +1,30 @@
+<ng-template #restoreSourceCard>
+  @if (secondaryDestinations().length) {
+    <app-toggle-card class="restore-source" [disableToggle]="true" [formGroup]="optionsForm">
+      <ng-container title i18n>Where do you want to restore from?</ng-container>
+
+      <sh-radio class="raised primary" i18n>
+        Primary destination
+        <input type="radio" name="restoreSource" value="" formControlName="restoreSource" />
+      </sh-radio>
+
+      @for (destination of secondaryDestinations(); track destination.UrlKey) {
+        <sh-radio class="raised primary">
+          {{ destinationLabel(destination.TargetUrl) }}
+          <input type="radio" name="restoreSource" [value]="destination.UrlKey" formControlName="restoreSource" />
+        </sh-radio>
+      }
+
+      @if (optionsFormSignal()?.restoreSource) {
+        <p class="restore-source-note" i18n>
+          The files and version were picked from the primary destination. A secondary destination may not hold the
+          newest versions yet.
+        </p>
+      }
+    </app-toggle-card>
+  }
+</ng-template>
+
 <form [formGroup]="optionsForm" #formRef (submit)="submit()">
   <h3 class="title-30" i18n>Restore options</h3>
 
@@ -306,6 +333,8 @@
       </sh-radio>
     </app-toggle-card>
 
+    <ng-container [ngTemplateOutlet]="restoreSourceCard" />
+
     @if (!isSync()) {
       <app-toggle-card>
         <ng-container title i18n>Metadata settings</ng-container>
@@ -337,6 +366,12 @@
         </p>
       </app-toggle-card>
     }
+  } @else {
+    <ng-container [ngTemplateOutlet]="restoreSourceCard" />
+  }
+
+  @if (isDatabaseTarget() || (isCustomRemoteRestore() && !isDiskTarget())) {
+    <ng-container [ngTemplateOutlet]="restoreSourceCard" />
   }
 
   @if (hasRestoreOptions() && !isSync()) {

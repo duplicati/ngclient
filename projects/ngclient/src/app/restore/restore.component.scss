@@ -69,3 +69,41 @@ sh-card {
     --card-shp: 0;
   }
 }
+
+.restore-action {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: stretch;
+
+  // The caret joins the Restore button as one split button
+  &.split {
+    > [shButton] {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    .secondary-menu [shButton] {
+      margin-left: -1px;
+      padding-inline: p2r(8);
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+  }
+}
+
+.menu-header {
+  display: block;
+  // Lines up with the text of the rows, which sit inside a margin and a padding of half a rem each
+  padding: p2r(8 16 0);
+  font: var(--paragraph-40);
+  color: var(--base-8);
+  white-space: nowrap;
+}
+
+// The menu hangs from the right edge of the split button, so it stays within the card
+@supports (anchor-name: --anchor) {
+  .secondary-menu ::ng-deep .popover-content {
+    position-area: bottom span-left;
+    position-try-fallbacks: --top-span-left, --bottom-span-right, --top-span-right;
+  }
+}

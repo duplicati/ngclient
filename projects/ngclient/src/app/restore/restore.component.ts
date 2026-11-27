@@ -18,13 +18,15 @@ import { ShipCard } from '@ship-ui/core/ship-card';
 import { ShipDivider } from '@ship-ui/core/ship-divider';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
+import { ShipMenu } from '@ship-ui/core/ship-menu';
 import { ShipProgressBar } from '@ship-ui/core/ship-progress-bar';
 import { defer, finalize } from 'rxjs';
 import StatusBarComponent from '../core/components/status-bar/status-bar.component';
-import { BackupAndScheduleOutputDto, DuplicatiServer, TargetUrlDto } from '../core/openapi';
+import { BackupAndScheduleOutputDto, BackupDto, DuplicatiServer, TargetUrlDto } from '../core/openapi';
 import { BackupsState } from '../core/states/backups.state';
 import { SysinfoState } from '../core/states/sysinfo.state';
 import { RestoreDraftsState } from './restore-drafts.state';
+import { secondaryDestinationName } from './secondary-destination-name';
 
 @Component({
   selector: 'app-restore',
@@ -38,6 +40,7 @@ import { RestoreDraftsState } from './restore-drafts.state';
     ShipDivider,
     ShipFormField,
     ShipIcon,
+    ShipMenu,
     ShipProgressBar,
     RouterLink,
   ],
@@ -48,46 +51,25 @@ import { RestoreDraftsState } from './restore-drafts.state';
 export default class RestoreComponent {
   #backupsState = inject(BackupsState);
   #dupServer = inject(DuplicatiServer);
-  #router = inject(Router);
-  #destroyRef = inject(DestroyRef);
 
   #sysinfo = inject(SysinfoState);
   #hasSyncRestore = this.#sysinfo.hasSyncRestore;
   #restoreDrafts = inject(RestoreDraftsState);
+  #router = inject(Router);
+  #destroyRef = inject(DestroyRef);
   copyingDestination = signal(false);
-  secondaryDestinations = signal<Record<string, TargetUrlDto[] | 'loading' | 'error'>>({});
-  hasRestoreDestination = computed(() =>
-    (this.#sysinfo.systemInfo()?.APIExtensions ?? []).includes('v1:backup:copytotemp-destination')
-  );
 
-  loadSecondaryDestinations(id: string | null, isOpen: boolean) {
-    if (!id || !isOpen || this.secondaryDestinations()[id] === 'loading') return;
-    this.secondaryDestinations.update((current) => ({ ...current, [id]: 'loading' }));
-    defer(() => this.#dupServer.getApiV1BackupById({ path: { id } }))
-      .pipe(takeUntilDestroyed(this.#destroyRef))
-      .subscribe({
-        next: ({ Backup }) =>
-          this.secondaryDestinations.update((current) => ({
-            ...current,
-            [id]: (Backup?.AdditionalTargetURLs ?? []).filter((destination) => destination.UrlKey),
-          })),
-        error: () => this.secondaryDestinations.update((current) => ({ ...current, [id]: 'error' })),
-      });
+  /** The secondary destinations the backup list reports for a backup; a server that reports none offers none */
+  secondaryTargets(backup: BackupDto | null | undefined): TargetUrlDto[] {
+    if (!backup?.ID || backup.OperationType === 'Sync') return [];
+    return (backup.AdditionalTargetURLs ?? []).filter((destination) => destination.UrlKey);
   }
 
-  destinationLabel(target: string | null, index: number) {
-    const label = $localize`Secondary destination ${index + 1}:destinationNumber:`;
-    if (!target) return label;
-    try {
-      const url = new URL(target);
-      return `${label} — ${url.protocol}//${url.host}${url.pathname}`;
-    } catch {
-      return label;
-    }
-  }
+  destinationName = secondaryDestinationName;
 
+  /** Opens a restore that lists the versions and files the secondary destination holds */
   restoreFromDestination(id: string | null, destination: string | null) {
-    if (!id || !destination || !this.hasRestoreDestination() || this.copyingDestination()) return;
+    if (!id || !destination || this.copyingDestination()) return;
     this.copyingDestination.set(true);
     defer(() => this.#dupServer.postApiV1BackupByIdCopytotemp({ path: { id }, query: { destination } }))
       .pipe(

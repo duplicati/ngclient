@@ -59,6 +59,12 @@ export class RestoreFlowState implements OnDestroy {
   backup = signal<GetBackupResultDto | null>(null);
   /** A Sync job restores from the copies on its destination, not from a backup database */
   isSync = computed(() => this.backup()?.Backup?.OperationType === 'Sync');
+  /** The secondary destinations the restore can read from instead of the primary destination */
+  secondaryDestinations = computed(() => {
+    const backup = this.backup()?.Backup;
+    if (!backup || backup.IsTemporary || this.isSync()) return [];
+    return (backup.AdditionalTargetURLs ?? []).filter((x) => x.UrlKey);
+  });
   destinationTargetUrl = signal<string | null>(null);
   destinationConnectionStringId = signal<number | null>(null);
   destinationTestSignal = signal<TestState>(null);
@@ -153,22 +159,28 @@ export class RestoreFlowState implements OnDestroy {
     this.isSubmitting.set(true);
     const id = this.backupId();
     const isTemporary = this.backup()?.Backup?.IsTemporary ?? false;
+    const source = this.optionsForm.value.restoreSource;
+    const destination = this.secondaryDestinations().find((x) => x.UrlKey === source)?.UrlKey ?? null;
 
-    if (isTemporary) {
+    if (isTemporary || destination) {
       // If this is a temporary backup, we have a partial database created for the file picking step.
       // We need to create a fresh temporary backup with no database, so the restore flow creates a partial database for the restore.
+      // Restoring from a secondary destination works the same way, with the copy reading that destination.
       defer(() =>
         this.#dupServer.postApiV1BackupByIdCopytotemp({
           path: { id: this.backupId() ?? '' },
+          ...(destination ? { query: { destination } } : {}),
         })
       ).subscribe({
         next: (res) => {
           this.#submitRestore(res.ID ?? '');
         },
-        error: (err) =>
+        error: (err) => {
+          this.isSubmitting.set(false);
           this.showErrorDialog(
             $localize`An error occurred while copying the backup to a temporary location: ${err.message}`
-          ),
+          );
+        },
       });
     } else {
       this.#submitRestore(id ?? '');
