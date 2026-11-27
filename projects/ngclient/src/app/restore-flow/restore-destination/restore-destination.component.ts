@@ -13,6 +13,7 @@ import { NullableTextControl } from '../../backup/general/nullable-text-control'
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
+import { ShipButtonGroup } from '@ship-ui/core/ship-button-group';
 import { ShipDialog, ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
@@ -38,6 +39,7 @@ import { RestoreFlowState } from '../restore-flow.state';
     FormField,
     NullableTextControl,
     ShipButton,
+    ShipButtonGroup,
     ShipFormField,
     ShipMenu,
     ShipIcon,
@@ -75,7 +77,9 @@ export default class RestoreDestinationComponent {
   targetUrlCtrl = this.targetUrlForm.url().value;
   targetUrlInitial = signal<string | null>(null);
   targetUrlDialogOpen = signal(false);
-  toggleNewDestination = signal(true);
+  /** Which list is shown while no destination is chosen; entering one by hand comes first */
+  destinationSource = signal<string | null>('new');
+  showSavedDestinations = computed(() => this.savedDestinations().length > 0 && this.destinationSource() === 'saved');
 
   selectedDestinationType = computed(() => {
     const targetUrl = this.#restoreFlowState.destinationTargetUrl();
@@ -151,8 +155,14 @@ export default class RestoreDestinationComponent {
     this.#restoreFlowState.updateTargetUrl(null);
   }
 
+  /** Steps back from configuring a chosen destination to the list of destinations, and from the list to the restore overview */
   goBack() {
-    this.#router.navigate(['general'], { relativeTo: this.#route.parent });
+    if (this.targetUrlModel()) {
+      this.removeDestination();
+      return;
+    }
+
+    this.#router.navigate(['/restore']);
   }
 
   next() {

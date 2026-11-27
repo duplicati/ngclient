@@ -71,8 +71,21 @@
       </sh-alert>
     }
     @if (savedDestinations().length) {
-      <section class="saved-destinations">
-        <h4 i18n>Saved destinations</h4>
+      <sh-button-group class="type-b destination-source" [(value)]="destinationSource">
+        <button type="button" value="new" i18n>
+          <sh-icon>pencil-simple</sh-icon>
+          Specify destination
+        </button>
+
+        <button type="button" value="saved" i18n>
+          <sh-icon>bookmark-simple</sh-icon>
+          Saved destinations
+        </button>
+      </sh-button-group>
+    }
+
+    @if (showSavedDestinations()) {
+      <section class="saved-destinations" aria-label="Saved destinations" i18n-aria-label>
         @for (saved of savedDestinations(); track saved.ID) {
           <app-destination-list-item [targetUrl]="saved.BaseUrl" [connectionStringId]="saved.ID" variant="type-a">
             @if (saved.Description) {
@@ -90,9 +103,9 @@
           </app-destination-list-item>
         }
       </section>
-      <p i18n>Or configure a new destination below.</p>
+    } @else {
+      <app-destination-list (setDestination)="setDestination($event)" />
     }
-    <app-destination-list (setDestination)="setDestination($event)" />
   }
 
   @if (hasDestination && connectionStringId() === null) {
