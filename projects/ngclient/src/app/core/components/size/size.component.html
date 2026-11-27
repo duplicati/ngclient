@@ -3,7 +3,7 @@
 </div>
 
 <sh-form-field [attr.readonly]="readonly() || undefined">
-  <input type="number" [id]="customId()" [(ngModel)]="timespan" [disabled]="readonly()" />
+  <input type="number" [id]="customId()" [formField]="amountField" />
 
   <ng-content select="[prefix]" />
   <ng-content select="[suffix]" />
