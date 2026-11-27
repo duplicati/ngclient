@@ -45,7 +45,9 @@ describe('SizeComponent form integration', () => {
     number.dispatchEvent(new Event('input'));
     await settle();
     expect(changed).toHaveBeenLastCalledWith('64MB');
-    component.unit.set('GB');
+    const unit = fixture.nativeElement.querySelector('sh-select input') as HTMLInputElement;
+    unit.value = 'GB';
+    unit.dispatchEvent(new Event('input'));
     await settle();
     expect(changed).toHaveBeenLastCalledWith('64GB');
   });
