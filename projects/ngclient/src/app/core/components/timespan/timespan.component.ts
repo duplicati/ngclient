@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal, untracked } from '@angular/core';
-import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { disabled, form, FormField } from '@angular/forms/signals';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipMenu } from '@ship-ui/core/ship-menu';
@@ -50,7 +51,7 @@ const SHORT_FIELD_TYPES = [
 
 @Component({
   selector: 'app-timespan',
-  imports: [ShipMenu, ShipFormField, FormsModule, ShipButton],
+  imports: [ShipMenu, ShipFormField, FormField, ShipButton],
   templateUrl: './timespan.component.html',
   styleUrl: './timespan.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -67,7 +68,11 @@ export class TimespanComponent implements ControlValueAccessor {
   inputType = input<string | null>();
   timeChange = output<string>();
 
-  timespan = signal(0);
+  readonly = signal(false);
+  durationForm = form(signal({ amount: 0 as number | null }), (fields) =>
+    disabled(fields.amount, () => this.readonly())
+  );
+  timespan = this.durationForm.amount().value;
   #defaultUnit = 'D';
   unit = signal(this.#defaultUnit);
   unitLabel = computed(() => {
@@ -88,8 +93,6 @@ export class TimespanComponent implements ControlValueAccessor {
 
     return DEFAULT_TIME_OPTIONS;
   });
-
-  readonly = signal(false);
 
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};

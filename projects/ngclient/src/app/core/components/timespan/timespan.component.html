@@ -1,7 +1,7 @@
 <ng-content select="label" ngProjectAs="label" />
 
 <sh-form-field [attr.readonly]="readonly() || undefined">
-  <input type="number" [id]="customId()" [(ngModel)]="timespan" [disabled]="readonly()" />
+  <input type="number" [id]="customId()" [formField]="durationForm.amount" />
 
   <ng-content select="[prefix]" />
   <ng-content select="[suffix]" />
@@ -16,18 +16,3 @@
     }
   </ng-container>
 </sh-menu>
-<!-- <sh-select
-  i18n-placeholder
-  placeholder="Select an item..."
-  [options]="timeOptions()"
-  value="value"
-  label="label"
-  [style.--miw]="0"
-  [readonly]="readonly()"
-  [isClearable]="false">
-  <input type="text" [(ngModel)]="unit" />
-
-  <ng-template let-option>
-    {{ option.label }}
-  </ng-template>
-</sh-select> -->
