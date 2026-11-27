@@ -88,14 +88,13 @@
         <sh-icon suffix>clock</sh-icon>
       </sh-form-field>
 
-      <sh-datepicker-input class="primary sharp">
+      <sh-datepicker-input
+        #calendar="appScheduleCalendar"
+        appScheduleCalendar
+        class="primary sharp"
+        [formField]="scheduleForm.nextTime.date">
         <label for="date">&nbsp;</label>
-        <input
-          type="text"
-          id="date"
-          #dateRef
-          [ngModel]="datepickerDate()"
-          (ngModelChange)="scheduleForm.nextTime.date().value.set($event)" />
+        <input type="text" id="date" #dateRef (input)="calendar.updateValue(dateRef.value)" />
         <sh-icon suffix>calendar</sh-icon>
       </sh-datepicker-input>
     </div>
