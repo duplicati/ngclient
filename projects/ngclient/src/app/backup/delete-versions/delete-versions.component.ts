@@ -51,6 +51,7 @@ export default class DeleteVersionsComponent {
   performCompact = signal(true);
   compactField = form(this.performCompact);
   versions = signal<VersionOption[]>([]);
+  versionsForm = form(this.versions);
 
   constructor() {
     effect(() => {

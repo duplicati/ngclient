@@ -30,10 +30,14 @@
     @for (version of versions(); track version.Version) {
       <tr (click)="toggleSelected(version.Version, $event)">
         <td>
-          <sh-checkbox
-            class="primary raised"
-            (click)="toggleSelected(version.Version, $event)"
-            [checked]="version.Selected"></sh-checkbox>
+          <sh-checkbox class="primary raised">
+            <input
+              type="checkbox"
+              [attr.aria-label]="version.Version"
+              [formField]="versionsForm[$index]!.Selected"
+              (click)="$event.stopPropagation()"
+              (keydown.space)="$event.stopPropagation()" />
+          </sh-checkbox>
         </td>
         <td>{{ version.Version }}</td>
         <td>{{ version.Time | relativeTime: true }}</td>
