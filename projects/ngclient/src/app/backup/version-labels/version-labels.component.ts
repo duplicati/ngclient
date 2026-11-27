@@ -67,7 +67,8 @@ export default class VersionLabelsComponent {
 
   changedItems = computed(() => this.versions().filter((v) => (v.Label ?? '') !== v.EditedLabel.trim()));
 
-  sortByColumn = signal<OrderBy | null>('version');
+  sortField = form(signal<OrderBy | null>('version'));
+  sortByColumn = this.sortField().value;
 
   updateLabel(version: number, label: string) {
     this.versions.update((versions) => versions.map((v) => (v.Version === version ? { ...v, EditedLabel: label } : v)));

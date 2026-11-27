@@ -65,6 +65,18 @@ describe('version label save sequencing', () => {
     expect(save).toHaveBeenCalledExactlyOnceWith({ body: { BackupId: '42', Version: 0, Label: 'Milestone' } });
   });
 
+  it('keeps the edited label when the table changes or clears its sort column', async () => {
+    const { component, save } = await setup();
+    expect(component.sortField().value()).toBe('version');
+    component.labelsForm[0].EditedLabel().value.set('Milestone');
+    component.sortByColumn.set('label');
+    expect(component.sortField().value()).toBe('label');
+    component.sortByColumn.set(null);
+    expect(component.sortField().value()).toBeNull();
+    component.saveLabels();
+    expect(save).toHaveBeenCalledExactlyOnceWith({ body: { BackupId: '42', Version: 0, Label: 'Milestone' } });
+  });
+
   it('disables all form rows during saving and retains edits after a failed request', async () => {
     const { component, responses } = await setup();
     component.labelsForm[0].EditedLabel().value.set('Keep me');
