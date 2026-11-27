@@ -109,26 +109,18 @@ form {
   }
 }
 
-.add-new {
-  display: flex;
-  align-items: center;
-  gap: p2r(24);
-  background: var(--base-1);
-  color: var(--primary-8);
-  cursor: pointer;
-
-  sh-icon {
-    font-size: p2r(40);
-    opacity: 0.8;
-  }
-}
-
 .actionable {
   cursor: pointer;
 
   &:hover {
     --card-shp: 0;
   }
+}
+
+.saved-destinations {
+  display: flex;
+  flex-direction: column;
+  gap: p2r(12);
 }
 
 .custom-list-header {

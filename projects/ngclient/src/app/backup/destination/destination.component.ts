@@ -18,7 +18,6 @@ import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipCard } from '@ship-ui/core/ship-card';
 import { ShipDialog } from '@ship-ui/core/ship-dialog';
-import { ShipDivider } from '@ship-ui/core/ship-divider';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipMenu } from '@ship-ui/core/ship-menu';
@@ -38,6 +37,7 @@ import {
   secondaryDestinationError,
 } from '../models/backup-form-mappers';
 import { TestState, TestUrl } from '../source-data/target-url-dialog/test-url/test-url';
+import { DestinationSourceToggleComponent } from './destination-source-toggle/destination-source-toggle.component';
 import { DestinationListItemComponent } from './destination-list-item/destination-list-item.component';
 import { DestinationListComponent } from './destination-list/destination-list.component';
 import { getConfigurationByKey, getConfigurationByUrl, getSimplePath } from './destination.config-utilities';
@@ -86,6 +86,7 @@ export type DestinationFormGroupValue = ReturnType<typeof createDestinationFormG
     SingleDestinationComponent,
     DestinationListComponent,
     DestinationListItemComponent,
+    DestinationSourceToggleComponent,
     TestUrl,
 
     ShipButton,
@@ -95,7 +96,6 @@ export type DestinationFormGroupValue = ReturnType<typeof createDestinationFormG
     ShipDialog,
     ShipAlert,
     ShipCard,
-    ShipDivider,
     ShipProgressBar,
     ShipSelect,
     ShipToggleCard,
@@ -179,6 +179,9 @@ export default class DestinationComponent {
   currentEditingIndex = signal<number | null>(null);
   targetUrlDialogOpen = signal(false);
   showCustomList = signal(false);
+  /** Which list is shown while a destination is being chosen; specifying one comes first */
+  destinationSource = signal<string | null>('new');
+  showSavedDestinations = computed(() => this.destinations().length > 0 && this.destinationSource() === 'saved');
   isConnectionStringSaved = this.#backupState.isConnectionStringSaved;
 
   destinations = this.#connectionStringsState.destinations;
@@ -278,17 +281,18 @@ export default class DestinationComponent {
       return;
     }
 
-    if (this.showCustomList()) {
-      // Adding new
-      this.#backupState.addTargetUrl(url, null, null);
-      this.showCustomList.set(false);
-      this.isAddingNew.set(false);
-    } else {
-      // Setting primary or fallback append (less likely used path but preserved for safety)
-      this.#backupState.addTargetUrl(url, null, null);
-      this.showCustomList.set(false);
-      this.isAddingNew.set(false);
-    }
+    this.#backupState.addTargetUrl(url, null, null);
+    this.#rememberChosen();
+    this.showCustomList.set(false);
+    this.isAddingNew.set(false);
+  }
+
+  /** The destinations chosen from the lists during this visit to the step, newest last; Go back returns from these to the list */
+  #chosenHere: string[] = [];
+
+  #rememberChosen() {
+    const key = this.targetUrls().at(-1)?.uiKey;
+    if (key) this.#chosenHere.push(key);
   }
 
   // Sync test states with target urls length
@@ -322,6 +326,7 @@ export default class DestinationComponent {
       this.showCustomList.set(false);
       this.isAddingNew.set(false);
     }
+    this.#rememberChosen();
   }
 
   toggleCustomList() {
@@ -377,7 +382,26 @@ export default class DestinationComponent {
     this.#backupState.toggleSaveConnectionString(index);
   }
 
+  /**
+   * Steps back one level at a time: out of adding a destination or changing a destination's type, then from a
+   * destination chosen during this visit to the list it was chosen from, and only then to the previous step.
+   */
   goBack() {
+    const targets = this.targetUrls();
+    const choosing = this.isAddingNew() || this.showCustomList() || this.currentEditingIndex() !== null;
+    if (choosing && targets.length > 0) {
+      this.closeCustomList();
+      return;
+    }
+
+    const lastIndex = targets.length - 1;
+    if (lastIndex >= 0 && targets[lastIndex].uiKey === this.#chosenHere.at(-1)) {
+      this.#chosenHere.pop();
+      this.removeDestination(lastIndex);
+      if (lastIndex > 0) this.startAddingNew();
+      return;
+    }
+
     this.#router.navigate(['source-data'], { relativeTo: this.#route.parent });
   }
 

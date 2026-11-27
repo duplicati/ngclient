@@ -71,17 +71,7 @@
       </sh-alert>
     }
     @if (savedDestinations().length) {
-      <sh-button-group class="type-b destination-source" [(value)]="destinationSource">
-        <button type="button" value="new" i18n>
-          <sh-icon>pencil-simple</sh-icon>
-          Specify destination
-        </button>
-
-        <button type="button" value="saved" i18n>
-          <sh-icon>bookmark-simple</sh-icon>
-          Saved destinations
-        </button>
-      </sh-button-group>
+      <app-destination-source-toggle [(value)]="destinationSource" />
     }
 
     @if (showSavedDestinations()) {
