@@ -50,7 +50,7 @@ describe('direct restore saved destination selection', () => {
     state.updateTargetUrl('file:///manual');
     expect(state.destinationConnectionStringId()).toBeNull();
     expect(state.destinationTestSignal()).toBeNull();
-    expect(state.destinationTargetUrl()).toBe('file:///manual');
+    expect(state.destinationUrlField().value()).toBe('file:///manual');
   });
   it('clears the reference when the URL is removed', () => {
     const state = setup();

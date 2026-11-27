@@ -59,7 +59,8 @@ export class RestoreFlowState implements OnDestroy {
   backup = signal<GetBackupResultDto | null>(null);
   /** A Sync job restores from the copies on its destination, not from a backup database */
   isSync = computed(() => this.backup()?.Backup?.OperationType === 'Sync');
-  destinationTargetUrl = signal<string | null>(null);
+  destinationUrlField = form(signal<string | null>(null));
+  destinationTargetUrl = this.destinationUrlField().value;
   destinationConnectionStringId = signal<number | null>(null);
   destinationTestSignal = signal<TestState>(null);
   selectFilesForm = createRestoreSelectFilesForm();
