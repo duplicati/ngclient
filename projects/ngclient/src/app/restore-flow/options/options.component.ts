@@ -46,7 +46,7 @@ const fb = new FormBuilder();
 
 export const createRestoreOptionsForm = () => {
   return fb.group({
-    restoreFrom: fb.control<
+    restoreFrom: fb.nonNullable.control<
       'original' | 'pickLocation' | 'download' | 'same-custom' | 'other-custom' | 'diskimage' | 'diskimage-file'
     >('original'),
     restoreFromPath: fb.control<string>(''),
@@ -95,6 +95,7 @@ export default class OptionsComponent {
 
   optionsForm = this.#restoreFlowState.optionsForm;
   handleExistingField = compatForm(signal({ handleExisting: this.optionsForm.controls.handleExisting })).handleExisting;
+  restoreFromField = compatForm(signal({ restoreFrom: this.optionsForm.controls.restoreFrom })).restoreFrom;
   optionsFormSignal = this.#restoreFlowState.optionsFormSignal;
   isSubmitting = this.#restoreFlowState.isSubmitting;
   extendedData = this.#restoreFlowState.extendedDataType;

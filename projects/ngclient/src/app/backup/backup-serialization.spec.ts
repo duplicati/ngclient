@@ -192,7 +192,6 @@ describe('BackupState saved DTO contracts', () => {
     state.mapGeneralToForm({ Name: 'Renamed' } as BackupDto);
     expect(state.generalForm.value).toEqual({
       name: 'Renamed',
-      description: '',
       encryption: 'aes',
       password: '',
       repeatPassword: '',

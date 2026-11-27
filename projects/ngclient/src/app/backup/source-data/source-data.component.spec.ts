@@ -157,10 +157,12 @@ describe('SourceDataComponent form contracts', () => {
     const hypervCalls = () =>
       listFilesystem.mock.calls.filter((call) => (call[0] as { body: { path: string } }).body.path === '%HYPERV%');
     listFilesystem.mockImplementation((options: unknown) =>
-      (options as { body: { path: string } }).body.path !== '%HYPERV%' ? of([]) : of([
-        { id: '%HYPERV%\\AAAA-1111\\', text: 'AAAA-1111', Metadata: { 'hyperv:Name': 'Web server' } },
-        { id: '%HYPERV%\\bbbb-2222', text: 'Build agent' },
-      ])
+      (options as { body: { path: string } }).body.path !== '%HYPERV%'
+        ? of([])
+        : of([
+            { id: '%HYPERV%\\AAAA-1111\\', text: 'AAAA-1111', Metadata: { 'hyperv:Name': 'Web server' } },
+            { id: '%HYPERV%\\bbbb-2222', text: 'Build agent' },
+          ])
     );
     await render('%HYPERV%\\aaaa-1111\0%HYPERV%\\bbbb-2222\\disk.vhdx\0%HYPERV%\\cccc-3333');
     expect(hypervCalls()).toHaveLength(1);
@@ -219,8 +221,11 @@ describe('SourceDataComponent form contracts', () => {
 
   it('round-trips size edits and clearing through the existing shared controls', async () => {
     await render();
+    expect(fixture.nativeElement.querySelector('app-size input[type="number"]').value).toBe('12');
     await input('app-size input[type="number"]', '25');
     expect(state.sourceDataForm.controls.excludes.controls.filesLargerThan.value).toEqual({ size: 25, unit: 'MB' });
+    await input('app-size sh-select input', 'GB');
+    expect(state.sourceDataForm.controls.excludes.controls.filesLargerThan.value).toEqual({ size: 25, unit: 'GB' });
     fixture.componentInstance.toggleFilesLargerThan(false);
     await settle();
     expect(fixture.componentInstance.filesLargerThan()).toBeNull();

@@ -65,7 +65,8 @@ export class RestoreFlowState implements OnDestroy {
     if (!backup || backup.IsTemporary || this.isSync()) return [];
     return (backup.AdditionalTargetURLs ?? []).filter((x) => x.UrlKey);
   });
-  destinationTargetUrl = signal<string | null>(null);
+  destinationUrlField = form(signal<string | null>(null));
+  destinationTargetUrl = this.destinationUrlField().value;
   destinationConnectionStringId = signal<number | null>(null);
   destinationTestSignal = signal<TestState>(null);
   selectFilesForm = createRestoreSelectFilesForm();

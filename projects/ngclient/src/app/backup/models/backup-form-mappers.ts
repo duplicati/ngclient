@@ -64,7 +64,7 @@ export function secondaryDestinationError(target: BackupTargetUrl): 'interval' |
 }
 
 export type BackupFormValue = {
-  general: GeneralFormValue;
+  general: GeneralFormValue & { description?: string | null };
   sourceData: SourceDataFormValue;
   schedule: ScheduleInputDto | null;
   runAfter: RunAfterFormValue | null;
@@ -85,7 +85,7 @@ export function mapBackupToGeneralForm(backup: BackupDto) {
   const { encryptionDisabled, encryptionModule, passphrase } = resolveBackupEncryptionSettings(backup.Settings);
   const operationType = backup.OperationType ?? 'Backup';
 
-  const baseUpdate: GeneralFormValue = {
+  const baseUpdate: BackupFormValue['general'] = {
     name: backup.Name ?? '',
     description: backup.Description ?? '',
     operationType,

@@ -205,10 +205,7 @@
 
       @if (filesLargerThan()) {
         <div class="row-inputs">
-          <app-size
-            [ngModel]="filesLargerThan()"
-            [ngModelOptions]="{ standalone: true }"
-            (ngModelChange)="updateFilesLargerThan($event)"></app-size>
+          <app-size [formField]="filesLargerThanField" (sizeChange)="updateFilesLargerThan($event)"></app-size>
         </div>
       }
 

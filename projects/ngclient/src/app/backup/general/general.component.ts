@@ -81,7 +81,8 @@ export default class GeneralComponent {
     if (value === 'Backup' || value === 'Sync') this.generalForm.operationType().value.set(value);
   }
 
-  nameAndDescriptionValid = computed(() => this.generalForm.name().valid() && this.generalForm.description().valid());
+  descriptionField = this.#backupState.descriptionField;
+  nameAndDescriptionValid = computed(() => this.generalForm.name().valid() && this.descriptionField().valid());
 
   calculatePasswordStrength = computed(() =>
     this.#passwordGeneratorService.calculatePasswordStrength(this.generalForm.password().value() ?? '')

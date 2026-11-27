@@ -63,6 +63,17 @@ describe('backup version deletion confirmation', () => {
     expect(component.allSelected()).toBe(false);
   });
 
+  it('retains the selected version when the table changes its sort column', async () => {
+    const { component } = await setup();
+    expect(component.sortField().value()).toBe('version');
+    component.toggleSelected(4, null);
+    component.sortByColumn.set('size');
+    expect(component.sortField().value()).toBe('size');
+    component.sortByColumn.set(null);
+    expect(component.sortField().value()).toBeNull();
+    expect(component.selectedItems().map((version) => version.Version)).toEqual([4]);
+  });
+
   it('does not prompt or delete when no versions are selected', async () => {
     const { component, open, remove } = await setup();
     component.deleteVersions();

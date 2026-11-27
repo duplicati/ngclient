@@ -5,6 +5,7 @@ import {
   effect,
   ElementRef,
   inject,
+  linkedSignal,
   signal,
   viewChild,
 } from '@angular/core';
@@ -170,6 +171,7 @@ export default class SourceDataComponent {
     const { size, unit } = this.sourceForm.filesLargerThan().value();
     return size !== null && unit !== null ? `${size}${unit}` : null;
   });
+  filesLargerThanField = form(linkedSignal(() => this.filesLargerThan()));
   osType = this.#backupState.osType;
   attributeExclusions = computed(() => {
     const setting =
@@ -471,8 +473,8 @@ export default class SourceDataComponent {
     });
   }
 
-  updateFilesLargerThan($event: any) {
-    const { size, unit } = splitSize($event);
+  updateFilesLargerThan(value: string) {
+    const { size, unit } = splitSize(value);
     this.sourceForm.filesLargerThan().value.set({
       size,
       unit,

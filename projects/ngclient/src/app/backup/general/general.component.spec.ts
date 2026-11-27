@@ -1,4 +1,5 @@
 import { signal } from '@angular/core';
+import { form } from '@angular/forms/signals';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -25,7 +26,6 @@ describe('GeneralComponent encryption fields', () => {
   } = {}) => {
     const generalForm = createGeneralForm({
       name: 'Imported backup',
-      description: '',
       encryption,
       password: encryption === NONE_OPTION.Key ? '' : 'secret',
       repeatPassword: encryption === NONE_OPTION.Key ? '' : 'secret',
@@ -45,8 +45,9 @@ describe('GeneralComponent encryption fields', () => {
         { provide: SysinfoState, useValue: { hasSyncMode: signal(true) } },
         {
           provide: BackupState,
-          useValue: {
+          useFactory: () => ({
             generalForm,
+            descriptionField: form(signal<string | null>('')),
             generalFormSignal: signal(generalForm.getRawValue()),
             encryptionFieldSignal: signal(encryption),
             operationTypeFieldSignal: signal(operationType),
@@ -56,7 +57,7 @@ describe('GeneralComponent encryption fields', () => {
             shouldAutoSave: signal(false),
             submit: vi.fn(),
             exit: vi.fn(),
-          },
+          }),
         },
       ],
     });

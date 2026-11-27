@@ -6,7 +6,7 @@ import { ShipSelect } from '@ship-ui/core/ship-select';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { of } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { DuplicatiServer } from '../../core/openapi';
+import { BackupDto, DuplicatiServer } from '../../core/openapi';
 import { PasswordGeneratorService } from '../../core/services/password-generator.service';
 import { TimespanLiteralsService } from '../../core/services/timespan-literals.service';
 import { ConnectionStringsState } from '../../core/states/connection-strings.state';
@@ -78,7 +78,8 @@ describe('GeneralComponent editing contracts', () => {
     expect(submit().disabled).toBe(true);
     await input('input[placeholder="Your backup name"]', 'Documents');
     await input('#backupDescription', 'Daily documents');
-    expect(state.generalForm.value).toMatchObject({ name: 'Documents', description: 'Daily documents' });
+    expect(state.generalForm.value.name).toBe('Documents');
+    expect(state.descriptionField().value()).toBe('Daily documents');
     expect(submit().disabled).toBe(false);
     await input('input[placeholder="Your backup name"]', '');
     expect(submit().disabled).toBe(true);
@@ -103,7 +104,7 @@ describe('GeneralComponent editing contracts', () => {
 
   it('reflects externally loaded values and resets after the view is created', async () => {
     await setup();
-    state.generalForm.patchValue({ name: 'Loaded', description: 'From server', password: 'saved' });
+    state.mapGeneralToForm({ Name: 'Loaded', Description: 'From server' } as BackupDto);
     await settle();
     expect(fixture.nativeElement.querySelector('input[placeholder="Your backup name"]').value).toBe('Loaded');
     expect(fixture.nativeElement.querySelector('#backupDescription').value).toBe('From server');
@@ -112,7 +113,9 @@ describe('GeneralComponent editing contracts', () => {
     expect(fixture.nativeElement.querySelector('input[placeholder="Your backup name"]').value).toBe('');
     expect(state.generalForm.controls.name.pristine).toBe(true);
     expect(state.generalForm.controls.name.value).toBeNull();
-    expect(state.generalForm.controls.description.value).toBeNull();
+    state.descriptionField().reset(null);
+    await settle();
+    expect(fixture.nativeElement.querySelector('#backupDescription').value).toBe('');
     expect(submit().disabled).toBe(true);
   });
 
@@ -174,6 +177,7 @@ describe('GeneralComponent editing contracts', () => {
     await settle();
     expect(fixture.nativeElement.querySelector('sh-select')).toBeNull();
     await input('input[placeholder="Your backup name"]', 'Renamed');
+    await input('#backupDescription', 'Updated description');
     fixture.componentInstance.next();
     expect(update).toHaveBeenCalledOnce();
     expect(update.mock.calls[0]?.[0]).toMatchObject({
@@ -181,6 +185,7 @@ describe('GeneralComponent editing contracts', () => {
       body: {
         Backup: {
           Name: 'Renamed',
+          Description: 'Updated description',
           Settings: [
             { Name: 'encryption-module', Value: 'aes' },
             { Name: 'passphrase', Value: 'existing-secret' },
