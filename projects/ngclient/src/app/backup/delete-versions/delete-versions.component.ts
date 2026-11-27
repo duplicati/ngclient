@@ -2,6 +2,7 @@ import { form, FormField } from '@angular/forms/signals';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, input, signal } from '@angular/core';
 import { rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
+import { form as signalForm } from '@angular/forms/signals';
 import { ShipButton } from '@ship-ui/core/ship-button';
 import { ShipCheckbox } from '@ship-ui/core/ship-checkbox';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
@@ -68,7 +69,8 @@ export default class DeleteVersionsComponent {
   noneSelected = computed(() => this.selectedItems().length === 0);
   indeterminate = computed(() => this.selectedItems().length > 0 && !this.allSelected());
 
-  sortByColumn = signal<OrderBy | null>('version');
+  sortField = signalForm(signal<OrderBy | null>('version'));
+  sortByColumn = this.sortField().value;
 
   toggleSelected(version: number, event: Event | null) {
     event?.stopPropagation();
