@@ -1,6 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component, input, output, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule } from '@angular/forms';
+import { FormField } from '@angular/forms/signals';
 import { ShipSelect } from '@ship-ui/core/ship-select';
 import { By } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -8,6 +8,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ConnectionStringsState } from '../../core/states/connection-strings.state';
 import { BackupState, BackupTargetUrl } from '../backup.state';
 import { TestState } from '../source-data/target-url-dialog/test-url/test-url';
+import { NullableTextControl } from '../general/nullable-text-control';
 import DestinationComponent from './destination.component';
 
 @Component({
@@ -81,7 +82,7 @@ describe('DestinationComponent destination identity', () => {
 
     TestBed.overrideComponent(DestinationComponent, {
       set: {
-        imports: [SingleDestinationStub, FormsModule, ShipSelect],
+        imports: [SingleDestinationStub, FormField, NullableTextControl, ShipSelect],
         schemas: [CUSTOM_ELEMENTS_SCHEMA],
       },
     });
@@ -134,6 +135,27 @@ describe('DestinationComponent destination identity', () => {
     expect(fixture.nativeElement.querySelectorAll('.secondary-sync')).toHaveLength(0);
   });
 
+  it('keeps the surviving secondary destination count after removing a preceding destination', async () => {
+    targetUrls.set([
+      localTarget,
+      { ...webdavTarget, mode: 'interval', interval: '7D' },
+      { ...webdavTarget, uiKey: 'counted-target', mode: 'counting', options: { count: 5 } },
+    ]);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const count = fixture.nativeElement.querySelector('#sync-count-counted-target') as HTMLInputElement;
+
+    component.removeDestination(1);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(fixture.nativeElement.querySelector('#sync-count-counted-target')).toBe(count);
+    expect(count.value).toBe('5');
+    count.value = '8';
+    count.dispatchEvent(new Event('input'));
+    expect(targetUrls()[1].options).toEqual({ count: 8 });
+  });
+
   it('edits synchronization independently of URL and preserves unknown options and inactive parameters', () => {
     targetUrls.update((targets) =>
       targets.map((target, i) =>
@@ -141,7 +163,7 @@ describe('DestinationComponent destination identity', () => {
       )
     );
     component.updateSynchronizationMode(1, 'counting');
-    expect(component.synchronizationCount(targetUrls()[1])).toBe(3);
+    expect(component.synchronizationForm[1]!.count().value()).toBe(3);
     component.updateSynchronizationCount(1, 5);
     component.updateSynchronizationMode(1, 'interval');
     component.updateSynchronizationInterval(1, '12h');
@@ -160,7 +182,7 @@ describe('DestinationComponent destination identity', () => {
     component.updateSynchronizationMode(1, 'interval');
     expect(targetUrls()[1].interval).toBe('1D');
     component.updateSynchronizationMode(1, 'counting');
-    expect(component.synchronizationCount(targetUrls()[1])).toBe(2);
+    expect(component.synchronizationForm[1]!.count().value()).toBe(2);
     expect(component.hasInvalidSynchronization()).toBe(false);
   });
 
