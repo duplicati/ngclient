@@ -81,6 +81,69 @@ describe('EmailReportsDialogComponent', () => {
     expect(component.result().to).toBe('');
   });
 
+  describe('result template', () => {
+    function setupWithTemplates(data: EmailReportsDialogData) {
+      const result = setup(data);
+      const sysinfo = TestBed.inject(SysinfoState) as unknown as { allOptions: ReturnType<typeof signal<unknown[]>> };
+      sysinfo.allOptions.update((options) => [
+        ...options,
+        {
+          name: 'send-mail-result-template',
+          type: 'Enumeration',
+          options: ['default', 'email', 'html', 'slack', 'summary'],
+          defaultValue: 'default',
+        },
+      ]);
+      return result;
+    }
+
+    it('is offered for the Template format only', () => {
+      const { component } = setupWithTemplates({ options: [] });
+      expect(component.templateOptions()).toEqual(['default', 'email', 'html', 'slack', 'summary']);
+      expect(component.showTemplate()).toBe(false);
+
+      component.format.set('Template');
+      expect(component.showTemplate()).toBe(true);
+      expect(component.template()).toBe('default');
+    });
+
+    it('is not offered by a server without the option', () => {
+      const { component } = setup({ options: [{ Name: 'send-mail-result-output-format', Value: 'Template' }] });
+      expect(component.showTemplate()).toBe(false);
+      expect(component.result().template).toBe('');
+    });
+
+    it('stores a template that differs from the default', () => {
+      const { component } = setupWithTemplates({
+        options: [
+          { Name: 'send-mail-result-output-format', Value: 'Template' },
+          { Name: 'send-mail-result-template', Value: 'summary' },
+        ],
+      });
+      expect(component.template()).toBe('summary');
+      expect(component.result().template).toBe('summary');
+
+      component.template.set('default');
+      expect(component.result().template).toBe('');
+    });
+
+    it('does not store a template that is inherited', () => {
+      const { component } = setupWithTemplates({
+        options: [],
+        inherited: [
+          { Name: '--send-mail-result-output-format', Value: 'Template' },
+          { Name: '--send-mail-result-template', Value: 'summary' },
+        ],
+      });
+      expect(component.showTemplate()).toBe(true);
+      expect(component.template()).toBe('summary');
+      expect(component.result().template).toBe('');
+
+      component.template.set('email');
+      expect(component.result().template).toBe('email');
+    });
+  });
+
   it('requires at least one level', () => {
     const { component } = setup({ options: [{ Name: 'send-mail-level', Value: 'Error' }] });
     component.toggleLevel('Error', false);
