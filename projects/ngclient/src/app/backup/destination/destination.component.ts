@@ -119,6 +119,7 @@ export default class DestinationComponent {
   testStates = signal<TestState[]>([]);
 
   targetUrls = this.#backupState.targetUrls;
+  targetForms = form(this.targetUrls);
   synchronizationMode = secondaryDestinationMode;
   synchronizationValues = linkedSignal(() =>
     this.targetUrls().map((target) => {

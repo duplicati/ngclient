@@ -1,3 +1,4 @@
+import { ShipToggle } from '@ship-ui/core/ship-toggle';
 import { CUSTOM_ELEMENTS_SCHEMA, Component, input, output, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormField } from '@angular/forms/signals';
@@ -82,7 +83,7 @@ describe('DestinationComponent destination identity', () => {
 
     TestBed.overrideComponent(DestinationComponent, {
       set: {
-        imports: [SingleDestinationStub, FormField, NullableTextControl, ShipSelect],
+        imports: [SingleDestinationStub, FormField, NullableTextControl, ShipSelect, ShipToggle],
         schemas: [CUSTOM_ELEMENTS_SCHEMA],
       },
     });
@@ -125,6 +126,15 @@ describe('DestinationComponent destination identity', () => {
     expect(updatedEditor).toBe(webdavEditor);
     expect(updatedEditor.targetUrl()).toBe('webdav://example.com/updated');
     expect(targetUrls()[1].uiKey).toBe('webdav-target');
+  });
+
+  it('updates the save choice for the destination selected after a preceding row is removed', () => {
+    component.removeDestination(0);
+    fixture.detectChanges();
+    const input = fixture.nativeElement.querySelector('#save-connection-webdav-target') as HTMLInputElement;
+    expect(input.checked).toBe(false);
+    input.click();
+    expect(targetUrls()[0]).toMatchObject({ uiKey: 'webdav-target', save: true });
   });
 
   it('shows synchronization controls only for secondary destinations', () => {
