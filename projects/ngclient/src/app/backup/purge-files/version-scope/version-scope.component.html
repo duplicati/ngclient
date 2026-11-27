@@ -35,10 +35,13 @@
   @if (versionScope() === 'specific') {
     <div class="versions-list">
       @for (version of versions(); track version.Version) {
-        <sh-checkbox
-          class="primary raised"
-          [checked]="isVersionSelected(version.Version)"
-          (checkedChange)="toggleVersion(version.Version, $event)">
+        <sh-checkbox class="primary raised">
+          <input
+            type="checkbox"
+            [attr.aria-label]="version.Version"
+            [formField]="specificVersionsForm[version.Version]!"
+            (keydown.space)="$event.stopPropagation()"
+            (change)="toggleVersion(version.Version, specificVersionsForm[version.Version]!().value())" />
           <span class="version">
             {{ version.Version }}: {{ version.Time | date: 'medium' }}
             @if (version.FileSizes) {
