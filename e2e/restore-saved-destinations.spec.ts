@@ -89,6 +89,7 @@ for (const encrypted of [false, true]) {
     await page.route('**/api/v1/backup/temp-7/filesets', (route) => route.fulfill({ json: [] }));
     await page.route('**/api/v1/backup/temp-7/files?*', (route) => route.fulfill({ json: { Files: [] } }));
     await openDestination(page);
+    await page.getByRole('button', { name: 'Saved destinations', exact: true }).click();
     const select = page.getByRole('button', { name: 'Use saved destination Archive storage', exact: true });
     await select.focus();
     await page.keyboard.press('Enter');
@@ -130,6 +131,7 @@ test('changing between saved connections with the same URL resets the previous t
     });
   });
   await openDestination(page);
+  await page.getByRole('button', { name: 'Saved destinations', exact: true }).click();
   await page.getByRole('button', { name: 'Use saved destination Archive storage', exact: true }).click();
   await page.getByRole('button', { name: 'Test now', exact: true }).click();
   await expect(page.getByText('Success! Test completed, backup found.', { exact: true })).toBeVisible();
@@ -154,6 +156,7 @@ test('saved-destination loading errors can be retried without blocking manual se
   await expect(page.getByText('Saved destinations could not be loaded.', { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Set target URL', exact: true })).toBeEnabled();
   await page.getByRole('button', { name: 'Retry', exact: true }).click();
+  await page.getByRole('button', { name: 'Saved destinations', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Use saved destination Archive storage', exact: true })).toBeVisible();
 });
 
@@ -161,9 +164,58 @@ test('an empty saved-destination list keeps the existing manual URL flow', async
   await page.route('**/api/v2/connection-strings', (route) => route.fulfill({ json: { Success: true, Data: [] } }));
   await openDestination(page);
   await expect(page.getByRole('button', { name: /^Use saved destination/ })).toHaveCount(0);
+  // Without saved destinations there is nothing to switch between
+  await expect(page.getByPlaceholder('Search for destination...', { exact: true })).toBeVisible();
+  await expect(page.locator('sh-button-group.destination-source')).toHaveCount(0);
   await page.getByRole('button', { name: 'Set target URL', exact: true }).click();
   await page.locator('#targetUrl').fill('file:///manual-archive');
   await page.getByRole('button', { name: 'Override target URL', exact: true }).click();
   await expect(page.locator('app-restore-destination app-single-destination')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Continue', exact: true })).toBeEnabled();
+});
+
+test('saved destinations and the new-destination list are shown one at a time', async ({ authenticatedPage: page }) => {
+  await openDestination(page);
+  const savedChoice = page.getByRole('button', { name: /^Use saved destination/ });
+  const search = page.getByPlaceholder('Search for destination...', { exact: true });
+  // The page opens on entering a destination by hand
+  await expect(search).toBeVisible();
+  await expect(savedChoice).toHaveCount(0);
+  // The steps keep their distance to the page heading
+  const steps = (await page.getByRole('navigation', { name: 'Restore steps' }).boundingBox())!;
+  const heading = (await page.getByRole('heading', { name: /^Backup destination/ }).boundingBox())!;
+  expect(heading.y - (steps.y + steps.height)).toBeGreaterThanOrEqual(32);
+  // The switch spans the list, with entering a destination by hand as its first choice
+  const toggle = page.locator('sh-button-group.destination-source');
+  await expect(toggle.getByRole('button')).toHaveText([/Specify destination/, /Saved destinations/]);
+  await page.getByRole('button', { name: 'Saved destinations', exact: true }).click();
+  await expect(savedChoice).toHaveCount(2);
+  await expect(search).toHaveCount(0);
+  const [toggleBox, listBox] = [
+    (await toggle.boundingBox())!,
+    (await page.locator('.saved-destinations').boundingBox())!,
+  ];
+  expect(Math.abs(toggleBox.width - listBox.width)).toBeLessThanOrEqual(1);
+  await page.getByRole('button', { name: 'Specify destination', exact: true }).click();
+  await expect(search).toBeVisible();
+  await expect(savedChoice).toHaveCount(0);
+  await page.getByRole('button', { name: 'Saved destinations', exact: true }).click();
+  await expect(savedChoice).toHaveCount(2);
+  await expect(search).toHaveCount(0);
+});
+
+test('going back leaves a chosen destination first and the destination step second', async ({
+  authenticatedPage: page,
+}) => {
+  await openDestination(page);
+  await page.getByRole('button', { name: 'Saved destinations', exact: true }).click();
+  await page.getByRole('button', { name: 'Use saved destination Archive storage', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Change', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Go back', exact: true }).click();
+  // Back at the list the destination was picked from
+  await expect(page).toHaveURL(/\/restore-from-files\/destination$/);
+  await expect(page.getByRole('button', { name: 'Use saved destination Archive storage', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Go back', exact: true }).click();
+  await expect(page).toHaveURL(/\/restore$/);
+  await expect(page.getByRole('heading', { name: 'Where do you want to restore from?', exact: true })).toBeVisible();
 });
