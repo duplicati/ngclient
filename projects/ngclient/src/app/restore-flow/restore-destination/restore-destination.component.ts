@@ -13,13 +13,13 @@ import { NullableTextControl } from '../../backup/general/nullable-text-control'
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
-import { ShipButtonGroup } from '@ship-ui/core/ship-button-group';
 import { ShipDialog, ShipDialogService } from '@ship-ui/core/ship-dialog';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipMenu } from '@ship-ui/core/ship-menu';
 import { BackupState } from '../../backup/backup.state';
 import { DestinationListItemComponent } from '../../backup/destination/destination-list-item/destination-list-item.component';
+import { DestinationSourceToggleComponent } from '../../backup/destination/destination-source-toggle/destination-source-toggle.component';
 import { DestinationListComponent } from '../../backup/destination/destination-list/destination-list.component';
 import { getConfigurationByKey, getConfigurationByUrl } from '../../backup/destination/destination.config-utilities';
 import { SingleDestinationComponent } from '../../backup/destination/single-destination/single-destination.component';
@@ -39,7 +39,7 @@ import { RestoreFlowState } from '../restore-flow.state';
     FormField,
     NullableTextControl,
     ShipButton,
-    ShipButtonGroup,
+    DestinationSourceToggleComponent,
     ShipFormField,
     ShipMenu,
     ShipIcon,
