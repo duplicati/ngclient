@@ -241,9 +241,9 @@
                     @if (runningBackupId() !== backup.Backup.ID) {
                       <p>
                         @if (backup.Backup.OperationType === 'Sync') {
-                          <span i18n>Last successful sync:</span>
+                          <span i18n>Last completed sync:</span>
                         } @else {
-                          <span i18n>Last successful backup:</span>
+                          <span i18n>Last completed backup:</span>
                         }
                         <span
                           class="time-value"
