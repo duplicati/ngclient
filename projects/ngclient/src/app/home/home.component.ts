@@ -194,7 +194,8 @@ export default class HomeComponent {
 
   viewMode = localStorageSignal<'list' | 'details'>('viewMode', 'list');
 
-  sortByColumn = signal<OrderBy | null>(this.#backupsState.orderBy());
+  sortField = form(signal<OrderBy | null>(this.#backupsState.orderBy()));
+  sortByColumn = this.sortField().value;
   loadingId = signal<string | null>(null);
   successId = signal<string | null>(null);
 
