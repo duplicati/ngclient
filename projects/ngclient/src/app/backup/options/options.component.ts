@@ -59,7 +59,8 @@ export default class OptionsComponent {
   formRef = viewChild.required<ElementRef<HTMLFormElement>>('formRef');
 
   isSubmitting = this.#backupState.isSubmitting;
-  settings = this.#backupState.settings;
+  advancedOptionsField = form(this.#backupState.settings);
+  settings = this.advancedOptionsField().value;
   optionsForm = this.#backupState.optionsForm;
   applicationOptions = this.#backupState.applicationOptions;
   /** Only a backup stored on the server has a password the server can fill in for a test email */
