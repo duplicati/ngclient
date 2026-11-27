@@ -16,28 +16,19 @@
   <p i18n>Choose which versions to remove the selected files from:</p>
 
   <div class="radios">
-    <sh-radio
-      class="primary raised"
-      [checked]="versionScope() === 'all'"
-      (checkedChange)="versionScope.set('all')"
-      i18n>
+    <sh-radio class="primary raised" i18n>
       All versions
+      <input type="radio" value="all" [formField]="versionScopeField" />
     </sh-radio>
 
-    <sh-radio
-      class="primary raised"
-      [checked]="versionScope() === 'current'"
-      (checkedChange)="versionScope.set('current')"
-      i18n>
+    <sh-radio class="primary raised" i18n>
       Active version ({{ selectedVersionItem()?.Time | date: 'medium' }})
+      <input type="radio" value="current" [formField]="versionScopeField" />
     </sh-radio>
 
-    <sh-radio
-      class="primary raised"
-      [checked]="versionScope() === 'specific'"
-      (checkedChange)="versionScope.set('specific')"
-      i18n>
+    <sh-radio class="primary raised" i18n>
       Specific versions
+      <input type="radio" value="specific" [formField]="versionScopeField" />
     </sh-radio>
   </div>
 

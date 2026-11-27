@@ -24,7 +24,7 @@ describe('PurgeVersionScopeComponent removal confirmation', () => {
         { provide: Router, useValue: { navigate } },
         { provide: ActivatedRoute, useValue: {} },
       ],
-    }).overrideComponent(PurgeVersionScopeComponent, { set: { template: '', imports: [] } });
+    });
     const fixture = TestBed.createComponent(PurgeVersionScopeComponent);
     const state = TestBed.inject(PurgeFilesState);
     TestBed.inject(SysinfoState).systemInfo.set({ APIExtensions: extensions } as SystemInfoDto);
@@ -32,7 +32,7 @@ describe('PurgeVersionScopeComponent removal confirmation', () => {
     state.selectedVersion.set('7');
     state.selectedPaths.set('/data/file.txt\0/data/folder/\0C:\\data\\folder\\');
     fixture.detectChanges();
-    return { component: fixture.componentInstance, state, response, purge, open, navigate };
+    return { component: fixture.componentInstance, state, response, purge, open, navigate, fixture };
   }
   it.each(['paths', 'versions'])('does not prompt or delete without selected %s', (missing) => {
     const { component, state, open, purge } = setup();
@@ -58,8 +58,9 @@ describe('PurgeVersionScopeComponent removal confirmation', () => {
   ] as [PurgeVersionScope, number[] | null][])(
     'sends only the confirmed %s scope and expands folder filters',
     (scope, versions) => {
-      const { component, state, open, purge, response, navigate } = setup();
-      state.versionScope.set(scope);
+      const { component, state, open, purge, response, navigate, fixture } = setup();
+      const radio = fixture.nativeElement.querySelector(`input[type=radio][value="${scope}"]`) as HTMLInputElement;
+      radio.click();
       state.specificVersions.set([2, 9]);
       component.purgeFiles();
       expect(purge).not.toHaveBeenCalled();
