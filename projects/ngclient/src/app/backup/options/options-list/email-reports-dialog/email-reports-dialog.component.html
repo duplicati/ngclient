@@ -178,7 +178,14 @@
           [placeholder]="inherited().body ?? defaultBodyText"
           [(ngModel)]="body"></textarea>
       </sh-form-field>
-      <p class="hint" i18n>Use %RESULT% to insert the result. You can also enter the path to a template file.</p>
+      @if (showTemplate()) {
+        <p class="hint" i18n>
+          Use %RESULT% to insert the result, rendered with the result template below. To use your own template, enter
+          the path to a Handlebars template file (.hbs), which is then used instead of the result template.
+        </p>
+      } @else {
+        <p class="hint" i18n>Use %RESULT% to insert the result. You can also enter the path to a template file.</p>
+      }
 
       <sh-checkbox class="primary raised" [(checked)]="bodyHtml" i18n>The message body is HTML</sh-checkbox>
 
@@ -186,6 +193,17 @@
         <label for="email-reports-format" i18n>Result format</label>
         <input id="email-reports-format" type="text" [(ngModel)]="format" />
       </sh-select>
+
+      @if (showTemplate()) {
+        <sh-select [options]="templateOptions()" [isClearable]="false" [optionTemplate]="plainOption">
+          <label for="email-reports-template" i18n>Result template</label>
+          <input id="email-reports-template" type="text" [(ngModel)]="template" />
+        </sh-select>
+        <p class="hint" i18n>
+          The template renders the result that replaces %RESULT% in the message body. A template that renders HTML,
+          such as html or summary, is sent as an HTML message, also when the message body is not marked as HTML.
+        </p>
+      }
 
       <sh-checkbox class="primary raised" [(checked)]="acceptAnyCertificate" i18n>
         Accept any SSL certificate from the mail server

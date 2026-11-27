@@ -95,9 +95,12 @@ export class EmailReportsDialogComponent {
   #option = (name: string) => this.#sysInfo.allOptions().find((x) => x.name === name);
   operationOptions = computed(() => this.#option(EMAIL_OPTIONS.operations)?.options ?? ['Backup']);
   formatOptions = computed(() => this.#option(EMAIL_OPTIONS.format)?.options ?? ['Duplicati', 'Json']);
+  /** The bundled templates; older servers do not have the option, so the list is empty */
+  templateOptions = computed(() => this.#option(EMAIL_OPTIONS.template)?.options ?? []);
   #defaults = computed(() => ({
     operations: this.#option(EMAIL_OPTIONS.operations)?.defaultValue ?? 'Backup',
     format: this.#option(EMAIL_OPTIONS.format)?.defaultValue ?? 'Duplicati',
+    template: this.#option(EMAIL_OPTIONS.template)?.defaultValue ?? 'default',
     level: 'All',
     bool: 'false',
   }));
@@ -113,6 +116,9 @@ export class EmailReportsDialogComponent {
   levels = linkedSignal(() => parseLevels(this.own().level ?? this.inherited().level));
   operations = linkedSignal(() => this.own().operations ?? this.inherited().operations ?? this.#defaults().operations);
   format = linkedSignal(() => this.own().format ?? this.inherited().format ?? this.#defaults().format);
+  template = linkedSignal(() => this.own().template ?? this.inherited().template ?? this.#defaults().template);
+  /** The template only applies to the Template format */
+  showTemplate = computed(() => this.templateOptions().length > 0 && this.format().trim().toLowerCase() === 'template');
   bodyHtml = linkedSignal(() => isOptionTrue(this.own().bodyHtml ?? this.inherited().bodyHtml ?? 'false'));
   acceptAnyCertificate = linkedSignal(() =>
     isOptionTrue(this.own().acceptAnyCertificate ?? this.inherited().acceptAnyCertificate ?? 'false')
@@ -195,6 +201,7 @@ export class EmailReportsDialogComponent {
       level: unlessInherited(serializeLevels(this.levels()), inherited.level ?? defaults.level),
       operations: unlessInherited(this.operations(), inherited.operations ?? defaults.operations),
       format: unlessInherited(this.format(), inherited.format ?? defaults.format),
+      template: unlessInherited(this.template(), inherited.template ?? defaults.template),
       bodyHtml: unlessInherited(String(this.bodyHtml()), inherited.bodyHtml ?? defaults.bool),
       acceptAnyCertificate: unlessInherited(
         String(this.acceptAnyCertificate()),

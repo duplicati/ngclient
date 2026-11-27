@@ -16,6 +16,7 @@ export const EMAIL_OPTIONS = {
   level: 'send-mail-level',
   operations: 'send-mail-operations',
   format: 'send-mail-result-output-format',
+  template: 'send-mail-result-template',
   acceptAnyCertificate: 'send-mail-accept-any-ssl-certificate',
 } as const;
 
