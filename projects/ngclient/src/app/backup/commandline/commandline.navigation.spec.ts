@@ -60,7 +60,7 @@ describe('command editor home navigation', () => {
   it('allows browser modified-click navigation without changing the editor', async () => {
     const { component, link, run, saveState } = await setup();
     expect(link).not.toBeNull();
-    component.baseCmdForm.controls.arguments.setValue('keep these arguments');
+    component.commandFields.arguments().value.set('keep these arguments');
     let prevented: boolean | undefined;
     link.addEventListener('click', (event) => {
       prevented = event.defaultPrevented;
@@ -69,7 +69,7 @@ describe('command editor home navigation', () => {
     link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, ctrlKey: true }));
     expect(prevented).toBe(false);
     expect(TestBed.inject(Router).url).toBe('/backup/42/commandline');
-    expect(component.baseCmdForm.controls.arguments.value).toBe('keep these arguments');
+    expect(component.commandModel().arguments).toBe('keep these arguments');
     expect(run).not.toHaveBeenCalled();
     expect(saveState).not.toHaveBeenCalled();
   });

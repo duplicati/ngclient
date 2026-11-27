@@ -17,7 +17,12 @@
           Command
           <sh-icon shTooltip="Choose the command to execute">question</sh-icon>
         </label>
-        <input type="text" id="command" appNullableText [formField]="commandFields.command" />
+        <input
+          type="text"
+          id="command"
+          appNullableText
+          [formField]="commandFields.command"
+          (valueChange)="updateCommandArguments($event)" />
       </sh-select>
 
       <sh-form-field>
@@ -71,7 +76,7 @@
     <div class="form-actions">
       <button shButton class="raised primary" [class.loading]="isSubmitting()" (click)="submit()" i18n>
         <sh-icon>arrow-right</sh-icon>
-        Run "{{ baseCmdForm.value.command }}" command now
+        Run "{{ commandModel().command }}" command now
       </button>
     </div>
   }
