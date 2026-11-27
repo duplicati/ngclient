@@ -265,7 +265,7 @@
         [isClearable]="false"
         [inlineSearch]="true"
         (selectedOptionsChange)="updateLocale($event)">
-        <input type="text" [ngModel]="langCtrl()" [ngModelOptions]="{ standalone: true }" />
+        <input type="text" appNullableText [formField]="languageField" />
       </sh-select>
     </div>
   </section>
