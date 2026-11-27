@@ -224,12 +224,15 @@ export default class ExportComponent {
     a.click();
     window.URL.revokeObjectURL(url);
   }
+  passwordCopyField = form(this.copiedPassword);
+  passwordCopied = this.passwordCopyField().value;
+
   async copyPassword() {
     const pass = this.exportForm.password().value();
 
     await this.#copyToClipboard(pass ?? '');
 
-    this.copiedPassword.set(true);
+    this.passwordCopied.set(true);
   }
 
   async #copyToClipboard(text: string) {
@@ -252,7 +255,7 @@ export default class ExportComponent {
   }
 
   generatePassword() {
-    this.copiedPassword.set(false);
+    this.passwordCopied.set(false);
 
     const newPass = this.#passwordGeneratorService.generate(41);
     this.exportForm.password().value.set(newPass);
