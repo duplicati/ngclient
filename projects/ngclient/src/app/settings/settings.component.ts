@@ -156,6 +156,7 @@ export default class SettingsComponent {
   powerModeCtrl = signal<string>('');
   powerModeField = form(linkedSignal(() => this.powerModeCtrl()));
   usageStatistics = signal<UsageStatisticsControlValue>('default');
+  usageStatisticsField = form(linkedSignal<string>(() => this.usageStatistics()));
   updatingUsageStatistics = signal(false);
   remoteControlStatus = this.#remoteControlState.statusMessage;
   remoteControlState = this.#remoteControlState.state;
@@ -563,6 +564,11 @@ export default class SettingsComponent {
         // The service restores the previous settings and the HTTP interceptor reports the error.
         error: () => {},
       });
+  }
+
+  selectUsageStatistics(selected: unknown[]) {
+    const option = this.usageStatisticsOptions().find((entry) => entry === selected[0]);
+    if (option) this.updateUsageStatistics(option.value);
   }
 
   updatePowerMode(selected: unknown[]) {

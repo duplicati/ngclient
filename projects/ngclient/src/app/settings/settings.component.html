@@ -632,12 +632,10 @@
           [options]="usageStatisticsOptions()"
           [disabled]="updatingUsageStatistics()"
           label="label"
-          value="value">
-          <input
-            type="text"
-            [ngModel]="usageStatistics()"
-            (ngModelChange)="updateUsageStatistics($event)"
-            [ngModelOptions]="{ standalone: true }" />
+          value="value"
+          (selectedOptionsChange)="selectUsageStatistics($event)"
+          (cleared)="updateUsageStatistics('default')">
+          <input type="text" appNullableText [formField]="usageStatisticsField" />
 
           <ng-template let-option>
             {{ option.label }}
