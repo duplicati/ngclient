@@ -382,7 +382,8 @@ export default class DestinationComponent {
   }
 
   isAdvancing = signal(false);
-  databaseChoice = signal<{ url: string; path: string } | null>(null);
+  databaseChoiceField = form(signal<{ url: string; path: string } | null>(null));
+  databaseChoice = this.databaseChoiceField().value;
   databaseLookupError = signal(false);
 
   cancelDatabaseChoice() {
