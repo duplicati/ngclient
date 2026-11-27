@@ -341,6 +341,10 @@ export default class SettingsComponent {
   /** What the toggle shows while the user is asked to confirm; null when it shows the setting */
   #mcpServerToggleOverride = signal<boolean | null>(null);
   mcpServerToggleChecked = computed(() => this.#mcpServerToggleOverride() ?? this.isMcpServerEnabled());
+  mcpServerField = form(
+    linkedSignal(() => this.mcpServerToggleChecked()),
+    (field) => disabled(field, () => this.updatingMcpServerState())
+  );
 
   saveMcpServerState($event: boolean) {
     const enabled = !!$event;

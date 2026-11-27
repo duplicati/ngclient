@@ -686,15 +686,17 @@
 
         @if (hasMcpServer()) {
           <p i18n>MCP server</p>
-          <sh-toggle
-            class="primary raised"
-            [checked]="mcpServerToggleChecked()"
-            [disabled]="updatingMcpServerState()"
-            (checkedChange)="saveMcpServerState($event)">
+          <sh-toggle class="primary raised">
+            <input
+              id="mcp-server"
+              type="checkbox"
+              [formField]="mcpServerField"
+              (keydown.space)="$event.stopPropagation()"
+              (change)="saveMcpServerState(mcpServerField().value())" />
             @if (isMcpServerEnabled()) {
-              <label i18n>AI agents with an access token can use the MCP endpoint at /mcp</label>
+              <label for="mcp-server" i18n>AI agents with an access token can use the MCP endpoint at /mcp</label>
             } @else {
-              <label i18n>The MCP endpoint is disabled</label>
+              <label for="mcp-server" i18n>The MCP endpoint is disabled</label>
             }
           </sh-toggle>
         }
