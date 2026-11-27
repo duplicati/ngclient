@@ -19,9 +19,9 @@
 
         <p>
           @if (_backup.Backup.OperationType === 'Sync') {
-            <span i18n>Last successful sync:</span>
+            <span i18n>Last completed sync:</span>
           } @else {
-            <span i18n>Last successful backup:</span>
+            <span i18n>Last completed backup:</span>
           }
           {{ (_backup.Backup | lastRun) | date: 'short' }}
           @if ((_backup.Backup | lastRun: 'duration')) {
