@@ -557,18 +557,16 @@
     <div class="right">
       <div class="field-row">
         <sh-range-slider [unit]="timeType() === 'none' ? 's' : timeType()" class="raised primary">
-          <input
-            type="range"
-            [min]="timeRange()[0]"
-            [max]="timeRange()[1]"
-            [disabled]="timeType() === 'none'"
-            [(ngModel)]="timeValue"
-            (ngModelChange)="updateTimeValue($event)"
-            [ngModelOptions]="{ standalone: true }" />
+          <input type="range" [formField]="timeValueField" (input)="scheduleStartupDelay()" />
         </sh-range-slider>
 
-        <sh-select [options]="timeTypeOptions()" [isClearable]="false" label="label" value="value">
-          <input type="text" [ngModel]="timeType()" (ngModelChange)="updateTimeType($event)" />
+        <sh-select
+          [options]="timeTypeOptions()"
+          [isClearable]="false"
+          label="label"
+          value="value"
+          (selectedOptionsChange)="updateTimeType($event)">
+          <input type="text" appNullableText [formField]="timeTypeField" />
 
           <ng-template let-option>
             {{ option.label }}
