@@ -1,3 +1,4 @@
+import { form } from '@angular/forms/signals';
 import { DatePipe, JsonPipe, NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -160,10 +161,13 @@ export class GeneralLogComponent {
   #durationPipe = new DurationFormatPipe();
 
   backupId = input.required<string>();
-  pagination = linkedSignal({
-    source: this.backupId,
-    computation: (): LogPagination => ({ offset: undefined, pagesize: 100, previousOffsets: [] }),
-  });
+  paginationField = form(
+    linkedSignal({
+      source: this.backupId,
+      computation: (): LogPagination => ({ offset: undefined, pagesize: 100, previousOffsets: [] }),
+    })
+  );
+  pagination = this.paginationField().value;
   isSuppressingWarning = signal(false);
   copied = linkedSignal({ source: this.pagination, computation: (): string | null => null });
 
