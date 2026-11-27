@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { form, FormField } from '@angular/forms/signals';
+import { disabled, form, FormField } from '@angular/forms/signals';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipAlert } from '@ship-ui/core/ship-alert';
 import { ShipButton } from '@ship-ui/core/ship-button';
@@ -40,6 +40,7 @@ export default class PurgeVersionScopeComponent {
   performCompact = this.#state.performCompact;
   canSuppressCompact = this.#sysinfo.hasV2PurgeFilesSuppressCompact;
   isPurging = signal(false);
+  compactField = form(this.performCompact, (field) => disabled(field, () => this.isPurging()));
 
   isVersionSelected(version: number) {
     return this.specificVersions().includes(version);

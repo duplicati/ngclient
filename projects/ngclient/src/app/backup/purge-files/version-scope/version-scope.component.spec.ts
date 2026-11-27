@@ -82,8 +82,10 @@ describe('PurgeVersionScopeComponent removal confirmation', () => {
     }
   );
   it.each([true, false])('submits the compact choice captured for confirmation (%s)', (compact) => {
-    const { component, state, open, purge } = setup();
-    state.performCompact.set(compact);
+    const { component, state, open, purge, fixture } = setup();
+    const checkbox = fixture.nativeElement.querySelector('input[type=checkbox]') as HTMLInputElement;
+    checkbox.checked = compact;
+    checkbox.dispatchEvent(new Event('input'));
     component.purgeFiles();
     state.performCompact.set(!compact);
     open.mock.calls[0][1].closed(true);
