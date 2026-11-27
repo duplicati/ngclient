@@ -8,12 +8,14 @@ import {
   ElementRef,
   inject,
   Injector,
+  linkedSignal,
   input,
   output,
   signal,
   viewChild,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { form, FormField } from '@angular/forms/signals';
+import { NullableTextControl } from '../../general/nullable-text-control';
 import { ShipFormField } from '@ship-ui/core/ship-form-field';
 import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipSelect } from '@ship-ui/core/ship-select';
@@ -221,7 +223,7 @@ export const serializeFilterPath = (
 
 @Component({
   selector: 'app-new-filter',
-  imports: [KeyboardActionDirective, FormsModule, ShipSelect, ShipFormField, ShipIcon],
+  imports: [KeyboardActionDirective, FormField, NullableTextControl, ShipSelect, ShipFormField, ShipIcon],
   templateUrl: './new-filter.component.html',
   styleUrl: './new-filter.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -238,6 +240,8 @@ export class NewFilterComponent {
 
   internalPath = signal<string>('');
   pathType = signal<string>('-Expression');
+  expressionField = form(this.internalPath);
+  pathTypeField = form(linkedSignal(() => this.pathType()));
   textInput = viewChild<ElementRef<HTMLInputElement>>('textInput');
   currentExpressionOption = computed(() => {
     const pathType = this.pathType();
@@ -330,8 +334,14 @@ export class NewFilterComponent {
     }
   }
 
-  updateFilter() {
-    let newPath = this.internalPath();
+  selectPathType(selected: unknown[]) {
+    const option = this.expressionOptions().find((entry) => entry === selected[0]);
+    if (!option || option.value === this.pathType()) return;
+    this.pathType.set(option.value);
+    this.updateFilter();
+  }
+
+  updateFilter(newPath = this.internalPath()) {
     const expressionOption = this.currentExpressionOption();
 
     if (newPath === '') return;
