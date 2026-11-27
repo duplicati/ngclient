@@ -92,8 +92,7 @@ export class BackupState {
 
   generalForm = createGeneralForm();
   sourceDataForm = createSourceDataForm();
-  readonly scheduleModel = signal(SCHEDULE_FIELD_DEFAULTS());
-  readonly scheduleForm = form(this.scheduleModel);
+  readonly scheduleForm = form(signal(SCHEDULE_FIELD_DEFAULTS()));
   scheduleType = signal<string>('daily');
   runAfterBackupId = signal<string | null>(null);
   runAfterAlways = signal(false);
@@ -523,7 +522,7 @@ export class BackupState {
     // The date is only the first run and depends on when the form was filled, so leave it out of the match
     const withoutDate = (x: { nextTime: object }) =>
       JSON.stringify({ ...x, nextTime: { ...x.nextTime, date: undefined } });
-    const test = this.scheduleModel();
+    const test = this.scheduleForm().value();
     const matchPredefined = SCHEDULE_DEFAULT_OPTIONS.find((x) => withoutDate(x.data) === withoutDate(test));
 
     if (matchPredefined) {
@@ -560,7 +559,7 @@ export class BackupState {
   }
 
   getScheduleFormValue() {
-    const schedule = this.scheduleModel();
+    const schedule = this.scheduleForm().value();
     const parsedSchedule = scheduleOptionToSchedule(schedule);
 
     return parsedSchedule;
