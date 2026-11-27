@@ -103,22 +103,28 @@
       </ng-template>
     </sh-select>
 
-    <sh-checkbox
-      class="primary raised"
-      [checked]="form().allBackups"
-      (checkedChange)="updateForm({ allBackups: $event })"
-      i18n>
+    <sh-checkbox class="primary raised" i18n>
       All backups, including ones created later
+      <input
+        id="mcp-all-backups"
+        type="checkbox"
+        aria-label="All backups, including ones created later"
+        i18n-aria-label
+        [formField]="tokenFields.allBackups"
+        (keydown.space)="$event.stopPropagation()" />
     </sh-checkbox>
 
     @if (!form().allBackups) {
       <div class="backup-list">
         @for (backup of backups(); track backup.id) {
-          <sh-checkbox
-            class="primary raised"
-            [checked]="isBackupSelected(backup.id)"
-            (checkedChange)="toggleBackup(backup.id, $event)">
+          <sh-checkbox class="primary raised">
             {{ backup.name }}
+            <input
+              type="checkbox"
+              [attr.aria-label]="backup.name"
+              [formField]="backupScopeForm[backup.id]!"
+              (keydown.space)="$event.stopPropagation()"
+              (change)="toggleBackup(backup.id, backupScopeForm[backup.id]!().value())" />
           </sh-checkbox>
         } @empty {
           <p i18n>There are no backups to choose from.</p>

@@ -92,6 +92,9 @@ export class McpTokensComponent {
       .map((x) => ({ id: x.Backup?.ID ?? '', name: x.Backup?.Name ?? '' }))
       .filter((x) => x.id !== '')
   );
+  backupScopeForm = form(
+    linkedSignal(() => Object.fromEntries(this.backups().map(({ id }) => [id, this.isBackupSelected(id)])))
+  );
   #backupNames = computed(() => new Map(this.backups().map((x) => [x.id, x.name])));
   formError = computed(() => getMcpTokenFormError(this.form()));
 
