@@ -67,7 +67,8 @@ export default class ImportComponent {
     }
   });
 
-  selectedFile = signal<File[]>([]);
+  selectedFileField = form(signal<File[]>([]));
+  selectedFile = this.selectedFileField().value;
   #reader: FileReader | null = null;
   #destroyed = false;
 
