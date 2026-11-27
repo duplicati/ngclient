@@ -55,7 +55,8 @@ export default class LoginComponent {
     const remember = this.loginForm.rememberMe().value();
     if (remember !== untracked(this.rememberMe)) this.rememberMe.set(remember);
   });
-  showPassword = signal(false);
+  passwordVisibilityField = form(signal(false));
+  showPassword = this.passwordVisibilityField().value;
   passwordInput = viewChild<ElementRef<HTMLInputElement>>('passwordInput');
   passwordEffect = effect(() => {
     if (this.failedLogin()) {
