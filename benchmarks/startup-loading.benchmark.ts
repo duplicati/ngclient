@@ -112,13 +112,13 @@ for (let sample = 1; sample <= rounds; sample++)
       await capture('home', start);
 
       start = performance.now();
-      await page.getByRole('button', { name: 'Settings', exact: true }).click();
+      await page.getByRole('navigation').getByRole('link', { name: 'Settings', exact: true }).click();
       await expect(page).toHaveURL('/settings');
       await expect(page.getByRole('heading', { name: 'Settings', exact: true })).toBeVisible();
       await capture('settings', start);
 
       start = performance.now();
-      await page.getByRole('button', { name: 'Restore', exact: true }).click();
+      await page.getByRole('navigation').getByRole('link', { name: 'Restore', exact: true }).click();
       await expect(
         page.getByRole('heading', { name: 'Where do you want to restore from?', exact: true })
       ).toBeVisible();
@@ -131,7 +131,7 @@ for (let sample = 1; sample <= rounds; sample++)
       });
       await expect(page.getByPlaceholder('Your backup name')).toHaveValue('Measurement backup');
       await capture('edit', start);
-      await page.getByRole('button', { name: 'Home', exact: true }).click();
+      await page.getByRole('navigation').getByRole('link', { name: 'Home', exact: true }).click();
       await expect(page.getByRole('heading', { name: 'My backups', exact: true })).toBeVisible();
       const result = {
         variant,

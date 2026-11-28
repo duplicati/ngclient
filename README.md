@@ -66,7 +66,7 @@ to Duplicati. `/api` and `/notifications` requests return 404. Use the Angular
 development server with its existing proxy configuration when working with a
 local Duplicati backend.
 
-The server binds to loopback by default. The underlying CLI's `HOST` and `PORT`
+The server binds to loopback by default. The preview server's `HOST` and `PORT`
 environment variables override the configured host and port; leave `HOST` unset
 to keep the preview local.
 
