@@ -3,7 +3,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { DuplicatiServer } from '../../../core/openapi';
-import { DayJsProvider } from '../../../core/providers/dayjs';
 import { BackupsState } from '../../../core/states/backups.state';
 import { GeneralLogComponent } from './general-log.component';
 
@@ -15,7 +14,6 @@ describe('GeneralLogComponent mixed log rows', () => {
       imports: [GeneralLogComponent],
       providers: [
         DecimalPipe,
-        DayJsProvider,
         {
           provide: DuplicatiServer,
           useValue: {
@@ -147,7 +145,6 @@ describe('GeneralLogComponent restore test section', () => {
       imports: [GeneralLogComponent],
       providers: [
         DecimalPipe,
-        DayJsProvider,
         {
           provide: DuplicatiServer,
           useValue: {
@@ -272,7 +269,6 @@ describe('GeneralLogComponent warning suppression preserves the job', () => {
         imports: [GeneralLogComponent],
         providers: [
           DecimalPipe,
-          DayJsProvider,
           {
             provide: DuplicatiServer,
             useValue: {

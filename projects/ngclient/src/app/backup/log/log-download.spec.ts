@@ -3,7 +3,6 @@ import { Type } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { DuplicatiServer } from '../../core/openapi';
-import { DayJsProvider } from '../../core/providers/dayjs';
 import { BackupsState } from '../../core/states/backups.state';
 import { GeneralLogComponent } from './general-log/general-log.component';
 import { RemoteLogComponent } from './remote-log/remote-log.component';
@@ -47,12 +46,7 @@ afterEach(() => {
 async function render<T>(component: Type<T>, server: object) {
   TestBed.configureTestingModule({
     imports: [component],
-    providers: [
-      DecimalPipe,
-      DayJsProvider,
-      { provide: DuplicatiServer, useValue: server },
-      { provide: BackupsState, useValue: {} },
-    ],
+    providers: [DecimalPipe, { provide: DuplicatiServer, useValue: server }, { provide: BackupsState, useValue: {} }],
   });
   const fixture = TestBed.createComponent(component);
   fixture.componentRef.setInput('backupId', '42');

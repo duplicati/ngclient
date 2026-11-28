@@ -1,5 +1,4 @@
 import { DatePipe } from '@angular/common';
-import { DayJsProvider } from '../../providers/dayjs';
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -28,7 +27,6 @@ describe('BackupProgressComponent task visibility', () => {
       imports: [BackupProgressComponent],
       providers: [
         DatePipe,
-        DayJsProvider,
         { provide: StatusBarState, useValue: { runningBackupId, statusData, serverState } },
         { provide: BackupsState, useValue: { backups: signal([]) } },
       ],

@@ -1,12 +1,13 @@
-import { inject, Pipe, type PipeTransform } from '@angular/core';
-import { DAYJS } from '../providers/dayjs';
+import { inject, LOCALE_ID, Pipe, type PipeTransform } from '@angular/core';
+import { getIntlDisplayLocale } from '../locales/intl-display-locale';
+import { relativeTimeMagnitude } from './relative-time-magnitude';
 
 @Pipe({
   name: 'durationFormat',
   standalone: true,
 })
 export class DurationFormatPipe implements PipeTransform {
-  #dayjs = inject(DAYJS);
+  #locale = getIntlDisplayLocale(inject(LOCALE_ID));
 
   transform(value: string | undefined | null, forceActualDuration = false, ...args: unknown[]): string {
     if (!value) return '';
@@ -24,6 +25,10 @@ export class DurationFormatPipe implements PipeTransform {
       return `${days ? `${days}d ` : ''}${hours}h ${minutes}m ${seconds}s`;
     }
 
-    return this.#dayjs.duration({ days, hours, minutes, seconds }).humanize();
+    const now = new Date();
+    const end = new Date(now.getTime() + (((days * 24 + hours) * 60 + minutes) * 60 + seconds) * 1000);
+    if (Number.isNaN(end.getTime())) return '';
+    const [amount, unit] = relativeTimeMagnitude(end, now);
+    return new Intl.NumberFormat(this.#locale, { style: 'unit', unit, unitDisplay: 'long' }).format(amount);
   }
 }

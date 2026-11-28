@@ -13,8 +13,6 @@ export type LocaleDefinition = {
   buildFile?: string;
   /** Static module, optional registration alias and supplemental data module. */
   angular?: { data: string; alias?: string; extra?: string };
-  /** Static module; key defaults to lowercase code, asset=false omits the raw JS copy. */
-  dayjs?: { data: string; key?: string; asset?: false };
 };
 
 export const DEFAULT_LOCALE = 'en-US';
@@ -37,18 +35,12 @@ export const LOCALE_CATALOG: readonly LocaleDefinition[] = [
     angular: {
       data: 'en-GB',
     },
-    dayjs: {
-      data: 'en-gb',
-    },
   },
   {
     code: 'cs',
     label: 'Czech (cs)',
     aliases: ['cs-CZ'],
     angular: {
-      data: 'cs',
-    },
-    dayjs: {
       data: 'cs',
     },
   },
@@ -59,18 +51,12 @@ export const LOCALE_CATALOG: readonly LocaleDefinition[] = [
     angular: {
       data: 'da',
     },
-    dayjs: {
-      data: 'da',
-    },
   },
   {
     code: 'de',
     label: 'German (de)',
     aliases: ['de-AT'],
     angular: {
-      data: 'de',
-    },
-    dayjs: {
       data: 'de',
     },
   },
@@ -81,9 +67,6 @@ export const LOCALE_CATALOG: readonly LocaleDefinition[] = [
     angular: {
       data: 'es',
     },
-    dayjs: {
-      data: 'es',
-    },
   },
   {
     code: 'fi',
@@ -92,17 +75,11 @@ export const LOCALE_CATALOG: readonly LocaleDefinition[] = [
     angular: {
       data: 'fi',
     },
-    dayjs: {
-      data: 'fi',
-    },
   },
   {
     code: 'fr',
     label: 'French (fr)',
     angular: {
-      data: 'fr',
-    },
-    dayjs: {
       data: 'fr',
     },
   },
@@ -113,17 +90,11 @@ export const LOCALE_CATALOG: readonly LocaleDefinition[] = [
     angular: {
       data: 'hu',
     },
-    dayjs: {
-      data: 'hu',
-    },
   },
   {
     code: 'it',
     label: 'Italian (it)',
     angular: {
-      data: 'it',
-    },
-    dayjs: {
       data: 'it',
     },
   },
@@ -143,9 +114,6 @@ export const LOCALE_CATALOG: readonly LocaleDefinition[] = [
     angular: {
       data: 'ko',
     },
-    dayjs: {
-      data: 'ko',
-    },
   },
   {
     code: 'nl-NL',
@@ -155,19 +123,12 @@ export const LOCALE_CATALOG: readonly LocaleDefinition[] = [
       data: 'nl',
       alias: 'nl',
     },
-    dayjs: {
-      data: 'nl',
-      key: 'nl',
-    },
   },
   {
     code: 'pl',
     label: 'Polish (pl)',
     aliases: ['pl-PL'],
     angular: {
-      data: 'pl',
-    },
-    dayjs: {
       data: 'pl',
     },
   },
@@ -185,18 +146,12 @@ export const LOCALE_CATALOG: readonly LocaleDefinition[] = [
     angular: {
       data: 'pt',
     },
-    dayjs: {
-      data: 'pt',
-    },
   },
   {
     code: 'ru',
     label: 'Russian (ru)',
     aliases: ['ru-RU'],
     angular: {
-      data: 'ru',
-    },
-    dayjs: {
       data: 'ru',
     },
   },
@@ -208,10 +163,6 @@ export const LOCALE_CATALOG: readonly LocaleDefinition[] = [
       data: 'sr',
       alias: 'sr',
     },
-    dayjs: {
-      data: 'sr',
-      key: 'sr',
-    },
   },
   {
     code: 'sv-SE',
@@ -221,19 +172,12 @@ export const LOCALE_CATALOG: readonly LocaleDefinition[] = [
       data: 'sv',
       alias: 'sv',
     },
-    dayjs: {
-      data: 'sv',
-      key: 'sv',
-    },
   },
   {
     code: 'tr',
     label: 'Turkish (tr)',
     aliases: ['tr-TR'],
     angular: {
-      data: 'tr',
-    },
-    dayjs: {
       data: 'tr',
     },
   },
@@ -255,9 +199,6 @@ export const LOCALE_CATALOG: readonly LocaleDefinition[] = [
       alias: 'zh-Hant',
       extra: 'zh-Hant',
     },
-    dayjs: {
-      data: 'zh-tw',
-    },
   },
   {
     code: 'de-CH',
@@ -265,18 +206,11 @@ export const LOCALE_CATALOG: readonly LocaleDefinition[] = [
     angular: {
       data: 'de-CH',
     },
-    dayjs: {
-      data: 'de-ch',
-      asset: false,
-    },
   },
   {
     code: 'de-DE',
     label: 'German (de-DE)',
     angular: {
-      data: 'de',
-    },
-    dayjs: {
       data: 'de',
     },
   },
@@ -286,9 +220,6 @@ export const LOCALE_CATALOG: readonly LocaleDefinition[] = [
     angular: {
       data: 'es',
     },
-    dayjs: {
-      data: 'es',
-    },
   },
   {
     code: 'fr-CA',
@@ -296,18 +227,11 @@ export const LOCALE_CATALOG: readonly LocaleDefinition[] = [
     angular: {
       data: 'fr-CA',
     },
-    dayjs: {
-      data: 'fr-ca',
-      asset: false,
-    },
   },
   {
     code: 'fr-FR',
     label: 'French (fr-FR)',
     angular: {
-      data: 'fr',
-    },
-    dayjs: {
       data: 'fr',
     },
   },
@@ -317,17 +241,11 @@ export const LOCALE_CATALOG: readonly LocaleDefinition[] = [
     angular: {
       data: 'it',
     },
-    dayjs: {
-      data: 'it',
-    },
   },
   {
     code: 'ja',
     label: 'Japanese (ja)',
     angular: {
-      data: 'ja',
-    },
-    dayjs: {
       data: 'ja',
     },
   },
@@ -336,10 +254,6 @@ export const LOCALE_CATALOG: readonly LocaleDefinition[] = [
     label: 'Dutch (nl-BE)',
     angular: {
       data: 'nl-BE',
-    },
-    dayjs: {
-      data: 'nl-be',
-      asset: false,
     },
   },
   {
@@ -350,9 +264,6 @@ export const LOCALE_CATALOG: readonly LocaleDefinition[] = [
       data: 'zh-Hant',
       extra: 'zh-Hant',
     },
-    dayjs: {
-      data: 'zh-tw',
-    },
   },
   {
     code: 'zh',
@@ -360,9 +271,6 @@ export const LOCALE_CATALOG: readonly LocaleDefinition[] = [
     aliases: ['zh-SG'],
     angular: {
       data: 'zh-Hans',
-    },
-    dayjs: {
-      data: 'zh-cn',
     },
   },
   {
@@ -373,18 +281,11 @@ export const LOCALE_CATALOG: readonly LocaleDefinition[] = [
       alias: 'zh-Hant',
       extra: 'zh-Hant',
     },
-    dayjs: {
-      data: 'zh-hk',
-      asset: false,
-    },
   },
   {
     code: 'en-US',
     runtime: 'en',
     buildFile: 'en',
-    dayjs: {
-      data: 'en',
-    },
   },
   {
     code: 'zh-Hans',

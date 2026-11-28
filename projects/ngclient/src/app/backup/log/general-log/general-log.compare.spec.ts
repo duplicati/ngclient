@@ -4,7 +4,6 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { DuplicatiServer, IListResultFileset } from '../../../core/openapi';
-import { DayJsProvider } from '../../../core/providers/dayjs';
 import { BackupsState } from '../../../core/states/backups.state';
 import { findBackupVersion, GeneralLogComponent } from './general-log.component';
 
@@ -68,7 +67,6 @@ describe('GeneralLogComponent compare with previous version', () => {
       imports: [GeneralLogComponent],
       providers: [
         DecimalPipe,
-        DayJsProvider,
         provideRouter([{ path: 'backup/:id/compare', component: CompareStub }]),
         {
           provide: DuplicatiServer,

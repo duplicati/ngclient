@@ -1,16 +1,17 @@
 import { DatePipe } from '@angular/common';
-import { inject, Pipe, type PipeTransform } from '@angular/core';
-import { DAYJS } from '../providers/dayjs';
+import { inject, LOCALE_ID, Pipe, type PipeTransform } from '@angular/core';
+import { getIntlDisplayLocale } from '../locales/intl-display-locale';
+import { relativeTimeMagnitude } from './relative-time-magnitude';
 
 @Pipe({
   name: 'relativeTime',
   standalone: true,
 })
 export class RelativeTimePipe implements PipeTransform {
-  #dayjs = inject(DAYJS);
+  #format = new Intl.RelativeTimeFormat(getIntlDisplayLocale(inject(LOCALE_ID)));
   #datePipe = inject(DatePipe);
 
-  // Convert Basic ISO 8601 timestamp to Extended ISO 8601 format that Day.js can parse
+  // Convert Basic ISO 8601 timestamp to Extended ISO 8601 format that Date can parse
   private convertTimestamp(input: string): string {
     const match = /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z$/.exec(input);
     if (match) {
@@ -31,11 +32,14 @@ export class RelativeTimePipe implements PipeTransform {
       return this.#datePipe.transform(value, 'short');
     }
 
-    this.#dayjs.locale();
     if (typeof value === 'string') {
       value = this.convertTimestamp(value);
     }
 
-    return this.#dayjs(value).fromNow();
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return 'Invalid Date';
+    const now = new Date();
+    const [amount, unit] = relativeTimeMagnitude(date, now);
+    return this.#format.format(date > now ? amount : -amount, unit);
   }
 }

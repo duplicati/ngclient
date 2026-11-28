@@ -734,37 +734,5 @@
         "extra": "extra/zh-Hant"
       }
     }
-  ],
-  "dayjs": {
-    "en-us": "en",
-    "en-gb": "en-gb",
-    "cs": "cs",
-    "da": "da",
-    "de": "de",
-    "es": "es",
-    "fi": "fi",
-    "fr": "fr",
-    "hu": "hu",
-    "it": "it",
-    "ja": "ja",
-    "ko": "ko",
-    "nl": "nl",
-    "pl": "pl",
-    "pt": "pt",
-    "ru": "ru",
-    "sr": "sr",
-    "sv": "sv",
-    "tr": "tr",
-    "zh": "zh-cn",
-    "zh-tw": "zh-tw",
-    "de-ch": "de-ch",
-    "de-de": "de",
-    "es-ar": "es",
-    "fr-ca": "fr-ca",
-    "fr-fr": "fr",
-    "it-it": "it",
-    "nl-be": "nl-be",
-    "zh-hant": "zh-tw",
-    "zh-hk": "zh-hk"
-  }
+  ]
 }

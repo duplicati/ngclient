@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal, LOCALE_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { form, FormField } from '@angular/forms/signals';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -9,7 +9,6 @@ import { ShipIcon } from '@ship-ui/core/ship-icon';
 import { ShipSelect } from '@ship-ui/core/ship-select';
 import { ShipToggle } from '@ship-ui/core/ship-toggle';
 import { ShipToggleCard } from '@ship-ui/core/ship-toggle-card';
-import { DAYJS } from '../../core/providers/dayjs';
 import { BackupsState } from '../../core/states/backups.state';
 import { SysinfoState } from '../../core/states/sysinfo.state';
 import { BackupState } from '../backup.state';
@@ -74,7 +73,7 @@ export default class ScheduleComponent {
   #backupState = inject(BackupState);
   #router = inject(Router);
   #route = inject(ActivatedRoute);
-  #dayjs = inject(DAYJS);
+  #locale = inject(LOCALE_ID);
   #backupsState = inject(BackupsState);
   #sysinfo = inject(SysinfoState);
 
@@ -125,7 +124,7 @@ export default class ScheduleComponent {
       time: this.scheduleForm.nextTime.time().value(),
       repeatValue: this.scheduleForm.runAgain.repeatValue().value(),
       repeatUnit: this.scheduleForm.runAgain.repeatUnit().value(),
-      allowedDays: formatAllowedDays(this.#dayjs, {
+      allowedDays: formatAllowedDays(this.#locale, {
         mon: allowedDays.mon,
         tue: allowedDays.tue,
         wed: allowedDays.wed,

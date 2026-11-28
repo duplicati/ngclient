@@ -153,11 +153,6 @@
       "glob": "messages.json",
       "input": "./projects/ngclient/src/locale",
       "output": "./locale/"
-    },
-    {
-      "glob": "{en,en-gb,cs,da,de,es,fi,fr,hu,it,ja,ko,nl,pl,pt,ru,sr,sv,tr,zh-cn,zh-tw}.js",
-      "input": "./node_modules/dayjs/esm/locale",
-      "output": "./locale/dayjs/"
     }
   ]
 }
