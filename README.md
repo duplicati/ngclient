@@ -36,6 +36,8 @@ Duplicati backend when using this configuration.
 Run the unit suite once, as in CI:
 
 ```sh
+bun run check:locales
+bun run test:locales
 bun run test:build
 bun run test:ci
 ```
@@ -114,41 +116,14 @@ select **Run workflow**, and enable **Run the real-server backup and restore
 smoke suite**. The job verifies a pinned Duplicati release before running the
 backup, restore, and job deletion specs against the production build.
 
-The first test edits an existing job, saves from another editor page, checks the
-server's stored settings and reloads the page. Round-trip cases start real
-unencrypted and AES-encrypted local backups through the UI, change the source
-files, then restore a selected folder and compare text and binary contents byte
-for byte. One AES case uses a generated, stored passphrase. Another deletes the
-original job and local DB, reloads the application, then enters the destination
-URL and passphrase in the direct-restore screens. Recovery cases first leave the passphrase empty or enter an
-incorrect value, check the real fileset/database-repair error, then return through
-the UI to correct it and restore without reloading. AES cases check encrypted volume
-suffixes. Version-deletion cases select only the middle of three versions, cancel before confirming,
-then restore both surviving versions and compare text/binary contents. They check the
-Compact option against task logs and actual data-volume removal. All cases use only
-disposable fixture jobs/files; deletion and compaction touch only fixture-owned data.
-Authentication-recovery cases configure one-minute access tokens in the stopped,
-isolated server database, then wait for a real server-side 401. They cover WebSocket
-and long-poll recovery, both with a successful refresh and with one deliberately
-injected refresh HTTP 503. All other auth/status traffic reaches the real server.
-They verify resumed subscriptions/state updates without a page reload. These four
-cases each wait for actual token expiry; browser time is not simulated.
-Destination-preservation cases compare the disposable server's stored URL with
-API and UI saves, including unknown providers, unreadable URLs, repeated/encoded
-parameters and masked credentials. They exercise mouse/keyboard saves and
-description-only edits without connecting to any remote provider or running a backup.
-These cases require a server containing the URL-masking fixes in Duplicati #7832,
-#7860 and #7898; older servers can fail even when the client preserves the URL.
-The worker stops its own server/proxy in teardown. Logs, isolated server data and
-failure traces remain under `test-results` for diagnosis (normal Playwright output
-cleanup applies on the next run). Abruptly terminating the runner may bypass teardown.
+Find logs and failure traces under `test-results`.
 
 ### Testing the client on windows
 
 - Open windows on parallels then run backend on port 8200
   - `cd [BACKEND_PATH]\Executables\Duplicati.Server`
   - `dotnet run -- --webservice-password=helloworld --webservice-interface=any` (insert your test password)
-- `npm run start:windows`
+- `bun run start:windows`
 - Debug on your mac in `localhost:4200`
 
 ### Locale definitions
