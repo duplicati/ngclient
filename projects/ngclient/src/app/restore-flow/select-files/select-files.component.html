@@ -2,7 +2,9 @@
   <h3 class="title-30" i18n>Select files</h3>
   @if (versionOptionsLoading()) {
     <sh-progress-bar class="indeterminate primary"></sh-progress-bar>
-    @if (waitingForBackup()) {
+    @if (recreatingDatabase()) {
+      <p role="status" i18n>Recreating the local database from the backup files. This can take a while.</p>
+    } @else if (waitingForBackup()) {
       <p role="status" i18n>Waiting for the backup or another operation to finish.</p>
     }
   } @else {

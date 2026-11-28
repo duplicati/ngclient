@@ -5,15 +5,17 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipAlertService } from '@ship-ui/core/ship-alert';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
-import { defer } from 'rxjs';
+import { defer, Subject } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ENVIRONMENT_TOKEN } from '../../environments/environment-token';
 import { httpInterceptor } from '../core/interceptors/http.interceptor';
 import { DuplicatiServer } from '../core/openapi';
 import { client } from '../core/openapi/client.gen';
 import { LOCALSTORAGE } from '../core/services/localstorage.token';
+import { ServerStateService } from '../core/services/server-state.service';
 import { AppAuthState } from '../core/states/app-auth.state';
 import { SysinfoState } from '../core/states/sysinfo.state';
+import { RestoreDraftsState } from '../restore/restore-drafts.state';
 import { ServerSettingsService } from '../settings/server-settings.service';
 import { RestoreFlowState } from './restore-flow.state';
 
@@ -66,6 +68,13 @@ describe('RestoreFlowState fileset/backup HTTP ordering', () => {
     const open = vi.fn();
     const navigate = vi.fn();
     const alert = vi.fn();
+    const remember = vi.fn();
+    const taskResults = new Map<number, Subject<{ ID: number; Status: string; ErrorMessage: string | null }>>();
+    const waitForTaskToComplete = vi.fn((taskId: number) => {
+      const result = new Subject<{ ID: number; Status: string; ErrorMessage: string | null }>();
+      taskResults.set(taskId, result);
+      return result;
+    });
     TestBed.configureTestingModule({
       providers: [
         provideHttpClient(withInterceptors([httpInterceptor])),
@@ -91,6 +100,8 @@ describe('RestoreFlowState fileset/backup HTTP ordering', () => {
           },
         },
         { provide: ServerSettingsService, useValue: { serverSettings: signal({}) } },
+        { provide: RestoreDraftsState, useValue: { remember } },
+        { provide: ServerStateService, useValue: { waitForTaskToComplete } },
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -127,6 +138,8 @@ describe('RestoreFlowState fileset/backup HTTP ordering', () => {
       open,
       navigate,
       alert,
+      remember,
+      taskResults,
       backupReads,
       flushBackup,
       flushFilesets,
@@ -162,28 +175,100 @@ describe('RestoreFlowState fileset/backup HTTP ordering', () => {
     expect(state.versionOptionsLoading()).toBe(false);
   });
 
-  it('still reports a genuinely missing database and opens the existing repair route', async () => {
-    const { state, open, navigate, flushBackup, flushFilesets } = setup();
-    state.getBackup();
+  async function reportMissingDatabase(ctx: ReturnType<typeof setup>) {
+    ctx.state.getBackup();
     await settle();
-    flushBackup(false);
-    flushFilesets();
+    ctx.flushBackup(false);
+    ctx.flushFilesets();
     await settle();
-    flushBackup(false);
+    ctx.flushBackup(false);
     await settle();
-    expect(open).toHaveBeenCalledTimes(1);
-    expect(open.mock.calls[0][1].data).toEqual({
+  }
+
+  it('asks whether to recreate the missing database or restore directly', async () => {
+    const ctx = setup();
+    await reportMissingDatabase(ctx);
+    expect(ctx.open).toHaveBeenCalledTimes(1);
+    const options = ctx.open.mock.calls[0][1];
+    expect(options.data).toEqual({
       title: 'Missing Local Database',
       message:
-        'The local database for this backup is missing. Please repair or recreate the local database before restoring.',
-      confirmText: 'OK',
-      cancelText: undefined,
+        'The local database for this backup is missing. Recreate it now to keep the backup job ready for its next run, or restore directly from the backup files without a local database.',
+      confirmText: 'Recreate database',
+      cancelText: 'Restore directly',
     });
-    expect(navigate).not.toHaveBeenCalled();
-    open.mock.calls[0][1].closed(true);
-    expect(navigate).toHaveBeenCalledExactlyOnceWith(['/backup', '42', 'database']);
-    expect(state.versionOptions()).toEqual([]);
-    expect(state.versionOptionsLoading()).toBe(false);
+    expect(options.maxWidth).toBe('500px');
+    expect(options.closeOnEsc).toBe(false);
+    expect(options.closeOnOutsideClick).toBe(false);
+    expect(ctx.navigate).not.toHaveBeenCalled();
+    expect(ctx.state.versionOptions()).toEqual([]);
+    expect(ctx.state.versionOptionsLoading()).toBe(false);
+  });
+
+  it('restores directly from a temporary copy of the job', async () => {
+    const ctx = setup();
+    await reportMissingDatabase(ctx);
+    ctx.open.mock.calls[0][1].closed(false);
+    await settle();
+    expect(ctx.state.versionOptionsLoading()).toBe(true);
+    const copy = http.expectOne(`${backupUrl}/copytotemp`);
+    expect(copy.request.method).toBe('POST');
+    copy.flush({ Status: 'OK', ID: '99', IsTemporary: true });
+    await settle();
+    expect(ctx.remember).toHaveBeenCalledExactlyOnceWith('99');
+    expect(ctx.navigate).toHaveBeenCalledExactlyOnceWith(['/restore-draft', '99']);
+    http.expectNone(`${backupUrl}/repair`);
+  });
+
+  it('recreates the database and then lists the versions from it', async () => {
+    const ctx = setup();
+    await reportMissingDatabase(ctx);
+    ctx.open.mock.calls[0][1].closed(true);
+    await settle();
+    const repair = http.expectOne(`${backupUrl}/repair`);
+    expect(repair.request.method).toBe('POST');
+    expect(repair.request.body).toEqual({});
+    repair.flush({ Status: 'OK', ID: 7 });
+    await settle();
+    expect(ctx.state.recreatingDatabase()).toBe(true);
+    expect(ctx.state.versionOptionsLoading()).toBe(true);
+    http.expectNone(filesetsUrl);
+
+    ctx.taskResults.get(7)!.next({ ID: 7, Status: 'Completed', ErrorMessage: null });
+    await settle();
+    expect(ctx.state.recreatingDatabase()).toBe(false);
+    ctx.flushFilesets();
+    await settle();
+    ctx.flushBackup(true);
+    await settle();
+    expect(ctx.open).toHaveBeenCalledTimes(1);
+    expect(ctx.navigate).not.toHaveBeenCalled();
+    expect(ctx.state.versionOptions()).toEqual([fileset]);
+    expect(ctx.state.versionOptionsLoading()).toBe(false);
+  });
+
+  it('offers the database page or a direct restore when recreating fails', async () => {
+    const ctx = setup();
+    await reportMissingDatabase(ctx);
+    ctx.open.mock.calls[0][1].closed(true);
+    await settle();
+    http.expectOne(`${backupUrl}/repair`).flush({ Status: 'OK', ID: 8 });
+    await settle();
+    ctx.taskResults.get(8)!.next({ ID: 8, Status: 'Failed', ErrorMessage: 'Remote folder is empty' });
+    await settle();
+    expect(ctx.state.recreatingDatabase()).toBe(false);
+    expect(ctx.state.versionOptionsLoading()).toBe(false);
+    expect(ctx.open).toHaveBeenCalledTimes(2);
+    const failed = ctx.open.mock.calls[1][1];
+    expect(failed.data).toEqual({
+      title: 'Recreating the database failed',
+      message: 'Remote folder is empty',
+      confirmText: 'Go to database',
+      cancelText: 'Restore directly',
+    });
+    failed.closed(true);
+    expect(ctx.navigate).toHaveBeenCalledExactlyOnceWith(['/backup', '42', 'database']);
+    http.expectNone(filesetsUrl);
   });
 
   it('does not report a missing database for a temporary backup', async () => {

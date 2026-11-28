@@ -1,4 +1,4 @@
-import { computed, effect, inject, Injectable, OnDestroy, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, Injector, OnDestroy, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
@@ -23,6 +23,7 @@ import {
 import { TestState } from '../backup/source-data/target-url-dialog/test-url/test-url';
 import { ConfirmDialogComponent } from '../core/components/confirm-dialog/confirm-dialog.component';
 import { DuplicatiServer, GetBackupResultDto, ListFilesetsResponseDto, SettingInputDto } from '../core/openapi';
+import { ServerStateService } from '../core/services/server-state.service';
 import { SysinfoState } from '../core/states/sysinfo.state';
 import { RestoreDraftsState } from '../restore/restore-drafts.state';
 import { ServerSettingsService } from '../settings/server-settings.service';
@@ -51,6 +52,8 @@ export class RestoreFlowState implements OnDestroy {
   #dupServer = inject(DuplicatiServer);
   #serverSettings = inject(ServerSettingsService);
   #restoreDrafts = inject(RestoreDraftsState);
+  // Resolved when a recreate is waited on, as it brings the server status connection along
+  #injector = inject(Injector);
   #restoreOptionsInitializedForBackupId: string | null = null;
   #backupLoad: Subscription | undefined;
   #destroyed = false;
@@ -77,6 +80,7 @@ export class RestoreFlowState implements OnDestroy {
   selectOption = signal<string | null>(null);
   versionOptionsLoading = signal(false);
   waitingForBackup = signal(false);
+  recreatingDatabase = signal(false);
   versionOptions = signal<ListResultFileset[]>([]);
   isSubmitting = signal(false);
   isFileRestore = signal(false);
@@ -373,18 +377,7 @@ export class RestoreFlowState implements OnDestroy {
               // A Sync job lists and restores from its destination, so it needs no local database
               const isSync = backup.Backup?.OperationType === 'Sync';
               if (!isTemporary && !isSync && backup?.Backup?.DBPathExists === false) {
-                this.#dialog.open(ConfirmDialogComponent, {
-                  data: {
-                    title: $localize`Missing Local Database`,
-                    message: $localize`The local database for this backup is missing. Please repair or recreate the local database before restoring.`,
-                    confirmText: $localize`OK`,
-                    cancelText: undefined,
-                  },
-                  closed: (_) => {
-                    this.#router.navigate(['/backup', id, 'database']);
-                  },
-                });
-
+                this.#askRecreateOrRestoreDirectly(id);
                 return;
               }
 
@@ -476,6 +469,109 @@ export class RestoreFlowState implements OnDestroy {
           },
         });
     }
+  }
+
+  /** A saved job without its local database, such as one imported on a new machine, can recreate it or restore without it */
+  #askRecreateOrRestoreDirectly(id: string) {
+    this.#dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: $localize`Missing Local Database`,
+        message: $localize`The local database for this backup is missing. Recreate it now to keep the backup job ready for its next run, or restore directly from the backup files without a local database.`,
+        confirmText: $localize`Recreate database`,
+        cancelText: $localize`Restore directly`,
+      },
+      // Either choice continues the restore, so the dialog is not dismissed without one
+      maxWidth: '500px',
+      width: '100%',
+      closeOnEsc: false,
+      closeOnOutsideClick: false,
+      closed: (recreate) => {
+        if (this.#destroyed || this.backupId() !== id) return;
+        if (recreate) this.#recreateDatabase(id);
+        else this.#restoreDirectly(id);
+      },
+    });
+  }
+
+  #recreateDatabase(id: string) {
+    this.#cancelBackupLoad();
+    this.versionOptionsLoading.set(true);
+    this.recreatingDatabase.set(true);
+    const request = new Subscription();
+    this.#backupLoad = request;
+    request.add(
+      // A repair without a local database recreates it from the backup files
+      defer(() => this.#dupServer.postApiV1BackupByIdRepair({ path: { id }, body: {} }))
+        .pipe(
+          switchMap((res) => this.#injector.get(ServerStateService).waitForTaskToComplete(res.ID!)),
+          take(1),
+          finalize(() => {
+            this.recreatingDatabase.set(false);
+            if (this.#backupLoad !== request) return;
+            this.#backupLoad = undefined;
+            this.versionOptionsLoading.set(false);
+          })
+        )
+        .subscribe({
+          next: (task) => {
+            if (task.Status === 'Completed' && task.ErrorMessage == null) {
+              this.getBackup();
+              return;
+            }
+            this.#showRecreateFailed(id, task.ErrorMessage || task.Exception || null);
+          },
+          error: (err) => this.#showRecreateFailed(id, err?.message ?? null),
+        })
+    );
+  }
+
+  #showRecreateFailed(id: string, reason: string | null) {
+    this.#dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: $localize`Recreating the database failed`,
+        message: reason ?? $localize`The local database could not be recreated.`,
+        confirmText: $localize`Go to database`,
+        cancelText: $localize`Restore directly`,
+      },
+      maxWidth: '500px',
+      width: '100%',
+      closeOnEsc: false,
+      closeOnOutsideClick: false,
+      closed: (toDatabase) => {
+        if (this.#destroyed || this.backupId() !== id) return;
+        if (toDatabase) this.#router.navigate(['/backup', id, 'database']);
+        else this.#restoreDirectly(id);
+      },
+    });
+  }
+
+  /** Restores from a temporary copy of the job, so the job's own database path is left untouched */
+  #restoreDirectly(id: string) {
+    this.#cancelBackupLoad();
+    this.versionOptionsLoading.set(true);
+    const request = new Subscription();
+    this.#backupLoad = request;
+    request.add(
+      defer(() => this.#dupServer.postApiV1BackupByIdCopytotemp({ path: { id } }))
+        .pipe(
+          finalize(() => {
+            if (this.#backupLoad !== request) return;
+            this.#backupLoad = undefined;
+            this.versionOptionsLoading.set(false);
+          })
+        )
+        .subscribe({
+          next: ({ ID }) => {
+            if (!ID) return;
+            this.#restoreDrafts.remember(ID);
+            this.#router.navigate(['/restore-draft', ID]);
+          },
+          error: (err) =>
+            this.showErrorDialog(
+              $localize`An error occurred while copying the backup to a temporary location: ${err.message}`
+            ),
+        })
+    );
   }
 
   #cancelBackupLoad() {
