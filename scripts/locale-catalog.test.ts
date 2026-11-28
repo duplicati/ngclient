@@ -72,16 +72,10 @@ test('rejects unknown runtime targets and conflicting Angular registrations', ()
   );
   expect(() => buildLocaleArtifacts(configuration, conflicting)).toThrow('Conflicting locale data');
 });
-test('reports missing translation files and missing Day.js modules', async () => {
+test('reports missing translation files', async () => {
   const missing = LOCALE_CATALOG.map((entry, index) => (index ? entry : { ...entry, file: 'missing' }));
   await expect(
     verifyLocaleAssets(root, buildLocaleArtifacts(configuration, missing).config, missing)
-  ).rejects.toThrow();
-  const missingModule = LOCALE_CATALOG.map((entry, index) =>
-    index ? entry : { ...entry, dayjs: { data: 'missing' } }
-  );
-  await expect(
-    verifyLocaleAssets(root, buildLocaleArtifacts(configuration, missingModule).config, missingModule)
   ).rejects.toThrow();
 });
 test('checked-in files match generation', async () => {

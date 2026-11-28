@@ -19,7 +19,6 @@ import { provideHeyApiClient } from './core/openapi/client/client.gen';
 import { BytesPipe } from './core/pipes/byte.pipe';
 import { DurationFormatPipe } from './core/pipes/duration.pipe';
 import { RelativeTimePipe } from './core/pipes/relative-time.pipe';
-import { DayJsProvider } from './core/providers/dayjs';
 import { withChunkLoadErrorDialog } from './core/routing/chunk-load-error';
 import { StartupPreloadingStrategy } from './core/routing/startup-preloading.strategy';
 import { LOCALSTORAGE } from './core/services/localstorage.token';
@@ -53,7 +52,6 @@ export const appConfig: ApplicationConfig = {
     { provide: ShipDialogService, useClass: StackingDialogService },
     NotificationsState,
     StatusBarState,
-    DayJsProvider,
     DecimalPipe,
     BytesPipe,
     DatePipe,

@@ -205,11 +205,6 @@
                 "output": "./locale/"
               },
               {
-                "glob": "{en-gb,cs,da,de,es,fi,fr,hu,it,ko,nl,pl,pt,ru,sr,sv,tr,zh-tw,ja,zh-cn,en}.js",
-                "input": "./node_modules/dayjs/esm/locale",
-                "output": "./locale/dayjs/"
-              },
-              {
                 "glob": "**/*",
                 "input": "./node_modules/@ship-ui/core/assets",
                 "output": "./ship-ui-assets/"

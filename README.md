@@ -9,7 +9,6 @@
 
 - ShipUI - https://shipui.com/ - ([Docs](https://docs.shipui.com/), [GitHub](https://github.com/shipuicom/core))
 - Angular 22 - https://angular.dev
-- Dayjs - https://day.js.org/en/
 - Phosphor Icons - https://phosphoricons.com/
 
 ### Run the project
@@ -155,7 +154,7 @@ cleanup applies on the next run). Abruptly terminating the runner may bypass tea
 
 Edit `scripts/locale-catalog.ts` when changing supported locale identifiers,
 selector labels, aliases, or locale data. It is the build-time source for the
-runtime tables, Angular locale imports, Day.js registrations, and the locale
+runtime tables, Angular locale imports and the locale
 sections of `angular.json`. Existing aliases and regional fallbacks are explicit
 in the catalog; language selection and provider lookup remain unchanged.
 
@@ -168,7 +167,7 @@ bun run test:locales
 ```
 
 Commit the catalog and generated files together. `check:locales` verifies that
-JSON/XLF translations and imported Angular/Day.js locale modules exist and that
+JSON/XLF translations and imported Angular locale modules exist and that
 the generated files are current. CI runs this check before building. The catalog
 is used only during generation, so the application loads static tables and does
 not need to generate configuration at startup.

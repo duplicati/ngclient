@@ -3,7 +3,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Subject } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { DuplicatiServer } from '../../../core/openapi';
-import { DayJsProvider } from '../../../core/providers/dayjs';
 import { BackupsState } from '../../../core/states/backups.state';
 import { GeneralLogComponent } from './general-log.component';
 
@@ -29,7 +28,6 @@ async function setup() {
     imports: [GeneralLogComponent],
     providers: [
       DecimalPipe,
-      DayJsProvider,
       {
         provide: DuplicatiServer,
         useValue: { getApiV1BackupById: () => Promise.resolve({}), getApiV1BackupByIdLog: load },

@@ -1,22 +1,17 @@
 import { DatePipe } from '@angular/common';
 import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { DAYJS } from '../providers/dayjs';
+import { relativeTimeMagnitude } from './relative-time-magnitude';
 import { RelativeTimePipe } from './relative-time.pipe';
 
 describe('RelativeTimePipe', () => {
-  const fromNow = vi.fn();
-  const dayjs = Object.assign(
-    vi.fn(() => ({ fromNow })),
-    { locale: vi.fn() }
-  );
   const datePipe = { transform: vi.fn() };
   let pipe: RelativeTimePipe;
 
   beforeEach(() => {
     vi.clearAllMocks();
     TestBed.configureTestingModule({
-      providers: [RelativeTimePipe, { provide: DAYJS, useValue: dayjs }, { provide: DatePipe, useValue: datePipe }],
+      providers: [RelativeTimePipe, { provide: DatePipe, useValue: datePipe }],
     });
     pipe = TestBed.inject(RelativeTimePipe);
   });
@@ -31,22 +26,35 @@ describe('RelativeTimePipe', () => {
 
     expect(pipe.transform(value, true)).toBe('6/14/26, 8:50 AM');
     expect(datePipe.transform).toHaveBeenCalledWith(value, 'short');
-    expect(dayjs).not.toHaveBeenCalled();
   });
 
   it('converts a basic ISO timestamp before calculating relative time', () => {
-    fromNow.mockReturnValue('a few seconds ago');
-
-    expect(pipe.transform('20260614T085000Z')).toBe('a few seconds ago');
-    expect(dayjs.locale).toHaveBeenCalledOnce();
-    expect(dayjs).toHaveBeenCalledWith('2026-06-14T08:50:00Z');
+    vi.useFakeTimers({ now: new Date('2026-06-14T08:50:05Z'), toFake: ['Date'] });
+    try {
+      expect(pipe.transform('20260614T085000Z')).toBe('5 seconds ago');
+      expect(pipe.transform('2026-06-14T08:50:10Z')).toBe('in 5 seconds');
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
-  it('passes other supported values directly to Day.js', () => {
-    const value = new Date('2026-06-14T08:50:00Z');
-    fromNow.mockReturnValue('a month ago');
+  it.each([
+    [44_000, 44, 'second'],
+    [44_500, 1, 'minute'],
+    [89_000, 1, 'minute'],
+    [90_000, 2, 'minute'],
+    [44.5 * 60_000, 1, 'hour'],
+    [21.5 * 3_600_000, 1, 'day'],
+    [35.5 * 3_600_000, 1, 'day'],
+    [25.5 * 86_400_000, 1, 'month'],
+  ] as const)('preserves the legacy unit boundary at %i ms', (elapsed, amount, unit) => {
+    const reference = new Date('2026-01-01T12:00:00Z');
+    expect(relativeTimeMagnitude(new Date(reference.getTime() + elapsed), reference)).toEqual([amount, unit]);
+  });
 
-    expect(pipe.transform(value)).toBe('a month ago');
-    expect(dayjs).toHaveBeenCalledWith(value);
+  it('uses calendar months when rounding long intervals', () => {
+    const reference = new Date(2025, 0, 31, 12);
+    expect(relativeTimeMagnitude(new Date(2025, 2, 31, 12), reference)).toEqual([2, 'month']);
+    expect(relativeTimeMagnitude(new Date(2026, 6, 31, 12), reference)).toEqual([2, 'year']);
   });
 });

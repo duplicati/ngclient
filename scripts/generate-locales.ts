@@ -11,7 +11,6 @@ export const messageStem = (locale: LocaleDefinition) => locale.file ?? locale.c
 export function validateCatalog(catalog: readonly LocaleDefinition[]) {
   const codes = new Set<string>();
   const aliases = new Set<string>();
-  const dayjsKeys = new Set<string>();
   const safe = (value: string) => {
     if (!/^[a-zA-Z0-9]+(?:[-_][a-zA-Z0-9]+)*$/.test(value)) throw new Error('Invalid locale identifier: ' + value);
   };
@@ -33,15 +32,8 @@ export function validateCatalog(catalog: readonly LocaleDefinition[]) {
       entry.angular?.data,
       entry.angular?.alias,
       entry.angular?.extra,
-      entry.dayjs?.data,
     ]) {
       if (value) safe(value);
-    }
-    if (entry.dayjs) {
-      const key = entry.dayjs.key ?? entry.code.toLowerCase();
-      safe(key);
-      if (dayjsKeys.has(key)) throw new Error('Duplicate Day.js key: ' + key);
-      dayjsKeys.add(key);
     }
   }
   if (!codes.has(DEFAULT_LOCALE) || !codes.has(SOURCE_LOCALE.code)) throw new Error('Default/source locale is missing');
@@ -61,7 +53,6 @@ export function buildLocaleArtifacts(configuration: any, catalog: readonly Local
   };
   const angular = new Map<string, string>();
   const extra = new Map<string, string>();
-  const dayjs = new Map<string, string>();
   const set = (map: Map<string, string>, key: string, value: string) => {
     if (map.has(key) && map.get(key) !== value) throw new Error('Conflicting locale data: ' + key);
     map.set(key, value);
@@ -72,9 +63,8 @@ export function buildLocaleArtifacts(configuration: any, catalog: readonly Local
       set(angular, key, entry.angular.data);
       if (entry.angular.extra) set(extra, key, entry.angular.extra);
     }
-    if (entry.dayjs) set(dayjs, entry.dayjs.key ?? entry.code.toLowerCase(), entry.dayjs.data);
   }
-  const module = (maps: [string, Map<string, string>, string][], prefix = '') => {
+  const module = (maps: [string, Map<string, string>, string][]) => {
     const imports = new Map<string, string>();
     for (const [, map, path] of maps)
       for (const value of map.values()) {
@@ -82,7 +72,6 @@ export function buildLocaleArtifacts(configuration: any, catalog: readonly Local
         if (!imports.has(specifier)) imports.set(specifier, 'locale' + imports.size);
       }
     return (
-      prefix +
       header +
       [...imports].map(([path, name]) => 'import ' + name + ' from ' + JSON.stringify(path) + ';').join('\n') +
       '\n\n' +
@@ -91,7 +80,7 @@ export function buildLocaleArtifacts(configuration: any, catalog: readonly Local
           ([name, map, path]) =>
             'export const ' +
             name +
-            (name === 'DAYJS_LOCALES' ? ': Record<string, ILocale>' : ': Record<string, any>') +
+            ': Record<string, any>' +
             ' = {\n' +
             [...map].map(([key, value]) => JSON.stringify(key) + ': ' + imports.get(path + value)).join(',\n') +
             '\n};'
@@ -120,13 +109,8 @@ export function buildLocaleArtifacts(configuration: any, catalog: readonly Local
   const messages = assets.find(
     (a: any) => a.input === './projects/ngclient/src/locale' && a.glob.startsWith('messages.{')
   );
-  const dayjsAssets = assets.find((a: any) => a.input === './node_modules/dayjs/esm/locale');
-  if (!messages || !dayjsAssets) throw new Error('Locale asset configuration is missing');
+  if (!messages) throw new Error('Locale asset configuration is missing');
   messages.glob = 'messages.{' + [...new Set(catalog.map(messageStem))].join(',') + '}.json';
-  dayjsAssets.glob =
-    '{' +
-    [...new Set(catalog.filter((e) => e.dayjs && e.dayjs.asset !== false).map((e) => e.dayjs!.data))].join(',') +
-    '}.js';
 
   const runtime =
     header +
@@ -146,10 +130,6 @@ export function buildLocaleArtifacts(configuration: any, catalog: readonly Local
         ['ANGULAR_LOCALE_DATA', angular, '@angular/common/locales/'],
         ['ANGULAR_LOCALE_EXTRA_DATA', extra, '@angular/common/locales/extra/'],
       ]),
-      [localeDirectory + '/dayjs.const.ts']: module(
-        [['DAYJS_LOCALES', dayjs, 'dayjs/esm/locale/']],
-        '// @ts-nocheck\n'
-      ),
     },
   };
 }
@@ -163,7 +143,6 @@ export async function verifyLocaleAssets(root: string, configuration: any, catal
       Bun.resolveSync('@angular/common/locales/' + entry.angular.data, root);
       if (entry.angular.extra) Bun.resolveSync('@angular/common/locales/extra/' + entry.angular.extra, root);
     }
-    if (entry.dayjs) Bun.resolveSync('dayjs/esm/locale/' + entry.dayjs.data, root);
   }
   await access(join(root, 'projects/ngclient/src/locale/messages.json'));
 }

@@ -6,10 +6,8 @@ import { By } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ShipDatepickerInput } from '@ship-ui/core/ship-datepicker';
 import { ShipDialogService } from '@ship-ui/core/ship-dialog';
-import dayjs from 'dayjs/esm';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { BackupAndScheduleOutputDto, DuplicatiServer, ScheduleDto } from '../../core/openapi';
-import { DAYJS } from '../../core/providers/dayjs';
 import { TimespanLiteralsService } from '../../core/services/timespan-literals.service';
 import { BackupsState } from '../../core/states/backups.state';
 import { ConnectionStringsState } from '../../core/states/connection-strings.state';
@@ -22,19 +20,19 @@ import { formatAllowedDays } from './schedule-summary';
 describe('schedule summary formatting', () => {
   it('formats all allowed days', () => {
     expect(
-      formatAllowedDays(dayjs, { mon: true, tue: true, wed: true, thu: true, fri: true, sat: true, sun: true })
+      formatAllowedDays('en-US', { mon: true, tue: true, wed: true, thu: true, fri: true, sat: true, sun: true })
     ).toBe('All days');
   });
 
   it('formats no allowed days', () => {
     expect(
-      formatAllowedDays(dayjs, { mon: false, tue: false, wed: false, thu: false, fri: false, sat: false, sun: false })
+      formatAllowedDays('en-US', { mon: false, tue: false, wed: false, thu: false, fri: false, sat: false, sun: false })
     ).toBe('No days selected');
   });
 
   it('formats a subset of allowed days', () => {
     expect(
-      formatAllowedDays(dayjs, { mon: true, tue: false, wed: true, thu: false, fri: true, sat: false, sun: false })
+      formatAllowedDays('en-US', { mon: true, tue: false, wed: true, thu: false, fri: true, sat: false, sun: false })
     ).toBe('Monday, Wednesday, and Friday');
   });
 });
@@ -50,7 +48,6 @@ describe('ScheduleComponent date picker', () => {
         BackupState,
         { provide: Router, useValue: { navigate: vi.fn() } },
         { provide: ActivatedRoute, useValue: { parent: {} } },
-        { provide: DAYJS, useValue: dayjs },
         { provide: SysinfoState, useValue: { systemInfo: signal(null), hasBackupRunAfter: signal(false) } },
         { provide: BackupsState, useValue: { backups: signal([]), getBackups: vi.fn() } },
         { provide: ShipDialogService, useValue: {} },
@@ -213,7 +210,6 @@ describe('ScheduleComponent run after another job', () => {
         BackupState,
         { provide: Router, useValue: { navigate: vi.fn() } },
         { provide: ActivatedRoute, useValue: { parent: {} } },
-        { provide: DAYJS, useValue: dayjs },
         { provide: SysinfoState, useValue: { systemInfo: signal(null), hasBackupRunAfter: signal(supported) } },
         { provide: BackupsState, useValue: { backups, getBackups } },
         { provide: ShipDialogService, useValue: {} },

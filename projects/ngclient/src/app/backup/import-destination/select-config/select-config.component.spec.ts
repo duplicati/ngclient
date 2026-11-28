@@ -6,7 +6,6 @@ import { ShipAlertService } from '@ship-ui/core/ship-alert';
 import { of, Subject } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { DuplicatiServer, RestoreTaskConfigElementDto } from '../../../core/openapi';
-import { DayJsProvider } from '../../../core/providers/dayjs';
 import { BackupsState } from '../../../core/states/backups.state';
 import { ImportDestinationState } from '../import-destination.state';
 import SelectConfigComponent from './select-config.component';
@@ -170,7 +169,6 @@ describe('configuration list loading', () => {
       imports: [SelectConfigComponent],
       providers: [
         DatePipe,
-        DayJsProvider,
         { provide: ImportDestinationState, useValue: { temporaryBackupId: signal('temp-42'), showErrorDialog } },
         { provide: DuplicatiServer, useValue: { postApiV1BackupByIdRestoreTaskConfig: list } },
         { provide: BackupsState, useValue: {} },
