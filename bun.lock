@@ -11,7 +11,6 @@
         "@angular/forms": "22.2.1",
         "@angular/localize": "22.2.1",
         "@angular/platform-browser": "22.2.1",
-        "@angular/platform-browser-dynamic": "22.2.1",
         "@angular/router": "22.2.1",
         "@ship-ui/core": "^0.23.5",
         "dayjs": "^1.11.19",
@@ -69,8 +68,6 @@
     "@angular/localize": ["@angular/localize@22.2.1", "", { "dependencies": { "@babel/core": "8.0.1", "tinyglobby": "^0.2.12", "yargs": "^18.0.0" }, "peerDependencies": { "@angular/compiler": "22.2.1", "@angular/compiler-cli": "22.2.1" }, "bin": { "localize-extract": "tools/bundles/src/extract/cli.js", "localize-migrate": "tools/bundles/src/migrate/cli.js", "localize-translate": "tools/bundles/src/translate/cli.js" } }, "sha512-fJ3GKhHQbCijcyjTpZsL+2MjVcFWXcJU0jOFlUKrBR3msWYcsF0gCjrPEcJXNlouUKBlC+2dlm9xnjqs2MUy6g=="],
 
     "@angular/platform-browser": ["@angular/platform-browser@22.2.1", "", { "dependencies": { "tslib": "^2.3.0" }, "peerDependencies": { "@angular/animations": "22.2.1", "@angular/common": "22.2.1", "@angular/core": "22.2.1" }, "optionalPeers": ["@angular/animations"] }, "sha512-KQ3oguemaSqyNP00yqEvPouY7NC4Lji+6S8yfjaWaUZjSth/GckpeP/Fo9HtMqd04y6MZ6lEb2hbQtTqFcSdEQ=="],
-
-    "@angular/platform-browser-dynamic": ["@angular/platform-browser-dynamic@22.2.1", "", { "dependencies": { "tslib": "^2.3.0" }, "peerDependencies": { "@angular/common": "22.2.1", "@angular/compiler": "22.2.1", "@angular/core": "22.2.1", "@angular/platform-browser": "22.2.1" } }, "sha512-Yg0JcTy3OzhvAM0LQT/XCx8eN3gFsR/BmnQ75Fg0Cvyog7NvFxVXxv/MWE2DNW96lRZNV8ECaVNdcU893ZITTw=="],
 
     "@angular/router": ["@angular/router@22.2.1", "", { "dependencies": { "tslib": "^2.3.0" }, "peerDependencies": { "@angular/common": "22.2.1", "@angular/core": "22.2.1", "@angular/platform-browser": "22.2.1", "rxjs": "^6.5.3 || ^7.4.0" } }, "sha512-HJfJ4yA1znKd9YFtbDOJfKmD12x0PhS7LkmYdWlJRu2WkQZRBVrdGKdmbvV5UvrqCRllVWKpzw1TIZJM69rlcw=="],
 
